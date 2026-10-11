@@ -1112,53 +1112,45 @@ namespace M3.ZoomHelper
             return WaitForWindow(MenuClass, 4000);
         }
 
-        /// <summary>The names of a row's hover buttons, first segments only.</summary>
-        static List<string> HoveredRowButtonNames(El window, Row row, string name)
+        /// <summary>A participant row's hover buttons, told apart. Zoom lays
+        /// them out as [Lower hand, only while the hand is up] [microphone]
+        /// [video, when any] [More, a split button]. The microphone button is
+        /// recognized by name where possible (the host's own Mute/Unmute
+        /// button names, learned by the setup assistant; "Ask to unmute" has
+        /// no counterpart), else by its place. With the hand up, the first
+        /// button is "Lower hand"; once its name is known (learned from the
+        /// first such row), a row laid out otherwise is left alone.</summary>
+        sealed class RowLayout
         {
-            return WithRowButtons(window, row, name, buttons =>
-            {
-                var names = new List<string>();
-                foreach (var button in buttons) names.Add(FirstSegment(button.Name));
-                return names;
-            }, (List<string>)null);
+            public El LowerHand;
+            public El Mic;
+            public bool Unmuted;
         }
 
-        /// <summary>The single item in `with` that isn't in `without`, else null.</summary>
-        static string OnlyExtra(List<string> with, List<string> without)
+        static RowLayout ReadRowLayout(List<El> buttons, string micOnTitle, string micOffTitle, string lowerHandTitle, bool handRaised)
         {
-            var extra = new List<string>();
-            foreach (var item in with) if (!without.Contains(item)) extra.Add(item);
-            return extra.Count == 1 ? extra[0] : null;
-        }
-
-        /// <summary>A row's microphone button, told apart by name, never by
-        /// position: with a hand raised, Zoom puts a "Lower hand" button first.
-        /// It reads like the host's own microphone button (micOnTitle while
-        /// unmuted, micOffTitle while muted) or, for someone who may not
-        /// unmute themselves, "Ask to unmute" - the one button left once the
-        /// "Lower hand" button (lowerHandTitle) and the trailing "More" button
-        /// are set aside. Null when it can't be told for sure.</summary>
-        static El FindMicButton(List<El> buttons, string micOnTitle, string micOffTitle, string lowerHandTitle, out bool unmuted)
-        {
-            unmuted = false;
+            var plain = new List<El>();
             foreach (var button in buttons)
+                if (button.ControlType != Uia.SplitButtonType) plain.Add(button); // "More" is the split button
+            var layout = new RowLayout();
+            if (handRaised)
             {
-                var title = FirstSegment(button.Name);
-                if (title == micOnTitle) { unmuted = true; return button; }
+                // [Lower hand] [microphone] [video?]: two or three buttons.
+                if (plain.Count < 2 || plain.Count > 3) return null;
+                var first = FirstSegment(plain[0].Name);
+                if (lowerHandTitle.Length > 0 && first != lowerHandTitle) return null;
+                if (first == micOnTitle || (micOffTitle.Length > 0 && first == micOffTitle)) return null;
+                layout.LowerHand = plain[0];
+                layout.Mic = plain[1];
             }
-            foreach (var button in buttons)
+            else
             {
-                var title = FirstSegment(button.Name);
-                if (micOffTitle.Length > 0 && title == micOffTitle) return button;
+                // [microphone] [video?]: one or two buttons.
+                if (plain.Count < 1 || plain.Count > 2) return null;
+                layout.Mic = plain[0];
             }
-            var candidates = new List<El>();
-            for (int i = 0; i < buttons.Count - 1; i++) // the last one is "More"
-            {
-                var title = FirstSegment(buttons[i].Name);
-                if (lowerHandTitle.Length > 0 && title == lowerHandTitle) continue;
-                candidates.Add(buttons[i]);
-            }
-            return candidates.Count == 1 ? candidates[0] : null;
+            layout.Unmuted = FirstSegment(layout.Mic.Name) == micOnTitle;
+            return layout;
         }
 
         static List<string> MenuItemNames(El menu)
@@ -1178,9 +1170,7 @@ namespace M3.ZoomHelper
         /// <summary>Learns how Zoom marks a raised hand in the user's language:
         /// raises the host's own hand (Alt+Y), reads what Zoom added to the
         /// host's row in the participants list, then lowers it again and makes
-        /// sure the words went away. While the hand is up, it also reads the
-        /// host's row menu to learn the "Lower hand" entry (the item that is
-        /// only there with the hand raised).</summary>
+        /// sure the words went away.</summary>
         public static Dictionary<string, object> LearnHandRaised()
         {
             var window = RequireMeetingWindow();
@@ -1210,25 +1200,6 @@ namespace M3.ZoomHelper
             }, 5000);
             if (!raised) throw new ZoomActionError("hand-not-raised");
 
-            // The "Lower hand" control: a button on the host's row while the
-            // hand is up (Zoom shows it first, before the microphone button),
-            // and an entry in the row's menu; both gone once the hand is down.
-            // Best effort: the alert works without it.
-            List<string> buttonsWithHand = null;
-            List<string> itemsWithHand = null;
-            try
-            {
-                var ownRow = UniqueMeetingRow(window, name);
-                if (ownRow != null) buttonsWithHand = HoveredRowButtonNames(window, ownRow, name);
-                var menu = ownRow == null ? null : OpenRowMenu(window, ownRow, name);
-                if (menu != null)
-                {
-                    itemsWithHand = MenuItemNames(menu);
-                    CloseMenu(window);
-                }
-            }
-            catch (ZoomActionError) { }
-
             Focus(window);
             AltKey('Y');
             var lowered = WaitUntil(() =>
@@ -1238,28 +1209,10 @@ namespace M3.ZoomHelper
             }, 5000);
             if (!lowered) throw new ZoomActionError("hand-not-lowered");
 
-            string lowerHandTitle = null;
-            try
-            {
-                var ownRow = UniqueMeetingRow(window, name);
-                if (ownRow != null && buttonsWithHand != null)
-                {
-                    var buttonsWithoutHand = HoveredRowButtonNames(window, ownRow, name) ?? new List<string>();
-                    lowerHandTitle = OnlyExtra(buttonsWithHand, buttonsWithoutHand);
-                }
-                if (lowerHandTitle == null && ownRow != null && itemsWithHand != null)
-                {
-                    var menu = OpenRowMenu(window, ownRow, name);
-                    if (menu != null)
-                    {
-                        var itemsWithoutHand = MenuItemNames(menu);
-                        CloseMenu(window);
-                        lowerHandTitle = OnlyExtra(itemsWithHand, itemsWithoutHand);
-                    }
-                }
-            }
-            catch (ZoomActionError) { }
-            return new Dictionary<string, object> { { "lowerHandTitle", lowerHandTitle }, { "phrase", phrase } };
+            // The "Lower hand" button of other people's rows (the host's own
+            // row names its hand button differently) is learned from the first
+            // raised hand M3 acts on.
+            return new Dictionary<string, object> { { "phrase", phrase } };
         }
 
         /// <summary>Who in the meeting has their hand raised, going by the words
@@ -1281,7 +1234,7 @@ namespace M3.ZoomHelper
         /// FindMicButton) and pressed only when it would go the wanted way.
         /// Nothing is pressed when the name is missing or shared by two people,
         /// or when the microphone button can't be told apart for sure.</summary>
-        public static Dictionary<string, object> SetParticipantMic(string name, bool on, string micOnTitle, string micOffTitle, string lowerHandTitle)
+        public static Dictionary<string, object> SetParticipantMic(string name, bool on, string micOnTitle, string micOffTitle, string lowerHandTitle, string phrase)
         {
             if (string.IsNullOrEmpty(name)) throw new ZoomActionError("participant-name-missing");
             if (string.IsNullOrEmpty(micOnTitle)) throw new ZoomActionError("mic-titles-not-captured");
@@ -1294,16 +1247,18 @@ namespace M3.ZoomHelper
             if (row == null) throw new ZoomActionError("participant-not-found");
             var before = row.Details;
             string buttonTitle = null;
+            string learnedLowerHandTitle = null;
             var found = false;
+            var handRaised = !string.IsNullOrEmpty(phrase) && Segments(row.Details).Contains(phrase);
             var pressed = WithRowButtons(window, row, name, buttons =>
             {
-                bool unmuted;
-                var mic = FindMicButton(buttons, muteTitle, unmuteTitle, lowerTitle, out unmuted);
-                if (mic == null) return false;
+                var layout = ReadRowLayout(buttons, muteTitle, unmuteTitle, lowerTitle, handRaised);
+                if (layout == null) return false;
                 found = true;
-                buttonTitle = FirstSegment(mic.Name);
-                if (unmuted == on) return false; // already as wanted
-                Press(mic);
+                buttonTitle = FirstSegment(layout.Mic.Name);
+                if (layout.LowerHand != null) learnedLowerHandTitle = FirstSegment(layout.LowerHand.Name);
+                if (layout.Unmuted == on) return false; // already as wanted
+                Press(layout.Mic);
                 return true;
             }, false);
             if (!found) throw new ZoomActionError("participant-mic-button-not-found");
@@ -1319,60 +1274,97 @@ namespace M3.ZoomHelper
             {
                 { "buttonTitle", buttonTitle },
                 { "changed", changed },
+                { "lowerHandTitle", learnedLowerHandTitle },
                 { "pressed", pressed },
             };
         }
 
-        /// <summary>Lowers one participant's hand through the "Lower hand" entry
-        /// (learned by LearnHandRaised) of their row's menu. Nothing else in
-        /// that menu is ever pressed.</summary>
-        public static Dictionary<string, object> LowerParticipantHand(string name, string lowerHandTitle, string phrase)
+        /// <summary>Lowers one participant's hand through the "Lower hand" button
+        /// their row shows first while hovered and the hand is up (see
+        /// ReadRowLayout). No other button is ever pressed; nothing happens
+        /// when the hand isn't up.</summary>
+        public static Dictionary<string, object> LowerParticipantHand(string name, string lowerHandTitle, string phrase, string micOnTitle, string micOffTitle)
         {
             if (string.IsNullOrEmpty(name)) throw new ZoomActionError("participant-name-missing");
-            if (string.IsNullOrEmpty(lowerHandTitle)) throw new ZoomActionError("lower-hand-not-learned");
+            if (string.IsNullOrEmpty(phrase)) throw new ZoomActionError("hand-phrase-not-learned");
+            var lowerTitle = FirstSegment(lowerHandTitle ?? "");
             var window = RequireMeetingWindow();
             OpenParticipantsPanel(window);
             var row = UniqueMeetingRow(window, name);
             if (row == null) throw new ZoomActionError("participant-not-found");
-            if (!string.IsNullOrEmpty(phrase) && !Segments(row.Details).Contains(phrase)) return Changed(false);
-            var wanted = FirstSegment(lowerHandTitle);
-            // Zoom shows a "Lower hand" button on the row itself while hovered.
-            var pressedButton = WithRowButtons(window, row, name, buttons =>
+            if (!Segments(row.Details).Contains(phrase)) return Changed(false);
+            string learnedLowerHandTitle = null;
+            var pressed = WithRowButtons(window, row, name, buttons =>
             {
-                foreach (var button in buttons)
-                {
-                    if (FirstSegment(button.Name) != wanted) continue;
-                    Press(button);
-                    return true;
-                }
-                return false;
+                var layout = ReadRowLayout(buttons, FirstSegment(micOnTitle ?? ""), FirstSegment(micOffTitle ?? ""), lowerTitle, true);
+                if (layout == null || layout.LowerHand == null) return false;
+                learnedLowerHandTitle = FirstSegment(layout.LowerHand.Name);
+                Press(layout.LowerHand);
+                return true;
             }, false);
-            if (!pressedButton)
-            {
-                var menu = OpenRowMenu(window, row, name);
-                if (menu == null) throw new ZoomActionError("participant-menu-not-found");
-                El lowerHand = null;
-                foreach (var item in MenuItems(menu))
-                {
-                    if (FirstSegment(item.Name) != wanted) continue;
-                    lowerHand = item;
-                    break;
-                }
-                if (lowerHand == null)
-                {
-                    CloseMenu(window);
-                    throw new ZoomActionError("lower-hand-item-not-found");
-                }
-                Press(lowerHand);
-            }
-            var lowered = string.IsNullOrEmpty(phrase) || WaitUntil(() =>
+            if (!pressed) throw new ZoomActionError("lower-hand-item-not-found");
+            var lowered = WaitUntil(() =>
             {
                 Row latest = null;
                 try { latest = UniqueMeetingRow(window, name); } catch (ZoomActionError) { }
                 return latest != null && !Segments(latest.Details).Contains(phrase);
             }, 4000);
             if (!lowered) throw new ZoomActionError("hand-not-lowered");
-            return Changed(true);
+            return new Dictionary<string, object> { { "changed", true }, { "lowerHandTitle", learnedLowerHandTitle } };
+        }
+
+        /// <summary>Diagnostics: everything a participant's row shows, hovered
+        /// (every control's type, name and position) and the entries of its
+        /// "More" menu, which is closed again. Presses nothing else.</summary>
+        public static Dictionary<string, object> InspectParticipant(string name)
+        {
+            if (string.IsNullOrEmpty(name)) throw new ZoomActionError("participant-name-missing");
+            var window = RequireMeetingWindow();
+            OpenParticipantsPanel(window);
+            var row = UniqueMeetingRow(window, name);
+            if (row == null) throw new ZoomActionError("participant-not-found");
+            var controls = new List<object>();
+            var hovered = WithRowButtons(window, row, name, buttons =>
+            {
+                var latest = UniqueMeetingRow(window, name);
+                if (latest == null) return false;
+                foreach (var control in Uia.Descendants(latest.Element))
+                {
+                    controls.Add(new Dictionary<string, object>
+                    {
+                        { "inRow", Contains(latest.Element.Rect, control) },
+                        { "left", control.Rect.left },
+                        { "name", control.Name },
+                        { "top", control.Rect.top },
+                        { "type", control.ControlType },
+                    });
+                }
+                return true;
+            }, false);
+            var menuItems = new List<object>();
+            string menuError = null;
+            try
+            {
+                var again = UniqueMeetingRow(window, name);
+                var menu = again == null ? null : OpenRowMenu(window, again, name);
+                if (menu == null) menuError = "menu-not-opened";
+                else
+                {
+                    foreach (var item in Uia.Descendants(menu, Uia.MenuItemType))
+                        menuItems.Add(new Dictionary<string, object> { { "name", item.Name }, { "type", item.ControlType } });
+                    CloseMenu(window);
+                }
+            }
+            catch (ZoomActionError error) { menuError = error.Message; }
+            return new Dictionary<string, object>
+            {
+                { "controls", controls },
+                { "details", row.Details },
+                { "hovered", hovered },
+                { "menuError", menuError },
+                { "menuItems", menuItems },
+                { "rowRect", new Dictionary<string, object> { { "bottom", row.Element.Rect.bottom }, { "left", row.Element.Rect.left }, { "right", row.Element.Rect.right }, { "top", row.Element.Rect.top } } },
+            };
         }
 
         // --- Screen sharing -----------------------------------------------------------
@@ -1848,9 +1840,10 @@ namespace M3.ZoomHelper
                 case "learn-hand-raised": return LearnHandRaised();
                 case "raised-hands": return RaisedHands(GetString(request, "phrase"));
                 case "set-participant-mic":
-                    return SetParticipantMic(GetString(request, "name"), GetBool(request, "on"), GetString(request, "micOnTitle"), GetString(request, "micOffTitle"), GetString(request, "lowerHandTitle"));
+                    return SetParticipantMic(GetString(request, "name"), GetBool(request, "on"), GetString(request, "micOnTitle"), GetString(request, "micOffTitle"), GetString(request, "lowerHandTitle"), GetString(request, "phrase"));
+                case "inspect-participant": return InspectParticipant(GetString(request, "name"));
                 case "lower-participant-hand":
-                    return LowerParticipantHand(GetString(request, "name"), GetString(request, "lowerHandTitle"), GetString(request, "phrase"));
+                    return LowerParticipantHand(GetString(request, "name"), GetString(request, "lowerHandTitle"), GetString(request, "phrase"), GetString(request, "micOnTitle"), GetString(request, "micOffTitle"));
                 case "share-entries": return ShareEntries();
                 case "start-share":
                     return StartShare(GetString(request, "windowTitle") ?? "", GetString(request, "shareButtonTitle"));

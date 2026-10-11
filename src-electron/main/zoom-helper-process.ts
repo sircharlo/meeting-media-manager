@@ -23,6 +23,7 @@ const COMMAND_TYPES = new Set<ZoomCommandType>([
   'admit',
   'ask-all-to-unmute',
   'diagnose',
+  'inspect-participant',
   'join-audio',
   'learn-hand-raised',
   'leave-audio',
@@ -123,7 +124,7 @@ export class ZoomHelperProcess {
     this.child = null;
     this.ready = false;
     this.settle({ error: 'helper-stopped', ok: false });
-    if (child && child.exitCode === null) {
+    if (child?.exitCode === null) {
       child.stdin.end();
       child.kill();
     }

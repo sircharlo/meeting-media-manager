@@ -676,21 +676,18 @@ const learnMic = async (micIsOn: boolean) => {
 // How Zoom marks a raised hand (and lowers one) is only known in the user's
 // Zoom language: M³ raises and lowers the host's own hand to read it.
 const handStatus = ref<Status>('pending');
-const handLowerLearned = ref(true);
 
 const handStatusText = computed(() => {
   if (handStatus.value === 'running') return t('zoom-setup-hand-learning');
   if (handStatus.value === 'failed') return t('zoom-setup-hand-failed');
-  const phrase = currentSettings.value?.zoomHandRaisedPhrase ?? '';
-  return handLowerLearned.value
-    ? t('zoom-setup-hand-done', { phrase })
-    : t('zoom-setup-hand-done-no-lower', { phrase });
+  return t('zoom-setup-hand-done', {
+    phrase: currentSettings.value?.zoomHandRaisedPhrase ?? '',
+  });
 });
 
 const learnHand = async () => {
   handStatus.value = 'running';
   const result = await withoutZoomFeedback(() => learnZoomHandRaisedPhrase());
-  handLowerLearned.value = !!result.lowerHandTitle;
   handStatus.value = result.ok && result.phrase ? 'passed' : 'failed';
 };
 
@@ -1000,9 +997,6 @@ const reset = () => {
   handStatus.value = currentSettings.value?.zoomHandRaisedPhrase
     ? 'passed'
     : 'pending';
-  handLowerLearned.value =
-    !currentSettings.value?.zoomHandRaisedPhrase ||
-    !!currentSettings.value.zoomLowerHandTitle;
   shareStatus.value = 'pending';
   shareEntries.value = { more: [], toolbar: [] };
   shareEntryTried.value = false;

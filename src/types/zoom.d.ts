@@ -4,6 +4,16 @@
  */
 export type ZoomCommand =
   | {
+      /** The "Lower hand" button name once learned (a sanity check). */
+      lowerHandTitle: null | string;
+      micOffTitle: null | string;
+      micOnTitle: null | string;
+      name: string;
+      /** How Zoom marks a raised hand (learned); skips rows without one. */
+      phrase: null | string;
+      type: 'lower-participant-hand';
+    }
+  | {
       /** The learned "Lower hand" button name, never to be pressed here. */
       lowerHandTitle: null | string;
       /** The host's own "Unmute" button name. */
@@ -12,17 +22,14 @@ export type ZoomCommand =
       micOnTitle: null | string;
       name: string;
       on: boolean;
+      /** How Zoom marks a raised hand (learned): a raised-hand row is only
+       * read when the "Lower hand" button's name is known too. */
+      phrase: null | string;
       type: 'set-participant-mic';
     }
   | { allowSelfUnmute: boolean; type: 'mute-all' }
   | { echo?: string; type: 'ping' }
-  | {
-      lowerHandTitle: null | string;
-      name: string;
-      /** How Zoom marks a raised hand (learned); skips rows without one. */
-      phrase: null | string;
-      type: 'lower-participant-hand';
-    }
+  | { name: string; type: 'inspect-participant' }
   | { names: string[]; type: 'admit' }
   | {
       offTitle: null | string;
@@ -83,7 +90,7 @@ export interface ZoomCommandResult {
   entries?: string[];
   /** A short machine-readable reason, e.g. `meeting-not-found`. */
   error?: string;
-  /** `learn-hand-raised`: the row menu's "Lower hand" entry, if found. */
+  /** `set-participant-mic`/`lower-participant-hand`: the "Lower hand" button's name, seen on that row. */
   lowerHandTitle?: null | string;
   meeting?: ZoomMeetingState;
   /** `share-entries`: Share candidates from the toolbar's "More" menu. */

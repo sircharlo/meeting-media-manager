@@ -360,9 +360,6 @@ export const learnZoomHandRaisedPhrase = async () => {
   const result = await runCommand({ type: 'learn-hand-raised' });
   if (result.ok && result.phrase) {
     saveSetting('zoomHandRaisedPhrase', result.phrase);
-    if (result.lowerHandTitle) {
-      saveSetting('zoomLowerHandTitle', result.lowerHandTitle);
-    }
     if (!feedbackMuted) {
       createTemporaryNotification({
         group: 'zoom-settings',
@@ -403,8 +400,10 @@ export const unmuteZoomParticipant = async (name: string) => {
     micOnTitle: settings?.zoomMicOnTitle ?? null,
     name,
     on: true,
+    phrase: settings?.zoomHandRaisedPhrase ?? null,
     type: 'set-participant-mic',
   });
+  rememberLowerHandTitle(result);
   if (!result.ok) {
     notifyNamedFailure('zoom-hand-unmute-failed', name, result.error);
     return result;
@@ -435,18 +434,23 @@ export const muteZoomParticipantAndLowerHand = async (name: string) => {
     micOnTitle: settings?.zoomMicOnTitle ?? null,
     name,
     on: false,
+    phrase: settings?.zoomHandRaisedPhrase ?? null,
     type: 'set-participant-mic',
   });
+  rememberLowerHandTitle(muted);
   if (!muted.ok) {
     notifyNamedFailure('zoom-hand-mute-failed', name, muted.error);
     return muted;
   }
   const lowered = await runCommand({
-    lowerHandTitle: settings?.zoomLowerHandTitle ?? null,
+    lowerHandTitle: getSettings()?.zoomLowerHandTitle ?? null,
+    micOffTitle: settings?.zoomMicOffTitle ?? null,
+    micOnTitle: settings?.zoomMicOnTitle ?? null,
     name,
     phrase: settings?.zoomHandRaisedPhrase ?? null,
     type: 'lower-participant-hand',
   });
+  rememberLowerHandTitle(lowered);
   if (!lowered.ok) {
     notifyNamedFailure('zoom-hand-lower-failed', name, lowered.error);
     return lowered;
@@ -458,6 +462,18 @@ export const muteZoomParticipantAndLowerHand = async (name: string) => {
     type: 'info',
   });
   return lowered;
+};
+
+/**
+ * The "Lower hand" button is named in the user's Zoom language and only
+ * shows on other people's rows (the host's own hand button reads
+ * differently), so its name is learned from the first raised hand acted on
+ * and then serves as a sanity check on every later row.
+ */
+const rememberLowerHandTitle = (result: ZoomCommandResult) => {
+  const title = result.lowerHandTitle;
+  if (!title || getSettings()?.zoomLowerHandTitle === title) return;
+  saveSetting('zoomLowerHandTitle', title);
 };
 
 const notifyNamedFailure = (
@@ -472,12 +488,10 @@ const notifyNamedFailure = (
         ? 'zoom-hand-participant-gone'
         : error === 'mic-titles-not-captured'
           ? 'zoom-hand-mic-not-learned'
-          : error === 'lower-hand-not-learned' ||
-              error === 'lower-hand-item-not-found'
-            ? 'zoom-hand-lower-not-learned'
-            : error === 'participant-mic-button-not-found'
-              ? 'zoom-hand-mic-ambiguous'
-              : null;
+          : error === 'lower-hand-item-not-found' ||
+              error === 'participant-mic-button-not-found'
+            ? 'zoom-hand-mic-ambiguous'
+            : null;
   createTemporaryNotification({
     caption: reasonKey ? t(reasonKey) : undefined,
     group: 'zoom-participants',

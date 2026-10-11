@@ -345,12 +345,15 @@ describe('isZoomCommand', () => {
         micOnTitle: 'Mute',
         name: 'Ann',
         on: true,
+        phrase: 'Hand raised',
         type: 'set-participant-mic',
       }),
     ).toBe(true);
     expect(
       isZoomCommand({
-        lowerHandTitle: 'Lower Hand',
+        lowerHandTitle: 'Lower hand',
+        micOffTitle: 'Unmute',
+        micOnTitle: 'Mute',
         name: 'Ann',
         phrase: 'Hand raised',
         type: 'lower-participant-hand',

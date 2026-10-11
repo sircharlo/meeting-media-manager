@@ -159,8 +159,7 @@ beforeEach(() => {
   });
   zoom.learnZoomHandRaisedPhrase.mockImplementation(async () => {
     settings().zoomHandRaisedPhrase = 'Hand raised';
-    settings().zoomLowerHandTitle = 'Lower Hand';
-    return { lowerHandTitle: 'Lower Hand', ok: true, phrase: 'Hand raised' };
+    return { ok: true, phrase: 'Hand raised' };
   });
   zoom.testZoomShareEntry.mockResolvedValue({
     opened: true,
@@ -284,12 +283,7 @@ describe('DialogZoomSetupAssistant', () => {
     expect(text()).toContain('Is your microphone on');
   });
 
-  it('learns how Zoom marks a raised hand, and says when lowering hands is unavailable', async () => {
-    zoom.learnZoomHandRaisedPhrase.mockResolvedValueOnce({
-      lowerHandTitle: null,
-      ok: true,
-      phrase: 'Main levée',
-    });
+  it('learns how Zoom marks a raised hand', async () => {
     await mountAssistant();
     await reachVideoStep();
     await click("Yes, it's on"); // camera
@@ -302,7 +296,7 @@ describe('DialogZoomSetupAssistant', () => {
     await click('Raise and lower my hand');
 
     expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenCalledOnce();
-    expect(text()).toContain("couldn't find Zoom's");
+    expect(text()).toContain('recognizes raised hands (“Hand raised”)');
     expect(isDisabled(button('Continue'))).toBe(false);
   });
 
