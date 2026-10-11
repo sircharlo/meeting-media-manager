@@ -76,7 +76,11 @@
           <div class="text-weight-medium">
             {{ t('zoom-automations-paused') }}
           </div>
-          <div>{{ pausedProblems }}</div>
+          <div>
+            {{
+              t('zoom-automations-paused-failed', { problems: pausedProblems })
+            }}
+          </div>
         </div>
         <q-btn
           color="primary"
@@ -144,6 +148,99 @@
                 </q-tooltip>
               </q-btn>
             </div>
+          </div>
+        </template>
+
+        <template v-if="currentSettings?.zoomMeetingManagerHandAlert">
+          <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
+            {{ t('zoom-raised-hands') }}
+          </p>
+          <div
+            v-if="!currentSettings?.zoomHandRaisedPhrase"
+            class="zoom-popup__banner row items-center no-wrap q-mx-md q-mb-sm q-pa-sm bg-accent-100"
+          >
+            <q-icon
+              class="q-mr-sm"
+              color="primary"
+              name="mmm-cog-sparkles"
+              size="18px"
+            />
+            <div class="col text-caption">
+              {{ t('zoomHandRaisedPhrase-explain') }}
+            </div>
+            <q-btn
+              color="primary"
+              dense
+              :disable="!meetingFound"
+              flat
+              :label="t('zoom-hand-learn')"
+              :loading="learningHand"
+              no-caps
+              @click="learnHand"
+            />
+          </div>
+          <template v-else>
+            <div
+              v-if="raisedHands.length === 0"
+              class="q-px-md q-pb-sm text-caption text-dark-grey"
+            >
+              {{ t('zoom-no-raised-hands') }}
+            </div>
+            <q-list v-else dense>
+              <q-item v-for="name in raisedHands" :key="name" class="q-px-md">
+                <q-item-section avatar>
+                  <q-icon color="warning" name="mmm-groups" />
+                </q-item-section>
+                <q-item-section class="ellipsis">{{ name }}</q-item-section>
+                <q-item-section side>
+                  <div class="row no-wrap q-gutter-xs">
+                    <q-btn
+                      class="btn-tonal"
+                      color="positive"
+                      dense
+                      :disable="!!busyParticipant"
+                      flat
+                      icon="mmm-microphone"
+                      :label="t('zoom-hand-unmute')"
+                      :loading="busyParticipant === `unmute:${name}`"
+                      no-caps
+                      size="sm"
+                      @click="unmute(name)"
+                    />
+                    <q-btn
+                      class="btn-tonal"
+                      color="primary"
+                      dense
+                      :disable="!!busyParticipant"
+                      flat
+                      icon="mmm-microphone-off"
+                      :label="t('zoom-hand-mute-and-lower')"
+                      :loading="busyParticipant === `mute:${name}`"
+                      no-caps
+                      size="sm"
+                      @click="muteAndLower(name)"
+                    />
+                  </div>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </template>
+          <div
+            v-if="currentSettings?.enableTimerDisplay"
+            class="q-px-md q-pb-sm"
+          >
+            <q-btn
+              class="full-width"
+              :color="handAlert.active ? 'warning' : 'primary'"
+              icon="mmm-groups"
+              :label="t('hand-alert')"
+              no-caps
+              :outline="!handAlert.manual"
+              unelevated
+              @click="handAlert.toggleManual()"
+            >
+              <q-tooltip :delay="500">{{ t('hand-alert-explain') }}</q-tooltip>
+            </q-btn>
           </div>
         </template>
 
@@ -228,11 +325,15 @@ import { storeToRefs } from 'pinia';
 import {
   getZoomMeetingState,
   isZoomSetupNeeded,
+  learnZoomHandRaisedPhrase,
+  muteZoomParticipantAndLowerHand,
   runZoomMeetingSequence,
   runZoomPostMeetingSequence,
+  unmuteZoomParticipant,
 } from 'src/helpers/zoom';
 import { runZoomStartupCheck } from 'src/helpers/zoom-startup-check';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useHandAlertStore } from 'stores/hand-alert';
 import { useZoomStateStore } from 'stores/zoom-state';
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -261,6 +362,38 @@ const { currentSettings, zoomHelperLogs } = storeToRefs(currentState);
 
 const zoomState = useZoomStateStore();
 const { automationsPaused, checkRunning, pause } = storeToRefs(zoomState);
+
+const handAlert = useHandAlertStore();
+const { raisedHands } = storeToRefs(handAlert);
+const learningHand = ref(false);
+const busyParticipant = ref<null | string>(null);
+
+const learnHand = async () => {
+  learningHand.value = true;
+  try {
+    await learnZoomHandRaisedPhrase();
+  } finally {
+    learningHand.value = false;
+  }
+};
+
+const unmute = async (name: string) => {
+  busyParticipant.value = `unmute:${name}`;
+  try {
+    await unmuteZoomParticipant(name);
+  } finally {
+    busyParticipant.value = null;
+  }
+};
+
+const muteAndLower = async (name: string) => {
+  busyParticipant.value = `mute:${name}`;
+  try {
+    await muteZoomParticipantAndLowerHand(name);
+  } finally {
+    busyParticipant.value = null;
+  }
+};
 
 const pausedProblems = computed(() =>
   (pause.value?.problems ?? []).map((key) => t(key)).join(', '),

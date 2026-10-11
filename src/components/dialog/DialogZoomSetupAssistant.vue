@@ -214,6 +214,47 @@
             />
           </ButtonStep>
 
+          <!-- Raised hands: how Zoom marks them in the user's language -->
+          <div v-else-if="step === 'hand'" key="hand">
+            <div class="text-h6 q-mb-sm">{{ t('zoom-setup-hand-title') }}</div>
+            <p>{{ t('zoom-setup-hand-intro') }}</p>
+            <StatusRow
+              v-if="handStatus !== 'pending'"
+              class="q-mb-sm"
+              :status="handStatus"
+              :text="handStatusText"
+            />
+            <div class="row q-gutter-sm q-mt-sm">
+              <q-btn
+                v-if="handStatus !== 'passed'"
+                class="btn-tonal"
+                color="primary"
+                flat
+                icon="mmm-groups"
+                :label="t('zoom-setup-hand-learn')"
+                :loading="handStatus === 'running'"
+                no-caps
+                @click="learnHand"
+              />
+              <q-btn
+                v-else
+                color="primary"
+                dense
+                flat
+                :label="t('zoom-setup-learn-again')"
+                no-caps
+                @click="learnHand"
+              />
+            </div>
+            <p class="text-caption text-grey q-mt-md">
+              {{
+                currentSettings?.enableTimerDisplay
+                  ? t('zoom-setup-hand-timer-on')
+                  : t('zoom-setup-hand-timer-off')
+              }}
+            </p>
+          </div>
+
           <!-- Sharing: Zoom's share window offering the media window -->
           <div v-else-if="step === 'share'" key="share">
             <div class="text-h6 q-mb-sm">{{ t('zoom-setup-share-title') }}</div>
@@ -427,10 +468,12 @@ import {
   getZoomShareEntries,
   getZoomTitlesFromSettings,
   joinZoomAudioForSetup,
+  learnZoomHandRaisedPhrase,
   learnZoomMicTitles,
   learnZoomVideoTitles,
   prepareMediaWindowForZoomTest,
   testZoomShareEntry,
+  withoutZoomFeedback,
 } from 'src/helpers/zoom';
 import {
   runZoomSelfTest,
@@ -449,6 +492,7 @@ const STEPS = [
   'checks',
   'video',
   'mic',
+  'hand',
   'share',
   'automations',
   'test',
@@ -461,6 +505,7 @@ const FEATURES = [
   { icon: 'mmm-volume-off', text: 'zoom-setup-feature-mute' },
   { icon: 'mmm-groups', text: 'zoom-setup-feature-audio' },
   { icon: 'mmm-media-display-active', text: 'zoom-setup-feature-share' },
+  { icon: 'mmm-microphone', text: 'zoom-setup-feature-hand' },
 ] as const;
 
 const VIDEO_CHOICES = [
@@ -626,6 +671,26 @@ const learnMic = async (micIsOn: boolean) => {
   micStatus.value = result.ok ? 'passed' : 'failed';
 };
 
+// --- Raised hands ----------------------------------------------------------
+
+// How Zoom marks a raised hand (and lowers one) is only known in the user's
+// Zoom language: M³ raises and lowers the host's own hand to read it.
+const handStatus = ref<Status>('pending');
+
+const handStatusText = computed(() => {
+  if (handStatus.value === 'running') return t('zoom-setup-hand-learning');
+  if (handStatus.value === 'failed') return t('zoom-setup-hand-failed');
+  return t('zoom-setup-hand-done', {
+    phrase: currentSettings.value?.zoomHandRaisedPhrase ?? '',
+  });
+});
+
+const learnHand = async () => {
+  handStatus.value = 'running';
+  const result = await withoutZoomFeedback(() => learnZoomHandRaisedPhrase());
+  handStatus.value = result.ok && result.phrase ? 'passed' : 'failed';
+};
+
 // --- Share -----------------------------------------------------------------
 
 const shareStatus = ref<Status>('pending');
@@ -756,6 +821,10 @@ const automations = computed(() => [
     disabled: shareStatus.value !== 'passed',
     setting: 'zoomMeetingManagerAutomateMediaSharing' as const,
   },
+  {
+    disabled: handStatus.value !== 'passed',
+    setting: 'zoomMeetingManagerHandAlert' as const,
+  },
 ]);
 
 // --- Test --------------------------------------------------------------------
@@ -813,6 +882,10 @@ const summary = computed(() => {
       text: t('zoom-setup-summary-share'),
     },
     {
+      status: handStatus.value === 'passed' ? 'passed' : 'pending',
+      text: t('zoom-setup-summary-hand'),
+    },
+    {
       status: enabledCount ? 'passed' : 'pending',
       text: t('zoom-setup-summary-automations', { count: enabledCount }),
     },
@@ -825,6 +898,8 @@ const canContinue = computed(() => {
   switch (step.value) {
     case 'checks':
       return checksPassed.value;
+    case 'hand':
+      return handStatus.value === 'passed';
     case 'meeting':
       return (
         meetingFound.value && (!meetingIdInput.value || !!parsedMeetingId.value)
@@ -849,6 +924,7 @@ const canSkip = computed(
   () =>
     (step.value === 'video' && videoStatus.value !== 'passed') ||
     (step.value === 'mic' && micStatus.value !== 'passed') ||
+    (step.value === 'hand' && handStatus.value !== 'passed') ||
     (step.value === 'share' && shareStatus.value !== 'passed') ||
     (step.value === 'test' && !testRunning.value && !testOutcome.value),
 );
@@ -918,6 +994,9 @@ const reset = () => {
       ? 'passed'
       : 'pending';
   micAudioJoined.value = false;
+  handStatus.value = currentSettings.value?.zoomHandRaisedPhrase
+    ? 'passed'
+    : 'pending';
   shareStatus.value = 'pending';
   shareEntries.value = { more: [], toolbar: [] };
   shareEntryTried.value = false;

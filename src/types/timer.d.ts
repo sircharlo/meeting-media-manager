@@ -53,6 +53,10 @@ export type TimerCountdownDisplay =
 // Timer data from main dialog
 export interface TimerData {
   aheadBehindMinutes?: null | number;
+  /** Show the hand alert (someone raised their hand, or switched on by hand). */
+  handAlertActive?: boolean;
+  /** Who raised their hand in Zoom, when known. */
+  handAlertNames?: string[];
   /** The main window's UI language, for formatting the time of day. */
   locale?: string;
   meetingStartTime?: string;

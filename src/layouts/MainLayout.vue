@@ -15,6 +15,7 @@
 
     <DialogCongregationSwitcher />
     <DialogZoomSetupAssistant v-model="zoomSetupAssistantOpen" />
+    <DialogZoomAutomationOverlay />
 
     <!-- Main content -->
     <q-page-container class="app-main-scroll main-bg">
@@ -99,6 +100,7 @@ import {
 import { queues } from 'boot/globals';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogCongregationSwitcher from 'components/dialog/DialogCongregationSwitcher.vue';
+import DialogZoomAutomationOverlay from 'components/dialog/DialogZoomAutomationOverlay.vue';
 import DialogZoomSetupAssistant from 'components/dialog/DialogZoomSetupAssistant.vue';
 import HeaderBase from 'components/header/HeaderBase.vue';
 import MediaPreview from 'components/media/MediaPreview.vue';
@@ -148,6 +150,11 @@ import {
   createTemporaryNotification,
 } from 'src/helpers/notifications';
 import { syncTimerRemote } from 'src/helpers/timer-remote';
+import { cancelZoomRun } from 'src/helpers/zoom';
+import {
+  startHandAlertDisplaySync,
+  syncZoomHandAlertWatcher,
+} from 'src/helpers/zoom-hand-alert';
 import { scheduleZoomStartupCheck } from 'src/helpers/zoom-startup-check';
 import { localeOptions } from 'src/i18n';
 import { log, type LogPrefix } from 'src/shared/vanilla';
@@ -793,6 +800,12 @@ const initListeners = () => {
   });
 
   onShortcut(({ shortcut }) => {
+    // The cancel shortcut for Zoom automations is only registered while one
+    // runs, and must work whatever the keyboard-shortcuts setting says.
+    if (shortcut === 'zoomCancelAutomationShortcut') {
+      void cancelZoomRun();
+      return;
+    }
     if (!currentSettings.value?.enableKeyboardShortcuts) return;
     executeShortcut(shortcut as keyof SettingsValues);
   });
@@ -1738,6 +1751,20 @@ watch(
   ],
   () => {
     currentState.syncZoomHelper();
+  },
+);
+
+// Watch Zoom for raised hands whenever the raised-hand alert is set up.
+watchImmediate(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.zoomMeetingManagerEnable,
+    currentSettings.value?.zoomMeetingManagerHandAlert,
+    currentSettings.value?.zoomHandRaisedPhrase,
+  ],
+  () => {
+    startHandAlertDisplaySync();
+    syncZoomHandAlertWatcher();
   },
 );
 

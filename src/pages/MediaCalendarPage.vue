@@ -291,7 +291,7 @@ import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { withPendingSectionImport } from 'src/helpers/pending-section-imports';
 import { updateLastUsedDate } from 'src/helpers/usage';
-import { triggerZoomScreenShare } from 'src/helpers/zoom';
+import { stopZoomSharingAfterMedia } from 'src/helpers/zoom';
 import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log, uuid } from 'src/shared/vanilla';
 import { convertImageIfNeeded, convertPdfToImages } from 'src/utils/converters';
@@ -3253,7 +3253,9 @@ watch(
       if (repeatHandled) return;
 
       triggerMediaWindowAutoHide(false);
-      triggerZoomScreenShare(false);
+      // Whichever Zoom integration is sharing the media window: a video that
+      // ends on its own must stop the share like a manual stop does.
+      stopZoomSharingAfterMedia();
 
       mediaPlaying.value = atRest;
 

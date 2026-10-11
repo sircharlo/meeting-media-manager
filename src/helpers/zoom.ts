@@ -2,6 +2,7 @@ import type {
   SettingsValues,
   ZoomCommand,
   ZoomCommandResult,
+  ZoomCommandType,
   ZoomDiagnosis,
   ZoomMeetingState,
 } from 'src/types';
@@ -67,7 +68,128 @@ export const getZoomTitlesFromSettings = (): ZoomTitles => {
   };
 };
 
+// --- Runs: telling the user, and letting them stop it ------------------------
+
+// Zoom actions that only read (no mouse, no focus): they never show the
+// "M³ is operating Zoom" overlay. Everything else may move the mouse (hover-
+// only buttons, menus, bringing Zoom's toolbar back) or the focus.
+const SILENT_COMMANDS = new Set<ZoomCommandType>([
+  'participants',
+  'ping',
+  'raised-hands',
+]);
+
+const isSilentCommand = (command: ZoomCommand) =>
+  SILENT_COMMANDS.has(command.type) ||
+  (command.type === 'meeting' && !command.reveal);
+
+/** What the overlay says about a single Zoom action, by its type. */
+const COMMAND_STEP_KEYS: Partial<Record<ZoomCommandType, string>> = {
+  admit: 'zoom-self-test-step-participants-join',
+  'ask-all-to-unmute': 'zoom-self-test-step-ask-all-to-unmute',
+  diagnose: 'zoom-setup-checks-title',
+  'join-audio': 'zoom-self-test-step-join-audio',
+  'learn-hand-raised': 'zoom-run-learn-hand',
+  'leave-audio': 'zoom-self-test-step-leave-audio',
+  'lower-participant-hand': 'zoom-run-lower-hand',
+  meeting: 'zoom-self-test-step-meeting',
+  'mute-all': 'zoom-self-test-step-mute-all-unlocked',
+  'set-mic': 'zoom-run-host-mic',
+  'set-participant-mic': 'zoom-run-participant-mic',
+  'set-video': 'zoom-run-host-video',
+  'share-entries': 'zoom-run-share-entries',
+  'start-share': 'zoom-self-test-step-share-start',
+  'stop-share': 'zoom-self-test-step-share-stop',
+  'test-share-picker': 'zoom-setup-share-checking',
+  'toggle-mic': 'zoom-run-host-mic',
+  'toggle-video': 'zoom-run-host-video',
+};
+
+const CANCELLED: ZoomCommandResult = { error: 'cancelled', ok: false };
+
+/**
+ * Runs a Zoom automation made of several actions under one overlay label
+ * (nested runs keep the outermost label). The overlay shows for as long as
+ * `run` takes, and a cancel request makes every further action a no-op.
+ */
+export const withZoomRun = async <T>(
+  labelKey: string,
+  run: () => Promise<T>,
+): Promise<T> => {
+  const zoomState = useZoomStateStore();
+  zoomState.beginRun(labelKey);
+  try {
+    return await run();
+  } finally {
+    zoomState.endRun();
+  }
+};
+
+export const isZoomRunCancelled = () => useZoomStateStore().cancelRequested;
+
+/**
+ * Stops the running automation: nothing further is sent to Zoom, and the
+ * action in flight is cut short by restarting the helper (which releases
+ * the mouse at once). Wired to the overlay's button, Esc, and the global
+ * zoomCancelAutomationShortcut.
+ */
+export const cancelZoomRun = async () => {
+  const zoomState = useZoomStateStore();
+  if (!zoomState.runActive) return;
+  if (zoomState.cancelRequested) {
+    // Asked twice: don't wait for the run to unwind any longer.
+    zoomState.abortRun();
+    return;
+  }
+  zoomState.requestCancel();
+  log('Zoom automation cancelled by the user', 'zoom', 'warn');
+  // Whatever the run was in the middle of, it must not hold things up
+  // beyond this.
+  setTimeout(() => {
+    if (zoomState.runActive && zoomState.cancelRequested) {
+      log(
+        'Zoom automation did not unwind after cancel: force-ended',
+        'zoom',
+        'warn',
+      );
+      zoomState.abortRun();
+    }
+  }, ABORT_FALLBACK_MS);
+  try {
+    await globalThis.electronApi.restartZoomHelper();
+  } catch (error) {
+    errorCatcher(error, { contexts: { fn: { name: 'cancelZoomRun' } } });
+  }
+  createTemporaryNotification({
+    group: 'zoom-run',
+    icon: 'mmm-info',
+    message: t('zoom-run-cancelled'),
+    type: 'warning',
+  });
+};
+
+// Once a cancel is asked for, nothing further goes to Zoom, including the
+// read-only lookups the automations poll with, so their waiting loops end
+// at once and the run unwinds.
+const ABORT_FALLBACK_MS = 15_000;
+
 const runCommand = async (command: ZoomCommand): Promise<ZoomCommandResult> => {
+  const zoomState = useZoomStateStore();
+  if (zoomState.cancelRequested && command.type !== 'ping') return CANCELLED;
+  if (isSilentCommand(command)) return sendCommand(command);
+  return withZoomRun(
+    COMMAND_STEP_KEYS[command.type] ?? 'zoom-run-generic',
+    async () => {
+      zoomState.setRunStep(COMMAND_STEP_KEYS[command.type] ?? null);
+      const result = await sendCommand(command);
+      return zoomState.cancelRequested ? CANCELLED : result;
+    },
+  );
+};
+
+const sendCommand = async (
+  command: ZoomCommand,
+): Promise<ZoomCommandResult> => {
   try {
     const result = await globalThis.electronApi.zoomCommand(command);
     if (!result.ok) {
@@ -249,6 +371,170 @@ export const askAllZoomParticipantsToUnmute = async () => {
   return result;
 };
 
+// --- Raised hands -------------------------------------------------------------
+
+/**
+ * Learns how Zoom marks a raised hand in the user's language, by raising
+ * and lowering the host's own hand, and saves it to Settings.
+ */
+export const learnZoomHandRaisedPhrase = async () => {
+  const result = await runCommand({ type: 'learn-hand-raised' });
+  if (result.ok && result.phrase) {
+    saveSetting('zoomHandRaisedPhrase', result.phrase);
+    if (!feedbackMuted) {
+      createTemporaryNotification({
+        group: 'zoom-settings',
+        icon: 'mmm-check',
+        message: t('zoom-hand-learned', { phrase: result.phrase }),
+        type: 'positive',
+      });
+    }
+  } else {
+    notifyFailure('zoom-settings', 'zoom-hand-learn-failed');
+  }
+  return result;
+};
+
+/**
+ * Who in the meeting has their hand raised, or null if Zoom's participants
+ * list couldn't be read (no meeting, or the phrase isn't learned yet).
+ */
+export const getZoomRaisedHands = async (): Promise<null | string[]> => {
+  const result = await runCommand({
+    phrase: getSettings()?.zoomHandRaisedPhrase ?? null,
+    type: 'raised-hands',
+  });
+  if (!result.ok || !result.raisedHands) return null;
+  return result.raisedHands;
+};
+
+/**
+ * Unmutes one participant (or asks them to, where Zoom only allows that),
+ * going by their exact name in the participants list. Nothing is pressed if
+ * the name is missing, shared by two people, or they're already unmuted.
+ */
+export const unmuteZoomParticipant = async (name: string) => {
+  const settings = getSettings();
+  const result = await runCommand({
+    askToUnmuteTitle: settings?.zoomAskToUnmuteTitle ?? null,
+    lowerHandTitle: settings?.zoomLowerHandTitle ?? null,
+    micOffTitle: settings?.zoomMicOffTitle ?? null,
+    micOnTitle: settings?.zoomMicOnTitle ?? null,
+    name,
+    on: true,
+    phrase: settings?.zoomHandRaisedPhrase ?? null,
+    type: 'set-participant-mic',
+  });
+  rememberRowButtonTitles(result);
+  if (!result.ok) {
+    notifyNamedFailure('zoom-hand-unmute-failed', name, result.error);
+    return result;
+  }
+  createTemporaryNotification({
+    group: 'zoom-participants',
+    icon: 'mmm-microphone',
+    message: t(
+      result.pressed
+        ? 'zoom-hand-unmute-requested'
+        : 'zoom-hand-already-unmuted',
+      { name },
+    ),
+    type: 'info',
+  });
+  return result;
+};
+
+/**
+ * When a participant is done speaking: mutes them (if they aren't already)
+ * and lowers their hand. Each step only touches that participant's own row.
+ */
+export const muteZoomParticipantAndLowerHand = async (name: string) => {
+  const settings = getSettings();
+  const muted = await runCommand({
+    askToUnmuteTitle: settings?.zoomAskToUnmuteTitle ?? null,
+    lowerHandTitle: settings?.zoomLowerHandTitle ?? null,
+    micOffTitle: settings?.zoomMicOffTitle ?? null,
+    micOnTitle: settings?.zoomMicOnTitle ?? null,
+    name,
+    on: false,
+    phrase: settings?.zoomHandRaisedPhrase ?? null,
+    type: 'set-participant-mic',
+  });
+  rememberRowButtonTitles(muted);
+  if (!muted.ok) {
+    notifyNamedFailure('zoom-hand-mute-failed', name, muted.error);
+    return muted;
+  }
+  const lowered = await runCommand({
+    askToUnmuteTitle: getSettings()?.zoomAskToUnmuteTitle ?? null,
+    lowerHandTitle: getSettings()?.zoomLowerHandTitle ?? null,
+    micOffTitle: settings?.zoomMicOffTitle ?? null,
+    micOnTitle: settings?.zoomMicOnTitle ?? null,
+    name,
+    phrase: settings?.zoomHandRaisedPhrase ?? null,
+    type: 'lower-participant-hand',
+  });
+  rememberRowButtonTitles(lowered);
+  if (!lowered.ok) {
+    notifyNamedFailure('zoom-hand-lower-failed', name, lowered.error);
+    return lowered;
+  }
+  createTemporaryNotification({
+    group: 'zoom-participants',
+    icon: 'mmm-microphone-off',
+    message: t('zoom-hand-muted-and-lowered', { name }),
+    type: 'info',
+  });
+  return lowered;
+};
+
+/**
+ * The "Lower hand" and "Ask to unmute" buttons are named in the user's Zoom
+ * language and only show on other people's rows (the host's own row reads
+ * differently), so their names are learned from the first rows acted on;
+ * from then on, buttons are found by name.
+ */
+const rememberRowButtonTitles = (result: ZoomCommandResult) => {
+  const settings = getSettings();
+  if (
+    result.lowerHandTitle &&
+    settings?.zoomLowerHandTitle !== result.lowerHandTitle
+  ) {
+    saveSetting('zoomLowerHandTitle', result.lowerHandTitle);
+  }
+  if (
+    result.askToUnmuteTitle &&
+    settings?.zoomAskToUnmuteTitle !== result.askToUnmuteTitle
+  ) {
+    saveSetting('zoomAskToUnmuteTitle', result.askToUnmuteTitle);
+  }
+};
+
+const notifyNamedFailure = (
+  messageKey: string,
+  name: string,
+  error: string | undefined,
+) => {
+  const reasonKey =
+    error === 'participant-name-ambiguous'
+      ? 'zoom-hand-name-ambiguous'
+      : error === 'participant-not-found'
+        ? 'zoom-hand-participant-gone'
+        : error === 'mic-titles-not-captured'
+          ? 'zoom-hand-mic-not-learned'
+          : error === 'lower-hand-item-not-found' ||
+              error === 'participant-mic-button-not-found'
+            ? 'zoom-hand-mic-ambiguous'
+            : null;
+  createTemporaryNotification({
+    caption: reasonKey ? t(reasonKey) : undefined,
+    group: 'zoom-participants',
+    icon: 'mmm-error',
+    message: t(messageKey, { name }),
+    type: 'negative',
+  });
+};
+
 // --- Automations and the startup check ---------------------------------------
 
 let zoomCheckInProgress: null | Promise<unknown> = null;
@@ -297,6 +583,7 @@ const NOT_LEARNED_ERRORS = new Set([
 
 const runSequence = async (
   name: string,
+  labelKey: string,
   steps: [string, () => Promise<ZoomCommandResult>][],
 ): Promise<ZoomSequenceResult> => {
   const meeting = await getZoomMeetingState();
@@ -306,18 +593,24 @@ const runSequence = async (
   }
 
   log(`${name}: starting`, 'zoom', 'info');
-  const failedSteps: string[] = [];
-  for (const [step, run] of steps) {
-    const result = await run();
-    if (!result.ok && !NOT_LEARNED_ERRORS.has(result.error ?? '')) {
-      failedSteps.push(step);
+  return withZoomRun(labelKey, async () => {
+    const failedSteps: string[] = [];
+    for (const [step, run] of steps) {
+      if (isZoomRunCancelled()) {
+        failedSteps.push(step);
+        continue;
+      }
+      const result = await run();
+      if (!result.ok && !NOT_LEARNED_ERRORS.has(result.error ?? '')) {
+        failedSteps.push(step);
+      }
     }
-  }
-  if (failedSteps.length) {
-    notifyFailure('zoom-automation', 'zoom-automation-failed');
-  }
-  log(`${name}: finished`, 'zoom', 'info', { failedSteps });
-  return { failedSteps, ok: failedSteps.length === 0 };
+    if (failedSteps.length && !isZoomRunCancelled()) {
+      notifyFailure('zoom-automation', 'zoom-automation-failed');
+    }
+    log(`${name}: finished`, 'zoom', 'info', { failedSteps });
+    return { failedSteps, ok: failedSteps.length === 0 };
+  });
 };
 
 /** Joins computer audio, unmutes the host's microphone, turns on the host
@@ -325,7 +618,7 @@ const runSequence = async (
 export const runZoomMeetingSequence = (
   titles: ZoomTitles = getZoomTitlesFromSettings(),
 ) =>
-  runSequence('Zoom meeting settings', [
+  runSequence('Zoom meeting settings', 'zoom-run-meeting-sequence', [
     ['join-audio', joinZoomAudio],
     ['mic-on', () => setZoomHostMic(true, titles)],
     ['video-on', () => setZoomHostVideo(true, titles)],
@@ -337,14 +630,18 @@ export const runZoomMeetingSequence = (
 export const runZoomPostMeetingSequence = (
   titles: ZoomTitles = getZoomTitlesFromSettings(),
 ) =>
-  runSequence('Zoom before/after-meeting settings', [
-    ['leave-audio', leaveZoomAudio],
-    ['video-off', () => setZoomHostVideo(false, titles)],
-    // Zoom only offers "allow participants to unmute themselves" in the
-    // mute-everyone dialog, so muting everyone is how it gets turned back on.
-    ['mute-all', () => muteAllZoomParticipants(true)],
-    ['ask-all-to-unmute', askAllZoomParticipantsToUnmute],
-  ]);
+  runSequence(
+    'Zoom before/after-meeting settings',
+    'zoom-run-post-meeting-sequence',
+    [
+      ['leave-audio', leaveZoomAudio],
+      ['video-off', () => setZoomHostVideo(false, titles)],
+      // Zoom only offers "allow participants to unmute themselves" in the
+      // mute-everyone dialog, so muting everyone is how it gets turned back on.
+      ['mute-all', () => muteAllZoomParticipants(true)],
+      ['ask-all-to-unmute', askAllZoomParticipantsToUnmute],
+    ],
+  );
 
 /**
  * Applies the in-meeting Zoom settings, if enabled.
@@ -458,7 +755,10 @@ export const stopSharingMediaInZoom = async () => {
  */
 export const automateZoomMediaSharing = async (start: boolean) => {
   if (!(await zoomAutomationsAllowed('Zoom media sharing'))) return false;
-  return start ? startSharingMediaInZoom() : stopSharingMediaInZoom();
+  return withZoomRun(
+    start ? 'zoom-run-media-sharing-start' : 'zoom-run-media-sharing-stop',
+    () => (start ? startSharingMediaInZoom() : stopSharingMediaInZoom()),
+  );
 };
 
 // --- Setup assistant -------------------------------------------------------
@@ -612,6 +912,24 @@ export const captureZoomShareButtonTitle = async () => {
   }).onOk((entry: string) => {
     if (entry) saveSetting('zoomShareButtonTitle', entry);
   });
+};
+
+/**
+ * Stops Zoom screen sharing after media, whichever Zoom integration is in
+ * use: the Zoom Meeting Manager's own sharing, or else the keyboard shortcut
+ * of the older integration. Called both when the user stops media and when
+ * a video ends on its own.
+ */
+export const stopZoomSharingAfterMedia = () => {
+  const settings = getSettings();
+  if (
+    settings?.zoomMeetingManagerEnable &&
+    settings.zoomMeetingManagerAutomateMediaSharing
+  ) {
+    void automateZoomMediaSharing(false);
+  } else {
+    triggerZoomScreenShare(false);
+  }
 };
 
 // --- Keyboard-shortcut screen sharing (the older Zoom integration) ---------

@@ -14,6 +14,7 @@ import {
   captureZoomShareButtonTitle,
   captureZoomVideoTitle,
   isZoomSetupNeeded,
+  learnZoomHandRaisedPhrase,
 } from 'src/helpers/zoom';
 import { getDateDiff, getSpecificWeekday, isInPast } from 'src/utils/date';
 
@@ -149,6 +150,8 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
         captureZoomMicTitle('zoomMicOnTitle');
       } else if (action === 'zoomCaptureShareButtonTitle') {
         captureZoomShareButtonTitle();
+      } else if (action === 'zoomLearnHandRaised') {
+        void learnZoomHandRaisedPhrase();
       }
     } catch (error) {
       errorCatcher(error);

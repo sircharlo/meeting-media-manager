@@ -3,8 +3,37 @@
  * (uia_helper.py) that the Zoom Meeting Manager runs alongside M³.
  */
 export type ZoomCommand =
+  | {
+      /** The "Ask to unmute" button name once learned. */
+      askToUnmuteTitle: null | string;
+      /** The "Lower hand" button name once learned. */
+      lowerHandTitle: null | string;
+      micOffTitle: null | string;
+      micOnTitle: null | string;
+      name: string;
+      /** How Zoom marks a raised hand (learned); skips rows without one. */
+      phrase: null | string;
+      type: 'lower-participant-hand';
+    }
+  | {
+      /** The "Ask to unmute" button name once learned. */
+      askToUnmuteTitle: null | string;
+      /** The learned "Lower hand" button name, never to be pressed here. */
+      lowerHandTitle: null | string;
+      /** The host's own "Unmute" button name. */
+      micOffTitle: null | string;
+      /** The host's own "Mute" button name, to tell muted from unmuted. */
+      micOnTitle: null | string;
+      name: string;
+      on: boolean;
+      /** How Zoom marks a raised hand (learned): a raised-hand row is only
+       * read when the "Lower hand" button's name is known too. */
+      phrase: null | string;
+      type: 'set-participant-mic';
+    }
   | { allowSelfUnmute: boolean; type: 'mute-all' }
   | { echo?: string; type: 'ping' }
+  | { name: string; type: 'inspect-participant' }
   | { names: string[]; type: 'admit' }
   | {
       offTitle: null | string;
@@ -18,6 +47,7 @@ export type ZoomCommand =
       onTitle: null | string;
       type: 'set-video';
     }
+  | { phrase: null | string; type: 'raised-hands' }
   | { reveal?: boolean; type: 'meeting' }
   | {
       shareButtonTitle: null | string;
@@ -32,6 +62,7 @@ export type ZoomCommand =
   | { type: 'ask-all-to-unmute' }
   | { type: 'diagnose' }
   | { type: 'join-audio' }
+  | { type: 'learn-hand-raised' }
   | { type: 'leave-audio' }
   | { type: 'mic-title' }
   /**
@@ -50,8 +81,12 @@ export interface ZoomCommandResult {
   admitted?: string[];
   /** `toggle-mic`/`toggle-video`: the button's name after switching. */
   after?: string;
+  /** `set-participant-mic`: the "Ask to unmute" button's name, when first seen. */
+  askToUnmuteTitle?: null | string;
   /** `toggle-mic`/`toggle-video`: the button's name before switching. */
   before?: string;
+  /** `set-participant-mic`: what the row's microphone button said. */
+  buttonTitle?: string;
   /** Whether the action changed anything (false: already in that state). */
   changed?: boolean;
   diagnosis?: ZoomDiagnosis;
@@ -61,6 +96,8 @@ export interface ZoomCommandResult {
   entries?: string[];
   /** A short machine-readable reason, e.g. `meeting-not-found`. */
   error?: string;
+  /** `set-participant-mic`/`lower-participant-hand`: the "Lower hand" button's name, seen on that row. */
+  lowerHandTitle?: null | string;
   meeting?: ZoomMeetingState;
   /** `share-entries`: Share candidates from the toolbar's "More" menu. */
   moreEntries?: string[];
@@ -68,6 +105,12 @@ export interface ZoomCommandResult {
   /** `test-share-picker`: whether Zoom's share picker opened. */
   opened?: boolean;
   participants?: ZoomParticipantRow[];
+  /** `learn-hand-raised`: how Zoom marks a raised hand, in its language. */
+  phrase?: null | string;
+  /** `set-participant-mic`: whether the button was pressed at all. */
+  pressed?: boolean;
+  /** `raised-hands`: who in the meeting has their hand raised. */
+  raisedHands?: string[];
   title?: null | string;
   version?: number;
   /** `test-share-picker`: whether M³'s media window was offered. */

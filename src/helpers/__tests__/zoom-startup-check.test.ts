@@ -47,6 +47,7 @@ vi.mock('src/helpers/zoom', () => ({
   prepareMediaWindowForZoomTest: vi.fn(),
   runWhileHoldingZoomAutomations: <T>(check: () => Promise<T>) => check(),
   testZoomShareEntry: zoom.testZoomShareEntry,
+  withZoomRun: <T>(_label: string, run: () => Promise<T>) => run(),
 }));
 
 vi.mock('src/helpers/zoom-self-test', async (importOriginal) => ({
