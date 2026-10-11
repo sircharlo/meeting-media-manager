@@ -8,21 +8,21 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Gestionnaire de réunions Zoom (version bêta, Windows)** : Une nouvelle intégration qui gère Zoom à votre place pour toutes vos réunions. Il peut lancer la réunion Zoom de votre assemblée locale lorsque la musique de fond commence avant le début de la réunion. Lorsque la musique s'arrête juste avant le début de la réunion, il active l'audio de l'ordinateur, réactive le microphone, active la vidéo de l'hôte et coupe le son de tous les participants sans leur permettre de le réactiver. Lorsque la musique est lancée avant ou après une réunion, le système procède à l'inverse : il désactive le son de l'ordinateur, coupe la vidéo de l'animateur et demande à tout le monde de réactiver leur micro et leur permet de le faire eux-même. Il peut également partager automatiquement la fenêtre multimédia dans Zoom pendant la lecture d'un contenu multimédia, en veillant à ce que seule cette fenêtre soit partagée. Un nouveau bouton « Zoom » dans l'îlot d'actions indique si une fenêtre de réunion Zoom a été détectée et vous permet d'exécuter ces étapes manuellement. Un assistant de configuration, proposé lorsque vous activez cette option (l'assistant de configuration initiale le propose désormais à la place du partage d'écran via raccourci clavier sous Windows) et accessible à tout moment depuis le bouton « Zoom » ou depuis les « Paramètres », vérifie votre application Zoom, mémorise les noms des boutons du microphone et de la caméra dans votre langue, et vous guide pas à pas tout au long de la procédure. Au démarrage, M³ vérifie également que toutes les automatisations qu’il gère dans Zoom fonctionnent correctement. Il ouvre la réunion si nécessaire les jours de réunion, une heure et quart avant son début (en se contentant de vérifier, sans appuyer sur aucun bouton, si d’autres participants sont déjà présents) ; si un problème survient, il vous en informe et met ses automatisations Zoom en pause jusqu’à ce que le programme soit redémarré ou qu’une nouvelle vérification aboutisse, afin d’éviter tout incident pendant la réunion. Cette option est activée par défaut et peut être désactivée dans les Paramètres. À mesure que chacune de ces étapes réussit, les éléments correspondants dans les listes de contrôle des actions rapides pour avant et après les réunions sont cochés pour vous et marqués comme effectués automatiquement dans Zoom. Comme cette fonctionnalité ne peut pas être utilisée en même temps que le partage d'écran par raccourci clavier, l'application « Réglages » l'indique sous l'option qui n'est pas disponible, en précisant laquelle doit être désactivée. Cela fonctionne quelle que soit la langue de Zoom, et ne nécessite aucune installation supplémentaire en dehors de Zoom lui-même.
+- ✨ **Gestionnaire de réunions Zoom (version bêta, Windows)** : Une nouvelle intégration qui gère Zoom à votre place pour toutes vos réunions. Il peut lancer la réunion Zoom de votre assemblée locale lorsque la musique de fond commence avant le début de la réunion. Lorsque la musique s'arrête juste avant le début de la réunion, il active l'audio de l'ordinateur, réactive le microphone, active la vidéo de l'hôte et coupe le son de tous les participants sans leur permettre de le réactiver. Lorsque la musique est lancée avant ou après une réunion, le système procède à l'inverse : il désactive le son de l'ordinateur, coupe la vidéo de l'hôte et permet de nouveau à tous les participants de réactiver leur micro (en leur demandant de le faire). Il peut également partager automatiquement la fenêtre multimédia dans Zoom pendant la lecture d'un contenu multimédia, en veillant à ce que seule cette fenêtre soit partagée. Un nouveau bouton « Zoom » dans l'îlot d'actions indique si une fenêtre de réunion Zoom a été détectée et vous permet d'exécuter ces étapes manuellement. Un assistant de configuration, proposé lorsque vous activez cette option (l'assistant de configuration initiale le propose désormais à la place du partage d'écran via raccourci clavier sous Windows) et accessible à tout moment depuis le bouton « Zoom » ou depuis les « Paramètres », vérifie votre application Zoom, mémorise les noms des boutons du microphone et de la caméra dans votre langue, et teste chaque étape avec vous. Au démarrage, M³ vérifie également que toutes les automatisations qu’il gère dans Zoom fonctionnent correctement. Il ouvre la réunion si nécessaire les jours de réunion, dans l’heure et quart qui précède son début (si d’autres participants sont déjà présents, il se contente de vérifier, sans appuyer sur aucun bouton) ; si un problème survient, il vous en informe et met ses automatisations Zoom en pause jusqu’à ce que le programme soit redémarré ou qu’une nouvelle vérification aboutisse, afin d’éviter tout incident pendant la réunion. Cette option est activée par défaut et peut être désactivée dans les Paramètres. À mesure que chacune de ces étapes réussit, les éléments correspondants dans les listes de contrôle des actions rapides pour avant et après les réunions sont cochés pour vous et marqués comme effectués automatiquement dans Zoom. Comme cette fonctionnalité ne peut pas être utilisée en même temps que le partage d'écran par raccourci clavier, les Paramètres l'indiquent sous l'option qui n'est pas disponible, en précisant laquelle doit être désactivée. Cela fonctionne quelle que soit la langue de Zoom, et ne nécessite aucune installation supplémentaire en dehors de Zoom lui-même.
 
-- ✨ **Meeting Timer**: Custom parts can now be added on meeting days too, for Governing Body updates, special programs and anything else that isn't on the regular schedule. Each is timed like any other part, and its name and length can be changed from the timer popup or from the parts list.
+- ✨ **Minuteur de réunion** : Des parties personnalisées peuvent désormais aussi être ajoutées les jours de réunion, pour les rapports du Collège central, les programmes spéciaux et tout ce qui ne figure pas dans l'horaire habituel. Chacune est chronométrée comme n'importe quelle autre partie, et son nom et sa durée peuvent être modifiés depuis la fenêtre contextuelle du minuteur ou depuis la liste des parties.
 
-- ✨ **Meeting Timer**: Quicker access to the timer. Hovering the timer button on the action island now shows the part being timed with Start, Pause, Stop and Next part buttons, without opening the popup (a setting, on by default). A new setting also keeps the whole parts list and the timer controls in a panel docked on the right side of the main window, always in view.
+- ✨ **Minuteur de réunion** : Un accès plus rapide au minuteur. Le survol du bouton du minuteur dans l'îlot d'actions affiche désormais la partie en cours de chronométrage, avec les boutons « Démarrer », « Mettre en pause », « Arrêter » et « Partie suivante », sans ouvrir la fenêtre contextuelle (paramètre activé par défaut). Un nouveau paramètre permet également d'afficher la liste complète des parties et les commandes du minuteur dans un panneau ancré sur le côté droit de la fenêtre principale, toujours visible.
 
-- ✨ **Meeting Timer**: A new "Analog clock with time arc" countdown display shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a red wedge. It also works for the pre-meeting countdown and in count-up mode.
+- ✨ **Minuteur de réunion** : Un nouveau format d'affichage du compte à rebours, « Horloge analogique avec indicateur visuel de temps », représente le temps restant pour une partie sous la forme d'un secteur sur le cadran d'une horloge analogique, de l'aiguille des minutes jusqu'à la fin prévue, de sorte qu'un seul coup d'œil suffit pour voir à la fois l'heure actuelle et le temps restant. Le dépassement du temps imparti s'affiche sous la forme d'un secteur rouge. Ce format fonctionne également pour le compte à rebours avant la réunion et en mode « Compte croissant ».
 
-- ✨ **Meeting Timer**: The pre-meeting countdown is now labelled "Meeting starts in", and the timer display shows the name of the part being timed, so "4:59" can no longer be mistaken for the time of day.
+- ✨ **Minuteur de réunion** : Le compte à rebours avant la réunion est désormais accompagné de la mention « La réunion débutera dans », et l'affichage du minuteur indique le nom de la partie en cours de chronométrage, de sorte que « 4:59 » ne peut plus être confondu avec l'heure actuelle.
 
-- ✨ **Meeting Timer**: Each day's recorded timings can be cleared in one go, after a confirmation, from the timer popup or the docked panel.
+- ✨ **Minuteur de réunion** : Les temps enregistrés pour chaque journée peuvent être effacés en une seule fois, après confirmation, depuis la fenêtre contextuelle ou le panneau du minuteur.
 
-- ✨ **Zoom Meeting Manager (beta, Windows)**: A new raised-hand helper. During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets the operator unmute that participant with one click, and, once they're done speaking, mute them again and lower their hand with another; the Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name, and M³ touches no one when two participants share a name. If the meeting timer is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and can be switched on by hand from the timer or Zoom popups. M³ learns how Zoom marks raised hands in your language with a single button (it raises and lowers your own hand), offered in the setup assistant as well.
+- ✨ **Gestionnaire de réunions Zoom (version bêta, Windows)** : Une nouvelle fonctionnalité de gestion des mains levées. Pendant une réunion, M³ surveille la liste des participants de Zoom pour repérer les mains levées. Lorsqu'une personne lève la main, une notification dans M³ permet à l'opérateur de réactiver le micro de ce participant en un clic puis, une fois son intervention terminée, de couper de nouveau son micro et de baisser sa main d'un autre clic ; le bouton « Zoom » de l'îlot d'actions affiche la liste des mains levées avec les mêmes boutons. Chaque action vise la ligne de ce participant dans Zoom, d'après son nom exact, et M³ ne touche à personne lorsque deux participants portent le même nom. Si le minuteur de réunion est activé, une grande main accompagnée du nom du participant apparaît également sur l'affichage du minuteur, à l'intention du président, et peut être affichée manuellement depuis les fenêtres contextuelles du minuteur ou de Zoom. M³ apprend comment Zoom signale les mains levées dans votre langue grâce à un simple bouton (il lève puis baisse votre propre main), également proposé dans l'assistant de configuration.
 
-- ✨ **Meeting Timer**: A new, optional timer remote. When turned on, M³ serves a read-only copy of the timer display as a web page on the local network, so a tablet or phone at the lectern can show the speaker the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time (parts, pre-meeting countdown, clock, overtime colors, hand alert) and all the controls stay in M³. The addresses to open are shown in the timer popup, with a copy button.
+- ✨ **Minuteur de réunion** : Un nouveau minuteur à distance, proposé en option. Lorsqu'il est activé, M³ diffuse une copie en lecture seule de l'affichage du minuteur sous forme de page web sur le réseau local, afin qu'une tablette ou un téléphone placé au pupitre puisse indiquer à l'orateur le temps restant, sans que celui-ci apparaisse sur l'écran de l'assemblée locale ni dans un partage Zoom. La page suit le minuteur en temps réel (parties, compte à rebours avant la réunion, horloge, couleurs de dépassement du temps imparti, alerte main levée) et toutes les commandes restent dans M³. Les adresses à ouvrir sont indiquées dans la fenêtre contextuelle du minuteur, avec un bouton pour les copier.
 
 ## v26.9.0
 
@@ -34,7 +34,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Refonte complète de l'application** : Une mise à jour visuelle et fonctionnelle à grande échelle touchant les boîtes de dialogue, l'en-tête et la liste des médias, les paramètres et l'assistant de configuration. L'assistant de configuration se présente désormais sous la forme d'un parcours comportant une question par écran, accompagné d'une barre de progression. Toutes les invites ont été remplacées par une boîte de dialogue cohérente avec l'identité visuelle de l'application, et la sélection d'une plage de pages dans un PDF (pour les publications et les importations par glisser-déposer) s'effectue désormais à l'aide d'un sélecteur sous forme de grille de vignettes, au lieu d'une invite de saisie libre. Ajout d'un nouveau guide de démarrage rapide à la fin de l'assistant d'installation. Comprend également un nouveau style pour les fiches et les en-têtes, avec des ombres adaptées au mode sombre, ainsi que plusieurs corrections de contraste en mode sombre (libellés des champs actifs, pourcentages de progression des téléchargements).
+- ✨ **Refonte complète de l'application** : Une mise à jour visuelle et fonctionnelle à grande échelle touchant les boîtes de dialogue, l'en-tête et la liste des médias, les paramètres et l'assistant de configuration. L'assistant de configuration se présente désormais sous la forme d'un parcours comportant une question par écran, accompagné d'une barre de progression. Toutes les invites ont été remplacées par une boîte de dialogue cohérente avec l'identité visuelle de l'application, et la sélection d'une plage de pages dans un PDF (pour les publications et les importations par glisser-déposer) s'effectue désormais à l'aide d'un sélecteur sous forme de grille de vignettes, au lieu d'une invite de saisie libre. Ajout d'un nouveau guide de démarrage rapide à la fin de l'assistant de configuration. Comprend également un nouveau style pour les fiches et les en-têtes, avec des ombres adaptées au mode sombre, ainsi que plusieurs corrections de contraste en mode sombre (libellés des champs actifs, pourcentages de progression des téléchargements).
 - ✨ **Page des paramètres** : Réorganisée en une mise en page à deux volets, avec une nouvelle section « Préférences globales » permettant d'activer ou de désactiver les mises à jour automatiques et les mises à jour bêta, qui a été déplacée hors de la boîte de dialogue « À propos » (qui est désormais purement informationnelle).
 - ✨ **Bouton « Ajouter d'autres éléments multimédias »** : Ajout d'un paramètre permettant de choisir précisément les sections de la réunion pour lesquelles le bouton de raccourci « Ajouter d'autres éléments multimédias » doit s'afficher, ainsi qu'un paramètre pour un mode compact qui n'affiche que les icônes.
 - ✨ **Liste des médias** : Les éléments s'affichent désormais sous forme de silhouettes de chargement pendant leur ajout, au lieu de ne pas apparaître du tout ; les groupes de médias indiquent le nombre d'éléments masqués dans leur badge (par exemple « 9 éléments (2 masq.) ») ; les éléments secondaires d'un groupe peuvent être réorganisés par glisser-déposer ; et lorsque la largeur de la fenêtre est très réduite, les éléments se replient en petites icônes compactes accompagnées d'une info-bulle, au lieu d'encombrer la ligne.
@@ -43,7 +43,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Qualité de l’aperçu des médias** : L’aperçu des médias affiche désormais les images des vidéos avec une mise à l’échelle de haute qualité, ce qui corrige les aperçus saccadés ou flous (en particulier pour les contenus comportant beaucoup de texte, comme les cantiques). L'aperçu se désactive également automatiquement si elle doit corriger à plusieurs reprises un décalage de lecture sur une même vidéo, mais il est possible de la réactiver d'un simple clic.
+- ✨ **Qualité de l’aperçu des médias** : L’aperçu des médias affiche désormais les images des vidéos avec une mise à l’échelle de haute qualité, ce qui corrige les aperçus pixelisés ou flous (en particulier pour les contenus comportant beaucoup de texte, comme les cantiques). L'aperçu se désactive également automatiquement s'il doit corriger à plusieurs reprises un décalage de lecture sur une même vidéo, mais il est possible de le réactiver d'un simple clic.
 
 ## v26.7.6
 
@@ -59,7 +59,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 - ✨ **Récupération des médias manquants** : Les éléments multimédias dont le fichier local a disparu (par exemple, supprimé lors de l'effacement automatique du cache ou supprimé manuellement) affichent désormais un bouton de lecture désactivé, une légende « manquant » indiquant le nom du fichier à rechercher, ainsi qu'une nouvelle action « Localiser le fichier » permettant de relier à nouveau l'élément à un fichier sur le disque.
 - ✨ **Avertissement de compatibilité** : Ajout d'une bannière (qui peut être masquée) avertissant les utilisateurs que certaines combinaisons de systèmes d'exploitation et d'architectures (macOS 12 Monterey et Windows 32 bits) ne seront bientôt plus prises en charge, afin qu'ils procèdent à une mise à niveau avant que les futures mises à jour de l'application n'exigent un système plus récent.
 
-## 7.0 v26.0
+## v26.7.0
 
 ### ✨ Nouvelles fonctionnalités
 
@@ -72,14 +72,14 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 - ✨ **Aperçu multimédia** : Ajout d'un aperçu multimédia en direct sous forme de superposition, que l'on peut activer ou désactiver depuis les paramètres ou via la fenêtre contextuelle d'affichage.
 - ✨ **Recherche de fichiers multimédias** : Ajout d'un champ de recherche rapide dans la liste des fichiers multimédias qui vous permet de trouver rapidement des médias par leur titre. Pour l'utiliser, utilisez simplement le raccourci clavier standard pour rechercher (Ctrl+F ou Cmd+F).
-- ✨ **Filtrage des paramètres** : Ajout d'une zone de recherche sur la page des paramètres qui vous permet de trouver des paramètres par mot-clé ou par catégorie. Pour l'utiliser, il suffit de cliquer sur le bouton de recherche en haut à droite de la page des paramètres, ou bien utilisez le raccourci clavier standard pour rechercher (Ctrl+F ou Cmd+F).
+- ✨ **Filtrage des paramètres** : Ajout d'une zone de recherche sur la page des paramètres qui vous permet de trouver des paramètres par mot-clé ou par catégorie. Pour l'utiliser, il suffit de cliquer sur le bouton de recherche en haut à droite de la page des paramètres, ou bien d'utiliser le raccourci clavier standard pour rechercher (Ctrl+F ou Cmd+F).
 - ✨ **Avertissement concernant le chevauchement de la musique de fond** : Ajout d'une notification d'avertissement lorsqu'un fichier multimédia est lancé alors que la musique de fond est en cours de lecture. Les utilisateurs peuvent choisir d'arrêter la musique de fond depuis la notification.
 
-## 6.0 v26.6
+## v26.6.0
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Minuterie** : ajout de modes d'affichage analogiques et d'un rapport de minuterie.
+- ✨ **Minuteur** : ajout de modes d'affichage analogiques et de l'état du rapport de chronométrage.
 - ✨ **Profils** : Ajout de la fonction d'importation et d'exportation des paramètres de profil dans les paramètres avancés et dans l'assistant de configuration.
 - ✨ **Fenêtre multimédia** : Ajout de la prise en charge du masquage automatique de la fenêtre multimédia après la lecture lorsqu'elle était initialement masquée. Cela s'avère pratique lorsqu'un orateur distant souhaite, par exemple, afficher des images.
 
@@ -93,7 +93,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **JW Stream** : Ajout de JW Stream à la liste des sites web qui peuvent être reproduits dans la fenêtre des médias.
+- ✨ **JW Stream** : Ajout de JW Stream à la liste des sites web qui peuvent être reproduits dans la fenêtre multimédia.
 
 ## v26.4.0
 
@@ -105,7 +105,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Médias pour Mémorial** : La récupération automatique des médias pour le Mémorial est désormais sortie de la phase bêta ! L'application téléchargera automatiquement la vidéo de bienvenue pour le Mémorial et l'image à afficher pendant le Mémorial, si elle est disponible dans la langue configurée.
+- ✨ **Médias pour le Mémorial** : La récupération automatique des médias pour le Mémorial est désormais sortie de la phase bêta ! L'application téléchargera automatiquement la vidéo de bienvenue pour le Mémorial et l'image à afficher pendant le Mémorial, si elle est disponible dans la langue configurée.
 - ✨ **Vitesse de lecture** : Ajout du contrôle de vitesse de lecture avec indicateur visuel, et réinitialisation manuelle. Cette fonctionnalité n'est visible que si elle est activée dans les paramètres avancés.
 - ✨ **Cantiques en pinyin** : Ajout d'une option permettant d'activer ou de désactiver le remplacement des cantiques par leur version en pinyin pour les réunions en chinois.
 
@@ -140,12 +140,12 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 ### ✨ Nouvelles fonctionnalités
 
 - ✨ **Menu contextuel à sélection multiple** : Ajout de la prise en charge des actions du menu contextuel lorsque plusieurs éléments multimédias sont sélectionnés.
-- ✨ **Raccourcis clavier** : Ajout de `Ctrl/Cmd+A` pour sélectionner tous les médias, `H` pour masquer les médias sélectionnés et `Maj+Haut/Bas` pour modifier la sélection.
-- ✨ **Paramètres pour les vidéos pour l'étude de la Tour de Garde** : Ajout d'un paramètre permettant d'exclure les vidéos supplémentaires pour l'étude de la Tour de Garde.
+- ✨ **Raccourcis clavier** : Ajout de `Ctrl/Cmd+A` pour sélectionner tous les médias, `H` pour masquer les médias sélectionnés et `Shift+Up/Down` pour modifier la sélection.
+- ✨ **Paramètres pour les vidéos pour l'Étude de La Tour de Garde** : Ajout d'un paramètre permettant d'exclure les vidéos supplémentaires pour l'Étude de La Tour de Garde.
 - ✨ **Sections repliables** : Ajout de la possibilité de replier les sections pour les jours sans réunion pour un affichage plus clair.
 - ✨ **Site web pour les assemblées** : Ajout de la possibilité de présenter le site web pour assemblées internationales en plus du site web officiel principal.
 - ✨ **Personnalisation de l'importation des listes de lecture** : Possibilité de personnaliser le préfixe ajouté aux éléments multimédias lors de l'importation des listes de lecture JW.
-- ✨ **Navigation après la mise en miroir du site Web** : Ajout d'un bouton permettant de naviguer automatiquement vers la liste des médias une fois la mise en miroir du site Web terminée.
+- ✨ **Navigation après la mise en miroir du site web** : Ajout d'un bouton permettant de naviguer automatiquement vers la liste des médias une fois la mise en miroir du site web terminée.
 - ✨ **Commandes d'enregistrement OBS Studio** : Ajout de la possibilité de contrôler les enregistrements dans OBS Studio.
 - ✨ **Aperçu du texte de l'année** : Ajout de la possibilité de prévisualiser le texte de l'année prochaine à partir du mois de décembre de chaque année.
 - ✨ **Notifications de mise à jour** : Ajout de notifications d'avertissement si une version bêta est utilisée ou si les mises à jour sont désactivées, et amélioration de l'affichage de la progression du téléchargement des mises à jour.
@@ -157,7 +157,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 - ✨ **Sélection de médias JWPUB** : Ajout d'une fonctionnalité permettant de sélectionner des médias individuels à partir de fichiers JWPUB.
 - ✨ **Focus automatique sur la fenêtre multimédia** : Ajout d'un paramètre facultatif permettant d'amener la fenêtre multimédia au premier plan automatiquement après le partage d'écran Zoom.
-- ✨ **Superposition du curseur pour l'affichage sur télévision** : Affichage amélioré du curseur dans la fenêtre du site Web pour une meilleure visibilité du curseur de la souris sur les écrans de télévision.
+- ✨ **Superposition du curseur pour l'affichage sur télévision** : Affichage amélioré du curseur dans la fenêtre du site web pour une meilleure visibilité du curseur de la souris sur les écrans de télévision.
 - ✨ **Enregistrement des réunions** : Ajout d'une nouvelle fonctionnalité d'enregistrement des réunions, permettant de contrôler une application d'enregistrement externe.
 - ✨ **Recherche sur le site** : Ajout d'une fonctionnalité permettant de rechercher des médias ou des publications sur le site à l'aide d'une recherche intelligente.
 - ✨ **Importation manuelle facile des publications** : Ajout d'une fonctionnalité permettant d'importer facilement des publications depuis le site officiel, telles que des revues, des livres, des programmes et des invitations.
@@ -239,7 +239,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 ### ✨ Nouvelles fonctionnalités
 
 - 🇵🇭 **Nouvelle langue : Tagalog** : Ajout du support pour le tagalog, étendant les capacités multilingues de l'application.
-- 🎞️ **Prise en charge du format `.m4v`**: Prise en charge de la lecture des fichiers `.m4v` pour améliorer la compatibilité avec les médias.
+- 🎞 **Prise en charge du format vidéo `.m4v`** : Prise en charge de la lecture des fichiers `.m4v` pour améliorer la compatibilité avec les médias.
 
 ## 25.3.1
 
@@ -253,7 +253,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 - 🎵 **Lecture de la musique de fond avec des vidéos** : Permettre à la musique de fond de continuer à jouer pendant que des vidéos sont visionnées.
 - 🎥 **Flux de la caméra pour les médias en langue des signes** : Ajoute la possibilité d'afficher un flux de caméra sur la fenêtre multimédia spécifiquement pour les réunions en langue des signes.
-- 📅 **Date et image de fond pour le Mémorial** : Détecte et définit automatiquement la date du mémorial et prépare l'image de fond pour le Mémorial.
+- 📅 **Date et image de fond pour le Mémorial** : Détecte et définit automatiquement la date du Mémorial et prépare l'image de fond pour le Mémorial.
 - 📜 **Affichage des notes de version** : Affichage des notes de version directement dans l'application afin que les utilisateurs puissent facilement revoir les changements après une mise à jour.
 
 ## 25.2.1
@@ -267,8 +267,8 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- 🌍 **Utiliser la locale du système par défaut** : Détecte et utilise automatiquement la locale du système pour une expérience plus personnalisée.
-- 🏷️ **Support des balises pour les médias exportés** : Ajouter des balises de métadonnées aux fichiers multimédia exportés pour une meilleure organisation.
+- 🌍 **Utiliser les paramètres régionaux du système par défaut** : Détecte et utilise automatiquement les paramètres régionaux du système pour une expérience plus personnalisée.
+- 🏷 **Support des balises pour les médias exportés** : Ajouter des balises de métadonnées aux fichiers multimédias exportés pour une meilleure organisation.
 - 🔄 **Passage automatique de la version bêta à la version stable** : Permet de passer automatiquement d'une version bêta à une version stable lorsque cela s'avère nécessaire.
 - 🌐 **Extraction des derniers index linguistiques MEPS** : Récupération des index linguistiques MEPS les plus récents directement depuis le site officiel, garantissant ainsi une prise en charge linguistique à jour.
 
@@ -277,16 +277,16 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 ### ✨ Nouvelles fonctionnalités
 
 - 📅 **Ouverture des dates passées** : permet d'ouvrir les dates passées de la semaine en cours, ce qui est utile lorsque la réunion est reportée à une date ultérieure dans la semaine.
-- 🛑 **Bannière d'erreur pour OBS Studio** : Ajoute une bannière d'erreur lorsque OBS Studio n'est pas connecté pendant un jour de la réunion, pour que les utilisateurs soient avertis.
-- 🚚 **Regrouper les médias par publication** : Regroupement des médias extraits d'une même publication pour obtenir une vue d'ensemble plus claire et mieux organisée.
-- 🎵 **Avertissement concernant les doublons** : Affichage d'un avertissement si des cantiques apparaissent plus d'une fois dans la liste des fichiers multimédias pour les réunions du week-end.
-- 👉 **Planification des horaires à venir** : permet de planifier les modifications futures des horaires des réunions, ce qui est utile pour les changements d'horaires annuels ou pour la visite du responsable de circonscription dans une assemblée locale voisine.
+- 🛑 **Bannière d'erreur pour OBS Studio** : Ajoute une bannière d'erreur lorsque OBS Studio n'est pas connecté un jour de réunion, pour que les utilisateurs soient avertis.
+- 📚 **Regrouper les médias par publication** : Regroupement des médias extraits d'une même publication pour obtenir une vue d'ensemble plus claire et mieux organisée.
+- 🎵 **Avertissement concernant les doublons** : Affichage d'un avertissement si des cantiques apparaissent plus d'une fois dans la liste des fichiers multimédias pour les réunions de fin de semaine.
+- 🔄 **Planification des horaires à venir** : permet de planifier les modifications futures des horaires des réunions, ce qui est utile pour les changements d'horaires annuels ou pour la visite du responsable de circonscription dans une assemblée locale voisine.
 
 ## 24.11.0
 
 ### ✨ Nouvelles fonctionnalités
 
-- 🖥️ **Présentation du site web sous macOS** : La rediffusion du site web est désormais prise en charge sous macOS 🚀
+- 🖥️ **Présentation du site web sous macOS** : La présentation du site web est désormais prise en charge sous macOS 🚀
 - ⌨️ **Raccourcis clavier pour la lecture** : Ajout de raccourcis clavier pour arrêter, mettre en pause et reprendre la lecture des fichiers multimédias 🚀
 - 🌐 **Adresse de téléchargement personnalisée des fichiers multimédias** : Ajout de la prise en charge de la configuration de l'adresse Web à partir de laquelle les fichiers multimédias doivent être téléchargés 🚀
 - 🎬 **Sélecteur de scènes instantané OBS** : Ajout d'un sélecteur de scènes instantané pour OBS Studio et refonte de la fonctionnalité du sélecteur de scènes dans les paramètres
@@ -298,7 +298,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 - ⌨️ **Raccourcis de navigation entre les fichiers multimédias** : Ajout de raccourcis clavier pour passer au fichier multimédia suivant ou précédent
 - 🖱️ **Menu contextuel des éléments multimédias** : Ajout d'un menu contextuel permettant de masquer et de renommer les éléments multimédias
-- ✂️ **Importation de playlists JWL avec durées raccourcies** : Les durées raccourcies des vidéos sont désormais prises en compte dans les playlists JWL importées
+- ✂️ **Importation de listes de lecture JWL avec durées raccourcies** : Les durées raccourcies des vidéos sont désormais prises en compte dans les listes de lecture JWL importées
 
 ## 24.10.9
 
