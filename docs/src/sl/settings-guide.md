@@ -350,11 +350,11 @@ Jezik podnapisov (lahko se razlikuje od jezika multimedijske vsebine).
 
 ### Upravljanje predpomnilnika {#cache-management}
 
-#### Omogoči dodatni predpomnilnik {#enable-extra-cache}
+#### Cache Songbook Video Files {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Omogoči dodatno shranjevanje v predpomnilniku za boljšo zmogljivost.
+Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
 
 **Privzeto**: `false`
 
@@ -587,7 +587,7 @@ Nastavite, kateri prizori OBS se uporabljajo za različne namene:
 
 #### Napredne možnosti OBS {#obs-advanced-options}
 
-- **Odloži slike**: Slike se delijo z OBS šele ob ročnem sproženju
+- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
 - **Hitro preklapljanje**: Omogoči hiter vklop/izklop za združevanje z OBS
 - **Preklopi prizor po predvajanju multimedijske vsebine**: Samodejno se vrne na prejšnji prizor po predvajanju multimedijske vsebine
 - **Zapomni si prejšnji prizor**: Shrani in obnovi prejšnji prizor
@@ -778,7 +778,7 @@ Popolnoma onemogoči samodejni prenos multimedijske vsebine. To možnost uporabi
 ### Za nove uporabnike {#new-users}
 
 1. Da bi nastavili osnovne nastavitve, začnite z nastavitvenim čarovnikom
-2. Omogočite gumb za »Multimedijski zaslon«
+2. Turn on "Enable media playback" to access presentation features
 3. Natančno nastavite urnik shodov
 4. Nastavite združevanje s programom OBS, če uporabljate hibridne shode
 
@@ -791,7 +791,7 @@ Popolnoma onemogoči samodejni prenos multimedijske vsebine. To možnost uporabi
 
 ### Optimizacija zmogljivosti {#performance-optimization}
 
-1. Omogočite dodatni predpomnilnik za boljše delovanje
+1. Cache songbook video files for better performance
 2. Uporabite ustrezno največjo ločljivost glede na vaše potrebe
 3. Nastavite samodejno čiščenje predpomnilnika, da varčujete s prostorom na disku
 4. Razmislite o omejeni povezavi, če imate omejeno pasovno širino

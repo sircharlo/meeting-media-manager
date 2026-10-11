@@ -214,12 +214,12 @@ M³ med predstavitvami samodejno preklaplja med prizori v programu OBS:
 
 ### Napredne funkcije OBS {#advanced-obs}
 
-#### Odložitev prikazovanja slik {#user-guide-postpone-images}
+#### Do Not Automatically Share Images {#user-guide-postpone-images}
 
 Omogoči to možnost, če želiš, da se deljenje slik v OBS odloži, dokler ga ne sprožiš ročno:
 
-1. V nastavitvah programa OBS omogoči možnost »Postpone Images«
-2. Slike bodo deljene šele, ko klikneš na gumb za njihovo prikazovanje z uporabo programa OBS Studio. To je koristno, če želiš sle slike naprej pokazati tistim, ki so prisotni v živo.
+1. Enable "Do not automatically share images" in OBS settings
+2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. To je koristno, če želiš sle slike naprej pokazati tistim, ki so prisotni v živo.
 
 #### Način preklapljanja med prizori {#user-guide-scene-switching}
 
@@ -405,7 +405,7 @@ Nastavi lastne bližnjice na tipkovnici za učinkovitejše upravljanje:
 
 #### Težave z zmogljivostjo {#user-guide-performance-issues}
 
-- Omogoči dodatni predpomnilnik
+- Cache songbook video files
 - Zmanjšaj največjo ločljivost
 - Počisti stare predpomnjene datoteke
 - Preveri razpoložljiv prostor na disku

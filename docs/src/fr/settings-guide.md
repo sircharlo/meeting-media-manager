@@ -350,11 +350,11 @@ Langue pour les sous-titres (peut être différente de la langue des médias).
 
 ### Gestion du cache {#cache-management}
 
-#### Activer le cache supplémentaire {#enable-extra-cache}
+#### Mettre en cache toutes les vidéos pour les cantiques {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Activez la mise en cache supplémentaire pour de meilleures performances.
+Mettre en cache à l'avance toutes les vidéos des cantiques pour de meilleures performances. Notez que cela augmente la taille du cache des médias.
 
 **Par défaut** : `faux`
 
@@ -587,7 +587,7 @@ Configurez quelles scènes OBS utiliser pour différents usages :
 
 #### Options avancées OBS {#obs-advanced-options}
 
-- **Différer les images** : Retarder le partage d'images vers OBS jusqu'à ce qu'elles soient déclenchées manuellement
+- **Ne pas partager automatiquement les images** : Retarder le partage d'images vers OBS jusqu'à ce qu'elles soient déclenchées manuellement
 - **Basculement rapide** : Activer le basculement rapide on/off pour l'intégration OBS
 - **Changer de scène après les médias** : Retourner automatiquement à la scène précédente après les médias
 - **Se souvenir de la scène précédente** : Se souvenir de la scène précédente et la restaurer
@@ -791,7 +791,7 @@ Désactiver complètement le téléchargement automatique des médias. Utilisez 
 
 ### Optimisation des performances {#performance-optimization}
 
-1. Activer le cache supplémentaire pour de meilleures performances
+1. Mettez en cache les vidéos des cantiques pour de meilleures performances
 2. Utilisez la résolution maximale appropriée pour vos besoins
 3. Configurer l'effacement automatique du cache pour gérer l'espace disque
 4. Envisagez d'utiliser le paramètre de connexion limitée si votre bande passante est limitée

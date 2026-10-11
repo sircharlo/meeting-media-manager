@@ -214,12 +214,12 @@ M³ vahetab ettekannete ajal OBS-i stseene automaatselt:
 
 ### OBS täiendavad võimalused {#advanced-obs}
 
-#### Piltide jagamise viivitus {#user-guide-postpone-images}
+#### Do Not Automatically Share Images {#user-guide-postpone-images}
 
 Selle lubamisel jagatakse pilte OBS-i alles käsitsi käivitamisel:
 
-1. Aktiveeri „Postpone Images” OBS sätetes
-2. Pilte jagatakse alles siis, kui vajutad OBS Studios nuppu nende näitamiseks. See on kasulik, kui soovid pilte esmalt näidata kohalolijatele.
+1. Enable "Do not automatically share images" in OBS settings
+2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. See on kasulik, kui soovid pilte esmalt näidata kohalolijatele.
 
 #### Stseenivahetuse seaded {#user-guide-scene-switching}
 
@@ -404,7 +404,7 @@ Loo endale sobivad kiirklahvid sujuvaks kasutuseks:
 
 #### Jõudlusprobleemid {#user-guide-performance-issues}
 
-- Kasuta suuremat vahemälu
+- Cache songbook video files
 - Vähenda maksimaalset eraldusvõimet
 - Puhasta vanad vahemälufailid
 - Veendu kettaruumi olemasolus

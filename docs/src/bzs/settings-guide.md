@@ -350,11 +350,11 @@ Language for subtitles (can be different from media language).
 
 ### Cache Management {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Cache Songbook Video Files {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Enable additional caching for better performance.
+Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
 
 **Default**: `false`
 
@@ -587,7 +587,7 @@ Configure which OBS scenes to use for different purposes:
 
 #### OBS Advanced Options {#obs-advanced-options}
 
-- **Postpone Images**: Delay sharing images to OBS until manually triggered
+- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
 - **Quick Toggle**: Enable quick on/off toggle for OBS integration
 - **Switch Scene After Media**: Automatically return to previous scene after media
 - **Remember Previous Scene**: Remember and restore the previous scene
@@ -778,7 +778,7 @@ Completely disable automatic media downloads. Use this only for profiles that wi
 ### For New Users {#new-users}
 
 1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
+2. Turn on "Enable media playback" to access presentation features
 3. Configure your meeting schedule accurately
 4. Set up OBS integration if you use hybrid meetings
 
@@ -791,7 +791,7 @@ Completely disable automatic media downloads. Use this only for profiles that wi
 
 ### Performance Optimization {#performance-optimization}
 
-1. Enable extra cache for better performance
+1. Cache songbook video files for better performance
 2. Use appropriate maximum resolution for your needs
 3. Configure cache auto-clear to manage disk space
 4. Consider metered connection setting if on limited bandwidth

@@ -350,11 +350,11 @@ Idioma de los subtítulos (puede ser distinto del idioma de los archivos multime
 
 ### Administración de caché {#cache-management}
 
-#### Activar caché adicional {#enable-extra-cache}
+#### Cache Songbook Video Files {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Activa almacenamiento adicional en caché para mejorar el rendimiento.
+Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
 
 **Predeterminado**: `false`
 
@@ -587,7 +587,7 @@ Configura qué escenas de OBS se usarán para distintos fines:
 
 #### Opciones avanzadas de OBS {#obs-advanced-options}
 
-- **Posponer imágenes**: Retrasa el envío de imágenes a OBS hasta que se active manualmente
+- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
 - **Activación rápida**: Activa un control rápido para activar o desactivar la integración con OBS
 - **Cambiar escena después de los archivos multimedia**: Vuelve automáticamente a la escena anterior después de reproducir archivos multimedia
 - **Recordar escena anterior**: Recuerda y restaura la escena anterior
@@ -778,7 +778,7 @@ Desactiva por completo las descargas automáticas de archivos multimedia. Usa es
 ### Para usuarios nuevos {#new-users}
 
 1. Empieza con el asistente de configuración para configurar las opciones básicas
-2. Activa "Presentación de archivos multimedia" para acceder a las funciones de presentación
+2. Turn on "Enable media playback" to access presentation features
 3. Configura correctamente tu programa de reuniones
 4. Configura la integración con OBS si tienes reuniones híbridas
 
@@ -791,7 +791,7 @@ Desactiva por completo las descargas automáticas de archivos multimedia. Usa es
 
 ### Optimización del rendimiento {#performance-optimization}
 
-1. Activa la caché adicional para mejorar el rendimiento
+1. Cache songbook video files for better performance
 2. Usa una resolución máxima adecuada para tus necesidades
 3. Configura el borrado automático de caché para administrar el espacio en disco
 4. Considera usar la opción de conexión de uso medido si tienes un ancho de banda limitado

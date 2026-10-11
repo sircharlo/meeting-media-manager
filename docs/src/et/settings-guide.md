@@ -350,11 +350,11 @@ Subtiitrite keel (võib erineda meedia keelest).
 
 ### Vahemälu haldamine {#cache-management}
 
-#### Lisavahemälu lubamine {#enable-extra-cache}
+#### Cache Songbook Video Files {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Luba lisavahemälu rakenduse paremaks toimimiseks.
+Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
 
 **Vaikimisi**: `väljas`
 
@@ -587,7 +587,7 @@ Määra, milliseid OBS-stseene kasutada erinevateks eesmärkideks:
 
 #### OBS Studio lisasätted {#obs-advanced-options}
 
-- **Pildid edasi lükkamine**: lükka piltide jagamine OBS-iga edasi, kuni see käsitsi käivitatakse
+- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
 - **Kiirlüliti**: Lülita sisse OBS-i koostöö kiirelt sisse-/välja nupu abil
 - **Vaheta stseeni pärast meediat**: naase automaatselt eelmisele stseenile pärast meediat
 - **Eelmise stseeni meeldejätmine**: Eelmise stseeni meeldejätmine ja taastamine
@@ -778,7 +778,7 @@ Lülita automaatne meedia allalaadimine täielikult välja. Kasuta seda ainult p
 ### Uutele kasutajatele {#new-users}
 
 1. Alusta määramiste abil, et seadistada põhilised sätted
-2. Lülita sisse „Meedia kuvamise nupp“, et pääseda juurde nende esitluse funktsioonidele
+2. Turn on "Enable media playback" to access presentation features
 3. Seadista koosolekute ajakava
 4. Kui sa kasutad hübriidkoosolekuid, siis seadista OBS Studio koostöö
 
@@ -791,7 +791,7 @@ Lülita automaatne meedia allalaadimine täielikult välja. Kasuta seda ainult p
 
 ### Jõudluse parandamise nipid {#performance-optimization}
 
-1. Luba lisavahemälu rakenduse paremaks toimimiseks
+1. Cache songbook video files for better performance
 2. Kasuta oma vajadustele vastavat maksimaalset resolutsiooni
 3. Seadista vahemälu automaatne tühjendamine, et hallata kettaruumi
 4. Kui andmemaht on piiratud, kaalu mõõdetud ühenduse seadistamist
