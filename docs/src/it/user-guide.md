@@ -149,25 +149,25 @@ Quando il timer dell'adunanza è abilitato, M³ può mostrare una finestra timer
 
 Il timer è una funzione beta e dovrebbe essere usato solo se approvato localmente.
 
-#### Meeting Parts {#user-guide-timer-parts}
+#### Parti Di Riunione {#user-guide-timer-parts}
 
-The timer popup on the action island lists the parts of the selected day's meeting. For midweek meetings, choose how many Apply Yourself to the Field Ministry and Living as Christians parts there are; the section's minutes are shared out evenly, and each part can then be adjusted freely with the **+** and **−** buttons or by clicking the part. Any part can be set to any number of minutes, including 0 to skip it. A warning icon points out sections whose parts don't add up to the time allotted to them, but never changes anything on its own.
+Il timer popup sull'isola di azione elenca le parti della riunione del giorno selezionato. Per le adunanze infrasettimanali, scegliere quanti ad "Efficaci nel ministero "e "Vita Cristiana" parti ci sono; i minuti della sezione sono ripartiti uniformemente, e ogni parte può essere regolata liberamente con i pulsanti **+** e **−** o facendo clic sulla parte. Qualsiasi parte può essere impostata su qualsiasi numero di minuti, compreso 0 per saltarla. Un'icona di avvertimento indica sezioni le cui parti non sommano al tempo loro assegnato, ma non cambia mai nulla da sole.
 
-**Custom parts** can be added on any day, for Governing Body updates, special programs or anything else that isn't on the regular schedule. On days without a meeting, the timer starts with one custom part per custom media section.
+✨ **Meeting Timer**: Le parti personalizzate possono essere aggiunte anche nelle giornate di riunione, per gli aggiornamenti del corpo direttivo, programmi speciali e qualsiasi altra cosa che non è sul programma regolare. Nei giorni senza riunione, il timer inizia con una parte personalizzata per ogni sezione multimediale personalizzata.
 
-Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
+I conteggi delle parti, le durate modificate, le parti personalizzate e i tempi registrati sono mantenuti ogni giorno, in modo da sopravvivere riavviare M3 e non mescolare mai i tempi di un incontro in un altro. Gli orari registrati di un giorno possono essere cancellati in una sola volta con **Resetta tutti gli orari per questo giorno**, e un rapporto di temporizzazione PDF può essere esportato in qualsiasi momento.
 
-#### Hand Alert {#user-guide-timer-hand-alert}
+#### Avviso a mano {#user-guide-timer-hand-alert}
 
-A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+Un pulsante **Avviso mano** nel popup del timer mostra una grande mano sul display del timer, per ottenere l'attenzione del presidente, per esempio quando qualcuno su Zoom ha alzato la mano. Con [Zoom Meeting Manager raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M3 lo mostra automaticamente ogni volta che qualcuno alza la mano in Zoom, con il loro nome, e permette di dismutarli, poi mutarli e abbassare la mano, con un clic ciascuno.
 
-#### Timer on a Tablet {#user-guide-timer-remote}
+#### Timer su Tablet {#user-guide-timer-remote}
 
-The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³.
+Il [timer remoto](/settings-guide#timer-remote) opzionale serve una copia di sola lettura del display timer come pagina web sulla rete locale. Aprire l'indirizzo mostrato nel timer popup nel browser di un tablet o telefono al lectern, e l'altoparlante vede il tempo rimanente in privato, mentre tutti i controlli rimangono in M3.
 
-#### Quick Access {#user-guide-timer-quick-access}
+#### Accesso rapido al Timer {#user-guide-timer-quick-access}
 
-Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).
+Il passaggio del timer sull'isola di azione mostra il tempo della parte con i pulsanti Start, Pause, Stop e Next Parte. Un'impostazione può anche agganciare un timer pannello sul lato destro della finestra principale con l'intera lista delle parti e i controlli del timer, sempre in vista. Vedi la [Guida alle impostazioni](/settings-guide#timer-quick-access).
 
 ## Musica di Sottofondo {#user-guide-background-music}
 
@@ -214,12 +214,12 @@ M³ automatically switches OBS scenes during presentations:
 
 ### Advanced OBS Features {#advanced-obs}
 
-#### Postpone Images {#user-guide-postpone-images}
+#### Non Condividi Automaticamente Le Immagini {#user-guide-postpone-images}
 
 Enable this option to delay sharing images to OBS until manually triggered:
 
-1. Enable "Postpone Images" in OBS settings
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+1. Abilita "Non condividere automaticamente le immagini" nelle impostazioni di OBS
+2. Le immagini saranno condivise solo facendo clic sul pulsante **Mostra immagine per i partecipanti a zoom** sull'immagine visualizzata. This is useful for showing images to in-person audience first.
 
 #### Scene Switching Behavior {#user-guide-scene-switching}
 
@@ -405,7 +405,7 @@ Configure custom keyboard shortcuts for efficient operation:
 
 #### Problemi di Prestazioni {#user-guide-performance-issues}
 
-- Enable extra cache
+- Memorizza i file video dei cantici
 - Reduce maximum resolution
 - Clear old cached files
 - Check available disk space

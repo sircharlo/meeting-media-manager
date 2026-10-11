@@ -214,12 +214,12 @@ E taui noa te M³ i te mau teata nō te OBS i te roara’a o te mau fa’a’ite
 
 ### Te mau rave’a pa’ari nō te OBS {#advanced-obs}
 
-#### Fa’ata’ara’a i te mau hōho’a {#user-guide-postpone-images}
+#### Do Not Automatically Share Images {#user-guide-postpone-images}
 
 Ha’amā’iti i teie maitira’a nō te fa’ata’a i te tu’ura’a atu i te mau hōho’a i ni’a i te OBS ’ia tae i te taime e fa’a’ohipahia ai e ’outou iho:
 
-1. Ha’amā’iti i te "Fa’ata’ara’a i te mau hōho’a" i roto i te mau fa’atanora’a nō te OBS
-2. E tu’u-noa-hia te mau hōho’a ’ia pa’i ’outou i te pitopito nō te fa’a’ite i te reira nā roto i te OBS Studio. E mea faufa’a teie nō te fa’a’ite mātāmua i te mau hōho’a i te feiā e fa’aro’o tūtū atu i mua.
+1. Enable "Do not automatically share images" in OBS settings
+2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. E mea faufa’a teie nō te fa’a’ite mātāmua i te mau hōho’a i te feiā e fa’aro’o tūtū atu i mua.
 
 #### Te huru o te tauira’a i te mau teata {#user-guide-scene-switching}
 
@@ -405,7 +405,7 @@ Te fa’anahora’a i te mau rāve’a pāpa’i-’āpee ta’a ’ē nō te �
 
 #### Te mau fifi nō te fa’aotira’a {#user-guide-performance-issues}
 
-- ’A fa’ati’a i te cache ta’a ’ē
+- Cache songbook video files
 - ’A fa’aiti i te faito teitei o te hōho’a
 - ’A tāmā i te mau cache tahito
 - ’A hi’o i te vāhi tei toe i roto i te disk

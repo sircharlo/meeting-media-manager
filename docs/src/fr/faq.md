@@ -158,12 +158,12 @@ M³ bascule automatiquement les scènes OBS Studio en fonction de :
 
 - Type de média (vidéo, image, etc.)
 - Votre configuration de scène
-- Paramètres comme « Différer les images »
+- Paramètres comme « Ne pas partager automatiquement les images »
 - Le choix de revenir ou non à la scène précédente après le média
 
-### :pause_button: Qu'est-ce que la fonction « Différer les images » ? {#faq-postpone-images}
+### :pause_button: À quoi sert le paramètre « Ne pas partager automatiquement les images » ? {#faq-postpone-images}
 
-Cette fonction retarde le partage des images vers OBS Studio jusqu'à ce que vous les déclenchiez manuellement. C'est utile pour :
+Ce paramètre retarde le partage des images vers OBS Studio jusqu'à ce que vous les déclenchiez manuellement. C'est utile pour :
 
 - Afficher les images à l'auditoire en personne d'abord
 - Avoir plus de contrôle sur le minutage
@@ -246,7 +246,7 @@ M³ lit des médias avec du son sur votre ordinateur, mais ce son n'est pas auto
 
 Essayez ces optimisations de performances :
 
-1. **Activer le cache supplémentaire** : Activez le cache supplémentaire dans les paramètres
+1. **Mettre en cache toutes les vidéos pour les cantiques** : Mettez en cache à l'avance toutes les vidéos des cantiques dans les paramètres
 2. **Fermer les autres applications** : Fermez les applications inutiles
 3. **Vérifier l'espace disque** : Assurez-vous d'avoir suffisamment d'espace disque libre
 4. **Réduire la résolution** : Réduisez la résolution maximale

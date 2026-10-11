@@ -214,12 +214,12 @@ M³ change automatiquement les scènes OBS pendant les présentations :
 
 ### Fonctionnalités OBS avancées {#advanced-obs}
 
-#### Différer les images {#user-guide-postpone-images}
+#### Ne pas partager automatiquement les images {#user-guide-postpone-images}
 
 Activez cette option pour retarder le partage d'images vers OBS jusqu'à ce qu'il soit déclenché manuellement :
 
-1. Activez « Différer les images » dans les paramètres OBS
-2. Les images ne seront partagées que lorsque vous cliquez sur le bouton pour les afficher en utilisant OBS Studio. Ceci est utile pour montrer les images à l'auditoire en personne en premier.
+1. Activez « Ne pas partager automatiquement les images » dans les paramètres OBS
+2. Les images ne seront partagées que lorsque vous cliquerez sur le bouton **Afficher l'image pour les participants Zoom** de l'image affichée. Ceci est utile pour montrer les images à l'auditoire en personne en premier.
 
 #### Comportement de changement de scène {#user-guide-scene-switching}
 
@@ -405,7 +405,7 @@ Configurez des raccourcis clavier personnalisés pour une utilisation efficace :
 
 #### Problèmes de performance {#user-guide-performance-issues}
 
-- Activez le cache supplémentaire
+- Mettez en cache les vidéos des cantiques
 - Réduisez la résolution maximale
 - Effacez les anciens fichiers mis en cache
 - Vérifiez l'espace disque disponible

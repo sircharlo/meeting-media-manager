@@ -350,11 +350,11 @@ Sprache für Untertitel (kann von der Mediensprache abweichen).
 
 ### Cache-Verwaltung {#cache-management}
 
-#### Extra-Cache aktivieren {#enable-extra-cache}
+#### Cache Songbook Video Files {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Aktivieren Sie zusätzliches Caching für eine bessere Leistung.
+Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
 
 **Standard**: `false`
 
@@ -587,7 +587,7 @@ Konfigurieren Sie, welche OBS-Szenen für verschiedene Zwecke verwendet werden s
 
 #### Erweiterte OBS-Optionen {#obs-advanced-options}
 
-- **Bilder aufschieben**: Verzögern Sie das Teilen von Bildern mit OBS, bis es manuell ausgelöst wird
+- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
 - **Schnellumschalter**: Aktivieren Sie den schnellen Ein-/Ausschalter für die OBS-Integration
 - **Szene nach Medien wechseln**: Kehren Sie nach Medien automatisch zur vorherigen Szene zurück
 - **Vorherige Szene merken**: Merken Sie sich die vorherige Szene und stellen Sie sie wieder her
@@ -778,7 +778,7 @@ Deaktivieren Sie automatische Medien-Downloads vollständig. Verwenden Sie dies 
 ### Für neue Benutzer {#new-users}
 
 1. Beginnen Sie mit dem Einrichtungsassistenten, um grundlegende Einstellungen zu konfigurieren
-2. Aktivieren Sie die "Medienanzeige-Taste", um auf Präsentationsfunktionen zuzugreifen
+2. Turn on "Enable media playback" to access presentation features
 3. Konfigurieren Sie Ihren Zusammenkunftsplan genau
 4. Richten Sie die OBS-Integration ein, wenn Sie hybride Zusammenkünfte nutzen
 
@@ -791,7 +791,7 @@ Deaktivieren Sie automatische Medien-Downloads vollständig. Verwenden Sie dies 
 
 ### Leistungsoptimierung {#performance-optimization}
 
-1. Aktivieren Sie Extra-Cache für eine bessere Leistung
+1. Cache songbook video files for better performance
 2. Verwenden Sie die für Ihre Bedürfnisse geeignete maximale Auflösung
 3. Konfigurieren Sie das automatische Löschen des Caches, um Speicherplatz zu verwalten
 4. Ziehen Sie die Einstellung für getaktete Verbindungen in Betracht, wenn die Bandbreite begrenzt ist
