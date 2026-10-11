@@ -158,12 +158,12 @@ M³는 다음 조건에 따라 OBS 장면을 자동으로 전환합니다.
 
 - 미디어 유형(동영상, 이미지 등)
 - 사용자가 설정한 장면 구성
-- '이미지 표시 지연'과 같은 설정
+- Settings like "Do not automatically share images"
 - 미디어 표시가 끝난 후 이전 장면으로 돌아가도록 설정했는지 여부
 
-### :pause_button: '이미지 표시 지연' 기능이란 무엇인가요? {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
 
-이 기능은 사용자가 직접 실행할 때까지 OBS에 이미지가 표시되지 않도록 지연시킵니다. 필요한 상황:
+This setting delays sharing images to OBS until you manually trigger them. 필요한 상황:
 
 - 왕국회관에 있는 청중에게 이미지를 먼저 보여 주려는 경우
 - 타이밍을 더 미세하게 조정
@@ -245,7 +245,7 @@ M³는 컴퓨터에서 소리와 함께 미디어를 재생하지만, OBS Studio
 
 성능 최적화를 진행해보세요:
 
-1. **추가 캐시 활성화**: 설정에서 추가 캐시 기능을 활성화합니다.
+1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
 2. **다른 프로그램 종료**: 사용하지 않는 프로그램을 종료합니다.
 3. **디스크 공간 확인**: 저장 장치에 충분한 여유 공간이 있는지 확인합니다.
 4. **해상도 낮추기**: 최대 해상도 설정을 낮춥니다.
