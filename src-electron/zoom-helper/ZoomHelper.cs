@@ -545,6 +545,20 @@ namespace M3.ZoomHelper
             Native.PostMessage(target, Native.WmMouseMove, IntPtr.Zero, new IntPtr(((client.Y & 0xFFFF) << 16) | (client.X & 0xFFFF)));
         }
 
+        /// <summary>Opens the menu behind a control: through Invoke first (no
+        /// mouse), and if Zoom takes the Invoke but shows no menu, through a
+        /// real click. Null if no menu showed up either way.</summary>
+        static El OpenMenuFrom(El control, int timeoutMs)
+        {
+            if (TryInvoke(control))
+            {
+                var menu = WaitForWindow(MenuClass, Math.Min(timeoutMs, 1500));
+                if (menu != null) return menu;
+            }
+            Click(control);
+            return WaitForWindow(MenuClass, timeoutMs);
+        }
+
         /// <summary>Invokes a control without moving the mouse, or clicks it if
         /// Zoom doesn't support Invoke on it.</summary>
         static void Press(El element)
@@ -608,6 +622,13 @@ namespace M3.ZoomHelper
             }
             groups.RemoveAll(group => group.Count == 0);
             return groups;
+        }
+
+        /// <summary>Whether a menu entry is an on/off option.</summary>
+        static bool IsToggleItem(El item)
+        {
+            try { return item.Raw.GetCurrentPattern(Uia.TogglePattern) != null; }
+            catch (Exception) { return false; }
         }
 
         static List<El> MenuItems(El menu)
@@ -972,20 +993,22 @@ namespace M3.ZoomHelper
             }
             if (more == null) throw new ZoomActionError("participants-more-button-not-found");
             Focus(window);
-            Press(more); // Invoke where Zoom allows it, a click otherwise
-            var menu = WaitForWindow(MenuClass, 4000);
+            var menu = OpenMenuFrom(more, 4000);
             if (menu == null) throw new ZoomActionError("participants-menu-not-found");
-            // "Ask all to unmute" heads the menu, alone in its group. Where it
-            // isn't offered, the first group holds on/off options that must
-            // not be toggled by mistake.
+            // "Ask all to unmute" heads the menu's first group, joined by
+            // "Clear all feedback" while anyone has a reaction or hand up.
+            // Where it isn't offered, the first group holds on/off options
+            // (which support the Toggle pattern) that must not be toggled by
+            // mistake.
             var groups = MenuGroups(menu);
-            if (groups.Count == 0 || groups[0].Count != 1)
+            var first = groups.Count == 0 ? null : groups[0];
+            if (first == null || first.Count < 1 || first.Count > 2 || IsToggleItem(first[0]))
             {
                 Focus(window);
                 Escape();
                 throw new ZoomActionError("ask-to-unmute-item-not-found");
             }
-            Press(groups[0][0]);
+            Press(first[0]);
             return Changed(true);
         }
 
@@ -1192,14 +1215,14 @@ namespace M3.ZoomHelper
         /// menu, or null.</summary>
         static El OpenRowMenu(El window, Row row, string name)
         {
+            El menu = null;
             var opened = WithRowButtons(window, row, name, buttons =>
             {
                 if (buttons.Count < 2) return false;
-                Press(buttons[buttons.Count - 1]);
+                menu = OpenMenuFrom(buttons[buttons.Count - 1], 4000);
                 return true;
             }, false);
-            if (!opened) return null;
-            return WaitForWindow(MenuClass, 4000);
+            return opened ? menu : null;
         }
 
         /// <summary>A participant row's hover buttons, told apart by name first:
@@ -1500,7 +1523,15 @@ namespace M3.ZoomHelper
             var menus = ToolbarMenus(window);
             if (menus.Count == 0) return null;
             Focus(window);
-            Press(menus[menus.Count - 1]); // "More" is the toolbar's last menu
+            // "More" is the toolbar's last menu; it opens a grid, not a menu.
+            // Invoke first (no mouse); a real click if Zoom shows nothing.
+            var moreButton = menus[menus.Count - 1];
+            if (TryInvoke(moreButton))
+            {
+                var grid = WaitForWindow(MoreGridClass, 1500);
+                if (grid != null) return grid;
+            }
+            Click(moreButton);
             return WaitForWindow(MoreGridClass, 4000);
         }
 
