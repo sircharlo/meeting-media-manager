@@ -189,24 +189,42 @@
                 </q-item-section>
                 <q-item-section class="ellipsis">{{ name }}</q-item-section>
                 <q-item-section side>
-                  <q-btn
-                    class="btn-tonal"
-                    color="primary"
-                    dense
-                    :disable="pressingMic === name"
-                    flat
-                    icon="mmm-microphone"
-                    :label="t('zoom-hand-mic')"
-                    :loading="pressingMic === name"
-                    no-caps
-                    size="sm"
-                    @click="pressMic(name)"
-                  />
+                  <div class="row no-wrap q-gutter-xs">
+                    <q-btn
+                      class="btn-tonal"
+                      color="positive"
+                      dense
+                      :disable="!!busyParticipant"
+                      flat
+                      icon="mmm-microphone"
+                      :label="t('zoom-hand-unmute')"
+                      :loading="busyParticipant === `unmute:${name}`"
+                      no-caps
+                      size="sm"
+                      @click="unmute(name)"
+                    />
+                    <q-btn
+                      class="btn-tonal"
+                      color="primary"
+                      dense
+                      :disable="!!busyParticipant"
+                      flat
+                      icon="mmm-microphone-off"
+                      :label="t('zoom-hand-mute-and-lower')"
+                      :loading="busyParticipant === `mute:${name}`"
+                      no-caps
+                      size="sm"
+                      @click="muteAndLower(name)"
+                    />
+                  </div>
                 </q-item-section>
               </q-item>
             </q-list>
           </template>
-          <div class="q-px-md q-pb-sm">
+          <div
+            v-if="currentSettings?.enableTimerDisplay"
+            class="q-px-md q-pb-sm"
+          >
             <q-btn
               class="full-width"
               :color="handAlert.active ? 'warning' : 'primary'"
@@ -304,9 +322,10 @@ import {
   getZoomMeetingState,
   isZoomSetupNeeded,
   learnZoomHandRaisedPhrase,
-  pressZoomParticipantMic,
+  muteZoomParticipantAndLowerHand,
   runZoomMeetingSequence,
   runZoomPostMeetingSequence,
+  unmuteZoomParticipant,
 } from 'src/helpers/zoom';
 import { runZoomStartupCheck } from 'src/helpers/zoom-startup-check';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -343,7 +362,7 @@ const { automationsPaused, checkRunning, pause } = storeToRefs(zoomState);
 const handAlert = useHandAlertStore();
 const { raisedHands } = storeToRefs(handAlert);
 const learningHand = ref(false);
-const pressingMic = ref<null | string>(null);
+const busyParticipant = ref<null | string>(null);
 
 const learnHand = async () => {
   learningHand.value = true;
@@ -354,12 +373,21 @@ const learnHand = async () => {
   }
 };
 
-const pressMic = async (name: string) => {
-  pressingMic.value = name;
+const unmute = async (name: string) => {
+  busyParticipant.value = `unmute:${name}`;
   try {
-    await pressZoomParticipantMic(name);
+    await unmuteZoomParticipant(name);
   } finally {
-    pressingMic.value = null;
+    busyParticipant.value = null;
+  }
+};
+
+const muteAndLower = async (name: string) => {
+  busyParticipant.value = `mute:${name}`;
+  try {
+    await muteZoomParticipantAndLowerHand(name);
+  } finally {
+    busyParticipant.value = null;
   }
 };
 

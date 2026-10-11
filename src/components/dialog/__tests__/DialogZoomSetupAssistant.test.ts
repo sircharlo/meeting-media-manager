@@ -15,6 +15,7 @@ const zoom = vi.hoisted(() => ({
   getZoomMeetingState: vi.fn(),
   getZoomShareEntries: vi.fn(),
   joinZoomAudioForSetup: vi.fn(),
+  learnZoomHandRaisedPhrase: vi.fn(),
   learnZoomMicTitles: vi.fn(),
   learnZoomVideoTitles: vi.fn(),
   runZoomSelfTest: vi.fn(),
@@ -33,10 +34,12 @@ vi.mock('src/helpers/zoom', () => ({
     videoOnTitle: 'Stop Video',
   }),
   joinZoomAudioForSetup: zoom.joinZoomAudioForSetup,
+  learnZoomHandRaisedPhrase: zoom.learnZoomHandRaisedPhrase,
   learnZoomMicTitles: zoom.learnZoomMicTitles,
   learnZoomVideoTitles: zoom.learnZoomVideoTitles,
   prepareMediaWindowForZoomTest: async () => () => undefined,
   testZoomShareEntry: zoom.testZoomShareEntry,
+  withoutZoomFeedback: (run: () => unknown) => run(),
 }));
 
 vi.mock('src/helpers/zoom-self-test', async (importOriginal) => ({
@@ -123,11 +126,13 @@ const reachVideoStep = async () => {
   await click('Continue'); // checks
 };
 
-/** Answers the camera and microphone questions, reaching the Share step. */
+/** Answers the camera and microphone questions and learns the raised hand, reaching the Share step. */
 const learnButtons = async () => {
   await click("Yes, it's on"); // camera
   await click('Continue');
   await click("Yes, it's on"); // microphone
+  await click('Continue');
+  await click('Raise and lower my hand'); // raised hands
   await click('Continue');
 };
 
@@ -151,6 +156,11 @@ beforeEach(() => {
     settings().zoomMicOnTitle = 'Mute';
     settings().zoomMicOffTitle = 'Unmute';
     return { ok: true };
+  });
+  zoom.learnZoomHandRaisedPhrase.mockImplementation(async () => {
+    settings().zoomHandRaisedPhrase = 'Hand raised';
+    settings().zoomLowerHandTitle = 'Lower Hand';
+    return { lowerHandTitle: 'Lower Hand', ok: true, phrase: 'Hand raised' };
   });
   zoom.testZoomShareEntry.mockResolvedValue({
     opened: true,
@@ -272,6 +282,28 @@ describe('DialogZoomSetupAssistant', () => {
 
     await click('Try again');
     expect(text()).toContain('Is your microphone on');
+  });
+
+  it('learns how Zoom marks a raised hand, and says when lowering hands is unavailable', async () => {
+    zoom.learnZoomHandRaisedPhrase.mockResolvedValueOnce({
+      lowerHandTitle: null,
+      ok: true,
+      phrase: 'Main levée',
+    });
+    await mountAssistant();
+    await reachVideoStep();
+    await click("Yes, it's on"); // camera
+    await click('Continue');
+    await click("Yes, it's on"); // microphone
+    await click('Continue');
+
+    expect(text()).toContain('Raised hands');
+    expect(isDisabled(button('Continue'))).toBe(true);
+    await click('Raise and lower my hand');
+
+    expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenCalledOnce();
+    expect(text()).toContain("couldn't find Zoom's");
+    expect(isDisabled(button('Continue'))).toBe(false);
   });
 
   it("lets the user pick the Share entry when Zoom's default does not open sharing", async () => {
@@ -416,6 +448,8 @@ describe('DialogZoomSetupAssistant', () => {
     await click('Skip'); // camera
     expect(text()).toContain('Your microphone');
     await click('Skip'); // microphone
+    expect(text()).toContain('Raised hands');
+    await click('Skip'); // raised hands
     expect(text()).toContain('Sharing the media window');
     await click('Skip'); // sharing
     expect(text()).toContain('What should M³ do?');

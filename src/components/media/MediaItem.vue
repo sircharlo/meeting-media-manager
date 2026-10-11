@@ -1421,6 +1421,7 @@ import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   automateZoomMediaSharing,
+  stopZoomSharingAfterMedia,
   triggerZoomScreenShare,
 } from 'src/helpers/zoom';
 import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
@@ -2744,14 +2745,7 @@ function stopMedia(forOtherMediaItem = false) {
   if (!forOtherMediaItem) {
     // Stop one-shot workflows when media is stopped (unless it's a media switch instead of a stop)
     triggerMediaWindowAutoHide(false);
-    if (
-      currentSettings.value?.zoomMeetingManagerEnable &&
-      currentSettings.value?.zoomMeetingManagerAutomateMediaSharing
-    ) {
-      void automateZoomMediaSharing(false);
-    } else {
-      triggerZoomScreenShare(false);
-    }
+    stopZoomSharingAfterMedia();
     nextTick(() => {
       globalThis.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });

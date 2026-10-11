@@ -3,7 +3,11 @@ import useTimer from 'src/composables/useTimer';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getRendererPlatform } from 'src/helpers/fs';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { getZoomRaisedHands, pressZoomParticipantMic } from 'src/helpers/zoom';
+import {
+  getZoomRaisedHands,
+  muteZoomParticipantAndLowerHand,
+  unmuteZoomParticipant,
+} from 'src/helpers/zoom';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useHandAlertStore } from 'stores/hand-alert';
@@ -40,14 +44,47 @@ export const isZoomHandAlertEnabled = () => {
   );
 };
 
+/**
+ * Once a participant has been unmuted, offers to mute them again and lower
+ * their hand in one go, when they're done speaking.
+ */
+const notifyParticipantSpeaking = (name: string) => {
+  createTemporaryNotification({
+    actions: [
+      {
+        handler: () => {
+          void muteZoomParticipantAndLowerHand(name);
+        },
+        label: t('zoom-hand-mute-and-lower'),
+        noCaps: true,
+      },
+      { label: t('dismiss'), noCaps: true },
+    ],
+    group: `zoom-hand-${name}`,
+    icon: 'mmm-microphone',
+    message: t('zoom-hand-unmuted', { name }),
+    timeout: 0,
+    type: 'info',
+  });
+};
+
 const notifyHandRaised = (name: string) => {
   createTemporaryNotification({
     actions: [
       {
         handler: () => {
-          void pressZoomParticipantMic(name);
+          void unmuteZoomParticipant(name).then((result) => {
+            if (result.ok) notifyParticipantSpeaking(name);
+          });
         },
-        label: t('zoom-hand-mic'),
+        label: t('zoom-hand-unmute'),
+        noCaps: true,
+      },
+      {
+        handler: () => {
+          void muteZoomParticipantAndLowerHand(name);
+        },
+        label: t('zoom-hand-mute-and-lower'),
         noCaps: true,
       },
       { label: t('dismiss'), noCaps: true },

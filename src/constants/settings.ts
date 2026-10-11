@@ -689,6 +689,14 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomMeetingManager',
     type: 'button',
   },
+  zoomLowerHandTitle: {
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    hidden: true,
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'text',
+  },
   obsEnable: {
     actions: ['obsConnect'],
     group: 'integrations',
@@ -1162,6 +1170,7 @@ export const defaultSettings: SettingsValues = {
   zoomAutoFocusMediaWindow: false,
   zoomEnable: false,
   zoomHandRaisedPhrase: null,
+  zoomLowerHandTitle: null,
   zoomMeetingManagerAutoLaunchMeeting: false,
   zoomMeetingManagerAutomateMediaSharing: false,
   zoomMeetingManagerAutomateMeetingAudioSettings: false,

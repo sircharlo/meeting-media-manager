@@ -350,6 +350,7 @@ export interface SettingsValues {
   zoomAutoFocusMediaWindow: boolean;
   zoomEnable: boolean;
   zoomHandRaisedPhrase: null | string;
+  zoomLowerHandTitle: null | string;
   zoomMeetingManagerAutoLaunchMeeting: boolean;
   zoomMeetingManagerAutomateMediaSharing: boolean;
   zoomMeetingManagerAutomateMeetingAudioSettings: boolean;

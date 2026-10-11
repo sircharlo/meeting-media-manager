@@ -15,7 +15,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - ✨ **Meeting Timer**: A new "Analog clock with time arc" countdown display shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a red wedge. It also works for the pre-meeting countdown and in count-up mode.
 - ✨ **Meeting Timer**: The pre-meeting countdown is now labelled "Meeting starts in", and the timer display shows the name of the part being timed, so "4:59" can no longer be mistaken for the time of day.
 - ✨ **Meeting Timer**: Each day's recorded timings can be cleared in one go, after a confirmation, from the timer popup or the docked panel.
-- ✨ **Zoom Meeting Manager (beta, Windows)**: A new raised-hand alert. During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a large hand appears on the timer display for the chairman, with the participant's name, and a notification in M³ lets the operator mute or unmute that participant with one click; the Zoom button on the action island lists the raised hands too. M³ learns how Zoom marks raised hands in your language with a single button (it raises and lowers your own hand). The hand can also be switched on by hand, from the timer or Zoom popups, for congregations that don't use the Zoom Meeting Manager's automation.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: A new raised-hand helper. During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets the operator unmute that participant with one click, and, once they're done speaking, mute them again and lower their hand with another; the Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name, and M³ touches no one when two participants share a name. If the meeting timer is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and can be switched on by hand from the timer or Zoom popups. M³ learns how Zoom marks raised hands in your language with a single button (it raises and lowers your own hand), offered in the setup assistant as well.
 
 ### 🛠️ Improvements and Tweaks
 
@@ -29,6 +29,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🐞 Bug Fixes
 
+- 🐞 **Zoom Meeting Manager**: Fixed the automatic media sharing in Zoom not stopping when a video ended on its own (it only stopped when media was stopped by hand).
 - 🐞 **Meeting Timer**: Fixed changes to the duration of Apply Yourself and Living as Christians parts being silently undone, with no way to set a part to 0 minutes or to a length that didn't add up to the section's usual total.
 - 🐞 **Meeting Timer**: Fixed a part whose length had been reduced to 0 still being listed with a default length, while its countdown went straight into overtime.
 - 🐞 **Meeting Timer**: Fixed count-up mode only ever listing one Apply Yourself part and one Living as Christians part.

@@ -155,7 +155,7 @@ Part counts, changed durations, custom parts and recorded timings are kept with 
 
 #### Hand Alert {#user-guide-timer-hand-alert}
 
-A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager](/settings-guide#zoom-meeting-manager-hand-alert), M³ can show it automatically whenever someone raises their hand in Zoom, with their name, and let you mute or unmute them with one click.
+A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
 
 #### Quick Access {#user-guide-timer-quick-access}
 

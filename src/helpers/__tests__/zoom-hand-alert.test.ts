@@ -35,7 +35,8 @@ vi.mock('src/helpers/notifications', () => ({ createTemporaryNotification }));
 
 vi.mock('src/helpers/zoom', () => ({
   getZoomRaisedHands,
-  pressZoomParticipantMic: vi.fn(),
+  muteZoomParticipantAndLowerHand: vi.fn(),
+  unmuteZoomParticipant: vi.fn(),
 }));
 
 vi.mock('src/helpers/fs', () => ({ getRendererPlatform: () => 'win32' }));

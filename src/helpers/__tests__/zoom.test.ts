@@ -392,3 +392,26 @@ describe('Zoom setup assistant', () => {
     expect(notifyMock).not.toHaveBeenCalled();
   });
 });
+
+describe('stopping Zoom sharing after media', () => {
+  it("stops the Zoom Meeting Manager's share when its media sharing is automated", async () => {
+    Object.assign(currentSettings, {
+      zoomMeetingManagerAutomateMediaSharing: true,
+    });
+    const { stopZoomSharingAfterMedia } = await import('../zoom');
+
+    stopZoomSharingAfterMedia();
+    await vi.waitFor(() => expect(commandTypes()).toContain('stop-share'));
+  });
+
+  it('falls back to the keyboard-shortcut integration otherwise', async () => {
+    Object.assign(currentSettings, {
+      zoomMeetingManagerAutomateMediaSharing: false,
+    });
+    const { stopZoomSharingAfterMedia } = await import('../zoom');
+
+    stopZoomSharingAfterMedia();
+    await Promise.resolve();
+    expect(commandTypes()).not.toContain('stop-share');
+  });
+});

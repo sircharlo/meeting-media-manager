@@ -3,9 +3,26 @@
  * (uia_helper.py) that the Zoom Meeting Manager runs alongside M³.
  */
 export type ZoomCommand =
+  | {
+      /** The learned "Lower hand" button name, never to be pressed here. */
+      lowerHandTitle: null | string;
+      /** The host's own "Unmute" button name. */
+      micOffTitle: null | string;
+      /** The host's own "Mute" button name, to tell muted from unmuted. */
+      micOnTitle: null | string;
+      name: string;
+      on: boolean;
+      type: 'set-participant-mic';
+    }
   | { allowSelfUnmute: boolean; type: 'mute-all' }
   | { echo?: string; type: 'ping' }
-  | { name: string; type: 'press-participant-mic' }
+  | {
+      lowerHandTitle: null | string;
+      name: string;
+      /** How Zoom marks a raised hand (learned); skips rows without one. */
+      phrase: null | string;
+      type: 'lower-participant-hand';
+    }
   | { names: string[]; type: 'admit' }
   | {
       offTitle: null | string;
@@ -55,6 +72,8 @@ export interface ZoomCommandResult {
   after?: string;
   /** `toggle-mic`/`toggle-video`: the button's name before switching. */
   before?: string;
+  /** `set-participant-mic`: what the row's microphone button said. */
+  buttonTitle?: string;
   /** Whether the action changed anything (false: already in that state). */
   changed?: boolean;
   diagnosis?: ZoomDiagnosis;
@@ -64,6 +83,8 @@ export interface ZoomCommandResult {
   entries?: string[];
   /** A short machine-readable reason, e.g. `meeting-not-found`. */
   error?: string;
+  /** `learn-hand-raised`: the row menu's "Lower hand" entry, if found. */
+  lowerHandTitle?: null | string;
   meeting?: ZoomMeetingState;
   /** `share-entries`: Share candidates from the toolbar's "More" menu. */
   moreEntries?: string[];
@@ -73,6 +94,8 @@ export interface ZoomCommandResult {
   participants?: ZoomParticipantRow[];
   /** `learn-hand-raised`: how Zoom marks a raised hand, in its language. */
   phrase?: null | string;
+  /** `set-participant-mic`: whether the button was pressed at all. */
+  pressed?: boolean;
   /** `raised-hands`: who in the meeting has their hand raised. */
   raisedHands?: string[];
   title?: null | string;

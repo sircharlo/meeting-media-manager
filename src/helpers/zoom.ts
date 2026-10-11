@@ -259,12 +259,17 @@ export const learnZoomHandRaisedPhrase = async () => {
   const result = await runCommand({ type: 'learn-hand-raised' });
   if (result.ok && result.phrase) {
     saveSetting('zoomHandRaisedPhrase', result.phrase);
-    createTemporaryNotification({
-      group: 'zoom-settings',
-      icon: 'mmm-check',
-      message: t('zoom-hand-learned', { phrase: result.phrase }),
-      type: 'positive',
-    });
+    if (result.lowerHandTitle) {
+      saveSetting('zoomLowerHandTitle', result.lowerHandTitle);
+    }
+    if (!feedbackMuted) {
+      createTemporaryNotification({
+        group: 'zoom-settings',
+        icon: 'mmm-check',
+        message: t('zoom-hand-learned', { phrase: result.phrase }),
+        type: 'positive',
+      });
+    }
   } else {
     notifyFailure('zoom-settings', 'zoom-hand-learn-failed');
   }
@@ -285,28 +290,100 @@ export const getZoomRaisedHands = async (): Promise<null | string[]> => {
 };
 
 /**
- * Presses the microphone button on a participant's row in Zoom: mutes
- * someone unmuted, asks someone muted to unmute (or unmutes them, where Zoom
- * allows it).
+ * Unmutes one participant (or asks them to, where Zoom only allows that),
+ * going by their exact name in the participants list. Nothing is pressed if
+ * the name is missing, shared by two people, or they're already unmuted.
  */
-export const pressZoomParticipantMic = async (name: string) => {
-  const result = await runCommand({ name, type: 'press-participant-mic' });
-  if (result.ok) {
-    createTemporaryNotification({
-      group: 'zoom-participants',
-      icon: 'mmm-microphone',
-      message: t('zoom-hand-mic-pressed', { name }),
-      type: 'info',
-    });
-  } else {
-    createTemporaryNotification({
-      group: 'zoom-participants',
-      icon: 'mmm-error',
-      message: t('zoom-hand-mic-failed', { name }),
-      type: 'negative',
-    });
+export const unmuteZoomParticipant = async (name: string) => {
+  const settings = getSettings();
+  const result = await runCommand({
+    lowerHandTitle: settings?.zoomLowerHandTitle ?? null,
+    micOffTitle: settings?.zoomMicOffTitle ?? null,
+    micOnTitle: settings?.zoomMicOnTitle ?? null,
+    name,
+    on: true,
+    type: 'set-participant-mic',
+  });
+  if (!result.ok) {
+    notifyNamedFailure('zoom-hand-unmute-failed', name, result.error);
+    return result;
   }
+  createTemporaryNotification({
+    group: 'zoom-participants',
+    icon: 'mmm-microphone',
+    message: t(
+      result.pressed
+        ? 'zoom-hand-unmute-requested'
+        : 'zoom-hand-already-unmuted',
+      { name },
+    ),
+    type: 'info',
+  });
   return result;
+};
+
+/**
+ * When a participant is done speaking: mutes them (if they aren't already)
+ * and lowers their hand. Each step only touches that participant's own row.
+ */
+export const muteZoomParticipantAndLowerHand = async (name: string) => {
+  const settings = getSettings();
+  const muted = await runCommand({
+    lowerHandTitle: settings?.zoomLowerHandTitle ?? null,
+    micOffTitle: settings?.zoomMicOffTitle ?? null,
+    micOnTitle: settings?.zoomMicOnTitle ?? null,
+    name,
+    on: false,
+    type: 'set-participant-mic',
+  });
+  if (!muted.ok) {
+    notifyNamedFailure('zoom-hand-mute-failed', name, muted.error);
+    return muted;
+  }
+  const lowered = await runCommand({
+    lowerHandTitle: settings?.zoomLowerHandTitle ?? null,
+    name,
+    phrase: settings?.zoomHandRaisedPhrase ?? null,
+    type: 'lower-participant-hand',
+  });
+  if (!lowered.ok) {
+    notifyNamedFailure('zoom-hand-lower-failed', name, lowered.error);
+    return lowered;
+  }
+  createTemporaryNotification({
+    group: 'zoom-participants',
+    icon: 'mmm-microphone-off',
+    message: t('zoom-hand-muted-and-lowered', { name }),
+    type: 'info',
+  });
+  return lowered;
+};
+
+const notifyNamedFailure = (
+  messageKey: string,
+  name: string,
+  error: string | undefined,
+) => {
+  const reasonKey =
+    error === 'participant-name-ambiguous'
+      ? 'zoom-hand-name-ambiguous'
+      : error === 'participant-not-found'
+        ? 'zoom-hand-participant-gone'
+        : error === 'mic-titles-not-captured'
+          ? 'zoom-hand-mic-not-learned'
+          : error === 'lower-hand-not-learned' ||
+              error === 'lower-hand-item-not-found'
+            ? 'zoom-hand-lower-not-learned'
+            : error === 'participant-mic-button-not-found'
+              ? 'zoom-hand-mic-ambiguous'
+              : null;
+  createTemporaryNotification({
+    caption: reasonKey ? t(reasonKey) : undefined,
+    group: 'zoom-participants',
+    icon: 'mmm-error',
+    message: t(messageKey, { name }),
+    type: 'negative',
+  });
 };
 
 // --- Automations and the startup check ---------------------------------------
@@ -672,6 +749,24 @@ export const captureZoomShareButtonTitle = async () => {
   }).onOk((entry: string) => {
     if (entry) saveSetting('zoomShareButtonTitle', entry);
   });
+};
+
+/**
+ * Stops Zoom screen sharing after media, whichever Zoom integration is in
+ * use: the Zoom Meeting Manager's own sharing, or else the keyboard shortcut
+ * of the older integration. Called both when the user stops media and when
+ * a video ends on its own.
+ */
+export const stopZoomSharingAfterMedia = () => {
+  const settings = getSettings();
+  if (
+    settings?.zoomMeetingManagerEnable &&
+    settings.zoomMeetingManagerAutomateMediaSharing
+  ) {
+    void automateZoomMediaSharing(false);
+  } else {
+    triggerZoomScreenShare(false);
+  }
 };
 
 // --- Keyboard-shortcut screen sharing (the older Zoom integration) ---------
