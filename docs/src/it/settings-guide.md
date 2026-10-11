@@ -350,11 +350,11 @@ Lingua dei sottotitoli (può essere diversa dalla lingua dei media).
 
 ### Gestione della cache {#cache-management}
 
-#### Abilita la cache extra {#enable-extra-cache}
+#### File Video Della Cache Songbook {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Abilita la memorizzazione aggiuntiva nella cache per prestazioni migliori.
+Cache tutti i video del libro di canzoni prima del tempo per migliorare le prestazioni. Si noti che questo aumenta le dimensioni della cache multimediale.
 
 **Predefinito**: `false`
 
@@ -452,24 +452,24 @@ Abilita una finestra timer separata per cronometrare le parti dell'adunanza. Que
 
 Configura se la finestra del timer si apre automaticamente, se i timer dei partecipanti contano in avanti o alla rovescia per impostazione predefinita, se l'orologio usa il formato a 12 o 24 ore, e se il valore corrente del timer è mostrato sul pulsante del timer nell'isola delle azioni.
 
-### Quick Access to the Timer {#timer-quick-access}
+### Accesso rapido al Timer {#timer-quick-access}
 
 <!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
 
-Choose how the timer is reached from the main window:
+Scegli come viene raggiunto il timer dalla finestra principale:
 
-- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
-- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+- **Controlli rapidi durante il passaggio del timer pulsante**: il passaggio del timer sull'isola di azione mostra la parte che è in corso il tempo, con i pulsanti Start, Pause, Stop e Next Parte, senza aprire il popup del timer completo. Attivato per impostazione predefinita
+- **Mostra un pannello timer nella finestra principale**: mantiene l'intera lista delle parti di riunione e dei controlli del timer in un pannello agganciato sul lato destro della finestra principale, sempre in vista. Il popup completo rimane disponibile dall'isola di azione per la finestra e le impostazioni di visualizzazione.
 
-### Timer Remote {#timer-remote}
+### Timer Remoto {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
 
-When turned on, M³ serves a read-only copy of the timer display as a web page on your local network, for a tablet or phone at the lectern: the speaker sees the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time, including the pre-meeting countdown, the clock, overtime colors and the hand alert, and all the controls stay in M³.
+Quando attivato, M3 serve una copia in sola lettura del display timer come pagina web sulla rete locale, per un tablet o un telefono al lecterna: l'altoparlante vede il tempo rimanente senza essere sullo schermo della congregazione o in una condivisione di zoom. La pagina segue il timer in tempo reale, compreso il conto alla rovescia pre-riunione, l'orologio, i colori straordinari e l'allarme a mano, e tutti i comandi rimangono in M3.
 
-The addresses to open on the device are listed in the timer popup, with a copy button. Change the port only if another program already uses it. Note that anyone on the same network can open the page while this is on; it shows nothing but the timer.
+Gli indirizzi da aprire sul dispositivo sono elencati nel timer popup, con un pulsante di copia. Cambia la porta solo se un altro programma la usa già. Si noti che chiunque sulla stessa rete può aprire la pagina mentre è acceso; non mostra altro che il timer.
 
-**Default**: `false`, port `8787`
+**Predefinito**: `false`, port `8787`
 
 ### Formati di visualizzazione del timer {#timer-display-formats}
 
@@ -477,7 +477,7 @@ The addresses to open on the device are listed in the timer popup, with a copy b
 
 Scegli formati di visualizzazione analogici o digitali per l'ora del giorno e i timer del conto alla rovescia. L'indicatore di avviso del conto alla rovescia può spostare l'anello analogico del conto alla rovescia verso un colore di avviso durante l'ultimo minuto.
 
-The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
+Il formato di conto alla rovescia **Orologio analogico con arco di tempo** mostra il tempo rimasto per una parte come cuneo su un orologio analogico, dalla mano del minuto alla fine pianificata, quindi uno sguardo mostra sia l'ora del giorno che quello che è rimasto. Gli straordinari si mostrano come un secondo cuneo nel colore degli straordinari. Si applica anche al conto alla rovescia pre-riunione e lavora in modalità di conteggio.
 
 ### Conto alla rovescia dell'adunanza e stato del programma {#meeting-countdown-and-schedule-status}
 
@@ -519,27 +519,27 @@ Metti in primo piano automaticamente la finestra multimediale dopo l'avvio della
 
 **Predefinito**: `false`
 
-### Zoom Meeting Manager {#zoom-meeting-manager}
+### Zoom Riunione Manager {#zoom-meeting-manager}
 
-The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+Zoom Meeting Manager (beta, solo Windows) gestisce l'app desktop Zoom per ogni riunione. Il suo assistente di installazione, offerto quando lo si accende, cammina attraverso ogni automazione.
 
-#### While M³ Operates Zoom {#zoom-meeting-manager-overlay}
+#### Mentre M3 Funziona Zoom {#zoom-meeting-manager-overlay}
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom offers no proper automation interface, so M³ drives the Zoom app through its accessibility interface, which works without the mouse for nearly everything (the participants list, its menus, the Share window). A few actions can still have to move the mouse or the focused window for a moment, for example to bring Zoom's auto-hidden toolbar back. Whenever that happens, M³ covers its own window with a "M³ is operating Zoom" notice naming what is going on, with a **Cancel this automation** button. The same notice shows during the setup assistant's checks and the self-test. A global keyboard shortcut (default `Ctrl+Alt+Escape`), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Cancelling stops M³ at once; Zoom may then be left part-way, so check it.
+Zoom non offre un'interfaccia di automazione adeguata, quindi M3 guida l'applicazione Zoom attraverso la sua interfaccia di accessibilità, che funziona senza il mouse per quasi tutto (l'elenco dei partecipanti, i suoi menu, la finestra Condividi). Alcune azioni possono ancora dover spostare il mouse o la finestra messa a fuoco per un momento, ad esempio per riportare indietro la barra degli strumenti nascosta automaticamente. Ogni volta che ciò accade, M3 copre la propria finestra con un "M3 sta operando Zoom" notando cosa sta succedendo, con un pulsante **Annulla questa automazione** Lo stesso avviso mostra durante i controlli dell'assistente di configurazione e l'autotesta. Una scorciatoia da tastiera globale (predefinita `Ctrl+Alt+Escape`), attiva solo durante l'esecuzione di un'automazione, la cancella da qualsiasi luogo, anche mentre Zoom ha il fuoco. Annullamento ferma M3 in una sola volta; Zoom può poi essere lasciato parziale, quindi controllarlo.
 
-**Default**: `Ctrl+Alt+Escape`
+**Predefinito**: `Ctrl+Alt+Escape`
 
-#### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
+#### Aiutante-mano {#zoom-meeting-manager-hand-alert}
 
 <!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
 
-During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
+Durante un incontro, M3 guarda la lista dei partecipanti Zoom per le mani alzate. Quando qualcuno alza la mano, una notifica in M3 ti permette di **riattivare** quel partecipante con un clic, e, una volta fatto parlare, **mute di nuovo e abbassare la mano** con un altro. Il pulsante Zoom sull'isola di azione elenca le mani alzate con gli stessi pulsanti. Ogni azione va alla riga di quel partecipante in Zoom, con il loro nome esatto; se due partecipanti condividono un nome, M3 non tocca alcuni.
 
-If the [meeting timer](#meeting-timer) is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and a **Hand alert** button in the timer and Zoom popups shows it by hand. This part needs the timer display; the notifications and buttons work without it.
+Se il [meeting timer](#meeting-timer) è abilitato, una grande mano con il nome del partecipante appare anche sulla visualizzazione del timer per il presidente, e un pulsante **Avviso mano** nel timer e Zoom popup lo mostra a mano. Questa parte ha bisogno della visualizzazione del timer; le notifiche e i pulsanti funzionano senza di essa.
 
-Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list and which menu entry lowers it, then lowers it again. The setup assistant offers this step too.
+Ingrandisci le mani alzate nella propria lingua, quindi M3 ha bisogno di imparare come: con la vostra riunione aperta in Zoom, fare clic su **Scopri come ingrandire le mani in aumento**. M3 alza la tua mano, legge come Zoom lo segna nella lista dei partecipanti e quale voce di menu lo abbassa, poi lo abbassa di nuovo. L'assistente di configurazione offre anche questo passaggio.
 
 **Predefinito**: `false`
 
@@ -778,7 +778,7 @@ Disabilita completamente i download automatici dei media. Usa questa opzione sol
 ### Per i nuovi utenti {#new-users}
 
 1. Inizia con la configurazione guidata per impostare le impostazioni di base
-2. Abilita «Pulsante di visualizzazione dei media» per accedere alle funzioni di presentazione
+2. Attiva "Abilita riproduzione multimediale" per accedere alle funzionalità di presentazione
 3. Configura con precisione il programma delle adunanze
 4. Configura l'integrazione con OBS se fai adunanze ibride
 
@@ -791,7 +791,7 @@ Disabilita completamente i download automatici dei media. Usa questa opzione sol
 
 ### Ottimizzazione delle prestazioni {#performance-optimization}
 
-1. Abilita la cache extra per prestazioni migliori
+1. File video della canzone della cache per prestazioni migliori
 2. Usa una risoluzione massima adeguata alle tue esigenze
 3. Configura la cancellazione automatica della cache per gestire lo spazio su disco
 4. Valuta l'impostazione della connessione a consumo se hai una banda limitata
