@@ -58,7 +58,7 @@ const notifyParticipantSpeaking = (name: string) => {
         label: t('zoom-hand-mute-and-lower'),
         noCaps: true,
       },
-      { label: t('dismiss'), noCaps: true },
+      { color: 'white', label: t('dismiss'), noCaps: true },
     ],
     group: `zoom-hand-${name}`,
     icon: 'mmm-microphone',
