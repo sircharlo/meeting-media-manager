@@ -178,12 +178,16 @@ M³ 本身没有内置录制功能，但可以通过两种方式帮助控制录�
 
 ## 高级功能 {#faq-advanced-features}
 
-### :cloud: 文件夹监视如何工作？ {#faq-folder-monitoring}
+### :cloud: How does the shared folder work? {#faq-folder-monitoring}
 
-文件夹监视功能可以：
+If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
 
-1. 选择要监视的文件夹
-2. 自动导入该文件夹中新出现的媒体文件，包括通过 Dropbox、OneDrive 等同步过来的文件
+1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
+2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
+3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
+4. To add files for another day, create a folder for it, named the same way.
+
+When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
 
 ### :file_folder: 什么是媒体自动导出？ {#faq-media-export}
 

@@ -178,12 +178,16 @@ Aita te M³ e fa’a’ohipa ra i te ho’ē matini haruharu-reo o roto, tera r�
 
 ## Mau tātara’a hōhonu {#faq-advanced-features}
 
-### :cloud: E aha te huru fa’atereha’avara’a o te hi’opo’ara’a puta? {#faq-folder-monitoring}
+### :cloud: How does the shared folder work? {#faq-folder-monitoring}
 
-Tē fa’ati’a nei te hi’opo’ara’a puta ia ’oe ’ia:
+If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
 
-1. A mā’iti i te hō’ē puta nō te hi’opo’a i te mau puta ’āpī
-2. Tefa’atōro’a-ti’amā-ra’a i te mau puta pāpāho ’āpī tei tū’atihia i ni’a i te pu’era’a rorouira ata mai ia Dropbox ’aore rā OneDrive
+1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
+2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
+3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
+4. To add files for another day, create a folder for it, named the same way.
+
+When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
 
 ### :file_folder: E aha te huru nō te fa’atahe-ti’amā-ra’a pāpāho? {#faq-media-export}
 

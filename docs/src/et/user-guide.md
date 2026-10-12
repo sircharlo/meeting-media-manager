@@ -284,7 +284,7 @@ Lisa oma meediafailid M³-sse:
 
 1. **Faili import** - Kasuta importnuppu videote, piltide või helifailide lisamiseks
 2. **Lohista ja kukuta** - Lohista failid M³ aknasse
-3. **Kausta jälgimine** - Sea jälgitav kaust automaatseks impordiks
+3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 4. **JWPUB failid ja esitusloendid** - Impordi väljaanded ja esitusloendid
 5. **Avaliku kõne meedia (S-34 / S-34mp)** – Impordi avaliku kõne meedia S‑34 või S‑34mp JWPUB-failidega
 6. **Videod ametlikult veebilehelt** – Otsi videoid ja lisa need valitud kuupäevale
@@ -311,16 +311,17 @@ Impordi Piibli salmide helisalvestised:
 
 Iga profiili seaded saab menüüst „Seaded” eksportida JSON-failina. Profiili seadete faili importimine asendab praeguse profiili seaded, mis on kasulik seadistuse teisele arvutile üleviimisel või teadaoleva konfiguratsiooni taastamisel.
 
-## Kausta jälgimine ja eksport {#user-guide-folder-monitoring}
+## Shared Folder and Export {#user-guide-folder-monitoring}
 
-### Kaustajälgimise seadistamine {#folder-monitoring-setup}
+### Setting Up a Shared Folder {#folder-monitoring-setup}
 
-Jälgi kausta uute meediafailide suhtes:
+Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
 
-1. **Kaustaseire** - Lülita seadetes kaustajälgimine sisse
-2. **Vali kaust** - Määra jälgitav kaust
-3. **Automaatne import** - Uued failid lisatakse M³-e automaatselt
-4. \*\*Organiseerimine \*\* - Kaustapuu kuupäevad määravad paigutuse
+1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
+2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
+3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
+4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
+5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
 
 ### Meedia eksport {#user-guide-media-export}
 

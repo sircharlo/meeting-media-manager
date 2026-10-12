@@ -80,7 +80,7 @@ Per adunanze di congregazione **ibride** o **di persona** la modalità di presen
 
 ### Funzionalità Avanzate {#about-advanced-features}
 
-- **Monitoraggio delle cartelle**: Sincronizza automaticamente i supporti dalle cartelle monitorate (Dropbox, OneDrive, ecc.)
+- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 - **Esportazione media**: Esporta automaticamente i media in cartelle, organizzati per data
 - **Presentazione del sito**: Presenta il sito ufficiale sui monitor esterni
 - **Timer dell'adunanza**: finestra timer facoltativa per cronometrare le parti dell'adunanza

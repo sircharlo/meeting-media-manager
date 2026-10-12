@@ -178,12 +178,16 @@ M³ nima vgrajenega snemalnika, lahko pa pomaga pri nadzoru snemanja na dva nač
 
 ## Napredne funkcije {#faq-advanced-features}
 
-### :cloud: Kako deluje spremljanje map? {#faq-folder-monitoring}
+### :cloud: How does the shared folder work? {#faq-folder-monitoring}
 
-Spremljanje map ti omogoča, da:
+If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
 
-1. Izbereš mapo, ki jo želiš spremljati za nove datoteke
-2. Samodejno uvoziš novo multimedijsko vsebino, ki se sinhronizira prek oblačnih storitev, kot sta Dropbox ali OneDrive
+1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
+2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
+3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
+4. To add files for another day, create a folder for it, named the same way.
+
+When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
 
 ### :file_folder: Kaj pomeni samodejni izvoz multimedijske vsebine? {#faq-media-export}
 

@@ -285,7 +285,7 @@ Añade tus propios archivos multimedia a M³:
 
 1. **Importar archivo** - Usa el botón de importación para añadir videos, imágenes o archivos de audio
 2. **Arrastrar y soltar** - Arrastra archivos directamente a M³
-3. **Supervisión de carpetas** - Configura una carpeta supervisada para importar archivos automáticamente
+3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 4. **Archivos JWPUB y listas de reproducción** - Importa publicaciones y listas de reproducción
 5. **Archivos multimedia de discursos públicos (S-34 / S-34mp)** - Importa archivos multimedia de discursos públicos mediante archivos JWPUB S‑34 o S‑34mp
 6. **Videos del sitio web oficial** - Busca videos y añádelos a la fecha seleccionada
@@ -312,16 +312,17 @@ Importa grabaciones de audio de versículos bíblicos:
 
 La configuración de cada perfil se puede exportar a un archivo JSON desde Configuración. Importar un archivo de configuración de perfil reemplaza la configuración del perfil actual, lo que resulta útil al trasladar una configuración a otra computadora o restaurar una configuración conocida.
 
-## Supervisión y exportación de carpetas {#user-guide-folder-monitoring}
+## Shared Folder and Export {#user-guide-folder-monitoring}
 
-### Configurar la supervisión de carpetas {#folder-monitoring-setup}
+### Setting Up a Shared Folder {#folder-monitoring-setup}
 
-Supervisa una carpeta en busca de nuevos archivos multimedia:
+Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
 
-1. **Activar supervisión de carpetas** - Activa la supervisión de carpetas en la configuración
-2. **Seleccionar carpeta** - Elige la carpeta que se supervisará
-3. **Importación automática** - Los archivos nuevos se añaden automáticamente a M³
-4. **Organización** - Los archivos se organizan por fecha según la estructura de carpetas
+1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
+2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
+3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
+4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
+5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
 
 ### Exportación de archivos multimedia {#user-guide-media-export}
 
