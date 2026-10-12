@@ -9,19 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Descargar
-      link: /download
+      link: /es/download
     - theme: brand
       text: Acerca de
-      link: /about
+      link: /es/about
     - theme: brand
       text: Guía del usuario
-      link: /user-guide
+      link: /es/user-guide
     - theme: brand
       text: Guía de configuración
-      link: /settings-guide
+      link: /es/settings-guide
     - theme: brand
       text: Preguntas frecuentes
-      link: /faq
+      link: /es/faq
 features:
   - icon: 🚀
     title: Administración automática de archivos multimedia
