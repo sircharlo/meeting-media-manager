@@ -2,6 +2,7 @@ import { flushPromises, mount, type VueWrapper } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { getCaptureSizeBounds } from 'src/utils/media';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -9,6 +10,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 
 import MediaPreview from '../MediaPreview.vue';
+
+vi.mock('src/helpers/error-catcher', () => ({ errorCatcher: vi.fn() }));
 
 installQuasarPlugin();
 installPinia();
@@ -465,6 +468,75 @@ describe('MediaPreview capture mode (dev toggle)', () => {
     // silently reverting, so the developer sees the black frame and knows
     // to re-toggle rather than being auto-switched without any signal.
     expect(wrapper.get('.media-preview-mode-toggle').text()).toBe('capture');
+  });
+
+  it('reports disabled capture smoothing to Sentry only once per session', async () => {
+    vi.mocked(errorCatcher).mockClear();
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    mockCaptureSuccess();
+    seedStores();
+
+    // Drive the capture frame loop by hand: every frame callback draws once
+    // and queues the next, and every draw takes 10ms, over the 8ms budget.
+    const frameCallbacks: (() => void)[] = [];
+    const videoPrototype = HTMLVideoElement.prototype as unknown as Record<
+      string,
+      unknown
+    >;
+    const stubbed = [
+      'cancelVideoFrameCallback',
+      'requestVideoFrameCallback',
+      'videoHeight',
+      'videoWidth',
+    ];
+    Object.defineProperties(videoPrototype, {
+      cancelVideoFrameCallback: { configurable: true, value: vi.fn() },
+      requestVideoFrameCallback: {
+        configurable: true,
+        value: (callback: () => void) => frameCallbacks.push(callback),
+      },
+      videoHeight: { configurable: true, get: () => 1080 },
+      videoWidth: { configurable: true, get: () => 1920 },
+    });
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+      clearRect: vi.fn(),
+      drawImage: vi.fn(),
+    } as unknown as CanvasRenderingContext2D);
+    let now = 0;
+    vi.spyOn(performance, 'now').mockImplementation(() => (now += 10));
+
+    const runSlowDraws = async () => {
+      for (let i = 0; i < 5; i++) {
+        frameCallbacks.pop()?.();
+        await nextTick();
+      }
+    };
+
+    try {
+      const wrapper = mountPreview();
+      await nextTick();
+      await wrapper.get('.media-preview-mode-toggle').trigger('click');
+      await flushPromises();
+
+      await runSlowDraws();
+      expect(wrapper.find('canvas').exists()).toBe(false);
+      expect(errorCatcher).toHaveBeenCalledTimes(1);
+
+      // Back into capture mode: a fresh stream gives smoothing another
+      // chance, and this machine trips it again - without a second report.
+      // capture -> canvas -> video -> capture
+      for (let i = 0; i < 3; i++) {
+        await wrapper.get('.media-preview-mode-toggle').trigger('click');
+        await flushPromises();
+      }
+      expect(wrapper.find('canvas').exists()).toBe(true);
+
+      await runSlowDraws();
+      expect(wrapper.find('canvas').exists()).toBe(false);
+      expect(errorCatcher).toHaveBeenCalledTimes(1);
+    } finally {
+      for (const key of stubbed) Reflect.deleteProperty(videoPrototype, key);
+    }
   });
 
   it('re-acquires the stream with a new size cap only after the main window changes size substantially', async () => {

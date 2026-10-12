@@ -456,6 +456,12 @@ const CAPTURE_SLOW_DRAWS_BEFORE_DISABLE = 5;
 const CAPTURE_SLOW_DRAW_WINDOW_SECONDS = 10;
 const recentSlowCaptureDraws = ref<number[]>([]);
 const captureCanvasDisabled = ref(false);
+// Smoothing gets a fresh chance on every new capture stream, so a machine
+// that's too slow for it trips this again and again in one session. It's a
+// harmless downgrade (the preview keeps working), so one report per session
+// is plenty to see how many machines hit it (MMM-V2-3HZ). MediaPreview is
+// mounted once, in MainLayout, for the app's lifetime.
+let slowCaptureDrawsReported = false;
 
 const registerSlowCaptureDraw = () => {
   const now = Date.now();
@@ -478,6 +484,8 @@ const registerSlowCaptureDraw = () => {
       'mediaPreview',
       'warn',
     );
+    if (slowCaptureDrawsReported) return;
+    slowCaptureDrawsReported = true;
     errorCatcher(
       new Error(
         'Capture-mode canvas smoothing disabled after repeated slow draws',
