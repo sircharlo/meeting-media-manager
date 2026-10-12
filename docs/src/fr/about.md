@@ -80,7 +80,7 @@ Pour les réunions de l'assemblée locale **hybrides** ou **en personne**, le mo
 
 ### Fonctionnalités avancées {#about-advanced-features}
 
-- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
+- **Dossier partagé** : Ajoutez automatiquement des médias aux réunions depuis un dossier synchronisé par Dropbox, OneDrive, iCloud Drive ou Google Drive
 - **Exportation de médias** : Exportez automatiquement les médias vers des dossiers, organisés par date
 - **Présentation de sites web** : Présentez le site officiel sur des écrans externes
 - **Minuteur de réunion** : Fenêtre du minuteur facultative pour chronométrer les parties de la réunion

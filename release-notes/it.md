@@ -24,6 +24,8 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 - ✨ **Meeting Timer**: Un nuovo timer opzionale a distanza. Quando attivato, M3 serve una copia in sola lettura del display timer come pagina web sulla rete locale, per un tablet o un telefono al lecterna: l'altoparlante vede il tempo rimanente senza essere sullo schermo della congregazione o in una condivisione di zoom. La pagina segue il timer in tempo reale, compreso il conto alla rovescia pre-riunione, l'orologio, i colori straordinari e l'allarme a mano, e tutti i comandi rimangono in M3. Gli indirizzi da aprire sul dispositivo sono elencati nel timer popup, con un pulsante di copia.
 
+- ✨ **Setup Wizard**: The setup wizard now asks whether you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive. If you do, it helps you choose a shared folder there and shows how it works: M³ creates a folder for each upcoming meeting, named with the meeting's date, and the files put in it are added to that meeting automatically, on every computer that uses the folder.
+
 ## v26.9.0
 
 ### ✨ Nuove Funzionalità

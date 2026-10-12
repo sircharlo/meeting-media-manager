@@ -24,6 +24,8 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 - ✨ **Minuteur de réunion** : Un nouveau minuteur à distance, proposé en option. Lorsqu'il est activé, M³ diffuse une copie en lecture seule de l'affichage du minuteur sous forme de page web sur le réseau local, afin qu'une tablette ou un téléphone placé au pupitre puisse indiquer à l'orateur le temps restant, sans que celui-ci apparaisse sur l'écran de l'assemblée locale ni dans un partage Zoom. La page suit le minuteur en temps réel (parties, compte à rebours avant la réunion, horloge, couleurs de dépassement du temps imparti, alerte main levée) et toutes les commandes restent dans M³. Les adresses à ouvrir sont indiquées dans la fenêtre contextuelle du minuteur, avec un bouton pour les copier.
 
+- ✨ **Assistant de configuration** : L'assistant de configuration demande désormais si vous conservez les fichiers pour les réunions dans une application de stockage cloud comme Dropbox, OneDrive, iCloud Drive ou Google Drive. Si c'est le cas, il vous aide à y choisir un dossier partagé et explique son fonctionnement : M³ crée un dossier pour chaque réunion à venir, nommé d'après la date de la réunion, et les fichiers qui y sont placés sont ajoutés automatiquement à cette réunion, sur chaque ordinateur qui utilise ce dossier.
+
 ## v26.9.0
 
 ### ✨ Nouvelles fonctionnalités
