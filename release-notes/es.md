@@ -24,6 +24,8 @@ Para ver la lista completa de cambios entre versiones, consulta nuestro archivo 
 
 - ✨ **Cronómetro de la reunión**: Un nuevo control remoto del cronómetro opcional. Al activarse, M³ sirve una copia de solo lectura de la pantalla del cronómetro como página web en la red local, para que una tableta o un teléfono en el atril le muestre al discursante el tiempo restante sin que aparezca en la pantalla de la congregación ni en la transmisión de Zoom. La página sigue el cronómetro en tiempo real (partes, cuenta regresiva previa a la reunión, reloj, colores de tiempo extra, aviso de mano levantada) y todos los controles permanecen en M³. Las direcciones para abrir se muestran en la ventana emergente del cronómetro, con un botón para copiar.
 
+- ✨ **Asistente de configuración**: El asistente de configuración ahora pregunta si guardas archivos para las reuniones en una aplicación de almacenamiento en la nube como Dropbox, OneDrive, iCloud Drive o Google Drive. Si es así, te ayuda a elegir una carpeta compartida allí y muestra cómo funciona: M³ crea una carpeta para cada próxima reunión, nombrada con la fecha de la reunión, y los archivos que pongas en ella se añaden a esa reunión automáticamente, en cada computadora que use la carpeta.
+
 ## v26.9.0
 
 ### ✨ Nuevas funciones
