@@ -551,6 +551,32 @@ describe('jw-media helpers', () => {
     expect(errorCatcherMock).not.toHaveBeenCalled();
   });
 
+  it('warns with phone-specific advice when a jwpub on a phone shown by Windows Cross Device cannot be copied', async () => {
+    const phoneJwpub = String.raw`C:\Users\PC\CrossDevice\Redmi 12\storage\Download\S-34_T_029.jwpub`;
+    // fs.copy crosses Electron's contextBridge, which strips `code` - only
+    // the message survives (MMM-V2-3M1).
+    copyMock.mockRejectedValue(
+      new Error(
+        `UNKNOWN: unknown error, copyfile '${phoneJwpub}' -> 'C:\\temp\\S-34_T_029.jwpub'`,
+      ),
+    );
+    vi.mocked(globalThis.electronApi.dirname).mockImplementation((path) =>
+      path.slice(0, path.lastIndexOf('\\')),
+    );
+    const { stageUserJwpubForRead } = await import('../jw-media');
+
+    await expect(stageUserJwpubForRead(phoneJwpub)).resolves.toBeUndefined();
+
+    expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        caption: 'jwpub-file-unavailable-caption-phone',
+        group: 'jwpubFileUnavailable',
+        type: 'warning',
+      }),
+    );
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
   it('warns without reporting when a staged jwpub becomes unavailable while extracting', async () => {
     const error = Object.assign(new Error('missing during extraction'), {
       code: 'ENOENT',

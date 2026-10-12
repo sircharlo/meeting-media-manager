@@ -52,9 +52,11 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { LAST_USED_FILENAME, updateLastUsedDate } from 'src/helpers/usage';
 import {
+  getCloudStorageProvider,
   getFilesystemErrorCode,
   isCloudStoragePath,
   isExpectedNetworkPathAccessError,
+  isPhoneStoragePath,
   isPossiblyNetworkFolderPath,
 } from 'src/shared/filesystem-errors';
 import { NETWORK_ERROR_CODES } from 'src/shared/network-errors';
@@ -497,7 +499,10 @@ const getPathDiagnostic = async (path: string): Promise<PathDiagnostic> => {
 };
 
 const isJwpubFileUnavailableError = (error: unknown, jwpubPath: string) => {
-  const errorCode = getErrorCode(error);
+  // Not getErrorCode: fs.copy (used to stage the file) is exposed straight
+  // through Electron's contextBridge, which strips `code` from the error, so
+  // it has to be parsed back out of the message (MMM-V2-3M1).
+  const errorCode = getFilesystemErrorCode(error);
   if (errorCode === 'ENOENT') return true;
   if (isCloudStorageReadError(error)) return true;
   return (
@@ -506,13 +511,32 @@ const isJwpubFileUnavailableError = (error: unknown, jwpubPath: string) => {
   );
 };
 
+// Suggest the fix that matches where the file lives, instead of one
+// catch-all hint covering every kind of storage at once.
+const getJwpubUnavailableCaption = (jwpubPath: string) => {
+  const t = i18n.global.t;
+
+  if (isPhoneStoragePath(jwpubPath)) {
+    return t('jwpub-file-unavailable-caption-phone');
+  }
+
+  const provider = getCloudStorageProvider(jwpubPath);
+  if (provider) return t('jwpub-file-unavailable-caption-cloud', { provider });
+
+  if (isPossiblyNetworkFolderPath(dirname(jwpubPath), getRendererPlatform())) {
+    return t('jwpub-file-unavailable-caption-drive');
+  }
+
+  return t('jwpub-file-unavailable-caption-local');
+};
+
 const warnJwpubUnavailable = (jwpubPath: string, error: unknown) => {
   if (!isJwpubFileUnavailableError(error, jwpubPath)) return false;
 
   const t = i18n.global.t;
 
   createTemporaryNotification({
-    caption: t('jwpub-file-unavailable-caption'),
+    caption: getJwpubUnavailableCaption(jwpubPath),
     group: 'jwpubFileUnavailable',
     message: t('jwpub-file-unavailable-message'),
     timeout: 15000,

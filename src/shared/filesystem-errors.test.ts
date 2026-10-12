@@ -5,7 +5,9 @@ import {
   getFilesystemErrorCode,
   isCloudStoragePath,
   isExpectedNetworkPathAccessError,
+  isPhoneStoragePath,
   isPossiblyNetworkFolderPath,
+  PHONE_STORAGE_PROVIDER,
   shouldIgnoreWatchFolderError,
 } from './filesystem-errors';
 
@@ -58,6 +60,14 @@ describe('filesystem error helpers', () => {
     ).toBe('Nextcloud');
     expect(isCloudStoragePath('C:/Users/test/OneDrive/Media')).toBe(true);
     expect(isCloudStoragePath('C:/Users/test/cache')).toBe(false);
+  });
+
+  it('recognizes a phone shown in File Explorer by Windows Cross Device as network-like storage', () => {
+    const phoneFolder = String.raw`C:\Users\PC\CrossDevice\Redmi 12\storage\Download`;
+    expect(getCloudStorageProvider(phoneFolder)).toBe(PHONE_STORAGE_PROVIDER);
+    expect(isPhoneStoragePath(phoneFolder)).toBe(true);
+    expect(isPossiblyNetworkFolderPath(phoneFolder, 'win32')).toBe(true);
+    expect(isPhoneStoragePath('C:/Users/test/OneDrive/Media')).toBe(false);
   });
 
   it('recognizes a Google Drive desktop "Mirror files" account folder by its "(email)" suffix, regardless of locale', () => {

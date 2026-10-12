@@ -26,6 +26,13 @@ const NETWORK_WATCH_ERROR_CODES = new Set(['EISDIR', 'UNKNOWN']);
 // normalize them to 'UNKNOWN' for callers that already tolerate that code.
 const UNKNOWN_SYSTEM_ERROR_CODE_PATTERN = /^Unknown system error -?\d+$/i;
 
+// Windows 11's "Mobile devices" feature shows a paired phone's storage in
+// File Explorer under %USERPROFILE%\CrossDevice\<phone name>\. Those files
+// are placeholders fetched from the phone over the network when opened, so
+// a phone that's asleep or out of reach fails reads with a raw UNKNOWN
+// error, just like a cloud-sync placeholder (MMM-V2-3M1).
+export const PHONE_STORAGE_PROVIDER = 'Windows Cross Device';
+
 const CLOUD_STORAGE_PROVIDERS: [marker: string, provider: string][] = [
   ['/library/mobile documents/', 'iCloud'],
   ['/icloud drive/', 'iCloud'],
@@ -33,6 +40,7 @@ const CLOUD_STORAGE_PROVIDERS: [marker: string, provider: string][] = [
   ['/onedrive', 'OneDrive'],
   ['/google drive/', 'Google Drive'],
   ['/nextcloud', 'Nextcloud'],
+  ['/crossdevice/', PHONE_STORAGE_PROVIDER],
 ];
 
 // Google Drive for desktop's "Mirror files" mode (as opposed to the virtual
@@ -139,6 +147,9 @@ export const getCloudStorageProvider = (filePath: string) => {
 
 export const isCloudStoragePath = (filePath: string) =>
   !!getCloudStorageProvider(filePath);
+
+export const isPhoneStoragePath = (filePath: string) =>
+  getCloudStorageProvider(filePath) === PHONE_STORAGE_PROVIDER;
 
 // `platform` has no default here on purpose: `process.platform` doesn't
 // exist in the renderer (no Node globals across Electron's contextBridge),
