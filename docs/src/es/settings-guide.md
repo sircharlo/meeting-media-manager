@@ -350,11 +350,11 @@ Idioma de los subtítulos (puede ser distinto del idioma de los archivos multime
 
 ### Administración de caché {#cache-management}
 
-#### Cache Songbook Video Files {#enable-extra-cache}
+#### Guardar en caché los videos del cancionero {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
+Guarda en caché todos los videos del cancionero con anticipación para mejorar el rendimiento. Ten en cuenta que esto aumenta el tamaño de la caché multimedia.
 
 **Predeterminado**: `false`
 
@@ -452,24 +452,24 @@ Activa una ventana independiente del cronómetro para controlar el tiempo de las
 
 Configura si la ventana del cronómetro se abre automáticamente, si los cronómetros de los participantes cuentan de forma progresiva o regresiva de manera predeterminada, si el reloj usa el formato de 12 o 24 horas y si el valor actual del cronómetro se muestra en el botón del cronómetro de la isla de acciones.
 
-### Quick Access to the Timer {#timer-quick-access}
+### Acceso rápido al cronómetro {#timer-quick-access}
 
 <!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
 
-Choose how the timer is reached from the main window:
+Elige cómo acceder al cronómetro desde la ventana principal:
 
-- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
-- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+- **Controles rápidos al pasar el ratón sobre el botón del cronómetro**: al pasar el ratón sobre el botón del cronómetro en la isla de acciones, se muestra la parte que se está cronometrando, con botones para Iniciar, Pausar, Detener y Siguiente parte, sin abrir la ventana emergente completa del cronómetro. Activado por defecto.
+- **Mostrar un panel del cronómetro en la ventana principal**: mantiene la lista completa de partes de la reunión y los controles del cronómetro en un panel anclado a la derecha de la ventana principal, siempre a la vista. La ventana emergente completa sigue estando disponible desde la isla de acciones para los ajustes de ventana y de pantalla.
 
-### Timer Remote {#timer-remote}
+### Control remoto del cronómetro {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
 
-When turned on, M³ serves a read-only copy of the timer display as a web page on your local network, for a tablet or phone at the lectern: the speaker sees the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time, including the pre-meeting countdown, the clock, overtime colors and the hand alert, and all the controls stay in M³.
+Al activarse, M³ sirve una copia de solo lectura de la pantalla del cronómetro como página web en tu red local para una tableta o un teléfono en el atril: el discursante ve el tiempo restante sin que aparezca en la pantalla de la congregación ni en la transmisión de Zoom. La página sigue el cronómetro en tiempo real, incluyendo la cuenta regresiva previa a la reunión, el reloj, los colores de tiempo extra y el aviso de mano levantada, y todos los controles se quedan en M³.
 
-The addresses to open on the device are listed in the timer popup, with a copy button. Change the port only if another program already uses it. Note that anyone on the same network can open the page while this is on; it shows nothing but the timer.
+Las direcciones para abrir en el dispositivo se enumeran en la ventana emergente del cronómetro, con un botón para copiar. Cambia el puerto solo si otro programa ya lo está usando. Ten en cuenta que cualquiera en la misma red puede abrir la página mientras esté activada; no muestra nada más que el cronómetro.
 
-**Default**: `false`, port `8787`
+**Por defecto**: `false`, puerto `8787`
 
 ### Formatos de visualización del cronómetro {#timer-display-formats}
 
@@ -477,7 +477,7 @@ The addresses to open on the device are listed in the timer popup, with a copy b
 
 Elige formatos de visualización analógicos o digitales para la hora y los cronómetros de cuenta regresiva. El indicador de advertencia de la cuenta regresiva puede cambiar el anillo analógico de cuenta regresiva hacia un color de advertencia durante el último minuto.
 
-The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
+El formato de cuenta regresiva **Reloj analógico con arco de tiempo** muestra el tiempo restante de una parte como un sector en la esfera de un reloj analógico, desde el minutero hasta el final previsto; así, con una sola mirada, ves tanto la hora como lo que queda. El tiempo extra se muestra como un segundo sector con el color de tiempo extra. También se aplica a la cuenta regresiva antes de la reunión y sirve en modo de conteo progresivo.
 
 ### Cuenta regresiva de la reunión y estado del programa {#meeting-countdown-and-schedule-status}
 
@@ -521,25 +521,25 @@ Enfoca automáticamente la ventana de archivos multimedia después de iniciar la
 
 ### Zoom Meeting Manager {#zoom-meeting-manager}
 
-The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+Zoom Meeting Manager (beta, solo Windows) maneja por ti la aplicación de escritorio de Zoom alrededor de cada reunión. Su asistente de configuración, ofrecido al activarlo, te guía por cada automatización.
 
-#### While M³ Operates Zoom {#zoom-meeting-manager-overlay}
+#### Mientras M³ controla Zoom {#zoom-meeting-manager-overlay}
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom offers no proper automation interface, so M³ drives the Zoom app through its accessibility interface, which works without the mouse for nearly everything (the participants list, its menus, the Share window). A few actions can still have to move the mouse or the focused window for a moment, for example to bring Zoom's auto-hidden toolbar back. Whenever that happens, M³ covers its own window with a "M³ is operating Zoom" notice naming what is going on, with a **Cancel this automation** button. The same notice shows during the setup assistant's checks and the self-test. A global keyboard shortcut (default `Ctrl+Alt+Escape`), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Cancelling stops M³ at once; Zoom may then be left part-way, so check it.
+Zoom no ofrece una interfaz de automatización adecuada, por lo que M³ controla la aplicación de Zoom mediante su interfaz de accesibilidad, la cual funciona sin el ratón para casi todo (la lista de participantes, sus menús, la ventana de compartir). Aun así, algunas acciones pueden requerir mover el ratón o la ventana activa por un instante, por ejemplo, para recuperar la barra de herramientas autooculta de Zoom. Siempre que ocurre eso, M³ cubre su propia ventana con un aviso que dice "M³ está controlando Zoom", indicando lo que está sucediendo y con un botón **Cancelar esta automatización**. El mismo aviso se muestra durante las comprobaciones del asistente de configuración y la autoprueba. Un atajo de teclado global (por defecto `Ctrl+Alt+Escape`), activo solo mientras se ejecuta una automatización, la cancela desde cualquier lugar, incluso mientras Zoom esté en primer plano. Cancelar detiene M³ de inmediato; Zoom podría quedar a medias, así que revísalo.
 
-**Default**: `Ctrl+Alt+Escape`
+**Por defecto**: `Ctrl+Alt+Escape`
 
-#### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
+#### Ayudante para manos levantadas {#zoom-meeting-manager-hand-alert}
 
 <!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
 
-During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
+Durante la reunión, M³ revisa la lista de participantes de Zoom en busca de manos levantadas. Cuando alguien levanta la mano, una notificación en M³ te permite **activar el micrófono** de ese participante con un clic y, una vez que termine de hablar, **volver a silenciarlo y bajarle la mano** con otro clic. El botón de Zoom en la isla de acciones muestra las manos levantadas con los mismos botones. Cada acción se dirige a la fila propia de ese participante en Zoom por su nombre exacto; si dos participantes comparten el mismo nombre, M³ no toca a ninguno.
 
-If the [meeting timer](#meeting-timer) is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and a **Hand alert** button in the timer and Zoom popups shows it by hand. This part needs the timer display; the notifications and buttons work without it.
+Si el [cronómetro de la reunión](#meeting-timer) está activado, también aparece una mano grande con el nombre del participante en la pantalla del cronómetro para el presidente, y el botón **Aviso de mano levantada** en las ventanas emergentes del cronómetro y de Zoom permite mostrarla manualmente. Esta función requiere la pantalla del cronómetro; las notificaciones y los botones funcionan sin ella.
 
-Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list and which menu entry lowers it, then lowers it again. The setup assistant offers this step too.
+Zoom marca las manos levantadas en su propio idioma, así que M³ necesita primero aprender cómo: con la reunión abierta en Zoom, haz clic en **Aprender cómo marca Zoom las manos levantadas**. M³ levanta tu propia mano, lee cómo la marca Zoom en la lista de participantes y qué opción del menú la baja, y luego vuelve a bajarla. El asistente de configuración también ofrece este paso.
 
 **Predeterminado**: `false`
 
@@ -587,7 +587,7 @@ Configura qué escenas de OBS se usarán para distintos fines:
 
 #### Opciones avanzadas de OBS {#obs-advanced-options}
 
-- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
+- **No compartir imágenes automáticamente**: Retrasa compartir imágenes en OBS hasta activarlas manualmente
 - **Activación rápida**: Activa un control rápido para activar o desactivar la integración con OBS
 - **Cambiar escena después de los archivos multimedia**: Vuelve automáticamente a la escena anterior después de reproducir archivos multimedia
 - **Recordar escena anterior**: Recuerda y restaura la escena anterior
@@ -778,7 +778,7 @@ Desactiva por completo las descargas automáticas de archivos multimedia. Usa es
 ### Para usuarios nuevos {#new-users}
 
 1. Empieza con el asistente de configuración para configurar las opciones básicas
-2. Turn on "Enable media playback" to access presentation features
+2. Activa "Habilitar reproducción de multimedia" para acceder a las funciones de presentación
 3. Configura correctamente tu programa de reuniones
 4. Configura la integración con OBS si tienes reuniones híbridas
 
@@ -791,7 +791,7 @@ Desactiva por completo las descargas automáticas de archivos multimedia. Usa es
 
 ### Optimización del rendimiento {#performance-optimization}
 
-1. Cache songbook video files for better performance
+1. Guarda en caché los archivos de video del cancionero para un mejor rendimiento
 2. Usa una resolución máxima adecuada para tus necesidades
 3. Configura el borrado automático de caché para administrar el espacio en disco
 4. Considera usar la opción de conexión de uso medido si tienes un ancho de banda limitado
