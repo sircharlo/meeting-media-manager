@@ -149,25 +149,25 @@ Cuando el cronómetro de la reunión está activado, M³ puede mostrar una venta
 
 El cronómetro es una función beta y solo debería usarse si se ha aprobado localmente.
 
-#### Meeting Parts {#user-guide-timer-parts}
+#### Partes de la reunión {#user-guide-timer-parts}
 
-The timer popup on the action island lists the parts of the selected day's meeting. For midweek meetings, choose how many Apply Yourself to the Field Ministry and Living as Christians parts there are; the section's minutes are shared out evenly, and each part can then be adjusted freely with the **+** and **−** buttons or by clicking the part. Any part can be set to any number of minutes, including 0 to skip it. A warning icon points out sections whose parts don't add up to the time allotted to them, but never changes anything on its own.
+La ventana emergente del cronómetro en la isla de acciones muestra las partes de la reunión del día seleccionado. Para las reuniones de entre semana, elige cuántas partes hay de Seamos mejores maestros y Nuestra vida cristiana; los minutos de la sección se reparten de manera uniforme, y cada parte se puede ajustar libremente con los botones **+** y **−** o haciendo clic sobre ella. Cualquier parte se puede configurar con cualquier número de minutos, incluido 0 para omitirla. Un icono de advertencia señala las secciones cuyas partes no suman el tiempo que tienen asignado, pero nunca cambia nada por su cuenta.
 
-**Custom parts** can be added on any day, for Governing Body updates, special programs or anything else that isn't on the regular schedule. On days without a meeting, the timer starts with one custom part per custom media section.
+Se pueden añadir **partes personalizadas** cualquier día para informes del Cuerpo Gobernante, programas especiales o cualquier otra cosa que no esté en el programa habitual. Los días sin reunión, el cronómetro inicia con una parte personalizada por cada sección multimedia personalizada.
 
-Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
+El número de partes, las duraciones modificadas, las partes personalizadas y los tiempos registrados se guardan para cada día, por lo que se mantienen aunque se reinicie M³ y nunca se mezclan los tiempos de una reunión con los de otra. Los tiempos registrados de un día se pueden borrar todos juntos con **Restablecer todos los tiempos de este día**, y se puede exportar un informe de tiempos en PDF en cualquier momento.
 
-#### Hand Alert {#user-guide-timer-hand-alert}
+#### Aviso de mano levantada {#user-guide-timer-hand-alert}
 
-A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+El botón **Aviso de mano levantada** en la ventana emergente del cronómetro muestra una mano grande en la pantalla del cronómetro para llamar la atención del presidente, por ejemplo, cuando alguien en Zoom levanta la mano. Con el [ayudante para manos levantadas de Zoom Meeting Manager](/settings-guide#zoom-meeting-manager-hand-alert), M³ la muestra automáticamente cada vez que alguien levanta la mano en Zoom, junto con su nombre, y te permite activar su micrófono, y luego volver a silenciarlo y bajarle la mano con un solo clic en cada caso.
 
-#### Timer on a Tablet {#user-guide-timer-remote}
+#### El cronómetro en una tableta {#user-guide-timer-remote}
 
-The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³.
+El [control remoto del cronómetro](/settings-guide#timer-remote) opcional sirve una copia de solo lectura de la pantalla del cronómetro como página web en tu red local. Abre la dirección que se muestra en la ventana emergente del cronómetro en el navegador de una tableta o teléfono en el atril, y el discursante verá el tiempo restante de forma privada mientras todos los controles permanecen en M³.
 
-#### Quick Access {#user-guide-timer-quick-access}
+#### Acceso rápido {#user-guide-timer-quick-access}
 
-Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).
+Al pasar el ratón sobre el botón del cronómetro en la isla de acciones, se muestra la parte que se está cronometrando, con botones para Iniciar, Pausar, Detener y Siguiente parte. Un ajuste también puede anclar un panel del cronómetro a la derecha de la ventana principal con la lista completa de partes y los controles del cronómetro, siempre a la vista. Consulta la [Guía de configuración](/settings-guide#timer-quick-access).
 
 ## Música de fondo {#user-guide-background-music}
 
@@ -214,12 +214,12 @@ M³ cambia automáticamente las escenas de OBS durante las presentaciones:
 
 ### Funciones avanzadas de OBS {#advanced-obs}
 
-#### Do Not Automatically Share Images {#user-guide-postpone-images}
+#### No compartir imágenes automáticamente {#user-guide-postpone-images}
 
 Activa esta opción para retrasar el envío de imágenes a OBS hasta que se active manualmente:
 
-1. Enable "Do not automatically share images" in OBS settings
-2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. Esto es útil para mostrar primero las imágenes al auditorio presencial.
+1. Activa "No compartir imágenes automáticamente" en los ajustes de OBS
+2. Las imágenes solo se compartirán cuando hagas clic en el botón **Mostrar imagen a los participantes de Zoom** sobre la imagen en pantalla. Esto es útil para mostrar primero las imágenes al auditorio presencial.
 
 #### Comportamiento del cambio de escenas {#user-guide-scene-switching}
 
@@ -405,7 +405,7 @@ Configura atajos de teclado personalizados para trabajar con eficiencia:
 
 #### Problemas de rendimiento {#user-guide-performance-issues}
 
-- Cache songbook video files
+- Guardar en caché los archivos de video del cancionero
 - Reduce la resolución máxima
 - Borra archivos antiguos de la caché
 - Comprueba el espacio disponible en disco
