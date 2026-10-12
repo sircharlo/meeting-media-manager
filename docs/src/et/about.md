@@ -80,7 +80,7 @@ M³, terviklik meediahalduslahendus, võimaldab teil lihtsalt ja automaatselt al
 
 ### Lisasätted {#about-advanced-features}
 
-- **Kausta jälgimine**: sünkroniseerib automaatselt meediafailid jälgitavatest kaustadest (Dropbox, OneDrive jne)
+- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 - **Meedia eksport**: ekspordi meedia automaatselt kaustadesse, korraldatuna kuupäeva järgi
 - **Veebisaidi esitlus**: Esita ametlikku veebisaiti välistel monitoridel
 - **Koosoleku taimer**: valikuline taimeri aken koosoleku osade kestuse mõõtmiseks
