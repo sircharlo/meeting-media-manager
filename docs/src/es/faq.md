@@ -128,7 +128,7 @@ Las funciones de música de fondo incluyen:
 
 ### :stopwatch: ¿M³ incluye un cronómetro para la reunión? {#faq-meeting-timer}
 
-Sí. Cuando está activado, M³ puede mostrar una ventana independiente del cronómetro para controlar el tiempo de los participantes. Puede contar de forma progresiva o regresiva, mostrar la hora actual, mostrar una cuenta regresiva antes de la reunión y, si quieres, indicar el tiempo excedido o si la reunión va adelantada o atrasada con respecto al programa. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
+Sí. Cuando está activado, M³ puede mostrar una ventana independiente del cronómetro para controlar el tiempo de los participantes. Puede contar de forma progresiva o regresiva, mostrar la hora actual, mostrar una cuenta regresiva antes de la reunión y, si quieres, indicar el tiempo excedido o si la reunión va adelantada o atrasada con respecto al programa. La duración de las partes se puede ajustar libremente, se pueden añadir partes personalizadas para programas especiales y el cronómetro se puede controlar desde la isla de acciones (incluso al pasar el ratón) o desde un panel anclado en la ventana principal.
 
 El cronómetro es una función beta y solo debería activarse si se ha aprobado localmente.
 
@@ -158,12 +158,12 @@ M³ cambia automáticamente las escenas de OBS según:
 
 - El tipo de archivo multimedia (video, imagen, etc.)
 - Tu configuración de escenas
-- Settings like "Do not automatically share images"
+- Ajustes como "No compartir imágenes automáticamente"
 - Si debe volver a la escena anterior después de reproducir archivos multimedia
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: ¿Qué hace el ajuste "No compartir imágenes automáticamente"? {#faq-postpone-images}
 
-This setting delays sharing images to OBS until you manually trigger them. Esto es útil para:
+Este ajuste retrasa la acción de compartir imágenes en OBS hasta que las actives manualmente. Esto es útil para:
 
 - Mostrar primero las imágenes al auditorio presencial
 - Tener más control sobre el momento de mostrarlas
@@ -246,7 +246,7 @@ M³ reproduce archivos multimedia con sonido en tu computadora, pero este audio 
 
 Prueba estas optimizaciones de rendimiento:
 
-1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
+1. **Guardar en caché los videos del cancionero**: Guarda en caché todos los videos del cancionero con anticipación en la configuración
 2. **Cerrar otras aplicaciones**: Cierra las aplicaciones que no necesites
 3. **Comprobar espacio en disco**: Asegúrate de tener suficiente espacio libre en disco
 4. **Reducir resolución**: Baja la configuración de resolución máxima
