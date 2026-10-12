@@ -2,7 +2,7 @@
 
 ## General Questions {#general-questions}
 
-### :earth_americas: Чи залежить ця програма від зовнішніх сайтів, джерел або "кураторів" для завантаження публікацій, медіа для зібрань та іншого контенту? {#external-dependencies}
+### :earth_americas: Чи залежить ця програма від зовнішніх сайтів, джерел або "кураторів" для завантаження публікацій, медіа для зібрань та іншого контенту?  {#external-dependencies}
 
 **Ні.** Додаток поводиться аналогічно як JW Library. Він завантажує публікації, медіа та інший контент безпосередньо з офіційного вебсайту Свідків Єгови та їх мережі надсилання контенту. Додаток автоматично визначає, що потрібно завантажити, та коли раніше завантажений контент більше не є актуальним і повинен бути завантажений заново.
 
@@ -12,7 +12,7 @@
 
 :::
 
-### :thinking: Чи цей додаток порушує Умови Використання офіційного сайту Свідків Єгови? {#terms-of-use}
+### :thinking: Чи цей додаток порушує Умови Використання офіційного сайту Свідків Єгови?  {#terms-of-use}
 
 **Ні.** [Умови використання](https://www.jw.org/finder?docid=1011511&prefer=content) офіційного вебсайту Свідків Єгови чітко дозволяють використання, яке ми здійснюємо. Ось відповідний уривок з цих умов (з виділенням):
 
@@ -178,12 +178,16 @@ M³ does not include a built-in recorder, but it can help control recording in t
 
 ## Advanced Features {#faq-advanced-features}
 
-### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
+### :cloud: How does the shared folder work? {#faq-folder-monitoring}
 
-Folder monitoring allows you to:
+If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
 
-1. Select a folder to watch for new files
-2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
+1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
+2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
+3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
+4. To add files for another day, create a folder for it, named the same way.
+
+When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
 
 ### :file_folder: What is media auto-export? {#faq-media-export}
 

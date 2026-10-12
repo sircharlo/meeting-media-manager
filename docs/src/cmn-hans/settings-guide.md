@@ -418,23 +418,43 @@ Cache all songbook videos ahead of time for better performance. Note that this i
 
 **Default**: `false`
 
-### 启用文件夹监视 {#settings-guide-folder-monitoring}
+### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-#### 监视文件夹 {#enable-folder-watcher}
+These settings are in the **Integrations** category.
+
+M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+
+M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. To add files for another day, create a folder for it, named the same way. Anything else in the shared folder is ignored.
+
+:::tip 小贴士
+
+Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+
+:::
+
+#### Add Media From a Shared Folder {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-监视指定文件夹。如果有新的媒体文件加入，会自动将它们添加到媒体列表。
+Add the files put in the shared folder to the right meeting automatically.
 
 **Default**: `false`
 
-#### 要监视的文件夹 {#folder-to-watch}
+#### Shared Folder {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-设置要监视新媒体文件的文件夹路径。
+The folder to add media from. The setup wizard offers to set it up for you.
 
 **默认**：空
+
+#### Delete Past Meeting Folders {#delete-past-watched-folders}
+
+<!-- **Setting**: `deletePastWatchedFolders` -->
+
+When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+
+**默认**：`true`
 
 ## 启用聚会计时器 {#meeting-timer}
 
@@ -492,6 +512,8 @@ The **Analog clock with time arc** countdown format shows the time left for a pa
 可以自定义计时器的文字大小和颜色，并设置超时提示，例如不同的背景和文字颜色、闪烁效果，以及在正计时模式下只显示超出的时间。
 
 ## 集成 {#integrations}
+
+This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
 
 ### 启用 Zoom {#settings-guide-zoom-integration}
 
@@ -784,7 +806,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 ### 高级用户 {#advanced-users}
 
-1. 使用文件夹监控从云存储同步媒体
+1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
 2. 使用媒体自动导出功能将媒体保存到指定位置
 3. 配置键盘快捷键，提高媒体操作效率
 4. 配置 Zoom 集成，以便在媒体开始和停止播放时触发屏幕共享

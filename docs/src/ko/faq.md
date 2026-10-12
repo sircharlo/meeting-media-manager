@@ -178,12 +178,16 @@ M³에는 자체 녹화 기능이 없지만, 다음 두 가지 방법으로 외�
 
 ## 고급 기능 {#faq-advanced-features}
 
-### :cloud: 폴더 감시 기능은 어떻게 작동하나요? {#faq-folder-monitoring}
+### :cloud: How does the shared folder work? {#faq-folder-monitoring}
 
-폴더 감시 기능을 사용하면 다음과 같은 작업을 할 수 있습니다.
+If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
 
-1. 새로운 파일이 추가되는지 감시할 폴더를 선택합니다.
-2. Dropbox나 OneDrive와 같은 클라우드 저장소를 통해 동기화된 새로운 미디어 파일을 자동으로 가져옵니다.
+1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
+2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
+3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
+4. To add files for another day, create a folder for it, named the same way.
+
+When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
 
 ### :file_folder: 미디어 자동 내보내기란 무엇인가요? {#faq-media-export}
 

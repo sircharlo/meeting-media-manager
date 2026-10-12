@@ -178,12 +178,16 @@ M³ no incluye un grabador integrado, pero puede ayudar a controlar la grabació
 
 ## Funciones avanzadas {#faq-advanced-features}
 
-### :cloud: ¿Cómo funciona la supervisión de carpetas? {#faq-folder-monitoring}
+### :cloud: How does the shared folder work? {#faq-folder-monitoring}
 
-La supervisión de carpetas te permite:
+If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
 
-1. Seleccionar una carpeta que se supervisará en busca de archivos nuevos
-2. Importar automáticamente nuevos archivos multimedia sincronizados con servicios de almacenamiento en la nube como Dropbox o OneDrive
+1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
+2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
+3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
+4. To add files for another day, create a folder for it, named the same way.
+
+When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
 
 ### :file_folder: ¿Qué es la exportación automática de archivos multimedia? {#faq-media-export}
 

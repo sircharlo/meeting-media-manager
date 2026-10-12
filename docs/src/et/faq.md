@@ -56,7 +56,7 @@ M³ sisaldab seadistusviisardit, mis juhendab teid oluliste seadistuste tegemise
 
 ## Põhimeedia haldus {#faq-media-management}
 
-### :desktop_computer: Kuidas M³ meediat alla laadib? {#media-download}
+### :desktop_computer: Kuidas M³ meediat alla laadib?  {#media-download}
 
 M³ laadib automaatselt alla meedia eelseisvate koosolekute jaoks järgmiselt:
 
@@ -66,7 +66,7 @@ M³ laadib automaatselt alla meedia eelseisvate koosolekute jaoks järgmiselt:
 4. Organiseerib meediaüksused vatavalt kuupäevale ja koosolekule
 5. Failide salvestamine offline-kasutamiseks
 
-### :calendar: Kas ma saan alla laadida meediat kindlate kuupäevade jaoks? {#specific-dates}
+### :calendar: Kas ma saan alla laadida meediat kindlate kuupäevade jaoks?  {#specific-dates}
 
 Jah! M³ võimaldab sul:
 
@@ -84,7 +84,7 @@ Sa saad importida kohandatud meediat mitmel viisil:
 - **Avaliku kõne meedia**: S-34 või S-34mp JWPUB-failide importimine avaliku kõne meedia jaoks
 - **Piibel ja piiblitööriistad**: Lisa piibli helisalvestusi, õppepiibli meediafailid või viipekeele piiblimaterjale
 
-### :speaker: Kas ma saan importida audiopiibli osi? {#audio-bible}
+### :speaker: Kas ma saan importida audiopiibli osi?  {#audio-bible}
 
 Jah! M³ sisaldab audiopiibli funktsiooni, mis võimaldab sul:
 
@@ -95,7 +95,7 @@ Jah! M³ sisaldab audiopiibli funktsiooni, mis võimaldab sul:
 
 ## Meedia esitluse funktsioonid {#faq-presentation-features}
 
-### :tv: Kuidas esitada koosolekute ajal meediafaile? {#present-media}
+### :tv: Kuidas esitada koosolekute ajal meediafaile?  {#present-media}
 
 Et esitada meediat:
 
@@ -105,7 +105,7 @@ Et esitada meediat:
 4. Kasuta piltide suumimise/panorameerimise funktsioone
 5. Vajadusel seadista kohandatud ajastus
 
-### :keyboard: Millised klaviatuurikombinatsioonid on saadaval? {#faq-keyboard-shortcuts}
+### :keyboard: Millised klaviatuurikombinatsioonid on saadaval?  {#faq-keyboard-shortcuts}
 
 M³ toetab kohandatavaid klaviatuurikombinatsioone järgmisteks toiminguteks:
 
@@ -116,7 +116,7 @@ M³ toetab kohandatavaid klaviatuurikombinatsioone järgmisteks toiminguteks:
 
 <!-- - Fullscreen mode -->
 
-### :notes: Kuidas taustamuusika toimib? {#faq-background-music}
+### :notes: Kuidas taustamuusika toimib?  {#faq-background-music}
 
 Taustamuusika funktsioon hõlmab:
 
@@ -132,7 +132,7 @@ Jah. Kui see funktsioon on sisse lülitatud, võib M³ kuvada osalejate aja mõ�
 
 Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
 
-### :video_camera: Kuidas seadistada Zoom-iga koostöö? {#zoom-setup}
+### :video_camera: Kuidas seadistada Zoom-iga koostöö?  {#zoom-setup}
 
 Zoom-iga koostöö:
 
@@ -142,7 +142,7 @@ Zoom-iga koostöö:
 
 ## Koostöö OBS Studioga {#faq-obs-integration}
 
-### :video_camera: Kuidas seadistada OBS Studio-ga koostöö? {#faq-obs-setup}
+### :video_camera: Kuidas seadistada OBS Studio-ga koostöö?  {#faq-obs-setup}
 
 Et teha koostööd OBS Studio-ga:
 
@@ -152,7 +152,7 @@ Et teha koostööd OBS Studio-ga:
 4. Seadista stseenid kaamera, meedia ja piltide jaoks
 5. Testi meedia esitlust
 
-### :arrows_counterclockwise: Kuidas töötab automaatne stseeni vahetamine? {#faq-scene-switching}
+### :arrows_counterclockwise: Kuidas töötab automaatne stseeni vahetamine?  {#faq-scene-switching}
 
 M³ lülitab OBS Studio-stseene automaatselt ümber järgmiste kriteeriumide alusel:
 
@@ -161,7 +161,7 @@ M³ lülitab OBS Studio-stseene automaatselt ümber järgmiste kriteeriumide alu
 - Settings like "Do not automatically share images"
 - Kas pärast meedia esitamist naasta eelmisele stseenile või mitte
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do?  {#faq-postpone-images}
 
 This setting delays sharing images to OBS until you manually trigger them. See on kasulik kui:
 
@@ -178,12 +178,16 @@ M³-l pole sisseehitatud salvestusseadet, kuid see aitab salvestamist juhtida ka
 
 ## Lisasätted {#faq-advanced-features}
 
-### :cloud: Kuidas töötab kausta jälgimine? {#faq-folder-monitoring}
+### :cloud: How does the shared folder work?  {#faq-folder-monitoring}
 
-Kausta jälgimine lubab sul:
+If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
 
-1. Valida kaust, kus soovid uusi faile jälgida
-2. Importida automaatselt uued meediafailid, mis on sünkroniseeritud pilvesalvestusega, nagu Dropbox või OneDrive
+1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
+2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
+3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
+4. To add files for another day, create a folder for it, named the same way.
+
+When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
 
 ### :file_folder: Mis on meedia automaatne eksport? {#faq-media-export}
 
@@ -194,7 +198,7 @@ Meedia automaatne eksport:
 3. Muudab failid MP4 formaati (valikuline)
 4. Säilitab organiseeritud tagavarakoopia koosoleku meediafailidest
 
-### :family: Kas ma saan kasutada rakenduses mitut kogudust? {#faq-multiple-congregations}
+### :family: Kas ma saan kasutada rakenduses mitut kogudust?  {#faq-multiple-congregations}
 
 Jah! M³-s saab kasutada erinevaid profiile:
 
@@ -207,7 +211,7 @@ Profiile saab eksportida ka JSON-failina ning importida teise arvutisse või tei
 
 ## Probleemide lahendamine {#faq-troubleshooting}
 
-### :warning: Meedia ei lae alla. Mida peaksin kontrollima? {#faq-media-not-downloading}
+### :warning: Meedia ei lae alla. Mida peaksin kontrollima?  {#faq-media-not-downloading}
 
 Kontrolli järgmisi põhjuseid:
 
@@ -218,7 +222,7 @@ Kontrolli järgmisi põhjuseid:
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: OBS Studio koostöö ei toimi. Mida peaksin kontrollima? {#faq-obs-not-working}
+### :video_camera: OBS Studio koostöö ei toimi. Mida peaksin kontrollima?  {#faq-obs-not-working}
 
 Kontrolli järgmisi OBS Studio põhjuseid:
 
@@ -227,7 +231,7 @@ Kontrolli järgmisi OBS Studio põhjuseid:
 3. **Port ja parool**: Kontrolli OBS Studio porti ja parooli seadeid
 4. **Tulemüür**: Veendu, et tulemüür ei blokeeri ühendust
 
-### :speaker: Kas Meeting Media Manager saadab OBS Studio kasutamisel meediaheli automaatselt Zoomile? {#audio-to-zoom}
+### :speaker: Kas Meeting Media Manager saadab OBS Studio kasutamisel meediaheli automaatselt Zoomile?  {#audio-to-zoom}
 
 **Ei.** M³ ei saada meediaheli automaatselt Zoomile ega OBS Studiole. Videovoog töötab nagu virtuaalne kaamera ilma helita, täpselt nagu veebikaamera. Et muusika/video heli oleks Zoomis automaatselt kättesaadav, pead tagama, et Zoom „kuuleb” arvutist tulevat helisignaali, ning seejärel peaksid Zoomis aktiveerima **Original Audio** (originaalheli) sätte.
 
@@ -242,7 +246,7 @@ Kontrolli järgmisi OBS Studio põhjuseid:
 **Miks on see vajalik?**
 M³ mängib sinu arvutis heli sisaldavat meediat, kuid OBS Studio kasutamisel ei edastata seda heli automaatselt videovoogude kaudu Zoomile. Originaalheli võimaldab Zoomil salvestada ekraani jagamise ajal sinu arvutis mängivat heli, kui sinu arvuti on õigesti seadistatud (näiteks: arvutil on teine helikaart, mida kasutatakse meedia taasesituseks ja mida Zoom kuulab mikrofoni rollis)
 
-### :snail: M³ töötab aeglaselt. Kuidas saan parandada jõudlust? {#performance-issues}
+### :snail: M³ töötab aeglaselt. Kuidas saan parandada jõudlust?  {#performance-issues}
 
 Proovi järgmisi jõudluse optimeerimisi:
 
@@ -262,7 +266,7 @@ Kontrolli neid keelesätteid:
 
 ## Tugi ja kogukond {#support-community}
 
-### :radioactive: Kuidas ma saan probleemist teada anda? {#how-do-i-report-an-issue}
+### :radioactive: Kuidas ma saan probleemist teada anda?  {#how-do-i-report-an-issue}
 
 Palun [esita probleem](https://github.com/sircharlo/meeting-media-manager/issues) ametlikus GitHubi andmebaasis. Kirjuta:
 
@@ -271,7 +275,7 @@ Palun [esita probleem](https://github.com/sircharlo/meeting-media-manager/issues
 - Sinu arvuti operatsioonisüsteem ja M³ versioon
 - Kõik veateated, logid ja ekraanipildid
 
-### :new: Kuidas saan taotleda uut funktsiooni või täiustust? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: Kuidas saan taotleda uut funktsiooni või täiustust?  {#how-can-i-request-a-new-feature-or-enhancement}
 
 Palun [ava arutelu](https://github.com/sircharlo/meeting-media-manager/discussions) ametlikus GitHubi repositooriumis. Kirjelda:
 
@@ -279,11 +283,11 @@ Palun [ava arutelu](https://github.com/sircharlo/meeting-media-manager/discussio
 - Kuidas see kasutajatele kasuks tuleks
 - Mis tahes konkreetsed nõuded või eelistused
 
-### :handshake: Kuidas saan ma panustada koodi arendamisse? {#how-can-i-contribute-some-code}
+### :handshake: Kuidas saan ma panustada koodi arendamisse?  {#how-can-i-contribute-some-code}
 
 Palun [vaata koostöö juhendit](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) ametlikus GitHubi repositooriumis. Ootame koodipanuseid ja Pull Requests-e!
 
-### :globe_with_meridians: Kuidas saan ma tõlkimisega aidata? {#translations}
+### :globe_with_meridians: Kuidas saan ma tõlkimisega aidata?  {#translations}
 
 M³ kasutab tõlkehalduseks Crowdin keskkonda. Saad tõlkeid lisada järgmiselt:
 
@@ -292,7 +296,7 @@ M³ kasutab tõlkehalduseks Crowdin keskkonda. Saad tõlkeid lisada järgmiselt:
 3. Tõlkides fraasid, mis vajavad tõlkimist
 4. Vaadates üle olemasolevad tõlked
 
-### :x: Kas ma saan teha projektile annetuse? {#can-i-make-a-donation-to-the-project}
+### :x: Kas ma saan teha projektile annetuse?  {#can-i-make-a-donation-to-the-project}
 
 Täname sind sinu huvi eest projekti toetamise vastu! Matteuse 10:8 vaimus **ei võeta vastu** annetusi ning ei võeta ka edaspidi. See rakendus on loodud armastusest ja vabast ajast. Palun naudi! :tada:
 

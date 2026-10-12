@@ -80,7 +80,7 @@ Nō te mau putuputura’a ’āmui ’aore rā i te vāhi rurura’a, te vai ra 
 
 ### Mau rāve’a hōhonu {#about-advanced-features}
 
-- Arata’ira’a rāfao: E tū’ati i’oa-noa i te media nō roto mai i te mau rāfao e mātāitaihia (Dropbox, OneDrive, ’e te tahi atu)
+- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 - Hāpono-fa’aho’i-ra’a media: E hāpono-fa’aho’i i’oa-noa i te media i roto i te mau rāfao, fa’anahohia mā te tai’o mahana
 - Te fa’a’itera’a pae natirara: Fa’a’ite i te pae natirara mana i ni’a i te mau piha hi’o nō rāpae
 - Te taime o te putuputura’a: Tei mā’itihia te ha’amaramarama taime no te faito i te mau tuha’a o te putuputura’a
