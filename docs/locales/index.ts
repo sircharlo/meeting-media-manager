@@ -13,10 +13,10 @@ export const enabled: LanguageValue[] = baseEnabled.filter((l) => l !== 'en');
 // 100.0% translated as of 2026-10-12
 import en from './en.json' with { type: 'json' };
 
-// 96.9% translated as of 2026-10-12
+// 99.4% translated as of 2026-10-12
 import fr from './fr.json' with { type: 'json' };
 
-// 96.4% translated as of 2026-10-12
+// 98.8% translated as of 2026-10-12
 import es from './es.json' with { type: 'json' };
 
 // 96.4% translated as of 2026-10-12
@@ -28,11 +28,11 @@ import sl from './sl.json' with { type: 'json' };
 // 83.1% translated as of 2026-10-12
 import ty from './ty.json' with { type: 'json' };
 
+// 75.0% translated as of 2026-10-12
+import ko from './ko.json' with { type: 'json' };
+
 // 74.9% translated as of 2026-10-12
 import cmnHans from './cmn-hans.json' with { type: 'json' };
-
-// 74.4% translated as of 2026-10-12
-import ko from './ko.json' with { type: 'json' };
 
 // 71.3% translated as of 2026-10-12
 import et from './et.json' with { type: 'json' };
