@@ -149,25 +149,25 @@ Ko je časovnik shoda omogočen, lahko M³ prikaže ločeno okno časovnika za m
 
 Časovnik je funkcija v beta fazi in se sme uporabljati samo, če je lokalno odobrena.
 
-#### Meeting Parts {#user-guide-timer-parts}
+#### Točke shoda {#user-guide-timer-parts}
 
-The timer popup on the action island lists the parts of the selected day's meeting. For midweek meetings, choose how many Apply Yourself to the Field Ministry and Living as Christians parts there are; the section's minutes are shared out evenly, and each part can then be adjusted freely with the **+** and **−** buttons or by clicking the part. Any part can be set to any number of minutes, including 0 to skip it. A warning icon points out sections whose parts don't add up to the time allotted to them, but never changes anything on its own.
+Pojavno okno časovnika v orodni vrstici prikaže točke izbranega dne shoda. Pri shodih med tednom izberi, koliko točk Izurimo se v oznanjevanju in Krščansko življenje je na sporedu; minute posameznega dela se razdelijo enakomerno, vsako točko pa je nato mogoče prosto prilagajati z gumboma + in − ali s klikom na točko. Vsako točko je mogoče nastaviti na poljubno število minut, tudi na 0, če jo želiš preskočiti. Opozorilna ikona označi razdelke, pri katerih se trajanja točk ne ujemajo z dodeljenim časom, vendar se nič ne popravi samo od sebe.
 
-**Custom parts** can be added on any day, for Governing Body updates, special programs or anything else that isn't on the regular schedule. On days without a meeting, the timer starts with one custom part per custom media section.
+**Prilagojene točke** je mogoče dodati na kateri koli dan — za poročila Vodstvenega organa, posebne programe ali kar koli drugega, kar ni na rednem razporedu. Na dneve brez shoda časovnik začne z eno prilagojeno točko na vsak razdelek s prilagojeno multimedijsko vsebino.
 
-Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
+Število točk, spremenjene dolžine točk, prilagojene točke in zabeleženi časi se shranijo za vsak dan posebej, zato se ohranijo tudi po ponovnem zagonu M³ in se nikoli ne pomešajo z drugimi shodi. Zabeležene čase posameznega dne je mogoče izbrisati naenkrat z možnostjo »Ponastavi vse časovne meritve za ta dan«, časovno poročilo v obliki PDF pa je mogoče izvoziti kadar koli.
 
 #### Hand Alert {#user-guide-timer-hand-alert}
 
 A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
 
-#### Timer on a Tablet {#user-guide-timer-remote}
+#### Časovnik na tablici {#user-guide-timer-remote}
 
-The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³.
+Neobvezni [oddaljeni časovnik](/settings-guide#timer-remote) streže kopijo prikaza časovnika kot spletno stran v vašem lokalnem omrežju. Odpri naslov, prikazan v pojavnem oknu časovnika, v brskalniku tablice ali telefona na govorniškem pultu, in govornik bo preostali čas videl zasebno, medtem ko vse kontrole ostanejo v M³.
 
-#### Quick Access {#user-guide-timer-quick-access}
+#### Hiter dostop {#user-guide-timer-quick-access}
 
-Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).
+Ko se z miško ustaviš na gumbu časovnika v orodni vrstici, se prikaže točka, ki se trenutno meri, skupaj z gumbi Začni, Premor, Ustavi in Naslednja točka. Nastavitev lahko tudi pripne časovni panel na desno stran glavnega okna, kjer sta celoten seznam točk in kontrole časovnika vedno vidne. Glej [Vodnik po nastavitvah](/settings-guide#timer-quick-access).
 
 ## Glasba v ozadju {#user-guide-background-music}
 
