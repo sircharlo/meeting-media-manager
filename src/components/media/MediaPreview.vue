@@ -628,22 +628,34 @@ onUnmounted(() => {
   stopCaptureStream();
 });
 
+const getPositionReportAgeSeconds = () => {
+  const updatedAt = mediaPlaying.value.currentPositionUpdatedAt;
+  return updatedAt ? Math.max(0, (Date.now() - updatedAt) / 1000) : 0;
+};
+
+// While media plays, the media window reports its position about every
+// 300ms. A report this old means it has stopped reporting (MMM-V2-3EY: a
+// 32-minute-old one after the media window's capture stream ended), so
+// there's no telling where real playback is.
+const POSITION_REPORT_STALE_SECONDS = 5;
+
 // mediaPlaying.currentPosition is only as fresh as the last throttled
 // current-time report from the media window. Extrapolate forward by however
 // long has elapsed since that report so the preview targets where real
 // playback actually is *now*, not where it was ~0.3s (report interval) plus
 // IPC round-trip ago - that gap is exactly what showed up as small,
 // consistent "exceeded acceptable drift" corrections right after starting.
+// Never past the end, though: a seek beyond the duration parks the video at
+// its end, the next play() restarts it from 0, and the following check
+// seeks past the end again, each pass counting as a drift correction.
 const getExpectedPosition = () => {
   const base = mediaPlaying.value.currentPosition || 0;
   if (mediaAction.value !== 'play') return base;
 
-  const updatedAt = mediaPlaying.value.currentPositionUpdatedAt;
-  if (!updatedAt) return base;
-
-  const elapsedSeconds = Math.max(0, (Date.now() - updatedAt) / 1000);
   const playbackRate = mediaPlaying.value.playbackRate || 1;
-  return base + elapsedSeconds * playbackRate;
+  const expected = base + getPositionReportAgeSeconds() * playbackRate;
+  const duration = mediaPlaying.value.duration;
+  return duration > 0 ? Math.min(expected, duration) : expected;
 };
 
 // The expected position is extrapolated from the last current-time report
@@ -658,11 +670,7 @@ const getExpectedPosition = () => {
 // 0.2s allowance scaled by rate.
 const getAcceptableDrift = () => {
   const playbackRate = mediaPlaying.value.playbackRate || 1;
-  const updatedAt = mediaPlaying.value.currentPositionUpdatedAt;
-  const reportAgeSeconds = updatedAt
-    ? Math.max(0, (Date.now() - updatedAt) / 1000)
-    : 0;
-  return 0.2 * playbackRate + reportAgeSeconds * playbackRate;
+  return 0.2 * playbackRate + getPositionReportAgeSeconds() * playbackRate;
 };
 
 const syncVideoTime = (element: HTMLVideoElement, acceptableDrift: number) => {
@@ -837,6 +845,19 @@ const syncVideos = async () => {
     if (element.playbackRate !== playbackRate) {
       log('Syncing video preview playback speed', 'mediaPreview');
       element.playbackRate = playbackRate;
+    }
+
+    if (getPositionReportAgeSeconds() > POSITION_REPORT_STALE_SECONDS) {
+      // Chasing a position extrapolated from a long-dead report seeks to
+      // somewhere real playback isn't, so every check reads as drift and
+      // the preview turned itself off within milliseconds (MMM-V2-3EY).
+      // Hold still until the media window reports again.
+      log(
+        'Holding video preview until the media window reports its position again',
+        'mediaPreview',
+      );
+      if (!element.paused) element.pause();
+      return;
     }
 
     if (element.paused && !realPlaybackConfirmed.value) {

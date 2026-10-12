@@ -203,6 +203,56 @@ describe('MediaPreview drift handling', () => {
     expect(videoElement.currentTime).toBe(130);
   });
 
+  it('holds the preview instead of chasing a position report the media window stopped sending', async () => {
+    const currentState = seedStores();
+    currentState.mediaPlaying = {
+      ...currentState.mediaPlaying,
+      // MMM-V2-3EY: the media window stopped reporting 3.6s before the end
+      // of a 266s song, and the preview was opened 32 minutes later.
+      currentPosition: 262.24,
+      currentPositionUpdatedAt: Date.now() - 32 * 60 * 1000,
+      duration: 265.856,
+    };
+
+    const wrapper = mountPreview();
+    await nextTick();
+
+    const videoElement = wrapper.get('video').element as HTMLVideoElement;
+    for (let i = 0; i < 12; i++) {
+      await wrapper.get('video').trigger('canplay');
+      await nextTick();
+      await nextTick();
+    }
+
+    // No seeking, no playing, and so no drift corrections piling up into
+    // the fallback and the auto-disable.
+    expect(videoElement.currentTime).toBe(0);
+    expect(videoElement.paused).toBe(true);
+    expect(currentState.currentSettings?.enableMediaPreview).toBe(true);
+  });
+
+  it('never extrapolates the expected position past the end of the media', async () => {
+    const currentState = seedStores();
+    currentState.mediaPlaying = {
+      ...currentState.mediaPlaying,
+      // A 2s-old report 0.5s before the end extrapolates 1.5s past it.
+      currentPosition: 399.5,
+      currentPositionUpdatedAt: Date.now() - 2000,
+      duration: 400,
+    };
+
+    const wrapper = mountPreview();
+    await nextTick();
+
+    // The first run seeds the paused element to the expected position.
+    await wrapper.get('video').trigger('canplay');
+    await nextTick();
+
+    expect((wrapper.get('video').element as HTMLVideoElement).currentTime).toBe(
+      400,
+    );
+  });
+
   it('disables the preview entirely when drift repeats in video mode', async () => {
     // Dev/test default is video mode - no localStorage opt-in needed.
     const currentState = seedStores();
