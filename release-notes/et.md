@@ -24,6 +24,8 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 - ✨ **Meeting Timer**: A new, optional timer remote. When turned on, M³ serves a read-only copy of the timer display as a web page on the local network, so a tablet or phone at the lectern can show the speaker the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time (parts, pre-meeting countdown, clock, overtime colors, hand alert) and all the controls stay in M³. The addresses to open are shown in the timer popup, with a copy button.
 
+- ✨ **Setup Wizard**: The setup wizard now asks whether you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive. If you do, it helps you choose a shared folder there and shows how it works: M³ creates a folder for each upcoming meeting, named with the meeting's date, and the files put in it are added to that meeting automatically, on every computer that uses the folder.
+
 ## v26.9.0
 
 ### ✨ Uued funktsioonid

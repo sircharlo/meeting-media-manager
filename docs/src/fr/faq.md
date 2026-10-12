@@ -178,16 +178,16 @@ M³ n'inclut pas de fonctionnalité d'enregistrement intégrée, mais il peut ai
 
 ## Fonctionnalités avancées {#faq-advanced-features}
 
-### :cloud: How does the shared folder work? {#faq-folder-monitoring}
+### :cloud: Comment fonctionne le dossier partagé ? {#faq-folder-monitoring}
 
-If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
+Si vous conservez les fichiers pour les réunions dans une application de stockage cloud comme Dropbox, OneDrive, iCloud Drive ou Google Drive, M³ peut les ajouter automatiquement à la bonne réunion :
 
-1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
-2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
-3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
-4. To add files for another day, create a folder for it, named the same way.
+1. Choisissez un dossier dans votre application de stockage cloud, dans l'assistant de configuration ou dans **Paramètres** > **Intégrations** > **Dossier partagé**. Le mieux est d'utiliser un nouveau dossier réservé à cet usage.
+2. M³ y crée un dossier pour chaque réunion à venir, nommé d'après la date de la réunion écrite sous la forme année-mois-jour (par exemple, `2026-03-25`).
+3. Placez des photos, des vidéos, des fichiers audio ou des listes de lecture JW Library dans le dossier d'une réunion quand vous en avez besoin. Ils sont ajoutés à la liste des médias de cette réunion, sur chaque ordinateur qui utilise ce dossier.
+4. Pour ajouter des fichiers pour un autre jour, créez un dossier pour ce jour, nommé de la même façon.
 
-When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
+Quand une semaine est terminée, M³ supprime les dossiers datés de cette semaine et les fichiers qu'ils contiennent, pour toutes les personnes qui utilisent le dossier partagé. Pour les conserver, désactivez **Supprimer les dossiers des réunions passées**.
 
 ### :file_folder: Qu'est-ce que l'exportation automatique des médias ? {#faq-media-export}
 
