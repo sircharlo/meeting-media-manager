@@ -418,41 +418,41 @@ Convierte los archivos multimedia exportados al formato MP4 para mejorar la comp
 
 **Predeterminado**: `false`
 
-### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
+### Carpeta compartida (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-These settings are in the **Integrations** category.
+Estos ajustes están en la categoría **Integraciones**.
 
-M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+M³ puede añadir archivos multimedia a tus reuniones desde una carpeta sincronizada con una aplicación de almacenamiento en la nube, como Dropbox, OneDrive, iCloud Drive o Google Drive. Esto resulta útil cuando otros preparan archivos multimedia para sus partes y los comparten contigo, o cuando M³ se usa en más de una computadora. Una carpeta en esta computadora o en tu red también sirve.
 
-M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. To add files for another day, create a folder for it, named the same way. Anything else in the shared folder is ignored.
+M³ crea una carpeta dentro de la carpeta compartida para cada próxima reunión, nombrada con la fecha de la reunión escrita como año-mes-día (por ejemplo, `2026-03-25`). Pon fotos, videos, archivos de audio o listas de reproducción de JW Library en la carpeta de una reunión y se añadirán automáticamente a la lista de multimedia de esa reunión. Para añadir archivos para otro día, crea una carpeta para ese día, nombrada de la misma manera. Todo lo demás en la carpeta compartida se ignorará.
 
 :::tip Consejo
 
-Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+Crea una carpeta nueva dedicada solo a esto, como "Multimedia de las reuniones", y configúrala para que permanezca siempre en esta computadora en tu aplicación de almacenamiento en la nube (suele llamarse "disponible sin conexión"), de modo que los archivos estén listos antes de que comience la reunión.
 
 :::
 
-#### Add Media From a Shared Folder {#enable-folder-watcher}
+#### Añadir archivos multimedia desde una carpeta compartida {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Add the files put in the shared folder to the right meeting automatically.
+Añade automáticamente los archivos que se pongan en la carpeta compartida a la reunión correspondiente.
 
 **Predeterminado**: `false`
 
-#### Shared Folder {#folder-to-watch}
+#### Carpeta compartida {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder to add media from. The setup wizard offers to set it up for you.
+La carpeta desde la que se añadirán los archivos multimedia. El asistente de configuración se ofrece a configurarla por ti.
 
 **Predeterminado**: Vacío
 
-#### Delete Past Meeting Folders {#delete-past-watched-folders}
+#### Eliminar carpetas de reuniones pasadas {#delete-past-watched-folders}
 
 <!-- **Setting**: `deletePastWatchedFolders` -->
 
-When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+Cuando termina una semana, elimina las carpetas fechadas de esa semana, junto con los archivos que contienen, para mantener ordenada la carpeta compartida. Como la carpeta es compartida, también se eliminan para todos los demás que la usan. Desactiva esto para conservarlos.
 
 **Predeterminado**: `true`
 
@@ -513,7 +513,7 @@ Personaliza el tamaño y los colores del texto del cronómetro, y configura indi
 
 ## Integraciones {#integrations}
 
-This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
+Esta categoría también contiene los ajustes de la [carpeta compartida](#settings-guide-folder-monitoring), para añadir archivos multimedia desde Dropbox, OneDrive, iCloud Drive o Google Drive.
 
 ### Integración con Zoom {#settings-guide-zoom-integration}
 
@@ -806,7 +806,7 @@ Desactiva por completo las descargas automáticas de archivos multimedia. Usa es
 
 ### Para usuarios avanzados {#advanced-users}
 
-1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
+1. Usa una carpeta compartida para añadir archivos multimedia desde un almacenamiento en la nube, como Dropbox o OneDrive
 2. Activa la exportación automática de archivos multimedia para tener copias de seguridad
 3. Configura atajos de teclado para trabajar con eficiencia
 4. Configura la integración con Zoom para compartir pantalla automáticamente
