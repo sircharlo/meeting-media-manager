@@ -37,7 +37,7 @@ import et from './et.json' with { type: 'json' };
 // 55.3% translated as of 2026-10-12
 import pt from './pt.json' with { type: 'json' };
 
-// 51.4% translated as of 2026-10-12
+// 52.1% translated as of 2026-10-12
 import de from './de.json' with { type: 'json' };
 
 // 40.9% translated as of 2026-10-12
