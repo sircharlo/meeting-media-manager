@@ -14,7 +14,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 - ✨ **Časovnik shodov**: Hitrejši dostop do časovnika. Ko se z miško ustaviš na gumbu časovnika v orodni vrstici, se prikaže točka, ki se trenutno meri, skupaj z gumbi Začni, Premor, Ustavi in Naslednja točka — brez odpiranja pojavnega okna (nastavitev, privzeto vklopljena). Nova nastavitev omogoča tudi, da sta celoten seznam točk in kontrole časovnika prikazana v panelu, pripetem na desni strani glavnega okna, vedno vidna.
 
-- ✨ **Časovnik shodov**: Nov prikaz odštevanja (»Analogna ura z lokom trajanja«) pokaže preostali čas točke kot klin na analogni uri — od minutnega kazalca do načrtovanega konca — tako da en sam pogled pokaže tako uro kot preostanek časa. Prekoračitev se prikaže kot rdeč klin. Prikaz deluje tudi pri odštevanju pred shodom in v načinu štetja navzgor.
+- ✨ **Časovnik shodov**: Nov prikaz odštevanja (»Analogna ura z lokom trajanja«) pokaže preostali čas točke kot segment na analogni uri — od minutnega kazalca do načrtovanega konca — tako da en sam pogled pokaže tako uro kot preostanek časa. Prekoračitev se prikaže kot rdeč segment. Prikaz deluje tudi pri odštevanju pred shodom in v načinu štetja navzgor.
 
 - ✨ **Časovnik shodov**: Odštevanje pred shodom je zdaj označeno s »Shod se začne čez«, prikaz časovnika pa pokaže ime točke, ki se meri, tako da »4:59« ne more biti več zamenjano za uro v dnevu.
 
@@ -22,7 +22,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 - ✨ **Zoom Meeting Manager (beta, Windows)**: A new raised-hand helper. During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets the operator unmute that participant with one click, and, once they're done speaking, mute them again and lower their hand with another; the Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name, and M³ touches no one when two participants share a name. If the meeting timer is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and can be switched on by hand from the timer or Zoom popups. M³ learns how Zoom marks raised hands in your language with a single button (it raises and lowers your own hand), offered in the setup assistant as well.
 
-- ✨ **Meeting Timer**: A new, optional timer remote. When turned on, M³ serves a read-only copy of the timer display as a web page on the local network, so a tablet or phone at the lectern can show the speaker the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time (parts, pre-meeting countdown, clock, overtime colors, hand alert) and all the controls stay in M³. The addresses to open are shown in the timer popup, with a copy button.
+- ✨ **Časovnik shodov**: Nov, neobvezen oddaljeni časovnik. Ko je vklopljen, M³ streže kopijo prikaza časovnika kot spletno stran v lokalnem omrežju, tako da lahko tablica ali telefon na govorniškem pultu pokaže govorniku preostali čas, ne da bi bil prikazan na občinskem zaslonu ali deljen prek Zooma. Stran sledi časovniku v realnem času (točke, odštevanje pred shodom, ura, barve za prekoračitev, opozorilo z roko), vse kontrole pa ostanejo v M³. Naslovi za odpiranje so prikazani v pojavnem oknu časovnika, skupaj z gumbom za kopiranje.
 
 ## v26.9.0
 
