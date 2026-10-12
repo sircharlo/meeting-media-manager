@@ -139,3 +139,71 @@ describe('SetupWizard, Zoom', () => {
     expect(text()).toContain('Zoom screen sharing shortcut');
   });
 });
+
+describe('SetupWizard, shared folder', () => {
+  const SHARED_FOLDER_STEP = 11;
+  const SHARED_FOLDER = 'C:/Users/me/Dropbox/Meeting media';
+
+  const goToSharedFolderQuestion = async () => {
+    await mountWizard();
+    (wrapper?.vm as unknown as { regularProfile: boolean }).regularProfile =
+      true;
+    await goToStep(SHARED_FOLDER_STEP);
+  };
+
+  it('goes straight to the end of the setup when no shared folder is used', async () => {
+    await goToSharedFolderQuestion();
+    expect(text()).toContain('Do you keep files for meetings in an app');
+
+    await click('No');
+    expect(settings().enableFolderWatcher).toBe(false);
+    expect(text()).toContain("We'll start fetching media");
+
+    await click('Back');
+    expect(text()).toContain('Do you keep files for meetings in an app');
+  });
+
+  it('asks for the folder, then explains how it works', async () => {
+    vi.spyOn(globalThis.electronApi, 'openFolderDialog').mockResolvedValue({
+      canceled: false,
+      filePaths: [SHARED_FOLDER],
+    });
+    // Tomorrow's weekday, numbered from Monday like the meeting day settings.
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const pad = (n: number) => String(n).padStart(2, '0');
+
+    await goToSharedFolderQuestion();
+    settings().mwDay = `${(tomorrow.getDay() + 6) % 7}`;
+    await click('Yes');
+    expect(settings().enableFolderWatcher).toBe(true);
+
+    const continueButton = () =>
+      Array.from(document.querySelectorAll('button')).findLast(
+        (el) => el.textContent?.trim() === 'Continue',
+      );
+    expect(continueButton()?.disabled).toBe(true);
+
+    document
+      .querySelector<HTMLElement>('.q-stepper__step-content .q-field')
+      ?.click();
+    await flushPromises();
+    expect(settings().folderToWatch).toBe(SHARED_FOLDER);
+    expect(continueButton()?.disabled).toBe(false);
+
+    await click('Continue');
+    expect(text()).toContain('How the shared folder works');
+    expect(text()).toContain('Meeting media');
+    expect(text()).toContain(
+      `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}`,
+    );
+    // Past folders are deleted by default, as they always were.
+    expect(settings().deletePastWatchedFolders).toBe(true);
+
+    await click('Continue');
+    expect(text()).toContain("We'll start fetching media");
+
+    await click('Back');
+    expect(text()).toContain('How the shared folder works');
+  });
+});

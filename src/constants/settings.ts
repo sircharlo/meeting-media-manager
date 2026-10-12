@@ -395,18 +395,6 @@ export const settingsDefinitions: SettingsItems = {
     type: 'toggle',
     unless: 'disableMediaFetching',
   },
-  enableFolderWatcher: {
-    depends: 'enableMediaDisplayButton',
-    group: 'mediaRetrievalPlayback',
-    subgroup: 'folderWatcher',
-    type: 'toggle',
-  },
-  folderToWatch: {
-    depends: ['enableFolderWatcher', 'enableMediaDisplayButton'],
-    group: 'mediaRetrievalPlayback',
-    subgroup: 'folderWatcher',
-    type: 'path',
-  },
 
   // Meeting Timer
   enableTimerDisplay: {
@@ -567,6 +555,27 @@ export const settingsDefinitions: SettingsItems = {
   },
 
   // Integrations
+  // The shared (watched) folder comes first: it's the integration most
+  // congregations can use (any cloud storage app), and its 3 settings stay
+  // visible without scrolling past the long Zoom and OBS sections.
+  enableFolderWatcher: {
+    depends: 'enableMediaDisplayButton',
+    group: 'integrations',
+    subgroup: 'folderWatcher',
+    type: 'toggle',
+  },
+  folderToWatch: {
+    depends: ['enableFolderWatcher', 'enableMediaDisplayButton'],
+    group: 'integrations',
+    subgroup: 'folderWatcher',
+    type: 'path',
+  },
+  deletePastWatchedFolders: {
+    depends: ['enableFolderWatcher', 'enableMediaDisplayButton'],
+    group: 'integrations',
+    subgroup: 'folderWatcher',
+    type: 'toggle',
+  },
   zoomEnable: {
     disableWhen: 'zoomMeetingManagerEnable',
     group: 'integrations',
@@ -1010,6 +1019,7 @@ export const defaultSettings: SettingsValues = {
   customEventMediaPlayShortcut: null,
   customEventMediaStopShortcut: null,
   darkMode: 'auto',
+  deletePastWatchedFolders: true,
   disableHardwareAcceleration: false,
   disableMediaFetching: false,
   enableAutomaticMeetingScheduleUpdates: true,

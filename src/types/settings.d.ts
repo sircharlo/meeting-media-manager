@@ -249,6 +249,7 @@ export interface SettingsValues {
   customEventMediaPlayShortcut: null | string;
   customEventMediaStopShortcut: null | string;
   darkMode: 'auto' | boolean;
+  deletePastWatchedFolders: boolean;
   disableHardwareAcceleration: boolean;
   disableMediaFetching: boolean;
   enableAutomaticMeetingScheduleUpdates: boolean;

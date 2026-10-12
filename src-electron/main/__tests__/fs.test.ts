@@ -1014,6 +1014,39 @@ describe('watchFolder', () => {
     expect(captureElectronErrorMock).not.toHaveBeenCalled();
   });
 
+  it('only watches dated folders that can still show up in the media calendar', async () => {
+    mockWatcherRegistration();
+    const { watchFolder } = await import('../fs');
+    await watchFolder('/tmp/media');
+
+    const { ignored } = watchMock.mock.calls[0]?.[1] as {
+      ignored: (fp: string, stats?: { isDirectory: () => boolean }) => boolean;
+    };
+    const folderStats = { isDirectory: () => true };
+    const datedFolder = (daysFromToday: number) => {
+      const date = new Date();
+      date.setDate(date.getDate() + daysFromToday);
+      const pad = (n: number) => String(n).padStart(2, '0');
+      return `/tmp/media/${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    };
+
+    expect(ignored('/tmp/media', folderStats)).toBe(false);
+    expect(ignored(datedFolder(-30), folderStats)).toBe(true);
+    expect(ignored(datedFolder(-6), folderStats)).toBe(false);
+    expect(ignored(datedFolder(7), folderStats)).toBe(false);
+    expect(ignored('/tmp/media/Not a date', folderStats)).toBe(true);
+  });
+
+  it('treats folders from before the last 7 days as long past', async () => {
+    const { isLongPastDayFolder } = await import('../fs');
+    const now = new Date(2026, 9, 12, 15, 30);
+
+    expect(isLongPastDayFolder('2026-10-04', now)).toBe(true);
+    expect(isLongPastDayFolder('2026-10-05', now)).toBe(false);
+    expect(isLongPastDayFolder('2026-10-12', now)).toBe(false);
+    expect(isLongPastDayFolder('2026-12-01', now)).toBe(false);
+  });
+
   it('still reports unexpected watch errors', async () => {
     const handlers = mockWatcherRegistration();
     const { watchFolder } = await import('../fs');

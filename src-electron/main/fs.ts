@@ -1958,6 +1958,24 @@ const decompressWithLocalFallback = async (
 const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
 const WATCH_POLL_INTERVAL_MS = 1000;
+// The media calendar starts on the current week's first day, at most 6 days
+// ago, so a dated folder older than this can never match a day it shows.
+const PAST_DAY_FOLDER_MAX_AGE_DAYS = 7;
+
+/**
+ * Whether a YYYY-MM-DD folder is too old to show up in the media calendar.
+ * Users can keep past dated folders in the watched folder (by turning off
+ * their automatic deletion), and watching all of them would only slow the
+ * watcher down, especially when it polls a network folder.
+ */
+export const isLongPastDayFolder = (folderName: string, now = new Date()) => {
+  const [year, month, day] = folderName.split('-').map(Number);
+  if (!year || !month || !day) return false;
+  const cutoff = new Date(now);
+  cutoff.setHours(0, 0, 0, 0);
+  cutoff.setDate(cutoff.getDate() - PAST_DAY_FOLDER_MAX_AGE_DAYS);
+  return new Date(year, month - 1, day) < cutoff;
+};
 
 export async function unwatchFolders() {
   for (const watcher of watchers) {
@@ -1988,7 +2006,9 @@ export async function watchFolder(folderPath: string) {
           if (!stats) return false; // Don't ignore anything if no stats are available
           const dirPath = toUnix(stats.isDirectory() ? fp : dirname(fp)); // If this isn't a directory, get the parent directory
           const dirOfNote = basename(dirPath); // Get the name of the directory
-          return !datePattern.test(dirOfNote); // Ignore files in a directory whose name doesn't match YYYY-MM-DD
+          // Ignore files in a directory whose name doesn't match YYYY-MM-DD,
+          // or whose date is long past
+          return !datePattern.test(dirOfNote) || isLongPastDayFolder(dirOfNote);
         } catch (error) {
           captureElectronError(error, {
             contexts: {

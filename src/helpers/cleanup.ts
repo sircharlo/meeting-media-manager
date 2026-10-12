@@ -885,7 +885,13 @@ export const cleanCache = async () => {
       cleanDateFolders(settings.mediaAutoExportFolder);
     }
 
-    if (settings?.enableFolderWatcher && settings?.folderToWatch) {
+    // Deleting from a shared folder also deletes for everyone who syncs it,
+    // so users can opt out and keep past folders.
+    if (
+      settings?.enableFolderWatcher &&
+      settings?.folderToWatch &&
+      settings?.deletePastWatchedFolders
+    ) {
       cleanDateFolders(settings.folderToWatch);
     }
   } catch (error) {
