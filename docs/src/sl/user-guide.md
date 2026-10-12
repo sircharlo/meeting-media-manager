@@ -285,7 +285,7 @@ Dodaj svoje datoteke v M³:
 
 1. **Uvoz datotek** - uporabi gumb za uvoz videov, slik ali zvočnih datotek
 2. **Povleci in spusti** - datoteke preprosto povleci v M³
-3. **Nadzor map** - nastavi nadzorovano mapo za samodejni uvoz
+3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 4. **Datoteke JWPUB in seznami predvajanja** - uvozi publikacije in sezname predvajanja
 5. **Seznam multimedijskih vsebin za javne govore (S-34 / S-34mp)** - Uvozi Seznam multimedijskih vsebin za javne govore z datotekami JWPUB S‑34 ali S‑34mp
 6. **Videoposnetkii z uradnega spletnega mesta** – Poišči videoposnetke in jih dodaj k izbranemu datumu
@@ -312,16 +312,17 @@ Uvozi zvočne posnetke svetopisemskih vrstic:
 
 Nastavitve posameznega profila lahko iz nastavitev izvoziš v datoteko JSON. Uvoz datoteke z nastavitvami profila zamenja trenutne nastavitve profila, kar je uporabno pri prenosu konfiguracije na drug računalnik ali pri obnovitvi znane, preverjene konfiguracije.
 
-## Nadzor map in izvoz {#user-guide-folder-monitoring}
+## Shared Folder and Export {#user-guide-folder-monitoring}
 
-### Nastavitev nadzora map {#folder-monitoring-setup}
+### Setting Up a Shared Folder {#folder-monitoring-setup}
 
-Nadzoruj mapo za nove datoteke multimedijske vsebine:
+Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
 
-1. **Omogoči nadzor map** - v nastavitvah vklopi možnost nadzora map
-2. **Izberi mapo** - določi mapo, ki jo želiš nadzorovati
-3. **Samodejni uvoz** - nove datoteke se samodejno dodajo v M³
-4. **Organizacija** - datoteke se organizirajo po datumu glede na strukturo mape
+1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
+2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
+3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
+4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
+5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
 
 ### Izvoz multimedijske vsebine {#user-guide-media-export}
 

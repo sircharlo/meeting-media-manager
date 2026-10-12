@@ -418,23 +418,43 @@ Fa’ahuru-ē-ra’a i te mau rāve’a ha’amāramaramara’a i roto i te huru
 
 Fa'anahora'a tumu: `Hape`
 
-### Te hi’opo’ara’a i te putu’a {#settings-guide-folder-monitoring}
+### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-#### Fa’ati’a i te hi’opo’a-’ōtohe-ra’a putu’a {#enable-folder-watcher}
+These settings are in the **Integrations** category.
+
+M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+
+M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. To add files for another day, create a folder for it, named the same way. Anything else in the shared folder is ignored.
+
+:::tip A’o
+
+Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+
+:::
+
+#### Add Media From a Shared Folder {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Hi’opo’a i te hō’ē putu’a nō te ’imi i te mau rorouira ’āpī e te tāpiri-’ōtohe-ra’a i te reira i roto i te M³.
+Add the files put in the shared folder to the right meeting automatically.
 
 Fa'anahora'a tumu: `Hape`
 
-#### Putu’a nō te hi’opo’a {#folder-to-watch}
+#### Shared Folder {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-Te arata’i o te putu’a nō te hi’opo’a i te mau rorouira ’āpī.
+The folder to add media from. The setup wizard offers to set it up for you.
 
 Fa’anahora’a tumu: ’Aita
+
+#### Delete Past Meeting Folders {#delete-past-watched-folders}
+
+<!-- **Setting**: `deletePastWatchedFolders` -->
+
+When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+
+Fa’anahora’a tumu: `’oia`
 
 ## Taime nō te Putuputura’a {#meeting-timer}
 
@@ -492,6 +512,8 @@ A fa’a’ite i te tāime tāta’u hou te mau putuputura’a i fa’anahohia, 
 A fa’anaho i te rahi e te mau fa’a’ine’ine o te tāreta tāime, e a fa’anaho i te mau fa’aara tāime hau mai te mau fa’a’ine’ine ta’a ’ē, te ’ana’anatae, e te fa’a’itera’a i te tāime hau i ravehia noa i roto i te huru tāta’u i ni’a.
 
 ## Te mau tāpirira’a {#integrations}
+
+This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
 
 ### Tāpirira’a Zoom {#settings-guide-zoom-integration}
 
@@ -784,7 +806,7 @@ Fa'anahora'a tumu: `Hape`
 
 ### Nō te feiā ’aravihi i te fa’a’ohipa {#advanced-users}
 
-1. ’Ia fa’a’ohipa i te mata’ita’ira’a i te mau pu’e parau nō te tu’ati i te mau rāve’a ha’amāramaramara’a mai roto mai i te ro’i parau
+1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
 2. ’Ia fa’ati’a i te tu’ura’a-’otometi-ra’a i te mau rāve’a ha’amāramaramara’a nō te mau ho’o-parau-ra’a
 3. ’Ia fa’atano i te mau tāpura rāve’a poto nō te tāpapa-matini nō te hō’ē fa’a’ohipara’a ’oi’oi
 4. ’Ia fa’atano i te fa’a’ohipara’a i te Zoom nō te tu’ura’a-’otometi-ra’a i te fa’a’itera’a i te ’ata-matini

@@ -80,7 +80,7 @@ Für **hybride** oder **persönliche** Zusammenkünfte umfasst der integrierte M
 
 ### Erweiterte Funktionen {#about-advanced-features}
 
-- **Ordnerüberwachung**: Synchronisieren Sie Medien automatisch aus überwachten Ordnern (Dropbox, OneDrive usw.)
+- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 - **Medienexport**: Exportieren Sie Medien automatisch in Ordner, organisiert nach Datum
 - **Webseiten-Präsentation**: Präsentieren Sie die offizielle Website auf externen Monitoren
 - **Meeting timer**: Optional timer window for timing meeting parts

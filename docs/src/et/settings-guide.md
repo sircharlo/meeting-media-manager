@@ -418,23 +418,43 @@ Salvesta eksporditud meediafailid MP4-vormingusse, et saavutada parem ühilduvus
 
 **Vaikimisi**: `väljas`
 
-### Kausta jälgimine {#settings-guide-folder-monitoring}
+### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-#### Luba kausta jälgimine {#enable-folder-watcher}
+These settings are in the **Integrations** category.
+
+M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+
+M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. To add files for another day, create a folder for it, named the same way. Anything else in the shared folder is ignored.
+
+:::tip Nõuanne
+
+Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+
+:::
+
+#### Add Media From a Shared Folder {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Jälgi kausta uute meediafailide lisandumist ja lisa need automaatselt M³-e.
+Add the files put in the shared folder to the right meeting automatically.
 
 **Vaikimisi**: `väljas`
 
-#### Jälgitav kaust {#folder-to-watch}
+#### Shared Folder {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-Kausta tee, mida jälgida uute meediafailide jaoks.
+The folder to add media from. The setup wizard offers to set it up for you.
 
 **Vaikimisi**: Tühi
+
+#### Delete Past Meeting Folders {#delete-past-watched-folders}
+
+<!-- **Setting**: `deletePastWatchedFolders` -->
+
+When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+
+**Vaikimisi**: `lubatud`
 
 ## Koosoleku taimer {#meeting-timer}
 
@@ -492,6 +512,8 @@ Näita enne planeeritud koosolekuid tagasiarvestust ja vajaduse korral ka seda, 
 Saate kohandada taimeri teksti suurust ja värve ning seadistada üle aja näitajaid, nagu näiteks vahelduvad värvid, vilkumine ja ainult möödunud üle aja kuvamine loendamisrežiimis.
 
 ## Koostöö {#integrations}
+
+This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
 
 ### Koostöö Zoomiga {#settings-guide-zoom-integration}
 
@@ -784,7 +806,7 @@ Lülita automaatne meedia allalaadimine täielikult välja. Kasuta seda ainult p
 
 ### Edasijõudnud kasutajatele {#advanced-users}
 
-1. Kasuta kausta jälgimist, et sünkroonida meediat pilvesalvestusest
+1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
 2. Luba meedia automaatne eksportimine varundamise eesmärgil
 3. Seadista kiirklahvid tõhusaks tööks
 4. Zoom-koostöö seadistamine automaatseks ekraani jagamiseks

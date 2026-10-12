@@ -284,7 +284,7 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 
 1. **添加媒体** —— 使用添加媒体功能加入视频、图片或音频
 2. **拖放导入** —— 直接将文件拖入 M³
-3. **文件夹监视** —— 设置监视文件夹，自动导入新文件
+3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 4. **JWPUB/播放列表** —— 导入出版物和 JW Library 播放列表
 5. **公众演讲媒体（S-34 / S-34mp）** —— 通过 S-34 或 S-34mp JWPUB 文件导入
 6. **官方网站视频** —— 搜索视频，并将其添加到所选日期
@@ -311,16 +311,17 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 
 可以从“设置”中将每个配置的设置导出为 JSON 文件。导入配置设置文件会替换当前配置的设置，适合把现有设置转移到另一台计算机，或恢复之前保存的配置。
 
-## 设置文件夹监视 {#user-guide-folder-monitoring}
+## Shared Folder and Export {#user-guide-folder-monitoring}
 
-### 文件夹监视与导出 {#folder-monitoring-setup}
+### Setting Up a Shared Folder {#folder-monitoring-setup}
 
-监视指定文件夹，自动导入新媒体：
+Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
 
-1. **启用文件夹监视** —— 在设置中开启
-2. **选择文件夹** —— 指定要监视的路径
-3. **自动导入** —— 新文件会自动加入 M³
-4. **自动整理** —— 可以按照日期文件夹结构整理
+1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
+2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
+3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
+4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
+5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
 
 ### 媒体导出 {#user-guide-media-export}
 

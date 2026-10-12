@@ -178,12 +178,16 @@ M³ does not include a built-in recorder, but it can help control recording in t
 
 ## Erweiterte Funktionen {#faq-advanced-features}
 
-### :cloud: Wie funktioniert die Ordnerüberwachung? {#faq-folder-monitoring}
+### :cloud: How does the shared folder work? {#faq-folder-monitoring}
 
-Die Ordnerüberwachung ermöglicht Ihnen:
+If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
 
-1. Einen Ordner auszuwählen, der auf neue Dateien überwacht werden soll
-2. Neue Mediendateien automatisch zu importieren, die mit Cloud-Speichern wie Dropbox oder OneDrive synchronisiert werden
+1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
+2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
+3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
+4. To add files for another day, create a folder for it, named the same way.
+
+When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
 
 ### :open_file_folder: Wie importiere ich meine eigenen Mediendateien? {#faq-media-export}
 

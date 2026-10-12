@@ -80,7 +80,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 ### Advanced Features {#about-advanced-features}
 
-- **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
+- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 - **Media export**: Automatically export media to folders, organized by date
 - **Website presentation**: Present the official website on external monitors
 - **Meeting timer**: Optional timer window for timing meeting parts

@@ -80,7 +80,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 ### Recursos Avançados {#about-advanced-features}
 
-- **Monitoramento de pastas**: sincronizar automaticamente as mídias das pastas selecionadas(Dropbox, OneDrive, etc.)
+- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 - **Exportação de mídia**: Exportar mídias automaticamente para pastas, organizadas por data
 - **Apresentação do site**: Apresente o site oficial em monitores externos
 - **Meeting timer**: Optional timer window for timing meeting parts
