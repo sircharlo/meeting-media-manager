@@ -128,6 +128,7 @@ const electronApi: ElectronApi = {
   onHardwareAccelerationTemporaryDisabled: (cb) =>
     listen('hardware-acceleration-temporary-disabled', cb),
   onLog: (cb) => listen('log', cb),
+  onMediaWindowRendererGone: (cb) => listen('media-window-renderer-gone', cb),
   onPathProbeNetworkWarning: (cb) => listen('pathProbeNetworkWarning', cb),
   onShortcut: (cb) => listen('shortcut', cb),
   onTimerWindowClosed: (cb) => listen('timerWindowClosed', cb),

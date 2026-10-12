@@ -277,6 +277,9 @@ export interface ElectronApi {
       msg: string;
     }) => void,
   ) => void;
+  onMediaWindowRendererGone: (
+    callback: (args: { reloading: boolean }) => void,
+  ) => void;
   onPathProbeNetworkWarning: (callback: () => void) => void;
   onShortcut: (
     callback: (args: { shortcut: keyof SettingsValues }) => void,
@@ -555,6 +558,7 @@ export type ElectronIpcListenKey =
   | 'gpu-crash-detected'
   | 'hardware-acceleration-temporary-disabled'
   | 'log'
+  | 'media-window-renderer-gone'
   | 'pathProbeNetworkWarning'
   | 'screenChange'
   | 'screenPrefsChange'

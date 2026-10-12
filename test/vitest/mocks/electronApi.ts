@@ -161,6 +161,9 @@ export const electronApi: ElectronApi = {
   onLog: function (callback) {
     throw new Error('Function not implemented.');
   },
+  onMediaWindowRendererGone: function (callback) {
+    throw new Error('Function not implemented.');
+  },
   onPathProbeNetworkWarning: function (callback) {
     throw new Error('Function not implemented.');
   },

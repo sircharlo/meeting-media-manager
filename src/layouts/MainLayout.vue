@@ -145,12 +145,13 @@ import {
   removeWatchedMediaSectionInfo,
 } from 'src/helpers/media-sections';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
+import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import {
   checkLowDiskSpaceAndNotify,
   createTemporaryNotification,
 } from 'src/helpers/notifications';
 import { syncTimerRemote } from 'src/helpers/timer-remote';
-import { cancelZoomRun } from 'src/helpers/zoom';
+import { cancelZoomRun, stopZoomSharingAfterMedia } from 'src/helpers/zoom';
 import {
   startHandAlertDisplaySync,
   syncZoomHandAlertWatcher,
@@ -249,6 +250,7 @@ const {
   onGpuCrashDetected,
   onHardwareAccelerationTemporaryDisabled,
   onLog,
+  onMediaWindowRendererGone,
   onPathProbeNetworkWarning,
   onShortcut,
   onTimerWindowClosed,
@@ -916,6 +918,63 @@ const initListeners = () => {
       type: 'warning',
     });
   });
+
+  // The media window's page died (see handleMediaWindowRendererGone in
+  // window-media.ts). Whatever it was playing is gone and will never send
+  // end-of-media, so stop playback here like a manual stop does - before the
+  // reloaded page asks for the current state, which would otherwise hand it
+  // the stale item to replay from the start.
+  onMediaWindowRendererGone(({ reloading }) => {
+    const wasPlaying = !!mediaPlaying.value.url;
+    if (wasPlaying) {
+      mediaPlaying.value = {
+        action: '',
+        currentPosition: 0,
+        currentPositionUpdatedAt: 0,
+        duration: 0,
+        pan: { x: 0, y: 0 },
+        playbackConfirmedToken: 0,
+        playbackRate: 1,
+        playToken: 0,
+        seekTo: 0,
+        shouldLoop: false,
+        slideshowAudioUrl: '',
+        subtitlesUrl: '',
+        uniqueId: '',
+        url: '',
+        zoom: 1,
+      };
+      triggerMediaWindowAutoHide(false);
+      stopZoomSharingAfterMedia();
+    }
+
+    if (!reloading) {
+      createTemporaryNotification({
+        actions: [
+          {
+            color: 'white',
+            handler: () => {
+              relaunchApp();
+            },
+            label: t('restart-app'),
+          },
+        ],
+        caption: t('media-window-keeps-stopping-explain'),
+        group: 'mediaWindowRendererGone',
+        message: t('media-window-keeps-stopping'),
+        timeout: 0,
+        type: 'negative',
+      });
+    } else if (wasPlaying) {
+      createTemporaryNotification({
+        caption: t('media-window-restarted-explain'),
+        group: 'mediaWindowRendererGone',
+        message: t('media-window-restarted'),
+        timeout: 15000,
+        type: 'warning',
+      });
+    }
+  });
 };
 
 const removeListenersLocal = () => {
@@ -931,6 +990,7 @@ const removeListenersLocal = () => {
     'downloadError',
     'downloadProgress',
     'gpu-crash-detected',
+    'media-window-renderer-gone',
     'video-capture-crash-detected',
   ];
 
