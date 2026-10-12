@@ -13,46 +13,46 @@ export const enabled: LanguageValue[] = baseEnabled.filter((l) => l !== 'en');
 // 100.0% translated as of 2026-10-12
 import en from './en.json' with { type: 'json' };
 
-// 99.3% translated as of 2026-10-12
+// 98.7% translated as of 2026-10-12
 import fr from './fr.json' with { type: 'json' };
 
-// 98.8% translated as of 2026-10-12
+// 98.1% translated as of 2026-10-12
 import es from './es.json' with { type: 'json' };
 
-// 98.8% translated as of 2026-10-12
+// 98.1% translated as of 2026-10-12
 import it from './it.json' with { type: 'json' };
 
-// 97.9% translated as of 2026-10-12
+// 97.2% translated as of 2026-10-12
 import sl from './sl.json' with { type: 'json' };
 
-// 85.3% translated as of 2026-10-12
+// 84.7% translated as of 2026-10-12
 import ty from './ty.json' with { type: 'json' };
 
-// 77.0% translated as of 2026-10-12
+// 76.5% translated as of 2026-10-12
 import cmnHans from './cmn-hans.json' with { type: 'json' };
 
-// 76.4% translated as of 2026-10-12
+// 75.9% translated as of 2026-10-12
 import ko from './ko.json' with { type: 'json' };
 
-// 73.3% translated as of 2026-10-12
+// 72.8% translated as of 2026-10-12
 import et from './et.json' with { type: 'json' };
 
-// 55.3% translated as of 2026-10-12
+// 54.9% translated as of 2026-10-12
 import pt from './pt.json' with { type: 'json' };
 
-// 52.1% translated as of 2026-10-12
+// 51.8% translated as of 2026-10-12
 import de from './de.json' with { type: 'json' };
 
-// 40.9% translated as of 2026-10-12
+// 40.6% translated as of 2026-10-12
 import ru from './ru.json' with { type: 'json' };
 
-// 38.4% translated as of 2026-10-12
+// 38.2% translated as of 2026-10-12
 import nl from './nl.json' with { type: 'json' };
 
-// 32.3% translated as of 2026-10-12
+// 32.1% translated as of 2026-10-12
 import hu from './hu.json' with { type: 'json' };
 
-// 27.4% translated as of 2026-10-12
+// 27.2% translated as of 2026-10-12
 import uk from './uk.json' with { type: 'json' };
 
 // 0.5% translated as of 2026-10-12
