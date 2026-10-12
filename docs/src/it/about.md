@@ -2,7 +2,7 @@
 
 ![M³ banner](./../assets/m3-banner.png)
 
-## Cos'è questa app?  {#what-is-this-app}
+## Cos'è questa app? {#what-is-this-app}
 
 **Meeting Media Manager**, o **M³** in breve, è un'applicazione multi-piattaforma completa per Windows, macOS e Linux che scarica automaticamente, organizza e presenta immagini e video per le riunioni di congregazione dei Testimoni di Geova. Supporta qualsiasi lingua disponibile sul sito ufficiale dei Testimoni di Geova e fornisce potenti strumenti per la gestione dei media sia durante le riunioni ibride che di persona.
 
@@ -14,7 +14,7 @@ Questa app era conosciuta come JWMMF (JW Meeting Media Fetcher), ma è stata rin
 
 :::
 
-## Perché scegliere M³?  {#why-choose-m3}
+## Perché scegliere M³? {#why-choose-m3}
 
 M3 è lo strumento definitivo per gestire i media di un adunanza, offrendo un'esperienza senza interruzioni, affidabile e ricca di funzionalità su diverse piattaforme. È progettato specificamente per le esigenze delle adunanze di congregazione e fornisce tutto il necessario per una presentazione efficace dei media.
 
@@ -32,7 +32,7 @@ M3 è lo strumento definitivo per gestire i media di un adunanza, offrendo un'es
 
 - **Strumenti di presentazione avanzati**: Controlli multimediali avanzati, funzionalità zoom/pan, sincronizzazione personalizzata e integrazione di Zoom e OBS Studio.
 
-## Cosa può fare M³?  {#what-can-m3-do}
+## Cosa può fare M³? {#what-can-m3-do}
 
 M³ è una soluzione completa di gestione dei media che consente di scaricare facilmente e automaticamente e sincronizzare, condividere e presentare tutti i media dell'adunanza. Ecco ciò che rende M³ potente:
 
@@ -88,7 +88,7 @@ Per adunanze di congregazione **ibride** o **di persona** la modalità di presen
 - **Scorciatoie da tastiera**: Scorciatoie da tastiera personalizzabili per molte funzioni
 - **Profili multipli**: gestisci congregazioni o gruppi diversi con profili separati, inclusi l'importazione e l'esportazione delle impostazioni del profilo
 
-## M³ funziona nella mia lingua?  {#does-m3-work-in-my-language}
+## M³ funziona nella mia lingua? {#does-m3-work-in-my-language}
 
 **Sì!** M³ fornisce un supporto multi-lingua completo:
 
