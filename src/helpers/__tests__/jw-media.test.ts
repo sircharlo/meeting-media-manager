@@ -1185,9 +1185,39 @@ describe('jw-media helpers', () => {
 
         await getJwMepsInfo();
 
-        expect(errorCatcherMock).toHaveBeenCalledWith(lockError);
+        expect(errorCatcherMock).toHaveBeenCalledWith(
+          expect.objectContaining({ cause: lockError }),
+          expect.anything(),
+        );
         expect(executeQueryMock).not.toHaveBeenCalled();
         expect(removeMock).toHaveBeenCalledWith(`${dir}/JWLibrary.exe.config`);
+      });
+
+      it('says which archive could not be read, and its size on disk', async () => {
+        // MMM-V2-3F9: all the main process's error says is that some zip
+        // had no end-of-central-directory record.
+        const notAZip = new Error(
+          "Error invoking remote method 'unzip': Error: End of central directory record signature not found. Either not a zip file, or file is truncated.",
+        );
+        unzipMock.mockRejectedValueOnce(notAZip);
+        statMock.mockResolvedValue({ size: 321896744 });
+        const { getJwMepsInfo } = await import('../jw-media');
+
+        await getJwMepsInfo();
+
+        expect(errorCatcherMock).toHaveBeenCalledWith(
+          expect.objectContaining({ cause: notAZip }),
+          {
+            contexts: {
+              fn: {
+                archiveOnDisk: { exists: true, size: 321896744 },
+                archivePath: zipPath,
+                jwlbZipPath: zipPath,
+                name: 'getJwMepsInfo',
+              },
+            },
+          },
+        );
       });
 
       it("never empties a folder that isn't JW Library's own", async () => {

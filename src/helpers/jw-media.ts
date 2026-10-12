@@ -5061,17 +5061,40 @@ export const getPubMediaLinks = async (
   }
 };
 
+// The error a failed unzip or getZipEntries brings back from the main process
+// doesn't say which file it was reading, and the JW Library refresh opens three
+// nested archives. This names the one that failed, with its size on disk taken
+// right away, before the leftover cleanup deletes the inner ones (MMM-V2-3F9).
+class ArchiveReadError extends Error {
+  constructor(
+    readonly archivePath: string,
+    readonly archiveOnDisk: PathDiagnostic,
+    cause: unknown,
+  ) {
+    super(`Could not read ${archivePath}`, { cause });
+    this.name = 'ArchiveReadError';
+  }
+}
+
 const extractMatchingZipEntry = async (
   zipPath: string,
   outputDir: string,
   matches: (entryName: string) => boolean,
 ) => {
-  const entryName = Object.keys(await getZipEntries(zipPath)).find(matches);
-  if (!entryName) return undefined;
-  const [extracted] = await unzip(zipPath, outputDir, {
-    includes: [entryName],
-  });
-  return extracted ? join(outputDir, extracted.path) : undefined;
+  try {
+    const entryName = Object.keys(await getZipEntries(zipPath)).find(matches);
+    if (!entryName) return undefined;
+    const [extracted] = await unzip(zipPath, outputDir, {
+      includes: [entryName],
+    });
+    return extracted ? join(outputDir, extracted.path) : undefined;
+  } catch (error) {
+    throw new ArchiveReadError(
+      zipPath,
+      await getPathDiagnostic(zipPath),
+      error,
+    );
+  }
 };
 
 /**
@@ -5159,6 +5182,7 @@ export const getJwMepsInfo = (): Promise<void> => {
   if (isDemoModeActive()) return Promise.resolve();
 
   jwMepsInfoPromise = (async () => {
+    let jwlbZipPath: string | undefined;
     try {
       const jwStore = useJwStore();
 
@@ -5172,6 +5196,7 @@ export const getJwMepsInfo = (): Promise<void> => {
         pub: 'jwlb',
       });
       if (!file.FilePath) return;
+      jwlbZipPath = file.FilePath;
       try {
         const mepsunit = await extractMepsUnitDb(file.FilePath);
         if (!mepsunit) return;
@@ -5197,7 +5222,17 @@ export const getJwMepsInfo = (): Promise<void> => {
         await removeMepsUnitLeftovers(file.FilePath);
       }
     } catch (e) {
-      errorCatcher(e);
+      const archiveError = e instanceof ArchiveReadError ? e : undefined;
+      errorCatcher(e, {
+        contexts: {
+          fn: {
+            archiveOnDisk: archiveError?.archiveOnDisk,
+            archivePath: archiveError?.archivePath,
+            jwlbZipPath,
+            name: 'getJwMepsInfo',
+          },
+        },
+      });
     } finally {
       jwMepsInfoPromise = null;
     }

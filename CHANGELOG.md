@@ -70,6 +70,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🔧 **Error Reporting**: A watched folder on a cloud-synced or network drive (Google Drive, OneDrive, a mapped drive, etc.) that briefly can't be read mid-sync is no longer reported as an error, and neither is a brief outage on GitHub's side while checking for updates.
 - 🔧 **Error Reporting**: Fixed error reports from some of M³'s background file operations (such as reading a folder's contents, or hiding and unhiding its small tracking files) never being sent, so problems there can now be diagnosed and fixed.
 - 🔧 **Error Reporting**: A video or song that M³ reads before it has finished downloading or copying (so the file is still incomplete) is no longer reported as an error, as was already the case before a recent update to the library M³ uses to read media details.
+- 🔧 **Error Reporting**: When M³ can't read the JW Library download it gets its list of languages from, the error report now says which file couldn't be read and how big it was.
 - 🔧 **Error Reporting**: The media preview now reports turning off its picture smoothing on a computer too slow for it at most once per session, instead of each time it happens.
 
 ## v26.10.0
