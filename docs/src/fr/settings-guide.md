@@ -418,41 +418,41 @@ Convertir les fichiers multimédias exportés au format MP4 pour une meilleure c
 
 **Par défaut** : `faux`
 
-### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
+### Dossier partagé (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-These settings are in the **Integrations** category.
+Ces paramètres se trouvent dans la catégorie **Intégrations**.
 
-M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+M³ peut ajouter des médias à vos réunions depuis un dossier synchronisé par une application de stockage cloud, comme Dropbox, OneDrive, iCloud Drive ou Google Drive. C'est utile quand d'autres préparent les médias de leurs parties et les partagent avec vous, ou quand M³ est utilisé sur plusieurs ordinateurs. Un dossier sur cet ordinateur ou sur votre réseau fonctionne aussi.
 
-M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. To add files for another day, create a folder for it, named the same way. Anything else in the shared folder is ignored.
+M³ crée dans le dossier partagé un dossier pour chaque réunion à venir, nommé d'après la date de la réunion écrite sous la forme année-mois-jour (par exemple, `2026-03-25`). Placez des photos, des vidéos, des fichiers audio ou des listes de lecture JW Library dans le dossier d'une réunion, et ils sont ajoutés automatiquement à la liste des médias de cette réunion. Pour ajouter des fichiers pour un autre jour, créez un dossier pour ce jour, nommé de la même façon. Tout le reste du dossier partagé est ignoré.
 
 :::tip Astuce
 
-Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+Créez un nouveau dossier réservé à cet usage, par exemple « Médias des réunions », et configurez-le dans votre application de stockage cloud pour qu'il reste toujours sur cet ordinateur (option souvent appelée « disponible hors ligne »), afin que les fichiers soient prêts avant le début de la réunion.
 
 :::
 
-#### Add Media From a Shared Folder {#enable-folder-watcher}
+#### Ajouter des médias depuis un dossier partagé {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Add the files put in the shared folder to the right meeting automatically.
+Ajouter automatiquement à la bonne réunion les fichiers placés dans le dossier partagé.
 
 **Par défaut** : `faux`
 
-#### Shared Folder {#folder-to-watch}
+#### Dossier partagé {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder to add media from. The setup wizard offers to set it up for you.
+Le dossier depuis lequel ajouter des médias. L'assistant de configuration propose de le configurer pour vous.
 
 **Par défaut** : Vide
 
-#### Delete Past Meeting Folders {#delete-past-watched-folders}
+#### Supprimer les dossiers des réunions passées {#delete-past-watched-folders}
 
 <!-- **Setting**: `deletePastWatchedFolders` -->
 
-When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+Quand une semaine est terminée, supprimer les dossiers datés de cette semaine, ainsi que les fichiers qu'ils contiennent, pour garder le dossier partagé en ordre. Comme le dossier est partagé, ils sont aussi supprimés pour toutes les autres personnes qui l'utilisent. Désactivez cette option pour les conserver.
 
 **Par défaut** : `vrai`
 
@@ -513,7 +513,7 @@ Personnalisez la taille et les couleurs du texte du minuteur, et configurez les 
 
 ## Intégrations {#integrations}
 
-This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
+Cette catégorie contient aussi les paramètres du [dossier partagé](#settings-guide-folder-monitoring), pour ajouter des médias depuis Dropbox, OneDrive, iCloud Drive ou Google Drive.
 
 ### Intégration Zoom {#settings-guide-zoom-integration}
 
@@ -806,7 +806,7 @@ Désactiver complètement le téléchargement automatique des médias. Utilisez 
 
 ### Pour les utilisateurs avancés {#advanced-users}
 
-1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
+1. Utilisez un dossier partagé pour ajouter des médias depuis un stockage cloud, comme Dropbox ou OneDrive
 2. Activer l'exportation automatique des médias à des fins de sauvegarde
 3. Configurez les raccourcis clavier pour une utilisation efficace
 4. Configurez l'intégration Zoom pour le partage d'écran automatique

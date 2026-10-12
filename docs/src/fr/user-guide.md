@@ -285,7 +285,7 @@ Ajoutez vos propres fichiers multimédias à M³ :
 
 1. **Import de fichiers** - Utilisez le bouton d'import pour ajouter des vidéos, images ou fichiers audio
 2. **Glisser-déposer** - Faites glisser les fichiers directement dans M³
-3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
+3. **Dossier partagé** - Ajoutez automatiquement des médias depuis un dossier synchronisé par Dropbox, OneDrive, iCloud Drive ou Google Drive
 4. **Fichiers JWPUB et listes de lecture** - Importez des publications et des listes de lecture
 5. **Médias pour discours publics (S-34 / S-34mp)** - Importez des médias pour discours publics à l'aide de fichiers JWPUB S‑34 ou S‑34mp
 6. **Vidéos du site officiel** - Recherchez des vidéos et ajoutez-les aux médias pour la date sélectionnée
@@ -312,17 +312,17 @@ Importez des enregistrements audio de versets bibliques :
 
 Les paramètres de chaque profil peuvent être exportés vers un fichier JSON à partir des paramètres. L'importation d'un fichier de paramètres de profil remplace les paramètres du profil actuel, ce qui est utile pour transférer une configuration vers un autre ordinateur ou pour restaurer une configuration connue.
 
-## Shared Folder and Export {#user-guide-folder-monitoring}
+## Dossier partagé et exportation {#user-guide-folder-monitoring}
 
-### Setting Up a Shared Folder {#folder-monitoring-setup}
+### Configuration d'un dossier partagé {#folder-monitoring-setup}
 
-Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
+Ajoutez des médias depuis un dossier synchronisé par une application de stockage cloud, comme Dropbox, OneDrive, iCloud Drive ou Google Drive :
 
-1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
-2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
-3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
-4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
-5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
+1. **Activer la fonction** - Répondez « Oui » quand l'assistant de configuration pose la question sur les applications de stockage cloud, ou allez dans **Paramètres** > **Intégrations** > **Dossier partagé** et activez **Ajouter des médias depuis un dossier partagé**
+2. **Choisir le dossier** - Choisissez un dossier dans votre application de stockage cloud, idéalement un nouveau dossier réservé à cet usage
+3. **Dossiers datés** - M³ y crée un dossier pour chaque réunion à venir, nommé d'après la date de la réunion écrite sous la forme année-mois-jour (par exemple, `2026-03-25`)
+4. **Ajouter des fichiers** - Placez des photos, des vidéos, des fichiers audio ou des listes de lecture JW Library dans le dossier d'une réunion, et ils sont ajoutés automatiquement à la liste des médias de cette réunion. Pour un autre jour, créez un dossier nommé de la même façon
+5. **Dossiers passés** - Quand une semaine est terminée, M³ supprime les dossiers de cette semaine et leurs fichiers, pour toutes les personnes qui utilisent le dossier partagé. Désactivez **Supprimer les dossiers des réunions passées** pour les conserver
 
 ### Exportation des médias {#user-guide-media-export}
 
