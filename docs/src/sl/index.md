@@ -9,19 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Prenesi
-      link: /sl/download
+      link: /download
     - theme: brand
       text: O programu
-      link: /sl/about
+      link: /about
     - theme: brand
       text: Uporabniški priročnik
-      link: /sl/user-guide
+      link: /user-guide
     - theme: brand
       text: Vodnik po nastavitvah
-      link: /sl/settings-guide
+      link: /settings-guide
     - theme: brand
       text: Pogosto zastavljena vprašanja
-      link: /sl/faq
+      link: /faq
 features:
   - icon: 🚀
     title: Samodejno upravljanje multimedijske vsebine
