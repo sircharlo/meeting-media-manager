@@ -285,7 +285,7 @@ Te mau raveraa maita’i a’e:
 
 1. Te tapera’a mai i te mau parau - ’A fa’a’ohipa i te tāpa’o "import" nō te tāmā’iti i te mau video, te mau hoho’a, ’aore rā te mau parau ta’o
 2. Te tu’u-tāmata-ra’a - ’A tu’u hō’ē noa i te mau parau na ni’a i te M³
-3. Te hi’opo’ara’a i te mau fātura - ’A ha’amau i te hō’ē fātura hi’opo’ahia nō te tāpe’a-’ōhie-ra’a i te mau parau
+3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 4. Te mau parau JWPUB ’e te mau tāpura pehe - ’A tapea mai i te mau parau nene’i ’e te mau tāpura pehe
 5. Te mau rāve’a ha’amāramaramara’a nō te ’ōrerora’a parau (S-34 / S-34mp) - ’A tapea mai i te mau rāve’a nō te ’ōrerora’a parau nā roto i te mau parau JWPUB S-34 ’aore rā S-34mp
 6. Te mau Video mai te reni matamua - A imi i te mau video e a tu’u atu i ni’a i te mahana i mā’itihia
@@ -312,16 +312,17 @@ Te tapea-mai-ra’a i te mau rīti’o o te mau tuha’a Bibilia:
 
 E nehenehe te mau fa’anahora’a o te mau ’ite-mata tāta’itahi e tono-hia atu i roto i te ho’ē pu’e parau JSON mai roto mai i te Fa’anahora’a. Te ’imi-ra’a mai i te ho’ē pu’e parau nō te mau fa’anahora’a, e mono ïa i te mau fa’anahora’a o te ’ite-mata e fa’a’ohipa-hia ra i teie taime, e mea faufa’a roa râ teie nō te fa’atere-ra’a i te ho’ē fa’anahora’a i ni’a i te tahi atu roro uira aore rā nō te fa’aho’i-ra’a i te ho’ē fa’anahora’a i te huru maita’i i matauhia.
 
-## Te hi’opo’a-ra’a i te pu’e parau ’e te fa’anahora’a i te reira {#user-guide-folder-monitoring}
+## Shared Folder and Export {#user-guide-folder-monitoring}
 
-### Te ha’amau-ra’a i te hi’opo’a-ra’a i te pu’e parau {#folder-monitoring-setup}
+### Setting Up a Shared Folder {#folder-monitoring-setup}
 
-’A hi’opo’a i te hō’ē pu’e parau nō te mau rīti’o peu ’āpī:
+Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
 
-1. Te ha’amara’a i te hi’opo’a-ra’a i te pu’e parau - ’A ha’amara i te hi’opo’a-ra’a i te pu’e parau i roto i te mau fa’anahora’a
-2. Te mā’itira’a i te pu’e parau - ’A mā’iti i te pu’e parau ’ia hi’opo’ahia
-3. Te tapea-mai-ra’a ’a’ano - E tu’uhia te mau rīti’o ’āpī i roto i te M³ ma te hō’ē noa ta’i-ta’i-ra’a
-4. Te fa’anahora’a - E fa’anahohia te mau rīti’o ia au i te mahana, ia au i te huru o te pu’e parau
+1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
+2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
+3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
+4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
+5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
 
 ### Te fa’anahora’a i te mau rāve’a ha’amāramaramara’a {#user-guide-media-export}
 
