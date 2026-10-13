@@ -1,5 +1,5 @@
 ---
-title: Downloads
+title: Download
 ---
 
 <!-- markdownlint-disable MD025 MD033 -->
