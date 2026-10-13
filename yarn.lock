@@ -366,7 +366,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/rebuild@npm:^4.0.4, @electron/rebuild@npm:^4.2.0":
+"@electron/rebuild@npm:^4.0.4":
   version: 4.2.0
   resolution: "@electron/rebuild@npm:4.2.0"
   dependencies:
@@ -382,6 +382,25 @@ __metadata:
   bin:
     electron-rebuild: lib/cli.js
   checksum: 10c0/6d5ed8a860b70d4760de299b4e07560cf95c81974788240aea28fdfe376ca4ec3f99bfa19d1a28cac40fa747142cc32368f1f28ad555670b59355e58d05724ae
+  languageName: node
+  linkType: hard
+
+"@electron/rebuild@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "@electron/rebuild@npm:4.2.1"
+  dependencies:
+    "@malept/cross-spawn-promise": "npm:^2.0.0"
+    debug: "npm:^4.1.1"
+    node-abi: "npm:^4.2.0"
+    node-api-version: "npm:^0.2.1"
+    node-gyp: "npm:^12.2.0"
+    read-binary-file-arch: "npm:^1.0.6"
+  dependenciesMeta:
+    electron:
+      built: true
+  bin:
+    electron-rebuild: lib/cli.js
+  checksum: 10c0/7e5a21d3325f3ca2f980eaaff9e0db89001fd9e6334c1a08e687f40a0224cf2c2c77736d96b7cc622d67633164956544e4840d9c05644d7254589bb7204ec08b
   languageName: node
   linkType: hard
 
@@ -8010,7 +8029,7 @@ __metadata:
   resolution: "meeting-media-manager@workspace:."
   dependencies:
     "@carboneio/image-size": "npm:3.0.0"
-    "@electron/rebuild": "npm:^4.2.0"
+    "@electron/rebuild": "npm:^4.2.1"
     "@eslint/config-helpers": "npm:^0.7.0"
     "@eslint/js": "npm:^10.0.1"
     "@fontsource-variable/inter": "npm:^5.3.0"
