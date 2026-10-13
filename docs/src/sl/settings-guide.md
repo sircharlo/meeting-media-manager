@@ -350,11 +350,11 @@ Jezik podnapisov (lahko se razlikuje od jezika multimedijske vsebine).
 
 ### Upravljanje predpomnilnika {#cache-management}
 
-#### Cache Songbook Video Files {#enable-extra-cache}
+#### Predpomni videoposnetke pesmi {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
+Vnaprej predpomni vse videe iz pesmarice za boljše delovanje. Upoštevaj, da to poveča velikost predpomnilnika multimedijske vsebine.
 
 **Privzeto**: `false`
 
@@ -485,7 +485,7 @@ Izberi, kako dostopaš do časovnika iz glavnega okna:
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
 
-Ko je časovnik vklopljen, M³ ponuja kopijo prikaza časovnika kot spletno stran v vašem lokalnem omrežju za tablico ali telefon na govorniškem pultu: govornik vidi preostali čas, ne da bi bil prikazan na občinskem zaslonu ali deljen prek Zooma. Stran sledi časovniku v realnem času, vključno z odštevanjem pred shodom, uro, barvami za prekoračitev in opozorilom z roko, vse kontrole pa ostanejo v M³.
+Ko je časovnik vklopljen, M³ ponuja kopijo prikaza časovnika kot spletno stran v vašem lokalnem omrežju za tablico ali telefon na govorniškem pultu: govornik vidi preostali čas, ne da bi bil prikazan na občinskem zaslonu ali deljen prek Zooma. Stran sledi časovniku v realnem času, vključno z odštevanjem pred shodom, uro, barvami za prekoračitev in opozorilom glede dvignjene roke, vse kontrole pa ostanejo v M³.
 
 Naslovi, ki jih odpreš na napravi, so navedeni v pojavnem oknu časovnika skupaj z gumbom za kopiranje. Omrežna vrata spremeni le, če jih že uporablja kak drug program. Upoštevaj, da lahko stran odpre vsakdo v istem omrežju, dokler je ta možnost vklopljena; prikazuje samo časovnik.
 
@@ -541,27 +541,27 @@ Ko se začne deljenje zaslona v Zoomu, se okno z multimedijsko vsebino samodejno
 
 **Privzeto**: `false`
 
-### Zoom Meeting Manager {#zoom-meeting-manager}
+### Upravljalnik Zoom shodov {#zoom-meeting-manager}
 
-The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+Upravljalnik Zoom shodov (beta, samo za Windows) upravlja namizno aplikacijo Zoom med vsakim shodom. Njegov nastavitveni pomočnik, ki se ponudi, ko ga vklopiš, te vodi skozi vsako avtomatizacijo.
 
-#### While M³ Operates Zoom {#zoom-meeting-manager-overlay}
+#### Medtem ko M³ upravlja Zoom {#zoom-meeting-manager-overlay}
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom offers no proper automation interface, so M³ drives the Zoom app through its accessibility interface, which works without the mouse for nearly everything (the participants list, its menus, the Share window). A few actions can still have to move the mouse or the focused window for a moment, for example to bring Zoom's auto-hidden toolbar back. Whenever that happens, M³ covers its own window with a "M³ is operating Zoom" notice naming what is going on, with a **Cancel this automation** button. The same notice shows during the setup assistant's checks and the self-test. A global keyboard shortcut (default `Ctrl+Alt+Escape`), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Cancelling stops M³ at once; Zoom may then be left part-way, so check it.
+Zoom ne ponuja ustreznega vmesnika za avtomatizacijo, zato M³ upravlja aplikacijo Zoom prek njenega dostopnostnega vmesnika, ki za skoraj vse deluje brez miške (seznam udeležencev, njegovi meniji, okno za deljenje). Nekatera dejanja pa lahko še vedno za trenutek premaknejo miško ali aktivno okno, na primer za prikaz samodejno skrite Zoomove orodne vrstice. Kadar se to zgodi, M³ prekrije svoje okno z obvestilom »M³ upravlja Zoom«, ki pove, kaj se dogaja, in ponudi gumb »Prekliči to avtomatizacijo«. Enako obvestilo se prikaže med preverjanji nastavitvenega pomočnika in med samopreizkusom. Globalna tipkovna bližnjica (privzeto Ctrl+Alt+Escape), ki je aktivna samo med avtomatizacijo, jo prekliče od koder koli, tudi ko je Zoom v ospredju. Preklic takoj ustavi M³; Zoom lahko zato ostane v vmesnem stanju, zato ga preveri.
 
-**Default**: `Ctrl+Alt+Escape`
+**Privzeto**: Ctrl+Alt+Escape
 
-#### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
+#### Pomočnik za dvignjene roke {#zoom-meeting-manager-hand-alert}
 
 <!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
 
-Med shodom M³ spremlja Zoomov seznam udeležencev in išče dvignjene roke. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
+Med shodom M³ spremlja Zoomov seznam udeležencev in išče dvignjene roke. Ko nekdo dvigne roko, te M³ z obvestilom opozori, da lahko tega udeleženca z enim klikom povabiš, naj si vklopi mikrofon, in ko neha govoriti, ga z drugim klikom znova utišaš ter spustiš njegovo roko. Gumb za Zoom na orodni vrstici prikazuje dvignjene roke z enakimi gumbi. Vsako dejanje se izvede v vrstici tega udeleženca v Zoomu, po njegovem natančnem imenu; če imata dva udeleženca enako ime, se M³ ne dotakne nobenega.
 
-If the [meeting timer](#meeting-timer) is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and a **Hand alert** button in the timer and Zoom popups shows it by hand. This part needs the timer display; the notifications and buttons work without it.
+Če je [časovnik shoda](#meeting-timer) omogočen, se na prikazu časovnika za predsedujočega pojavi velika roka z imenom udeleženca, gumb »Opozorilo glede roka« v časovniku in pojavnih oknih Zooma pa jo lahko prikaže ročno. Ta del potrebuje prikaz časovnika; obvestila in gumbi delujejo tudi brez njega.
 
-Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list and which menu entry lowers it, then lowers it again. The setup assistant offers this step too.
+Zoom označuje dvignjene roke v svojem jeziku, zato se mora M³ najprej naučiti, kako: ko je vaš shod odprt v Zoomu, klikni »Nauči se, kako Zoom označuje dvignjene roke«. M³ dvigne tvojo roko, prebere, kako jo Zoom označi na seznamu udeležencev in kateri meni jo spusti, nato pa jo spusti. Ta korak ponudi tudi nastavitveni pomočnik.
 
 **Privzeto**: `false`
 
@@ -609,7 +609,7 @@ Nastavite, kateri prizori OBS se uporabljajo za različne namene:
 
 #### Napredne možnosti OBS {#obs-advanced-options}
 
-- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
+- **Slik ne deli samodejno**: Odloži deljenje slik v OBS, dokler jih ne sprožiš ročno
 - **Hitro preklapljanje**: Omogoči hiter vklop/izklop za združevanje z OBS
 - **Preklopi prizor po predvajanju multimedijske vsebine**: Samodejno se vrne na prejšnji prizor po predvajanju multimedijske vsebine
 - **Zapomni si prejšnji prizor**: Shrani in obnovi prejšnji prizor
@@ -800,7 +800,7 @@ Popolnoma onemogoči samodejni prenos multimedijske vsebine. To možnost uporabi
 ### Za nove uporabnike {#new-users}
 
 1. Da bi nastavili osnovne nastavitve, začnite z nastavitvenim čarovnikom
-2. Turn on "Enable media playback" to access presentation features
+2. Vklopi »Omogoči predvajanje multimedijske vsebine«, da dostopaš do predstavitvenih funkcij
 3. Natančno nastavite urnik shodov
 4. Nastavite združevanje s programom OBS, če uporabljate hibridne shode
 
@@ -813,7 +813,7 @@ Popolnoma onemogoči samodejni prenos multimedijske vsebine. To možnost uporabi
 
 ### Optimizacija zmogljivosti {#performance-optimization}
 
-1. Cache songbook video files for better performance
+1. Predpomni video datoteke pesmarice za boljše delovanje
 2. Uporabite ustrezno največjo ločljivost glede na vaše potrebe
 3. Nastavite samodejno čiščenje predpomnilnika, da varčujete s prostorom na disku
 4. Razmislite o omejeni povezavi, če imate omejeno pasovno širino
