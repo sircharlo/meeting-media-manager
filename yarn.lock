@@ -8253,7 +8253,7 @@ __metadata:
     mime: "npm:^4.1.0"
     mousetrap: "npm:^1.6.5"
     msw: "npm:^3.0.2"
-    music-metadata: "npm:^12.0.0"
+    music-metadata: "npm:^12.1.0"
     obs-websocket-js: "npm:^5.0.8"
     p-queue: "npm:^9.3.3"
     pdf-parse: "npm:^2.4.5"
@@ -8651,9 +8651,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^12.0.0":
-  version: 12.0.0
-  resolution: "music-metadata@npm:12.0.0"
+"music-metadata@npm:^12.1.0":
+  version: 12.1.0
+  resolution: "music-metadata@npm:12.1.0"
   dependencies:
     "@borewit/text-codec": "npm:^0.2.2"
     "@tokenizer/token": "npm:^0.3.0"
@@ -8665,7 +8665,7 @@ __metadata:
     token-types: "npm:^6.1.2"
     uint8array-extras: "npm:^1.6.0"
     win-guid: "npm:^0.2.1"
-  checksum: 10c0/4bdf85f68072b855f8d9173cef29e1050a1972b3ba7f1aadac1afacea3058ba34aceefbb800d00ab45ffa0ed3c42cc75a3fbdaf1a4f52665452ff3587a9a73f8
+  checksum: 10c0/dd8930bb28e8d75da5c0ab6567c7d0316567991092df4c3c8b2bb79b7110218e40860623cd249e54aea989fff75a3a5a0123335ad88dd64bcc6baa0911b62184
   languageName: node
   linkType: hard
 
