@@ -84,7 +84,7 @@
     "yauzl": "^3.4.0"
   },
   "devDependencies": {
-    "@electron/rebuild": "^4.2.0",
+    "@electron/rebuild": "^4.2.1",
     "@eslint/config-helpers": "^0.7.0",
     "@eslint/js": "^10.0.1",
     "@intlify/message-compiler": "11.4.14",
