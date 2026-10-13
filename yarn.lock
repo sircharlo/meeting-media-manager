@@ -2186,9 +2186,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^3.10.0":
-  version: 3.10.1
-  resolution: "@quasar/app-vite@npm:3.10.1"
+"@quasar/app-vite@npm:^3.10.2":
+  version: 3.10.2
+  resolution: "@quasar/app-vite@npm:3.10.2"
   dependencies:
     "@clack/prompts": "npm:^1.8.1"
     "@quasar/art": "npm:^1.0.0"
@@ -2253,7 +2253,7 @@ __metadata:
       optional: true
   bin:
     quasar: ./bin/quasar.js
-  checksum: 10c0/7e50d479ed26adb8df8030e84a585fea731bb10ddbfd1adfe8c3bf6347cfde09d8d0673c856712b2ba48b3f1faab6c622e945df83bdc46f2051f2201f22b27f7
+  checksum: 10c0/64efe512bf986622238ea881479eeee5dda982b7df346c99840b0c27a681e1486eaf641f1891e88266df22851e6379bbbc30ff00fa2762e068eabaa3f099ec3b
   languageName: node
   linkType: hard
 
@@ -8202,7 +8202,7 @@ __metadata:
     "@intlify/unplugin-vue-i18n": "npm:^11.2.5"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@pinia/testing": "npm:^2.0.1"
-    "@quasar/app-vite": "npm:^3.10.0"
+    "@quasar/app-vite": "npm:^3.10.2"
     "@quasar/extras": "npm:^2.1.0"
     "@quasar/vite-plugin": "npm:^2.0.2"
     "@sentry/core": "npm:^11.4.0"
