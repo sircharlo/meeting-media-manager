@@ -157,9 +157,9 @@ Pojavno okno časovnika v orodni vrstici prikaže točke izbranega dne shoda. Pr
 
 Število točk, spremenjene dolžine točk, prilagojene točke in zabeleženi časi se shranijo za vsak dan posebej, zato se ohranijo tudi po ponovnem zagonu M³ in se nikoli ne pomešajo z drugimi shodi. Zabeležene čase posameznega dne je mogoče izbrisati naenkrat z možnostjo »Ponastavi vse časovne meritve za ta dan«, časovno poročilo v obliki PDF pa je mogoče izvoziti kadar koli.
 
-#### Hand Alert {#user-guide-timer-hand-alert}
+#### Opozorilo glede dvignjene roke {#user-guide-timer-hand-alert}
 
-A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+Gumb **Opozorilo glede dvignjene roke** v pojavnem oknu časovnika prikaže veliko roko na prikazu časovnika, da opozori predsedujočega, na primer ko nekdo v Zoomu dvigne roko. S [pomočnikom za dvignjene roke v Upravljalniku Zoom shodov](/settings-guide#zoom-meeting-manager-hand-alert) M³ to prikaže samodejno, kadar nekdo dvigne roko v Zoomu, skupaj z njegovim imenom, in ti omogoči, da ga z enim klikom povabiš, naj si vklopi mikrofon, nato pa ga z drugim klikom znova utišaš in spustiš njegovo roko.
 
 #### Časovnik na tablici {#user-guide-timer-remote}
 
@@ -214,12 +214,12 @@ M³ med predstavitvami samodejno preklaplja med prizori v programu OBS:
 
 ### Napredne funkcije OBS {#advanced-obs}
 
-#### Do Not Automatically Share Images {#user-guide-postpone-images}
+#### Ne deli samodejno slik {#user-guide-postpone-images}
 
 Omogoči to možnost, če želiš, da se deljenje slik v OBS odloži, dokler ga ne sprožiš ročno:
 
-1. Enable "Do not automatically share images" in OBS settings
-2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. To je koristno, če želiš sle slike naprej pokazati tistim, ki so prisotni v živo.
+1. Omogoči »Slik ne deli samodejno« v nastavitvah OBS
+2. Slike bodo deljene samo, ko klikneš gumb **Prikaži sliko za udeležence Zooma** na sliki, ki je prikazana. To je koristno, če želiš sle slike naprej pokazati tistim, ki so prisotni v živo.
 
 #### Način preklapljanja med prizori {#user-guide-scene-switching}
 
@@ -406,7 +406,7 @@ Nastavi lastne bližnjice na tipkovnici za učinkovitejše upravljanje:
 
 #### Težave z zmogljivostjo {#user-guide-performance-issues}
 
-- Cache songbook video files
+- Predpomni videoposnetke pesmi
 - Zmanjšaj največjo ločljivost
 - Počisti stare predpomnjene datoteke
 - Preveri razpoložljiv prostor na disku
