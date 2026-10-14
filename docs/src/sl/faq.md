@@ -158,12 +158,12 @@ M³ samodejno preklaplja prizore v OBS glede na:
 
 - Vrsto multimedijske vsebine (video, slika itd.)
 - Tvojo nastavitev prizorov
-- Settings like "Do not automatically share images"
+- Nastavitve, kot je »Slik ne deli samodejno«
 - To, ali naj se po predvajanju multimedijske vsebine vrne na prejšnji prizor
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: Kaj naredi nastavitev »Slik ne deli samodejno«? {#faq-postpone-images}
 
-This setting delays sharing images to OBS until you manually trigger them. To je uporabno za:
+Ta nastavitev odloži deljenje slik v OBS, dokler jih ne sprožiš ročno. To je uporabno za:
 
 - Prikaz slik najprej občinstvu v kraljestveni dvorani
 - Večji nadzor nad časom prikaza
@@ -250,7 +250,7 @@ M³ predvaja multimedijsko vsebino z zvokom na tvojem računalniku, vendar se ta
 
 Poskusi naslednje optimizacije zmogljivosti:
 
-1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
+1. **Predpomni videoposnetke pesmi**: Vnaprej predpomni vse videe iz pesmarice v nastavitvah
 2. **Zapri druge aplikacije**: zapri programe, ki jih trenutno ne potrebuješ
 3. **Preveri prostor na disku**: poskrbi, da imaš dovolj prostega prostora
 4. **Zmanjšaj ločljivost**: znižaj največjo nastavljeno ločljivost multimedijske vsebine
