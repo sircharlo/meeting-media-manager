@@ -23,13 +23,17 @@ const obsGetRecordingStateMock = vi.hoisted(() =>
   vi.fn<() => Promise<boolean>>(async () => false),
 );
 
+const obsGetRecordingDirectoryMock = vi.hoisted(() =>
+  vi.fn<() => Promise<null | string>>(async () => null),
+);
+
 vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: errorCatcherMock,
 }));
 
 vi.mock('src/helpers/obs', () => ({
   obsConnect: vi.fn(),
-  obsGetRecordingDirectory: vi.fn(async () => null),
+  obsGetRecordingDirectory: obsGetRecordingDirectoryMock,
   obsGetRecordingState: obsGetRecordingStateMock,
   obsStartRecording: vi.fn(),
   obsStopRecording: vi.fn(),
@@ -50,6 +54,8 @@ installPinia({ stubActions: false });
 afterEach(() => {
   document.body.innerHTML = '';
   vi.clearAllMocks();
+  obsGetRecordingDirectoryMock.mockResolvedValue(null);
+  obsGetRecordingStateMock.mockResolvedValue(false);
 });
 
 const CONGREGATION_ID = 'test-cong';
@@ -215,5 +221,76 @@ describe('DialogObsPopup - recording-state resync on reconnect', () => {
     await flushPromises();
 
     expect(recording.isRecording).toBe(true);
+  });
+});
+
+describe('DialogObsPopup - status line', () => {
+  it('says OBS is connected', async () => {
+    const obsState = setupObsSettings();
+    obsState.obsConnectionState = 'connected';
+
+    mount(DialogObsPopup, {
+      props: { modelValue: true },
+    });
+    await flushPromises();
+
+    const status = document.querySelector('.action-popup__status');
+    expect(status?.textContent).toContain('OBS Studio: Connected');
+    expect(status?.querySelector('.text-positive')).not.toBeNull();
+  });
+
+  it('warns when the scene list could not be loaded', async () => {
+    const obsState = setupObsSettings();
+    obsState.obsConnectionState = 'connected';
+    obsState.obsSceneListError = true;
+
+    mount(DialogObsPopup, {
+      props: { modelValue: true },
+    });
+    await flushPromises();
+
+    const status = document.querySelector('.action-popup__status');
+    expect(status?.textContent).toContain("OBS Studio: Couldn't load scenes");
+    expect(status?.querySelector('.text-warning')).not.toBeNull();
+  });
+});
+
+describe('DialogObsPopup - recording footer', () => {
+  it('has no footer when recording controls are off', async () => {
+    const obsState = setupObsSettings({ obsEnableRecordingControls: false });
+    obsState.obsConnectionState = 'connected';
+
+    mount(DialogObsPopup, {
+      props: { modelValue: true },
+    });
+    await flushPromises();
+
+    expect(document.querySelector('.action-popup__footer')).toBeNull();
+  });
+
+  it('puts start/stop recording first and the recording folder under it', async () => {
+    obsGetRecordingDirectoryMock.mockResolvedValue('C:/Recordings');
+    const openFolderSpy = vi
+      .spyOn(globalThis.electronApi, 'openFolder')
+      .mockResolvedValue('');
+    const obsState = setupObsSettings({ obsEnableRecordingControls: true });
+    obsState.obsConnectionState = 'connected';
+
+    mount(DialogObsPopup, {
+      props: { modelValue: true },
+    });
+    await flushPromises();
+
+    const footer = document.querySelector('.action-popup__footer');
+    expect(footer?.firstElementChild?.textContent).toContain('Start Recording');
+
+    const folderButton = footer?.querySelector<HTMLButtonElement>(
+      '.action-popup__footer-row button',
+    );
+    expect(folderButton?.textContent).toContain('Open recording folder');
+    folderButton?.click();
+    expect(openFolderSpy).toHaveBeenCalledWith('C:/Recordings');
+
+    openFolderSpy.mockRestore();
   });
 });

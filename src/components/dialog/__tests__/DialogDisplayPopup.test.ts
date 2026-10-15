@@ -5,6 +5,8 @@ import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plug
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
+import { useCurrentStateStore } from 'stores/current-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 
@@ -41,6 +43,18 @@ const closePopup = async () => {
   wrapper?.unmount();
   wrapper = undefined;
 };
+
+// QMenu teleports its content to document.body, outside the wrapper's tree.
+const findButton = (label: string) => {
+  const button = Array.from(document.querySelectorAll('button')).find((el) =>
+    el.textContent?.includes(label),
+  );
+  if (!button) throw new Error(`No button found with label "${label}"`);
+  return button;
+};
+
+const statusLine = () =>
+  document.querySelector('.action-popup__status')?.textContent ?? '';
 
 const triggerScreenUpdate = () => {
   globalThis.dispatchEvent(new CustomEvent('screen-trigger-update'));
@@ -146,5 +160,41 @@ describe('DialogDisplayPopup - custom background picker', () => {
     expect(picker?.props('modelValue')).toBe(false);
     expect(state.jwpubImportFilePath).toBe('');
     expect(state.jwpubImages).toEqual([]);
+  });
+});
+
+describe('DialogDisplayPopup - status line and footer', () => {
+  it('says whether and where the media display is shown, and shows or hides it from the footer', async () => {
+    getAllScreensMock.mockResolvedValue([]);
+    const currentState = useCurrentStateStore();
+    currentState.mediaWindowVisible = false;
+    await openPopup();
+    await flushPromises();
+
+    expect(statusLine()).toContain('Inactive · Windowed');
+    findButton('Show media display').click();
+    expect(toggleMediaWindowVisibility).toHaveBeenLastCalledWith(true);
+
+    currentState.mediaWindowVisible = true;
+    await flushPromises();
+
+    expect(statusLine()).toContain('Projecting · Windowed');
+    findButton('Hide media display').click();
+    expect(toggleMediaWindowVisibility).toHaveBeenLastCalledWith(false);
+  });
+
+  it('offers to remove a custom background once one is set', async () => {
+    getAllScreensMock.mockResolvedValue([]);
+    const currentState = useCurrentStateStore();
+    currentState.mediaWindowCustomBackground = 'file:///tmp/background.jpg';
+    await openPopup();
+    await flushPromises();
+
+    expect(() => findButton('Select a custom background')).toThrow();
+    findButton('Remove custom background').click();
+    await flushPromises();
+
+    expect(currentState.mediaWindowCustomBackground).toBe('');
+    expect(findButton('Select a custom background')).toBeDefined();
   });
 });

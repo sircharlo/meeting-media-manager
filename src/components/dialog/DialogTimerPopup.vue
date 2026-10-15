@@ -1,482 +1,442 @@
 <template>
-  <q-menu
-    ref="timerPopup"
+  <ActionPopup
     v-model="open"
-    anchor="top middle"
-    no-parent-event
-    :offset="[0, 8]"
-    self="bottom middle"
-    transition-hide="jump-down"
-    transition-show="jump-up"
+    :status-color="statusColor"
+    :status-icon="statusIcon"
+    :status-text="statusText"
+    :title="t('timer')"
   >
-    <div
-      ref="popupContent"
-      class="action-popup action-popup--scroll-layout q-py-md"
-    >
-      <div class="card-title row q-px-md q-mb-none">
-        {{ t('timer') }}
+    <!-- Window Type Selection -->
+    <template v-if="showWindowTypeControls">
+      <p class="card-section-title text-dark-grey q-px-md q-pt-sm">
+        {{ t('window-type') }}
+      </p>
+      <div class="row q-px-md q-pb-sm q-col-gutter-sm">
+        <div class="col-6">
+          <q-btn
+            class="full-width full-height"
+            color="primary"
+            :disable="!canUseFullscreenTimer"
+            icon="mmm-fullscreen"
+            :label="t('full-screen')"
+            :outline="timerPreferences.preferWindowed"
+            unelevated
+            @click="setTimerFullscreenMode()"
+          />
+        </div>
+        <div class="col-6">
+          <q-btn
+            class="full-width full-height"
+            color="primary"
+            icon="mmm-window"
+            :label="t('windowed')"
+            :outline="!timerPreferences.preferWindowed"
+            :text-color="timerPreferences.preferWindowed ? '' : 'primary'"
+            unelevated
+            @click="setTimerWindowedMode()"
+          />
+        </div>
       </div>
+      <q-separator class="bg-accent-200 q-my-sm" />
+    </template>
 
-      <div class="action-popup__scroll">
-        <!-- Window Type Selection -->
-        <template v-if="showWindowTypeControls">
-          <div class="card-section-title row q-px-md">
-            {{ t('window-type') }}
-          </div>
-          <div class="row q-px-md q-pb-sm q-col-gutter-sm">
-            <div class="col-6">
-              <q-btn
-                class="full-width full-height"
-                color="primary"
-                :disable="!canUseFullscreenTimer"
-                :outline="timerPreferences.preferWindowed"
-                unelevated
-                @click="setTimerFullscreenMode()"
-              >
-                <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
-                {{ t('full-screen') }}
-              </q-btn>
-            </div>
-            <div class="col-6">
-              <q-btn
-                class="full-width full-height"
-                color="primary"
-                :outline="!timerPreferences.preferWindowed"
-                :text-color="timerPreferences.preferWindowed ? '' : 'primary'"
-                unelevated
-                @click="setTimerWindowedMode()"
-              >
-                <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
-                {{ t('windowed') }}
-              </q-btn>
-            </div>
-          </div>
-          <q-separator class="bg-accent-200 q-mb-md" />
-        </template>
-
-        <template
-          v-if="!timerPreferences.preferWindowed && showFullscreenScreenPicker"
-        >
-          <q-separator class="bg-accent-200 q-mb-md" />
-          <div class="card-section-title row q-px-md">
-            {{ t('display') }}
-          </div>
-          <div class="q-px-md q-pb-sm">
-            <div
-              class="display-map"
-              :style="{
-                position: 'relative',
-                width: '100%',
-                aspectRatio: virtualBounds.width + ' / ' + virtualBounds.height,
-                overflow: 'hidden',
-                '--screen-gap': '1%',
-              }"
-            >
-              <template v-for="(screen, index) in screenList" :key="screen.id">
-                <q-btn
-                  class="screen-rect column items-center justify-center"
-                  :class="{
-                    'border-dashed': screen.mainWindow,
-                  }"
-                  :color="
-                    !screen.mainWindow && !screen.mediaWindow
-                      ? 'primary'
-                      : 'secondary'
-                  "
-                  :disable="screen.mainWindow || screen.mediaWindow"
-                  :outline="!isTimerScreenSelected(index, screen)"
-                  :style="{
-                    position: 'absolute',
-                    left:
-                      'calc(' +
-                      (screenRects[index]?.left ?? 0) +
-                      '% + var(--screen-gap))',
-                    top:
-                      'calc(' +
-                      (screenRects[index]?.top ?? 0) +
-                      '% + var(--screen-gap))',
-                    width:
-                      'calc(' +
-                      (screenRects[index]?.width ?? 0) +
-                      '% - (var(--screen-gap) * 2))',
-                    height:
-                      'calc(' +
-                      (screenRects[index]?.height ?? 0) +
-                      '% - (var(--screen-gap) * 2))',
-                    borderRadius: '6px',
-                  }"
-                  unelevated
-                  @click="
-                    () => {
-                      if (screen.mainWindow || screen.mediaWindow) return;
-                      timerPreferences.preferredScreenNumber = index;
-                      moveTimerWindow(index, !timerPreferences.preferWindowed);
-                    }
-                  "
-                >
-                  <q-tooltip
-                    v-if="screen.mainWindow || screen.mediaWindow"
-                    :delay="1000"
-                  >
-                    {{
-                      screen.mainWindow
-                        ? t('main-window-is-on-this-screen')
-                        : t('media-display') + ' (' + t('projecting') + ')'
-                    }}
-                  </q-tooltip>
-                  <q-icon
-                    v-if="screen.mainWindow"
-                    class="absolute-top-left q-ma-xs"
-                    name="mmm-logo"
-                    size="xs"
-                  />
-                  <q-icon
-                    v-if="screen.mediaWindow"
-                    class="absolute-top-right q-ma-xs"
-                    name="mmm-media-display-active"
-                    size="xs"
-                  />
-                  <q-icon
-                    v-if="!screen.mainWindow && !screen.mediaWindow"
-                    class="q-mr-sm"
-                    name="mmm-time"
-                    size="xs"
-                  />
-                  {{
-                    !screen.mainWindow && !screen.mediaWindow
-                      ? t('display') + ' ' + (index + 1)
-                      : ''
-                  }}
-                </q-btn>
-              </template>
-            </div>
-          </div>
-          <q-separator class="bg-accent-200 q-mb-md" />
-        </template>
-
-        <q-separator class="bg-accent-200 q-mb-md" />
-
-        <!-- Meeting structure (midweek): number of parts and study end time -->
-        <template v-if="isMwMeetingDay(selectedDateObject?.date)">
-          <div class="card-section-title row q-px-md">
-            {{ t('ayfm') }}
-          </div>
-          <div class="row q-px-md q-py-sm">
-            {{ t('number-of-ayfm-parts') }}
-          </div>
-          <div class="row q-px-md q-pb-sm">
-            <q-btn-toggle
-              v-model="ayfmPartsCount"
-              class="full-width"
-              :disable="timerRunning"
-              :options="[
-                { label: '1', value: 1 },
-                { label: '2', value: 2 },
-                { label: '3', value: 3 },
-                { label: '4', value: 4 },
-                { label: '5', value: 5 },
-              ]"
-              spread
-            />
-          </div>
-          <q-separator class="bg-accent-200 q-mb-md" />
-          <div class="card-section-title row q-px-md">
-            {{ t('lac') }}
-          </div>
-          <div class="row q-px-md q-py-sm">
-            {{ t('number-of-lac-parts') }}
-          </div>
-          <div class="row q-px-md q-pb-sm">
-            <q-btn-toggle
-              v-model="lacPartsCount"
-              class="full-width"
-              :disable="timerRunning"
-              :options="[
-                { label: '1', value: 1 },
-                { label: '2', value: 2 },
-                { label: '3', value: 3 },
-              ]"
-              spread
-            />
-          </div>
-          <template
-            v-if="
-              timerMode === 'countdown' && !isCoWeek(selectedDateObject?.date)
-            "
-          >
-            <div class="row q-px-md q-py-sm">
-              {{ t('cbs-custom-end-time') }}
-            </div>
-            <div class="row q-px-md q-pb-sm">
-              <TimeInput
-                v-model="cbsCustomEndTime"
-                :disable="timerRunning"
-                :extra-rules="cbsEndTimeRules"
-                full-width
-                :label="t('end-time')"
-                :options="undefined"
-              />
-            </div>
-          </template>
-          <q-separator class="bg-accent-200 q-mb-md" />
-        </template>
-        <template
-          v-else-if="
-            timerMode === 'countdown' &&
-            isWeMeetingDay(selectedDateObject?.date)
-          "
-        >
-          <div class="row q-px-md q-py-sm">
-            {{ t('wt-custom-end-time') }}
-          </div>
-          <div class="row q-px-md q-pb-sm">
-            <TimeInput
-              v-model="wtCustomEndTime"
-              :disable="timerRunning"
-              :extra-rules="wtEndTimeRules"
-              full-width
-              :label="t('end-time')"
-              :options="undefined"
-            />
-          </div>
-          <q-separator class="bg-accent-200 q-mb-md" />
-        </template>
-
-        <!-- Custom parts: the whole list on days without a meeting, and extra
-             parts for special programs on meeting days -->
-        <div class="card-section-title row q-px-md">
-          {{ t('custom-timer-parts') }}
-        </div>
+    <template
+      v-if="!timerPreferences.preferWindowed && showFullscreenScreenPicker"
+    >
+      <p class="card-section-title text-dark-grey q-px-md q-pt-sm">
+        {{ t('display') }}
+      </p>
+      <div class="q-px-md q-pb-sm">
         <div
-          v-if="isMeetingDay(selectedDateObject?.date)"
-          class="row q-px-md q-pb-sm text-caption text-dark-grey"
+          class="display-map"
+          :style="{
+            position: 'relative',
+            width: '100%',
+            aspectRatio: virtualBounds.width + ' / ' + virtualBounds.height,
+            overflow: 'hidden',
+            '--screen-gap': '1%',
+          }"
         >
-          {{ t('custom-timer-parts-explain') }}
-        </div>
-        <div class="column q-px-md q-pb-sm q-gutter-sm">
-          <div
-            v-for="(part, index) in customTimerParts"
-            :key="part.id"
-            class="row items-center q-col-gutter-sm"
-          >
-            <div class="col">
-              <q-input
-                dense
-                :disable="timerRunning && currentPart === part.id"
-                filled
-                :label="t('meeting-part')"
-                :model-value="part.label"
-                @update:model-value="
-                  (value) =>
-                    updateCustomTimerPart(part.id, {
-                      label: String(value ?? ''),
-                    })
-                "
-              />
-            </div>
-            <div class="col-4">
-              <q-input
-                dense
-                :disable="timerRunning && currentPart === part.id"
-                filled
-                :label="t('duration-minutes')"
-                min="0"
-                :model-value="part.duration"
-                type="number"
-                @update:model-value="
-                  (value) =>
-                    updateCustomTimerPart(part.id, { duration: Number(value) })
-                "
-              />
-            </div>
-            <div class="col-auto">
-              <div class="row q-gutter-xs">
-                <q-btn
-                  :aria-label="t('move-up')"
-                  dense
-                  :disable="timerRunning || index === 0"
-                  flat
-                  icon="mmm-up"
-                  round
-                  @click="moveCustomTimerPart(index, index - 1)"
-                >
-                  <q-tooltip>{{ t('move-up') }}</q-tooltip>
-                </q-btn>
-                <q-btn
-                  :aria-label="t('move-down')"
-                  dense
-                  :disable="
-                    timerRunning || index === customTimerParts.length - 1
-                  "
-                  flat
-                  icon="mmm-down"
-                  round
-                  @click="moveCustomTimerPart(index, index + 1)"
-                >
-                  <q-tooltip>{{ t('move-down') }}</q-tooltip>
-                </q-btn>
-                <q-btn
-                  :aria-label="t('delete')"
-                  color="negative"
-                  dense
-                  :disable="
-                    (timerRunning && currentPart === part.id) ||
-                    (!isMeetingDay(selectedDateObject?.date) &&
-                      customTimerParts.length <= 1)
-                  "
-                  flat
-                  icon="mmm-delete"
-                  round
-                  @click="removeCustomTimerPart(part.id)"
-                >
-                  <q-tooltip>{{ t('delete') }}</q-tooltip>
-                </q-btn>
-              </div>
-            </div>
-          </div>
-          <div class="row">
+          <template v-for="(screen, index) in screenList" :key="screen.id">
             <q-btn
-              color="primary"
-              flat
-              icon="mmm-plus"
-              :label="t('add-custom-part')"
-              no-caps
-              @click="addCustomTimerPart"
-            />
-          </div>
+              class="screen-rect column items-center justify-center"
+              :class="{
+                'border-dashed': screen.mainWindow,
+              }"
+              :color="
+                !screen.mainWindow && !screen.mediaWindow
+                  ? 'primary'
+                  : 'secondary'
+              "
+              :disable="screen.mainWindow || screen.mediaWindow"
+              :outline="!isTimerScreenSelected(index, screen)"
+              :style="{
+                position: 'absolute',
+                left:
+                  'calc(' +
+                  (screenRects[index]?.left ?? 0) +
+                  '% + var(--screen-gap))',
+                top:
+                  'calc(' +
+                  (screenRects[index]?.top ?? 0) +
+                  '% + var(--screen-gap))',
+                width:
+                  'calc(' +
+                  (screenRects[index]?.width ?? 0) +
+                  '% - (var(--screen-gap) * 2))',
+                height:
+                  'calc(' +
+                  (screenRects[index]?.height ?? 0) +
+                  '% - (var(--screen-gap) * 2))',
+                borderRadius: '6px',
+              }"
+              unelevated
+              @click="
+                () => {
+                  if (screen.mainWindow || screen.mediaWindow) return;
+                  timerPreferences.preferredScreenNumber = index;
+                  moveTimerWindow(index, !timerPreferences.preferWindowed);
+                }
+              "
+            >
+              <q-tooltip
+                v-if="screen.mainWindow || screen.mediaWindow"
+                :delay="1000"
+              >
+                {{
+                  screen.mainWindow
+                    ? t('main-window-is-on-this-screen')
+                    : t('media-display') + ' (' + t('projecting') + ')'
+                }}
+              </q-tooltip>
+              <q-icon
+                v-if="screen.mainWindow"
+                class="absolute-top-left q-ma-xs"
+                name="mmm-logo"
+                size="xs"
+              />
+              <q-icon
+                v-if="screen.mediaWindow"
+                class="absolute-top-right q-ma-xs"
+                name="mmm-media-display-active"
+                size="xs"
+              />
+              <q-icon
+                v-if="!screen.mainWindow && !screen.mediaWindow"
+                class="q-mr-sm"
+                name="mmm-time"
+                size="xs"
+              />
+              {{
+                !screen.mainWindow && !screen.mediaWindow
+                  ? t('display') + ' ' + (index + 1)
+                  : ''
+              }}
+            </q-btn>
+          </template>
         </div>
+      </div>
+      <q-separator class="bg-accent-200 q-my-sm" />
+    </template>
 
-        <q-separator class="bg-accent-200 q-mb-md" />
-        <div class="card-section-title row q-px-md">
-          {{ t('meeting-part') }}
+    <!-- Meeting structure (midweek): number of parts and study end time -->
+    <template v-if="isMwMeetingDay(selectedDateObject?.date)">
+      <p class="card-section-title text-dark-grey q-px-md q-pt-sm">
+        {{ t('ayfm') }}
+      </p>
+      <div class="row q-px-md q-py-sm">
+        {{ t('number-of-ayfm-parts') }}
+      </div>
+      <div class="row q-px-md q-pb-sm">
+        <q-btn-toggle
+          v-model="ayfmPartsCount"
+          class="full-width"
+          :disable="timerRunning"
+          :options="[
+            { label: '1', value: 1 },
+            { label: '2', value: 2 },
+            { label: '3', value: 3 },
+            { label: '4', value: 4 },
+            { label: '5', value: 5 },
+          ]"
+          spread
+        />
+      </div>
+      <q-separator class="bg-accent-200 q-my-sm" />
+      <p class="card-section-title text-dark-grey q-px-md q-pt-sm">
+        {{ t('lac') }}
+      </p>
+      <div class="row q-px-md q-py-sm">
+        {{ t('number-of-lac-parts') }}
+      </div>
+      <div class="row q-px-md q-pb-sm">
+        <q-btn-toggle
+          v-model="lacPartsCount"
+          class="full-width"
+          :disable="timerRunning"
+          :options="[
+            { label: '1', value: 1 },
+            { label: '2', value: 2 },
+            { label: '3', value: 3 },
+          ]"
+          spread
+        />
+      </div>
+      <template
+        v-if="timerMode === 'countdown' && !isCoWeek(selectedDateObject?.date)"
+      >
+        <div class="row q-px-md q-py-sm">
+          {{ t('cbs-custom-end-time') }}
         </div>
         <div class="row q-px-md q-pb-sm">
-          <TimerPartsList dialog-id="timer-popup" />
+          <TimeInput
+            v-model="cbsCustomEndTime"
+            :disable="timerRunning"
+            :extra-rules="cbsEndTimeRules"
+            full-width
+            :label="t('end-time')"
+            :options="undefined"
+          />
         </div>
-
-        <!-- Timer Controls -->
-        <q-separator class="bg-accent-200 q-mb-md" />
-        <div class="card-section-title row q-px-md">
-          {{ t('timer-controls') }}
-        </div>
-
-        <div class="q-px-md q-pt-sm">
-          <TimerQuickControls class="q-mb-md" />
-
-          <div
-            v-if="timerRunning && aheadBehindText"
-            class="text-center text-caption text-dark-grey q-mb-sm"
-          >
-            {{ aheadBehindText }}
-          </div>
-
-          <q-btn
-            class="full-width q-mb-sm"
-            :color="handAlert.active ? 'warning' : 'primary'"
-            :outline="!handAlert.manual"
-            unelevated
-            @click="handAlert.toggleManual()"
-          >
-            <q-icon class="q-mr-sm" name="mmm-groups" />
-            {{ t('hand-alert') }}
-            <q-tooltip :delay="500">{{ t('hand-alert-explain') }}</q-tooltip>
-          </q-btn>
-          <q-btn
-            class="full-width q-mb-sm"
-            color="info"
-            :loading="exportingReport"
-            unelevated
-            @click="exportReport"
-          >
-            <q-icon class="q-mr-sm" name="mmm-file" />
-            {{ t('export-pdf-report') }}
-          </q-btn>
-          <q-btn
-            class="full-width q-mb-sm"
-            color="warning"
-            :disable="!hasAnyPartTimings || timerRunning"
-            flat
-            @click="resetAllConfirmOpen = true"
-          >
-            <q-icon class="q-mr-sm" name="mmm-reset" />
-            {{ t('reset-all-timings') }}
-          </q-btn>
-        </div>
+      </template>
+      <q-separator class="bg-accent-200 q-my-sm" />
+    </template>
+    <template
+      v-else-if="
+        timerMode === 'countdown' && isWeMeetingDay(selectedDateObject?.date)
+      "
+    >
+      <div class="row q-px-md q-py-sm">
+        {{ t('wt-custom-end-time') }}
       </div>
+      <div class="row q-px-md q-pb-sm">
+        <TimeInput
+          v-model="wtCustomEndTime"
+          :disable="timerRunning"
+          :extra-rules="wtEndTimeRules"
+          full-width
+          :label="t('end-time')"
+          :options="undefined"
+        />
+      </div>
+      <q-separator class="bg-accent-200 q-my-sm" />
+    </template>
 
-      <!-- Timer remote: where to open the read-only page -->
-      <template v-if="currentSettings?.timerRemoteEnable">
-        <q-separator class="bg-accent-200" />
-        <div class="q-px-md q-py-sm">
-          <div class="card-section-title row">
-            {{ t('timer-remote') }}
-          </div>
-          <div class="text-caption text-dark-grey q-mb-xs">
-            {{
-              timerRemoteUrls.length
-                ? t('timer-remote-open-on-device')
-                : t('timer-remote-no-network')
-            }}
-          </div>
-          <div
-            v-for="url in timerRemoteUrls"
-            :key="url"
-            class="row items-center no-wrap q-gutter-x-sm"
-          >
-            <code class="col ellipsis timer-remote__url">{{ url }}</code>
+    <!-- Custom parts: the whole list on days without a meeting, and extra
+         parts for special programs on meeting days -->
+    <p class="card-section-title text-dark-grey q-px-md q-pt-sm">
+      {{ t('custom-timer-parts') }}
+    </p>
+    <div
+      v-if="isMeetingDay(selectedDateObject?.date)"
+      class="row q-px-md q-pb-sm text-caption text-dark-grey"
+    >
+      {{ t('custom-timer-parts-explain') }}
+    </div>
+    <div class="column q-px-md q-pb-sm q-gutter-sm">
+      <div
+        v-for="(part, index) in customTimerParts"
+        :key="part.id"
+        class="row items-center q-col-gutter-sm"
+      >
+        <div class="col">
+          <q-input
+            dense
+            :disable="timerRunning && currentPart === part.id"
+            filled
+            :label="t('meeting-part')"
+            :model-value="part.label"
+            @update:model-value="
+              (value) =>
+                updateCustomTimerPart(part.id, {
+                  label: String(value ?? ''),
+                })
+            "
+          />
+        </div>
+        <div class="col-4">
+          <q-input
+            dense
+            :disable="timerRunning && currentPart === part.id"
+            filled
+            :label="t('duration-minutes')"
+            min="0"
+            :model-value="part.duration"
+            type="number"
+            @update:model-value="
+              (value) =>
+                updateCustomTimerPart(part.id, { duration: Number(value) })
+            "
+          />
+        </div>
+        <div class="col-auto">
+          <div class="row q-gutter-xs">
             <q-btn
-              :aria-label="t('timer-remote-copy')"
+              :aria-label="t('move-up')"
               dense
+              :disable="timerRunning || index === 0"
               flat
-              icon="mmm-link"
+              icon="mmm-up"
               round
-              size="sm"
-              @click="copyRemoteUrl(url)"
+              @click="moveCustomTimerPart(index, index - 1)"
             >
-              <q-tooltip :delay="500">{{ t('timer-remote-copy') }}</q-tooltip>
+              <q-tooltip>{{ t('move-up') }}</q-tooltip>
+            </q-btn>
+            <q-btn
+              :aria-label="t('move-down')"
+              dense
+              :disable="timerRunning || index === customTimerParts.length - 1"
+              flat
+              icon="mmm-down"
+              round
+              @click="moveCustomTimerPart(index, index + 1)"
+            >
+              <q-tooltip>{{ t('move-down') }}</q-tooltip>
+            </q-btn>
+            <q-btn
+              :aria-label="t('delete')"
+              color="negative"
+              dense
+              :disable="
+                (timerRunning && currentPart === part.id) ||
+                (!isMeetingDay(selectedDateObject?.date) &&
+                  customTimerParts.length <= 1)
+              "
+              flat
+              icon="mmm-delete"
+              round
+              @click="removeCustomTimerPart(part.id)"
+            >
+              <q-tooltip>{{ t('delete') }}</q-tooltip>
             </q-btn>
           </div>
         </div>
-      </template>
+      </div>
+      <div class="row">
+        <q-btn
+          color="primary"
+          flat
+          icon="mmm-plus"
+          :label="t('add-custom-part')"
+          no-caps
+          @click="addCustomTimerPart"
+        />
+      </div>
+    </div>
 
-      <!-- Show/Hide Section -->
-      <q-separator class="bg-accent-200" />
-      <div class="action-popup__footer q-px-md q-pt-md row">
-        <div class="col">
-          <div class="row text-subtitle1 text-weight-medium">
-            {{ timerWindowVisible ? t('projecting') : t('inactive') }}
-          </div>
-          <div class="row text-dark-grey">
-            {{
-              screenList?.length < 2 || timerPreferences.preferWindowed
-                ? t('windowed')
-                : t('external-screen')
-            }}
-          </div>
+    <q-separator class="bg-accent-200 q-my-sm" />
+    <p class="card-section-title text-dark-grey q-px-md q-pt-sm">
+      {{ t('meeting-part') }}
+    </p>
+    <div class="row q-px-md q-pb-sm">
+      <TimerPartsList dialog-id="timer-popup" />
+    </div>
+
+    <!-- Timer Controls -->
+    <q-separator class="bg-accent-200 q-my-sm" />
+    <p class="card-section-title text-dark-grey q-px-md q-pt-sm">
+      {{ t('timer-controls') }}
+    </p>
+    <div class="q-px-md q-pt-sm q-pb-sm">
+      <TimerQuickControls class="q-mb-md" />
+
+      <div
+        v-if="timerRunning && aheadBehindText"
+        class="text-center text-caption text-dark-grey q-mb-sm"
+      >
+        {{ aheadBehindText }}
+      </div>
+
+      <q-btn
+        class="full-width q-mb-sm"
+        :color="handAlert.active ? 'warning' : 'primary'"
+        icon="mmm-groups"
+        :label="t('hand-alert')"
+        no-caps
+        :outline="!handAlert.manual"
+        unelevated
+        @click="handAlert.toggleManual()"
+      >
+        <q-tooltip :delay="500">{{ t('hand-alert-explain') }}</q-tooltip>
+      </q-btn>
+      <q-btn
+        class="full-width q-mb-sm"
+        color="primary"
+        icon="mmm-export"
+        :label="t('export-pdf-report')"
+        :loading="exportingReport"
+        no-caps
+        outline
+        @click="exportReport"
+      />
+      <q-btn
+        class="full-width"
+        color="negative"
+        :disable="!hasAnyPartTimings || timerRunning"
+        flat
+        icon="mmm-reset"
+        :label="t('reset-all-timings')"
+        no-caps
+        @click="resetAllConfirmOpen = true"
+      />
+    </div>
+
+    <!-- Timer remote: where to open the read-only page -->
+    <template v-if="currentSettings?.timerRemoteEnable">
+      <q-separator class="bg-accent-200 q-my-sm" />
+      <p class="card-section-title text-dark-grey q-px-md q-pt-sm">
+        {{ t('timer-remote') }}
+      </p>
+      <div class="q-px-md q-pb-sm">
+        <div class="text-caption text-dark-grey q-mb-xs">
+          {{
+            timerRemoteUrls.length
+              ? t('timer-remote-open-on-device')
+              : t('timer-remote-no-network')
+          }}
         </div>
-        <div class="col-grow">
+        <div
+          v-for="url in timerRemoteUrls"
+          :key="url"
+          class="row items-center no-wrap q-gutter-x-sm"
+        >
+          <code class="col ellipsis timer-remote__url">{{ url }}</code>
           <q-btn
-            v-if="timerWindowVisible"
-            class="full-width"
-            color="primary"
-            unelevated
-            @click="handleTimerWindowVisibility(false)"
+            :aria-label="t('timer-remote-copy')"
+            dense
+            flat
+            icon="mmm-link"
+            round
+            size="sm"
+            @click="copyRemoteUrl(url)"
           >
-            {{ t('hide-timer-display') }}
-          </q-btn>
-          <q-btn
-            v-else
-            class="full-width"
-            color="primary"
-            unelevated
-            @click="handleTimerWindowVisibility(true)"
-          >
-            {{ t('show-timer-display') }}
+            <q-tooltip :delay="500">{{ t('timer-remote-copy') }}</q-tooltip>
           </q-btn>
         </div>
       </div>
-    </div>
-  </q-menu>
+    </template>
+
+    <template #footer>
+      <q-btn
+        v-if="timerWindowVisible"
+        class="full-width"
+        color="primary"
+        icon="mmm-alarm-off"
+        :label="t('hide-timer-display')"
+        unelevated
+        @click="handleTimerWindowVisibility(false)"
+      />
+      <q-btn
+        v-else
+        class="full-width"
+        color="primary"
+        icon="mmm-alarm"
+        :label="t('show-timer-display')"
+        unelevated
+        @click="handleTimerWindowVisibility(true)"
+      />
+    </template>
+  </ActionPopup>
 
   <ConfirmDialog
     v-model="resetAllConfirmOpen"
@@ -505,8 +465,9 @@ import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import TimeInput from 'components/form-inputs/TimeInput.vue';
 import TimerPartsList from 'components/media/TimerPartsList.vue';
 import TimerQuickControls from 'components/media/TimerQuickControls.vue';
+import ActionPopup from 'components/ui/ActionPopup.vue';
 import { storeToRefs } from 'pinia';
-import { copyToClipboard, QMenu } from 'quasar';
+import { copyToClipboard } from 'quasar';
 import useTimer from 'src/composables/useTimer';
 import { useTimerAheadBehindText } from 'src/composables/useTimerAheadBehindText';
 import {
@@ -522,12 +483,8 @@ import { useAppSettingsStore } from 'src/stores/app-settings';
 import { withTimeout } from 'src/utils/general';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useHandAlertStore } from 'stores/hand-alert';
-import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-
-const timerPopup = useTemplateRef<QMenu>('timerPopup');
-const popupContent = useTemplateRef<HTMLElement>('popupContent');
-let popupResizeObserver: ResizeObserver | undefined;
 
 const { t } = useI18n();
 
@@ -739,6 +696,25 @@ const setTimerWindowedMode = () => {
   moveTimerWindow(timerPreferences.value.preferredScreenNumber, false);
 };
 
+// "Projecting · External screen": whether the timer display is shown, and
+// where.
+const statusText = computed(() => {
+  const visibility = timerWindowVisible.value ? t('projecting') : t('inactive');
+  const windowed =
+    (screenList.value?.length ?? 0) < 2 ||
+    timerPreferences.value.preferWindowed;
+  const placement = windowed ? t('windowed') : t('external-screen');
+  return [visibility, placement].join(' · ');
+});
+
+const statusIcon = computed(() =>
+  timerWindowVisible.value ? 'mmm-alarm' : 'mmm-alarm-off',
+);
+
+const statusColor = computed(() =>
+  timerWindowVisible.value ? 'positive' : 'grey',
+);
+
 // Selected when timer window is on this screen and it's not the app's main window
 const isTimerScreenSelected = (index: number, screen: Display) => {
   return (
@@ -755,23 +731,6 @@ whenever(
     fetchScreens();
   },
 );
-
-// Anchored bottom-up (self="bottom middle") so it visually grows out of the
-// action island. A ResizeObserver repositions it whenever its rendered size
-// actually changes - custom timer parts added/removed, meeting-day section
-// swaps, screen list thresholds, etc. - instead of guessing which reactive
-// values might affect height.
-watch(popupContent, (el) => {
-  popupResizeObserver?.disconnect();
-  popupResizeObserver = undefined;
-  if (!el) return;
-  popupResizeObserver = new ResizeObserver(() => {
-    timerPopup.value?.updatePosition();
-  });
-  popupResizeObserver.observe(el);
-});
-
-onBeforeUnmount(() => popupResizeObserver?.disconnect());
 
 watch(
   screenList,

@@ -1,232 +1,197 @@
 <template>
-  <q-menu
-    ref="downloadPopup"
+  <ActionPopup
     v-model="open"
-    anchor="top middle"
-    no-parent-event
-    :offset="[0, 8]"
-    self="bottom middle"
-    transition-hide="jump-down"
-    transition-show="jump-up"
+    :status-color="summaryColor"
+    :status-icon="summaryIcon"
+    :status-loading="checkingCount > 0 || downloadingCount > 0"
+    :status-text="summaryText"
+    :title="t('media-sync')"
   >
-    <div
-      ref="popupContent"
-      class="action-popup action-popup--scroll-layout q-py-md"
-    >
-      <div class="card-title row q-px-md q-mb-none items-center">
-        <div class="col">{{ t('media-sync') }}</div>
-        <div class="col-shrink">
-          <q-btn
-            :aria-label="t('refresh-all-meeting-media')"
-            color="primary"
-            :disable="refreshDisabled"
-            flat
-            icon="mmm-refresh"
-            :loading="fetchOrDownloadsAreRunning"
-            round
-            size="sm"
-            @click="onRefreshMeetingMedia"
+    <template #status-action>
+      <q-btn
+        :aria-label="t('refresh-all-meeting-media')"
+        color="primary"
+        dense
+        :disable="refreshDisabled"
+        flat
+        icon="mmm-refresh"
+        round
+        size="sm"
+        @click="onRefreshMeetingMedia"
+      >
+        <q-tooltip :delay="500">
+          {{ t('refresh-all-meeting-media') }}
+        </q-tooltip>
+      </q-btn>
+    </template>
+
+    <template v-if="groupedByDateEntries.length === 0">
+      <div class="column flex-center q-px-md q-py-lg text-center">
+        <q-icon color="positive" name="mmm-cloud-done" size="48px" />
+        <div class="text-weight-medium q-mt-sm">
+          {{ t('all-caught-up') }}
+        </div>
+        <div class="text-caption text-dark-grey">
+          {{ t('noDownloadsInProgress') }}
+        </div>
+      </div>
+    </template>
+
+    <template v-else>
+      <q-list class="full-width" dense>
+        <transition-group name="date-row">
+          <template
+            v-for="[dateKey, group] in groupedByDateEntries"
+            :key="dateKey"
           >
-            <q-tooltip v-if="!fetchOrDownloadsAreRunning" :delay="500">
-              {{ t('refresh-all-meeting-media') }}
-            </q-tooltip>
-          </q-btn>
-        </div>
-      </div>
+            <q-expansion-item
+              v-if="group.length"
+              :key="`${dateKey}-files`"
+              dense
+              dense-toggle
+              expand-separator
+              :model-value="expandedDates.has(dateKey)"
+              @update:model-value="(v) => handleExpansionToggle(dateKey, v)"
+            >
+              <template #header>
+                <div class="row items-center no-wrap full-width">
+                  <q-icon
+                    class="q-mr-sm"
+                    :color="statusColor(dateKey)"
+                    :name="statusIcon(dateKey)"
+                    size="sm"
+                  />
+                  <div class="col">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ localDate(dateKey) || t('unknown-date') }}
+                      </q-item-label>
+                      <q-item-label caption>{{
+                        statusCaption(dateKey, group)
+                      }}</q-item-label>
+                    </q-item-section>
+                  </div>
+                  <q-btn
+                    v-if="localDate(dateKey)"
+                    class="q-mr-sm"
+                    color="primary"
+                    flat
+                    icon="mmm-arrow-outward"
+                    round
+                    size="xs"
+                    @click.stop="navigateToDate(dateKey)"
+                  >
+                    <q-tooltip :delay="500">
+                      {{ t('go-to-this-date') }}
+                    </q-tooltip>
+                  </q-btn>
+                </div>
+              </template>
 
-      <div class="row items-center no-wrap q-px-md q-mb-sm q-gutter-x-sm">
-        <!-- As wide as the rows' icons below, so they share one column. -->
-        <div class="sync-icon-column">
-          <q-spinner
-            v-if="checkingCount > 0 || downloadingCount > 0"
-            color="primary"
-            size="16px"
-          />
-          <q-icon
-            v-else
-            :color="summaryColor"
-            :name="summaryIcon"
-            size="16px"
-          />
-        </div>
-        <div class="text-caption text-weight-medium ellipsis">
-          {{ summaryText }}
-        </div>
-      </div>
-      <q-separator class="bg-accent-200 q-mb-sm" />
-
-      <div class="action-popup__scroll q-col-gutter-y-sm">
-        <template v-if="groupedByDateEntries.length === 0">
-          <div class="column flex-center q-px-md q-py-lg text-center">
-            <q-icon color="positive" name="mmm-cloud-done" size="48px" />
-            <div class="text-weight-medium q-mt-sm">
-              {{ t('all-caught-up') }}
-            </div>
-            <div class="text-caption text-dark-grey">
-              {{ t('noDownloadsInProgress') }}
-            </div>
-          </div>
-        </template>
-
-        <template v-else>
-          <q-list class="full-width" dense>
-            <transition-group name="date-row">
-              <template
-                v-for="[dateKey, group] in groupedByDateEntries"
-                :key="dateKey"
-              >
-                <q-expansion-item
-                  v-if="group.length"
-                  :key="`${dateKey}-files`"
-                  dense
-                  dense-toggle
-                  expand-separator
-                  :model-value="expandedDates.has(dateKey)"
-                  @update:model-value="(v) => handleExpansionToggle(dateKey, v)"
-                >
-                  <template #header>
-                    <div class="row items-center no-wrap full-width">
-                      <q-icon
-                        class="q-mr-sm"
-                        :color="statusColor(dateKey)"
-                        :name="statusIcon(dateKey)"
-                        size="sm"
-                      />
-                      <div class="col">
-                        <q-item-section>
-                          <q-item-label>
-                            {{ localDate(dateKey) || t('unknown-date') }}
-                          </q-item-label>
-                          <q-item-label caption>{{
-                            statusCaption(dateKey, group)
-                          }}</q-item-label>
-                        </q-item-section>
-                      </div>
-                      <q-btn
-                        v-if="localDate(dateKey)"
-                        class="q-mr-sm"
-                        color="primary"
-                        flat
-                        icon="mmm-arrow-outward"
-                        round
-                        size="xs"
-                        @click.stop="navigateToDate(dateKey)"
-                      >
-                        <q-tooltip :delay="500">
-                          {{ t('go-to-this-date') }}
-                        </q-tooltip>
-                      </q-btn>
-                    </div>
-                  </template>
-
-                  <!-- Laid out like the header above: names under the date,
+              <!-- Laid out like the header above: names under the date,
                        statuses under the expand toggle. -->
-                  <q-list class="sync-files full-width" dense>
-                    <q-item v-for="(item, id) in group" :key="id" dense>
-                      <div class="row items-center no-wrap full-width">
-                        <div class="col">
-                          <q-item-section>
-                            <q-item-label
-                              class="text-weight-medium text-dark-grey"
-                            >
-                              {{ basename(item.filename) }}
-                            </q-item-label>
-                          </q-item-section>
-                        </div>
-                      </div>
-                      <q-item-section side>
-                        <div class="sync-icon-column">
-                          <q-icon
-                            v-if="item.error"
-                            :color="
-                              itemErrorSeverity(item) === 'error'
-                                ? 'negative'
-                                : 'info'
-                            "
-                            :name="
-                              itemErrorSeverity(item) === 'error'
-                                ? 'mmm-error'
-                                : 'mmm-info'
-                            "
-                            :size="
-                              itemErrorSeverity(item) === 'error' ? 'sm' : 'xs'
-                            "
-                          >
-                            <q-tooltip>{{ errorTooltip(item) }}</q-tooltip>
-                          </q-icon>
-                          <q-icon
-                            v-else-if="item.complete"
-                            color="positive"
-                            name="mmm-cloud-done"
-                            size="sm"
-                          />
-                          <q-circular-progress
-                            v-else-if="item.loaded && item.total"
-                            color="primary"
-                            size="sm"
-                            :thickness="0.3"
-                            :value="(item.loaded / item.total) * 100"
-                          />
-                        </div>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-expansion-item>
-
-                <!-- Laid out like the expandable rows' header above, so the
-                     icons, dates and buttons of both kinds of rows line up. -->
-                <q-item v-else :key="`${dateKey}-checking`" dense>
+              <q-list class="sync-files full-width" dense>
+                <q-item v-for="(item, id) in group" :key="id" dense>
                   <div class="row items-center no-wrap full-width">
-                    <q-spinner
-                      v-if="getStatus(dateKey) === 'checking'"
-                      class="q-mr-sm"
-                      color="secondary"
-                      size="sm"
-                    />
-                    <q-icon
-                      v-else
-                      class="q-mr-sm"
-                      :color="statusColor(dateKey)"
-                      :name="statusIcon(dateKey)"
-                      size="sm"
-                    />
                     <div class="col">
                       <q-item-section>
-                        <q-item-label>
-                          {{ localDate(dateKey) || t('unknown-date') }}
+                        <q-item-label class="text-weight-medium text-dark-grey">
+                          {{ basename(item.filename) }}
                         </q-item-label>
-                        <q-item-label caption>{{
-                          statusCaption(dateKey, group)
-                        }}</q-item-label>
                       </q-item-section>
                     </div>
-                    <q-btn
-                      v-if="localDate(dateKey)"
-                      class="q-mr-sm"
-                      color="primary"
-                      flat
-                      icon="mmm-arrow-outward"
-                      round
-                      size="xs"
-                      @click="navigateToDate(dateKey)"
-                    >
-                      <q-tooltip :delay="500">
-                        {{ t('go-to-this-date') }}
-                      </q-tooltip>
-                    </q-btn>
                   </div>
-                  <!-- Takes the place of the expand toggle the other rows have. -->
-                  <q-item-section aria-hidden="true" class="invisible" side>
-                    <q-icon name="mmm-dropdown-arrow" />
+                  <q-item-section side>
+                    <div class="sync-icon-column">
+                      <q-icon
+                        v-if="item.error"
+                        :color="
+                          itemErrorSeverity(item) === 'error'
+                            ? 'negative'
+                            : 'info'
+                        "
+                        :name="
+                          itemErrorSeverity(item) === 'error'
+                            ? 'mmm-error'
+                            : 'mmm-info'
+                        "
+                        :size="
+                          itemErrorSeverity(item) === 'error' ? 'sm' : 'xs'
+                        "
+                      >
+                        <q-tooltip>{{ errorTooltip(item) }}</q-tooltip>
+                      </q-icon>
+                      <q-icon
+                        v-else-if="item.complete"
+                        color="positive"
+                        name="mmm-cloud-done"
+                        size="sm"
+                      />
+                      <q-circular-progress
+                        v-else-if="item.loaded && item.total"
+                        color="primary"
+                        size="sm"
+                        :thickness="0.3"
+                        :value="(item.loaded / item.total) * 100"
+                      />
+                    </div>
                   </q-item-section>
                 </q-item>
-              </template>
-            </transition-group>
-          </q-list>
-        </template>
-      </div>
-    </div>
-  </q-menu>
+              </q-list>
+            </q-expansion-item>
+
+            <!-- Laid out like the expandable rows' header above, so the
+                     icons, dates and buttons of both kinds of rows line up. -->
+            <q-item v-else :key="`${dateKey}-checking`" dense>
+              <div class="row items-center no-wrap full-width">
+                <q-spinner
+                  v-if="getStatus(dateKey) === 'checking'"
+                  class="q-mr-sm"
+                  color="secondary"
+                  size="sm"
+                />
+                <q-icon
+                  v-else
+                  class="q-mr-sm"
+                  :color="statusColor(dateKey)"
+                  :name="statusIcon(dateKey)"
+                  size="sm"
+                />
+                <div class="col">
+                  <q-item-section>
+                    <q-item-label>
+                      {{ localDate(dateKey) || t('unknown-date') }}
+                    </q-item-label>
+                    <q-item-label caption>{{
+                      statusCaption(dateKey, group)
+                    }}</q-item-label>
+                  </q-item-section>
+                </div>
+                <q-btn
+                  v-if="localDate(dateKey)"
+                  class="q-mr-sm"
+                  color="primary"
+                  flat
+                  icon="mmm-arrow-outward"
+                  round
+                  size="xs"
+                  @click="navigateToDate(dateKey)"
+                >
+                  <q-tooltip :delay="500">
+                    {{ t('go-to-this-date') }}
+                  </q-tooltip>
+                </q-btn>
+              </div>
+              <!-- Takes the place of the expand toggle the other rows have. -->
+              <q-item-section aria-hidden="true" class="invisible" side>
+                <q-icon name="mmm-dropdown-arrow" />
+              </q-item-section>
+            </q-item>
+          </template>
+        </transition-group>
+      </q-list>
+    </template>
+  </ActionPopup>
   <ConfirmDialog
     v-model="refreshConfirmOpen"
     confirm-color="primary"
@@ -243,9 +208,8 @@
 </template>
 
 <script setup lang="ts">
-import type { QMenu } from 'quasar';
-
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
+import ActionPopup from 'components/ui/ActionPopup.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { DOWNLOAD_ROW_AUTO_COLLAPSE_MS, SORTER } from 'src/constants/general';
@@ -253,7 +217,7 @@ import { updateLookupPeriod } from 'src/helpers/date';
 import { fetchMedia } from 'src/helpers/jw-media';
 import { dateFromString, getDateDiff, getLocalDate } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // ─── Setup ───────────────────────────────────────────────────────────────────
@@ -517,10 +481,6 @@ const expandedDates = computed(() => {
   );
 });
 
-const downloadPopup = useTemplateRef<QMenu>('downloadPopup');
-const popupContent = useTemplateRef<HTMLElement>('popupContent');
-let popupResizeObserver: ResizeObserver | undefined;
-
 function handleExpansionToggle(dateKey: string, expanded: boolean) {
   expansionModes.value[dateKey] = expanded ? 'manual-open' : 'manual-closed';
 }
@@ -545,11 +505,11 @@ function navigateToDate(dateKey?: string) {
 const refreshConfirmOpen = ref(false);
 
 async function doRefreshMeetingMedia() {
-  // Close immediately rather than blocking on the fetch - the refresh
-  // button itself already shows :loading="fetchOrDownloadsAreRunning" (a
-  // global "is any media work active" store flag, not something local to
-  // this dialog) for as long as the refresh is actually running, so the
-  // user isn't left without feedback - they're just free to close this
+  // Close immediately rather than blocking on the fetch - the status line
+  // shows a spinner (and the refresh button is disabled) for as long as
+  // media work is running (a global store flag, not something local to
+  // this dialog), so the user isn't left without feedback - they're just
+  // free to close this
   // popup, switch dates, or otherwise keep using the app while it runs
   // instead of being stuck behind a persistent confirm dialog.
   refreshConfirmOpen.value = false;
@@ -590,29 +550,11 @@ watch(open, (isOpen) => {
   expansionModes.value = {};
   completedAt.value = {};
 });
-
-// The popup is anchored bottom-up (self="bottom middle") so it visually
-// grows out of the action island. That only holds if we reposition every
-// time the content's actual rendered size changes - row add/remove,
-// expand/collapse animations, fade-out transitions completing, etc. A
-// ResizeObserver catches all of these at the moment they really happen,
-// instead of guessing with setTimeout delays tied to animation durations.
-watch(popupContent, (el) => {
-  popupResizeObserver?.disconnect();
-  popupResizeObserver = undefined;
-  if (!el) return;
-  popupResizeObserver = new ResizeObserver(() => {
-    downloadPopup.value?.updatePosition();
-  });
-  popupResizeObserver.observe(el);
-});
-
-onBeforeUnmount(() => popupResizeObserver?.disconnect());
 </script>
 
 <style scoped lang="scss">
-// The width of the rows' status icons, to center smaller icons in that same
-// column (the summary's, a file's info icon).
+// The width of the rows' status icons, to center a file's smaller info icon in
+// that same column.
 .sync-icon-column {
   align-items: center;
   display: flex;

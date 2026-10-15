@@ -1,91 +1,63 @@
 <template>
-  <q-menu
-    ref="obsPopup"
+  <ActionPopup
     v-model="open"
-    anchor="top middle"
-    no-parent-event
-    :offset="[0, 8]"
-    self="bottom middle"
-    transition-hide="jump-down"
-    transition-show="jump-up"
+    :status-color="statusColor"
+    :status-icon="statusIcon"
+    :status-text="statusText"
+    :title="t('scene-selection')"
   >
-    <div
-      ref="popupContent"
-      class="action-popup action-popup--scroll-layout q-py-md"
-    >
-      <div class="card-title col-shrink full-width q-px-md q-mb-none">
-        {{ t('scene-selection') }}
-      </div>
-
-      <div class="action-popup__scroll full-width q-px-md">
-        <div class="row q-col-gutter-xs">
-          <template v-for="scene in sceneList.concat([])" :key="scene">
-            <div :class="sceneColumnClass">
-              <q-btn
-                class="full-width"
-                :color="sceneExists(scene) ? 'primary' : 'negative'"
-                :icon="getSceneIcon(scene)"
-                :outline="scene !== resolvedScene"
-                :size="currentSettings?.obsHideIcons ? 'md' : 'sm'"
-                unelevated
-                @click="setObsScene(undefined, scene)"
-              >
-                <div class="ellipsis full-width">
-                  {{
-                    scene === currentSettings?.obsCameraScene
-                      ? t('stage')
-                      : scene === currentSettings?.obsMediaScene
-                        ? t('media-only')
-                        : scene === currentSettings?.obsImageScene
-                          ? t('picture-in-picture')
-                          : isUUID(scene)
-                            ? (scenes.find((s) => s.sceneUuid === scene)
-                                ?.sceneName ?? t('unknown-scene'))
-                            : scene
-                  }}
-                </div>
-              </q-btn>
+    <div class="row q-px-md q-pb-sm q-col-gutter-xs">
+      <template v-for="scene in sceneList.concat([])" :key="scene">
+        <div :class="sceneColumnClass">
+          <q-btn
+            class="full-width"
+            :color="sceneExists(scene) ? 'primary' : 'negative'"
+            :icon="getSceneIcon(scene)"
+            :outline="scene !== resolvedScene"
+            :size="currentSettings?.obsHideIcons ? 'md' : 'sm'"
+            unelevated
+            @click="setObsScene(undefined, scene)"
+          >
+            <div class="ellipsis full-width">
+              {{ getSceneLabel(scene) }}
             </div>
-          </template>
-        </div>
-      </div>
-
-      <template v-if="currentSettings?.obsEnableRecordingControls">
-        <q-separator class="bg-accent-200 q-mt-sm" />
-        <div
-          class="action-popup__footer full-width q-px-md q-pt-md row q-col-gutter-xs"
-        >
-          <div class="col-12 q-mb-sm">
-            <q-btn
-              class="full-width"
-              :color="isRecording ? 'negative' : 'primary'"
-              :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
-              :label="isRecording ? t('stop-recording') : t('start-recording')"
-              unelevated
-              @click="toggleRecording()"
-            />
-          </div>
-          <div v-if="obsRecordingFolder" class="col-12">
-            <q-btn
-              class="full-width"
-              color="secondary"
-              icon="mmm-folder-open"
-              :label="t('open-recording-folder')"
-              unelevated
-              @click="openObsRecordingFolder"
-            />
-          </div>
+          </q-btn>
         </div>
       </template>
     </div>
-  </q-menu>
+
+    <template v-if="currentSettings?.obsEnableRecordingControls" #footer>
+      <q-btn
+        class="full-width"
+        :color="isRecording ? 'negative' : 'primary'"
+        :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
+        :label="isRecording ? t('stop-recording') : t('start-recording')"
+        unelevated
+        @click="toggleRecording()"
+      />
+    </template>
+    <template
+      v-if="currentSettings?.obsEnableRecordingControls && obsRecordingFolder"
+      #footer-secondary
+    >
+      <q-btn
+        class="col btn-tonal"
+        color="secondary"
+        flat
+        icon="mmm-folder-open"
+        :label="t('open-recording-folder')"
+        no-caps
+        @click="openObsRecordingFolder"
+      />
+    </template>
+  </ActionPopup>
 </template>
 
 <script setup lang="ts">
-import type { QMenu } from 'quasar';
 import type { ObsSceneType } from 'src/types';
 
 import { useEventListener, watchImmediate } from '@vueuse/core';
+import ActionPopup from 'components/ui/ActionPopup.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -101,14 +73,10 @@ import { obsWebSocketInfo } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
 import { useRecordingStore } from 'stores/recording-state';
-import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const open = defineModel<boolean>({ default: false });
-
-const obsPopup = useTemplateRef<QMenu>('obsPopup');
-const popupContent = useTemplateRef<HTMLElement>('popupContent');
-let popupResizeObserver: ResizeObserver | undefined;
 
 const currentState = useCurrentStateStore();
 const {
@@ -122,6 +90,7 @@ const {
   currentScene,
   currentSceneType,
   obsConnectionState,
+  obsSceneListError,
   previousScene,
   scenes,
 } = storeToRefs(obsState);
@@ -133,6 +102,20 @@ const { isRecording } = storeToRefs(recording);
 const { syncObsRecordingState, toggleRecording } = recording;
 
 const { t } = useI18n();
+
+// Connected (the popup only opens then), but the scene list may have failed
+// to load: say so, as the OBS button's tooltip does.
+const statusText = computed(() =>
+  obsSceneListError.value ? t('obs.scene-list-error') : t('obs.connected'),
+);
+
+const statusIcon = computed(() =>
+  obsSceneListError.value ? 'mmm-warning' : 'mmm-check',
+);
+
+const statusColor = computed(() =>
+  obsSceneListError.value ? 'warning' : 'positive',
+);
 
 // OBS-specific recording folder (not in the store since it's OBS-only)
 const obsRecordingFolder = ref<null | string>(null);
@@ -330,6 +313,18 @@ const getSceneIcon = (scene: null | string | undefined) => {
   return 'play-box-outline';
 };
 
+const getSceneLabel = (scene: string) => {
+  const settings = currentSettings.value;
+  if (scene === settings?.obsCameraScene) return t('stage');
+  if (scene === settings?.obsMediaScene) return t('media-only');
+  if (scene === settings?.obsImageScene) return t('picture-in-picture');
+  if (!isUUID(scene)) return scene;
+  return (
+    scenes.value.find((s) => s.sceneUuid === scene)?.sceneName ??
+    t('unknown-scene')
+  );
+};
+
 const sceneColumnClass = computed(() => {
   const sceneCount = sceneList.value.length;
   if (sceneCount === 1) {
@@ -395,17 +390,4 @@ watchImmediate(
     obsRecordingFolder.value = folder;
   },
 );
-
-// Anchored bottom-up
-watch(popupContent, (el) => {
-  popupResizeObserver?.disconnect();
-  popupResizeObserver = undefined;
-  if (!el) return;
-  popupResizeObserver = new ResizeObserver(() => {
-    obsPopup.value?.updatePosition();
-  });
-  popupResizeObserver.observe(el);
-});
-
-onBeforeUnmount(() => popupResizeObserver?.disconnect());
 </script>

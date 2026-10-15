@@ -700,8 +700,53 @@ a {
   // separators inside short of the popup's right edge.
 }
 
+.action-popup__status {
+  gap: 8px;
+  margin-bottom: 8px;
+  // Times and counts shown here (a recording's length, a countdown) tick
+  // without the text around them shifting.
+  font-variant-numeric: tabular-nums;
+}
+
+// The main action, full width, then a row of secondary ones under it.
 .action-popup__footer {
+  display: flex;
   flex: 0 0 auto;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 16px 0;
+}
+
+.action-popup__footer-row {
+  display: flex;
+  gap: 8px;
+}
+
+// Under the status line: blue for information, or orange or red to match
+// what it reports (--warning / --negative). Tints rather than the accent
+// palette, which turns a flat grey in dark mode that hides a blue link.
+.action-popup__banner {
+  align-items: center;
+  background: color-mix(in srgb, $primary 12%, transparent);
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin: 0 16px 8px;
+  padding: 8px;
+}
+
+.action-popup__banner--warning {
+  background: color-mix(in srgb, $warning 16%, transparent);
+}
+
+.action-popup__banner--negative {
+  background: color-mix(in srgb, $negative 14%, transparent);
+}
+
+// The same blue tint, for a panel in a popup's body.
+.action-popup__tint {
+  background: color-mix(in srgb, $primary 10%, transparent);
 }
 
 // Action island buttons share one status language (see useIslandButton): a

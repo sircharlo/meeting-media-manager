@@ -1,50 +1,29 @@
 <template>
-  <q-menu
-    ref="zoomMeetingManagerPopup"
+  <ActionPopup
     v-model="open"
-    anchor="top middle"
-    no-parent-event
-    :offset="[0, 8]"
-    self="bottom middle"
-    transition-hide="jump-down"
-    transition-show="jump-up"
+    :status-color="statusColor"
+    :status-icon="statusIcon"
+    :status-loading="searchingForWindow"
+    :status-text="statusText"
+    :title="t('zoomMeetingManager')"
   >
-    <div
-      ref="popupContent"
-      class="action-popup action-popup--scroll-layout q-py-md"
-    >
-      <div class="card-title col-shrink full-width q-px-md q-mb-none">
-        {{ t('zoomMeetingManager') }}
-      </div>
-
-      <div class="row items-center no-wrap q-px-md q-mb-sm q-gutter-x-sm">
-        <q-spinner v-if="searchingForWindow" color="primary" size="16px" />
-        <q-icon v-else :color="statusColor" :name="statusIcon" size="16px" />
-        <div class="col text-caption text-weight-medium ellipsis">
-          {{ statusText }}
-        </div>
-        <q-btn
-          dense
-          flat
-          icon="mmm-refresh"
-          round
-          size="sm"
-          @click="syncMainWindow"
-        >
-          <q-tooltip :delay="500">{{ t('refresh') }}</q-tooltip>
-        </q-btn>
-      </div>
-
-      <div
-        v-if="setupNeeded"
-        class="zoom-popup__banner row items-center no-wrap q-mx-md q-mb-sm q-pa-sm bg-accent-100"
+    <template #status-action>
+      <q-btn
+        color="primary"
+        dense
+        flat
+        icon="mmm-refresh"
+        round
+        size="sm"
+        @click="syncMainWindow"
       >
-        <q-icon
-          class="q-mr-sm"
-          color="primary"
-          name="mmm-cog-sparkles"
-          size="18px"
-        />
+        <q-tooltip :delay="500">{{ t('refresh') }}</q-tooltip>
+      </q-btn>
+    </template>
+
+    <template #banners>
+      <div v-if="setupNeeded" class="action-popup__banner">
+        <q-icon color="primary" name="mmm-cog-sparkles" size="18px" />
         <div class="col text-caption text-weight-medium">
           {{ t('zoom-setup-banner') }}
         </div>
@@ -58,20 +37,17 @@
         />
       </div>
 
-      <div
-        v-if="checkRunning"
-        class="zoom-popup__banner row items-center no-wrap q-mx-md q-mb-sm q-pa-sm bg-accent-100"
-      >
-        <q-spinner class="q-mr-sm" color="primary" size="18px" />
+      <div v-if="checkRunning" class="action-popup__banner">
+        <q-spinner color="primary" size="18px" />
         <div class="col text-caption text-weight-medium">
           {{ t('zoom-check-running') }}
         </div>
       </div>
       <div
         v-else-if="automationsPaused"
-        class="zoom-popup__banner row items-center no-wrap q-mx-md q-mb-sm q-pa-sm bg-accent-100"
+        class="action-popup__banner action-popup__banner--negative"
       >
-        <q-icon class="q-mr-sm" color="negative" name="mmm-error" size="18px" />
+        <q-icon color="negative" name="mmm-error" size="18px" />
         <div class="col text-caption">
           <div class="text-weight-medium">
             {{ t('zoom-automations-paused') }}
@@ -91,236 +67,215 @@
           @click="testAgain"
         />
       </div>
+    </template>
 
-      <div class="action-popup__scroll full-width">
-        <template v-if="showMeetingSettingsSection">
-          <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
-            {{ t('zoom-meeting-settings') }}
-          </p>
-          <div class="row q-px-md q-col-gutter-xs">
-            <div
-              v-if="
-                currentSettings?.zoomMeetingManagerAutomateMeetingAudioSettings
-              "
-              class="col-12"
-            >
-              <q-btn
-                class="full-width"
-                color="primary"
-                :disable="!meetingFound || !!runningAction"
-                icon="mmm-volume-off"
-                :label="t('zoom-apply-meeting-settings')"
-                :loading="runningAction === 'meeting'"
-                no-caps
-                outline
-                @click="runAction('meeting')"
-              >
-                <q-tooltip :delay="500">
-                  {{
-                    t('zoomMeetingManagerAutomateMeetingAudioSettings-explain')
-                  }}
-                </q-tooltip>
-              </q-btn>
-            </div>
-            <div
-              v-if="
-                currentSettings?.zoomMeetingManagerAutomatePostMeetingAudioSettings
-              "
-              class="col-12"
-            >
-              <q-btn
-                class="full-width"
-                color="primary"
-                :disable="!meetingFound || !!runningAction"
-                icon="mmm-groups"
-                :label="t('zoom-apply-before-after-meeting-settings')"
-                :loading="runningAction === 'postMeeting'"
-                no-caps
-                outline
-                @click="runAction('postMeeting')"
-              >
-                <q-tooltip :delay="500">
-                  {{
-                    t(
-                      'zoomMeetingManagerAutomatePostMeetingAudioSettings-explain',
-                    )
-                  }}
-                </q-tooltip>
-              </q-btn>
-            </div>
-          </div>
-        </template>
-
-        <template v-if="currentSettings?.zoomMeetingManagerHandAlert">
-          <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
-            {{ t('zoom-raised-hands') }}
-          </p>
-          <div
-            v-if="!currentSettings?.zoomHandRaisedPhrase"
-            class="zoom-popup__banner row items-center no-wrap q-mx-md q-mb-sm q-pa-sm bg-accent-100"
-          >
-            <q-icon
-              class="q-mr-sm"
-              color="primary"
-              name="mmm-cog-sparkles"
-              size="18px"
-            />
-            <div class="col text-caption">
-              {{ t('zoomHandRaisedPhrase-explain') }}
-            </div>
-            <q-btn
-              color="primary"
-              dense
-              :disable="!meetingFound"
-              flat
-              :label="t('zoom-hand-learn')"
-              :loading="learningHand"
-              no-caps
-              @click="learnHand"
-            />
-          </div>
-          <template v-else>
-            <div
-              v-if="raisedHands.length === 0"
-              class="q-px-md q-pb-sm text-caption text-dark-grey"
-            >
-              {{ t('zoom-no-raised-hands') }}
-            </div>
-            <q-list v-else dense>
-              <q-item v-for="name in raisedHands" :key="name" class="q-px-md">
-                <q-item-section avatar>
-                  <q-icon color="warning" name="mmm-groups" />
-                </q-item-section>
-                <q-item-section class="ellipsis">{{ name }}</q-item-section>
-                <q-item-section side>
-                  <div class="row no-wrap q-gutter-xs">
-                    <q-btn
-                      class="btn-tonal"
-                      color="positive"
-                      dense
-                      :disable="!!busyParticipant"
-                      flat
-                      icon="mmm-microphone"
-                      :label="t('zoom-hand-unmute')"
-                      :loading="busyParticipant === `unmute:${name}`"
-                      no-caps
-                      size="sm"
-                      @click="unmute(name)"
-                    />
-                    <q-btn
-                      class="btn-tonal"
-                      color="primary"
-                      dense
-                      :disable="!!busyParticipant"
-                      flat
-                      icon="mmm-microphone-off"
-                      :label="t('zoom-hand-mute-and-lower')"
-                      :loading="busyParticipant === `mute:${name}`"
-                      no-caps
-                      size="sm"
-                      @click="muteAndLower(name)"
-                    />
-                  </div>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </template>
-          <div
-            v-if="currentSettings?.enableTimerDisplay"
-            class="q-px-md q-pb-sm"
-          >
-            <q-btn
-              class="full-width"
-              :color="handAlert.active ? 'warning' : 'primary'"
-              icon="mmm-groups"
-              :label="t('hand-alert')"
-              no-caps
-              :outline="!handAlert.manual"
-              unelevated
-              @click="handAlert.toggleManual()"
-            >
-              <q-tooltip :delay="500">{{ t('hand-alert-explain') }}</q-tooltip>
-            </q-btn>
-          </div>
-        </template>
-
-        <div v-if="zoomHelperLogs.length" class="q-px-md q-pt-md">
-          <q-expansion-item
-            v-model="logsExpanded"
-            class="bg-accent-100 rounded-borders"
-            dense
-            dense-toggle
-            :label="t('zoom-helper-logs')"
-          >
-            <div class="zoom-helper-logs">
-              <div
-                v-for="(logLine, index) in zoomHelperLogs"
-                :key="index"
-                class="zoom-helper-logs__line"
-              >
-                {{ logLine }}
-              </div>
-            </div>
-          </q-expansion-item>
-        </div>
-
-        <ZoomSelfTestPanel v-if="isDev" />
-      </div>
-
-      <q-separator class="bg-accent-200 q-mt-sm" />
-      <div
-        class="action-popup__footer full-width q-px-md q-pt-md row q-col-gutter-xs"
-      >
-        <div class="col-12 q-mb-sm">
+    <template v-if="showMeetingSettingsSection">
+      <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
+        {{ t('zoom-meeting-settings') }}
+      </p>
+      <div class="row q-px-md q-col-gutter-xs">
+        <div
+          v-if="currentSettings?.zoomMeetingManagerAutomateMeetingAudioSettings"
+          class="col-12"
+        >
           <q-btn
             class="full-width"
             color="primary"
-            :disable="!meetingId"
-            icon="mmm-arrow-outward"
-            :label="t('launch-zoom-meeting')"
-            unelevated
-            @click="launchZoomMeeting(meetingId)"
-          />
-          <q-tooltip v-if="!meetingId" :delay="500">
-            {{ t('zoom-meeting-manager-meeting-id-missing') }}
-          </q-tooltip>
-        </div>
-        <div class="col-auto">
-          <q-btn
-            :aria-label="t('zoomMeetingManagerSetupAssistant')"
-            class="btn-tonal full-height"
-            color="secondary"
-            flat
-            icon="mmm-cog-sparkles"
-            @click="openSetupAssistant"
+            :disable="!meetingFound || !!runningAction"
+            icon="mmm-volume-off"
+            :label="t('zoom-apply-meeting-settings')"
+            :loading="runningAction === 'meeting'"
+            no-caps
+            outline
+            @click="runAction('meeting')"
           >
             <q-tooltip :delay="500">
-              {{ t('zoomMeetingManagerSetupAssistant') }}
+              {{ t('zoomMeetingManagerAutomateMeetingAudioSettings-explain') }}
             </q-tooltip>
           </q-btn>
         </div>
-        <div class="col">
+        <div
+          v-if="
+            currentSettings?.zoomMeetingManagerAutomatePostMeetingAudioSettings
+          "
+          class="col-12"
+        >
           <q-btn
-            class="full-width btn-tonal"
-            color="secondary"
-            flat
-            icon="mmm-reset"
-            :label="t('zoom-helper-restart')"
-            :loading="restartingHelper"
+            class="full-width"
+            color="primary"
+            :disable="!meetingFound || !!runningAction"
+            icon="mmm-groups"
+            :label="t('zoom-apply-before-after-meeting-settings')"
+            :loading="runningAction === 'postMeeting'"
             no-caps
-            @click="restartHelper"
-          />
+            outline
+            @click="runAction('postMeeting')"
+          >
+            <q-tooltip :delay="500">
+              {{
+                t('zoomMeetingManagerAutomatePostMeetingAudioSettings-explain')
+              }}
+            </q-tooltip>
+          </q-btn>
         </div>
       </div>
+    </template>
+
+    <template v-if="currentSettings?.zoomMeetingManagerHandAlert">
+      <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
+        {{ t('zoom-raised-hands') }}
+      </p>
+      <div
+        v-if="!currentSettings?.zoomHandRaisedPhrase"
+        class="action-popup__banner"
+      >
+        <q-icon color="primary" name="mmm-cog-sparkles" size="18px" />
+        <div class="col text-caption">
+          {{ t('zoomHandRaisedPhrase-explain') }}
+        </div>
+        <q-btn
+          color="primary"
+          dense
+          :disable="!meetingFound"
+          flat
+          :label="t('zoom-hand-learn')"
+          :loading="learningHand"
+          no-caps
+          @click="learnHand"
+        />
+      </div>
+      <template v-else>
+        <div
+          v-if="raisedHands.length === 0"
+          class="q-px-md q-pb-sm text-caption text-dark-grey"
+        >
+          {{ t('zoom-no-raised-hands') }}
+        </div>
+        <q-list v-else dense>
+          <q-item v-for="name in raisedHands" :key="name" class="q-px-md">
+            <q-item-section avatar>
+              <q-icon color="warning" name="mmm-groups" />
+            </q-item-section>
+            <q-item-section class="ellipsis">{{ name }}</q-item-section>
+            <q-item-section side>
+              <div class="row no-wrap q-gutter-xs">
+                <q-btn
+                  class="btn-tonal"
+                  color="positive"
+                  dense
+                  :disable="!!busyParticipant"
+                  flat
+                  icon="mmm-microphone"
+                  :label="t('zoom-hand-unmute')"
+                  :loading="busyParticipant === `unmute:${name}`"
+                  no-caps
+                  size="sm"
+                  @click="unmute(name)"
+                />
+                <q-btn
+                  class="btn-tonal"
+                  color="primary"
+                  dense
+                  :disable="!!busyParticipant"
+                  flat
+                  icon="mmm-microphone-off"
+                  :label="t('zoom-hand-mute-and-lower')"
+                  :loading="busyParticipant === `mute:${name}`"
+                  no-caps
+                  size="sm"
+                  @click="muteAndLower(name)"
+                />
+              </div>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </template>
+      <div v-if="currentSettings?.enableTimerDisplay" class="q-px-md q-pb-sm">
+        <q-btn
+          class="full-width"
+          :color="handAlert.active ? 'warning' : 'primary'"
+          icon="mmm-groups"
+          :label="t('hand-alert')"
+          no-caps
+          :outline="!handAlert.manual"
+          unelevated
+          @click="handAlert.toggleManual()"
+        >
+          <q-tooltip :delay="500">{{ t('hand-alert-explain') }}</q-tooltip>
+        </q-btn>
+      </div>
+    </template>
+
+    <div v-if="zoomHelperLogs.length" class="q-px-md q-pt-md">
+      <q-expansion-item
+        v-model="logsExpanded"
+        class="action-popup__tint rounded-borders"
+        dense
+        dense-toggle
+        :label="t('zoom-helper-logs')"
+      >
+        <div class="zoom-helper-logs">
+          <div
+            v-for="(logLine, index) in zoomHelperLogs"
+            :key="index"
+            class="zoom-helper-logs__line"
+          >
+            {{ logLine }}
+          </div>
+        </div>
+      </q-expansion-item>
     </div>
-  </q-menu>
+
+    <ZoomSelfTestPanel v-if="isDev" />
+
+    <template #footer>
+      <div>
+        <q-btn
+          class="full-width"
+          color="primary"
+          :disable="!meetingId"
+          icon="mmm-arrow-outward"
+          :label="t('launch-zoom-meeting')"
+          unelevated
+          @click="launchZoomMeeting(meetingId)"
+        />
+        <q-tooltip v-if="!meetingId" :delay="500">
+          {{ t('zoom-meeting-manager-meeting-id-missing') }}
+        </q-tooltip>
+      </div>
+    </template>
+    <template #footer-secondary>
+      <q-btn
+        :aria-label="t('zoomMeetingManagerSetupAssistant')"
+        class="btn-tonal"
+        color="secondary"
+        flat
+        icon="mmm-cog-sparkles"
+        @click="openSetupAssistant"
+      >
+        <q-tooltip :delay="500">
+          {{ t('zoomMeetingManagerSetupAssistant') }}
+        </q-tooltip>
+      </q-btn>
+      <q-btn
+        class="col btn-tonal"
+        color="secondary"
+        flat
+        icon="mmm-reset"
+        :label="t('zoom-helper-restart')"
+        :loading="restartingHelper"
+        no-caps
+        @click="restartHelper"
+      />
+    </template>
+  </ActionPopup>
 </template>
 
 <script setup lang="ts">
-import type { QMenu } from 'quasar';
 import type { ZoomMeetingState } from 'src/types';
 
 import ZoomSelfTestPanel from 'components/dialog/ZoomSelfTestPanel.vue';
+import ActionPopup from 'components/ui/ActionPopup.vue';
 import { storeToRefs } from 'pinia';
 import {
   getZoomMeetingState,
@@ -335,7 +290,7 @@ import { runZoomStartupCheck } from 'src/helpers/zoom-startup-check';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useHandAlertStore } from 'stores/hand-alert';
 import { useZoomStateStore } from 'stores/zoom-state';
-import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 type ZoomAction = 'meeting' | 'postMeeting';
@@ -403,11 +358,6 @@ const testAgain = () => {
   void runZoomStartupCheck({ manual: true });
 };
 
-const zoomMeetingManagerPopup = useTemplateRef<QMenu>(
-  'zoomMeetingManagerPopup',
-);
-const popupContent = useTemplateRef<HTMLElement>('popupContent');
-let popupResizeObserver: ResizeObserver | undefined;
 let mainWindowPollingInterval: ReturnType<typeof setInterval> | undefined;
 
 const meeting = ref<null | ZoomMeetingState>(null);
@@ -478,16 +428,6 @@ const restartHelper = async () => {
   }
 };
 
-watch(popupContent, (el) => {
-  popupResizeObserver?.disconnect();
-  popupResizeObserver = undefined;
-  if (!el) return;
-  popupResizeObserver = new ResizeObserver(() => {
-    zoomMeetingManagerPopup.value?.updatePosition();
-  });
-  popupResizeObserver.observe(el);
-});
-
 watch(
   open,
   (isOpen) => {
@@ -504,15 +444,10 @@ watch(
 
 onBeforeUnmount(() => {
   stopPolling();
-  popupResizeObserver?.disconnect();
 });
 </script>
 
 <style scoped>
-.zoom-popup__banner {
-  border-radius: 10px;
-}
-
 .zoom-helper-logs {
   font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
   font-size: 0.8em;
