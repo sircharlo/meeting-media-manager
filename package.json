@@ -116,7 +116,7 @@
     "eslint-plugin-vue": "^10.11.1",
     "fantasticon": "patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch",
     "globals": "^17.12.0",
-    "happy-dom": "^20.14.6",
+    "happy-dom": "^21.0.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
     "lodash-es": "^4.18.1",
