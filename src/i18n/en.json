@@ -1183,6 +1183,8 @@
   "zoom-setup-welcome-intro": "M³ can handle the routine Zoom tasks around each meeting, so you can focus on the meeting itself. This assistant sets it up in a few minutes.",
   "zoom-setup-welcome-title": "Let M³ take care of Zoom",
   "zoom-sharing-failed": "Sharing failed",
+  "zoom-sharing-failed-caption": "Share the media window from Zoom yourself.",
+  "zoom-sharing-no-meeting": "No Zoom meeting is open, so the media wasn't shared in Zoom",
   "zoom-sharing-started": "Sharing started",
   "zoom-sharing-stop-failed": "Failed to stop sharing",
   "zoom-sharing-stopped": "Sharing stopped",

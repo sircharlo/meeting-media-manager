@@ -9,7 +9,10 @@ import type {
 
 import { i18n } from 'boot/i18n';
 import { Dialog } from 'quasar';
+import { AUTO_START_WINDOW_HOURS } from 'src/constants/date';
 import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
+import { getMeetingStartToday, isMemorialDay } from 'src/helpers/date';
+import { MEETING_SCHEDULED_DURATION_MINUTES } from 'src/helpers/meeting-parts';
 import { log } from 'src/shared/vanilla';
 import { areZoomButtonsLearned } from 'src/utils/zoom';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -230,13 +233,28 @@ const notifyInfo = (group: string, messageKey: string) => {
   });
 };
 
-const notifyFailure = (group: string, messageKey: string) => {
+const notifyFailure = (
+  group: string,
+  messageKey: string,
+  captionKey?: string,
+) => {
   if (feedbackMuted) return;
   createTemporaryNotification({
+    caption: captionKey ? t(captionKey) : undefined,
     group,
     icon: 'mmm-error',
     message: t(messageKey),
     type: 'negative',
+  });
+};
+
+const notifyWarning = (group: string, messageKey: string) => {
+  if (feedbackMuted) return;
+  createTemporaryNotification({
+    group,
+    icon: 'mmm-warning',
+    message: t(messageKey),
+    type: 'warning',
   });
 };
 
@@ -732,8 +750,13 @@ export const startSharingMediaInZoom = async (
   });
   if (result.ok) {
     if (result.changed) notifyInfo('zoom-sharing', 'zoom-sharing-started');
-  } else {
-    notifyFailure('zoom-sharing', 'zoom-sharing-failed');
+  } else if (result.error !== CANCELLED.error) {
+    // A cancel already says so itself.
+    notifyFailure(
+      'zoom-sharing',
+      'zoom-sharing-failed',
+      'zoom-sharing-failed-caption',
+    );
   }
   return result.ok;
 };
@@ -743,22 +766,103 @@ export const stopSharingMediaInZoom = async () => {
   const result = await runCommand({ type: 'stop-share' });
   if (result.ok) {
     if (result.changed) notifyInfo('zoom-sharing', 'zoom-sharing-stopped');
-  } else {
+  } else if (result.error !== CANCELLED.error) {
     notifyFailure('zoom-sharing', 'zoom-sharing-stop-failed');
   }
   return result.ok;
 };
 
+// Media may still be shown for a while after the meeting's scheduled end.
+const AFTER_MEETING_MARGIN_MINUTES = 30;
+
 /**
- * Starts or stops sharing the media window in Zoom as media starts or
- * stops, unless the Zoom automations are paused. Resolves to whether it did.
+ * Whether a meeting is on or close: from when background music may start
+ * before it until a while after its scheduled end, or all day on the
+ * Memorial, which has no start time in M³. Never, for a profile without a
+ * meeting schedule.
+ */
+export const isAroundMeetingTime = (now = new Date()) => {
+  if (isMemorialDay(now)) return true;
+  const start = getMeetingStartToday(now)?.getTime();
+  if (!start) return false;
+  const from = start - AUTO_START_WINDOW_HOURS * 3600 * 1000;
+  const until =
+    start +
+    (MEETING_SCHEDULED_DURATION_MINUTES + AFTER_MEETING_MARGIN_MINUTES) *
+      60 *
+      1000;
+  return now.getTime() >= from && now.getTime() <= until;
+};
+
+// Only a share M³ started for media is stopped when that media stops, never
+// one the user started in Zoom themselves (perhaps of the media window, for
+// the whole meeting).
+let mediaShareStartedByM3 = false;
+let mediaShareStarting: null | Promise<boolean> = null;
+
+const startAutomatedMediaShare = async () => {
+  if (!(await zoomAutomationsAllowed('Zoom media sharing'))) return false;
+  const meeting = await getZoomMeetingState();
+  if (!meeting?.found) {
+    log('Zoom media sharing: skipped, no Zoom meeting found', 'zoom', 'info', {
+      helperAnswered: !!meeting,
+    });
+    // Outside meeting times, Zoom being closed is expected.
+    if (!isAroundMeetingTime()) return false;
+    if (meeting) {
+      notifyWarning('zoom-sharing', 'zoom-sharing-no-meeting');
+    } else {
+      notifyFailure(
+        'zoom-sharing',
+        'zoom-sharing-failed',
+        'zoom-sharing-failed-caption',
+      );
+    }
+    return false;
+  }
+  if (meeting.sharing) {
+    log('Zoom media sharing: skipped, Zoom is sharing already', 'zoom', 'info');
+    return true;
+  }
+  mediaShareStartedByM3 = await withZoomRun(
+    'zoom-run-media-sharing-start',
+    () => startSharingMediaInZoom(),
+  );
+  return mediaShareStartedByM3;
+};
+
+const stopAutomatedMediaShare = async () => {
+  if (mediaShareStarting) await mediaShareStarting;
+  if (!mediaShareStartedByM3) return true;
+  const meeting = await getZoomMeetingState();
+  // Already stopped in Zoom, or the meeting was left.
+  if (meeting && !meeting.sharing) {
+    mediaShareStartedByM3 = false;
+    return true;
+  }
+  const stopped = await withZoomRun('zoom-run-media-sharing-stop', () =>
+    stopSharingMediaInZoom(),
+  );
+  if (stopped) mediaShareStartedByM3 = false;
+  return stopped;
+};
+
+/**
+ * Starts sharing the media window in Zoom as media starts, if a Zoom meeting
+ * is open and the Zoom automations aren't paused, or stops the share it
+ * started as media stops. Resolves to whether Zoom is sharing (or, when
+ * stopping, no longer sharing M³'s media).
  */
 export const automateZoomMediaSharing = async (start: boolean) => {
-  if (!(await zoomAutomationsAllowed('Zoom media sharing'))) return false;
-  return withZoomRun(
-    start ? 'zoom-run-media-sharing-start' : 'zoom-run-media-sharing-stop',
-    () => (start ? startSharingMediaInZoom() : stopSharingMediaInZoom()),
-  );
+  if (!start) return stopAutomatedMediaShare();
+  // Known at once, so a stop right behind it waits for it.
+  const starting = startAutomatedMediaShare();
+  mediaShareStarting = starting;
+  try {
+    return await starting;
+  } finally {
+    if (mediaShareStarting === starting) mediaShareStarting = null;
+  }
 };
 
 // --- Setup assistant -------------------------------------------------------

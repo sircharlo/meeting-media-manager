@@ -16,10 +16,16 @@ const currentSettings = {
   zoomVideoOnTitle: 'Stop Video' as null | string,
 };
 
-const { notifyMock, updateChecklistMock } = vi.hoisted(() => ({
+const { dateMocks, notifyMock, updateChecklistMock } = vi.hoisted(() => ({
+  dateMocks: {
+    getMeetingStartToday: vi.fn((): Date | null => null),
+    isMemorialDay: vi.fn(() => false),
+  },
   notifyMock: vi.fn(),
   updateChecklistMock: vi.fn(),
 }));
+
+vi.mock('src/helpers/date', () => dateMocks);
 
 vi.mock('stores/current-state', () => ({
   useCurrentStateStore: () => ({ currentSettings }),
@@ -83,14 +89,20 @@ const launchZoomMeetingMock = vi.fn();
 const restartZoomHelperMock = vi.fn(async () => ({ ok: true }));
 
 let meetingFound = true;
+let zoomSharing = false;
 let failing: Partial<Record<ZoomCommand['type'], string>> = {};
 
 const commandTypes = () => zoomCommandMock.mock.calls.map(([c]) => c.type);
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // The media-share bookkeeping lives in the module: start each test afresh.
+  vi.resetModules();
   meetingFound = true;
+  zoomSharing = false;
   failing = {};
+  dateMocks.getMeetingStartToday.mockReturnValue(null);
+  dateMocks.isMemorialDay.mockReturnValue(false);
   zoomState.automationsPaused = false;
   zoomState.cancelRequested = false;
   zoomState.runDepth = 0;
@@ -106,10 +118,16 @@ beforeEach(() => {
   });
   zoomCommandMock.mockImplementation(async (command) => {
     if (command.type === 'meeting') {
-      return { meeting: { found: meetingFound, sharing: false }, ok: true };
+      return {
+        meeting: { found: meetingFound, sharing: zoomSharing },
+        ok: true,
+      };
     }
     const error = failing[command.type];
-    return error ? { error, ok: false } : { changed: true, ok: true };
+    if (error) return { error, ok: false };
+    if (command.type === 'start-share') zoomSharing = true;
+    if (command.type === 'stop-share') zoomSharing = false;
+    return { changed: true, ok: true };
   });
   vi.stubGlobal('electronApi', {
     focusMediaWindow: vi.fn(),
@@ -298,6 +316,163 @@ describe('Zoom media sharing', () => {
       expect.objectContaining({ group: 'zoom-sharing', type: 'negative' }),
     );
   });
+
+  it('does not report a cancelled share as failed', async () => {
+    failing = { 'start-share': 'cancelled' };
+    const { startSharingMediaInZoom } = await import('../zoom');
+
+    expect(await startSharingMediaInZoom()).toBe(false);
+    expect(notifyMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('automated media sharing', () => {
+  const minutesFromNow = (minutes: number) =>
+    new Date(Date.now() + minutes * 60 * 1000);
+
+  it('does not touch Zoom, nor say so, without a meeting open outside meeting time', async () => {
+    meetingFound = false;
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    expect(await automateZoomMediaSharing(true)).toBe(false);
+
+    expect(commandTypes()).toEqual(['meeting']);
+    expect(zoomState.beginRun).not.toHaveBeenCalled();
+    expect(notifyMock).not.toHaveBeenCalled();
+  });
+
+  it('warns that nothing was shared without a meeting open at meeting time', async () => {
+    meetingFound = false;
+    dateMocks.getMeetingStartToday.mockReturnValue(minutesFromNow(10));
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    expect(await automateZoomMediaSharing(true)).toBe(false);
+
+    expect(commandTypes()).toEqual(['meeting']);
+    expect(zoomState.beginRun).not.toHaveBeenCalled();
+    expect(notifyMock).toHaveBeenCalledWith(
+      expect.objectContaining({ group: 'zoom-sharing', type: 'warning' }),
+    );
+  });
+
+  it("reports Zoom's helper not answering at meeting time as a failure", async () => {
+    dateMocks.getMeetingStartToday.mockReturnValue(minutesFromNow(-30));
+    zoomCommandMock.mockImplementation(async () => ({
+      error: 'helper-not-running',
+      ok: false,
+    }));
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    expect(await automateZoomMediaSharing(true)).toBe(false);
+
+    expect(zoomState.beginRun).not.toHaveBeenCalled();
+    expect(notifyMock).toHaveBeenCalledWith(
+      expect.objectContaining({ group: 'zoom-sharing', type: 'negative' }),
+    );
+  });
+
+  it('shares under the overlay once a meeting is found', async () => {
+    const labels: (null | string)[] = [];
+    const respond = zoomCommandMock.getMockImplementation();
+    zoomCommandMock.mockImplementation(async (command) => {
+      labels.push(zoomState.runLabel);
+      return respond?.(command) ?? { ok: false };
+    });
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    expect(await automateZoomMediaSharing(true)).toBe(true);
+
+    expect(commandTypes()).toEqual(['meeting', 'start-share']);
+    expect(labels).toEqual([null, 'zoom-run-media-sharing-start']);
+  });
+
+  it('stops the share it started once the media stops', async () => {
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    await automateZoomMediaSharing(true);
+    expect(await automateZoomMediaSharing(false)).toBe(true);
+
+    expect(commandTypes()).toEqual([
+      'meeting',
+      'start-share',
+      'meeting',
+      'stop-share',
+    ]);
+  });
+
+  it('waits for a share being started before stopping it', async () => {
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    const starting = automateZoomMediaSharing(true);
+    const stopping = automateZoomMediaSharing(false);
+    await Promise.all([starting, stopping]);
+
+    expect(commandTypes()).toContain('stop-share');
+    expect(zoomSharing).toBe(false);
+  });
+
+  it('leaves a share the user started alone, then and after the media', async () => {
+    zoomSharing = true;
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    expect(await automateZoomMediaSharing(true)).toBe(true);
+    expect(await automateZoomMediaSharing(false)).toBe(true);
+
+    expect(commandTypes()).toEqual(['meeting']);
+    expect(zoomState.beginRun).not.toHaveBeenCalled();
+  });
+
+  it('does not stop anything when nothing was shared', async () => {
+    meetingFound = false;
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    await automateZoomMediaSharing(true);
+    expect(await automateZoomMediaSharing(false)).toBe(true);
+
+    expect(commandTypes()).toEqual(['meeting']);
+    expect(zoomState.beginRun).not.toHaveBeenCalled();
+  });
+
+  it('skips stopping a share already stopped in Zoom', async () => {
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    await automateZoomMediaSharing(true);
+    zoomSharing = false;
+    await automateZoomMediaSharing(false);
+
+    expect(commandTypes()).not.toContain('stop-share');
+  });
+});
+
+describe('meeting time', () => {
+  const at = (hours: number, minutes = 0) => {
+    const date = new Date(2026, 9, 15);
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+  };
+
+  it('runs from the music window before the meeting until a while after its end', async () => {
+    dateMocks.getMeetingStartToday.mockImplementation(() => at(19));
+    const { isAroundMeetingTime } = await import('../zoom');
+
+    expect(isAroundMeetingTime(at(17, 44))).toBe(false);
+    expect(isAroundMeetingTime(at(17, 45))).toBe(true);
+    expect(isAroundMeetingTime(at(20, 30))).toBe(true);
+    // A 1h45 meeting, then half an hour.
+    expect(isAroundMeetingTime(at(21, 15))).toBe(true);
+    expect(isAroundMeetingTime(at(21, 16))).toBe(false);
+  });
+
+  it('is never without a meeting today', async () => {
+    const { isAroundMeetingTime } = await import('../zoom');
+    expect(isAroundMeetingTime(at(19))).toBe(false);
+  });
+
+  it('is all day on the Memorial, which has no start time', async () => {
+    dateMocks.isMemorialDay.mockReturnValue(true);
+    const { isAroundMeetingTime } = await import('../zoom');
+    expect(isAroundMeetingTime(at(10))).toBe(true);
+  });
 });
 
 describe('Zoom meeting auto-launch', () => {
@@ -431,7 +606,9 @@ describe('stopping Zoom sharing after media', () => {
     Object.assign(currentSettings, {
       zoomMeetingManagerAutomateMediaSharing: true,
     });
-    const { stopZoomSharingAfterMedia } = await import('../zoom');
+    const { automateZoomMediaSharing, stopZoomSharingAfterMedia } =
+      await import('../zoom');
+    await automateZoomMediaSharing(true);
 
     stopZoomSharingAfterMedia();
     await vi.waitFor(() => expect(commandTypes()).toContain('stop-share'));

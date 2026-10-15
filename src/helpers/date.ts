@@ -432,6 +432,32 @@ function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
   updateLookupPeriod({ reset: true });
 }
 
+// When a meeting of the given type held on `now`'s date starts, or null if
+// no start time is configured for it.
+const getMeetingStartOn = (now: Date, meetingType: 'mw' | 'we') => {
+  const { currentSettings } = useCurrentStateStore();
+  const meetingStartTimes = shouldUseChangedMeetingSchedule(now)
+    ? {
+        mw:
+          currentSettings?.meetingScheduleChangeMwStartTime ??
+          currentSettings?.mwStartTime,
+        we:
+          currentSettings?.meetingScheduleChangeWeStartTime ??
+          currentSettings?.weStartTime,
+      }
+    : {
+        mw: currentSettings?.mwStartTime,
+        we: currentSettings?.weStartTime,
+      };
+  const meetingStartTime = meetingStartTimes[meetingType];
+  if (!meetingStartTime) return null;
+
+  const [hours, minutes] = meetingStartTime.split(':').map(Number);
+  const meetingStartDateTime = new Date(now);
+  meetingStartDateTime.setHours(hours ?? 0, minutes, 0, 0);
+  return meetingStartDateTime;
+};
+
 // Today's meeting start time as an actual Date, or null if today isn't a
 // meeting day or no start time is configured. Shared by
 // remainingTimeBeforeMeetingStart() and anything that needs to display the
@@ -446,30 +472,30 @@ export const getTodaysMeetingStartDateTime = (
       !!currentState.selectedDayMeetingType;
     if (!meetingDay) return null;
 
-    const now = new Date(referenceDate);
-    const weMeeting = currentState.selectedDayMeetingType === 'we';
-    const meetingStartTimes = shouldUseChangedMeetingSchedule(now)
-      ? {
-          mw:
-            currentState.currentSettings?.meetingScheduleChangeMwStartTime ??
-            currentState.currentSettings?.mwStartTime,
-          we:
-            currentState.currentSettings?.meetingScheduleChangeWeStartTime ??
-            currentState.currentSettings?.weStartTime,
-        }
-      : {
-          mw: currentState.currentSettings?.mwStartTime,
-          we: currentState.currentSettings?.weStartTime,
-        };
-    const meetingStartTime = meetingStartTimes[weMeeting ? 'we' : 'mw'];
-    if (!meetingStartTime) return null;
-
-    const [hours, minutes] = meetingStartTime.split(':').map(Number);
-    const meetingStartDateTime = new Date(now);
-    meetingStartDateTime.setHours(hours ?? 0, minutes, 0, 0);
-    return meetingStartDateTime;
+    return getMeetingStartOn(
+      new Date(referenceDate),
+      currentState.selectedDayMeetingType === 'we' ? 'we' : 'mw',
+    );
   } catch (error) {
     errorCatcher(error);
+    return null;
+  }
+};
+
+/**
+ * Today's meeting start time, going by the calendar date itself rather than
+ * the day selected in the media calendar (which getTodaysMeetingStartDateTime
+ * requires to be today); null if today isn't a meeting day or no start time
+ * is configured.
+ */
+export const getMeetingStartToday = (referenceDate = new Date()) => {
+  try {
+    const now = new Date(referenceDate);
+    if (isMwMeetingDay(now)) return getMeetingStartOn(now, 'mw');
+    if (isWeMeetingDay(now)) return getMeetingStartOn(now, 'we');
+    return null;
+  } catch (error) {
+    errorCatcher(error, { contexts: { fn: { name: 'getMeetingStartToday' } } });
     return null;
   }
 };

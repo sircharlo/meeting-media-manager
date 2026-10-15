@@ -10,6 +10,7 @@ import {
 } from '@vueuse/core';
 import { i18n } from 'boot/i18n';
 import { defineStore, storeToRefs } from 'pinia';
+import { AUTO_START_WINDOW_HOURS } from 'src/constants/date';
 import { MEDIA_STOP_FADE_DURATION_SECONDS } from 'src/constants/media';
 import {
   enrichSongsWithMetadata,
@@ -65,12 +66,9 @@ export const isIgnorablePlaybackError = (message?: null | string) =>
   !!message &&
   IGNORABLE_PLAYBACK_ERROR_MESSAGES.some((msg) => message.includes(msg));
 
-// How far ahead of the meeting start background music is allowed to
-// auto-start. Exported so the before-meeting quick-actions panel can show
-// itself over the same window - independent of whether autoStartMusic
-// itself is enabled, since the panel's usefulness (recording/checklist/
-// manual music controls) doesn't depend on that one setting.
-export const AUTO_START_WINDOW_HOURS = 1.25;
+// Kept in src/constants so the Zoom helpers, which this store imports, can
+// use it too; re-exported for the existing importers.
+export { AUTO_START_WINDOW_HOURS };
 
 export const useMusicStore = defineStore('music', () => {
   // The store can be instantiated outside component setup (e.g. the dev-menu
