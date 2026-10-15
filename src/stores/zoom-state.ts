@@ -14,7 +14,7 @@ export interface ZoomAutomationPause {
 interface Store {
   /** The user asked for the running automation to stop. */
   cancelRequested: boolean;
-  /** Congregations whose Zoom was checked since M³ started. */
+  /** Congregations whose Zoom was checked today. */
   checkedCongregations: string[];
   checkRunning: boolean;
   pause: null | ZoomAutomationPause;

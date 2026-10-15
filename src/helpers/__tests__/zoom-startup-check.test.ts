@@ -22,12 +22,13 @@ const currentState = vi.hoisted(() => ({
 const zoom = vi.hoisted(() => ({
   countZoomMeetingParticipants: vi.fn<() => Promise<null | number>>(),
   diagnoseZoom: vi.fn<() => Promise<null | ZoomDiagnosis>>(),
-  getTodaysMeetingStartDateTime: vi.fn<() => Date | null>(),
+  getMeetingStartToday: vi.fn<(now?: Date) => Date | null>(),
   getZoomMeetingState: vi.fn<() => Promise<null | ZoomMeetingState>>(),
   isZoomSetupNeeded: vi.fn(() => false),
   notify: vi.fn(),
   runZoomSelfTest: vi.fn<() => Promise<ZoomSelfTestStep[]>>(),
   testZoomShareEntry: vi.fn(),
+  withZoomRun: vi.fn(<T>(_label: string, run: () => Promise<T>) => run()),
 }));
 
 vi.mock('stores/current-state', () => ({
@@ -47,7 +48,7 @@ vi.mock('src/helpers/zoom', () => ({
   prepareMediaWindowForZoomTest: vi.fn(),
   runWhileHoldingZoomAutomations: <T>(check: () => Promise<T>) => check(),
   testZoomShareEntry: zoom.testZoomShareEntry,
-  withZoomRun: <T>(_label: string, run: () => Promise<T>) => run(),
+  withZoomRun: zoom.withZoomRun,
 }));
 
 vi.mock('src/helpers/zoom-self-test', async (importOriginal) => ({
@@ -56,7 +57,7 @@ vi.mock('src/helpers/zoom-self-test', async (importOriginal) => ({
 }));
 
 vi.mock('src/helpers/date', () => ({
-  getTodaysMeetingStartDateTime: zoom.getTodaysMeetingStartDateTime,
+  getMeetingStartToday: zoom.getMeetingStartToday,
 }));
 
 vi.mock('stores/music', () => ({ AUTO_START_WINDOW_HOURS: 1.25 }));
@@ -65,7 +66,7 @@ const MINUTE = 60_000;
 
 /** Today's meeting starts this long from now (or there's none, with null). */
 const meetingStartsIn = (ms: null | number) => {
-  zoom.getTodaysMeetingStartDateTime.mockReturnValue(
+  zoom.getMeetingStartToday.mockReturnValue(
     ms === null ? null : new Date(Date.now() + ms),
   );
 };
@@ -161,6 +162,48 @@ describe('Zoom startup check', () => {
     expect(await runZoomStartupCheck()).toBe('skipped');
     expect(launch).not.toHaveBeenCalled();
     expect(zoom.runZoomSelfTest).not.toHaveBeenCalled();
+    // Nor says it's operating Zoom, since it isn't.
+    expect(zoom.withZoomRun).not.toHaveBeenCalled();
+  });
+
+  it('says nothing while only waiting for the meeting', async () => {
+    vi.useFakeTimers();
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    meetingClosedUntilLaunched();
+    meetingStartsIn(3 * 60 * MINUTE);
+
+    expect(await runZoomStartupCheck()).toBe('scheduled');
+    expect(zoom.withZoomRun).not.toHaveBeenCalled();
+  });
+
+  it('checks again each day while M³ stays open, opening the meeting in time', async () => {
+    vi.useFakeTimers();
+    // Wednesday evening; the meeting is on Thursday at 19:30.
+    vi.setSystemTime(new Date(2026, 9, 14, 20, 0));
+    vi.resetModules();
+    const { scheduleZoomStartupCheck } = await import('../zoom-startup-check');
+    const launch = meetingClosedUntilLaunched();
+    zoom.getMeetingStartToday.mockImplementation((now = new Date()) =>
+      now.getDate() === 15 ? new Date(2026, 9, 15, 19, 30) : null,
+    );
+
+    scheduleZoomStartupCheck();
+    await vi.advanceTimersByTimeAsync(MINUTE);
+    expect(launch).not.toHaveBeenCalled();
+
+    // Thursday, 18:10: not yet (the window opens at 18:15).
+    await vi.advanceTimersByTimeAsync((22 * 60 + 9) * MINUTE);
+    expect(launch).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(10 * MINUTE);
+    expect(launch).toHaveBeenCalledWith('123 456 7890');
+  });
+
+  it('goes by the calendar date, whichever day is selected', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    meetingClosedUntilLaunched();
+
+    await runZoomStartupCheck();
+    expect(zoom.getMeetingStartToday).toHaveBeenCalled();
   });
 
   it("doesn't open the meeting once it's starting or under way", async () => {

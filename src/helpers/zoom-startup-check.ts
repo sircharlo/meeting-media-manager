@@ -2,7 +2,7 @@ import type { ZoomDiagnosis } from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import { ZOOM_DIAGNOSIS_CHECKS } from 'src/constants/zoom';
-import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
+import { getMeetingStartToday } from 'src/helpers/date';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   countZoomMeetingParticipants,
@@ -25,8 +25,8 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { AUTO_START_WINDOW_HOURS } from 'stores/music';
 import { useZoomStateStore } from 'stores/zoom-state';
 
-// The startup check: once per M³ session (per congregation), before any
-// automation relies on Zoom, M³ makes sure the meeting is open and that
+// The startup check: once a day (per congregation) while M³ is open, before
+// any automation relies on Zoom, M³ makes sure the meeting is open and that
 // everything it automates works, much like the setup assistant's test. A
 // meeting already open is checked right away; otherwise, on meeting days,
 // M³ opens it in the same window background music can start in, before the
@@ -159,7 +159,8 @@ const testEverything = async (): Promise<string[]> => {
  */
 const getMeetingOpeningWindow = (): 'now' | null | number => {
   const now = new Date();
-  const start = getTodaysMeetingStartDateTime(now);
+  // Whichever day is selected in the media calendar.
+  const start = getMeetingStartToday(now);
   if (!start) return null;
   const secondsUntilStart = (start.getTime() - now.getTime()) / 1000;
   const stopBufferSeconds =
@@ -187,31 +188,38 @@ const waitForMeeting = async () => {
 const findProblems = async (
   manual: boolean,
 ): Promise<null | string[] | { checkInSeconds: number }> => {
+  // Only looking, so far: nothing to tell the user about.
   const meeting = await getZoomMeetingState();
   if (!meeting) return [HELPER_PROBLEM];
 
+  const meetingId =
+    useCurrentStateStore().currentSettings?.zoomMeetingManagerMeetingId?.trim();
   if (!meeting.found) {
-    const meetingId =
-      useCurrentStateStore().currentSettings?.zoomMeetingManagerMeetingId?.trim();
     if (!manual) {
       const opening = getMeetingOpeningWindow();
       if (!meetingId || opening === null) return null;
       if (opening !== 'now') return { checkInSeconds: opening };
     }
     if (!meetingId) return [MEETING_PROBLEM];
-    log('Zoom check: opening the meeting', 'zoom', 'info');
-    globalThis.electronApi.launchZoomMeeting(meetingId);
-    if (!(await waitForMeeting())) return [MEETING_PROBLEM];
-    await sleep(MEETING_SETTLE_MS);
   }
 
-  const people = await countZoomMeetingParticipants();
-  // Unknown counts as not alone: nothing gets pressed.
-  if (people === 1) return testEverything();
-  log('Zoom check: others in the meeting, only looking', 'zoom', 'info', {
-    people,
+  // From here on, M³ may open the meeting and press things in Zoom.
+  return withZoomRun('zoom-run-startup-check', async () => {
+    if (!meeting.found && meetingId) {
+      log('Zoom check: opening the meeting', 'zoom', 'info');
+      globalThis.electronApi.launchZoomMeeting(meetingId);
+      if (!(await waitForMeeting())) return [MEETING_PROBLEM];
+      await sleep(MEETING_SETTLE_MS);
+    }
+
+    const people = await countZoomMeetingParticipants();
+    // Unknown counts as not alone: nothing gets pressed.
+    if (people === 1) return testEverything();
+    log('Zoom check: others in the meeting, only looking', 'zoom', 'info', {
+      people,
+    });
+    return checkWithoutPressing(!!meeting.sharing);
   });
-  return checkWithoutPressing(!!meeting.sharing);
 };
 
 const report = (
@@ -259,9 +267,9 @@ const report = (
 };
 
 /**
- * Checks the Zoom Meeting Manager. On its own (`manual` false), only once
- * per session per congregation, when the startup check is turned on and
- * the setup assistant has been through; asked for, whenever possible.
+ * Checks the Zoom Meeting Manager. On its own (`manual` false), only once a
+ * day per congregation, when the startup check is turned on and the setup
+ * assistant has been through; asked for, whenever possible.
  */
 export const runZoomStartupCheck = async ({
   manual = false,
@@ -286,7 +294,7 @@ export const runZoomStartupCheck = async ({
   try {
     log('Zoom check: starting', 'zoom', 'info', { manual });
     const found = await runWhileHoldingZoomAutomations(() =>
-      withZoomRun('zoom-run-startup-check', () => findProblems(manual)),
+      findProblems(manual),
     );
     if (found === null) {
       log('Zoom check: no meeting to check now', 'zoom', 'info');
@@ -309,13 +317,31 @@ export const runZoomStartupCheck = async ({
 
 let startupTimer: ReturnType<typeof setTimeout> | undefined;
 
+// M³ may stay open for days: each new day gets its own check (on meeting
+// days, that's what opens the meeting in time), and a computer that slept
+// through the time a check was due catches up when it wakes.
+const RECHECK_INTERVAL_MS = 5 * 60 * 1000;
+let recheckTimer: ReturnType<typeof setInterval> | undefined;
+let checkedDay = new Date().toDateString();
+
+const recheck = () => {
+  const today = new Date().toDateString();
+  if (today !== checkedDay) {
+    checkedDay = today;
+    useZoomStateStore().checkedCongregations = [];
+  }
+  void runZoomStartupCheck();
+};
+
 /**
  * Runs the startup check shortly after M³ starts (or a congregation is
- * opened), once things have settled, or after the given delay.
+ * opened), once things have settled, or after the given delay; and from
+ * then on, again each day.
  */
 export function scheduleZoomStartupCheck(delayMs = STARTUP_DELAY_MS) {
   clearTimeout(startupTimer);
   startupTimer = setTimeout(() => {
     void runZoomStartupCheck();
   }, delayMs);
+  recheckTimer ??= setInterval(recheck, RECHECK_INTERVAL_MS);
 }
