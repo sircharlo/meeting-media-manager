@@ -50,6 +50,7 @@ const zoomState = {
       zoomState.cancelRequested = false;
     }
   }),
+  meeting: null as unknown,
   requestCancel: vi.fn(() => {
     zoomState.cancelRequested = true;
   }),
@@ -58,6 +59,9 @@ const zoomState = {
   },
   runDepth: 0,
   runLabel: null as null | string,
+  setMeeting: vi.fn((meeting: unknown) => {
+    zoomState.meeting = meeting;
+  }),
   setRunStep: vi.fn(),
 };
 
@@ -103,6 +107,7 @@ beforeEach(() => {
   failing = {};
   dateMocks.getMeetingStartToday.mockReturnValue(null);
   dateMocks.isMemorialDay.mockReturnValue(false);
+  zoomState.meeting = null;
   zoomState.automationsPaused = false;
   zoomState.cancelRequested = false;
   zoomState.runDepth = 0;
@@ -472,6 +477,19 @@ describe('meeting time', () => {
     dateMocks.isMemorialDay.mockReturnValue(true);
     const { isAroundMeetingTime } = await import('../zoom');
     expect(isAroundMeetingTime(at(10))).toBe(true);
+  });
+});
+
+describe('what the action island shows', () => {
+  it('remembers what the last look at Zoom found', async () => {
+    const { getZoomMeetingState } = await import('../zoom');
+
+    await getZoomMeetingState();
+    expect(zoomState.meeting).toEqual({ found: true, sharing: false });
+
+    meetingFound = false;
+    await getZoomMeetingState();
+    expect(zoomState.meeting).toEqual({ found: false, sharing: false });
   });
 });
 

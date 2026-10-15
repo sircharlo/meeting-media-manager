@@ -2,7 +2,8 @@
   <q-btn
     v-if="currentSettings?.enableSubtitles"
     class="super-rounded"
-    :color="!subtitlesVisible ? 'negative' : 'white-transparent'"
+    :class="classes"
+    :color="color"
     :icon="subtitlesVisible ? 'mmm-subtitles' : 'mmm-subtitles-off'"
     rounded
     unelevated
@@ -17,8 +18,12 @@
 <script setup lang="ts">
 import { useBroadcastChannel, watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
+import {
+  type IslandButtonStatus,
+  useIslandButton,
+} from 'src/composables/useIslandButton';
 import { useCurrentStateStore } from 'stores/current-state';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -26,6 +31,12 @@ const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
 const subtitlesVisible = ref(true);
+
+const { classes, color } = useIslandButton(
+  computed<IslandButtonStatus>(() =>
+    subtitlesVisible.value ? 'normal' : 'off',
+  ),
+);
 
 const { post } = useBroadcastChannel<boolean, boolean>({
   name: 'subtitles-visible',

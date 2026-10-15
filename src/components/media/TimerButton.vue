@@ -2,17 +2,10 @@
   <q-btn
     v-if="currentSettings?.enableTimerDisplay"
     class="super-rounded"
-    :color="
-      timerPopup
-        ? 'white'
-        : timerWindowVisible
-          ? 'white-transparent'
-          : 'negative'
-    "
+    :class="classes"
+    :color="color"
     rounded
-    :text-color="
-      timerPopup ? (timerWindowVisible ? 'primary' : 'negative') : ''
-    "
+    :text-color="textColor"
     unelevated
     @click="timerPopup = !timerPopup"
     @mouseenter="scheduleHoverOpen"
@@ -68,6 +61,10 @@ import type { TimerData } from 'src/types';
 import { useBroadcastChannel } from '@vueuse/core';
 import TimerQuickControls from 'components/media/TimerQuickControls.vue';
 import { storeToRefs } from 'pinia';
+import {
+  type IslandButtonStatus,
+  useIslandButton,
+} from 'src/composables/useIslandButton';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -77,6 +74,13 @@ const currentState = useCurrentStateStore();
 const { currentSettings, timerWindowVisible } = storeToRefs(currentState);
 
 const timerPopup = defineModel<boolean>({ required: true });
+
+const { classes, color, textColor } = useIslandButton(
+  computed<IslandButtonStatus>(() =>
+    timerWindowVisible.value ? 'normal' : 'off',
+  ),
+  timerPopup,
+);
 
 const timerDisplay = ref<string>('');
 

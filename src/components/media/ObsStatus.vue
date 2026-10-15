@@ -2,26 +2,10 @@
   <q-btn
     v-if="currentSettings?.obsEnable"
     class="super-rounded"
-    :color="
-      obsPopup
-        ? 'white'
-        : obsStatusVariant === 'connected'
-          ? 'white-transparent'
-          : obsStatusVariant === 'disconnected'
-            ? 'negative'
-            : 'warning'
-    "
-    :disable="obsConnectionState === 'connecting'"
+    :class="classes"
+    :color="color"
     rounded
-    :text-color="
-      obsPopup
-        ? obsStatusVariant === 'connected'
-          ? 'primary'
-          : obsStatusVariant === 'disconnected'
-            ? 'negative'
-            : 'warning'
-        : ''
-    "
+    :text-color="textColor"
     unelevated
     @click="onClick"
     @mouseenter="
@@ -30,18 +14,20 @@
         : undefined
     "
   >
-    <q-spinner v-if="obsConnectionState === 'connecting'" size="sm" />
-    <template v-else>
-      <q-icon name="mmm-obs-studio" />
-      <q-tooltip v-if="!obsPopup" :delay="1000" :offset="[14, 22]">
-        {{ t(tooltipMessageKey) }}
-      </q-tooltip>
-    </template>
+    <q-spinner v-if="busy" size="sm" />
+    <q-icon v-else name="mmm-obs-studio" />
+    <q-tooltip v-if="!obsPopup" :delay="1000" :offset="[14, 22]">
+      {{ t(tooltipMessageKey) }}
+    </q-tooltip>
   </q-btn>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
+import {
+  type IslandButtonStatus,
+  useIslandButton,
+} from 'src/composables/useIslandButton';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { isTransientObsError, obsConnect } from 'src/helpers/obs';
@@ -70,14 +56,18 @@ const { obsCloseHandler, obsErrorHandler, sceneExists } = obsState;
 const obsPopup = defineModel<boolean>({ required: true });
 
 // Scene list fetch failures don't mean the socket is disconnected (it's
-// still identified and usable for recording/scene switching), so they get
-// their own warning state instead of overriding obsConnectionState.
-const obsStatusVariant = computed(() => {
-  if (obsConnectionState.value === 'disconnected') return 'disconnected';
-  if (obsConnectionState.value === 'connected')
-    return obsSceneListError.value ? 'warning' : 'connected';
-  return 'warning';
+// still identified and usable for recording/scene switching), so they only
+// call for attention instead of overriding obsConnectionState.
+const status = computed<IslandButtonStatus>(() => {
+  if (obsConnectionState.value === 'disconnected') return 'error';
+  if (obsConnectionState.value === 'connecting') return 'busy';
+  if (obsConnectionState.value === 'connected' && !obsSceneListError.value) {
+    return 'normal';
+  }
+  return 'attention';
 });
+
+const { busy, classes, color, textColor } = useIslandButton(status, obsPopup);
 
 const tooltipMessageKey = computed(() =>
   obsConnectionState.value === 'connected' && obsSceneListError.value

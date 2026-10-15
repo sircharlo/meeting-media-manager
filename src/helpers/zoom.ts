@@ -273,7 +273,11 @@ export const getZoomMeetingState = async (
   reveal = false,
 ): Promise<null | ZoomMeetingState> => {
   const result = await runCommand({ reveal, type: 'meeting' });
-  return result.ok ? (result.meeting ?? null) : null;
+  if (result.error === CANCELLED.error) return null;
+  const meeting = result.ok ? (result.meeting ?? null) : null;
+  // What the action island's Zoom button shows.
+  useZoomStateStore().setMeeting(meeting);
+  return meeting;
 };
 
 // --- Individual steps ------------------------------------------------------

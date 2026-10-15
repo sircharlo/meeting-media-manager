@@ -2,13 +2,8 @@
   <q-btn
     v-if="currentSettings?.enableMediaDisplayButton"
     class="super-rounded"
-    :color="
-      displayPopup
-        ? 'white'
-        : mediaWindowVisible
-          ? 'white-transparent'
-          : 'negative'
-    "
+    :class="classes"
+    :color="color"
     data-wizard-target="media-display-button"
     :icon="
       mediaWindowVisible
@@ -16,9 +11,7 @@
         : 'mmm-media-display-inactive'
     "
     rounded
-    :text-color="
-      displayPopup ? (mediaWindowVisible ? 'primary' : 'negative') : ''
-    "
+    :text-color="textColor"
     unelevated
     @click="displayPopup = !displayPopup"
   >
@@ -36,7 +29,12 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
+import {
+  type IslandButtonStatus,
+  useIslandButton,
+} from 'src/composables/useIslandButton';
 import { useCurrentStateStore } from 'stores/current-state';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -44,4 +42,11 @@ const currentState = useCurrentStateStore();
 const { currentSettings, mediaWindowVisible } = storeToRefs(currentState);
 
 const displayPopup = defineModel<boolean>({ required: true });
+
+const { classes, color, textColor } = useIslandButton(
+  computed<IslandButtonStatus>(() =>
+    mediaWindowVisible.value ? 'normal' : 'off',
+  ),
+  displayPopup,
+);
 </script>

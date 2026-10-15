@@ -1,3 +1,5 @@
+import type { ZoomMeetingState } from 'src/types';
+
 import { defineStore } from 'pinia';
 import { useCurrentStateStore } from 'stores/current-state';
 
@@ -17,6 +19,11 @@ interface Store {
   /** Congregations whose Zoom was checked today. */
   checkedCongregations: string[];
   checkRunning: boolean;
+  /**
+   * What the last look at Zoom found (null: not looked yet, or Zoom's
+   * helper couldn't tell), for the action island's Zoom button.
+   */
+  meeting: null | ZoomMeetingState;
   pause: null | ZoomAutomationPause;
   /** How many nested automation runs are going (0: none). */
   runDepth: number;
@@ -68,6 +75,9 @@ export const useZoomStateStore = defineStore('zoom-state', {
     resumeAutomations() {
       this.pause = null;
     },
+    setMeeting(meeting: null | ZoomMeetingState) {
+      this.meeting = meeting;
+    },
     setRunStep(stepKey: null | string) {
       if (this.runDepth > 0) this.runStep = stepKey;
     },
@@ -83,6 +93,7 @@ export const useZoomStateStore = defineStore('zoom-state', {
     cancelRequested: false,
     checkedCongregations: [],
     checkRunning: false,
+    meeting: null,
     pause: null,
     runDepth: 0,
     runLabel: null,

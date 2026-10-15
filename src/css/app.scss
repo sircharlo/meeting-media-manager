@@ -704,6 +704,39 @@ a {
   flex: 0 0 auto;
 }
 
+// Action island buttons share one status language (see useIslandButton): a
+// button turned off is faded, like a disabled one, but stays clickable; a
+// live one (recording) keeps its usual color, since a red button means an
+// error, and shows its icon red on a pulsing white dot instead - red
+// straight on the island's blue would hardly show.
+.island-btn--off {
+  opacity: 0.6;
+}
+
+.island-btn--live .island-btn__icon {
+  animation: island-btn-live 2s ease-in-out infinite;
+  background: #fff;
+  border-radius: 50%;
+  color: $negative;
+}
+
+@keyframes island-btn-live {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .island-btn--live .island-btn__icon {
+    animation: none;
+  }
+}
+
 // A soft wash of the button's own current color instead of a border, so
 // small icon-only actions still read as clearly filled/interactive at rest
 // without the stroked-ring look of an outline button. `currentColor` picks
