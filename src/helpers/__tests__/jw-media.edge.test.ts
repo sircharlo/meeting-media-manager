@@ -1,5 +1,8 @@
+import type { Publication } from 'src/types';
+
 import { fetchPubMediaLinks } from 'src/utils/api';
 import { findBestResolution, isMediaLink } from 'src/utils/jw';
+import { findDb } from 'src/utils/sqlite';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const errorCatcherMock = vi.fn();
@@ -41,6 +44,10 @@ const currentStateStore = {
 };
 
 const jwStore = {
+  jwBibleFiles: {} as Record<
+    string,
+    undefined | { list: Partial<Publication>[]; updated: Date }
+  >,
   jwLanguages: { list: [] as { isSignLanguage?: boolean; langcode: string }[] },
   jwMepsLanguages: { list: [] as { LanguageId: number; Symbol: string }[] },
   jwSongs: {} as Record<string, undefined | { list: unknown[]; updated: Date }>,
@@ -243,6 +250,7 @@ describe('jw-media edge cases', () => {
     currentStateStore.getMeetingType.mockReturnValue(null);
     currentStateStore.meetingCheckStatus = {};
     jwStore.lookupPeriod = {};
+    jwStore.jwBibleFiles = {};
     jwStore.jwSongs = {};
     jwStore.jwMepsLanguages = { list: [] };
     jwStore.jwLanguages = { list: [] };
@@ -564,6 +572,102 @@ describe('jw-media edge cases', () => {
 
       const result = await promise;
       expect(result).toMatchObject({ new: true });
+    });
+  });
+
+  describe('Bible book list with a fallback language', () => {
+    // X is the congregation's language and Y its fallback language. Book 10
+    // is only recorded in Y, book 30 only in X, book 20 in neither, and every
+    // other book in both.
+    const allBooks = Array.from({ length: 66 }, (_, i) => i + 1);
+    const recordedBooks: Record<string, number[]> = {
+      X: allBooks.filter((booknum) => booknum !== 10 && booknum !== 20),
+      Y: allBooks.filter((booknum) => booknum !== 20 && booknum !== 30),
+    };
+    const localBookName = (booknum: number) => `Local name of book ${booknum}`;
+
+    const getBibleBookList = async () => {
+      const { getBibleMedia } = await import('../jw-media');
+      return (await getBibleMedia()) ?? [];
+    };
+
+    beforeEach(() => {
+      currentStateStore.currentSettings = { lang: 'X', langFallback: 'Y' };
+      vi.mocked(fetchPubMediaLinks).mockImplementation(async (publication) => {
+        const { booknum, fileformat, langwritten } = publication;
+        // The study Bible JWPUBs (for the local book names) come from the
+        // copy already on disk, mocked below.
+        if (fileformat !== 'MP3' || !booknum) return null;
+        if (!recordedBooks[langwritten]?.includes(booknum)) return null;
+        return {
+          booknum,
+          files: { [langwritten]: { MP3: [] } },
+          pubName: `${langwritten} book ${booknum}`,
+        } as unknown as Publication;
+      });
+
+      // A study Bible already downloaded and extracted, holding the local
+      // book names.
+      pathExistsMock.mockResolvedValue(true);
+      vi.mocked(findDb).mockResolvedValue('/pub-dir/nwt.db');
+      vi.stubGlobal('electronApi', {
+        ...globalThis.electronApi,
+        executeQuery: vi.fn(async () =>
+          Array.from({ length: 66 }, (_, i) => ({
+            ChapterNumber: i + 1,
+            Title: localBookName(i + 1),
+          })),
+        ),
+        getZipEntries: vi.fn(async () => ({ contents: 100 })),
+        isSqliteDbCorrupt: vi.fn(async () => false),
+        readdir: vi.fn(async () => [{ name: 'nwt.jwpub' }]),
+      });
+    });
+
+    afterEach(() => {
+      vi.mocked(fetchPubMediaLinks).mockReset();
+      vi.mocked(findDb).mockReset();
+    });
+
+    it('lists a book the main language has once, from the main language', async () => {
+      const list = await getBibleBookList();
+
+      for (const booknum of [1, 30]) {
+        const books = list.filter((book) => book.booknum === booknum);
+        expect(books).toHaveLength(1);
+        expect(books[0]?.pubName).toBe(`X book ${booknum}`);
+        expect(Object.keys(books[0]?.files ?? {})).toEqual(['X']);
+      }
+    });
+
+    it('uses the fallback language for a book the main language has no recording of', async () => {
+      const books = (await getBibleBookList()).filter(
+        (book) => book.booknum === 10,
+      );
+
+      expect(books).toHaveLength(1);
+      expect(books[0]?.pubName).toBe('Y book 10');
+      expect(Object.keys(books[0]?.files ?? {})).toEqual(['Y']);
+    });
+
+    it('shows the local name of a book neither language has a recording of, without touching other books', async () => {
+      const list = await getBibleBookList();
+
+      expect(list.filter((book) => !book.files)).toEqual([
+        { booknum: 20, pubName: localBookName(20) },
+      ]);
+      expect(list.find((book) => book.booknum === 19)?.pubName).toBe(
+        'X book 19',
+      );
+      expect(list.find((book) => book.booknum === 21)?.pubName).toBe(
+        'X book 21',
+      );
+    });
+
+    it('returns exactly one entry per book, in book order', async () => {
+      const list = await getBibleBookList();
+
+      expect(list.map((book) => book.booknum)).toEqual(allBooks);
     });
   });
 });

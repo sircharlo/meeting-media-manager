@@ -3052,13 +3052,11 @@ const applyBibleBookBackupNames = async (
     nwtStyDb || nwtDb || '',
   );
   for (const booknum of backupNameNeeded) {
-    const pubName = bibleBookLocalNames.find(
+    const placeholder = returnedItems.find((item) => item.booknum === booknum);
+    if (!placeholder) continue;
+    placeholder.pubName = bibleBookLocalNames.find(
       (item) => item.ChapterNumber === booknum,
     )?.Title;
-    returnedItems[booknum - 1] = {
-      booknum,
-      pubName,
-    };
   }
 };
 
@@ -3072,35 +3070,34 @@ const fetchBibleBookMedia = async (
     fetchBibleBookMediaForLanguages(publication, booknum, languages);
 
   for (const booknum of Array.from({ length: 66 }, (_, i) => i + 1)) {
-    const { items, needsBackupName } = await fetchBook(booknum); // NOSONAR: sequential - one JW.org lookup at a time
-    returnedItems.push(...items);
-
-    if (needsBackupName) {
-      backupNameNeeded.push(booknum);
-      returnedItems.push({ booknum });
+    const bookMedia = await fetchBook(booknum); // NOSONAR: sequential - one JW.org lookup at a time
+    if (bookMedia) {
+      returnedItems.push(bookMedia);
+      continue;
     }
+
+    backupNameNeeded.push(booknum);
+    returnedItems.push({ booknum });
   }
 
   return { backupNameNeeded, returnedItems };
 };
 
+// The book's media in the first of the languages that has it, or null when
+// none of them does.
 const fetchBibleBookMediaForLanguages = async (
   publication: PublicationFetcher,
   booknum: number,
   languages: JwLangCode[],
 ) => {
-  const items: Publication[] = [];
-
   for (const lang of languages) {
     publication.booknum = booknum;
     publication.langwritten = lang;
-    const bibleMediaItems = await getPubMediaLinks(publication); // NOSONAR: sequential - stops at first miss, reuses one publication object
-    if (!bibleMediaItems) return { items, needsBackupName: true };
-
-    items.push(bibleMediaItems);
+    const bibleMediaItems = await getPubMediaLinks(publication); // NOSONAR: sequential - stops at first match
+    if (bibleMediaItems) return bibleMediaItems;
   }
 
-  return { items, needsBackupName: false };
+  return null;
 };
 
 const getBibleMediaLanguages = (langwritten?: JwLangCode) => {
