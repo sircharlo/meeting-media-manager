@@ -182,7 +182,7 @@ interface ZipGuardState {
   totalUncompressedSize: number;
 }
 
-let securityScopedBookmarksLoaded = false;
+let securityScopedBookmarksLoad: Promise<void> | undefined;
 const securityScopedBookmarks = new Map<string, string>();
 const securityScopedAccessStops = new Map<string, () => void>();
 
@@ -393,10 +393,7 @@ const normalizeBookmarkPath = (filePath: string) => toUnix(resolve(filePath));
 const isSameOrChildPath = (parentPath: string, childPath: string) =>
   childPath === parentPath || childPath.startsWith(`${parentPath}/`);
 
-const loadSecurityScopedBookmarks = async () => {
-  if (securityScopedBookmarksLoaded) return;
-  securityScopedBookmarksLoaded = true;
-
+const readSecurityScopedBookmarks = async () => {
   try {
     const raw = await readFile(getSecurityScopedBookmarksFile(), 'utf8');
     const parsed = JSON.parse(raw) as unknown;
@@ -410,6 +407,13 @@ const loadSecurityScopedBookmarks = async () => {
   } catch {
     securityScopedBookmarks.clear();
   }
+};
+
+// Every caller awaits the same in-flight read, so none of them sees (or
+// persists) the map before the stored bookmarks are in it.
+const loadSecurityScopedBookmarks = () => {
+  securityScopedBookmarksLoad ??= readSecurityScopedBookmarks();
+  return securityScopedBookmarksLoad;
 };
 
 const persistSecurityScopedBookmarks = async () => {

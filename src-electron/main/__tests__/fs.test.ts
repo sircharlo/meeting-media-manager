@@ -563,6 +563,61 @@ describe('macOS folder permissions', () => {
     );
   });
 
+  it('gives a caller that arrives while the stored bookmarks are still loading the stored bookmark too', async () => {
+    const { app } = await import('electron');
+    const bookmarksRead = Promise.withResolvers<string>();
+    readFileMock.mockReturnValueOnce(bookmarksRead.promise);
+
+    const { startSecurityScopedAccess } = await import('../fs');
+
+    const first = startSecurityScopedAccess('/Users/test/Stored/a.mp4');
+    const second = startSecurityScopedAccess('/Users/test/Stored/b.mp4');
+    bookmarksRead.resolve(
+      JSON.stringify({ '/Users/test/Stored': 'stored-bookmark' }),
+    );
+
+    await expect(Promise.all([first, second])).resolves.toEqual([true, true]);
+    expect(readFileMock).toHaveBeenCalledTimes(1);
+    expect(app.startAccessingSecurityScopedResource).toHaveBeenCalledTimes(1);
+    expect(app.startAccessingSecurityScopedResource).toHaveBeenCalledWith(
+      'stored-bookmark',
+    );
+  });
+
+  it('keeps the stored bookmarks when a new one is saved while they are still loading', async () => {
+    const { dialog } = await import('electron');
+    const bookmarksRead = Promise.withResolvers<string>();
+    readFileMock.mockReturnValueOnce(bookmarksRead.promise);
+    vi.mocked(dialog.showOpenDialog).mockResolvedValue({
+      bookmarks: ['new-bookmark'],
+      canceled: false,
+      filePaths: ['/Users/test/New'],
+    });
+
+    const { openFolderDialog, startSecurityScopedAccess } =
+      await import('../fs');
+
+    const access = startSecurityScopedAccess('/Users/test/Stored/a.mp4');
+    const picked = openFolderDialog();
+    // Let the folder dialog reach the bookmark store while the stored
+    // bookmarks file read is still pending.
+    await new Promise((resolve) => {
+      setImmediate(resolve);
+    });
+    bookmarksRead.resolve(
+      JSON.stringify({ '/Users/test/Stored': 'stored-bookmark' }),
+    );
+    await Promise.all([access, picked]);
+
+    expect(writeFileMock).toHaveBeenCalledTimes(1);
+    const [file, contents] = writeFileMock.mock.calls[0] as [string, string];
+    expect(file).toBe('/user-data/security-scoped-bookmarks.json');
+    expect(JSON.parse(contents)).toEqual({
+      '/Users/test/New': 'new-bookmark',
+      '/Users/test/Stored': 'stored-bookmark',
+    });
+  });
+
   it('can probe macOS folder permissions without opening the picker', async () => {
     const { dialog } = await import('electron');
     const permissionError = new Error('operation not permitted');
