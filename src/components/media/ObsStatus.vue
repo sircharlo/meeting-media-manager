@@ -110,6 +110,10 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
           });
         return;
       }
+      // No socket or an empty reply: there is nothing to retry, and going
+      // round again without awaiting anything would spin the renderer.
+      obsSceneListError.value = true;
+      return;
     } catch (error) {
       attempts++;
       const isTransient = isTransientObsError(error);
