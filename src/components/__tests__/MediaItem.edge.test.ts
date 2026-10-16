@@ -4,6 +4,7 @@ import { basePath } from 'app/test/vitest/mocks/electronApi';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { ensureFile, writeFile } from 'fs-extra';
 import { defaultSettings } from 'src/constants/settings';
+import { formatTime } from 'src/utils/time';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -328,6 +329,30 @@ describe('MediaItem playback resilience while offline', () => {
     await flushPromises();
 
     expect(currentState.mediaPlaying.url).toBe(resolvedUrl);
+    wrapper.unmount();
+  });
+
+  // A trim end of 0 (saved when a playlist with an unknown length had only a
+  // start trim) means "to the end", which is how the media window plays it.
+  it('shows a trim with an end of 0 as running to the end of the media', () => {
+    const wrapper = mount(MediaItem, {
+      props: {
+        media: {
+          customDuration: { max: 0, min: 30 },
+          duration: 300,
+          fileUrl: 'file:///C:/media/talk.mp4',
+          isVideo: true,
+          title: 'Start-trimmed video',
+          type: 'media',
+          uniqueId: 'start-trim-only-1',
+        },
+        repeat: false,
+      },
+    });
+
+    expect(wrapper.text().replaceAll(/\s+/g, ' ')).toContain(
+      `${formatTime(30)} - ${formatTime(300)}`,
+    );
     wrapper.unmount();
   });
 });

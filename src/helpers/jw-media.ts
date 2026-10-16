@@ -85,6 +85,7 @@ import {
 } from 'src/utils/fs';
 import { sanitizeId } from 'src/utils/general';
 import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
+import { getJwPlaylistItemTrim } from 'src/utils/jw-playlist';
 import {
   getMetadataFromMediaPath,
   isAudio,
@@ -770,19 +771,7 @@ const getMediaFromJwPlaylist = async (
             }
           }
         }
-        const durationTicks =
-          item?.BaseDurationTicks || item?.DurationTicks || 0; // NOSONAR: 0 falls back too
-        const EndTime =
-          durationTicks &&
-          item?.EndTrimOffsetTicks &&
-          durationTicks >= item.EndTrimOffsetTicks
-            ? (durationTicks - item.EndTrimOffsetTicks) / 10_000 / 1000
-            : null;
-
-        const StartTime =
-          item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
-            ? item.StartTrimOffsetTicks / 10_000 / 1000
-            : null;
+        const { EndTime, StartTime } = getJwPlaylistItemTrim(item);
 
         const VerseNumbers = (
           await globalThis.electronApi.executeQuery<{

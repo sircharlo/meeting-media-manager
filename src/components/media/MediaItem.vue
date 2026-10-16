@@ -2016,41 +2016,46 @@ const finishTitleEdit = () => {
   });
 };
 
+// A trim end of 0 means "to the end": that's how the media window plays it
+// (it never stops at 0), and imported playlists with an unknown length save
+// one when only the start is trimmed.
+const getTrimEnd = (max?: number) => max || props.media.duration; // NOSONAR: 0 means to the end
+
 const updateMediaCustomDuration = (customDuration?: {
   max: number;
   min: number;
 }) => {
   emit('update:customDuration', JSON.stringify(customDuration || ''));
   draftCustomDuration.value = {
-    max: customDuration?.max ?? props.media.duration,
+    max: getTrimEnd(customDuration?.max),
     min: customDuration?.min ?? 0,
   };
 };
-
-const customDurationIsSet = computed(() => {
-  return (
-    props.media.duration &&
-    props.media.customDuration &&
-    (props.media.customDuration.min > 0 ||
-      props.media.customDuration.max < props.media.duration)
-  );
-});
 
 // The actually-applied trim range (badge text, live playback slider) -
 // sourced from the persisted prop, not the popup's in-progress draft below,
 // so editing (typing or dragging) doesn't visibly "live apply" anywhere
 // outside the popup before Save is clicked.
 const appliedCustomDuration = computed(() => ({
-  max: props.media.customDuration?.max ?? props.media.duration,
+  max: getTrimEnd(props.media.customDuration?.max),
   min: props.media.customDuration?.min ?? 0,
 }));
+
+const customDurationIsSet = computed(() => {
+  return (
+    props.media.duration &&
+    props.media.customDuration &&
+    (appliedCustomDuration.value.min > 0 ||
+      (appliedCustomDuration.value.max ?? 0) < props.media.duration)
+  );
+});
 
 // The duration popup's own working copy while it's open - only persisted
 // (via updateMediaCustomDuration, which emits update:customDuration) when
 // Save is clicked. Cancel just discards whatever's in here.
 const draftCustomDuration = ref({
   max: props.media.duration
-    ? props.media.customDuration?.max || props.media.duration // NOSONAR: 0 means not set
+    ? getTrimEnd(props.media.customDuration?.max)
     : undefined,
   min: props.media.duration
     ? (props.media.customDuration?.min ?? 0)
@@ -2642,9 +2647,9 @@ async function findThumbnailUrl() {
 
 const showMediaDurationPopup = () => {
   try {
-    draftCustomDuration.value = props.media.customDuration || {
-      max: props.media.duration,
-      min: 0,
+    draftCustomDuration.value = {
+      max: getTrimEnd(props.media.customDuration?.max),
+      min: props.media.customDuration?.min ?? 0,
     };
     customDurationMinUserInput.value = formatTime(
       draftCustomDuration.value.min,

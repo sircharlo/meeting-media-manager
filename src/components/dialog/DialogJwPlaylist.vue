@@ -221,6 +221,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
 import { log, uuid } from 'src/shared/vanilla';
 import { getTempPath } from 'src/utils/fs';
+import { getJwPlaylistItemTrim } from 'src/utils/jw-playlist';
 import { isImage } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -552,7 +553,7 @@ const getMediaIcon = (item: JwPlaylistItem) => {
 };
 
 const formatDuration = (item: JwPlaylistItem) => {
-  const durationTicks = item?.BaseDurationTicks || item?.DurationTicks || 0; // NOSONAR: 0 means not set
+  const { durationTicks } = getJwPlaylistItemTrim(item);
   if (!durationTicks) return '';
 
   const seconds = Math.floor(durationTicks / 10_000 / 1000);
@@ -585,22 +586,6 @@ function getItemLabelParts(i: number, item: JwPlaylistItem) {
   }
 
   return { prefix, rest };
-}
-
-function getTrimmedTimes(item: JwPlaylistItem) {
-  const durationTicks = item.BaseDurationTicks ?? item.DurationTicks ?? 0;
-
-  const StartTime =
-    item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
-      ? item.StartTrimOffsetTicks / 10_000 / 1000
-      : null;
-
-  const EndTime =
-    item.EndTrimOffsetTicks && durationTicks >= item.EndTrimOffsetTicks
-      ? (durationTicks - item.EndTrimOffsetTicks) / 10_000 / 1000
-      : null;
-
-  return { durationTicks, EndTime, StartTime };
 }
 
 async function processNonVideoItem(
@@ -681,7 +666,7 @@ async function processSingleItem(
   index: number,
   outputPath: string,
 ) {
-  const { durationTicks, EndTime, StartTime } = getTrimmedTimes(item);
+  const { durationTicks, EndTime, StartTime } = getJwPlaylistItemTrim(item);
   const itemLabel = getItemLabel(index, item);
   const isVideo = !item.OriginalFilename;
 
