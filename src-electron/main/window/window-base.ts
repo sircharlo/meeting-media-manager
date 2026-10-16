@@ -215,7 +215,7 @@ function buildWebsitePage(
   websiteParams: JwSiteParams | undefined,
   base: string | undefined,
 ) {
-  const langSymbol = encodeURIComponent(websiteParams?.langSymbol || '');
+  const langSymbol = encodeURIComponent(websiteParams?.langSymbol ?? '');
   if (websiteParams?.site) {
     // JW Stream and the conventions site are jw.org's own: never opened for
     // a different Website.

@@ -207,7 +207,7 @@ const dialogValue = computed({
 });
 
 const jwpubDb = computed({
-  get: () => props.jwpubDb || '',
+  get: () => props.jwpubDb ?? '',
   set: (value) => emit('update:jwpub-db', value),
 });
 

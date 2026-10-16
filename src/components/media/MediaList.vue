@@ -324,7 +324,7 @@ useEventListener(globalThis, 'reset-sort-order', () => {
 
 // Computed styles
 const sectionStyles = computed(() => ({
-  '--bg-color': props.mediaList.config?.bgColor || 'rgb(148, 94, 181)',
+  '--bg-color': props.mediaList.config?.bgColor || 'rgb(148, 94, 181)', // NOSONAR: '' means not set
   '--text-color': getTextColor(props.mediaList),
 }));
 

@@ -79,7 +79,7 @@ export const openPdfThumbnailSession = async (
           imageDataUrl: true,
           partial: [pageNumber],
         });
-        return result.pages[0]?.dataUrl || null;
+        return result.pages[0]?.dataUrl || null; // NOSONAR: empty data URL means no thumbnail
       } catch (e) {
         if (!destroyed) errorCatcher(e);
         return null;
@@ -263,7 +263,7 @@ export const convertImageIfNeeded = async (filepath: string) => {
     const nrOfPages = await getNrOfPdfPages(filepath);
     if (nrOfPages === 1) {
       const converted = await convertPdfToImages(filepath, await getTempPath());
-      return converted[0] || filepath;
+      return converted[0] ?? filepath;
     }
   }
   return filepath;

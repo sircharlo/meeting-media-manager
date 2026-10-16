@@ -72,7 +72,7 @@ const getUpdatesEnabled = async () => {
 
 const loadLatestVersion = async () => {
   if (latestVersion.value) return;
-  latestVersion.value = (await fetchLatestVersion()) || '';
+  latestVersion.value = (await fetchLatestVersion()) ?? '';
 };
 const dismissed = ref<Set<string>>(new Set());
 

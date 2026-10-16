@@ -217,7 +217,7 @@ export const loadYeartextFont = async (
   script?: string,
   langCode?: string,
 ): Promise<string> => {
-  const scriptKey = script?.toUpperCase() || '';
+  const scriptKey = script?.toUpperCase() ?? '';
 
   // Check language-specific override first, then fall back to script
   const langKey = langCode
@@ -362,7 +362,7 @@ export const getJwIconFromKeyword = (keyword: number | string | undefined) => {
   const icon = keywordToJwIconMapping[keyword.toString()];
   if (!icon) return '';
   if (jwIconsGlyphMapPromise && !glyphMap) return '';
-  return glyphMap?.[icon] || fallbackJwIconsGlyphMap[icon] || '';
+  return glyphMap?.[icon] ?? fallbackJwIconsGlyphMap[icon] ?? '';
 };
 
 export const setElementFont = async (fontName: FontName) => {

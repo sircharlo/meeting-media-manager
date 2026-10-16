@@ -17,7 +17,7 @@ const currentState = useCurrentStateStore();
 function getParam(key: string) {
   try {
     return (
-      new URLSearchParams(location.search).get(key) ||
+      new URLSearchParams(location.search).get(key) || // NOSONAR: '' means not set
       new URLSearchParams(
         location.hash.substring(location.hash.indexOf('?')),
       ).get(key)

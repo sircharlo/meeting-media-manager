@@ -536,8 +536,8 @@ const buildDocumentMultimediaQuery = async (
   ) {
     where += ` AND ${mmTable}.BeginParagraphOrdinal >= ? AND ${mmTable}.EndParagraphOrdinal <= ?`;
     params.push(
-      source.BeginParagraphOrdinal || 0,
-      source.EndParagraphOrdinal || 0,
+      source.BeginParagraphOrdinal ?? 0,
+      source.EndParagraphOrdinal ?? 0,
     );
   }
 
@@ -626,11 +626,11 @@ const fixSjjmItems = async (
     const next = sjjmItems[i + 1];
     if (!current || !next) continue;
 
-    const currentOrigP = originalOrdinals.get(current.MultimediaId) || 0;
-    const nextOrigP = originalOrdinals.get(next.MultimediaId) || 0;
+    const currentOrigP = originalOrdinals.get(current.MultimediaId) ?? 0;
+    const nextOrigP = originalOrdinals.get(next.MultimediaId) ?? 0;
 
     const betweenItems = items.filter((item) => {
-      const origP = originalOrdinals.get(item.MultimediaId) || 0;
+      const origP = originalOrdinals.get(item.MultimediaId) ?? 0;
       return (
         origP > currentOrigP && origP < nextOrigP && !sjjmItems.includes(item)
       );
@@ -638,13 +638,13 @@ const fixSjjmItems = async (
 
     if (betweenItems.length > 0) {
       betweenItems.sort((a, b) => {
-        const aP = originalOrdinals.get(a.MultimediaId) || 0;
-        const bP = originalOrdinals.get(b.MultimediaId) || 0;
+        const aP = originalOrdinals.get(a.MultimediaId) ?? 0;
+        const bP = originalOrdinals.get(b.MultimediaId) ?? 0;
         return aP - bP;
       });
 
       let lastP = current.BeginParagraphOrdinal || 0;
-      let lastS = current.BeginPosition || 0;
+      let lastS = current.BeginPosition ?? 0;
 
       betweenItems.forEach((item) => {
         lastP++;
@@ -756,7 +756,7 @@ const getExtractLanguage = (
     try {
       const matches = extract.Link.match(/\/(.*)\//);
       if (matches && matches.length > 0) {
-        return (matches.pop()?.split(':')[0] || '') as JwLangCode;
+        return (matches.pop()?.split(':')[0] ?? '') as JwLangCode;
       }
     } catch (e: unknown) {
       errorCatcher(e);
@@ -890,7 +890,7 @@ const getExtractMultimedia = async (
     }))
     .filter(
       (extractItem) =>
-        isSignLanguage ||
+        isSignLanguage || // NOSONAR: false checks the next condition
         !(symbol === 'lmd' && extractItem.MimeType.includes('video')),
     );
 
@@ -926,7 +926,7 @@ export const getDocumentExtractItems = async (
   try {
     const currentStateStore = useCurrentStateStore();
     const settings = currentStateStore.currentSettings;
-    const defaultLang = settings?.lang || 'E';
+    const defaultLang = settings?.lang || 'E'; // NOSONAR: '' means not set
 
     const extracts = await executeQuery<MultimediaExtractItem>(
       db,

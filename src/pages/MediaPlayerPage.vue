@@ -450,9 +450,9 @@ const applyZoomPanState = (zoomPanState: Record<string, number>) => {
 
     if (width > 0 && height > 0) {
       // Apply zoom and pan using CSS transforms for smooth animation
-      const scale = zoomPanState.scale || 1;
-      const x = (zoomPanState.x || 0) * width;
-      const y = (zoomPanState.y || 0) * height;
+      const scale = zoomPanState.scale ?? 1;
+      const x = (zoomPanState.x || 0) * width; // NOSONAR: NaN falls back to 0
+      const y = (zoomPanState.y || 0) * height; // NOSONAR: NaN falls back to 0
 
       if (skipZoomPanAnimation.value) {
         // Apply instantly without animation
@@ -503,11 +503,11 @@ const { post: postLastEndTimestamp } = useBroadcastChannel<number, number>({
 });
 
 const customMin = computed(() => {
-  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.min || 0;
+  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.min || 0; // NOSONAR: '' is not valid JSON
 });
 
 const customMax = computed(() => {
-  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max;
+  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max; // NOSONAR: '' is not valid JSON
 });
 
 type DisplayLayerRef = typeof displayLayer1;
@@ -758,7 +758,8 @@ const handleMediaError = (layer: 1 | 2) => {
   // it must not be treated as end-of-media either.
   if (!layerRef.value.url) return;
 
-  errorCatcher(new Error(element.error?.message || 'Media playback error'), {
+  const errorMessage = element.error?.message || 'Media playback error'; // NOSONAR: '' means no message
+  errorCatcher(new Error(errorMessage), {
     contexts: {
       fn: {
         code: element.error?.code,
@@ -780,7 +781,7 @@ const handleMediaError = (layer: 1 | 2) => {
 const handleVideoPause = () => {
   log('⏸️ [handleVideoPause] Video paused', 'mediaPlayer', 'log');
   try {
-    postCurrentTime(currentMediaElement.value?.currentTime || 0);
+    postCurrentTime(currentMediaElement.value?.currentTime ?? 0);
   } catch (e) {
     errorCatcher(e);
   }
@@ -857,7 +858,7 @@ const playMedia = () => {
         return;
       }
 
-      const currentTime = currentMediaElement.value?.currentTime || 0;
+      const currentTime = currentMediaElement.value?.currentTime ?? 0;
 
       if (Date.now() - lastUpdate > updateInterval) {
         // Throttle time updates

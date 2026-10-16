@@ -89,8 +89,8 @@ function compareVersions(a: string, b: string): number {
   const [aRelease, aPre] = a.split('-', 2);
   const [bRelease, bPre] = b.split('-', 2);
 
-  const aParts = (aRelease || '').split('.').map(Number);
-  const bParts = (bRelease || '').split('.').map(Number);
+  const aParts = (aRelease ?? '').split('.').map(Number);
+  const bParts = (bRelease ?? '').split('.').map(Number);
   for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
     const diff = (aParts[i] ?? 0) - (bParts[i] ?? 0);
     if (diff !== 0) return diff;

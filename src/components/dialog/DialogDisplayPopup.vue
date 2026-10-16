@@ -517,7 +517,7 @@ const processJwpubBackground = async (filepath: string) => {
   >(db, query);
 
   jwpubImages.value = results.map((multimediaItem) => ({
-    FilePath: join(unzipDir, multimediaItem.FilePath || ''),
+    FilePath: join(unzipDir, multimediaItem.FilePath ?? ''),
   }));
 
   if (jwpubImages.value.length === 0) {

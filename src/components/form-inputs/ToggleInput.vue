@@ -32,7 +32,7 @@ const customDisabled = computed(() => {
     props.disable ||
     (props.settingId !== 'obsEnable' &&
       props.settingId?.startsWith('obs') &&
-      obsConnectionState.value !== 'connected') ||
+      obsConnectionState.value !== 'connected') || // NOSONAR: false would render disabled="false"
     undefined
   );
 });

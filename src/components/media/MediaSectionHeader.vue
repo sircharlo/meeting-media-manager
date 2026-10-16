@@ -297,7 +297,7 @@ const sectionHeader = ref<HTMLElement>();
 const isHovered = useElementHover(sectionHeader);
 
 const renameInput = ref<HTMLInputElement>();
-const hexValue = ref(props.mediaList.config?.bgColor || '#ffffff');
+const hexValue = ref(props.mediaList.config?.bgColor || '#ffffff'); // NOSONAR: '' means not set
 const showColorPicker = ref(false);
 const moreOptionsMenuActive = ref(false);
 
@@ -430,7 +430,7 @@ const updateSectionRepeatState = (newState: boolean) => {
 // doesn't fight the user's own in-progress drag.
 watch(showColorPicker, (open) => {
   if (!open) return;
-  hexValue.value = props.mediaList.config?.bgColor || '#ffffff';
+  hexValue.value = props.mediaList.config?.bgColor || '#ffffff'; // NOSONAR: '' means not set
 });
 
 // Expose the method for parent components

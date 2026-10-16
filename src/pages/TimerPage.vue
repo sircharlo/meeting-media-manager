@@ -280,8 +280,8 @@ const textColor = computed(() => {
   const data = timerData.value;
   const useOvertime = isOvertime.value && data?.timerOvertimeIndicator;
   return useOvertime
-    ? data?.timerOvertimeTextColor || '#ffffff'
-    : data?.timerTextColor || '#ffffff';
+    ? data?.timerOvertimeTextColor || '#ffffff' // NOSONAR: '' means not set
+    : data?.timerTextColor || '#ffffff'; // NOSONAR: '' means not set
 });
 
 // Computed styles
@@ -293,8 +293,8 @@ const containerStyles = computed(() => {
     alignContent: 'center',
     alignItems: 'center',
     backgroundColor: useOvertime
-      ? data?.timerOvertimeBackgroundColor || '#000000'
-      : data?.timerBackgroundColor || '#000000',
+      ? data?.timerOvertimeBackgroundColor || '#000000' // NOSONAR: '' means not set
+      : data?.timerBackgroundColor || '#000000', // NOSONAR: '' means not set
     color: textColor.value,
     display: 'flex',
     height: '100vh',
@@ -304,7 +304,7 @@ const containerStyles = computed(() => {
   };
 });
 
-const timerTextSize = computed(() => timerData.value?.timerTextSize || '10vw');
+const timerTextSize = computed(() => timerData.value?.timerTextSize || '10vw'); // NOSONAR: '' means not set
 
 const fittedDigitalFontSize = computed(() => {
   const characterCount = Math.max(digitalDisplayTime.value.length, 1);
@@ -344,16 +344,15 @@ const clockHands = computed(() => {
 });
 
 const analogClockStyles = computed<CSSProperties>(() => ({
-  '--clock-color': timerData.value?.timerTextColor || '#ffffff',
+  '--clock-color': timerData.value?.timerTextColor || '#ffffff', // NOSONAR: '' means not set
 }));
 
 const countdownProgress = computed(() => {
   if (isOvertime.value) return 1;
 
   const totalSeconds =
-    timerData.value?.timerCountdownTargetSeconds ||
-    meetingCountdownTargetSeconds.value ||
-    0;
+    timerData.value?.timerCountdownTargetSeconds || // NOSONAR: 0 means no countdown target
+    (meetingCountdownTargetSeconds.value ?? 0);
   const remainingSeconds =
     currentMode.value === 'timer'
       ? Math.max(0, totalSeconds - (timerData.value?.timerElapsedSeconds ?? 0))
@@ -366,9 +365,8 @@ const countdownProgress = computed(() => {
 
 const countdownRemainingSeconds = computed(() => {
   const totalSeconds =
-    timerData.value?.timerCountdownTargetSeconds ||
-    meetingCountdownTargetSeconds.value ||
-    0;
+    timerData.value?.timerCountdownTargetSeconds || // NOSONAR: 0 means no countdown target
+    (meetingCountdownTargetSeconds.value ?? 0);
 
   if (currentMode.value === 'timer') {
     return totalSeconds - (timerData.value?.timerElapsedSeconds ?? 0);
@@ -382,7 +380,7 @@ const ORANGE = { b: 10, g: 149, r: 255 };
 
 const countdownRingColor = computed(() => {
   if (isOvertime.value) {
-    return timerData.value?.timerOvertimeTextColor || '#ff0000';
+    return timerData.value?.timerOvertimeTextColor || '#ff0000'; // NOSONAR: '' means not set
   }
 
   if (!timerData.value?.timerCountdownWarningIndicator) {
@@ -405,8 +403,8 @@ const analogCountdownStyles = computed<CSSProperties>(() => {
   const progressPercent = countdownProgress.value * 100;
   const countdownTextColor =
     isOvertime.value && timerData.value?.timerOvertimeIndicator
-      ? timerData.value?.timerOvertimeTextColor || '#ff0000'
-      : timerData.value?.timerTextColor || '#ffffff';
+      ? timerData.value?.timerOvertimeTextColor || '#ff0000' // NOSONAR: '' means not set
+      : timerData.value?.timerTextColor || '#ffffff'; // NOSONAR: '' means not set
 
   return {
     '--countdown-progress': isFull ? '100 0' : `${progressPercent} 100`,
@@ -456,7 +454,7 @@ const clockArc = computed(() => {
     const data = timerData.value;
     const elapsed = data?.timerElapsedSeconds ?? 0;
     targetSeconds =
-      data?.timerCountdownTargetSeconds || data?.timerPartTargetSeconds || 0;
+      data?.timerCountdownTargetSeconds || data?.timerPartTargetSeconds || 0; // NOSONAR: 0 means no countdown target
     endTime = now - elapsed * 1000 + targetSeconds * 1000;
   } else {
     targetSeconds = meetingCountdownTargetSeconds.value ?? 0;
@@ -475,7 +473,7 @@ const clockArc = computed(() => {
   const remainingPath = wedgePath(nowAngle, nowAngle + remainingDegrees);
   const overtimePath = wedgePath(nowAngle - overtimeDegrees, nowAngle);
 
-  const overtimeColor = timerData.value?.timerOvertimeTextColor || '#ff453a';
+  const overtimeColor = timerData.value?.timerOvertimeTextColor || '#ff453a'; // NOSONAR: '' means not set
   return {
     overtimeColor,
     overtimePath,
@@ -488,7 +486,7 @@ const clockArc = computed(() => {
 const overlayStyles = computed<CSSProperties>(() => ({
   backgroundColor: 'rgba(0, 0, 0, 0.7)',
   borderRadius: '8px',
-  color: timerData.value?.timerTextColor || '#ffffff',
+  color: timerData.value?.timerTextColor || '#ffffff', // NOSONAR: '' means not set
   fontSize: '24px',
   fontWeight: 'bold',
   left: '20px',
@@ -507,7 +505,7 @@ const formatTime = (date: Date) => {
     second: '2-digit',
   };
   try {
-    return date.toLocaleTimeString(timerData.value?.locale || [], options);
+    return date.toLocaleTimeString(timerData.value?.locale || [], options); // NOSONAR: '' means not set
   } catch {
     return date.toLocaleTimeString([], options);
   }

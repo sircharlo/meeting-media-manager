@@ -122,7 +122,7 @@ export const parseVersion = (version: string) => {
     minor: minor ?? 0,
     patch: patch ?? 0,
     prerelease: prTag,
-    prereleaseVersion: Number.parseInt(prVersion || '0'),
+    prereleaseVersion: Number.parseInt(prVersion || '0'), // NOSONAR: '' parses as 0
   };
 };
 

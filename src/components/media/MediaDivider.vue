@@ -162,7 +162,7 @@ const emit = defineEmits<{
 
 const isEditing = ref(false);
 const editTitle = ref('');
-const currentBgColor = ref(props.divider.bgColor || 'var(--q-secondary)');
+const currentBgColor = ref(props.divider.bgColor || 'var(--q-secondary)'); // NOSONAR: '' means not set
 
 const editTitleInput = ref<HTMLInputElement>();
 
@@ -171,8 +171,8 @@ const dividerStyles = computed(() => {
 
   if (!selectedDateObject?.mediaSections)
     return {
-      backgroundColor: `${props.divider.bgColor || 'var(--q-secondary)'} !important`,
-      color: props.divider.textColor || 'white',
+      backgroundColor: `${props.divider.bgColor || 'var(--q-secondary)'} !important`, // NOSONAR: '' means not set
+      color: props.divider.textColor || 'white', // NOSONAR: '' means not set
     };
 
   const section = findMediaSection(
@@ -181,13 +181,13 @@ const dividerStyles = computed(() => {
   );
   if (!section?.config)
     return {
-      backgroundColor: `${props.divider.bgColor || 'var(--q-secondary)'} !important`,
-      color: props.divider.textColor || 'white',
+      backgroundColor: `${props.divider.bgColor || 'var(--q-secondary)'} !important`, // NOSONAR: '' means not set
+      color: props.divider.textColor || 'white', // NOSONAR: '' means not set
     };
 
   return {
-    backgroundColor: `${props.divider.bgColor || getSectionBgColor(section.config)} !important`,
-    color: props.divider.textColor || 'white',
+    backgroundColor: `${props.divider.bgColor || getSectionBgColor(section.config)} !important`, // NOSONAR: '' means not set
+    color: props.divider.textColor || 'white', // NOSONAR: '' means not set
   };
 });
 

@@ -280,7 +280,7 @@ const parseReleaseNotes = () => {
   for (const line of lines) {
     const versionMatch = SECTION_HEADER_PATTERN.exec(line);
     if (versionMatch) {
-      currentVersion = versionMatch[1] || '';
+      currentVersion = versionMatch[1] ?? '';
       if (!VERSION_HEADER_PATTERN.test(currentVersion)) {
         currentVersion = '';
       } else if (!currentVersion.startsWith('v')) {

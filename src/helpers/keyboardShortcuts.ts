@@ -203,9 +203,7 @@ export const registerCustomShortcut = (
     ) {
       return;
     }
-    if (!keySequence) {
-      keySequence = currentState.currentSettings[shortcutName] as string;
-    }
+    keySequence ||= currentState.currentSettings[shortcutName] as string; // NOSONAR: '' means not set
     registerShortcut(shortcutName, keySequence);
   } catch (error) {
     errorCatcher(error);

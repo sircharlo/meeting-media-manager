@@ -310,7 +310,7 @@ const deleteSectionPending = computed({
 });
 const sectionPendingDeleteLabel = computed(
   () =>
-    labels.value[sectionPendingDelete.value?.config?.uniqueId || ''] ||
+    labels.value[sectionPendingDelete.value?.config?.uniqueId ?? ''] || // NOSONAR: '' means not set
     t('imported-media'),
 );
 
@@ -359,7 +359,7 @@ const initializeValues = () => {
   hexValues.value = daySections.reduce(
     (acc, section) => ({
       ...acc,
-      [section.config.uniqueId]: section.config?.bgColor || '#ffffff',
+      [section.config.uniqueId]: section.config?.bgColor || '#ffffff', // NOSONAR: '' means not set
     }),
     {},
   );

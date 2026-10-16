@@ -67,10 +67,10 @@ const getObsConnectionSettings = () => {
   const currentState = useCurrentStateStore();
   if (!currentState.currentSettings?.obsEnable) return 'disabled';
 
-  const obsPort = currentState.currentSettings?.obsPort || '';
+  const obsPort = currentState.currentSettings?.obsPort ?? '';
   if (!portNumberValidator(obsPort)) return 'invalid';
 
-  const obsPassword = currentState.currentSettings?.obsPassword || '';
+  const obsPassword = currentState.currentSettings?.obsPassword ?? '';
   if (obsPassword?.length === 0) return 'invalid';
 
   return { obsPassword, obsPort };
@@ -211,7 +211,7 @@ export const obsGetRecordingDirectory = async (): Promise<null | string> => {
     const response = await callWhenObsReady(async () =>
       obsWebSocketInfo.obsWebSocket?.call('GetRecordDirectory'),
     );
-    return response?.recordDirectory || null;
+    return response?.recordDirectory || null; // NOSONAR: '' means not set
   } catch (error) {
     reportObsCallError(error, 'obsGetRecordingDirectory');
     return null;
@@ -228,7 +228,7 @@ export const obsGetRecordingState = async (): Promise<boolean> => {
     const response = await callWhenObsReady(async () =>
       obsWebSocketInfo.obsWebSocket?.call('GetRecordStatus'),
     );
-    return response?.outputActive || false;
+    return response?.outputActive ?? false;
   } catch (error) {
     reportObsCallError(error, 'obsGetRecordingState');
     return false;

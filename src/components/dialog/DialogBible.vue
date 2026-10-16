@@ -397,14 +397,14 @@ const addSelectedVerses = () => {
     isProcessing.value = true;
     if (!chosenVerses.value.length) return;
     const startVerseNumber = chosenVerses.value[0];
-    const endVerseNumber = chosenVerses.value[1] || startVerseNumber;
+    const endVerseNumber = chosenVerses.value[1] ?? startVerseNumber;
 
     const min = timeToSeconds(
       selectedChapterMedia.value.map((item) =>
         item.markers.markers.find(
           (marker) => marker.verseNumber === startVerseNumber,
         ),
-      )?.[0]?.startTime || '0',
+      )?.[0]?.startTime ?? '0',
     );
 
     const endVerse = selectedChapterMedia.value.map((item) =>
@@ -461,8 +461,8 @@ const getVerseClass = (verse: number) => {
   } else if (
     chosenVerses.value.length === 1 &&
     chosenVerses.value?.[0] &&
-    verse > Math.min(chosenVerses.value[0], hoveredVerse.value || 0) &&
-    verse < Math.max(chosenVerses.value[0], hoveredVerse.value || 0)
+    verse > Math.min(chosenVerses.value[0], hoveredVerse.value ?? 0) &&
+    verse < Math.max(chosenVerses.value[0], hoveredVerse.value ?? 0)
   ) {
     return 'bg-primary-semi-transparent text-white';
   } else {

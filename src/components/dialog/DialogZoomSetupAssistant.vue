@@ -932,7 +932,7 @@ const canSkip = computed(
 const saveMeetingId = () => {
   if (currentSettings.value) {
     currentSettings.value.zoomMeetingManagerMeetingId =
-      parsedMeetingId.value || null;
+      parsedMeetingId.value ?? null;
   }
 };
 

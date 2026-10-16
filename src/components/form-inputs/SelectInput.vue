@@ -138,7 +138,7 @@ const filteredTimerHourFormats = ref(buildTimerHourFormats());
 const customDisabled = computed(() => {
   return (
     (props.settingId?.startsWith('obs') &&
-      obsConnectionState.value !== 'connected') ||
+      obsConnectionState.value !== 'connected') || // NOSONAR: false would render disabled="false"
     undefined
   );
 });
@@ -252,7 +252,7 @@ const listOptions = computed(
       } else if (props.list?.startsWith('obs')) {
         return filteredObsScenes.value.map((scene) => {
           const sceneName =
-            getObsSceneField(scene, 'sceneName') || 'Unknown scene';
+            getObsSceneField(scene, 'sceneName') || 'Unknown scene'; // NOSONAR: '' means not set
           const sceneUuid = getObsSceneField(scene, 'sceneUuid');
           return {
             label: sceneName,

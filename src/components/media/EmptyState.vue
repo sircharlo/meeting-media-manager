@@ -336,7 +336,7 @@ const skeletonSections = computed(() => {
     ],
   };
 
-  return map[selectedDayMeetingType.value || 'we'];
+  return map[selectedDayMeetingType.value ?? 'we'];
 });
 
 // A genuine fetch failure (not just "actively being rechecked" -

@@ -370,7 +370,7 @@ export const fetchMeetingLocations = async (
   );
 
   return {
-    hasResultsOutsideViewport: details?.hasResultsOutsideViewport || false,
+    hasResultsOutsideViewport: details?.hasResultsOutsideViewport ?? false,
     items: details?.items || [],
   };
 };

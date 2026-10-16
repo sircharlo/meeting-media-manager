@@ -331,9 +331,7 @@ const groupedMediaItems = computed(() => {
       ? bibleBookChapter.value + ':' + item.VerseNumber
       : t('general');
 
-    if (!groups[label]) {
-      groups[label] = [];
-    }
+    groups[label] ??= [];
     groups[label]?.push(item);
   }
 

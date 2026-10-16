@@ -139,14 +139,14 @@ const getThumbnailFromMetadata = async (
     if (!mediaPath || !(await pathExists(mediaPath))) return '';
     const metadata = await parseMediaFile(mediaPath);
     const thumbnailData = metadata?.common?.picture?.[0]?.data || null;
-    const thumbnailFormat = metadata?.common?.picture?.[0]?.format || null;
+    const thumbnailFormat = metadata?.common?.picture?.[0]?.format ?? null;
     if (thumbnailData?.length && thumbnailFormat) {
       try {
         const parentDir = dirname(mediaPath);
 
         const currentState = useCurrentStateStore();
         const watcherEnabled =
-          currentState.currentSettings?.enableFolderWatcher || false;
+          currentState.currentSettings?.enableFolderWatcher ?? false;
         const watchDir = currentState.currentSettings?.folderToWatch
           ? resolve(currentState.currentSettings?.folderToWatch)
           : null;
@@ -222,7 +222,7 @@ const getThumbnailFromVideoPath = async (
 
   const currentState = useCurrentStateStore();
   const watcherEnabled =
-    currentState.currentSettings?.enableFolderWatcher || false;
+    currentState.currentSettings?.enableFolderWatcher ?? false;
   const watchDir = currentState.currentSettings?.folderToWatch
     ? resolve(currentState.currentSettings?.folderToWatch)
     : null;

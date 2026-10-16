@@ -42,6 +42,41 @@ describe('buildNewPrefsObject', () => {
     expect(result.mwDay).toBe('2');
   });
 
+  it('keeps options the old app had turned off and a muted music volume', () => {
+    const oldPrefs = {
+      media: {
+        enableMediaDisplayButton: false,
+        excludeTh: false,
+        includePrinted: false,
+      },
+      meeting: {
+        autoStartMusic: false,
+        enableMusicButton: false,
+        musicVolume: 0,
+      },
+    } as OldAppConfig;
+
+    const result = buildNewPrefsObject(oldPrefs);
+
+    expect(result.autoStartMusic).toBe(false);
+    expect(result.enableMediaDisplayButton).toBe(false);
+    expect(result.enableMusicButton).toBe(false);
+    expect(result.excludeTh).toBe(false);
+    expect(result.includePrinted).toBe(false);
+    expect(result.musicVolume).toBe(0);
+  });
+
+  it('still defaults those options when the old app never saved them', () => {
+    const result = buildNewPrefsObject({} as OldAppConfig);
+
+    expect(result.autoStartMusic).toBe(true);
+    expect(result.enableMediaDisplayButton).toBe(true);
+    expect(result.enableMusicButton).toBe(true);
+    expect(result.excludeTh).toBe(true);
+    expect(result.includePrinted).toBe(true);
+    expect(result.musicVolume).toBe(100);
+  });
+
   it('gives each migrated congregation its own independent Meeting Quick Actions arrays', () => {
     const first = buildNewPrefsObject({} as OldAppConfig);
     const second = buildNewPrefsObject({} as OldAppConfig);

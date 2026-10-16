@@ -278,8 +278,8 @@ async function getPreferredScreenFromPrefs(
   const preferredScreen = getDisplayMatchingSafe({
     height: mediaWindowPrefs.height,
     width: mediaWindowPrefs.width,
-    x: mediaWindowPrefs.x || 0,
-    y: mediaWindowPrefs.y || 0,
+    x: mediaWindowPrefs.x ?? 0,
+    y: mediaWindowPrefs.y ?? 0,
   });
 
   const preferredIndex = screens.findIndex((s) => s.id === preferredScreen?.id);

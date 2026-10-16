@@ -315,7 +315,7 @@ export const jumpToLastSong = () => {
     playbackConfirmedToken: currentState.mediaPlaying.playToken + 1,
     playToken: currentState.mediaPlaying.playToken + 1,
     uniqueId: lastSong.uniqueId,
-    url: lastSong.fileUrl || lastSong.streamUrl || 'demo://last-song',
+    url: lastSong.fileUrl || lastSong.streamUrl || 'demo://last-song', // NOSONAR: '' means not set
   } satisfies MediaPlayingState;
 };
 

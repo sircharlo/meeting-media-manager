@@ -117,7 +117,7 @@ export async function getSharedDataPath(): Promise<null | string> {
 
   if (PLATFORM === 'win32') {
     sharedPath = join(
-      process.env.ProgramData || String.raw`C:\ProgramData`,
+      process.env.ProgramData || String.raw`C:\ProgramData`, // NOSONAR: '' means not set
       PRODUCT_NAME || 'Meeting Media Manager',
     );
   } else if (PLATFORM === 'darwin') {
@@ -363,7 +363,7 @@ export function isIgnoredUpdateError(
 
     return ignoreErrorArray.every(
       (ignoreStr) =>
-        message?.includes(ignoreStr) ||
+        message?.includes(ignoreStr) || // NOSONAR: false checks the next condition
         errorMsg?.includes(ignoreStr) ||
         errorName?.includes(ignoreStr) ||
         (typeof errorCode === 'string' && errorCode.includes(ignoreStr)),
@@ -390,8 +390,8 @@ export function isUpdaterFullDownloadFallbackError(error: unknown) {
 
   return UPDATER_PARTIAL_DOWNLOAD_NETWORK_ERRORS.some(
     (errorText) =>
-      code?.includes(errorText) ||
-      message?.includes(errorText) ||
+      code?.includes(errorText) || // NOSONAR: false checks the next condition
+      message?.includes(errorText) || // NOSONAR: false checks the next condition
       name?.includes(errorText),
   );
 }
@@ -618,7 +618,7 @@ export function capturePreloadErrorReport(report: unknown) {
   const rebuilt = rebuildPreloadError({
     code: optionalString(error.code),
     message: error.message,
-    name: optionalString(error.name) || 'Error',
+    name: optionalString(error.name) || 'Error', // NOSONAR: '' means not set
     stack: optionalString(error.stack),
     syscall: optionalString(error.syscall),
   });

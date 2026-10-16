@@ -118,7 +118,7 @@ const dateFormatTokenGroups = computed(() => {
   for (const fmt of dateFormatTokens) {
     const match = /[A-Za-z]/.exec(fmt);
     const key = match ? match[0] : fmt;
-    if (!groups[key]) groups[key] = [];
+    groups[key] ??= [];
     groups[key].push(fmt);
   }
   return Object.entries(groups).map(([type, tokens]) => ({ tokens, type }));
@@ -137,7 +137,7 @@ const onClear = () => {
 };
 
 const addToModel = (value: string) => {
-  model.value = (model.value || '') + value;
+  model.value = (model.value ?? '') + value;
 };
 
 const customError = computed(

@@ -370,6 +370,9 @@ function avatarColor(id: number | string) {
 // frame or two before the modal closes, a visible flicker.
 const congregationIdPendingNavigation = ref<string | undefined>();
 
+const getSortName = (prefs: SettingsValues) =>
+  prefs.congregationName || t('noName'); // NOSONAR: '' means not set
+
 const sortedCongregations = computed(() =>
   Object.entries(congregations.value)
     .flatMap(([id, prefs]): { id: string; prefs: SettingsValues }[] =>
@@ -378,11 +381,9 @@ const sortedCongregations = computed(() =>
         : [],
     )
     .sort((a, b) =>
-      (a.prefs.congregationName || t('noName')).localeCompare(
-        b.prefs.congregationName || t('noName'),
-        undefined,
-        { sensitivity: 'base' },
-      ),
+      getSortName(a.prefs).localeCompare(getSortName(b.prefs), undefined, {
+        sensitivity: 'base',
+      }),
     ),
 );
 
