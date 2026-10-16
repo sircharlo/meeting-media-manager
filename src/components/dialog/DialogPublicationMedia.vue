@@ -1238,7 +1238,7 @@ function onSearchInput() {
   }
 
   searchTimeout.value = setTimeout(() => {
-    performSearch();
+    void performSearch();
   }, 500);
 }
 

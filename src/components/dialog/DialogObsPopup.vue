@@ -134,7 +134,7 @@ const notifySceneNotFound = () =>
 
 const openObsRecordingFolder = async () => {
   if (obsRecordingFolder.value) {
-    openFolder(obsRecordingFolder.value);
+    void openFolder(obsRecordingFolder.value);
   }
 };
 
@@ -255,7 +255,7 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
 
 const setObsSceneListener = (event: CustomEvent<{ scene: ObsSceneType }>) => {
   try {
-    setObsScene(event.detail.scene);
+    void setObsScene(event.detail.scene);
   } catch (error) {
     errorCatcher(error);
   }

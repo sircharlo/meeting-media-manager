@@ -202,7 +202,7 @@ const onMusicClick = () => {
   if (musicPlaying.value) {
     stopMusic(true);
   } else {
-    playMusic('quick-action');
+    void playMusic('quick-action');
   }
 };
 </script>

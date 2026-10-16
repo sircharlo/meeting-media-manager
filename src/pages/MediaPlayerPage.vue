@@ -983,7 +983,7 @@ const crossfadeToNewMedia = (newUrl: string) => {
     // Wait for the new image to actually be decoded before starting the
     // crossfade, so the outgoing layer never fades out ahead of the
     // incoming one having pixels to show.
-    waitForImageDecode(newUrl).then(() => {
+    void waitForImageDecode(newUrl).then(() => {
       setTimeout(startFadeIn, 50);
     });
   } else {
@@ -1610,7 +1610,7 @@ watchImmediate(
         newValues,
       );
       postGetCurrentState(Date.now().toString());
-      loadFonts();
+      void loadFonts();
     }
   },
 );

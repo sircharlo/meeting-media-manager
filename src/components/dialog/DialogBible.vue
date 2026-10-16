@@ -470,7 +470,7 @@ const getVerseClass = (verse: number) => {
 // Watch for dialog opening to get JW videos and reset state
 whenever(dialogValue, () => {
   resetBibleBook(true);
-  fetchBibleMedia();
+  void fetchBibleMedia();
 });
 
 watch(

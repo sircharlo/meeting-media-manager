@@ -361,7 +361,7 @@ watch(
   () => dialogValue.value,
   (isOpen) => {
     if (isOpen) {
-      loadMediaItems();
+      void loadMediaItems();
     } else {
       selectedItems.value = [];
       mediaItems.value = [];

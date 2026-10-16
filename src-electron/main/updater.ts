@@ -258,7 +258,7 @@ export async function initUpdater() {
     );
   });
 
-  triggerUpdateCheck();
+  void triggerUpdateCheck();
 }
 
 export const triggerUpdateCheck = async (attempt = 1) => {

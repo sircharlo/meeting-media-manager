@@ -60,7 +60,7 @@ export const addDayToExportQueue = async (targetDate?: Date) => {
 
   const queue = await getQueue();
 
-  queue.add(async () => {
+  void queue.add(async () => {
     try {
       // Run the export
       await exportDayToFolder(targetDate);

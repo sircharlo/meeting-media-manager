@@ -126,7 +126,7 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
           new CustomEvent<undefined>('obsConnectFromSettings'),
         );
       } else if (action === 'syncMeetingSchedule') {
-        syncMeetingScheduleManually();
+        void syncMeetingScheduleManually();
       } else if (action === 'openCongregationLookup') {
         globalThis.dispatchEvent(
           new CustomEvent<undefined>('openCongregationLookup'),
@@ -141,15 +141,15 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
           globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
         }
       } else if (action === 'zoomCaptureVideoOffTitle') {
-        captureZoomVideoTitle('zoomVideoOffTitle');
+        void captureZoomVideoTitle('zoomVideoOffTitle');
       } else if (action === 'zoomCaptureVideoOnTitle') {
-        captureZoomVideoTitle('zoomVideoOnTitle');
+        void captureZoomVideoTitle('zoomVideoOnTitle');
       } else if (action === 'zoomCaptureMicOffTitle') {
-        captureZoomMicTitle('zoomMicOffTitle');
+        void captureZoomMicTitle('zoomMicOffTitle');
       } else if (action === 'zoomCaptureMicOnTitle') {
-        captureZoomMicTitle('zoomMicOnTitle');
+        void captureZoomMicTitle('zoomMicOnTitle');
       } else if (action === 'zoomCaptureShareButtonTitle') {
-        captureZoomShareButtonTitle();
+        void captureZoomShareButtonTitle();
       } else if (action === 'zoomLearnHandRaised') {
         void learnZoomHandRaisedPhrase();
       }

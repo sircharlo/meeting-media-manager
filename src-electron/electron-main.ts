@@ -271,25 +271,27 @@ function createApplicationMenu() {
       submenu: [
         {
           click: () => {
-            shell.openExternal(repository.url.replace('.git', ''));
+            openExternalAndCaptureErrors(repository.url.replace('.git', ''));
           },
           label: 'Learn More',
         },
         {
           click: () => {
-            shell.openExternal(homepage);
+            openExternalAndCaptureErrors(homepage);
           },
           label: 'Documentation',
         },
         {
           click: () => {
-            shell.openExternal(repository.url.replace('.git', '/discussions'));
+            openExternalAndCaptureErrors(
+              repository.url.replace('.git', '/discussions'),
+            );
           },
           label: 'Community Discussions',
         },
         {
           click: () => {
-            shell.openExternal(bugs);
+            openExternalAndCaptureErrors(bugs);
           },
           label: 'Search Issues',
         },
@@ -474,7 +476,7 @@ if (gotTheLock) {
     app.commandLine.appendSwitch('gtk-version', '3'); // Force GTK 3 on Linux (Workaround for https://github.com/electron/electron/issues/46538)
   }
 
-  if (!IS_DEMO_MODE) initUpdater();
+  if (!IS_DEMO_MODE) void initUpdater();
 
   initScreenListeners();
   createApplicationMenu();
@@ -694,6 +696,14 @@ function isHwAccelDisabled() {
     log('Failed to read hw accel setting:', 'electron', 'warn', error);
   }
   return false;
+}
+
+function openExternalAndCaptureErrors(url: string) {
+  shell.openExternal(url).catch((error: unknown) =>
+    captureElectronError(error, {
+      contexts: { fn: { name: 'openExternal', url } },
+    }),
+  );
 }
 
 function setHwAccelDisabled(disabled: boolean, temporary = false) {

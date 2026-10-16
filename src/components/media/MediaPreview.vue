@@ -933,7 +933,7 @@ const toggleModal = () => {
   }
 
   modalOpen.value = !modalOpen.value;
-  syncVideos();
+  void syncVideos();
 };
 
 const previewPositionStyle = computed(() => {
@@ -1283,8 +1283,8 @@ const debouncedReacquireCaptureForViewport = useDebounceFn(
 );
 
 useEventListener(globalThis, 'resize', () => {
-  debouncedNormalizeCollapsedPreviewAfterResize();
-  debouncedReacquireCaptureForViewport();
+  void debouncedNormalizeCollapsedPreviewAfterResize();
+  void debouncedReacquireCaptureForViewport();
 });
 
 useEventListener(
@@ -1334,7 +1334,7 @@ watch(
   (visible) => {
     closeModalWhenHidden();
     if (visible) {
-      syncVideos();
+      void syncVideos();
     }
   },
   { immediate: true },
@@ -1348,7 +1348,7 @@ watch(
     realPlaybackConfirmed.value,
   ],
   () => {
-    syncVideos();
+    void syncVideos();
   },
 );
 
@@ -1362,9 +1362,9 @@ watch(
     // case anyway - see the mediaAction.value !== 'play' branch above - so
     // calling it directly here doesn't affect the auto-disable count either.)
     if (mediaAction.value !== 'play') {
-      syncVideos();
+      void syncVideos();
     } else {
-      throttledSyncVideos();
+      void throttledSyncVideos();
     }
   },
 );

@@ -767,7 +767,7 @@ const stopListeningToScreens = ref<(() => void) | null>(null);
 watch(
   () => mediaWindowCustomBackground.value,
   (newMediaBackground) => {
-    loadMemorialBackground(newMediaBackground);
+    void loadMemorialBackground(newMediaBackground);
   },
 );
 
@@ -806,8 +806,8 @@ watch(
 whenever(
   () => open.value,
   async () => {
-    fetchScreens();
-    getCameras();
+    void fetchScreens();
+    void getCameras();
   },
 );
 

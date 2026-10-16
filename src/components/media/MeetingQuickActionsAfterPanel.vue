@@ -183,7 +183,7 @@ const shouldConfirmStartMusic = computed(() => {
 const startMusicConfirmPending = ref(false);
 const confirmStartMusic = () => {
   startMusicConfirmPending.value = false;
-  playMusic('quick-action');
+  void playMusic('quick-action');
 };
 const onMusicClick = () => {
   if (musicPlaying.value) {
@@ -194,7 +194,7 @@ const onMusicClick = () => {
     startMusicConfirmPending.value = true;
     return;
   }
-  playMusic('quick-action');
+  void playMusic('quick-action');
 };
 const phase = computed<'ended' | 'last-song' | 'scheduled'>(() => {
   if (lastSongEndedAt.value !== null) return 'ended';

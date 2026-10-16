@@ -1,5 +1,9 @@
 import { app, session, shell } from 'electron';
-import { isSelf, isTrustedNavigationTarget } from 'src-electron/main/utils';
+import {
+  captureElectronError,
+  isSelf,
+  isTrustedNavigationTarget,
+} from 'src-electron/main/utils';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 
@@ -84,7 +88,11 @@ app.on('web-contents-created', (_event, contents) => {
   contents.setWindowOpenHandler(({ url }) => {
     if (isTrustedNavigationTarget(url)) {
       setImmediate(() => {
-        shell.openExternal(url);
+        shell.openExternal(url).catch((error: unknown) => {
+          captureElectronError(error, {
+            contexts: { fn: { name: 'setWindowOpenHandler' } },
+          });
+        });
       });
     }
 

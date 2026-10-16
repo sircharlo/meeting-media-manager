@@ -79,7 +79,7 @@ const onClick = () => {
   if (obsConnectionState.value === 'connected') {
     obsPopup.value = !obsPopup.value;
   } else if (obsConnectionState.value !== 'connecting') {
-    obsConnect();
+    void obsConnect();
   }
 };
 
@@ -180,12 +180,12 @@ const initObsListeners = async () => {
     obsWebSocketInfo.obsWebSocket.on('Identified', async () => {
       obsConnectionState.value = 'connected';
       obsMessage.value = 'obs.connected';
-      fetchSceneList();
+      void fetchSceneList();
     });
     obsWebSocketInfo.obsWebSocket.on('SceneListChanged', (data) => {
       scenes.value = data.scenes.reverse();
     });
-    obsConnect();
+    void obsConnect();
   } catch (error) {
     errorCatcher(error);
   }
@@ -211,14 +211,14 @@ const removeObsListeners = () => {
 };
 
 onMounted(() => {
-  initObsListeners();
+  void initObsListeners();
 });
 
 watch(
   () => currentSettings.value?.obsEnable,
   (val) => {
     if (val) {
-      initObsListeners();
+      void initObsListeners();
     } else {
       removeObsListeners();
     }
@@ -234,7 +234,7 @@ watch(
 // this could ever see a close) can't retrigger it.
 watch(obsConnectionState, (newState) => {
   if (newState === 'disconnected' && currentSettings.value?.obsEnable) {
-    obsConnect();
+    void obsConnect();
   }
 });
 

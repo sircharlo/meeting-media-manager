@@ -328,7 +328,7 @@ watch(
   () => dialogValue.value,
   (isOpen) => {
     if (isOpen) {
-      getJwVideos();
+      void getJwVideos();
     } else {
       // Reset state when dialog closes
       resetDialogState();

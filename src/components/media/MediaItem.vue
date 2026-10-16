@@ -2003,7 +2003,7 @@ const handleTitleEdit = (value: boolean) => {
     isEditingTitle.value = true;
     // Initialize mediaTitle with current title when starting to edit
     mediaTitle.value = props.media.title || '';
-    nextTick(() => {
+    void nextTick(() => {
       if (titleInput.value) {
         titleInput.value.focus();
       }
@@ -2012,7 +2012,7 @@ const handleTitleEdit = (value: boolean) => {
     // End editing - emit the updated title
     isEditingTitle.value = false;
     // Use nextTick to ensure the input disappears first, then emit
-    nextTick(() => {
+    void nextTick(() => {
       emit('update:title', mediaTitle.value);
     });
   }
@@ -2368,7 +2368,7 @@ const setMediaPlaying = async (
 
   toggleMediaWindowVisibility(true);
 
-  nextTick(() => {
+  void nextTick(() => {
     globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
   });
 
@@ -2414,7 +2414,7 @@ const playSlideshowVideo = async () => {
 
   toggleMediaWindowVisibility(true);
 
-  nextTick(() => {
+  void nextTick(() => {
     globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
   });
 };
@@ -2431,7 +2431,7 @@ const getMarkerTimes = (m: VideoMarker) => {
 const setRangeAndPlay = (min: number, max: number) => {
   updateMediaCustomDuration({ max, min });
   skipCustomDurationUpdateOnce.value = true;
-  setMediaPlaying(props.media, true);
+  void setMediaPlaying(props.media, true);
   // mark all markers in this range as played
   if (props.media.markers && props.media.markers.length) {
     props.media.markers.forEach((m) => {
@@ -2483,7 +2483,7 @@ const onPlayEntireFileClick = () => {
 
 const confirmPlayEntireFile = () => {
   entireFileConfirmPending.value = false;
-  setMediaPlaying(props.media, true);
+  void setMediaPlaying(props.media, true);
 };
 
 const getMarkerDuration = (marker: VideoMarker) => {
@@ -2746,7 +2746,7 @@ function stopMedia(forOtherMediaItem = false) {
     // Stop one-shot workflows when media is stopped (unless it's a media switch instead of a stop)
     triggerMediaWindowAutoHide(false);
     stopZoomSharingAfterMedia();
-    nextTick(() => {
+    void nextTick(() => {
       globalThis.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });
   }
@@ -3229,7 +3229,7 @@ watch(
   () => mediaEditTagDialog.value && !!mediaTag.value.type,
   (canFocus) => {
     if (!canFocus) return;
-    nextTick(() => tagValueInput.value?.focus());
+    void nextTick(() => tagValueInput.value?.focus());
   },
 );
 </script>

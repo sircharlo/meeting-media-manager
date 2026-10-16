@@ -216,7 +216,7 @@ const deleteDivider = () => {
 };
 
 whenever(isEditing, () => {
-  nextTick(() => {
+  void nextTick(() => {
     editTitleInput.value?.focus();
   });
 });

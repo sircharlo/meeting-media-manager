@@ -117,7 +117,7 @@ export const useCongregationSettingsStore = defineStore(
     actions: {
       createCongregation() {
         const newId = uuid();
-        wasUpdateInstalled(newId, true);
+        void wasUpdateInstalled(newId, true);
         this.congregations[newId] = cloneMeetingQuickActionSettings({
           ...defaultSettings,
         });

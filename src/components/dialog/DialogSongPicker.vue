@@ -274,7 +274,7 @@ const startSongUpdate = async () => {
 watchOnce(
   () => online.value && currentSettings.value && currentSongbook.value,
   () => {
-    startSongUpdate();
+    void startSongUpdate();
   },
   { immediate: true },
 );

@@ -35,7 +35,7 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
     return;
   }
 
-  askForMediaAccess();
+  void askForMediaAccess();
 
   // Create the browser window
   websiteWindowInfo.websiteWindow = createWindow(
@@ -62,7 +62,15 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
     void injectCursorIndicator(webContents);
   });
 
-  websiteWindowInfo.websiteWindow?.webContents.setVisualZoomLevelLimits(1, 5);
+  websiteWindowInfo.websiteWindow?.webContents
+    .setVisualZoomLevelLimits(1, 5)
+    .catch((error: unknown) => {
+      captureElectronError(error, {
+        contexts: {
+          fn: { name: 'createWebsiteWindow.setVisualZoomLevelLimits' },
+        },
+      });
+    });
   websiteWindowInfo.websiteWindow?.webContents.on(
     'enter-html-full-screen',
     () => {
@@ -88,7 +96,15 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
   websiteWindowInfo.websiteWindow?.webContents.setWindowOpenHandler(
     (details) => {
       if (isTrustedNavigationTarget(details.url)) {
-        websiteWindowInfo.websiteWindow?.loadURL(details.url);
+        websiteWindowInfo.websiteWindow
+          ?.loadURL(details.url)
+          .catch((error: unknown) => {
+            captureElectronError(error, {
+              contexts: {
+                fn: { name: 'createWebsiteWindow.setWindowOpenHandler' },
+              },
+            });
+          });
       } else {
         logToWindow(
           mainWindowInfo.mainWindow,

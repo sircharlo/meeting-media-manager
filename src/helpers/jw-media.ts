@@ -2204,7 +2204,7 @@ export const fetchMedia = async () => {
     await ensureWatchedMeetingDayFolders();
     downloadBackgroundMusic();
     log('✅ All media processing completed', 'mediaFetching', 'info');
-    exportAllDays();
+    void exportAllDays();
   } catch (error) {
     log('❌ Error in fetchMedia:', 'mediaFetching', 'error');
     errorCatcher(error);
@@ -5542,7 +5542,7 @@ const queueAdditionalMediaDownload = ({
   meetingDate?: string;
   progressCategory: FileDownloader['progressCategory'];
 }) => {
-  downloadFileIfNeeded({
+  void downloadFileIfNeeded({
     dir: datedAdditionalMediaDir,
     lowPriority: false,
     meetingDate,
@@ -5828,7 +5828,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
     const dir = await getPublicationDirectory(publication);
     await updateLastUsedDate(dir, new Date());
     for (const mediaLink of filteredMediaItemLinks) {
-      downloadFileIfNeeded({
+      void downloadFileIfNeeded({
         dir,
         // Background music should not be a high priority download
         lowPriority: true,
@@ -5920,7 +5920,7 @@ export const resolveBackgroundMusicPlaybackUrl = async (
 
   if (song.remoteUrl) {
     const dir = dirname(song.path);
-    downloadFileIfNeeded({
+    void downloadFileIfNeeded({
       dir,
       lowPriority: true,
       size: song.filesize,
@@ -5974,7 +5974,7 @@ export const downloadBackgroundMusic = () => {
         pub: currentStateStore.currentSongbook?.pub,
       },
     );
-    downloadPubMediaFiles({
+    void downloadPubMediaFiles({
       fileformat: currentStateStore.currentSongbook?.fileformat,
       langwritten: currentStateStore.currentSettings?.lang,
       maxTrack: MAX_SONGS,
@@ -5994,7 +5994,7 @@ export const downloadSongbookVideos = () => {
       !currentStateStore.currentSettings?.enableExtraCache
     )
       return;
-    downloadPubMediaFiles({
+    void downloadPubMediaFiles({
       fileformat: 'MP4',
       issue: 0,
       langwritten: currentStateStore.currentSettings?.lang,

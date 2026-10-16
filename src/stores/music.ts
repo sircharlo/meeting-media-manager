@@ -365,7 +365,7 @@ export const useMusicStore = defineStore('music', () => {
       autoStartRetryTimer = undefined;
       if (shouldAutoStart.value && musicState.value === 'music.error') {
         log('Retrying auto-start after cooldown', 'backgroundMusic', 'info');
-        playMusic('auto');
+        void playMusic('auto');
       }
     }, AUTO_START_ERROR_COOLDOWN_MS);
   };
@@ -614,7 +614,7 @@ export const useMusicStore = defineStore('music', () => {
 
       musicState.value = 'music.stopping';
       if (automateMeetingSettings) {
-        automateZoomMeetingSettings();
+        void automateZoomMeetingSettings();
       }
       fadeToVolumeLevel(0, fadeSeconds);
     } catch (error) {
@@ -736,7 +736,7 @@ export const useMusicStore = defineStore('music', () => {
         stopMusic();
       } else {
         log('Music started manually', 'backgroundMusic', 'info');
-        playMusic('manual-shortcut');
+        void playMusic('manual-shortcut');
       }
     } catch (error) {
       errorCatcher(error);
@@ -766,7 +766,7 @@ export const useMusicStore = defineStore('music', () => {
       if (action?.action === 'stop') {
         stopMusic(true, action.fadeSeconds ?? MEDIA_STOP_FADE_DURATION_SECONDS);
       } else if (action?.action === 'start') {
-        playMusic(action.reason ?? 'external');
+        void playMusic(action.reason ?? 'external');
       }
     },
   );
@@ -797,8 +797,8 @@ export const useMusicStore = defineStore('music', () => {
     () => musicPlaying.value && duration.value > 0,
     () => {
       musicState.value = 'music.playing';
-      autoLaunchZoomMeetingIfNeeded(timeUntilMeeting.value);
-      automateZoomPostMeetingSettings();
+      void autoLaunchZoomMeetingIfNeeded(timeUntilMeeting.value);
+      void automateZoomPostMeetingSettings();
     },
   );
 
@@ -849,7 +849,7 @@ export const useMusicStore = defineStore('music', () => {
         state !== 'music.error'
       ) {
         log('Auto-starting background music', 'backgroundMusic', 'info');
-        playMusic('auto');
+        void playMusic('auto');
       }
     },
   );

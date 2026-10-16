@@ -62,11 +62,11 @@ const updateOnline = async () => {
 // settings, or switching to a congregation with different values for them),
 // so a bare setInterval here would accumulate a new timer on every remount.
 useIntervalFn(() => {
-  updateOnline();
+  void updateOnline();
 }, 10000);
 
 onMounted(() => {
-  updateOnline();
+  void updateOnline();
 });
 
 function isErrorInCurrentWindow(item: DownloadProgressItem) {

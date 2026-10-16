@@ -340,7 +340,7 @@ const toggleCollapse = () => {
 };
 const handleDoubleClick = () => {
   emit('rename', true);
-  nextTick(() => {
+  void nextTick(() => {
     if (renameInput.value) {
       renameInput.value.focus();
     }
