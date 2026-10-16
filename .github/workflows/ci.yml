@@ -5,21 +5,29 @@ on:
     branches:
       - master
     paths:
+      - '.github/workflows/build.yml'
+      - '.github/workflows/ci.yml'
       - 'build/**'
       - 'src/**'
       - 'src-electron/**'
       - 'index.html'
       - 'package.json'
       - 'quasar.config.ts'
+      - 'sonar-project.properties'
+      - 'tsconfig.json'
       - 'yarn.lock'
   pull_request:
     paths:
+      - '.github/workflows/build.yml'
+      - '.github/workflows/ci.yml'
       - 'build/**'
       - 'src/**'
       - 'src-electron/**'
       - 'index.html'
       - 'package.json'
       - 'quasar.config.ts'
+      - 'sonar-project.properties'
+      - 'tsconfig.json'
       - 'yarn.lock'
   workflow_dispatch:
 
