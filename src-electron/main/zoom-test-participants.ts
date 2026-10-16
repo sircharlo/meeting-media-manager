@@ -90,7 +90,7 @@ const start = async (count: number): Promise<ZoomTestParticipantsResponse> => {
   }
 
   const participantsProcess = spawn(
-    'node',
+    'node', // NOSONAR: development builds only (IS_DEV gate in handleZoomTestParticipants) - runs the repo's own script with the developer's Node from PATH
     [
       getDevRepoPath('scripts/zoom-live/participants.mjs'),
       String(count),

@@ -383,7 +383,7 @@ export const trimFilepathAsNeeded = (filepath: string, maxBytes = 230) => {
   let size = getSize(filepath);
 
   while (size > maxBytes) {
-    const uniqueId = '_' + Math.random().toString(16).slice(2, 6);
+    const uniqueId = '_' + Math.random().toString(16).slice(2, 6); // NOSONAR: suffix that keeps trimmed file names apart, not a secret
 
     const baseName = basename(filepath, ext);
 

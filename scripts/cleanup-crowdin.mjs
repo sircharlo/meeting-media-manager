@@ -443,7 +443,7 @@ async function deleteTmSegment(ctx, tmId, segmentId, label) {
     await crowdinRequest(
       ctx.baseUrl,
       ctx.token,
-      `/tms/${tmId}/segments/${segmentId}`,
+      `/tms/${toCrowdinId(tmId)}/segments/${toCrowdinId(segmentId)}`,
       { method: 'DELETE' },
     );
   } catch (error) {
@@ -581,13 +581,11 @@ function loadEnKeys() {
 }
 
 function logUnmatchedPaths(ctx, files, max = 15) {
-  const sample = files
-    .slice(0, max)
-    .map((file) => file.normalizedPath || file.name || `id ${file.id}`)
-    .join('\n  ');
-  ctx.log(
-    `[crowdin] DEBUG: sample of ${files.length} file paths in project:\n  ${sample}`,
-  );
+  ctx.log(`[crowdin] DEBUG: sample of ${files.length} file paths in project:`);
+  for (const file of files.slice(0, max)) {
+    const label = file.normalizedPath || file.name || `id ${file.id}`;
+    ctx.log(`  ${label}`);
+  }
 }
 
 function normalizePath(filePath) {
@@ -752,7 +750,7 @@ async function purgeCorruptedTmSegments(ctx) {
   const segments = await listAll(
     ctx.baseUrl,
     ctx.token,
-    `/tms/${tmId}/segments`,
+    `/tms/${toCrowdinId(tmId)}/segments`,
   );
 
   for (const segment of segments) {
@@ -1060,7 +1058,7 @@ async function run() {
     enKeys: loadEnKeys(),
     failures: [],
     languages: [],
-    log: (message) => console.log(message),
+    log: (message) => console.log(toSingleLine(message)), // NOSONAR: line breaks stripped by toSingleLine
     projectId,
     token,
     totals: {
@@ -1196,14 +1194,16 @@ async function run() {
   ctx.log(`  corrupted TM segments:   ${segments}`);
 
   if (ctx.failures.length > 0) {
-    ctx.log(`\n${ctx.failures.length} failure(s):`);
+    ctx.log('');
+    ctx.log(`${ctx.failures.length} failure(s):`);
     for (const failure of ctx.failures) {
       ctx.log(`  ${failure}`);
     }
   }
 
   if (!ctx.apply && total > 0) {
-    ctx.log('\nChanges pending - pass --apply to commit them to Crowdin.');
+    ctx.log('');
+    ctx.log('Changes pending - pass --apply to commit them to Crowdin.');
     return 1;
   }
   return ctx.failures.length > 0 ? 1 : 0;
@@ -1212,6 +1212,15 @@ async function run() {
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 function runSelfTest() {
+  const refusesCrowdinId = (value) => {
+    try {
+      toCrowdinId(value);
+      return false;
+    } catch {
+      return true;
+    }
+  };
+
   const cases = [
     // Linked-message repairs (real samples from commit 535970092).
     [
@@ -1576,6 +1585,21 @@ function runSelfTest() {
       null,
     ],
     ['empty body returns null', getFailedPatchIndices(''), null],
+
+    // Log and request-path hardening for data from the Crowdin API.
+    [
+      'log text flattened to one line',
+      toSingleLine('404 Not Found\r\n::error::forged\nline'),
+      '404 Not Found ::error::forged line',
+    ],
+    ['numeric crowdin id kept', toCrowdinId('12345'), 12_345],
+    [
+      'path-like crowdin ids refused',
+      ['..', '1/../projects', '1?limit=1', '', 0, -3, 1.5, null].map((value) =>
+        refusesCrowdinId(value),
+      ),
+      [true, true, true, true, true, true, true, true],
+    ],
   ];
 
   let failed = 0;
@@ -1595,9 +1619,29 @@ function runSelfTest() {
   return failed === 0;
 }
 
+// Crowdin ids are positive integers. The TM ids put into request paths come
+// from API responses (the project's defaultTmId, the TM and segment
+// listings), so anything else is refused rather than allowed to change the
+// path (`..`, `/`, a query string) the token is sent to.
+function toCrowdinId(value) {
+  const id = Number(value);
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    throw new Error(`Unexpected Crowdin id: ${JSON.stringify(value)}`);
+  }
+  return id;
+}
+
+// Crowdin API data (file paths, language ids, error response bodies) ends up
+// in this script's log lines, which CI prints; flattening its line breaks
+// keeps that data from forging extra log lines or GitHub Actions workflow
+// commands (`::error::...`).
+function toSingleLine(text) {
+  return String(text).replaceAll(/[\r\n]+/g, ' ');
+}
+
 try {
   process.exitCode = await run();
 } catch (error) {
-  console.error(`[crowdin] ${error.message}`);
+  console.error(`[crowdin] ${toSingleLine(error.message)}`); // NOSONAR: line breaks stripped by toSingleLine
   process.exitCode = 1;
 }

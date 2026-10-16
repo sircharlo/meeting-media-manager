@@ -314,7 +314,7 @@ if (import.meta.env.DEV) {
     const interval = setInterval(() => {
       transferred = Math.min(
         total,
-        transferred + total * (0.05 + Math.random() * 0.1),
+        transferred + total * (0.05 + Math.random() * 0.1), // NOSONAR: DEV-only fake update-progress step
       );
       handleUpdateDownloadProgress({
         bytesPerSecond: total * 0.08,

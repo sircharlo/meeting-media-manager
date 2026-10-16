@@ -282,8 +282,8 @@ def update_index(
     elif label == "docs/locales/index.ts":
         new_export = f"const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {{\n  {keys_str},\n}};"
         updated = re.sub(r"const\s+messages:\s*Partial<Record<LanguageValue,\s*Partial<typeof\s*en>>>\s*=\s*\{[\s\S]*?\};", new_export, updated)
-        
-    path.write_text(updated, encoding="utf-8")
+
+    path.write_text(updated, encoding="utf-8")  # NOSONAR: path is one of the two fixed repo index files main() passes in; only the content is derived, from that same file and the local locale JSON
     print(f"✅  Updated {path}")
 
 

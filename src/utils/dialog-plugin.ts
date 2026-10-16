@@ -101,7 +101,7 @@ export class DialogPlugin {
    */
   open<T = unknown>(options: DialogOptions): Promise<T> {
     const { component, dialogOptions = {}, props = {} } = options;
-    const dialogId = `${component}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    const dialogId = `${component}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`; // NOSONAR: in-memory id of an open dialog, not a secret
     // Register the dialog as open in our store
     this.dialogStore.openDialog(dialogId, component, props);
 

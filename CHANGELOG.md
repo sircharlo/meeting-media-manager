@@ -78,6 +78,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🔧 Chores
 
+- 🔧 **Security**: Hardened the "Open folder" buttons so they only ever open a real folder, never a file or an app bundle disguised as one.
 - 🔧 **Dependencies**: Removed the PDF library that was only used for the meeting timing report.
 - 🔧 **Dependencies**: Updated `p-queue` to version 10. Days that one media refresh adds while another is finishing are no longer dropped.
 - 🔧 **Keyboard Shortcut Automation**: Switched the native module used to send keyboard shortcuts from the `@jitsi/robotjs` fork to the actively maintained upstream `robotjs` package, which now ships prebuilt binaries for every platform M³ supports.

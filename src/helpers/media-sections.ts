@@ -147,7 +147,7 @@ export const deleteSection = (uniqueId: string) => {
 export const getRandomColor = () => {
   const min = 80; // Minimum brightness for each RGB channel
   const max = 230; // Maximum brightness for each RGB channel
-  const randomChannel = () => Math.floor(Math.random() * (max - min + 1)) + min;
+  const randomChannel = () => Math.floor(Math.random() * (max - min + 1)) + min; // NOSONAR: picks a section's display color
 
   const r = randomChannel();
   const g = randomChannel();

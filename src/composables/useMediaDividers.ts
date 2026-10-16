@@ -84,7 +84,7 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
       source: 'additional',
       title: title ?? '',
       type: 'divider',
-      uniqueId: `divider_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`,
+      uniqueId: `divider_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`, // NOSONAR: local list-item id (with a timestamp), not a secret
     };
 
     // Add divider to the section

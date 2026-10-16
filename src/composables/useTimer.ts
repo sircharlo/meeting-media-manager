@@ -104,7 +104,7 @@ type TimerDayState = Pick<
 >;
 
 const createCustomPartId = (): `custom-${string}` =>
-  `custom-${Math.random().toString(36).slice(2, 10)}`;
+  `custom-${Math.random().toString(36).slice(2, 10)}`; // NOSONAR: id of a user-added timer part within one day, not a secret
 
 const getCustomEndTimeCountdownTarget = (
   date: Date,
