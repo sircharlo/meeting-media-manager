@@ -123,7 +123,7 @@
     "msw": "^3.0.3",
     "playwright": "^1.64.0",
     "png2icons": "^2.0.1",
-    "postcss": "^8.5.29",
+    "postcss": "^8.5.30",
     "prettier": "^3.9.6",
     "rollup-plugin-visualizer": "^7.1.1",
     "sharp": "^0.35.4",
