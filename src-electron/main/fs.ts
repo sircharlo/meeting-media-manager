@@ -1990,7 +1990,7 @@ export async function unwatchFolders() {
   }
 }
 
-export async function watchFolder(folderPath: string) {
+export function watchFolder(folderPath: string) {
   const pathIsPossiblyNetwork = isPossiblyNetworkFolderPath(
     folderPath,
     process.platform,

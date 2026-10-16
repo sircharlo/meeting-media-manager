@@ -389,7 +389,7 @@ const fetchBibleMedia = async (force = false) => {
   }
 };
 
-const addSelectedVerses = async () => {
+const addSelectedVerses = () => {
   try {
     isProcessing.value = true;
     if (!chosenVerses.value.length) return;

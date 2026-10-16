@@ -881,7 +881,7 @@ function clearSearch() {
   step.value = 'category';
 }
 
-async function downloadMediaItem(media: MediaLink) {
+function downloadMediaItem(media: MediaLink) {
   // ✅ Always emit - parent handles section assignment
   emit('import', { media, type: 'media' });
   resetState();
@@ -1104,7 +1104,7 @@ async function handleMediaResult(
   return false;
 }
 
-async function importDocument(doc: DocumentItem) {
+function importDocument(doc: DocumentItem) {
   if (!selection.dbPath) return;
 
   // ✅ Always emit - parent handles section assignment
@@ -1664,7 +1664,7 @@ async function selectYear(choice: FilterChoice) {
 
 watch(
   () => dialogValue.value,
-  async (isOpen) => {
+  (isOpen) => {
     if (isOpen) {
       resetState();
     }

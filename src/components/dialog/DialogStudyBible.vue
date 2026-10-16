@@ -482,7 +482,7 @@ const isSelected = (item: MultimediaItem) => {
   return selectedMediaItems.value.includes(item);
 };
 
-const addSelectedMediaItems = async () => {
+const addSelectedMediaItems = () => {
   // ✅ Emit raw MultimediaItems - parent handles image conversion and video downloads
   emit('import', { items: [...selectedMediaItems.value] });
   resetState();

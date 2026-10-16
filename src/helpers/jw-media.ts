@@ -315,10 +315,8 @@ const getPublicationMediaLinks = async (
   return publicationMediaLinksCache.get(cacheKey) ?? [];
 };
 
-const getExpectedDownloadPath = async (
-  dir: string,
-  url: string,
-): Promise<string> => join(dir, sanitizeFilename(basename(url)));
+const getExpectedDownloadPath = (dir: string, url: string): string =>
+  join(dir, sanitizeFilename(basename(url)));
 
 const getValidLocalSongPath = async (song: SongItem): Promise<string> => {
   try {
@@ -5862,16 +5860,14 @@ export const fetchBackgroundMusicSongLibrary = async (
         const dir = await getPublicationDirectory(publication);
         await updateLastUsedDate(dir, new Date());
 
-        const songs = await Promise.all(
-          mediaLinks.map(async (mediaLink) => ({
-            duration: mediaLink.duration,
-            filesize: mediaLink.filesize,
-            path: await getExpectedDownloadPath(dir, mediaLink.file.url),
-            remoteUrl: mediaLink.file.url,
-            title: mediaLink.title,
-            track: mediaLink.track,
-          })),
-        );
+        const songs = mediaLinks.map((mediaLink) => ({
+          duration: mediaLink.duration,
+          filesize: mediaLink.filesize,
+          path: getExpectedDownloadPath(dir, mediaLink.file.url),
+          remoteUrl: mediaLink.file.url,
+          title: mediaLink.title,
+          track: mediaLink.track,
+        }));
 
         log(
           `[${new Date().toISOString()}] +${Math.round(

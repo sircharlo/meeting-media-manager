@@ -188,9 +188,9 @@ const waitOnce = (emitter: HTMLVideoElement, event: string): Promise<void> => {
   });
 };
 
-const captureVideoFrame = async (
+const captureVideoFrame = (
   videoRef: HTMLVideoElement,
-): Promise<{ blobUrl: string; imageData: Buffer }> => {
+): { blobUrl: string; imageData: Buffer } => {
   const canvas = document.createElement('canvas');
   canvas.width = FULL_HD.width;
   canvas.height = FULL_HD.height;
@@ -270,7 +270,7 @@ const getThumbnailFromVideoPath = async (
 
     await Promise.race([waitOnce(videoRef, 'seeked'), errorPromise]);
 
-    const { blobUrl, imageData } = await captureVideoFrame(videoRef);
+    const { blobUrl, imageData } = captureVideoFrame(videoRef);
 
     if (
       !watcherEnabled ||

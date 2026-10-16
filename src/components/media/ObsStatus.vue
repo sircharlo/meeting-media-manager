@@ -181,7 +181,7 @@ const initObsListeners = async () => {
         }
       },
     );
-    obsWebSocketInfo.obsWebSocket.on('Identified', async () => {
+    obsWebSocketInfo.obsWebSocket.on('Identified', () => {
       obsConnectionState.value = 'connected';
       obsMessage.value = 'obs.connected';
       void fetchSceneList();

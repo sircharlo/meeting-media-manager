@@ -325,7 +325,7 @@ const selectCongregation = (congregation: CongregationSuggestion) => {
   }
 };
 
-const lookupCongregation = async () => {
+const lookupCongregation = () => {
   if (lookupDebounce.value) clearTimeout(lookupDebounce.value);
   lookupDebounce.value = setTimeout(async () => {
     try {
@@ -360,7 +360,7 @@ const dismissPopup = () => {
 whenever(dialogValue, () => {
   congregationFilter.value = currentSettings.value?.congregationName || '';
   results.value = [];
-  void lookupCongregation();
+  lookupCongregation();
   setTimeout(() => {
     log(
       '🔍 Focusing input',

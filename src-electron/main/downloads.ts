@@ -660,7 +660,7 @@ export interface DownloadFileResult {
 /**
  * Cancels all downloads.
  */
-export async function cancelAllDownloads() {
+export function cancelAllDownloads() {
   cancelAll = true;
   downloadQueue.length = 0;
   lowPriorityQueue.length = 0;
@@ -802,7 +802,7 @@ export async function downloadFile(
   }
 }
 
-export async function isDownloadComplete(downloadId: string) {
+export function isDownloadComplete(downloadId: string) {
   if (!getDownloadWindow()) return null;
 
   // Started but not finished yet (running, paused, or waiting to retry)
@@ -821,7 +821,7 @@ export async function isDownloadComplete(downloadId: string) {
  * Pauses every running download, and holds the queue - nothing starts or
  * resumes - until resumeAllDownloads() is called.
  */
-export async function pauseAllDownloads(reason = 'manual') {
+export function pauseAllDownloads(reason = 'manual') {
   downloadsHeld = true;
   pauseActiveDownloads(reason);
 }
@@ -830,7 +830,7 @@ export async function pauseAllDownloads(reason = 'manual') {
  * Releases a pauseAllDownloads() hold and lets paused downloads resume, as
  * many as there are free slots for, by priority.
  */
-export async function resumeAllDownloads(reason = 'manual') {
+export function resumeAllDownloads(reason = 'manual') {
   downloadsHeld = false;
   log(
     `Resuming ${getPausedDownloads().size} paused downloads as slots allow (${reason})`,

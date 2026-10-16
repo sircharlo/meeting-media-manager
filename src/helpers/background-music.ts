@@ -176,9 +176,7 @@ export function calculateOptimalSongQueue(
 /**
  * Enriches song items with metadata (duration, title)
  */
-export async function enrichSongsWithMetadata(
-  songs: SongItem[],
-): Promise<SongItem[]> {
+export function enrichSongsWithMetadata(songs: SongItem[]): SongItem[] {
   const startedAt = performance.now();
   logBackgroundMusicTiming('normalize API song metadata started', undefined, {
     songs: songs.length,
@@ -361,10 +359,10 @@ export async function getNextSongFromQueue(
 /**
  * Prepares the complete song queue for a meeting day
  */
-export async function prepareMeetingDaySongQueue(
+export function prepareMeetingDaySongQueue(
   songLibrary: SongItem[],
   options: SongQueueOptions,
-): Promise<{ queue: SongItem[]; startOffsetSeconds: number }> {
+): { queue: SongItem[]; startOffsetSeconds: number } {
   const startedAt = performance.now();
   try {
     logBackgroundMusicTiming(

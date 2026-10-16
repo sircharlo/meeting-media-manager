@@ -364,7 +364,7 @@ const processMediaItem = async ({
   const sourceFilePath = fileUrlToPath(mediaItem.fileUrl);
   if (!sourceFilePath || !(await pathExists(sourceFilePath))) return;
 
-  const destFilePath = await buildDestinationPath({
+  const destFilePath = buildDestinationPath({
     destFolder,
     index,
     mediaItem,
@@ -391,7 +391,7 @@ const processMediaItem = async ({
   await copy(finalSourcePath, destFilePath);
 };
 
-const buildDestinationPath = async ({
+const buildDestinationPath = ({
   destFolder,
   index,
   mediaItem,
@@ -407,7 +407,7 @@ const buildDestinationPath = async ({
   sectionPrefix: string;
   sourceFilePath: string;
   totalItems: number;
-}): Promise<string> => {
+}): string => {
   const currentStateStore = useCurrentStateStore();
 
   const shouldConvert =

@@ -117,7 +117,7 @@ const normalizeLookupPeriodDays = (congId: string, dateInfo: DateInfo[]) => {
   });
 };
 
-export const localStorageToPiniaPersist: MigrationFunction = async (
+export const localStorageToPiniaPersist: MigrationFunction = (
   appSettingsStore,
 ) => {
   try {

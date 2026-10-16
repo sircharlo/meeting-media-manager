@@ -494,7 +494,7 @@ if (gotTheLock) {
   // progress" staleness signal this app doesn't track today, deliberately
   // left as a separate, more speculative piece of work.
   powerMonitor.on('resume', () => {
-    void resumeAllDownloads('power-resume');
+    resumeAllDownloads('power-resume');
   });
 
   let videoCaptureCrashCount = 0;
@@ -603,11 +603,11 @@ if (gotTheLock) {
   });
 
   // macOS default behavior is to keep the app running even after all windows are closed
-  app.on('window-all-closed', async () => {
+  app.on('window-all-closed', () => {
     // Set app quitting state
     setAppQuitting(true);
     try {
-      await cancelAllDownloads();
+      cancelAllDownloads();
     } catch (error) {
       captureElectronError(error, {
         contexts: { fn: { name: 'app.on(window-all-closed)' } },

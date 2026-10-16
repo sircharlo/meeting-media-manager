@@ -805,7 +805,7 @@ watch(
 
 whenever(
   () => open.value,
-  async () => {
+  () => {
     void fetchScreens();
     void getCameras();
   },

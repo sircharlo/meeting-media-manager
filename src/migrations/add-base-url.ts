@@ -6,7 +6,7 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 
 import type { MigrationFunction } from './types';
 
-export const addBaseUrlToAllCongregations: MigrationFunction = async () => {
+export const addBaseUrlToAllCongregations: MigrationFunction = () => {
   try {
     const congregationStore = useCongregationSettingsStore();
 

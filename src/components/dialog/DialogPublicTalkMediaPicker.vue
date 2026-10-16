@@ -210,7 +210,7 @@ const dismissPopup = () => {
   emit('cancel');
 };
 
-const addPublicTalkMedia = async (publicTalkDocId: DocumentItem) => {
+const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
   if (!s34Db.value || !publicTalkDocId) return;
 
   // ✅ Always emit - parent handles section assignment

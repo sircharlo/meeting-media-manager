@@ -5,7 +5,7 @@ const createWindow = vi.fn();
 const closeOtherWindows = vi.fn();
 const sendToWindow = vi.fn();
 const createMediaWindow = vi.fn();
-const cancelAllDownloads = vi.fn(() => Promise.resolve());
+const cancelAllDownloads = vi.fn();
 const setAppQuitting = vi.fn();
 const setShouldQuit = vi.fn();
 const captureElectronError = vi.fn();
