@@ -363,16 +363,28 @@ const countdownProgress = computed(() => {
   return Math.max(0, Math.min(1, remainingSeconds / totalSeconds));
 });
 
-const countdownRemainingSeconds = computed(() => {
-  const totalSeconds =
+// How long the part being timed should take. Counting up, the countdown
+// target is 0, so the part's planned length is what the clock-face arc and
+// its last-minute warning count towards.
+const partTargetSeconds = computed(
+  () =>
     timerData.value?.timerCountdownTargetSeconds || // NOSONAR: 0 means no countdown target
-    (meetingCountdownTargetSeconds.value ?? 0);
+    timerData.value?.timerPartTargetSeconds || // NOSONAR: 0 means no planned length
+    0,
+);
 
+const countdownRemainingSeconds = computed(() => {
   if (currentMode.value === 'timer') {
+    const totalSeconds =
+      partTargetSeconds.value || (meetingCountdownTargetSeconds.value ?? 0); // NOSONAR: 0 means no part target
     return totalSeconds - (timerData.value?.timerElapsedSeconds ?? 0);
   }
 
-  return meetingCountdownRemainingSeconds.value ?? totalSeconds;
+  return (
+    meetingCountdownRemainingSeconds.value ??
+    (timerData.value?.timerCountdownTargetSeconds || // NOSONAR: 0 means no countdown target
+      (meetingCountdownTargetSeconds.value ?? 0))
+  );
 });
 
 const GREEN = { b: 89, g: 199, r: 53 };
@@ -451,10 +463,8 @@ const clockArc = computed(() => {
   let targetSeconds: number;
   let endTime: number;
   if (currentMode.value === 'timer') {
-    const data = timerData.value;
-    const elapsed = data?.timerElapsedSeconds ?? 0;
-    targetSeconds =
-      data?.timerCountdownTargetSeconds || data?.timerPartTargetSeconds || 0; // NOSONAR: 0 means no countdown target
+    const elapsed = timerData.value?.timerElapsedSeconds ?? 0;
+    targetSeconds = partTargetSeconds.value;
     endTime = now - elapsed * 1000 + targetSeconds * 1000;
   } else {
     targetSeconds = meetingCountdownTargetSeconds.value ?? 0;
