@@ -194,7 +194,7 @@ onBeforeUnmount(() => {
     180deg,
     color-mix(in srgb, white 8%, transparent),
     transparent
-  ) !important;
+  ) !important; /* NOSONAR: overrides Quasar's !important .bg-primary background shorthand, which resets background-image */
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
 }
 </style>

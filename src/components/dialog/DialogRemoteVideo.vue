@@ -96,7 +96,7 @@
                 >
                   <q-badge
                     class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
-                    style="padding: 5px !important"
+                    style="padding: 5px"
                   >
                     <q-icon class="q-mr-xs" color="white" name="mmm-play" />
                     {{ formatTime(video.duration) }}

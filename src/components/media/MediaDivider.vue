@@ -235,8 +235,7 @@ whenever(isEditing, () => {
 
   &.sortable-selected {
     transform: none;
-    background-color: unset !important;
-    background-color: var(--divider-bg-color) !important;
+    background-color: var(--divider-bg-color);
   }
 
   &.is-editing {

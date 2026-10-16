@@ -4,7 +4,7 @@
     class="settings-filter-dialog"
     position="top"
     seamless
-    style="z-index: 1500 !important"
+    style="z-index: 1500"
     @show="focusSettingsFilter"
   >
     <q-card class="settings-filter-overlay">

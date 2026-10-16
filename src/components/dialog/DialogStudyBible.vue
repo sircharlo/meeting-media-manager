@@ -506,14 +506,16 @@ body.body--dark .study-bible-item :deep(img) {
   background-color: #2a2a2a;
 }
 
-.study-bible-chapter-unavailable {
-  background-color: #e0e0e0 !important;
-  color: #757575 !important;
-  opacity: 1 !important;
+/* .q-btn outranks the button's own bg-accent-200 color class
+   (body.body--light .bg-accent-200) without needing !important. */
+.q-btn.study-bible-chapter-unavailable {
+  background-color: #e0e0e0;
+  color: #757575 !important; /* NOSONAR: overrides Quasar's !important .text-black from text-color="black" */
+  opacity: 1 !important; /* NOSONAR: overrides Quasar's !important .disabled / .q-btn.disabled opacity */
 }
 
 body.body--dark .study-bible-chapter-unavailable {
-  background-color: #343434 !important;
-  color: #9e9e9e !important;
+  background-color: #343434;
+  color: #9e9e9e !important; /* NOSONAR: overrides Quasar's !important .text-black and the light-mode !important color above */
 }
 </style>

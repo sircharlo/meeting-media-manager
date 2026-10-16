@@ -4,7 +4,7 @@
     class="media-filter-dialog"
     position="top"
     seamless
-    style="z-index: 1500 !important"
+    style="z-index: 1500"
     @show="focusMediaFilter"
   >
     <q-card class="media-filter-overlay">
