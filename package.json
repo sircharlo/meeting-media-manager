@@ -66,7 +66,7 @@
     "is-online": "^12.0.2",
     "mime": "^4.1.1",
     "mousetrap": "^1.6.5",
-    "music-metadata": "^12.1.1",
+    "music-metadata": "^12.2.0",
     "obs-websocket-js": "^5.0.8",
     "p-queue": "^9.3.5",
     "pdf-parse": "^2.4.5",
