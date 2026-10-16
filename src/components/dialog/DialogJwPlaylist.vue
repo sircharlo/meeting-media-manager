@@ -785,7 +785,7 @@ const addSelectedItems = async () => {
 
     for (const [idx, item] of selectedPlaylistItems.entries()) {
       try {
-        const result = await processSingleItem(item, idx, outputPath);
+        const result = await processSingleItem(item, idx, outputPath); // NOSONAR: sequential - bulk import, avoid flooding network/disk
         if (result?.mappedItems?.length) {
           processedMediaItems.push(...result.mappedItems);
         }

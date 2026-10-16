@@ -263,6 +263,17 @@ const getJwVideos = async () => {
         online.value,
       );
     };
+    const getCategoryVideos = async (category: string) =>
+      await fetchJson<JwVideoCategory>(
+        `${urlVariables.value.mediator}/v1/categories/${
+          currentSettings.value?.lang
+        }/${category}`,
+        new URLSearchParams({
+          clientType: 'www',
+          detailed: '0',
+        }),
+        online.value,
+      );
     const subcategories: {
       key: string;
       parentCategory: string;
@@ -271,26 +282,16 @@ const getJwVideos = async () => {
     const subcategoriesFirstLevel =
       subcategoriesRequest?.category?.subcategories?.map((s) => s.key) || [];
     for (const subcategoryFirstLevel of subcategoriesFirstLevel) {
+      const subRequest = await getSubcategories(subcategoryFirstLevel); // NOSONAR: sequential - one JW.org lookup at a time
       subcategories.push(
-        ...((
-          await getSubcategories(subcategoryFirstLevel)
-        )?.category.subcategories.map((s) => {
+        ...(subRequest?.category.subcategories.map((s) => {
           return { key: s.key, parentCategory: subcategoryFirstLevel };
         }) || []),
       );
     }
     for (const category of subcategories) {
       if (!category?.key) continue;
-      const request = await fetchJson<JwVideoCategory>(
-        `${urlVariables.value.mediator}/v1/categories/${
-          currentSettings.value?.lang
-        }/${category.key}`,
-        new URLSearchParams({
-          clientType: 'www',
-          detailed: '0',
-        }),
-        online.value,
-      );
+      const request = await getCategoryVideos(category.key); // NOSONAR: sequential - one JW.org lookup at a time
       const newVideos = (request?.category?.media || []).filter(
         (video) => !remoteVideos.value.some((v) => v.guid === video.guid),
       );

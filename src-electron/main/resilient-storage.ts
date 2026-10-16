@@ -233,7 +233,7 @@ export async function pruneStaleFallbackEntries(): Promise<void> {
 
     let entries: { isDirectory: () => boolean; name: string }[];
     try {
-      entries = await readdir(namespaceDir, { withFileTypes: true });
+      entries = await readdir(namespaceDir, { withFileTypes: true }); // NOSONAR: sequential - low-priority cleanup, unbounded entry count
     } catch {
       continue;
     }
@@ -241,13 +241,13 @@ export async function pruneStaleFallbackEntries(): Promise<void> {
     for (const entry of entries) {
       if (!entry.isDirectory()) continue;
       const entryDir = join(namespaceDir, entry.name);
-      const newestMtimeMs = await getNewestMtimeMs(entryDir);
+      const newestMtimeMs = await getNewestMtimeMs(entryDir); // NOSONAR: sequential - low-priority cleanup, unbounded entry count
       const isStale =
         !newestMtimeMs ||
         Date.now() - newestMtimeMs >= FALLBACK_ENTRY_MAX_AGE_MS;
       if (!isStale) continue;
 
-      await remove(entryDir).catch(() => undefined);
+      await remove(entryDir).catch(() => undefined); // NOSONAR: sequential - low-priority cleanup, unbounded entry count
     }
   }
 }
@@ -264,11 +264,11 @@ async function getNewestMtimeMs(dir: string): Promise<number> {
   for (const entry of entries) {
     const entryPath = join(dir, entry.name);
     if (entry.isDirectory()) {
-      newest = Math.max(newest, await getNewestMtimeMs(entryPath));
+      newest = Math.max(newest, await getNewestMtimeMs(entryPath)); // NOSONAR: sequential - unbounded recursive directory walk
       continue;
     }
     try {
-      const stats = await stat(entryPath);
+      const stats = await stat(entryPath); // NOSONAR: sequential - unbounded recursive directory walk
       newest = Math.max(newest, stats.mtimeMs);
     } catch {
       // Ignore files that disappear mid-scan

@@ -308,6 +308,7 @@ import {
   getTempPath,
   isFileUrl,
 } from 'src/utils/fs';
+import { sleep } from 'src/utils/general';
 import {
   getMetadataFromMediaPath,
   getVisibleMeetingItems,
@@ -819,9 +820,8 @@ const addMemorialSongsIfNeeded = async (
   const songsToAdd = [18, 25];
   let successfulSongs = 0;
   for (const songTrack of songsToAdd) {
-    if (await downloadMemorialSong(songTrack)) {
-      successfulSongs++;
-    }
+    const downloaded = await downloadMemorialSong(songTrack); // NOSONAR: sequential - ordered section inserts
+    if (downloaded) successfulSongs++;
   }
   const allSongsDownloaded = successfulSongs === songsToAdd.length;
 
@@ -957,7 +957,7 @@ const downloadMemorialStreamSources = async (sections: {
   if (!datedAdditionalMediaDir) return;
 
   for (const mediaItem of memorialMediaWithStreamSource) {
-    await downloadMemorialStreamSource(mediaItem, datedAdditionalMediaDir);
+    await downloadMemorialStreamSource(mediaItem, datedAdditionalMediaDir); // NOSONAR: sequential - one download at a time
   }
 };
 
@@ -1048,10 +1048,8 @@ const waitForDownloadComplete = async (downloadId?: string) => {
   let downloadCompleted: boolean | null = null;
   while (downloadCompleted !== true) {
     downloadCompleted =
-      await globalThis.electronApi?.isDownloadComplete(downloadId);
-    await new Promise((resolve) => {
-      setTimeout(resolve, 300);
-    });
+      await globalThis.electronApi?.isDownloadComplete(downloadId); // NOSONAR: sequential - polls until ready
+    await sleep(300); // NOSONAR: sequential - polls until ready
   }
 };
 
@@ -1420,15 +1418,22 @@ const restoreAdditionalSongsForPinyin = async (
 ) => {
   const songsBySection: Record<string, MediaItem[]> = {};
 
-  for (const song of savedSongs) {
-    const section = song.section || 'imported-media';
-    const item =
+  // Each song resolves independently (a local pinyin file, or the cached
+  // copy that's downloaded through the app's download queue if missing), so
+  // they're created concurrently; Promise.all keeps the saved order, and
+  // the section map below is still filled in that order.
+  const items = await Promise.all(
+    savedSongs.map((song) =>
       newPinyinActive && pinyinFolder
-        ? await createPinyinSongMediaItem(song, pinyinFolder)
-        : await createCachedSongMediaItem(song);
+        ? createPinyinSongMediaItem(song, pinyinFolder)
+        : createCachedSongMediaItem(song),
+    ),
+  );
 
-    addSongToSectionMap(songsBySection, section, item);
-  }
+  savedSongs.forEach((song, index) => {
+    const section = song.section || 'imported-media';
+    addSongToSectionMap(songsBySection, section, items[index]);
+  });
 
   for (const sec in songsBySection) {
     if (!songsBySection[sec]) continue;
@@ -1853,12 +1858,9 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const file = selectedFiles[i];
         if (!file) continue;
         try {
-          const convertedImages = await processImportFile(
-            file,
-            mediaItemsToAdd,
-          );
-          if (convertedImages?.length) {
-            selectedFiles.splice(i + 1, 0, ...convertedImages);
+          const converted = await processImportFile(file, mediaItemsToAdd); // NOSONAR: sequential - ordered import, inserts converted files
+          if (converted?.length) {
+            selectedFiles.splice(i + 1, 0, ...converted);
             totalFiles.value = selectedFiles.length;
           }
         } catch (error) {
@@ -3500,7 +3502,7 @@ watch(
     });
 
     for (const folder of foldersToTouch) {
-      await updateLastUsedDate(folder, meetingDate);
+      await updateLastUsedDate(folder, meetingDate); // NOSONAR: sequential - avoid flooding the network drive
     }
   },
   { immediate: true },

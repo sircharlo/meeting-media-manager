@@ -104,7 +104,8 @@ const TYPOGRAPHIC_QUOTES = '‚‘’‛“”„‟';
 // Matches a hero-action link string's Crowdin context, e.g.
 // "CXPath: //yaml/hero/actions[0]/link" - identifies the 5 docs/src/en/
 // index.md link: fields (Download/About/User Guide/Settings Guide/FAQ).
-const HERO_ACTION_LINK_CONTEXT = /^CXPath: \/\/yaml\/hero\/actions\[\d+\]\/link$/;
+const HERO_ACTION_LINK_CONTEXT =
+  /^CXPath: \/\/yaml\/hero\/actions\[\d+\]\/link$/;
 
 // docs/src folders that exist in the repo but aren't part of the app's
 // active language list (src/constants/locales.ts) - leftovers from past
@@ -346,7 +347,11 @@ function replaceHeadingAnchor(line, anchor) {
  * explicit override (confirmed live: `zh-CN`'s own twoLettersCode is `zh`,
  * which belongs to the separate, orphaned `zh` folder, not `cmn-hans`).
  */
-function resolveDocsLanguageId(folder, targetLanguageIds, languageIdByTwoLetters) {
+function resolveDocsLanguageId(
+  folder,
+  targetLanguageIds,
+  languageIdByTwoLetters,
+) {
   if (targetLanguageIds.has(folder)) return folder;
   if (
     DOCS_LANGUAGE_ID_OVERRIDES[folder] &&
@@ -386,14 +391,11 @@ async function createTranslations(ctx, creates, label) {
   // (POST /projects/{id}/translations takes one {stringId, languageId,
   // text} object per call) - so these go one at a time, same failure
   // handling as patchTranslations' per-op retry path.
+  const translationsPath = `/projects/${ctx.projectId}/translations`;
   for (const create of creates) {
+    const options = { body: create, method: 'POST' };
     try {
-      await crowdinRequest(
-        ctx.baseUrl,
-        ctx.token,
-        `/projects/${ctx.projectId}/translations`,
-        { body: create, method: 'POST' },
-      );
+      await crowdinRequest(ctx.baseUrl, ctx.token, translationsPath, options); // NOSONAR: sequential - rate-limited API
     } catch (error) {
       ctx.failures.push(
         `${label} (string ${create.stringId}): ${error.message}`,
@@ -507,11 +509,8 @@ async function listAll(baseUrl, token, path) {
 
   for (;;) {
     const separator = path.includes('?') ? '&' : '?';
-    const page = await crowdinRequest(
-      baseUrl,
-      token,
-      `${path}${separator}limit=${PAGE_SIZE}&offset=${offset}`,
-    );
+    const pagePath = `${path}${separator}limit=${PAGE_SIZE}&offset=${offset}`;
+    const page = await crowdinRequest(baseUrl, token, pagePath); // NOSONAR: sequential - paginated, stops at the last page
     const rows = page.data ?? [];
     for (const row of rows) {
       items.push(row.data);
@@ -521,6 +520,14 @@ async function listAll(baseUrl, token, path) {
   }
 
   return items;
+}
+
+function listFileTranslations(ctx, language, fileId) {
+  return listAll(
+    ctx.baseUrl,
+    ctx.token,
+    `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${fileId}`,
+  );
 }
 
 /**
@@ -663,16 +670,13 @@ async function patchTranslations(ctx, ops, label) {
         `[patch] ${label}: batch failed for ${failedIndices.length} of ${ops.length} op(s) - retrying individually`,
       );
     }
+    const translationsPath = `/projects/${ctx.projectId}/translations`;
     for (const index of failedIndices) {
       const op = ops[index];
       if (!op) continue;
+      const options = { body: [op], method: 'PATCH' };
       try {
-        await crowdinRequest(
-          ctx.baseUrl,
-          ctx.token,
-          `/projects/${ctx.projectId}/translations`,
-          { body: [op], method: 'PATCH' },
-        );
+        await crowdinRequest(ctx.baseUrl, ctx.token, translationsPath, options); // NOSONAR: sequential - rate-limited API
       } catch (opError) {
         ctx.failures.push(`${label} (op ${index}): ${opError.message}`);
       }
@@ -760,7 +764,7 @@ async function purgeCorruptedTmSegments(ctx) {
       );
     }
     if (ctx.apply) {
-      await deleteTmSegment(ctx, tmId, segment.id, `tm segment ${segment.id}`);
+      await deleteTmSegment(ctx, tmId, segment.id, `tm segment ${segment.id}`); // NOSONAR: sequential - rate-limited API
     }
   }
 }
@@ -789,11 +793,7 @@ async function repairDocsFile(ctx, file) {
 
   for (const language of ctx.languages) {
     const localeFolder = ctx.docsLocaleFolderByLanguage.get(language);
-    const translations = await listAll(
-      ctx.baseUrl,
-      ctx.token,
-      `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
-    );
+    const translations = await listFileTranslations(ctx, language, file.id); // NOSONAR: sequential - rate-limited API
     // A language with no translations at all in this file still needs class
     // 3 (every hero link is untranslated, which is exactly what needs
     // fixing), so only skip outright when there's neither an existing
@@ -846,7 +846,11 @@ async function repairDocsFile(ctx, file) {
       for (const heroString of heroLinkStrings) {
         const sourceText = sources.get(heroString.id);
         const existing = translationByStringId.get(heroString.id);
-        const fix = computeDocsLinkFix(sourceText, existing?.text, localeFolder);
+        const fix = computeDocsLinkFix(
+          sourceText,
+          existing?.text,
+          localeFolder,
+        );
         if (fix === null) continue;
 
         ctx.totals.docsLinks += 1;
@@ -863,20 +867,21 @@ async function repairDocsFile(ctx, file) {
             value: { text: fix },
           });
         } else {
-          creates.push({ languageId: language, stringId: heroString.id, text: fix });
+          creates.push({
+            languageId: language,
+            stringId: heroString.id,
+            text: fix,
+          });
         }
       }
     }
 
+    const fileLabel = `${file.normalizedPath} (${language})`;
     if (ctx.apply && ops.length > 0) {
-      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
+      await patchTranslations(ctx, ops, fileLabel); // NOSONAR: sequential - rate-limited API
     }
     if (ctx.apply && creates.length > 0) {
-      await createTranslations(
-        ctx,
-        creates,
-        `${file.normalizedPath} (${language})`,
-      );
+      await createTranslations(ctx, creates, fileLabel); // NOSONAR: sequential - rate-limited API
     }
   }
 }
@@ -900,11 +905,7 @@ async function repairI18nLinkedSyntax(ctx, file) {
   if (candidateIds.size === 0) return;
 
   for (const language of ctx.languages) {
-    const translations = await listAll(
-      ctx.baseUrl,
-      ctx.token,
-      `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
-    );
+    const translations = await listFileTranslations(ctx, language, file.id); // NOSONAR: sequential - rate-limited API
 
     const ops = [];
     for (const item of translations) {
@@ -928,7 +929,7 @@ async function repairI18nLinkedSyntax(ctx, file) {
       });
     }
     if (ctx.apply && ops.length > 0) {
-      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
+      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`); // NOSONAR: sequential - rate-limited API
     }
   }
 }
@@ -960,11 +961,7 @@ async function repairI18nLinkTargets(ctx, file) {
   if (sources.size === 0) return;
 
   for (const language of ctx.languages) {
-    const translations = await listAll(
-      ctx.baseUrl,
-      ctx.token,
-      `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
-    );
+    const translations = await listFileTranslations(ctx, language, file.id); // NOSONAR: sequential - rate-limited API
 
     const ops = [];
     for (const item of translations) {
@@ -988,7 +985,7 @@ async function repairI18nLinkTargets(ctx, file) {
       });
     }
     if (ctx.apply && ops.length > 0) {
-      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
+      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`); // NOSONAR: sequential - rate-limited API
     }
   }
 }
@@ -1013,11 +1010,7 @@ async function repairReleaseNotesVersions(ctx, file) {
   if (sources.size === 0) return;
 
   for (const language of ctx.languages) {
-    const translations = await listAll(
-      ctx.baseUrl,
-      ctx.token,
-      `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
-    );
+    const translations = await listFileTranslations(ctx, language, file.id); // NOSONAR: sequential - rate-limited API
 
     const ops = [];
     for (const item of translations) {
@@ -1041,7 +1034,7 @@ async function repairReleaseNotesVersions(ctx, file) {
       });
     }
     if (ctx.apply && ops.length > 0) {
-      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
+      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`); // NOSONAR: sequential - rate-limited API
     }
   }
 }
@@ -1147,7 +1140,7 @@ async function run() {
       `[crowdin] classes 2+3: heading anchors + hero-action link: frontmatter (${docsFiles.length} files, ${ctx.docsLocaleFolderByLanguage.size} active docs locales)`,
     );
     for (const file of docsFiles) {
-      await repairDocsFile(ctx, file);
+      await repairDocsFile(ctx, file); // NOSONAR: sequential - rate-limited API
     }
   } else {
     ctx.log(
@@ -1187,8 +1180,7 @@ async function run() {
     ctx.failures.push(`translation-memory purge: ${error.message}`);
   }
 
-  const { anchors, docsLinks, linked, links, segments, versions } =
-    ctx.totals;
+  const { anchors, docsLinks, linked, links, segments, versions } = ctx.totals;
   const total = anchors + docsLinks + linked + links + segments + versions;
   ctx.log('');
   ctx.log(

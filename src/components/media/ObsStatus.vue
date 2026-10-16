@@ -32,6 +32,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { isTransientObsError, obsConnect } from 'src/helpers/obs';
 import { log } from 'src/shared/vanilla';
+import { sleep } from 'src/utils/general';
 import { initObsWebSocket, obsWebSocketInfo } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
@@ -88,7 +89,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
   while (attempts < maxRetries) {
     try {
       const sceneList =
-        await obsWebSocketInfo.obsWebSocket?.call('GetSceneList');
+        await obsWebSocketInfo.obsWebSocket?.call('GetSceneList'); // NOSONAR: sequential - retry loop
       if (sceneList) {
         obsSceneListError.value = false;
         scenes.value = sceneList.scenes.reverse();
@@ -119,9 +120,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
       const isTransient = isTransientObsError(error);
       if (attempts < maxRetries && isTransient) {
         log(`Retrying... (${attempts}/${maxRetries})`, 'obs', 'log');
-        await new Promise((resolve) => {
-          setTimeout(resolve, retryInterval);
-        });
+        await sleep(retryInterval); // NOSONAR: sequential - retry loop
       } else {
         obsSceneListError.value = true;
         // OBS still loading after every retry (big scene collections or

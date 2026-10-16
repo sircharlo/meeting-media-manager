@@ -295,7 +295,7 @@ export const askForMediaAccess = async () => {
           access,
           'error',
         );
-        const result = await systemPreferences.askForMediaAccess(type);
+        const result = await systemPreferences.askForMediaAccess(type); // NOSONAR: sequential - one OS permission prompt at a time
         logToWindow(
           mainWindowInfo.mainWindow,
           `${type} result:`,

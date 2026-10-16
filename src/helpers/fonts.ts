@@ -276,9 +276,7 @@ const getExistingLocalFontPath = async (
   fontName: FontName,
 ) => {
   for (const fontPath of getFontPathCandidates(fontsDir, fontName)) {
-    if (await pathExists(fontPath)) {
-      return fontPath;
-    }
+    if (await pathExists(fontPath)) return fontPath; // NOSONAR: sequential - stops at first match
   }
 
   return null;

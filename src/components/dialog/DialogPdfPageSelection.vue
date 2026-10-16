@@ -251,13 +251,13 @@ async function runLoadVisibleThumbnails() {
     if (thumbnailSession !== session) return;
 
     loadingPages.value.add(page);
-    let dataUrl = await session.getThumbnail(page);
+    let dataUrl = await session.getThumbnail(page); // NOSONAR: sequential - PDF worker is not concurrency-safe
     // A single render can still fail transiently (e.g. the same worker
     // hiccup this whole one-at-a-time change is guarding against, just
     // less likely) - retry once before giving up on this page.
     if (!dataUrl && !retriedPages.has(page)) {
       retriedPages.add(page);
-      dataUrl = await session.getThumbnail(page);
+      dataUrl = await session.getThumbnail(page); // NOSONAR: sequential - PDF worker is not concurrency-safe
     }
 
     if (thumbnailSession === session) {

@@ -256,23 +256,22 @@ async function getLocaleDirs() {
 
 async function getMarkdownFiles(dir, prefix = '') {
   const entries = await readdir(dir, { withFileTypes: true });
-  const files = [];
 
-  for (const entry of entries) {
-    const relativePath = prefix ? `${prefix}/${entry.name}` : entry.name;
-    const fullPath = resolve(dir, entry.name);
+  // Subdirectories are walked concurrently; the final sort makes the result
+  // order independent of which walk finishes first.
+  const filesPerEntry = await Promise.all(
+    entries.map((entry) => {
+      const relativePath = prefix ? `${prefix}/${entry.name}` : entry.name;
 
-    if (entry.isDirectory()) {
-      files.push(...(await getMarkdownFiles(fullPath, relativePath)));
-      continue;
-    }
+      if (entry.isDirectory()) {
+        return getMarkdownFiles(resolve(dir, entry.name), relativePath);
+      }
 
-    if (entry.isFile() && entry.name.endsWith('.md')) {
-      files.push(relativePath);
-    }
-  }
+      return entry.isFile() && entry.name.endsWith('.md') ? [relativePath] : [];
+    }),
+  );
 
-  return files.sort();
+  return filesPerEntry.flat().sort();
 }
 
 function getRelativePath(path) {
@@ -351,12 +350,12 @@ async function main() {
     };
 
     for (const locale of localeDirs) {
-      await fixIndexLinks(locale, totals);
+      await fixIndexLinks(locale, totals); // NOSONAR: sequential - ordered console output
 
       if (locale === EN_LOCALE) continue;
 
       for (const markdownFile of englishMarkdownFiles) {
-        await fixMarkdownAnchors(locale, markdownFile, totals);
+        await fixMarkdownAnchors(locale, markdownFile, totals); // NOSONAR: sequential - ordered console output
       }
     }
 

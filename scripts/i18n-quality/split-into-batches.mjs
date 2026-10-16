@@ -43,10 +43,19 @@ async function main() {
   await ensureDir(batchDir);
 
   const batchCount = Math.ceil(records.length / batchSize);
-  for (let i = 0; i < batchCount; i += 1) {
-    const batch = records.slice(i * batchSize, (i + 1) * batchSize);
-    const outPath = resolve(batchDir, `batch-${i + 1}.json`);
-    await writeFile(outPath, `${JSON.stringify(batch, null, 2)}\n`, 'utf-8');
+  const batches = Array.from({ length: batchCount }, (_, i) => ({
+    outPath: resolve(batchDir, `batch-${i + 1}.json`),
+    records: records.slice(i * batchSize, (i + 1) * batchSize),
+  }));
+
+  // Every batch goes to its own file, so they are written concurrently and
+  // then logged in batch order.
+  await Promise.all(
+    batches.map(({ outPath, records: batch }) =>
+      writeFile(outPath, `${JSON.stringify(batch, null, 2)}\n`, 'utf-8'),
+    ),
+  );
+  for (const { outPath, records: batch } of batches) {
     console.log(`Wrote ${outPath} (${batch.length} records)`);
   }
 

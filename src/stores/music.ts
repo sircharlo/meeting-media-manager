@@ -508,9 +508,9 @@ export const useMusicStore = defineStore('music', () => {
           'song library empty, waiting for songs to appear',
           'debug',
         );
-        await sleep(SONG_LIBRARY_RETRY_INTERVAL_MS);
+        await sleep(SONG_LIBRARY_RETRY_INTERVAL_MS); // NOSONAR: sequential - polls until ready
         if (isStale()) return;
-        nextSongUrl = await buildQueueAndGetNextSongUrl();
+        nextSongUrl = await buildQueueAndGetNextSongUrl(); // NOSONAR: sequential - polls until ready
       }
 
       if (isStale()) return;

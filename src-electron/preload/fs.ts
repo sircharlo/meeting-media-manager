@@ -43,7 +43,7 @@ const startSecurityScopedAccess = async (filePath: string) => {
 const activatePaths = async (...paths: (string | undefined)[]) => {
   if (PLATFORM !== 'darwin') return;
   for (const path of paths) {
-    if (path) await startSecurityScopedAccess(path);
+    if (path) await startSecurityScopedAccess(path); // NOSONAR: sequential - avoid racing the bookmark load in main
   }
 };
 
@@ -255,16 +255,12 @@ const readDirRecursive = async (
       name: dirent.name,
       parentPath: directory,
       ...(withSizes &&
-        dirent.isFile() && { size: (await stat(fullPath)).size }),
+        dirent.isFile() && { size: (await stat(fullPath)).size }), // NOSONAR: sequential - ordered recursive directory walk
     };
     dirItems.push(fileItem);
     if (recursive && dirent.isDirectory()) {
-      const subDirItems = await readDirRecursive(
-        fullPath,
-        withSizes,
-        recursive,
-      );
-      dirItems.push(...subDirItems);
+      const subItems = await readDirRecursive(fullPath, withSizes, recursive); // NOSONAR: sequential - ordered recursive directory walk
+      dirItems.push(...subItems);
     }
   }
   return dirItems;

@@ -68,7 +68,7 @@ export const addDayToExportQueue = async (targetDate?: Date) => {
       // If the day was marked as dirty while running, run it again until it's clean
       while (dirtyDays.has(dateStr)) {
         dirtyDays.delete(dateStr);
-        await exportDayToFolder(targetDate);
+        await exportDayToFolder(targetDate); // NOSONAR: sequential - re-runs until no new changes
       }
     } catch (error) {
       errorCatcher(error);
@@ -209,7 +209,7 @@ const processAllSections = async (
     const sanitizedSectionName = sanitizeFilename(sectionName);
     const sectionPrefix = pad(sectionIndex++);
 
-    await processSectionItems(
+    const sectionExport = processSectionItems(
       visibleItems,
       destFolder,
       sectionPrefix,
@@ -217,6 +217,7 @@ const processAllSections = async (
       expectedFiles,
       conversionFailures,
     );
+    await sectionExport; // NOSONAR: sequential - avoid flooding the network drive
   }
 
   return { conversionFailures, expectedFiles };
@@ -300,7 +301,7 @@ const processSectionItems = async (
       const mediaItem = visibleItems[i];
       if (!mediaItem) continue;
 
-      await processMediaItem({
+      const mediaItemExport = {
         conversionFailures,
         destFolder,
         expectedFiles,
@@ -309,7 +310,8 @@ const processSectionItems = async (
         sanitizedSectionName,
         sectionPrefix,
         totalItems: visibleItems.length,
-      });
+      };
+      await processMediaItem(mediaItemExport); // NOSONAR: sequential - avoid flooding the network drive
     } catch (error) {
       // A cloud-synced export folder (Nextcloud, OneDrive, ...) can
       // transiently fail a stat/copy while its sync client holds or swaps the

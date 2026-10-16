@@ -41,40 +41,13 @@ async function main() {
     f.endsWith('.json'),
   );
 
-  for (const file of files) {
-    const contentType = file.replace(/\.json$/, '');
-    const records = await readJson(resolve(validatedDir, file));
-
-    const byCategory = {
-      phrasing: records.filter((r) => r.category === 'phrasing').length,
-      terminology: records.filter((r) => r.category === 'terminology').length,
-    };
-
-    const lines = [
-      `# Proposed translation-quality changes: ${language} / ${contentType}`,
-      '',
-      `Run: \`${runId}\`. ${records.length} proposed change${records.length === 1 ? '' : 's'} ` +
-        `(${byCategory.terminology} terminology, ${byCategory.phrasing} phrasing) survived the guardrail gate.`,
-      '',
-      'Nothing here has been applied to Crowdin. To approve entries, copy this ' +
-        'run\'s validated JSON, mark the entries you want with `"status": "approved"`, ' +
-        'and hand the file to `apply-translation-quality-fixes.mjs`.',
-      '',
-      '---',
-      '',
-    ];
-
-    records.forEach((record, index) => {
-      lines.push(renderRecord(record, index, language));
-    });
-
-    if (records.length === 0) {
-      lines.push('_No changes proposed for this content type._', '');
-    }
-
-    const outPath = resolve(validatedDir, `${contentType}.md`);
-    await writeFile(outPath, lines.join('\n'), 'utf-8');
-    console.log(`Wrote ${outPath} (${records.length} entries)`);
+  // Each validated file renders to its own report, so they are generated
+  // concurrently and then logged in directory order.
+  const reports = await Promise.all(
+    files.map((file) => writeReport(validatedDir, file, language, runId)),
+  );
+  for (const { outPath, recordCount } of reports) {
+    console.log(`Wrote ${outPath} (${recordCount} entries)`);
   }
 }
 
@@ -114,6 +87,42 @@ function renderRecord(record, index, language) {
   }
   lines.push('', `_id: \`${record.id}\` | file: \`${record.filePath}\`_`, '');
   return lines.join('\n');
+}
+
+async function writeReport(validatedDir, file, language, runId) {
+  const contentType = file.replace(/\.json$/, '');
+  const records = await readJson(resolve(validatedDir, file));
+
+  const byCategory = {
+    phrasing: records.filter((r) => r.category === 'phrasing').length,
+    terminology: records.filter((r) => r.category === 'terminology').length,
+  };
+
+  const lines = [
+    `# Proposed translation-quality changes: ${language} / ${contentType}`,
+    '',
+    `Run: \`${runId}\`. ${records.length} proposed change${records.length === 1 ? '' : 's'} ` +
+      `(${byCategory.terminology} terminology, ${byCategory.phrasing} phrasing) survived the guardrail gate.`,
+    '',
+    'Nothing here has been applied to Crowdin. To approve entries, copy this ' +
+      'run\'s validated JSON, mark the entries you want with `"status": "approved"`, ' +
+      'and hand the file to `apply-translation-quality-fixes.mjs`.',
+    '',
+    '---',
+    '',
+  ];
+
+  records.forEach((record, index) => {
+    lines.push(renderRecord(record, index, language));
+  });
+
+  if (records.length === 0) {
+    lines.push('_No changes proposed for this content type._', '');
+  }
+
+  const outPath = resolve(validatedDir, `${contentType}.md`);
+  await writeFile(outPath, lines.join('\n'), 'utf-8');
+  return { outPath, recordCount: records.length };
 }
 
 await main();

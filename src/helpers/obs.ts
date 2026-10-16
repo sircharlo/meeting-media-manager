@@ -45,12 +45,12 @@ const OBS_NOT_READY_RETRY_MS = 2000;
 const callWhenObsReady = async <T>(request: () => Promise<T>): Promise<T> => {
   for (let attempt = 1; ; attempt++) {
     try {
-      return await request();
+      return await request(); // NOSONAR: sequential - retry loop
     } catch (error) {
       const notReadyYet =
         error instanceof Error && error.message.includes('OBS is not ready');
       if (!notReadyYet || attempt >= OBS_NOT_READY_RETRIES) throw error;
-      await sleep(OBS_NOT_READY_RETRY_MS);
+      await sleep(OBS_NOT_READY_RETRY_MS); // NOSONAR: sequential - retry loop
     }
   }
 };
@@ -130,13 +130,13 @@ const runObsConnect = async (setup?: boolean) => {
       obsState.obsConnectionState !== 'connected'
     ) {
       if (
-        await performConnectionAttempt(settings.obsPort, settings.obsPassword)
+        await performConnectionAttempt(settings.obsPort, settings.obsPassword) // NOSONAR: sequential - retry loop
       )
         break;
 
       attempt++;
       if (attempt < maxAttempts) {
-        await sleep(5000);
+        await sleep(5000); // NOSONAR: sequential - retry loop
       }
     }
 
