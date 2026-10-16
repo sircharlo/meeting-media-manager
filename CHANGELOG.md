@@ -74,6 +74,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Bible Dialog**: Fixed Bible books being listed twice when a secondary media language is set, and verses added from the dialog then sometimes being titled with another book's name. Each book is now listed once: books with no recording in the media language use the secondary media language's recording, and books with no recording in either language show their own name.
 - 🐞 **Media List**: Fixed a media item's thumbnail sometimes never appearing after a single failed attempt to find it.
 - 🐞 **Migrating from the old app**: Settings imported from a pre-M³ install now keep options that were turned off there (automatically starting background music, background music playback, media playback, excluding media from the Teaching brochure, including printed media) and a background music volume of 0, instead of turning them back on and setting the volume to 100%.
+- 🐞 **Meeting Timer**: When counting up with the "Analog clock with time arc" display and the countdown warning turned on, the arc now turns orange only in the part's last minute, instead of being orange from the start.
 
 ### 🔧 Chores
 
