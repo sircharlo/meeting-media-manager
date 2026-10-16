@@ -304,9 +304,9 @@ const collectDirectoryZipEntries = async (
       const fullPath = join(currentPath, dirent.name);
       if (dirent.isDirectory()) {
         entries.push({ fileName: `${entryName}/`, uncompressedSize: 0 });
-        await walk(fullPath, entryName);
+        await walk(fullPath, entryName); // NOSONAR: sequential - ordered recursive directory walk
       } else if (dirent.isFile()) {
-        const fileStats = await stat(fullPath);
+        const fileStats = await stat(fullPath); // NOSONAR: sequential - ordered recursive directory walk
         entries.push({
           fileName: entryName,
           uncompressedSize: fileStats.size,
@@ -493,15 +493,23 @@ export const startSecurityScopedAccess = async (filePath: string) => {
   }
 };
 
+const probeSharedSubfolder = async (sharedPath: string, folder: string) => {
+  const dirPath = join(sharedPath, folder);
+  const testDir = join(dirPath, `.health-check-${uuid()}`);
+  const testFile = join(testDir, 'test.txt');
+  await mkdir(testDir, { recursive: true });
+  await writeFile(testFile, 'ok', 'utf8');
+  await rm(testDir, { force: true, recursive: true });
+};
+
+// Each subfolder gets its own uniquely named probe directory, so the probes
+// are independent of one another and can run together.
 const probeSharedSubfolders = async (sharedPath: string) => {
-  for (const folder of SHARED_PATH_HEALTH_FOLDERS) {
-    const dirPath = join(sharedPath, folder);
-    const testDir = join(dirPath, `.health-check-${uuid()}`);
-    const testFile = join(testDir, 'test.txt');
-    await mkdir(testDir, { recursive: true });
-    await writeFile(testFile, 'ok', 'utf8');
-    await rm(testDir, { force: true, recursive: true });
-  }
+  await Promise.all(
+    SHARED_PATH_HEALTH_FOLDERS.map((folder) =>
+      probeSharedSubfolder(sharedPath, folder),
+    ),
+  );
 };
 
 /**
@@ -627,7 +635,7 @@ const findExistingProbeFile = async (
   }
 
   for (const subdir of subdirs) {
-    const found = await findExistingProbeFile(subdir, depth + 1);
+    const found = await findExistingProbeFile(subdir, depth + 1); // NOSONAR: sequential - stops at first match
     if (found) return found;
   }
 
@@ -702,7 +710,7 @@ const cleanupProbePath = async (
 
   for (let attempt = 0; attempt <= PATH_PROBE_RETRY_COUNT; attempt += 1) {
     try {
-      await rm(targetPath, options);
+      await rm(targetPath, options); // NOSONAR: sequential - retry loop
       return;
     } catch (error) {
       lastError = error;
@@ -712,7 +720,7 @@ const cleanupProbePath = async (
       ) {
         break;
       }
-      await delay(PATH_PROBE_RETRY_DELAY_MS);
+      await delay(PATH_PROBE_RETRY_DELAY_MS); // NOSONAR: sequential - retry loop
     }
   }
 
@@ -1281,7 +1289,7 @@ const decompress = async (
     try {
       const dirEntries = await collectDirectoryZipEntries(input);
       for (const entry of dirEntries) {
-        await handleDirectoryZipEntry(entry, input, context, state);
+        await handleDirectoryZipEntry(entry, input, context, state); // NOSONAR: sequential - ordered extraction with shared size guards
       }
     } catch (error) {
       captureElectronError(error, {
@@ -1334,7 +1342,7 @@ const openZipFileForUnzip = async (
 
   for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
     try {
-      return await openPromise(input);
+      return await openPromise(input); // NOSONAR: sequential - retry loop
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
@@ -1358,7 +1366,7 @@ const openZipFileForUnzip = async (
 
       if (!shouldRetry) throw error;
 
-      await delay(getZipRetryDelay(attempt + 1));
+      await delay(getZipRetryDelay(attempt + 1)); // NOSONAR: sequential - retry loop
     }
   }
 
@@ -1458,7 +1466,7 @@ const getZipFileStats = async (zipPath: string) => {
 
   for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
     try {
-      return await stat(zipPath);
+      return await stat(zipPath); // NOSONAR: sequential - retry loop
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
@@ -1496,7 +1504,7 @@ const getZipFileStats = async (zipPath: string) => {
         throw error;
       }
 
-      await delay(getZipRetryDelay(attempt + 1));
+      await delay(getZipRetryDelay(attempt + 1)); // NOSONAR: sequential - retry loop
     }
   }
 
@@ -1511,7 +1519,7 @@ const openZipFileForEntries = async (
 
   for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
     try {
-      return await openPromise(zipPath);
+      return await openPromise(zipPath); // NOSONAR: sequential - retry loop
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
@@ -1528,7 +1536,7 @@ const openZipFileForEntries = async (
         throw error;
       }
 
-      await delay(getZipRetryDelay(attempt + 1));
+      await delay(getZipRetryDelay(attempt + 1)); // NOSONAR: sequential - retry loop
     }
   }
 
@@ -1701,7 +1709,7 @@ const readDirectoryEntriesIntoMemory = async (
 
         const sourcePath = resolveZipEntryPath(dirPath, entry.fileName);
         entries.push({
-          data: await readFile(sourcePath),
+          data: await readFile(sourcePath), // NOSONAR: sequential - shared size guards, stops after the last requested entry
           path: entry.fileName,
         });
         if (entries.length === includes.length) break;
@@ -1977,17 +1985,19 @@ export const isLongPastDayFolder = (folderName: string, now = new Date()) => {
   return new Date(year, month - 1, day) < cutoff;
 };
 
-export async function unwatchFolders() {
-  for (const watcher of watchers) {
-    try {
-      if (!watcher?.closed) await watcher?.close();
-      watchers.delete(watcher);
-    } catch (error) {
-      captureElectronError(error, {
-        contexts: { fn: { name: 'unwatchFolders' } },
-      });
-    }
+const closeWatcher = async (watcher: FSWatcher) => {
+  try {
+    if (!watcher?.closed) await watcher?.close();
+    watchers.delete(watcher);
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'unwatchFolders' } },
+    });
   }
+};
+
+export async function unwatchFolders() {
+  await Promise.all([...watchers].map((watcher) => closeWatcher(watcher)));
 }
 
 export async function watchFolder(folderPath: string) {

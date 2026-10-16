@@ -153,8 +153,8 @@ const runSteps = async (
     const deadline = Date.now() + timeoutMs;
     let value = await read();
     while (!isDone(value) && Date.now() < deadline && !signal?.aborted) {
-      await sleep(timeouts.pollMs);
-      value = await read();
+      await sleep(timeouts.pollMs); // NOSONAR: sequential - polls until ready
+      value = await read(); // NOSONAR: sequential - polls until ready
     }
     return { done: isDone(value), value };
   };
@@ -424,7 +424,7 @@ const runSteps = async (
     step.status = 'running';
     report();
     try {
-      const detail = await run[step.id]();
+      const detail = await run[step.id](); // NOSONAR: sequential - Zoom UI automation must not overlap
       step.status = 'passed';
       step.detail = typeof detail === 'string' && detail ? detail : undefined;
     } catch (error) {

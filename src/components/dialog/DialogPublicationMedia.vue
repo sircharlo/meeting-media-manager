@@ -1063,7 +1063,7 @@ async function handleMediaResult(
             pub: publication,
             track: mediaFile.track,
           };
-          const mediaInfo = await getJwMediaInfo(mediaFetcherCopy);
+          const mediaInfo = await getJwMediaInfo(mediaFetcherCopy); // NOSONAR: sequential - one JW.org lookup at a time
           mediaFile.trackImage.url = mediaInfo.thumbnail;
         }
       }

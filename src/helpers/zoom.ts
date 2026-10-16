@@ -622,7 +622,7 @@ const runSequence = async (
         failedSteps.push(step);
         continue;
       }
-      const result = await run();
+      const result = await run(); // NOSONAR: sequential - Zoom UI automation must not overlap
       if (!result.ok && !NOT_LEARNED_ERRORS.has(result.error ?? '')) {
         failedSteps.push(step);
       }

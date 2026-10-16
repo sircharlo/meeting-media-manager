@@ -34,12 +34,16 @@ async function main() {
     .filter((f) => f.startsWith(batchPrefix) && f.endsWith('.json'))
     .sort();
 
+  // Batch files are independent local reads; merging and logging still
+  // happen in sorted file order.
+  const batches = await Promise.all(
+    files.map((file) => readJson(resolve(proposedDir, file))),
+  );
   let merged = [];
-  for (const file of files) {
-    const batch = await readJson(resolve(proposedDir, file));
+  batches.forEach((batch, index) => {
     merged = merged.concat(batch);
-    console.log(`  + ${file} (${batch.length} records)`);
-  }
+    console.log(`  + ${files[index]} (${batch.length} records)`);
+  });
 
   const outPath = resolve(proposedDir, `${contentType}.json`);
   await writeFile(outPath, `${JSON.stringify(merged, null, 2)}\n`, 'utf-8');

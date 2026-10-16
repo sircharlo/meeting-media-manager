@@ -375,21 +375,23 @@ async function discoverFromSiteCss(
   for (const pageUrl of pageUrls) {
     let found = false;
     try {
-      const response = await fetchRaw(pageUrl, undefined, options.cache);
+      const response = await fetchRaw(pageUrl, undefined, options.cache); // NOSONAR: sequential - stops at first match
       if (!response.ok) continue;
-      const cssUrls = extractCssUrls(await response.text(), pageUrl);
+      const cssUrls = extractCssUrls(await response.text(), pageUrl); // NOSONAR: sequential - stops at first match
 
       for (const cssUrl of cssUrls) {
         try {
-          const cssResponse = await fetchRaw(cssUrl, undefined, options.cache);
+          const cssResponse = await fetchRaw(cssUrl, undefined, options.cache); // NOSONAR: sequential - stops at first match
           if (!cssResponse.ok) continue;
-          if (onCss(await cssResponse.text(), cssUrl)) {
+          const cssText = await cssResponse.text(); // NOSONAR: sequential - stops at first match
+          if (onCss(cssText, cssUrl)) {
             found = true;
             if (options.firstMatchOnly) return;
           }
         } catch (e) {
           // A flaky connection to the site is not a bug (MMM-V2-3H4).
-          if (!(await shouldReportCaughtError(e, online))) {
+          const shouldReport = await shouldReportCaughtError(e, online); // NOSONAR: sequential - stops at first match
+          if (!shouldReport) {
             unreportedError = e;
             continue;
           }
@@ -399,7 +401,8 @@ async function discoverFromSiteCss(
         }
       }
     } catch (e) {
-      if (!(await shouldReportCaughtError(e, online))) {
+      const shouldReport = await shouldReportCaughtError(e, online); // NOSONAR: sequential - stops at first match
+      if (!shouldReport) {
         unreportedError = e;
         continue;
       }
@@ -706,6 +709,18 @@ export const useJwStore = defineStore('jw-store', {
           return;
         }
         const formats: (keyof PublicationFiles)[] = ['MP4', 'MP3'];
+        const fetchSongbookLinks = (fileformat: keyof PublicationFiles) => {
+          const songbook: PublicationFetcher = {
+            fileformat,
+            langwritten: lang,
+            pub: currentSongbook.pub,
+          };
+          return fetchPubMediaLinks(
+            songbook,
+            this.urlVariables.pubMedia,
+            online,
+          );
+        };
         for (const fileformat of formats) {
           try {
             this.jwSongs[lang] ??= { list: [], updated: oldDate };
@@ -720,16 +735,7 @@ export const useJwStore = defineStore('jw-store', {
 
             // Fetch media links only if the song list hasn't been updated in over a month or if force is true
             if (monthsSinceUpdated > 1 || force) {
-              const songbook: PublicationFetcher = {
-                fileformat,
-                langwritten: lang,
-                pub: currentSongbook.pub,
-              };
-              const pubMediaLinks = await fetchPubMediaLinks(
-                songbook,
-                this.urlVariables.pubMedia,
-                online,
-              );
+              const pubMediaLinks = await fetchSongbookLinks(fileformat); // NOSONAR: sequential - stops at first match
               if (!pubMediaLinks?.files) {
                 continue;
               }

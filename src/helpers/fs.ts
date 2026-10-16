@@ -102,7 +102,7 @@ const writeThumbnailFile = async (thumbnailPath: string, imageData: Buffer) => {
 
   for (let attempt = 0; attempt <= THUMBNAIL_WRITE_RETRY_COUNT; attempt++) {
     try {
-      await writeFile(thumbnailPath, imageData);
+      await writeFile(thumbnailPath, imageData); // NOSONAR: sequential - retry loop
       return;
     } catch (error) {
       lastError = error;
@@ -113,7 +113,7 @@ const writeThumbnailFile = async (thumbnailPath: string, imageData: Buffer) => {
       ) {
         throw error;
       }
-      await delay(THUMBNAIL_WRITE_RETRY_DELAY_MS * (attempt + 1));
+      await delay(THUMBNAIL_WRITE_RETRY_DELAY_MS * (attempt + 1)); // NOSONAR: sequential - retry loop
     }
   }
 

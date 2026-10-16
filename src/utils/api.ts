@@ -611,21 +611,20 @@ export const fetchMediaItems = async (
         .filter((v, i) => v != null && (v.toString() !== '0' || i === 2))
         .join('_');
 
-    let response = await fetchJson<MediaItemsMediator>(
-      `${url}/${getId(publication.track)}`,
-      undefined,
-      online,
-    );
+    const fetchTrackMediaItems = (track?: null | number | string) =>
+      fetchJson<MediaItemsMediator>(
+        `${url}/${getId(track)}`,
+        undefined,
+        online,
+      );
+
+    let response = await fetchTrackMediaItems(publication.track);
 
     if (!response?.media?.length && !publication.track) {
       for (const track of ['x', 0, 1]) {
         if (track.toString() === publication.track?.toString()) continue;
 
-        const fallbackResponse = await fetchJson<MediaItemsMediator>(
-          `${url}/${getId(track)}`,
-          undefined,
-          online,
-        );
+        const fallbackResponse = await fetchTrackMediaItems(track); // NOSONAR: sequential - stops at first match
         if (fallbackResponse?.media?.length) {
           response = fallbackResponse;
           break;

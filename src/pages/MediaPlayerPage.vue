@@ -191,6 +191,7 @@ import {
 } from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
+import { sleep } from 'src/utils/general';
 import {
   isAudio,
   isExpectedMediaAccessError,
@@ -1119,9 +1120,7 @@ const ensureElementReady = async (
 ): Promise<boolean> => {
   let timeouts = 0;
   while (!getter()) {
-    await new Promise((resolve) => {
-      setTimeout(resolve, 100);
-    });
+    await sleep(100); // NOSONAR: sequential - polls until ready
     if (++timeouts > maxRetries) {
       return false;
     }
@@ -1518,9 +1517,7 @@ watchImmediate(
     // Wait for the camera element to be available in the DOM (v-if)
     let retries = 0;
     while (!cameraElement.value && retries < 60) {
-      await new Promise((resolve) => {
-        setTimeout(resolve, 50);
-      });
+      await sleep(50); // NOSONAR: sequential - polls until ready
       retries++;
     }
 

@@ -280,7 +280,7 @@ async function processCacheDirectory(
 
       // If not proactively referenced, check the "last used" date
       if (!isReferenced) {
-        isReferenced = await wasFileUsedRecently(item.parentPath);
+        isReferenced = await wasFileUsedRecently(item.parentPath); // NOSONAR: sequential - avoid flooding the network drive
       }
 
       files.push({
@@ -448,6 +448,29 @@ const collectAllCongregationLanguages = (): Set<JwLangCode> => {
 };
 
 /**
+ * Gets the publication directory for a single language
+ */
+const getPublicationDirectoryForLanguage = async (
+  pub: string,
+  langwritten: JwLangCode,
+  issue?: number | string,
+): Promise<string> => {
+  // Special handling for "any" issue: protect all issue-tagged folders
+  if (issue === 'any') {
+    const baseId = getPubId({ langwritten, pub });
+    const pubsRootDefault = await getPublicationsPath();
+    return join(pubsRootDefault, baseId);
+  }
+
+  const directoryParams: PublicationFetcher = {
+    issue,
+    langwritten,
+    pub,
+  };
+  return getPublicationDirectory(directoryParams);
+};
+
+/**
  * Gets publication directories for given languages
  */
 const getPublicationDirectories = async (
@@ -456,30 +479,17 @@ const getPublicationDirectories = async (
   issue?: number | string,
   includeEnglish?: boolean,
 ): Promise<string[]> => {
-  const directories: string[] = [];
   const languagesToUse = new Set<JwLangCode>(languages);
 
   if (includeEnglish) {
     languagesToUse.add('E');
   }
 
-  for (const langwritten of languagesToUse) {
-    // Special handling for "any" issue: protect all issue-tagged folders
-    if (issue === 'any') {
-      const baseId = getPubId({ langwritten, pub });
-      const pubsRootDefault = await getPublicationsPath();
-      directories.push(join(pubsRootDefault, baseId));
-    } else {
-      const directoryParams: PublicationFetcher = {
-        issue,
-        langwritten,
-        pub,
-      };
-      directories.push(await getPublicationDirectory(directoryParams));
-    }
-  }
-
-  return directories;
+  return Promise.all(
+    [...languagesToUse].map((langwritten) =>
+      getPublicationDirectoryForLanguage(pub, langwritten, issue),
+    ),
+  );
 };
 
 /**

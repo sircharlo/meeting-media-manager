@@ -197,7 +197,7 @@ export const ensureWatchedMeetingDayFolders = async () => {
       .map((day) => formatDate(day.date, 'YYYY-MM-DD'));
 
     for (const folderName of new Set(meetingDayFolders)) {
-      await ensureDir(join(watchFolder, folderName));
+      await ensureDir(join(watchFolder, folderName)); // NOSONAR: sequential - avoid flooding the network drive
     }
   } catch (error) {
     if (
@@ -1564,15 +1564,10 @@ export const addJwpubDocumentMediaToFiles = async (
           selectedMultimediaIds.includes(item.MultimediaId),
         )
       : multimediaItems;
-    for (let i = 0; i < filteredMultimediaItems.length; i++) {
-      const item = filteredMultimediaItems[i];
-      if (item) {
-        filteredMultimediaItems[i] = await addFullFilePathToMultimediaItem(
-          item,
-          pubFolder ?? publication,
-        );
-      }
-    }
+    await addFullPathsToMultimediaItems(
+      filteredMultimediaItems,
+      pubFolder ?? publication,
+    );
     await processMissingMediaInfo({
       allMedia: filteredMultimediaItems,
       meetingDate: meetingDate || currentStateStore.selectedDate,
@@ -1645,6 +1640,11 @@ const pollUntilDownloaded = (
     }, 500);
   });
 
+const waitBeforeNextDownloadedFileCheck = () =>
+  new Promise<void>((settle) => {
+    setTimeout(settle, 200);
+  });
+
 const resolveDownloadedFile = async (
   destinationPath: string,
   remoteSize: number,
@@ -1653,8 +1653,9 @@ const resolveDownloadedFile = async (
   const maxAttempts = 10;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
-      if (await pathExists(destinationPath)) {
-        const statistics = await stat(destinationPath);
+      const fileExists = await pathExists(destinationPath); // NOSONAR: sequential - polls until ready
+      if (fileExists) {
+        const statistics = await stat(destinationPath); // NOSONAR: sequential - polls until ready
         const hasExpectedSize =
           remoteSize <= 0 || statistics.size === remoteSize;
         if (statistics.size > 0 && hasExpectedSize) {
@@ -1668,9 +1669,7 @@ const resolveDownloadedFile = async (
       // unhandled rejections from this race). Treat it as not-ready-yet
       // and let the retry loop below re-check.
     }
-    await new Promise((settle) => {
-      setTimeout(settle, 200);
-    });
+    await waitBeforeNextDownloadedFileCheck(); // NOSONAR: sequential - polls until ready
   }
   resolve({ error: true, path: destinationPath });
 };
@@ -2466,6 +2465,9 @@ const getStudyBibleMediaCacheKey = (
     chapterNumber ?? 'all-chapters',
   ].join(':');
 
+const getStudyBibleDb = (publication: PublicationFetcher) =>
+  getDbFromJWPUB(publication, undefined, 'study-bible');
+
 const getStudyBible = async () => {
   const languages = getStudyBibleLanguages();
   const cacheKey = getStudyBibleCacheKey(
@@ -2477,10 +2479,8 @@ const getStudyBible = async () => {
     studyBibleCache.set(
       cacheKey,
       (async (): Promise<StudyBibleResult> => {
-        const nwtStyDb_E_Promise = getDbFromJWPUB(
+        const nwtStyDb_E_Promise = getStudyBibleDb(
           studyBibleNwtStyPublication_E,
-          undefined,
-          'study-bible',
         );
 
         const nwtStyPromise = (async () => {
@@ -2489,7 +2489,7 @@ const getStudyBible = async () => {
 
           for (const langwritten of languages) {
             if (langwritten === 'E') {
-              nwtStyDb = await nwtStyDb_E_Promise;
+              nwtStyDb = await nwtStyDb_E_Promise; // NOSONAR: sequential - stops at first match
               nwtStyPublication = studyBibleNwtStyPublication_E;
               break;
             }
@@ -2499,11 +2499,7 @@ const getStudyBible = async () => {
               langwritten,
               pub: 'nwtsty',
             };
-            nwtStyDb = await getDbFromJWPUB(
-              nwtStyPublication,
-              undefined,
-              'study-bible',
-            );
+            nwtStyDb = await getStudyBibleDb(nwtStyPublication); // NOSONAR: sequential - stops at first match
             if (nwtStyDb) break;
           }
 
@@ -2530,11 +2526,7 @@ const getStudyBible = async () => {
               langwritten,
               pub: 'nwt',
             };
-            const nwtDb = await getDbFromJWPUB(
-              nwtPublication,
-              undefined,
-              'study-bible',
-            );
+            const nwtDb = await getStudyBibleDb(nwtPublication); // NOSONAR: sequential - stops at first match
             if (nwtDb) return nwtDb;
           }
 
@@ -3078,13 +3070,11 @@ const fetchBibleBookMedia = async (
 ) => {
   const returnedItems: Partial<Publication>[] = [];
   const backupNameNeeded: number[] = [];
+  const fetchBook = (booknum: number) =>
+    fetchBibleBookMediaForLanguages(publication, booknum, languages);
 
   for (const booknum of Array.from({ length: 66 }, (_, i) => i + 1)) {
-    const { items, needsBackupName } = await fetchBibleBookMediaForLanguages(
-      publication,
-      booknum,
-      languages,
-    );
+    const { items, needsBackupName } = await fetchBook(booknum); // NOSONAR: sequential - one JW.org lookup at a time
     returnedItems.push(...items);
 
     if (needsBackupName) {
@@ -3106,7 +3096,7 @@ const fetchBibleBookMediaForLanguages = async (
   for (const lang of languages) {
     publication.booknum = booknum;
     publication.langwritten = lang;
-    const bibleMediaItems = await getPubMediaLinks(publication);
+    const bibleMediaItems = await getPubMediaLinks(publication); // NOSONAR: sequential - stops at first miss, reuses one publication object
     if (!bibleMediaItems) return { items, needsBackupName: true };
 
     items.push(bibleMediaItems);
@@ -3219,13 +3209,12 @@ export const getMemorialMedia = async (
           }
 
           if (videoItems.length) {
-            for (const item of videoItems) {
-              const parsedItem = await addFullFilePathToMultimediaItem(
-                item,
-                pub,
-              );
-              results.introVideos.push(parsedItem);
-            }
+            const parsedItems = await Promise.all(
+              videoItems.map((item) =>
+                addFullFilePathToMultimediaItem(item, pub),
+              ),
+            );
+            results.introVideos.push(...parsedItems);
 
             await processMissingMediaInfo({
               allMedia: results.introVideos,
@@ -3244,7 +3233,7 @@ export const getMemorialMedia = async (
       })();
 
       memorialMediaInFlight.set(cacheKey, fetchPromise);
-      const result = await fetchPromise;
+      const result = await fetchPromise; // NOSONAR: sequential - stops at first match
       if (result) return result;
     }
   } catch (e) {
@@ -4022,12 +4011,12 @@ const addFullPathsToMultimediaItems = async (
   items: MultimediaItem[],
   publication: PublicationFetcher,
 ) => {
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (item) {
-      items[i] = await addFullFilePathToMultimediaItem(item, publication);
-    }
-  }
+  const itemsWithPaths = await Promise.all(
+    items.map((item) => addFullFilePathToMultimediaItem(item, publication)),
+  );
+  itemsWithPaths.forEach((item, i) => {
+    items[i] = item;
+  });
 };
 
 const applyMepsLanguageOverrides = async (
@@ -4052,13 +4041,18 @@ const applyMepsLanguageOverrides = async (
 
   for (const media of allMedia) {
     applyMepsLanguageOverride(media, mepsLanguagesByMediaItem);
-    if (options.includeVideoMarkers) {
-      const videoMarkers = await getMediaVideoMarkers(
-        options,
-        media.MultimediaId,
-      );
-      if (videoMarkers) media.VideoMarkers = videoMarkers;
-    }
+  }
+
+  if (options.includeVideoMarkers) {
+    await Promise.all(
+      allMedia.map(async (media) => {
+        const videoMarkers = await getMediaVideoMarkers(
+          options,
+          media.MultimediaId,
+        );
+        if (videoMarkers) media.VideoMarkers = videoMarkers;
+      }),
+    );
   }
 
   return mepsLanguagesByMediaItem;
@@ -4131,14 +4125,11 @@ const getWeekendIssueForLanguage = async (
 ) => {
   if (!langwritten) return getEmptyWeekendIssue();
 
+  const getIssueWeeksBack = (weeks: number) =>
+    getWtIssue(monday, weeks, langwritten, lookupDate, lastChance);
+
   for (const weeks of weeksToTry) {
-    const result = await getWtIssue(
-      monday,
-      weeks,
-      langwritten,
-      lookupDate,
-      lastChance,
-    );
+    const result = await getIssueWeeksBack(weeks); // NOSONAR: sequential - stops at first match
     if (result.db?.length > 0) {
       return result;
     }
@@ -4989,24 +4980,24 @@ export async function processMissingMediaInfo({
         );
 
         if (media.KeySymbol === 'nwt') {
-          mediaWasDownloaded =
-            !!(await downloadBibleMissingMedia(
-              media,
-              langwritten,
-              meetingDate,
-            )) || mediaWasDownloaded;
+          const bibleDownload = downloadBibleMissingMedia(
+            media,
+            langwritten,
+            meetingDate,
+          );
+          mediaWasDownloaded = !!(await bibleDownload) || mediaWasDownloaded; // NOSONAR: sequential - each step needs the previous result
           continue;
         }
 
         try {
-          mediaWasDownloaded =
-            (await downloadStandardMissingMedia({
-              isDynamicMedia,
-              keepMediaLabels,
-              media,
-              meetingDate,
-              publicationFetcher,
-            })) || mediaWasDownloaded;
+          const standardDownload = downloadStandardMissingMedia({
+            isDynamicMedia,
+            keepMediaLabels,
+            media,
+            meetingDate,
+            publicationFetcher,
+          });
+          mediaWasDownloaded = (await standardDownload) || mediaWasDownloaded; // NOSONAR: sequential - each step needs the previous result
         } catch (e) {
           errorCatcher(e);
         }
@@ -5354,25 +5345,30 @@ const downloadRelatedMediaAssets = async ({
     jwMediaInfo.thumbnail,
   ].filter((url): url is string => !!url);
 
-  for (const itemUrl of relatedUrls) {
-    const itemFilename = changeExt(
-      basename(bestItem.file.url),
-      extname(itemUrl),
-    );
+  await Promise.all(
+    relatedUrls.map(async (itemUrl) => {
+      const itemFilename = changeExt(
+        basename(bestItem.file.url),
+        extname(itemUrl),
+      );
 
-    if (
-      bestItem.file?.url &&
-      (downloadedFile?.new || !(await pathExists(join(pubDir, itemFilename))))
-    ) {
-      await downloadFileIfNeeded({
-        dir: pubDir,
-        filename: itemFilename,
-        lowPriority: shouldDownloadLowPriority(isMemorialMeeting, meetingDate),
-        meetingDate,
-        url: itemUrl,
-      });
-    }
-  }
+      if (
+        bestItem.file?.url &&
+        (downloadedFile?.new || !(await pathExists(join(pubDir, itemFilename))))
+      ) {
+        await downloadFileIfNeeded({
+          dir: pubDir,
+          filename: itemFilename,
+          lowPriority: shouldDownloadLowPriority(
+            isMemorialMeeting,
+            meetingDate,
+          ),
+          meetingDate,
+          url: itemUrl,
+        });
+      }
+    }),
+  );
 };
 
 interface MissingMediaDownloadResult {
@@ -6048,7 +6044,8 @@ const downloadJwpub = async (
           if (!filename.toLowerCase().endsWith('.jwpub')) continue;
 
           const jwpubPath = join(dir, filename);
-          if (await isValidJwpubArchive(jwpubPath)) {
+          const isValidJwpub = await isValidJwpubArchive(jwpubPath); // NOSONAR: sequential - stops at first match
+          if (isValidJwpub) {
             return {
               new: false,
               path: jwpubPath,

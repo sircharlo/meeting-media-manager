@@ -28,7 +28,7 @@ async function backfillFromLookupPeriods() {
       const mediaItems = collectMediaItems(day);
 
       for (const item of mediaItems) {
-        await updateFromMediaItem(item, meetingDate);
+        await updateFromMediaItem(item, meetingDate); // NOSONAR: sequential - same folder can repeat and concurrent updates coalesce
       }
     }
   }
@@ -46,7 +46,7 @@ async function updateAllSubdirsWithDate(basePath: string, date: string) {
   const dirs = items.filter((i) => i.isDirectory);
 
   for (const dir of dirs) {
-    await updateLastUsedDate(join(basePath, dir.name), date);
+    await updateLastUsedDate(join(basePath, dir.name), date); // NOSONAR: sequential - avoid flooding the network drive
   }
 }
 
@@ -68,7 +68,7 @@ async function updateTwoLevelSubdirsWithDate(basePath: string, date: string) {
 
   for (const dir1 of level1Dirs) {
     const level1Path = join(basePath, dir1.name);
-    await updateAllSubdirsWithDate(level1Path, date);
+    await updateAllSubdirsWithDate(level1Path, date); // NOSONAR: sequential - avoid flooding the network drive
   }
 }
 

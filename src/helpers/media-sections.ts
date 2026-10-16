@@ -576,7 +576,7 @@ export const saveWatchedMediaLayout = async (
       );
       sectionOrderFilePath = currentSectionOrderFilePath;
 
-      await withSectionOrderLock(currentSectionOrderFilePath, async () => {
+      const mergeLayoutData = async () => {
         const existingData = await readWatchedMediaSectionOrder(
           currentSectionOrderFilePath,
         );
@@ -585,7 +585,8 @@ export const saveWatchedMediaLayout = async (
           ...existingData,
           ...layoutData,
         });
-      });
+      };
+      await withSectionOrderLock(currentSectionOrderFilePath, mergeLayoutData); // NOSONAR: sequential - avoid flooding the network drive
     }
   } catch (error) {
     errorCatcher(error, {

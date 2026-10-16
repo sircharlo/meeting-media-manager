@@ -141,7 +141,8 @@ const clickButton = async (page, pattern) => {
   if (!total) return false;
   let target = locator.first();
   for (let index = 0; index < total; index++) {
-    if (await locator.nth(index).isVisible()) {
+    const isVisible = await locator.nth(index).isVisible(); // NOSONAR: sequential - stops at first match
+    if (isVisible) {
       target = locator.nth(index);
       break;
     }
@@ -319,9 +320,9 @@ const joinParticipant = async (participant, index) => {
 
   for (let attempt = 1; attempt <= JOIN_ATTEMPTS; attempt++) {
     try {
-      await submitJoinForm(page, name);
-      await sleep(6000);
-      const phase = detectPhase(await readPageInfo(page), 'joining');
+      await submitJoinForm(page, name); // NOSONAR: sequential - retry loop
+      await sleep(6000); // NOSONAR: sequential - retry loop
+      const phase = detectPhase(await readPageInfo(page), 'joining'); // NOSONAR: sequential - retry loop
       // Only the last attempt's "turned away" is final: until then the
       // participant is still joining.
       const finalAttempt = attempt === JOIN_ATTEMPTS;
@@ -329,7 +330,7 @@ const joinParticipant = async (participant, index) => {
         phase === 'blocked' && !finalAttempt ? 'joining' : phase;
       if (phase !== 'blocked') break;
       log(`${name} was turned away (attempt ${attempt}/${JOIN_ATTEMPTS})`);
-      if (!finalAttempt) await sleep(BLOCKED_RETRY_DELAY_MS);
+      if (!finalAttempt) await sleep(BLOCKED_RETRY_DELAY_MS); // NOSONAR: sequential - retry loop
     } catch (error) {
       participant.phase = 'error';
       participant.error = String(error);
@@ -448,7 +449,7 @@ if (process.argv.includes('--exit-with-parent')) {
 }
 
 for (const [index, participant] of participants.entries()) {
-  await joinParticipant(participant, index);
-  if (index < count - 1) await sleep(JOIN_STAGGER_MS);
+  await joinParticipant(participant, index); // NOSONAR: sequential - Zoom UI automation must not overlap
+  if (index < count - 1) await sleep(JOIN_STAGGER_MS); // NOSONAR: sequential - Zoom UI automation must not overlap
 }
 log(`${count} participant(s) launched for the test meeting`);

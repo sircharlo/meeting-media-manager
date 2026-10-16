@@ -89,9 +89,18 @@ async function main() {
     let totalFixed = 0;
     const totalUnfixable = [];
 
-    for (const file of files) {
-      const path = resolve(I18N_DIR, file);
-      const messages = JSON.parse(await readFile(path, 'utf-8'));
+    // Locale files are independent: read them concurrently, then fix and log
+    // them in directory order so the console output stays deterministic.
+    const locales = await Promise.all(
+      files.map(async (file) => {
+        const path = resolve(I18N_DIR, file);
+        const messages = JSON.parse(await readFile(path, 'utf-8'));
+        return { file, messages, path };
+      }),
+    );
+    const pendingWrites = [];
+
+    for (const { file, messages, path } of locales) {
       const totals = { fixed: 0, unfixable: [] };
       walkAndFix(messages, totals);
 
@@ -100,18 +109,19 @@ async function main() {
         console.log(
           `[i18n] ${file}: fixed ${totals.fixed} message${totals.fixed === 1 ? '' : 's'}`,
         );
-        if (!checkOnly) {
-          await writeFile(
-            path,
-            `${JSON.stringify(messages, null, 2)}\n`,
-            'utf-8',
-          );
-        }
+        if (!checkOnly) pendingWrites.push({ messages, path });
       }
       for (const failure of totals.unfixable) {
         totalUnfixable.push({ file, ...failure });
       }
     }
+
+    // Each fixed locale is written to its own file, so order doesn't matter.
+    await Promise.all(
+      pendingWrites.map(({ messages, path }) =>
+        writeFile(path, `${JSON.stringify(messages, null, 2)}\n`, 'utf-8'),
+      ),
+    );
 
     if (totalUnfixable.length > 0) {
       console.warn(

@@ -470,7 +470,7 @@ const checkMacosFolderPermission = async (
 const checkMacosProfileFolderPermissions = async () => {
   if (PLATFORM !== 'darwin') return;
   for (const target of getMacosFolderPermissionTargets()) {
-    await checkMacosFolderPermission(target);
+    await checkMacosFolderPermission(target); // NOSONAR: sequential - one OS permission prompt at a time
   }
 };
 
@@ -737,7 +737,7 @@ const updateWatchFolderRef = async ({
 const processWatchFolderEvents = debounce(
   async (pendingEvents: Record<string, string>[]) => {
     for (const evt of pendingEvents) {
-      await updateWatchFolderRef(evt);
+      await updateWatchFolderRef(evt); // NOSONAR: sequential - watch-folder events apply in order
     }
     pendingEventKeys.clear();
     pendingEvents.length = 0;

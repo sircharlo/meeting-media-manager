@@ -199,9 +199,9 @@ const waitForClose = (stream: WriteStream) =>
 async function finalizeDownload(partialPath: string, destPath: string) {
   let lastError: unknown;
   for (let attempt = 0; attempt <= FINALIZE_RETRY_COUNT; attempt++) {
-    if (attempt > 0) await delay(FINALIZE_RETRY_DELAY_MS * attempt);
+    if (attempt > 0) await delay(FINALIZE_RETRY_DELAY_MS * attempt); // NOSONAR: sequential - retry loop
     try {
-      await rename(partialPath, destPath);
+      await rename(partialPath, destPath); // NOSONAR: sequential - retry loop
       return;
     } catch (error) {
       lastError = error;

@@ -18,7 +18,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
       const executedMigrations: string[] = [];
       for (const migration of Object.keys(MIGRATION_REGISTRY)) {
         if (!this.migrations.includes(migration)) {
-          const success = await this.runMigration(migration);
+          const success = await this.runMigration(migration); // NOSONAR: sequential - migrations run in registry order
           if (success) {
             executedMigrations.push(migration);
           }

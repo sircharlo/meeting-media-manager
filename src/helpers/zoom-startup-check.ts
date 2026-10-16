@@ -173,8 +173,8 @@ const getMeetingOpeningWindow = (): 'now' | null | number => {
 const waitForMeeting = async () => {
   const deadline = Date.now() + MEETING_OPEN_TIMEOUT_MS;
   while (Date.now() < deadline) {
-    await sleep(MEETING_POLL_MS);
-    const meeting = await getZoomMeetingState();
+    await sleep(MEETING_POLL_MS); // NOSONAR: sequential - polls until ready
+    const meeting = await getZoomMeetingState(); // NOSONAR: sequential - polls until ready
     if (meeting?.found) return true;
   }
   return false;

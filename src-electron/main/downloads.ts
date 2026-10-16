@@ -331,7 +331,7 @@ async function createDirWithRetry(dir: string): Promise<string> {
   const diagnostics: EnsureDirAttemptDiagnostics[] = [];
 
   for (let attempt = 0; attempt <= ENSURE_DIR_RETRY_COUNT; attempt += 1) {
-    const result = await tryCreateDir(dir);
+    const result = await tryCreateDir(dir); // NOSONAR: sequential - retry loop
     if (!result) {
       if (attempt > 0) {
         addElectronBreadcrumb({
@@ -346,16 +346,12 @@ async function createDirWithRetry(dir: string): Promise<string> {
 
     const { error } = result;
     lastError = error;
-    const attemptDiagnostics = await getDirectoryFailureDiagnostics(
-      dir,
-      attempt,
-      error,
-    );
-    diagnostics.push(attemptDiagnostics);
+    const diagnosis = await getDirectoryFailureDiagnostics(dir, attempt, error); // NOSONAR: sequential - retry loop
+    diagnostics.push(diagnosis);
 
     addElectronBreadcrumb({
       category: 'downloads.filesystem',
-      data: attemptDiagnostics,
+      data: diagnosis,
       level: 'warning',
       message: 'download-directory-create-failed',
     });
@@ -365,7 +361,7 @@ async function createDirWithRetry(dir: string): Promise<string> {
       ENSURE_DIR_RETRYABLE_CODES.has(code ?? '') &&
       attempt < ENSURE_DIR_RETRY_COUNT;
     if (!shouldRetry) break;
-    await delay(getEnsureDirRetryDelay(attempt));
+    await delay(getEnsureDirRetryDelay(attempt)); // NOSONAR: sequential - retry loop
   }
 
   const fallbackDir = getDownloadFallbackDir(dir);
@@ -1060,7 +1056,7 @@ async function drainQueue() {
   try {
     while (queueRerunRequested) {
       queueRerunRequested = false;
-      await fillFreeSlots();
+      await fillFreeSlots(); // NOSONAR: sequential - queue drain loop, reruns until no new request
     }
   } catch (error) {
     // Every call site fires processQueue() and forgets it, so report here
@@ -1079,7 +1075,8 @@ async function drainQueue() {
 
 async function fillFreeSlots() {
   while (canStartDownloads() && pickNextQueueItemType() !== null) {
-    if (await isDiskSpaceCriticallyLow()) {
+    const diskSpaceCriticallyLow = await isDiskSpaceCriticallyLow(); // NOSONAR: sequential - download queue fills one slot at a time
+    if (diskSpaceCriticallyLow) {
       log(
         'Pausing downloads: disk space is critically low.',
         'electronDownloads',

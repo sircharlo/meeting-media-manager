@@ -109,11 +109,8 @@ async function listAll(baseUrl, token, path) {
   let offset = 0;
   for (;;) {
     const separator = path.includes('?') ? '&' : '?';
-    const page = await crowdinRequest(
-      baseUrl,
-      token,
-      `${path}${separator}limit=${PAGE_SIZE}&offset=${offset}`,
-    );
+    const pagePath = `${path}${separator}limit=${PAGE_SIZE}&offset=${offset}`;
+    const page = await crowdinRequest(baseUrl, token, pagePath); // NOSONAR: sequential - paginated, stops at the last page
     const rows = page.data ?? [];
     for (const row of rows) items.push(row.data);
     if (rows.length < PAGE_SIZE) break;
@@ -133,13 +130,23 @@ async function main() {
 
   const { baseUrl, projectId, token } = getConfig();
 
+  // Local decision files are independent, so check and read them
+  // concurrently; the first missing one (in argument order) still aborts
+  // before anything is read.
+  const fileExists = await Promise.all(
+    decisionFiles.map((filePath) => pathExists(filePath)),
+  );
+  const missingIndex = fileExists.indexOf(false);
+  if (missingIndex !== -1) {
+    console.error(`Decisions file not found: ${decisionFiles[missingIndex]}`);
+    process.exit(1);
+  }
+  const recordsPerFile = await Promise.all(
+    decisionFiles.map((filePath) => readJson(filePath)),
+  );
+
   const allDecisions = [];
-  for (const filePath of decisionFiles) {
-    if (!(await pathExists(filePath))) {
-      console.error(`Decisions file not found: ${filePath}`);
-      process.exit(1);
-    }
-    const records = await readJson(filePath);
+  for (const records of recordsPerFile) {
     for (const record of records) {
       if (record.status === 'approved') allDecisions.push(record);
     }
@@ -223,11 +230,8 @@ async function main() {
       continue;
     }
 
-    const fileStrings = await listAll(
-      baseUrl,
-      token,
-      `/projects/${projectId}/strings?fileId=${file.id}`,
-    );
+    const stringsPath = `/projects/${projectId}/strings?fileId=${file.id}`;
+    const fileStrings = await listAll(baseUrl, token, stringsPath); // NOSONAR: sequential - rate-limited API
     if (fileStrings[0] && fileStrings[0].identifier === undefined) {
       console.warn(
         `[apply] NOTE: strings for ${sourcePath} do not expose an "identifier" field - ` +
@@ -252,17 +256,14 @@ async function main() {
     }
 
     for (const [crowdinLanguageId, languageDecisions] of byLanguage) {
-      const translations = await listAll(
-        baseUrl,
-        token,
-        `/projects/${projectId}/languages/${encodeURIComponent(crowdinLanguageId)}/translations?fileId=${file.id}`,
-      );
+      const translationsPath = `/projects/${projectId}/languages/${encodeURIComponent(crowdinLanguageId)}/translations?fileId=${file.id}`;
+      const translations = await listAll(baseUrl, token, translationsPath); // NOSONAR: sequential - rate-limited API
       const translationsByStringId = new Map(
         translations.map((t) => [t.stringId, t]),
       );
 
       for (const decision of languageDecisions) {
-        const result = await resolveDecision(
+        const result = resolveDecision(
           { baseUrl, projectId, token },
           decision,
           fileStrings,
@@ -357,12 +358,7 @@ function parseProjectIdFromCrowdinYml() {
  * field first (if the live project exposes one matching the JSON key);
  * falls back to a unique exact-text match. Never guesses on ambiguity.
  */
-async function resolveDecision(
-  ctx,
-  decision,
-  fileStrings,
-  translationsByStringId,
-) {
+function resolveDecision(ctx, decision, fileStrings, translationsByStringId) {
   const byIdentifier = fileStrings.find((s) => s.identifier === decision.key);
   let stringMatch = byIdentifier;
   let matchedBy = 'identifier';

@@ -34,9 +34,9 @@ const discoverJwIconsFontUrl = async () => {
 
   for (const cssUrl of cssUrls) {
     try {
-      const cssResponse = await fetch(cssUrl);
+      const cssResponse = await fetch(cssUrl); // NOSONAR: sequential - stops at first match
       if (!cssResponse.ok) continue;
-      const fontUrl = findIconUrlInCss(await cssResponse.text(), cssUrl);
+      const fontUrl = findIconUrlInCss(await cssResponse.text(), cssUrl); // NOSONAR: sequential - stops at first match
       if (fontUrl) return fontUrl;
     } catch {
       // Try the next stylesheet.

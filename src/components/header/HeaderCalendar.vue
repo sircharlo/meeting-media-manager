@@ -1231,8 +1231,8 @@ const importStudyBibleMedia = async (
 
   for (const mediaItem of importItem.data.items) {
     const item = mediaItem.MimeType.includes('image')
-      ? await createStudyBibleImageItem(mediaItem)
-      : await createStudyBibleVideoItem(mediaItem, targetSection);
+      ? await createStudyBibleImageItem(mediaItem) // NOSONAR: sequential - bulk import, avoid flooding network/disk
+      : await createStudyBibleVideoItem(mediaItem, targetSection); // NOSONAR: sequential - bulk import, avoid flooding network/disk
 
     if (item) mediaItemsToAdd.push(item);
   }

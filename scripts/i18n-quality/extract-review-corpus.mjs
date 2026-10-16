@@ -159,13 +159,29 @@ async function main() {
 
   const summary = { language, runId: resolvedRunId, sources: [] };
 
-  for (const source of CONTENT_SOURCES) {
-    const { records, skippedCorrupted, skippedIdentical, totalSourceKeys } =
-      await extractForSource(source, language);
+  // Each content source reads its own local files and writes its own output
+  // file, so they are extracted concurrently and then summarized in order.
+  const extracted = await Promise.all(
+    CONTENT_SOURCES.map(async (source) => {
+      const result = await extractForSource(source, language);
+      const outPath = resolve(outDir, `${source.contentType}.json`);
+      await writeFile(
+        outPath,
+        `${JSON.stringify(result.records, null, 2)}\n`,
+        'utf-8',
+      );
+      return { ...result, outPath, source };
+    }),
+  );
 
-    const outPath = resolve(outDir, `${source.contentType}.json`);
-    await writeFile(outPath, `${JSON.stringify(records, null, 2)}\n`, 'utf-8');
-
+  for (const {
+    outPath,
+    records,
+    skippedCorrupted,
+    skippedIdentical,
+    source,
+    totalSourceKeys,
+  } of extracted) {
     summary.sources.push({
       contentType: source.contentType,
       emitted: records.length,

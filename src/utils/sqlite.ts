@@ -255,48 +255,61 @@ export interface MepsLanguageByMediaItem {
   Track: null | number;
 }
 
+const MEPS_LANGUAGE_TABLES = [
+  'Multimedia',
+  'DocumentMultimedia',
+  'ExtractMultimedia',
+] as const;
+
+const getTableMepsLanguages = async (
+  source: MultimediaItemsFetcher,
+  db: string,
+  table: (typeof MEPS_LANGUAGE_TABLES)[number],
+): Promise<MepsLanguageByMediaItem[]> => {
+  try {
+    const thisTableExists = await tableExists(db, table);
+    if (!thisTableExists) return [];
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: { name: 'getMepsLanguagesByMediaItem', source, table },
+      },
+    });
+    return [];
+  }
+  const columnQueryResult = await executeQuery<{ name: string }>(
+    db,
+    `PRAGMA table_info(${table})`,
+  );
+
+  const columnMLIExists = columnQueryResult.some(
+    (column) => column.name === 'MepsLanguageIndex',
+  );
+  const columnKSExists = columnQueryResult.some(
+    (column) => column.name === 'KeySymbol',
+  );
+  if (!columnKSExists || !columnMLIExists) return [];
+
+  return executeQuery<MepsLanguageByMediaItem>(
+    db,
+    `SELECT DISTINCT IssueTagNumber, KeySymbol, MepsLanguageIndex, Track from ${table} ORDER by KeySymbol, IssueTagNumber, Track`,
+  );
+};
+
 export const getMepsLanguagesByMediaItem = async (
   source: MultimediaItemsFetcher,
 ): Promise<MepsLanguageByMediaItem[]> => {
   try {
-    if (!source.db) return [];
-    const mepsLanguagesByMediaItem: MepsLanguageByMediaItem[] = [];
-    for (const table of [
-      'Multimedia',
-      'DocumentMultimedia',
-      'ExtractMultimedia',
-    ]) {
-      try {
-        const thisTableExists = await tableExists(source.db, table);
-        if (!thisTableExists) continue;
-      } catch (error) {
-        errorCatcher(error, {
-          contexts: {
-            fn: { name: 'getMepsLanguagesByMediaItem', source, table },
-          },
-        });
-        continue;
-      }
-      const columnQueryResult = await executeQuery<{ name: string }>(
-        source.db,
-        `PRAGMA table_info(${table})`,
-      );
-
-      const columnMLIExists = columnQueryResult.some(
-        (column) => column.name === 'MepsLanguageIndex',
-      );
-      const columnKSExists = columnQueryResult.some(
-        (column) => column.name === 'KeySymbol',
-      );
-
-      if (columnKSExists && columnMLIExists)
-        mepsLanguagesByMediaItem.push(
-          ...(await executeQuery<MepsLanguageByMediaItem>(
-            source.db,
-            `SELECT DISTINCT IssueTagNumber, KeySymbol, MepsLanguageIndex, Track from ${table} ORDER by KeySymbol, IssueTagNumber, Track`,
-          )),
-        );
-    }
+    const { db } = source;
+    if (!db) return [];
+    // Read-only lookups against independent tables; results are kept in
+    // table order.
+    const mepsLanguagesByTable = await Promise.all(
+      MEPS_LANGUAGE_TABLES.map((table) =>
+        getTableMepsLanguages(source, db, table),
+      ),
+    );
+    const mepsLanguagesByMediaItem = mepsLanguagesByTable.flat();
 
     const filterSjjm = (items: typeof mepsLanguagesByMediaItem) => {
       // Build a set of sjj keys (IssueTagNumber + Track)
@@ -881,21 +894,22 @@ const getExtractMultimedia = async (
         !(symbol === 'lmd' && extractItem.MimeType.includes('video')),
     );
 
+  const extractPub: PublicationFetcher = {
+    issue: extract.IssueTagNumber,
+    langwritten: extractLang,
+    pub: symbol,
+  };
+  const getExtractVideoMarkers = (mediaId: number) =>
+    getMediaVideoMarkers({ db: extractDb }, mediaId);
+
   for (let i = 0; i < extractItems.length; i++) {
     const item = extractItems[i];
     if (!item) continue;
 
-    const videoMarkers = await getMediaVideoMarkers(
-      { db: extractDb },
-      item.MultimediaId,
-    );
+    const videoMarkers = await getExtractVideoMarkers(item.MultimediaId); // NOSONAR: sequential - avoid flooding the network drive
     if (videoMarkers) item.VideoMarkers = videoMarkers;
 
-    extractItems[i] = await addFullFilePathToMultimediaItem(item, {
-      issue: extract.IssueTagNumber,
-      langwritten: extractLang,
-      pub: symbol,
-    });
+    extractItems[i] = await addFullFilePathToMultimediaItem(item, extractPub); // NOSONAR: sequential - avoid flooding the network drive
   }
 
   return { items: extractItems, mepsLanguagesByMediaItem };
@@ -934,14 +948,17 @@ export const getDocumentExtractItems = async (
     const allExtractItems: MultimediaItem[] = [];
     const allMepsLanguagesByMediaItem: MepsLanguageByMediaItem[] = [];
 
-    for (const extract of extracts) {
-      const { items, mepsLanguagesByMediaItem } = await getExtractMultimedia(
+    const getMultimedia = (extract: MultimediaExtractItem) =>
+      getExtractMultimedia(
         extract,
         meetingDate,
         defaultLang,
         settings,
         currentStateStore.currentLangObject?.isSignLanguage,
       );
+
+    for (const extract of extracts) {
+      const { items, mepsLanguagesByMediaItem } = await getMultimedia(extract); // NOSONAR: sequential - may download and unzip the same JWPUB
       allExtractItems.push(...items);
       allMepsLanguagesByMediaItem.push(...mepsLanguagesByMediaItem);
     }
