@@ -37,6 +37,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🐞 Bug Fixes
 
+- 🐞 **Shared Folder**: Fixed files added to, replaced in or removed from the shared folder sometimes not being picked up when many changes arrived at once, as often happens with cloud storage apps: a new file could fail to appear in the media list, a replaced file could disappear from it, or a removed one could stay listed.
 - 🛠️ **Zoom Meeting Manager**: A "raised their hand" notification now stays until the operator acts on it, and goes away by itself when that participant lowers their hand before being picked.
 - 🐞 **Zoom Meeting Manager**: Fixed the "M³ is operating Zoom" notice staying up, with its Cancel button spinning, when the run behind it (such as the startup check) kept polling after a cancel. One press on Cancel now frees the window at once, a cancel also stops the read-only lookups the automations poll with, a run that doesn't unwind within 15 seconds is force-ended, and no run may last more than 5 minutes.
 - 🛠️ **Zoom Meeting Manager**: The "Zoom automations paused" notice in the Zoom popup now says that the line under it is what failed at the last check.
