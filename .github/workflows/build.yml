@@ -49,12 +49,15 @@ jobs:
         with:
           node-version: 24
           cache: 'yarn'
-      - name: Install X11 development libraries
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libx11-xcb-dev libxkbcommon-x11-dev libxss-dev libpng-dev libpng++-dev
+      # The scan only reads the dependencies' sources and types, never their
+      # build output, so their install/postinstall scripts are skipped: a
+      # compromised package then gets no chance to run code at install time.
+      # --mode=skip-build is Yarn 4's install flag for that, and
+      # YARN_ENABLE_SCRIPTS=false the config-level equivalent.
       - name: Install dependencies
-        run: yarn install
+        env:
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: yarn install --mode=skip-build
       - name: Prepare Quasar
         run: yarn quasar prepare
       - name: SonarQube Scan
@@ -104,7 +107,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libx11-xcb-dev libxkbcommon-x11-dev libxss-dev libpng-dev libpng++-dev
       - name: Install dependencies
-        run: yarn install
+        run: yarn install # NOSONAR: gates the Build job, so it installs exactly like Build does (dependency build scripts on); CI only installs the immutable, checksum-verified yarn.lock
       - name: Prepare Quasar
         run: yarn quasar prepare
       - name: Lint files
@@ -146,7 +149,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libx11-xcb-dev libxkbcommon-x11-dev libxss-dev libpng-dev libpng++-dev
       - name: Install dependencies
-        run: yarn install
+        run: yarn install # NOSONAR: the release build keeps dependency build scripts on (robotjs/ttf2woff2 native addons, sentry-cli binary check); CI only installs the immutable, checksum-verified yarn.lock
       - name: Install Apple certificate
         if: runner.os == 'macOS' && github.actor != 'dependabot[bot]'
         env:

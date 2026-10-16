@@ -22,8 +22,15 @@ jobs:
           node-version: 24
           cache: 'yarn'
 
+      # The refresh script is plain JavaScript (fontkit), and this job holds
+      # a write token, so the dependencies' install/postinstall scripts are
+      # skipped: a compromised package then gets no chance to run code at
+      # install time. --mode=skip-build is Yarn 4's install flag for that,
+      # and YARN_ENABLE_SCRIPTS=false the config-level equivalent.
       - name: Install dependencies
-        run: yarn install
+        env:
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: yarn install --mode=skip-build
 
       - name: Run refresh-jw-icons-fallbacks script
         run: yarn refresh:jw-icons-fallbacks

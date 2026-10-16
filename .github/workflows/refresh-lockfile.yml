@@ -30,8 +30,17 @@ jobs:
       - name: Delete lockfile
         run: rm -f yarn.lock
 
+      # Only yarn.lock is kept from this install, and dependency builds never
+      # change it. This is also the one install that resolves fresh, not yet
+      # reviewed versions while holding a write token, so the dependencies'
+      # install/postinstall scripts are skipped: a compromised package then
+      # gets no chance to run code here. --mode=skip-build is Yarn 4's
+      # install flag for that, and YARN_ENABLE_SCRIPTS=false the config-level
+      # equivalent.
       - name: Install dependencies
-        run: yarn install --no-immutable
+        env:
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: yarn install --no-immutable --mode=skip-build
 
       - name: Commit and push lockfile branch
         id: commit

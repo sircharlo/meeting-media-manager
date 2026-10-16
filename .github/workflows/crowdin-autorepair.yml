@@ -80,13 +80,23 @@ jobs:
           node-version: 24
           cache: 'yarn'
 
+      # The cleanup script is plain JavaScript, so the dependencies'
+      # install/postinstall scripts are skipped: a compromised package then
+      # gets no chance to run code at install time. --mode=skip-build is
+      # Yarn 4's install flag for that, and YARN_ENABLE_SCRIPTS=false the
+      # config-level equivalent.
       - name: Install dependencies
-        run: yarn install
+        env:
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: yarn install --mode=skip-build
 
       - name: Repair Crowdin translations at the source
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          # Passed through the environment rather than interpolated into the
+          # script, so a crafted value can't inject shell code.
+          LANGUAGE_INPUT: ${{ inputs.language }}
         run: |
           # Scheduled and push-triggered runs always apply a full sweep (push
           # events carry no workflow_dispatch inputs to read). Manual runs
@@ -95,7 +105,7 @@ jobs:
             node scripts/cleanup-crowdin.mjs --apply
             exit $?
           fi
-          LANGUAGE="${{ inputs.language }}"
+          LANGUAGE="$LANGUAGE_INPUT"
           # Guard against malformed or injected language ids.
           case "$LANGUAGE" in
             ''|*[!a-zA-Z0-9_-]*) LANGUAGE='' ;;
@@ -152,8 +162,15 @@ jobs:
           node-version: 24
           cache: 'yarn'
 
+      # The repair scripts are plain JavaScript, and this checkout holds the
+      # PERSONAL_TOKEN, so the dependencies' install/postinstall scripts are
+      # skipped: a compromised package then gets no chance to run code at
+      # install time. --mode=skip-build is Yarn 4's install flag for that,
+      # and YARN_ENABLE_SCRIPTS=false the config-level equivalent.
       - name: Install dependencies
-        run: yarn install
+        env:
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: yarn install --mode=skip-build
 
       - name: Repair the exported files
         run: |
