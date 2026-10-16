@@ -14,7 +14,7 @@ vi.mock('src/helpers/error-catcher', async (importOriginal) => {
   const mod = await importOriginal<object>();
   return {
     ...mod,
-    errorCatcher: vi.fn(async (error: unknown) => {
+    errorCatcher: vi.fn((error: unknown) => {
       if (
         error instanceof Error &&
         error.message === 'Function not implemented.'

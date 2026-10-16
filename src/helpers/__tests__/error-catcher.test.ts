@@ -22,13 +22,23 @@ describe('errorCatcher', () => {
 
   it('does nothing for a falsy error', async () => {
     const { errorCatcher } = await import('../error-catcher');
-    await errorCatcher(undefined);
+    errorCatcher(undefined);
     expect(captureExceptionMock).not.toHaveBeenCalled();
+  });
+
+  it('reports synchronously and returns nothing to await', async () => {
+    const { errorCatcher } = await import('../error-catcher');
+    const error = new Error('sync report');
+
+    const result: unknown = errorCatcher(error);
+
+    expect(result).toBeUndefined();
+    expect(captureExceptionMock).toHaveBeenCalledWith(error, undefined);
   });
 
   it('drops raw DOM events instead of reporting them', async () => {
     const { errorCatcher } = await import('../error-catcher');
-    await errorCatcher(new Event('error'));
+    errorCatcher(new Event('error'));
     expect(captureExceptionMock).not.toHaveBeenCalled();
   });
 
@@ -37,7 +47,7 @@ describe('errorCatcher', () => {
     const cause = new Error('root cause');
     const wrapper = new Error('wrapper', { cause });
 
-    await errorCatcher(wrapper);
+    errorCatcher(wrapper);
 
     expect(captureExceptionMock).toHaveBeenCalledTimes(1);
     expect(captureExceptionMock).toHaveBeenCalledWith(cause, undefined);
@@ -47,7 +57,7 @@ describe('errorCatcher', () => {
     const { errorCatcher } = await import('../error-catcher');
     const wrapper = new Error('wrapper', { cause: new Event('error') });
 
-    await errorCatcher(wrapper);
+    errorCatcher(wrapper);
 
     expect(captureExceptionMock).not.toHaveBeenCalled();
   });
@@ -60,7 +70,7 @@ describe('errorCatcher', () => {
     const mediaError = { code: 4, message: '' };
     const wrapper = new Error('Unknown VideoRef Error', { cause: mediaError });
 
-    await errorCatcher(wrapper);
+    errorCatcher(wrapper);
 
     expect(captureExceptionMock).toHaveBeenCalledTimes(1);
     expect(captureExceptionMock).toHaveBeenCalledWith(wrapper, undefined);
@@ -73,7 +83,7 @@ describe('errorCatcher', () => {
       { code: 'ENOENT', syscall: 'rename' },
     );
 
-    await errorCatcher(error, {
+    errorCatcher(error, {
       contexts: { fn: { name: 'getMediaFromJwPlaylist rename thumbnail' } },
     });
 
@@ -97,7 +107,7 @@ describe('errorCatcher', () => {
       syscall: 'open',
     });
 
-    await errorCatcher(error);
+    errorCatcher(error);
 
     expect(captureExceptionMock).toHaveBeenCalledWith(
       error,
@@ -111,7 +121,7 @@ describe('errorCatcher', () => {
     const { errorCatcher } = await import('../error-catcher');
     const error = new Error('Something else went wrong');
 
-    await errorCatcher(error);
+    errorCatcher(error);
 
     expect(captureExceptionMock).toHaveBeenCalledWith(error, undefined);
   });

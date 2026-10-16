@@ -640,7 +640,7 @@ const reportContentsExtractionError = async (
     diagnostics,
   );
 
-  await errorCatcher(error, {
+  errorCatcher(error, {
     contexts: {
       fn: {
         args: {
@@ -676,7 +676,7 @@ const getMediaFromJwPlaylist = async (
         playlistName = playlistNameQuery[0].Name + ' - ';
       }
     } catch (error) {
-      await errorCatcher(error, {
+      errorCatcher(error, {
         contexts: {
           fn: {
             args: {
@@ -758,7 +758,7 @@ const getMediaFromJwPlaylist = async (
             ) {
               item.ThumbnailFilePath += '.jpg';
             } else {
-              await errorCatcher(error, {
+              errorCatcher(error, {
                 contexts: {
                   fn: {
                     args: {
@@ -851,7 +851,7 @@ const getMediaFromJwPlaylist = async (
     );
     return mappedPlaylistMediaItems;
   } catch (error) {
-    await errorCatcher(error, {
+    errorCatcher(error, {
       contexts: {
         fn: {
           args: {
@@ -1188,7 +1188,7 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
       await closeSqliteConnections();
       await remove(outputPath);
     } catch (removeError) {
-      await errorCatcher(removeError, {
+      errorCatcher(removeError, {
         contexts: {
           fn: {
             args: {
@@ -1209,7 +1209,7 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
         error,
       );
     } else {
-      await errorCatcher(error, {
+      errorCatcher(error, {
         contexts: {
           fn: {
             args: {
@@ -1249,7 +1249,7 @@ export const unzipJwpub = async (
       try {
         await remove(outputPath);
       } catch (e) {
-        await errorCatcher(e, {
+        errorCatcher(e, {
           contexts: {
             fn: {
               args: {
@@ -1286,7 +1286,7 @@ export const unzipJwpub = async (
     }
   } catch (error) {
     if (!warnJwpubUnavailable(jwpubPath, error)) {
-      await errorCatcher(error, {
+      errorCatcher(error, {
         contexts: {
           fn: {
             args: {

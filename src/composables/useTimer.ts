@@ -786,7 +786,7 @@ const createTimer = () => {
     try {
       postTimerData(timerData);
     } catch (error) {
-      void errorCatcher(error, {
+      errorCatcher(error, {
         contexts: { fn: { name: 'postTimerData' } },
       });
     }
@@ -838,7 +838,7 @@ const createTimer = () => {
       try {
         globalThis.electronApi.timerRemoteUpdate(timerData);
       } catch (error) {
-        void errorCatcher(error, {
+        errorCatcher(error, {
           contexts: { fn: { name: 'timerRemoteUpdate' } },
         });
       }
