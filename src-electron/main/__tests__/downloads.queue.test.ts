@@ -479,7 +479,7 @@ describe('download queue', () => {
     await waitUntil(() => runningTransfers().length === 3);
 
     const { cancelAllDownloads } = await loadDownloads();
-    await cancelAllDownloads();
+    cancelAllDownloads();
     await waitUntil(() => sentTo('downloadCancelled').length === 4);
     await flush();
 
@@ -509,7 +509,7 @@ describe('download queue', () => {
     await waitUntil(() => mocks.delay.mock.calls.length > 0);
 
     const { cancelAllDownloads } = await loadDownloads();
-    await cancelAllDownloads();
+    cancelAllDownloads();
     finishWaiting();
     await flush();
 
@@ -528,7 +528,7 @@ describe('download queue', () => {
     await waitUntil(() => transfersFor('normal').length === 1);
 
     const { cancelAllDownloads } = await loadDownloads();
-    await cancelAllDownloads();
+    cancelAllDownloads();
     latestTransfer('low').resolve({ kind: 'paused', resume: null });
 
     await waitUntil(() =>
@@ -571,13 +571,13 @@ describe('download queue', () => {
     await waitUntil(() => runningTransfers().length === 2);
 
     const { pauseAllDownloads, resumeAllDownloads } = await loadDownloads();
-    await pauseAllDownloads('test');
+    pauseAllDownloads('test');
     await waitUntil(() => runningTransfers().length === 0);
     await startDownloads(['c']);
     await flush();
     expect(mocks.transfers).toHaveLength(2);
 
-    await resumeAllDownloads('test');
+    resumeAllDownloads('test');
     await waitUntil(() => runningTransfers().length === 3);
     expect(transfersFor('a')).toHaveLength(2);
     expect(transfersFor('c')).toHaveLength(1);
@@ -588,12 +588,12 @@ describe('download queue', () => {
     await waitUntil(() => runningTransfers().length === 3);
     const { isDownloadComplete } = await loadDownloads();
 
-    expect(await isDownloadComplete(keyFor('a'))).toBe(false);
-    expect(await isDownloadComplete(keyFor('d'))).toBe(false);
+    expect(isDownloadComplete(keyFor('a'))).toBe(false);
+    expect(isDownloadComplete(keyFor('d'))).toBe(false);
 
     complete('a');
     await waitUntil(() => transfersFor('d').length === 1);
-    expect(await isDownloadComplete(keyFor('a'))).toBe(true);
+    expect(isDownloadComplete(keyFor('a'))).toBe(true);
   });
 
   // BE-1 (full-audit-2026-09-04.md)

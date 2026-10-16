@@ -1180,7 +1180,7 @@ const sectionToAddTo = ref<MediaSectionIdentifier | undefined>();
 useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   globalThis,
   'openFileImportDialog',
-  async (e) => {
+  (e) => {
     sectionToAddTo.value = e.detail.section;
     // Reset progress tracking when opening the dialog
     totalFiles.value = 0;
@@ -3051,7 +3051,7 @@ watch(
 
 watchImmediate(
   () => selectedDate.value,
-  async (newVal) => {
+  (newVal) => {
     stopSlideshowPlayback();
     selectedMediaItems.value = [];
     lastExtendDirection.value = null;
@@ -3077,7 +3077,7 @@ watch(
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
-  async ([newJwpubImportDb, newJwpubImportDocuments]) => {
+  ([newJwpubImportDb, newJwpubImportDocuments]) => {
     if (newJwpubImportDocuments?.length) {
       showFileImport.value = true;
     } else if (!newJwpubImportDb) {

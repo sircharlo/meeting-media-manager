@@ -3,7 +3,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 
 import type { MigrationFunction } from './types';
 
-export const refreshDynamicMedia: MigrationFunction = async () => {
+export const refreshDynamicMedia: MigrationFunction = () => {
   try {
     // Refresh dynamic media for all congregations
     updateLookupPeriod({ multipleCongregations: true, reset: true });

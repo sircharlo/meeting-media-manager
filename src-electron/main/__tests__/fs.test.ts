@@ -992,7 +992,7 @@ describe('watchFolder', () => {
     mockWatcherRegistration();
     const { watchFolder } = await import('../fs');
 
-    await watchFolder(webDavPath);
+    watchFolder(webDavPath);
 
     expect(watchMock).toHaveBeenCalledWith(
       webDavPath,
@@ -1006,7 +1006,7 @@ describe('watchFolder', () => {
   it('ignores known network watch/stat errors instead of reporting them to Sentry', async () => {
     const handlers = mockWatcherRegistration();
     const { watchFolder } = await import('../fs');
-    await watchFolder(webDavPath);
+    watchFolder(webDavPath);
 
     handlers.get('error')?.({ code: 'EISDIR', syscall: 'watch' });
     handlers.get('error')?.({ code: 'UNKNOWN', syscall: 'stat' });
@@ -1017,7 +1017,7 @@ describe('watchFolder', () => {
   it('only watches dated folders that can still show up in the media calendar', async () => {
     mockWatcherRegistration();
     const { watchFolder } = await import('../fs');
-    await watchFolder('/tmp/media');
+    watchFolder('/tmp/media');
 
     const { ignored } = watchMock.mock.calls[0]?.[1] as {
       ignored: (fp: string, stats?: { isDirectory: () => boolean }) => boolean;
@@ -1050,7 +1050,7 @@ describe('watchFolder', () => {
   it('still reports unexpected watch errors', async () => {
     const handlers = mockWatcherRegistration();
     const { watchFolder } = await import('../fs');
-    await watchFolder('/tmp/media');
+    watchFolder('/tmp/media');
 
     handlers.get('error')?.({ code: 'EACCES', syscall: 'watch' });
 

@@ -727,7 +727,7 @@ const isTimerScreenSelected = (index: number, screen: Display) => {
 
 whenever(
   () => open.value,
-  async () => {
+  () => {
     void fetchScreens();
   },
 );

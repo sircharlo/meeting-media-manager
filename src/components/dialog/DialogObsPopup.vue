@@ -132,7 +132,7 @@ const notifySceneNotFound = () =>
     type: 'negative',
   });
 
-const openObsRecordingFolder = async () => {
+const openObsRecordingFolder = () => {
   if (obsRecordingFolder.value) {
     void openFolder(obsRecordingFolder.value);
   }

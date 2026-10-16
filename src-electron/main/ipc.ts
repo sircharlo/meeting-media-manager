@@ -259,15 +259,15 @@ handleIpcSend('toggleTimerWindow', async (_e, show: boolean) => {
 handleIpcSend('askForMediaAccess', askForMediaAccess);
 
 handleIpcSend('cancelAllDownloads', () => {
-  void cancelAllDownloads();
+  cancelAllDownloads();
 });
 
 handleIpcSend('resumeAllDownloads', () => {
-  void resumeAllDownloads('renderer-manual');
+  resumeAllDownloads('renderer-manual');
 });
 
 handleIpcSend('pauseAllDownloads', () => {
-  void pauseAllDownloads('renderer-manual');
+  pauseAllDownloads('renderer-manual');
 });
 
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
@@ -317,7 +317,7 @@ handleIpcSend(
   'toggleWebsiteWindow',
   (_e, show: boolean, websiteParams?: JwSiteParams) => {
     if (show) {
-      void createWebsiteWindow(websiteParams);
+      createWebsiteWindow(websiteParams);
     } else {
       websiteWindowInfo.websiteWindow?.close();
     }
@@ -436,7 +436,7 @@ function handleIpcInvoke<T = unknown>(
     event: IpcMainInvokeEvent,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...args: any[]
-  ) => Promise<T>,
+  ) => Promise<T> | T,
 ) {
   ipcMain.handle(channel, (e, ...args) => {
     if (isSelf(e.senderFrame?.url)) {
@@ -493,10 +493,10 @@ handleIpcInvoke('getAppDataPath', async () => getAppDataPath());
 handleIpcInvoke('getBetaUpdatesPath', async () => getBetaUpdatesPath());
 handleIpcInvoke('getLowDiskSpaceStatus', async () => getLowDiskSpaceStatus());
 handleIpcInvoke('getUpdatesDisabledPath', async () => getUpdatesDisabledPath());
-handleIpcInvoke('getUpdaterState', async () => getUpdaterState());
+handleIpcInvoke('getUpdaterState', () => getUpdaterState());
 handleIpcInvoke('getSharedDataPath', async () => getSharedDataPath());
-handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
-handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());
+handleIpcInvoke('getUserDataPath', () => app.getPath('userData'));
+handleIpcInvoke('getLocales', () => app.getPreferredSystemLanguages());
 handleIpcInvoke('isUsablePath', async (_e, p: string) => isUsablePath(p));
 handleIpcInvoke('startZoomHelper', async () => startZoomHelper());
 handleIpcSend('stopZoomHelper', () => stopZoomHelper());
@@ -512,17 +512,15 @@ handleIpcInvoke('isOnline', async () => {
   return isOnline();
 });
 
-handleIpcInvoke('getOsSupportWarning', async () => getOsSupportWarning());
+handleIpcInvoke('getOsSupportWarning', () => getOsSupportWarning());
 
-handleIpcInvoke(
-  'getScreenAccessStatus',
-  async (): Promise<MediaAccessStatus> =>
-    PLATFORM === 'linux'
-      ? 'granted'
-      : systemPreferences.getMediaAccessStatus('screen'),
+handleIpcInvoke('getScreenAccessStatus', (): MediaAccessStatus =>
+  PLATFORM === 'linux'
+    ? 'granted'
+    : systemPreferences.getMediaAccessStatus('screen'),
 );
 
-handleIpcInvoke('getAllScreens', async () => getAllScreens());
+handleIpcInvoke('getAllScreens', () => getAllScreens());
 
 // Media-preview capture mode: lets MediaPreview.vue mirror the media
 // window's actual composited pixels via getUserMedia({chromeMediaSource})
@@ -531,7 +529,7 @@ handleIpcInvoke('getAllScreens', async () => getAllScreens());
 // registered once per session, and since all windows share the default
 // session, a second registration here would silently replace the existing
 // website-mirror handler and break OBS/Zoom screen-share.
-handleIpcInvoke('getMediaWindowCaptureSourceId', async (e) => {
+handleIpcInvoke('getMediaWindowCaptureSourceId', (e) => {
   const media = mediaWindowInfo.mediaWindow;
   if (!media || media.isDestroyed()) return null;
   return media.webContents.getMediaSourceId(e.sender);
@@ -552,7 +550,7 @@ handleIpcInvoke(
     params?: (null | number | string)[],
   ) => executeQuery(dbPath, query, params),
 );
-handleIpcInvoke('isDownloadComplete', async (_e, downloadId: string) =>
+handleIpcInvoke('isDownloadComplete', (_e, downloadId: string) =>
   isDownloadComplete(downloadId),
 );
 handleIpcInvoke('isDownloadErrorExpected', async () =>
@@ -566,7 +564,7 @@ handleIpcInvoke('passWafChallenge', async (_e, url: string) => {
 
 handleIpcInvoke(
   'registerShortcut',
-  async (_e, name: keyof SettingsValues, keySequence: string) =>
+  (_e, name: keyof SettingsValues, keySequence: string) =>
     registerShortcut(name, keySequence),
 );
 
@@ -649,7 +647,7 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('unwatchFolders', async () => unwatchFolders());
-handleIpcInvoke('watchFolder', async (_e, folderPath: string) =>
+handleIpcInvoke('watchFolder', (_e, folderPath: string) =>
   watchFolder(folderPath),
 );
 

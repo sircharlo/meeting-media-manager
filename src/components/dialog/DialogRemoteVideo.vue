@@ -312,7 +312,7 @@ const refreshVideos = async () => {
   await getJwVideos();
 };
 
-const addVideo = async (video: MediaItemsMediatorItem) => {
+const addVideo = (video: MediaItemsMediatorItem) => {
   // ✅ Always emit - parent handles section assignment
   emit('import', {
     mediaItemLinks: video.files,

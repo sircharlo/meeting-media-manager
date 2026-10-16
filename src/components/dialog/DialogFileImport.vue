@@ -256,7 +256,7 @@ onUnmounted(() => {
   authorizedDrop.value = false;
 });
 
-const getLocalFiles = async () => {
+const getLocalFiles = () => {
   globalThis.electronApi
     .openFileDialog()
     .then((result) => {

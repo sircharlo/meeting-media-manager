@@ -436,7 +436,7 @@ export const useMusicStore = defineStore('music', () => {
         });
 
         const enrichMetadataStartedAt = performance.now();
-        const enrichedSongs = await enrichSongsWithMetadata(rawSongLibrary);
+        const enrichedSongs = enrichSongsWithMetadata(rawSongLibrary);
         logMusicStartStep('song metadata enriched', enrichMetadataStartedAt, {
           songs: enrichedSongs.length,
         });
@@ -454,12 +454,14 @@ export const useMusicStore = defineStore('music', () => {
             selectedDateObject.value?.mediaSections ?? {},
           ).flatMap((section) => (section.items ?? []) as MediaItem[]);
 
-          const { queue, startOffsetSeconds } =
-            await prepareMeetingDaySongQueue(enrichedSongs, {
+          const { queue, startOffsetSeconds } = prepareMeetingDaySongQueue(
+            enrichedSongs,
+            {
               currentSettings: currentSettings.value,
               selectedDayMedia,
               timeBeforeMeetingStart,
-            });
+            },
+          );
 
           songList.value = queue;
           initialStartOffset.value = startOffsetSeconds;

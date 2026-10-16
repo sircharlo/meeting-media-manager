@@ -25,7 +25,7 @@ export const websiteWindowInfo = {
 /**
  * Creates the website window
  */
-export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
+export function createWebsiteWindow(websiteParams?: JwSiteParams) {
   // If the window is already open, just focus it
   if (
     websiteWindowInfo.websiteWindow &&

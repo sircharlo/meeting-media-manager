@@ -1025,7 +1025,7 @@ const { post: postOnline } = useBroadcastChannel<boolean, boolean>({
 });
 
 // Function to check if we should show the yeartext preview notification
-const checkYeartextPreview = async () => {
+const checkYeartextPreview = () => {
   try {
     // Only run if congregation is selected
     if (!currentCongregation.value) return;
@@ -1321,7 +1321,7 @@ watch(
     if (newCongregation && newYeartext && newOnline) {
       // Small delay to ensure all data is ready
       setTimeout(() => {
-        void checkYeartextPreview();
+        checkYeartextPreview();
       }, 1000);
     }
   },
