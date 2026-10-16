@@ -460,6 +460,52 @@ describe('jw-media edge cases', () => {
         'checking',
       );
     });
+
+    it('does not abort days an overlapping run queued after its own days were done', async () => {
+      currentStateStore.currentCongregation = 'cong-1';
+      currentStateStore.currentSettings = {
+        enableFolderWatcher: true,
+        folderToWatch: '/watched',
+      };
+      jwStore.urlVariables = {
+        base: 'jw.org',
+        mediator: 'https://b.jw-cdn.org/apis/mediator',
+      };
+
+      const { fetchMedia } = await import('../jw-media');
+      const { queues } = await import('boot/globals');
+
+      // Another fetchMedia() run queues its days on the shared congregation
+      // queue while this one, already past onIdle(), checks the watched
+      // folder. Two days take both concurrency slots, so the third waits.
+      let releaseRunningDays = () => {
+        /* empty */
+      };
+      const runningDays = new Promise<void>((resolve) => {
+        releaseRunningDays = resolve;
+      });
+      let overlappingDays: Promise<string>[] = [];
+      isUsablePathMock.mockImplementationOnce(async () => {
+        const queue = queues.meetings['cong-1'];
+        if (!queue) throw new Error('meeting queue missing');
+        overlappingDays = ['a', 'b', 'c'].map((day) =>
+          queue.add(async () => {
+            await runningDays;
+            return day;
+          }),
+        );
+        return false;
+      });
+
+      await fetchMedia();
+      releaseRunningDays();
+
+      await expect(Promise.all(overlappingDays)).resolves.toEqual([
+        'a',
+        'b',
+        'c',
+      ]);
+    });
   });
 
   describe('stalled download detection', () => {

@@ -2195,11 +2195,15 @@ export const fetchMedia = async () => {
         currentStateStore.meetingCheckStatus[dateKey] = 'error';
       }
     }
+    // No queue.clear() afterwards: this run's days are all done once the
+    // queue is idle, so anything queued since belongs to an overlapping
+    // fetchMedia() run sharing this congregation's queue. p-queue 10's
+    // clear() rejects those tasks with an AbortError, which their .catch()
+    // above would report and turn into an error status for their days.
     await queue?.onIdle();
     await ensureWatchedMeetingDayFolders();
     downloadBackgroundMusic();
     log('✅ All media processing completed', 'mediaFetching', 'info');
-    queue?.clear();
     exportAllDays();
   } catch (error) {
     log('❌ Error in fetchMedia:', 'mediaFetching', 'error');

@@ -74,6 +74,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🔧 Chores
 
 - 🔧 **Dependencies**: Removed the PDF library that was only used for the meeting timing report.
+- 🔧 **Dependencies**: Updated `p-queue` to version 10. Days that one media refresh adds while another is finishing are no longer dropped.
 - 🔧 **Keyboard Shortcut Automation**: Switched the native module used to send keyboard shortcuts from the `@jitsi/robotjs` fork to the actively maintained upstream `robotjs` package, which now ships prebuilt binaries for every platform M³ supports.
 - 🔧 **Error Reporting**: A watched folder on a cloud-synced or network drive (Google Drive, OneDrive, a mapped drive, etc.) that briefly can't be read mid-sync is no longer reported as an error, and neither is a brief outage on GitHub's side while checking for updates.
 - 🔧 **Error Reporting**: Fixed error reports from some of M³'s background file operations (such as reading a folder's contents, or hiding and unhiding its small tracking files) never being sent, so problems there can now be diagnosed and fixed.
