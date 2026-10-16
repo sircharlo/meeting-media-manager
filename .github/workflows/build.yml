@@ -39,6 +39,24 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
+      # The scan type-checks with the app's own tsconfig.json (which extends
+      # the generated .quasar/tsconfig.json for the path aliases and the
+      # *.vue shim), so dependencies and Quasar's generated types must exist
+      # first - otherwise every external type is `any` and the type-aware
+      # rules report the wrong things.
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24
+          cache: 'yarn'
+      - name: Install X11 development libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libx11-xcb-dev libxkbcommon-x11-dev libxss-dev libpng-dev libpng++-dev
+      - name: Install dependencies
+        run: yarn install
+      - name: Prepare Quasar
+        run: yarn quasar prepare
       - name: SonarQube Scan
         id: scan
         uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9
