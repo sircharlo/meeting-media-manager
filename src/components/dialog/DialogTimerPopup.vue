@@ -606,7 +606,7 @@ const fetchScreens = async () => {
       'getAllScreens timed out',
     );
   } catch (error) {
-    void errorCatcher(error, {
+    errorCatcher(error, {
       contexts: { fn: { name: 'fetchScreens' } },
     });
   } finally {

@@ -4,7 +4,7 @@ import { log } from 'src/shared/vanilla';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
 
-export const errorCatcher = async (error: unknown, context?: CaptureCtx) => {
+export const errorCatcher = (error: unknown, context?: CaptureCtx): void => {
   if (!error) return;
 
   // Raw DOM events (e.g. a <video>/<audio> 'error' event with no attached
