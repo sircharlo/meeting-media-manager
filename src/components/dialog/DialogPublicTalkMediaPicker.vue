@@ -189,7 +189,7 @@ const browse = async () => {
       const stagedS34File = await stageUserJwpubForRead(s34File.value);
       if (!stagedS34File) return;
       await unzipJwpub(stagedS34File, s34Dir.value, true);
-      populatePublicTalks();
+      void populatePublicTalks();
     } catch (error) {
       errorCatcher(error, {
         contexts: {
@@ -264,7 +264,13 @@ watch(
   (isOpen) => {
     if (isOpen) {
       // Initialize when dialog opens
-      initialize();
+      initialize().catch((error: unknown) => {
+        errorCatcher(error, {
+          contexts: {
+            fn: { name: 'DialogPublicTalkMediaPicker initialize' },
+          },
+        });
+      });
     } else {
       // Reset state when dialog closes
       resetDialogState();

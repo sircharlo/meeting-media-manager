@@ -87,7 +87,7 @@ export default defineBoot(() => {
         jumpToPreMeeting();
         break;
       case 'play-music':
-        music.playMusic('dev-menu');
+        void music.playMusic('dev-menu');
         break;
       case 'reseed-demo':
         seedDemoData();

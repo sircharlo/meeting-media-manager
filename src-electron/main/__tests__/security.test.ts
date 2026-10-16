@@ -9,10 +9,11 @@ const { appOn, isSelfMock, setPermissionRequestHandler } = vi.hoisted(() => ({
 vi.mock('electron', () => ({
   app: { on: appOn },
   session: { defaultSession: { setPermissionRequestHandler } },
-  shell: { openExternal: vi.fn() },
+  shell: { openExternal: vi.fn(async () => undefined) },
 }));
 
 vi.mock('src-electron/main/utils', () => ({
+  captureElectronError: vi.fn(),
   isSelf: isSelfMock,
   isTrustedNavigationTarget: vi.fn(() => false),
 }));

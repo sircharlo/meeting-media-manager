@@ -500,9 +500,15 @@ watch(
   () => currentStateStore.online,
   (online) => {
     if (!online) return;
-    loadLatestVersion();
-    loadAnnouncements();
-    getUpdatesEnabled();
+    loadLatestVersion().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'loadLatestVersion' } } });
+    });
+    loadAnnouncements().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'loadAnnouncements' } } });
+    });
+    getUpdatesEnabled().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'getUpdatesEnabled' } } });
+    });
   },
   { immediate: true },
 );

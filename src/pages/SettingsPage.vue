@@ -1021,7 +1021,7 @@ const invalidSettingsLength = computed(() => invalidSettings.value?.length > 0);
 
 // Lifecycle hooks
 onMounted(() => {
-  updateJwLanguages(online.value);
+  void updateJwLanguages(online.value);
   validateSettingsLocal();
 
   const onlyInvalidId = invalidSettings.value[0];

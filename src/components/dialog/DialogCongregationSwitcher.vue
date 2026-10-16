@@ -407,7 +407,7 @@ async function chooseCongregation(
     if (congregation) {
       void checkLowDiskSpaceAndNotify();
 
-      updateYeartext({
+      void updateYeartext({
         isSignLanguage: currentLangObject.value?.isSignLanguage,
         lang: currentSettings.value?.lang,
         langFallback: currentSettings.value?.langFallback,
@@ -433,7 +433,7 @@ async function chooseCongregation(
     errorCatcher(error);
     congregationSwitcherOpen.value = false;
     congregationIdPendingNavigation.value = undefined;
-    router.push('/media-calendar');
+    void router.push('/media-calendar');
   } finally {
     isSwitchingCongregation.value = false;
   }
@@ -442,7 +442,7 @@ async function chooseCongregation(
 function createNewCongregation() {
   const id = createCongregation();
   congregationIdPendingNavigation.value = id;
-  chooseCongregation(id, true);
+  void chooseCongregation(id, true);
 }
 
 const autoSelectCongregation = () => {
@@ -453,7 +453,7 @@ const autoSelectCongregation = () => {
     congregationSwitcherBootstrap.value
   ) {
     const id = Object.keys(congregations.value)[0];
-    if (id) chooseCongregation(id);
+    if (id) void chooseCongregation(id);
   }
   // Every other case (manual reopen with >=1 congregation) requires a real
   // user choice - handled by requiresUserChoice below revealing the dialog,

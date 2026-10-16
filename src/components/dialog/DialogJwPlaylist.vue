@@ -840,7 +840,7 @@ watch(
   (newPath: string) => {
     log(`🎯 jwPlaylistPath changed to: ${newPath}`, 'jwPlaylist', 'info');
     if (newPath) {
-      loadPlaylistItems();
+      void loadPlaylistItems();
     }
   },
 );
@@ -856,7 +856,7 @@ watch(
     } else if (props.jwPlaylistPath) {
       // Load items when dialog opens if path is present
       // This handles the case where the same file is dropped twice
-      loadPlaylistItems();
+      void loadPlaylistItems();
     }
   },
 );

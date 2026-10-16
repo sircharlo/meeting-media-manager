@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import { initializeElectronApi } from 'src/helpers/electron-api-manager';
-initializeElectronApi('MainLayout');
+void initializeElectronApi('MainLayout');
 
 import type { LanguageValue } from 'src/constants/locales';
 import type {
@@ -268,8 +268,8 @@ const {
   setPathProbeNotificationPaths,
   toggleTimerWindow,
 } = globalThis.electronApi;
-updateMemorials(online.value);
-updateJwLanguages(online.value);
+void updateMemorials(online.value);
+void updateJwLanguages(online.value);
 
 const hasActiveDownloads = () => currentState.hasActiveMediaWork;
 
@@ -756,7 +756,7 @@ const queueWatchFolderEvent = (event: Record<string, string>) => {
   processWatchFolderEvents(pendingEvents);
 };
 
-cleanCache();
+void cleanCache();
 cleanPersistedStores();
 
 const closeAttempts = ref(0);
@@ -1263,8 +1263,8 @@ watchImmediate(
       (online && (prev.base !== base || prev.mediator !== mediator));
 
     if (shouldRun) {
-      getJwMepsInfo();
-      setElementFont('jw-icons-all');
+      void getJwMepsInfo();
+      void setElementFont('jw-icons-all');
     }
 
     // Update previous state
@@ -1321,7 +1321,7 @@ watch(
     if (newCongregation && newYeartext && newOnline) {
       // Small delay to ensure all data is ready
       setTimeout(() => {
-        checkYeartextPreview();
+        void checkYeartextPreview();
       }, 1000);
     }
   },
@@ -1394,7 +1394,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     // currentSettings resolves to undefined until a congregation is active.
     // Re-run it now that one is, and again on every later switch, so those
     // folders actually get cleaned up.
-    cleanCache();
+    void cleanCache();
 
     setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
 
@@ -1472,7 +1472,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
           {
             color: 'white',
             handler: () => {
-              router.push('/settings/autoUpdateApp');
+              void router.push('/settings/autoUpdateApp');
             },
             label: t('go-to-settings'),
           },
@@ -1567,13 +1567,13 @@ watch(online, (isNowOnline) => {
         'mediaFetching',
       );
       meetingQueue?.start();
-      jwStore.updateYeartext({
+      void jwStore.updateYeartext({
         isSignLanguage: currentLangObject.value?.isSignLanguage,
         lang: currentSettings.value?.lang,
         langFallback: currentSettings.value?.langFallback,
         online: online.value,
       });
-      jwStore.updateJwLanguages(online.value);
+      void jwStore.updateJwLanguages(online.value);
     } else {
       log(
         '📴 Offline: pausing active congregation meeting queue',
@@ -1636,7 +1636,8 @@ watch(
     currentSettings.value?.convertFilesToMp4,
   ],
   ([newMediaAutoExport, newMediaAutoExportFolder]) => {
-    if (!!newMediaAutoExport && !!newMediaAutoExportFolder) exportAllDays();
+    if (!!newMediaAutoExport && !!newMediaAutoExportFolder)
+      void exportAllDays();
   },
 );
 
@@ -1810,7 +1811,9 @@ watch(
     currentSettings.value?.zoomMeetingManagerEnable,
   ],
   () => {
-    currentState.syncZoomHelper();
+    currentState.syncZoomHelper().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'syncZoomHelper' } } });
+    });
   },
 );
 
@@ -1903,7 +1906,7 @@ watchImmediate(
               {
                 color: 'white',
                 handler: () => {
-                  router.push('/settings/disableHardwareAcceleration');
+                  void router.push('/settings/disableHardwareAcceleration');
                 },
                 label: t('go-to-settings'),
               },

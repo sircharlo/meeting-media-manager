@@ -12,7 +12,7 @@ import { useMeta } from 'quasar';
 import { initializeElectronApi } from 'src/helpers/electron-api-manager';
 import { onMounted } from 'vue';
 
-initializeElectronApi('MediaPlayerLayout');
+void initializeElectronApi('MediaPlayerLayout');
 
 useMeta({
   title: 'Media Player',

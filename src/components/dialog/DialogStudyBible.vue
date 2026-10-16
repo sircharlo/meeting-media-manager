@@ -435,12 +435,12 @@ const fetchBibleBookMedia = async () => {
 
 const selectBook = (bookNr: number) => {
   bibleBook.value = bookNr;
-  fetchBibleBookMedia();
+  void fetchBibleBookMedia();
 };
 
 const selectChapter = (chapter: number) => {
   bibleBookChapter.value = chapter;
-  fetchBibleBookMedia();
+  void fetchBibleBookMedia();
 };
 
 const chapterHasMedia = (chapter: number) =>

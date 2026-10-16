@@ -291,11 +291,11 @@ whenever(dialogValue, () => {
 });
 
 watch(currentCongregation, (val) => {
-  if (val) checkLastVersion(val);
+  if (val) void checkLastVersion(val);
 });
 
 watchImmediate(locale, () => {
-  loadReleaseNotes();
+  void loadReleaseNotes();
 });
 </script>
 

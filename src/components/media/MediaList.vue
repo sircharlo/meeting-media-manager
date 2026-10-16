@@ -251,7 +251,7 @@ function handleWatchedMediaPersistence() {
     );
     if (!hasWatchedMedia) return;
 
-    saveWatchedMediaLayout(selectedDateObject.value.mediaSections);
+    void saveWatchedMediaLayout(selectedDateObject.value.mediaSections);
   } catch (error) {
     // Fail gracefully - if we can't save the order file, it's not a big deal
     errorCatcher(error, {
@@ -294,7 +294,7 @@ function queueWatchedMediaPersistence() {
   if (watchedMediaPersistenceQueued) return;
 
   watchedMediaPersistenceQueued = true;
-  nextTick(() => {
+  void nextTick(() => {
     watchedMediaPersistenceQueued = false;
     handleWatchedMediaPersistence();
   });

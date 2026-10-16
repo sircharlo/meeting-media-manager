@@ -60,6 +60,6 @@ const statusColor = computed(() => (isRecording.value ? 'negative' : 'grey'));
 
 const openRecordingFolder = () => {
   if (!currentSettings.value?.recordingFolder) return;
-  openFolder(currentSettings.value.recordingFolder);
+  void openFolder(currentSettings.value.recordingFolder);
 };
 </script>

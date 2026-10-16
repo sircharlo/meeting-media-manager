@@ -867,7 +867,7 @@ export const cleanCache = async () => {
     const additionalMediaPath = await getAdditionalMediaPath();
 
     congIds.forEach((congId) => {
-      cleanDateFolders(join(additionalMediaPath, congId));
+      void cleanDateFolders(join(additionalMediaPath, congId));
     });
   } catch (error) {
     ok = false;
@@ -882,7 +882,7 @@ export const cleanCache = async () => {
     const settings = useCurrentStateStore().currentSettings;
 
     if (settings?.enableMediaAutoExport && settings?.mediaAutoExportFolder) {
-      cleanDateFolders(settings.mediaAutoExportFolder);
+      void cleanDateFolders(settings.mediaAutoExportFolder);
     }
 
     // Deleting from a shared folder also deletes for everyone who syncs it,
@@ -892,7 +892,7 @@ export const cleanCache = async () => {
       settings?.folderToWatch &&
       settings?.deletePastWatchedFolders
     ) {
-      cleanDateFolders(settings.folderToWatch);
+      void cleanDateFolders(settings.folderToWatch);
     }
   } catch (error) {
     ok = false;

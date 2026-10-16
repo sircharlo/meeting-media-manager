@@ -940,12 +940,12 @@ const loadSystemLocale = async () => {
 };
 
 onMounted(() => {
-  loadSystemLocale();
+  void loadSystemLocale();
 });
 
 const goToPage = (path: string) => {
   try {
-    router.push({ path });
+    void router.push({ path });
   } catch (error) {
     errorCatcher(error);
   }
@@ -1142,7 +1142,7 @@ const openCongregationLookup = () => {
 };
 
 watch(step, () => {
-  nextTick(() => {
+  void nextTick(() => {
     const activeTab = document.querySelector('.q-stepper__tab--active');
     const parentStep = activeTab?.closest('.q-stepper__step');
 

@@ -1123,7 +1123,7 @@ const checkCoDate = () => {
         {
           color: 'white',
           handler: () => {
-            router.push('/settings/coWeek');
+            void router.push('/settings/coWeek');
           },
           label: t('go-to-settings'),
         },
@@ -3262,7 +3262,7 @@ watch(
       // Clear custom duration when media ends
       postCustomDuration(undefined);
 
-      nextTick(() => {
+      void nextTick(() => {
         globalThis.dispatchEvent(
           new CustomEvent<{ scrollToSelectedMedia: boolean }>(
             'shortcutMediaNext',
@@ -3281,7 +3281,7 @@ watch(
 watch(
   () => currentTimeData.value,
   (newCurrentTime) => {
-    nextTick(() => {
+    void nextTick(() => {
       mediaPlaying.value.currentPosition = newCurrentTime;
       mediaPlaying.value.currentPositionUpdatedAt = Date.now();
     });
@@ -3474,7 +3474,9 @@ watch(
 watch(
   () => selectedDateObject.value,
   async (newDateObject) => {
-    checkMemorialDate();
+    checkMemorialDate().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'checkMemorialDate' } } });
+    });
 
     if (!newDateObject?.date || !newDateObject?.mediaSections) return;
     const meetingDate = formatDate(newDateObject.date, 'YYYY-MM-DD');
@@ -3506,7 +3508,9 @@ watch(
 
 onMounted(() => {
   goToNextDayWithMedia();
-  checkMemorialDate();
+  checkMemorialDate().catch((error: unknown) => {
+    errorCatcher(error, { contexts: { fn: { name: 'checkMemorialDate' } } });
+  });
 
   // If no date with media is found, go to today's date
   if (!selectedDate.value) {
@@ -3551,12 +3555,16 @@ onMounted(() => {
   if (urlVariables.value.base && urlVariables.value.mediator) {
     if (pinyinChanged) {
       // Full pinyin change handling (includes fetchMedia + additional song re-add)
-      handlePinyinChange(currentState.pinyinActive);
+      handlePinyinChange(currentState.pinyinActive).catch((error: unknown) => {
+        errorCatcher(error, {
+          contexts: { fn: { name: 'handlePinyinChange' } },
+        });
+      });
     } else {
-      fetchMedia();
+      void fetchMedia();
     }
   } else {
-    router.push('/settings');
+    void router.push('/settings');
   }
   checkCoDate();
   maybeShowQuickStartGuide();
@@ -3564,7 +3572,7 @@ onMounted(() => {
   watch(
     () => urlVariables.value.mediator,
     () => {
-      fetchMedia();
+      void fetchMedia();
     },
   );
 
@@ -3623,7 +3631,9 @@ watch(
     // selected date visibly bleed through in the meantime.
     selectedDate.value = '';
     goToNextDayWithMedia();
-    checkMemorialDate();
+    checkMemorialDate().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'checkMemorialDate' } } });
+    });
     if (!selectedDate.value) {
       selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
     }
@@ -3634,7 +3644,7 @@ watch(
     // so without this the newly selected congregation's errored/incomplete
     // days just sit there unretried until something else happens to
     // trigger a refetch.
-    fetchMedia();
+    void fetchMedia();
   },
 );
 
@@ -3685,7 +3695,7 @@ watch(
       !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
     ) {
       try {
-        addDayToExportQueue(selectedDateObject.value.date);
+        void addDayToExportQueue(selectedDateObject.value.date);
       } catch (e) {
         errorCatcher(e);
       }
@@ -3698,7 +3708,7 @@ watch(
   () => {
     if (selectedDateObject.value?.date) {
       try {
-        addDayToExportQueue(selectedDateObject.value.date);
+        void addDayToExportQueue(selectedDateObject.value.date);
       } catch (e) {
         errorCatcher(e);
       }

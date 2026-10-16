@@ -259,15 +259,15 @@ handleIpcSend('toggleTimerWindow', async (_e, show: boolean) => {
 handleIpcSend('askForMediaAccess', askForMediaAccess);
 
 handleIpcSend('cancelAllDownloads', () => {
-  cancelAllDownloads();
+  void cancelAllDownloads();
 });
 
 handleIpcSend('resumeAllDownloads', () => {
-  resumeAllDownloads('renderer-manual');
+  void resumeAllDownloads('renderer-manual');
 });
 
 handleIpcSend('pauseAllDownloads', () => {
-  pauseAllDownloads('renderer-manual');
+  void pauseAllDownloads('renderer-manual');
 });
 
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
@@ -317,7 +317,7 @@ handleIpcSend(
   'toggleWebsiteWindow',
   (_e, show: boolean, websiteParams?: JwSiteParams) => {
     if (show) {
-      createWebsiteWindow(websiteParams);
+      void createWebsiteWindow(websiteParams);
     } else {
       websiteWindowInfo.websiteWindow?.close();
     }
@@ -332,7 +332,11 @@ handleIpcSend('launchZoomMeeting', (_e, meetingId: string) => {
   if (!meetingId) return;
   openExternal(
     `zoommtg://zoom.us/join?confno=${encodeURIComponent(meetingId)}`,
-  );
+  ).catch((error: unknown) => {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'launchZoomMeeting' } },
+    });
+  });
 });
 
 handleIpcSend('navigateWebsiteWindow', (_e, action: NavigateWebsiteAction) => {
@@ -389,7 +393,12 @@ handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
       break;
   }
 
-  if (url) openExternal(url);
+  if (!url) return;
+  openExternal(url).catch((error: unknown) => {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'openExternal', website } },
+    });
+  });
 });
 
 handleIpcSend(
@@ -411,7 +420,11 @@ handleIpcSend(
     }).toString();
     openExternal(
       `${repository.url.replace('.git', '/discussions/new')}?${search}`,
-    );
+    ).catch((error: unknown) => {
+      captureElectronError(error, {
+        contexts: { fn: { category, name: 'openDiscussion' } },
+      });
+    });
   },
 );
 

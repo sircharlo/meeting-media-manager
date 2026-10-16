@@ -321,7 +321,7 @@ const selectCongregation = (congregation: CongregationSuggestion) => {
   if (hasConfiguredCongregationInfo.value) {
     pendingCongregation.value = congregation;
   } else {
-    applyCongregation(congregation);
+    void applyCongregation(congregation);
   }
 };
 
@@ -360,7 +360,7 @@ const dismissPopup = () => {
 whenever(dialogValue, () => {
   congregationFilter.value = currentSettings.value?.congregationName || '';
   results.value = [];
-  lookupCongregation();
+  void lookupCongregation();
   setTimeout(() => {
     log(
       '🔍 Focusing input',
