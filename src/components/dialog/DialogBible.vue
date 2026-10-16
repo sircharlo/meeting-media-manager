@@ -308,11 +308,14 @@ const bibleMediaComplete = computed(() => {
   return bibleMediaHebrew.value.concat(bibleMediaGreek.value);
 });
 
+const selectedBook = computed(() =>
+  bibleMedia.value?.find((item) => item?.booknum === selectedBibleBook.value),
+);
+
 const selectedBookMedia = computed(() => {
   if (!selectedBibleBook.value) return [];
   const allFiles: PublicationFiles[] = Object.values(
-    bibleMedia.value?.find((item) => item?.booknum === selectedBibleBook.value)
-      ?.files || {},
+    selectedBook.value?.files || {},
   );
   const langFiles: PublicationFiles = allFiles[0] ?? {};
   const mediaFiles: MediaLink[] = Object.values(langFiles || {})[0];
@@ -414,7 +417,7 @@ const addSelectedVerses = () => {
       : 0;
 
     const title =
-      decodeEntities(bibleMedia.value?.[selectedBibleBook.value - 1]?.pubName) +
+      decodeEntities(selectedBook.value?.pubName) +
       ' ' +
       selectedChapter.value +
       ':' +
