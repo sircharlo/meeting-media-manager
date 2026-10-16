@@ -63,7 +63,7 @@ const updateOnline = async () => {
 // so a bare setInterval here would accumulate a new timer on every remount.
 useIntervalFn(() => {
   void updateOnline();
-}, 10000);
+}, 10_000);
 
 onMounted(() => {
   void updateOnline();

@@ -103,12 +103,70 @@ type TimerDayState = Pick<
   'timerPartCounts' | 'timerPartDurations' | 'timerParts' | 'timerPartTimings'
 >;
 
+const createCustomPartId = (): `custom-${string}` =>
+  `custom-${Math.random().toString(36).slice(2, 10)}`;
+
+const getCustomEndTimeCountdownTarget = (
+  date: Date,
+  configuredMeetingStartTime: null | string | undefined,
+  customEndTime: string,
+  maxDurationSeconds: number,
+) => {
+  if (!configuredMeetingStartTime) return 0;
+
+  const [startHour, startMinute] = configuredMeetingStartTime.split(':');
+  if (!startHour || !startMinute) return 0;
+
+  const meetingStartTime = new Date(date);
+  meetingStartTime.setHours(
+    Number.parseInt(startHour),
+    Number.parseInt(startMinute),
+    0,
+    0,
+  );
+
+  const parts = customEndTime.split(':');
+  const h = Number(parts[0]);
+  const m = Number(parts[1]);
+  const endTime = new Date(meetingStartTime);
+  endTime.setHours(h, m, 0, 0);
+  const now = new Date();
+  const remaining = Math.max(0, endTime.getTime() - now.getTime()) / 1000;
+  const remainingWholeSeconds = Math.floor(remaining);
+  return Math.min(remainingWholeSeconds, maxDurationSeconds);
+};
+
+const getTimedEndCountdownTarget = (
+  date: Date,
+  configuredMeetingStartTime: null | string | undefined,
+  customEndTime: string,
+  adaptiveDefaultEndTime: string,
+  maxDurationSeconds: number,
+) => {
+  if (!customEndTime || customEndTime === adaptiveDefaultEndTime) {
+    return maxDurationSeconds;
+  }
+
+  return getCustomEndTimeCountdownTarget(
+    date,
+    configuredMeetingStartTime,
+    customEndTime,
+    maxDurationSeconds,
+  );
+};
+
+const toHoursMinutes = (timestamp: number) => {
+  const date = new Date(timestamp);
+  return (
+    date.getHours().toString().padStart(2, '0') +
+    ':' +
+    date.getMinutes().toString().padStart(2, '0')
+  );
+};
+
 const createTimer = () => {
   const currentState = useCurrentStateStore();
   const { currentSettings, selectedDateObject } = storeToRefs(currentState);
-
-  const createCustomPartId = (): `custom-${string}` =>
-    `custom-${Math.random().toString(36).slice(2, 10)}`;
 
   // Only used while no day is selected (which the calendar page never
   // allows for long): the timer still works, it just doesn't persist.
@@ -516,6 +574,9 @@ const createTimer = () => {
 
   const currentPartLabel = computed(() => currentPartOption.value?.label ?? '');
 
+  const notStarted = (option: MeetingPartOption) =>
+    !partTimings.value[option.value]?.startTime;
+
   /**
    * The part to time next: the first one after the current part that hasn't
    * been started, else the first unstarted part anywhere in the list.
@@ -525,65 +586,14 @@ const createTimer = () => {
     const currentIndex = options.findIndex(
       (option) => option.value === currentPart.value,
     );
-    const notStarted = (option: MeetingPartOption) =>
-      !partTimings.value[option.value]?.startTime;
     return (
-      options.slice(currentIndex + 1).find(notStarted) ??
-      options.find(notStarted) ??
+      options.slice(currentIndex + 1).find((option) => notStarted(option)) ??
+      options.find((option) => notStarted(option)) ??
       null
     );
   });
 
   // --- Countdown targets ------------------------------------------------------
-
-  const getCustomEndTimeCountdownTarget = (
-    date: Date,
-    configuredMeetingStartTime: null | string | undefined,
-    customEndTime: string,
-    maxDurationSeconds: number,
-  ) => {
-    if (!configuredMeetingStartTime) return 0;
-
-    const [startHour, startMinute] = configuredMeetingStartTime.split(':');
-    if (!startHour || !startMinute) return 0;
-
-    const meetingStartTime = new Date(date);
-    meetingStartTime.setHours(
-      Number.parseInt(startHour),
-      Number.parseInt(startMinute),
-      0,
-      0,
-    );
-
-    const parts = customEndTime.split(':');
-    const h = Number(parts[0]);
-    const m = Number(parts[1]);
-    const endTime = new Date(meetingStartTime);
-    endTime.setHours(h, m, 0, 0);
-    const now = new Date();
-    const remaining = Math.max(0, endTime.getTime() - now.getTime()) / 1000;
-    const remainingWholeSeconds = Math.floor(remaining);
-    return Math.min(remainingWholeSeconds, maxDurationSeconds);
-  };
-
-  const getTimedEndCountdownTarget = (
-    date: Date,
-    configuredMeetingStartTime: null | string | undefined,
-    customEndTime: string,
-    adaptiveDefaultEndTime: string,
-    maxDurationSeconds: number,
-  ) => {
-    if (!customEndTime || customEndTime === adaptiveDefaultEndTime) {
-      return maxDurationSeconds;
-    }
-
-    return getCustomEndTimeCountdownTarget(
-      date,
-      configuredMeetingStartTime,
-      customEndTime,
-      maxDurationSeconds,
-    );
-  };
 
   const getWeekendCountdownTarget = (date: Date) => {
     if (currentPart.value !== 'wt') {
@@ -955,15 +965,6 @@ const createTimer = () => {
 
     return (actualStartTime - plannedStartTime) / (1000 * 60);
   });
-
-  const toHoursMinutes = (timestamp: number) => {
-    const date = new Date(timestamp);
-    return (
-      date.getHours().toString().padStart(2, '0') +
-      ':' +
-      date.getMinutes().toString().padStart(2, '0')
-    );
-  };
 
   const cbsAdaptiveDefaultEndTime = computed(() => {
     const startTime = getPlannedStartTime('cbs');

@@ -167,12 +167,12 @@ export interface Publication {
 
 export interface PublicationFetcher {
   booknum?: number;
-  docid?: null | number | undefined;
+  docid?: null | number;
   fileformat?: keyof PublicationFiles;
   issue?: number | string;
   langwritten: '' | JwLangCode;
   maxTrack?: number;
-  pub?: null | string | undefined;
+  pub?: null | string;
   track?: number;
 }
 

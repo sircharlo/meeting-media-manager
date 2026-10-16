@@ -1,4 +1,3 @@
-/* eslint-disable no-fallthrough */
 import type { DateLocale, DateOptions, DateUnitOptions } from 'quasar';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -246,9 +245,9 @@ export const getSpecificWeekday = (
 
 // Taken from Quasar Date Utils
 
-const MILLISECONDS_IN_DAY = 86400000;
-const MILLISECONDS_IN_HOUR = 3600000;
-const MILLISECONDS_IN_MINUTE = 60000;
+const MILLISECONDS_IN_DAY = 86_400_000;
+const MILLISECONDS_IN_HOUR = 3_600_000;
+const MILLISECONDS_IN_MINUTE = 60_000;
 const defaultMask = 'YYYY-MM-DD';
 const token = /\[((?:[^[\]\\]|\\.)*)\]|d{1,4}|M{1,4}|D{1,4}|Y{2,4}/g;
 const defaultDateLocale: Required<DateLocale> = {
@@ -260,6 +259,10 @@ const defaultDateLocale: Required<DateLocale> = {
     ),
   monthsShort: 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_'),
 };
+
+// workaround for < 1900 with new Date()
+const getFormatterYear = (date: Date, forcedYear?: number) =>
+  forcedYear ?? date.getFullYear();
 
 const formatter = {
   // Day of month: 1, 2, ..., 31
@@ -308,18 +311,14 @@ const formatter = {
   },
 
   // Year: 00, 01, ..., 99
-  YY(date: Date, dateLocale: Required<DateLocale>, forcedYear?: number) {
-    // workaround for < 1900 with new Date()
-    const y = this.YYYY(date, dateLocale, forcedYear) % 100;
+  YY(date: Date, _dateLocale: Required<DateLocale>, forcedYear?: number) {
+    const y = getFormatterYear(date, forcedYear) % 100;
     return y >= 0 ? pad(y) : '-' + pad(Math.abs(y));
   },
 
   // Year: 1900, 1901, ..., 2099
   YYYY(date: Date, _dateLocale: Required<DateLocale>, forcedYear?: number) {
-    // workaround for < 1900 with new Date()
-    return forcedYear !== void 0 && forcedYear !== null
-      ? forcedYear
-      : date.getFullYear();
+    return getFormatterYear(date, forcedYear);
   },
 };
 
@@ -564,30 +563,30 @@ function normalizeMod(mod: DateOptions) {
   return acc;
 }
 
-function startOfDate(date: PotentialDate, unit: DateUnitOptions) {
-  const prefix = 'set';
-  const t = new Date(date);
+// From the largest unit down: the start of a unit resets that unit's own
+// field and every smaller one (the start of a month also resets the hours,
+// minutes, seconds and milliseconds).
+const START_OF_DATE_RESETS: {
+  reset: (date: Date) => void;
+  units: DateUnitOptions[];
+}[] = [
+  { reset: (date) => date.setMonth(0), units: ['year', 'years'] },
+  { reset: (date) => date.setDate(1), units: ['month', 'months'] },
+  { reset: (date) => date.setHours(0), units: ['date', 'day', 'days'] },
+  { reset: (date) => date.setMinutes(0), units: ['hour', 'hours'] },
+  { reset: (date) => date.setSeconds(0), units: ['minute', 'minutes'] },
+  { reset: (date) => date.setMilliseconds(0), units: ['second', 'seconds'] },
+];
 
-  switch (unit) {
-    case 'year':
-    case 'years':
-      t[`${prefix}Month`](0);
-    case 'month':
-    case 'months':
-      t[`${prefix}Date`](1);
-    case 'date':
-    case 'day':
-    case 'days':
-      t[`${prefix}Hours`](0);
-    case 'hour':
-    case 'hours':
-      t[`${prefix}Minutes`](0);
-    case 'minute':
-    case 'minutes':
-      t[`${prefix}Seconds`](0);
-    case 'second':
-    case 'seconds':
-      t[`${prefix}Milliseconds`](0);
+function startOfDate(date: PotentialDate, unit: DateUnitOptions) {
+  const t = new Date(date);
+  const firstReset = START_OF_DATE_RESETS.findIndex(({ units }) =>
+    units.includes(unit),
+  );
+  if (firstReset === -1) return t;
+
+  for (const { reset } of START_OF_DATE_RESETS.slice(firstReset)) {
+    reset(t);
   }
   return t;
 }

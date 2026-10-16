@@ -468,9 +468,9 @@ const clockArc = computed(() => {
   const remainingMs = endTime - now;
   // One hour fills the face; longer parts show their final hour.
   const remainingDegrees =
-    Math.min(60 * 60 * 1000, Math.max(0, remainingMs)) / 10000;
+    Math.min(60 * 60 * 1000, Math.max(0, remainingMs)) / 10_000;
   const overtimeDegrees =
-    Math.min(60 * 60 * 1000, Math.max(0, -remainingMs)) / 10000;
+    Math.min(60 * 60 * 1000, Math.max(0, -remainingMs)) / 10_000;
 
   const remainingPath = wedgePath(nowAngle, nowAngle + remainingDegrees);
   const overtimePath = wedgePath(nowAngle - overtimeDegrees, nowAngle);
@@ -552,7 +552,7 @@ const getMeetingCountdown = (
   if (!countdownMinutes || !startTime) return null;
 
   const meetingTime = parseTime(startTime, now);
-  const minutesUntil = (meetingTime.getTime() - now.getTime()) / 60000;
+  const minutesUntil = (meetingTime.getTime() - now.getTime()) / 60_000;
 
   if (minutesUntil <= 0 || minutesUntil > countdownMinutes) return null;
 

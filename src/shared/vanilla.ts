@@ -139,7 +139,9 @@ const REDACTED_VALUE = '<redacted>';
  */
 export const scrubUserPathsDeep = <T>(value: T): T => {
   if (typeof value === 'string') return scrubUserPaths(value) as T;
-  if (Array.isArray(value)) return value.map(scrubUserPathsDeep) as T;
+  if (Array.isArray(value)) {
+    return value.map((item: unknown) => scrubUserPathsDeep(item)) as T;
+  }
   if (value && typeof value === 'object') {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>).map(([key, val]) => [

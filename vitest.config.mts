@@ -93,6 +93,6 @@ export default defineConfig({
         },
       },
     ],
-    testTimeout: 15000,
+    testTimeout: 15_000,
   },
 });

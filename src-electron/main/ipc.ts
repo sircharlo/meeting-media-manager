@@ -144,8 +144,9 @@ const { openExternal, openPath } = shell;
 
 function handleIpcSend(
   channel: ElectronIpcSendKey,
+  // An async listener is fine: its rejection is caught and reported below.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  listener: (event: IpcMainEvent, ...args: any[]) => void,
+  listener: (event: IpcMainEvent, ...args: any[]) => Promise<void> | void,
 ) {
   ipcMain.on(channel, (e, ...args) => {
     if (isSelf(e.senderFrame?.url)) {

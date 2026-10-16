@@ -400,8 +400,8 @@ const fetchChapterMediaAvailability = async (bookNr: number) => {
       if (item.ChapterNumber !== undefined && item.ChapterNumber !== null) {
         chaptersSet.add(item.ChapterNumber);
       } else if (item.VerseLabel) {
-        const match = item.VerseLabel.match(/>(\d+):/);
-        if (match && match[1]) {
+        const match = />(\d+):/.exec(item.VerseLabel);
+        if (match?.[1]) {
           chaptersSet.add(Number.parseInt(match[1]));
         }
       }

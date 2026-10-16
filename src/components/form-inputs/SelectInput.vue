@@ -54,6 +54,7 @@ import { SORTER } from 'src/constants/general';
 import { RESOLUTIONS } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { localeOptions } from 'src/i18n';
+import { getObsSceneField } from 'src/utils/obs-scene';
 import { getRules } from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -190,7 +191,9 @@ const filterFn = (val: string, update: (fn: () => void) => void) => {
 
         filteredObsScenes.value =
           scenes.value?.filter((scene) =>
-            scene.sceneName?.toString().toLowerCase().includes(needle),
+            getObsSceneField(scene, 'sceneName')
+              ?.toLowerCase()
+              .includes(needle),
           ) ?? [];
         filteredTimerModes.value = buildTimerModes().filter((mode) =>
           mode.label.toLowerCase().includes(needle),
@@ -247,13 +250,18 @@ const listOptions = computed(
       } else if (props.list === 'days') {
         return filteredDays.value;
       } else if (props.list?.startsWith('obs')) {
-        return filteredObsScenes.value.map((scene) => ({
-          label: scene.sceneName?.toString() || 'Unknown scene',
-          value:
-            configuredScenesAreAllUUIDs.value && scene.sceneUuid
-              ? scene.sceneUuid.toString()
-              : scene.sceneName?.toString() || 'Unknown scene',
-        }));
+        return filteredObsScenes.value.map((scene) => {
+          const sceneName =
+            getObsSceneField(scene, 'sceneName') || 'Unknown scene';
+          const sceneUuid = getObsSceneField(scene, 'sceneUuid');
+          return {
+            label: sceneName,
+            value:
+              configuredScenesAreAllUUIDs.value && sceneUuid
+                ? sceneUuid
+                : sceneName,
+          };
+        });
       } else if (props.list === 'fontSizes') {
         return [
           { label: t('small'), value: '5vw' },

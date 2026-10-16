@@ -45,7 +45,7 @@ describe('DialogPdfPageSelection - keyboard page selection', () => {
     await nextTick();
 
     const pageThumbs = document.querySelectorAll('.pdf-page-thumb');
-    expect(pageThumbs.length).toBe(TOTAL_PAGES);
+    expect(pageThumbs).toHaveLength(TOTAL_PAGES);
 
     const firstPage = pageThumbs[0] as HTMLElement;
     // Every page starts selected (selectPdfPages() defaults to "all"), so

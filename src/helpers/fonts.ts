@@ -12,14 +12,15 @@ import { fetchRaw, shouldReportCaughtError } from 'src/utils/api';
 import { getFontsPath } from 'src/utils/fs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { ref } from 'vue';
+import { shallowRef } from 'vue';
 
 const { extname, fs, join } = globalThis.electronApi;
 const { ensureDir, pathExists, readFile, remove, writeFile } = fs;
 
 let jwIconsGlyphMapPromise: null | Promise<void> = null;
-let jwIconsGlyphMap: null | Record<string, string> = null;
-const jwIconsGlyphMapVersion = ref(0);
+// A shallowRef so callers that read it during render (getJwIconFromKeyword,
+// used directly in templates) re-render once it finishes loading.
+const jwIconsGlyphMap = shallowRef<null | Record<string, string>>(null);
 
 // Yeartext font configuration per writing script
 interface YeartextFontConfig {
@@ -302,12 +303,12 @@ const parseJwIconsGlyphMap = (buffer: Buffer) => {
 };
 
 const buildJwIconsMap = async (fontPath: string) => {
-  if (jwIconsGlyphMap) return;
+  if (jwIconsGlyphMap.value) return;
   if (jwIconsGlyphMapPromise) return jwIconsGlyphMapPromise;
 
   jwIconsGlyphMapPromise = (async () => {
     try {
-      jwIconsGlyphMap = parseJwIconsGlyphMap(await readFile(fontPath));
+      jwIconsGlyphMap.value = parseJwIconsGlyphMap(await readFile(fontPath));
     } catch (error) {
       // The local font file can be unusable in two ways worth one retry
       // each: it can vanish between setElementFont() confirming/downloading
@@ -332,7 +333,9 @@ const buildJwIconsMap = async (fontPath: string) => {
           await remove(fontPath).catch(() => undefined);
           delete localFontPathPromises['jw-icons-all'];
           const freshFontPath = await getLocalFontPath('jw-icons-all');
-          jwIconsGlyphMap = parseJwIconsGlyphMap(await readFile(freshFontPath));
+          jwIconsGlyphMap.value = parseJwIconsGlyphMap(
+            await readFile(freshFontPath),
+          );
           recovered = true;
         } catch (retryError) {
           reportedError = retryError;
@@ -343,23 +346,23 @@ const buildJwIconsMap = async (fontPath: string) => {
         errorCatcher(reportedError, {
           contexts: { fn: { fontPath, name: 'buildJwIconsMap' } },
         });
-        jwIconsGlyphMap = fallbackJwIconsGlyphMap;
+        jwIconsGlyphMap.value = fallbackJwIconsGlyphMap;
       }
     }
-    jwIconsGlyphMapVersion.value++;
   })();
   return jwIconsGlyphMapPromise;
 };
 
 export const getJwIconFromKeyword = (keyword: number | string | undefined) => {
-  // Establish a reactive dependency so callers (used directly in templates)
-  // re-render once the glyph map finishes loading asynchronously.
-  void jwIconsGlyphMapVersion.value;
+  // Reading jwIconsGlyphMap.value establishes a reactive dependency so callers
+  // (used directly in templates) re-render once the glyph map finishes
+  // loading asynchronously.
+  const glyphMap = jwIconsGlyphMap.value;
   if (!keyword) return '';
   const icon = keywordToJwIconMapping[keyword.toString()];
   if (!icon) return '';
-  if (jwIconsGlyphMapPromise && !jwIconsGlyphMap) return '';
-  return jwIconsGlyphMap?.[icon] || fallbackJwIconsGlyphMap[icon] || '';
+  if (jwIconsGlyphMapPromise && !glyphMap) return '';
+  return glyphMap?.[icon] || fallbackJwIconsGlyphMap[icon] || '';
 };
 
 export const setElementFont = async (fontName: FontName) => {
@@ -455,7 +458,7 @@ const resolveFontRequest = async (
   const originalUrl = store.fontUrls[fontName];
 
   const fetchFont = async (url: string) =>
-    withTimeout(method === 'HEAD' ? 5000 : 30000, (signal) =>
+    withTimeout(method === 'HEAD' ? 5000 : 30_000, (signal) =>
       fetchRaw(url, { method, signal }, method === 'HEAD'),
     );
 

@@ -329,7 +329,7 @@ watch(
     // Wait for the q-slide-transition to finish expanding the panel
     // before scrolling, otherwise scrollIntoView targets the collapsed height.
     await new Promise<void>((resolve) => {
-      void setTimeout(resolve, 350);
+      setTimeout(resolve, 350);
     });
     afterPanel.value?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     hasScrolledToAfterPanel.value = true;

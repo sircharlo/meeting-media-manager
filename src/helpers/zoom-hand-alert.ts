@@ -200,7 +200,7 @@ export const stopZoomHandAlertWatcher = () => {
   if (pollTimer === undefined) return;
   clearTimeout(pollTimer);
   pollTimer = undefined;
-  for (const name of [...pendingHandNotifications.keys()]) {
+  for (const name of pendingHandNotifications.keys()) {
     dismissHandNotification(name);
   }
   useHandAlertStore().setRaisedHands([]);

@@ -295,7 +295,7 @@ function shouldReportStatus(
 // request doesn't hang fetchJson indefinitely - ties into withFetchRetry
 // below for free, since a timeout abort is already classified as a
 // network error by isFetchNetworkError.
-const FETCH_JSON_TIMEOUT_MS = 15000;
+const FETCH_JSON_TIMEOUT_MS = 15_000;
 
 export const fetchJson = async <T>(
   url: string,

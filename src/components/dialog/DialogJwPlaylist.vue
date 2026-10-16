@@ -475,7 +475,7 @@ const loadPlaylistItems = async () => {
 
         const verseNumbers = verseRows.map((v) => {
           // Matches e.g. "John 3:16" or "Genesis 1", captures the verse number
-          const match = v.Label.match(/^\S+ (?:\d+:)?(\d+)/);
+          const match = /^\S+ (?:\d+:)?(\d+)/.exec(v.Label);
           return match?.[1] ? Number.parseInt(match[1], 10) : 0;
         });
 
@@ -555,7 +555,7 @@ const formatDuration = (item: JwPlaylistItem) => {
   const durationTicks = item?.BaseDurationTicks || item?.DurationTicks || 0;
   if (!durationTicks) return '';
 
-  const seconds = Math.floor(durationTicks / 10000 / 1000);
+  const seconds = Math.floor(durationTicks / 10_000 / 1000);
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
 
@@ -592,12 +592,12 @@ function getTrimmedTimes(item: JwPlaylistItem) {
 
   const StartTime =
     item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
-      ? item.StartTrimOffsetTicks / 10000 / 1000
+      ? item.StartTrimOffsetTicks / 10_000 / 1000
       : null;
 
   const EndTime =
     item.EndTrimOffsetTicks && durationTicks >= item.EndTrimOffsetTicks
-      ? (durationTicks - item.EndTrimOffsetTicks) / 10000 / 1000
+      ? (durationTicks - item.EndTrimOffsetTicks) / 10_000 / 1000
       : null;
 
   return { durationTicks, EndTime, StartTime };
@@ -741,7 +741,7 @@ async function processVideoItem(
   const customDuration =
     StartTime !== null || EndTime !== null
       ? {
-          max: EndTime ?? durationTicks / 10000 / 1000,
+          max: EndTime ?? durationTicks / 10_000 / 1000,
           min: StartTime ?? 0,
         }
       : undefined;

@@ -15,7 +15,11 @@ import {
 // no congregation-specific one applies.
 const BASE_URL = 'jw.org';
 
-const SOURCE_URL_COMMENT_PATTERN = /\/\/ Source font: (\S+).*\n/;
+// The URL, then optionally a (non-line-terminator) whitespace and the rest of
+// the line: starting the tail with whitespace keeps it from overlapping the
+// URL run, which made the old `(\S+).*\n` backtrack on a line with no `\n`.
+const SOURCE_URL_COMMENT_PATTERN =
+  /\/\/ Source font: (\S+)(?:[^\S\n\r\u2028\u2029].*)?\n/;
 
 // This mirrors the CSS-scraping half of useJwStore().updateJwIconsUrl() in
 // src/stores/jw.ts, which the app calls when its cached jw-icons font URL

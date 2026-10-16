@@ -54,7 +54,9 @@ const runFfmpegCommand = (
           // Best-effort: if this also fails, the original ffmpeg error is
           // still what matters and is reported below.
         })
-        .finally(() => reject(err));
+        .finally(() => {
+          reject(err instanceof Error ? err : new Error(String(err)));
+        });
     });
     command.save(convertedFilePath);
   });

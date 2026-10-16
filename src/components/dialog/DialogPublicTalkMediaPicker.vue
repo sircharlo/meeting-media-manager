@@ -178,7 +178,7 @@ const populatePublicTalks = async () => {
 
 const browse = async () => {
   const s34FileSelection = await openFileDialog(true, 'jwpub');
-  if (!s34FileSelection || !s34FileSelection.filePaths.length) return;
+  if (!s34FileSelection?.filePaths.length) return;
   s34File.value = s34FileSelection.filePaths[0];
   if (!s34Dir.value) {
     await setS34Info();

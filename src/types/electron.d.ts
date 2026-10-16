@@ -453,16 +453,11 @@ export type ElectronFsApi = Pick<
   readFile: {
     (
       path: string,
-      options?:
-        | null
-        | undefined
-        | { encoding?: null | undefined; flag?: string | undefined },
+      options?: null | undefined | { encoding?: null; flag?: string },
     ): Promise<Buffer>;
     (
       path: string,
-      options:
-        | BufferEncoding
-        | { encoding: BufferEncoding; flag?: string | undefined },
+      options: BufferEncoding | { encoding: BufferEncoding; flag?: string },
     ): Promise<string>;
     (
       path: string,
@@ -471,8 +466,8 @@ export type ElectronFsApi = Pick<
         | string
         | undefined
         | {
-            encoding?: BufferEncoding | null | undefined;
-            flag?: string | undefined;
+            encoding?: BufferEncoding | null;
+            flag?: string;
           },
     ): Promise<Buffer | string>;
   };
@@ -483,9 +478,9 @@ export type ElectronFsApi = Pick<
       | string
       | undefined
       | {
-          encoding?: string | undefined;
-          flag?: string | undefined;
-          throws?: boolean | undefined;
+          encoding?: string;
+          flag?: string;
+          throws?: boolean;
         },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<any>;

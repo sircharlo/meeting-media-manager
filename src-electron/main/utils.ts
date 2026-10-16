@@ -515,7 +515,7 @@ export const fetchJsonFromMainProcess = async <T>(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => {
     controller.abort();
-  }, options.timeout ?? 30000);
+  }, options.timeout ?? 30_000);
 
   try {
     const response = await fetch(

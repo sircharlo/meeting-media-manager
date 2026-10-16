@@ -285,50 +285,45 @@ describe('updater install flow', () => {
       });
     });
 
-    it('does not flag a beta->stable channel switch to a numerically-lower-looking version as a downgrade when it is not one', async () => {
-      // The exact scenario allowDowngrade exists for: switching a beta
-      // build back to the latest matching stable release is a promotion,
-      // not a downgrade, even though the beta's own prerelease suffix makes
-      // the installed version string "26.6.0-beta.9" look larger at a
-      // glance than the plain "26.6.0" it's switching to.
-      getVersionMock.mockReturnValue('26.6.0-beta.9');
-      const { getUpdaterState, initUpdater } = await import('../updater');
-
-      await initUpdater();
-      handlers.get('update-available')?.({ version: '26.6.0' });
-
-      expect(getUpdaterState().versionInfo).toEqual({
+    it.each([
+      {
+        // The exact scenario allowDowngrade exists for: switching a beta
+        // build back to the latest matching stable release is a promotion,
+        // not a downgrade, even though the beta's own prerelease suffix makes
+        // the installed version string "26.6.0-beta.9" look larger at a
+        // glance than the plain "26.6.0" it's switching to.
+        installedVersion: '26.6.0-beta.9',
         isDowngrade: false,
-        version: '26.6.0',
-      });
-    });
-
-    it('does flag a genuine downgrade away from an in-progress beta cycle', async () => {
-      // The actual motivating case from the code comment: a beta tester on
-      // 26.6.1-beta.24 (already past 26.6.0) turns beta updates off and
-      // rolls back to the last real stable release, 26.6.0.
-      getVersionMock.mockReturnValue('26.6.1-beta.24');
-      const { getUpdaterState, initUpdater } = await import('../updater');
-
-      await initUpdater();
-      handlers.get('update-available')?.({ version: '26.6.0' });
-
-      expect(getUpdaterState().versionInfo).toEqual({
+        title:
+          'does not flag a beta->stable channel switch to a numerically-lower-looking version as a downgrade when it is not one',
+        updateVersion: '26.6.0',
+      },
+      {
+        // The actual motivating case from the code comment: a beta tester on
+        // 26.6.1-beta.24 (already past 26.6.0) turns beta updates off and
+        // rolls back to the last real stable release, 26.6.0.
+        installedVersion: '26.6.1-beta.24',
         isDowngrade: true,
-        version: '26.6.0',
-      });
-    });
-
-    it('treats an identical version as not a downgrade', async () => {
-      getVersionMock.mockReturnValue('26.6.0');
+        title:
+          'does flag a genuine downgrade away from an in-progress beta cycle',
+        updateVersion: '26.6.0',
+      },
+      {
+        installedVersion: '26.6.0',
+        isDowngrade: false,
+        title: 'treats an identical version as not a downgrade',
+        updateVersion: '26.6.0',
+      },
+    ])('$title', async ({ installedVersion, isDowngrade, updateVersion }) => {
+      getVersionMock.mockReturnValue(installedVersion);
       const { getUpdaterState, initUpdater } = await import('../updater');
 
       await initUpdater();
-      handlers.get('update-available')?.({ version: '26.6.0' });
+      handlers.get('update-available')?.({ version: updateVersion });
 
       expect(getUpdaterState().versionInfo).toEqual({
-        isDowngrade: false,
-        version: '26.6.0',
+        isDowngrade,
+        version: updateVersion,
       });
     });
   });

@@ -325,27 +325,31 @@ const selectCongregation = (congregation: CongregationSuggestion) => {
   }
 };
 
+const runCongregationLookup = async () => {
+  try {
+    loading.value = true;
+    lookupError.value = false;
+    results.value = [];
+    if (congregationFilter.value?.length > 2) {
+      results.value = await fetchCongregationSuggestions(
+        congregationFilter.value,
+      );
+    } else {
+      results.value = [];
+    }
+  } catch (error) {
+    errorCatcher(error);
+    results.value = [];
+    lookupError.value = true;
+  } finally {
+    loading.value = false;
+  }
+};
+
 const lookupCongregation = () => {
   if (lookupDebounce.value) clearTimeout(lookupDebounce.value);
-  lookupDebounce.value = setTimeout(async () => {
-    try {
-      loading.value = true;
-      lookupError.value = false;
-      results.value = [];
-      if (congregationFilter.value?.length > 2) {
-        results.value = await fetchCongregationSuggestions(
-          congregationFilter.value,
-        );
-      } else {
-        results.value = [];
-      }
-    } catch (error) {
-      errorCatcher(error);
-      results.value = [];
-      lookupError.value = true;
-    } finally {
-      loading.value = false;
-    }
+  lookupDebounce.value = setTimeout(() => {
+    void runCongregationLookup();
   }, 500);
 };
 

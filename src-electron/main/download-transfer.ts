@@ -27,7 +27,7 @@ import { isFetchNetworkError } from 'src/shared/network-errors';
 // Zero bytes received for this long is a stuck transfer, not a slow one -
 // the same judgment as the renderer's own DOWNLOAD_STALL_TIMEOUT_MS
 // (src/helpers/jw-media.ts), since many users have slow connections.
-export const TRANSFER_STALL_TIMEOUT_MS = 45000;
+export const TRANSFER_STALL_TIMEOUT_MS = 45_000;
 
 // Renaming the finished `.part` file over an existing file fails on Windows
 // while that file is open elsewhere (e.g. being played, or scanned by an

@@ -21,7 +21,9 @@ export const emptyFontsFolder: MigrationFunction = async () => {
       await emptyDir(fontsPath);
     };
 
-    await Promise.all([...new Set(pathsToCheck)].map(emptyFontsDir));
+    await Promise.all(
+      [...new Set(pathsToCheck)].map((basePath) => emptyFontsDir(basePath)),
+    );
 
     return true;
   } catch (error) {

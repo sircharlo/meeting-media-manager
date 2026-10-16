@@ -20,6 +20,7 @@ import {
   closeConnection,
   createProgressWatchdog,
   executeQuery,
+  isAllowedQuery,
   isDbCorrupt,
 } from '../sqlite';
 
@@ -45,6 +46,38 @@ const createTestDb = () => {
 
   return dbPath;
 };
+
+describe('isAllowedQuery', () => {
+  it.each([
+    'SELECT 1',
+    'select title FROM media',
+    'PRAGMA table_info(media)',
+    '  select 1',
+    '\n\t SELECT 1',
+    '(SELECT 1)',
+    '( \n select 1)',
+    '  (  PRAGMA user_version',
+    'select\n*',
+    'select(1)',
+  ])('allows %j', (query) => {
+    expect(isAllowedQuery(query)).toBe(true);
+  });
+
+  it.each([
+    '',
+    '   ',
+    "INSERT INTO media (title) VALUES ('x')",
+    'ATTACH DATABASE "x" AS y',
+    'selector',
+    'pragmatic',
+    '((SELECT 1))',
+    '-- comment\nSELECT 1',
+    'WITH x AS (SELECT 1) SELECT * FROM x',
+    `${' '.repeat(50_000)}x`,
+  ])('rejects %j', (query) => {
+    expect(isAllowedQuery(query)).toBe(false);
+  });
+});
 
 describe('executeQuery', () => {
   afterEach(async () => {

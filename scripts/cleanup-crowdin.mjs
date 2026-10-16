@@ -372,7 +372,7 @@ function trimEndIndex(value, end = value.length) {
 
 const CORRUPTION_SIGNATURES = [
   // Typographic quotes inside @:{...} (e.g. @:{‚cbs‘}).
-  new RegExp(`@:\\{[^{}]*[${TYPOGRAPHIC_QUOTES}][^{}]*\\}`),
+  new RegExp(String.raw`@:\{[^{}]*[${TYPOGRAPHIC_QUOTES}][^{}]*\}`),
   // Stray whitespace after @: (e.g. @: cbs), which is never valid.
   /@:[ \t]+(?=[\p{L}\p{N}_-])/u,
   // Doubled heading anchors left over from mangled {#a} {#a} runs.
@@ -380,7 +380,9 @@ const CORRUPTION_SIGNATURES = [
   // Scrambled release-notes version headers (e.g. `7.0 v26.0` for `v26.7.0`).
   /^(?:##\s*)?\d+\.\d+\s+v\d+\.\d+\s*$/,
   // Localized separators in release-notes versions (`v26,3.0`, `v26 6.1`).
-  /^(?:##\s*)?v\d+[ ,]\d+[,.]?\d*\s*$/,
+  // The optional separator owns its trailing digits so the two digit runs
+  // can't overlap (and backtrack) when there is no separator.
+  /^(?:##\s*)?v\d+[ ,]\d+(?:[,.]\d*)?\s*$/,
   // Truncated vue-i18n linked keys (`@:study- ` for `@:study-bible`): a link
   // token ending in a hyphen is never valid.
   /@:[^\s]*-(?=[\s.,;:!?]|$)/,
@@ -1349,6 +1351,14 @@ function runSelfTest() {
     ],
     ['tm scrambled version header', isCorruptedSegment('## 7.0 v26.0'), true],
     ['tm localized version separators', isCorruptedSegment('## v26,3.0'), true],
+    ['tm space-separated version', isCorruptedSegment('## v26 6.1'), true],
+    ['tm separator-less version tail', isCorruptedSegment('v26 61 '), true],
+    ['tm trailing-comma version', isCorruptedSegment('v26,3,'), true],
+    [
+      'tm version followed by text left alone',
+      isCorruptedSegment('## v26 6.1 notes'),
+      false,
+    ],
     [
       'tm clean version header left alone',
       isCorruptedSegment('## v26.7.0'),

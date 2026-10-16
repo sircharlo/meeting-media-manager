@@ -458,7 +458,7 @@ const screenRects = computed(() => {
 const scaledMainWindowRect = (index: number) => {
   const list = screenList.value ?? [];
   const screen = list[index];
-  if (!screen || !screen.mainWindowBounds) return undefined;
+  if (!screen?.mainWindowBounds) return undefined;
 
   const b = screen.bounds;
   const mw = screen.mainWindowBounds;
@@ -784,7 +784,9 @@ watch(
         stopListeningToScreens.value = useEventListener(
           globalThis,
           'screen-trigger-update',
-          fetchScreens,
+          () => {
+            void fetchScreens();
+          },
           {
             passive: true,
           },

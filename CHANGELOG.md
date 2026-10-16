@@ -72,6 +72,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Media Window**: If the media window stops working (for example when it runs out of memory), M³ now restarts it on its own and stops whatever was playing, saying so, instead of leaving a blank media window and a media item that looks like it's still playing. If it keeps stopping, M³ suggests restarting the app.
 - 🐞 **JWPUB Files**: When a JWPUB file you select or drop can't be read, M³ now tells you why and how to fix it, based on where the file is: on your phone (shown in File Explorer by Windows), in cloud storage such as OneDrive or iCloud that hasn't downloaded it yet, on a network folder or removable drive that can't be reached, or moved or in use by another program. Previously, a file on a phone or one that Windows reported an unexpected error for failed with no explanation.
 - 🐞 **Bible Dialog**: Fixed Bible books being listed twice when a secondary media language is set, and verses added from the dialog then sometimes being titled with another book's name. Each book is now listed once: books with no recording in the media language use the secondary media language's recording, and books with no recording in either language show their own name.
+- 🐞 **Media List**: Fixed a media item's thumbnail sometimes never appearing after a single failed attempt to find it.
 
 ### 🔧 Chores
 

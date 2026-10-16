@@ -614,9 +614,14 @@ const fetchScreens = async () => {
   }
 };
 
-useEventListener(globalThis, 'screen-trigger-update', fetchScreens, {
-  passive: true,
-});
+useEventListener(
+  globalThis,
+  'screen-trigger-update',
+  () => {
+    void fetchScreens();
+  },
+  { passive: true },
+);
 
 // Virtual desktop extents across all displays (in physical pixels as provided by Electron)
 const virtualBounds = computed(() => {

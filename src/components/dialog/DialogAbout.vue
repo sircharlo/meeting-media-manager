@@ -248,6 +248,27 @@ const LEADING_EMOJI =
 // unreleased changes aren't shown in the About dialog.
 const VERSION_HEADER_PATTERN = /^v?\d+\.\d+\.\d+/;
 
+const SECTION_HEADER_PATTERN = /^## (.+)$/;
+const BOLD_TITLE_PATTERN = /^\*\*(.+?)\*\*/u;
+// French typography puts a (narrow) non-breaking space before the colon
+// ("**Title** : text"), and CJK locales use a full-width colon ("**Title**：text").
+const TITLE_SEPARATOR_PATTERN = /^[:：]/u;
+
+// Splits "**Title**: text" into its bold title and the text after it,
+// allowing optional whitespace around an ASCII or full-width colon.
+// String ops instead of one regex: chaining optional whitespace, an optional
+// colon and a catch-all group backtracks super-linearly.
+const parseFeatureLine = (raw: string) => {
+  const titleMatch = BOLD_TITLE_PATTERN.exec(raw);
+  if (!titleMatch) return { text: raw.trim(), title: '' };
+
+  const rest = raw.slice(titleMatch[0].length).trimStart();
+  return {
+    text: rest.replace(TITLE_SEPARATOR_PATTERN, '').trim(),
+    title: (titleMatch[1] ?? '').trim(),
+  };
+};
+
 const parseReleaseNotes = () => {
   const md = releaseNotes.value;
   if (!md) return;
@@ -257,7 +278,7 @@ const parseReleaseNotes = () => {
   let currentVersion = '';
 
   for (const line of lines) {
-    const versionMatch = line.match(/^## (.+)$/);
+    const versionMatch = SECTION_HEADER_PATTERN.exec(line);
     if (versionMatch) {
       currentVersion = versionMatch[1] || '';
       if (!VERSION_HEADER_PATTERN.test(currentVersion)) {
@@ -267,13 +288,8 @@ const parseReleaseNotes = () => {
       }
     } else if (currentVersion && line.startsWith('- ')) {
       const raw = line.replace(/^-\s*/, '').replace(LEADING_EMOJI, '');
-      // French typography puts a (narrow) non-breaking space before the colon
-      // ("**Title** : text"), and CJK locales use a full-width colon ("**Title**：text"),
-      // so allow optional whitespace before an ASCII or full-width colon.
-      const titleMatch = raw.match(/^\*\*(.+?)\*\*\s*[:：]?\s*(.*)$/u);
       parsedFeatures.value.push({
-        text: (titleMatch ? (titleMatch[2] ?? '') : raw).trim(),
-        title: (titleMatch?.[1] ?? '').trim(),
+        ...parseFeatureLine(raw),
         version: currentVersion,
       });
     }

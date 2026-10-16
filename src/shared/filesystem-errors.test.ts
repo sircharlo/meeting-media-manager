@@ -116,7 +116,7 @@ describe('filesystem error helpers', () => {
         new Error("ENOENT: no such file or directory, open 'C:/x'"),
       ),
     ).toBe('ENOENT');
-    expect(getFilesystemErrorCode(new Error('Something else'))).toBe(undefined);
+    expect(getFilesystemErrorCode(new Error('Something else'))).toBeUndefined();
     expect(
       isExpectedNetworkPathAccessError(
         new Error("UNKNOWN: unknown error, copyfile 'a' -> 'b'"),

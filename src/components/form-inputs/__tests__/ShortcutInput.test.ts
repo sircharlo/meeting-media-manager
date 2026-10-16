@@ -43,7 +43,7 @@ describe('ShortcutInput - single focusable control per assigned shortcut', () =>
 
     // Three key segments (Ctrl/Shift/F) must render as plain, non-focusable
     // display elements now - none of them a real <button>.
-    expect(row.findAll('button').length).toBe(0);
+    expect(row.findAll('button')).toHaveLength(0);
 
     row.element.dispatchEvent(
       new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' }),

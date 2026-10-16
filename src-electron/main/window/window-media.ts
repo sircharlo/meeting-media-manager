@@ -650,10 +650,10 @@ export const moveMediaWindow = async (
   }
 };
 
-export const moveMediaWindowThrottled = throttleWithTrailing(
-  () => moveMediaWindow(),
-  WINDOW_MOVE_THROTTLE_MS,
-);
+export const moveMediaWindowThrottled = throttleWithTrailing(() => {
+  // Never rejects: moveMediaWindow catches and reports its own errors.
+  void moveMediaWindow();
+}, WINDOW_MOVE_THROTTLE_MS);
 
 // =============================================================================
 // WINDOW CREATION & ANIMATION

@@ -56,6 +56,36 @@ state.on('dragEnded', () => {
   isDraggingGlobal.value = false;
 });
 
+// formkit's own per-node/per-parent drop handlers assume a drag it
+// validated itself - dropping something it never saw start (an OS file
+// drag, a drag from another window) leaves its internal drag state absent
+// and crashes inside its own handler ("Cannot read properties of
+// undefined (reading 'map')", Sentry MMM-V2-3BG).
+// formkit's root-level `document` listener guards against this correctly,
+// but the listeners it registers directly on the sortable container and
+// its children don't. Intercept in the capture phase - which, for an
+// ancestor of the actual drop target, always runs before the target's own
+// listeners - and stop the event right there for any drop formkit didn't
+// start. useMediaDragAndDrop deliberately attaches this to just its own
+// sortable container rather than window/document: a foreign file dropped
+// on that container is exactly
+// the crash case, but a foreign file dropped anywhere else (in particular
+// MediaCalendarPage.vue's own drag-and-drop-to-import feature, which
+// shows a separate dialog to receive the drop) must be left alone.
+//
+// This reads formkit's live drag state rather than isDraggingGlobal:
+// formkit can reset that state without emitting dragEnded (its tearDown(),
+// when a list unmounts or re-initialises mid-drag, e.g. as imported items
+// land in it), which left the mirrored flag stuck on and let the next drop
+// through to crash. And stopImmediatePropagation, not stopPropagation: a
+// drop directly on the container must not reach formkit's own listener on
+// that same element either.
+const suppressForeignDrop = (event: DragEvent) => {
+  if (!isDragState(state)) {
+    event.stopImmediatePropagation();
+  }
+};
+
 export function useMediaDragAndDrop(
   items: MediaItem[],
   options: UseMediaDragAndDropOptions = {},
@@ -121,35 +151,6 @@ export function useMediaDragAndDrop(
     // Don't use a selected class since we're handling selection independently with click events
     selectedClass: undefined,
   });
-
-  // formkit's own per-node/per-parent drop handlers assume a drag it
-  // validated itself - dropping something it never saw start (an OS file
-  // drag, a drag from another window) leaves its internal drag state absent
-  // and crashes inside its own handler ("Cannot read properties of
-  // undefined (reading 'map')", Sentry MMM-V2-3BG).
-  // formkit's root-level `document` listener guards against this correctly,
-  // but the listeners it registers directly on the sortable container and
-  // its children don't. Intercept in the capture phase - which, for an
-  // ancestor of the actual drop target, always runs before the target's own
-  // listeners - and stop the event right there for any drop formkit didn't
-  // start. This is deliberately scoped to just this container rather than
-  // window/document: a foreign file dropped on this container is exactly
-  // the crash case, but a foreign file dropped anywhere else (in particular
-  // MediaCalendarPage.vue's own drag-and-drop-to-import feature, which
-  // shows a separate dialog to receive the drop) must be left alone.
-  //
-  // This reads formkit's live drag state rather than isDraggingGlobal:
-  // formkit can reset that state without emitting dragEnded (its tearDown(),
-  // when a list unmounts or re-initialises mid-drag, e.g. as imported items
-  // land in it), which left the mirrored flag stuck on and let the next drop
-  // through to crash. And stopImmediatePropagation, not stopPropagation: a
-  // drop directly on the container must not reach formkit's own listener on
-  // that same element either.
-  const suppressForeignDrop = (event: DragEvent) => {
-    if (!isDragState(state)) {
-      event.stopImmediatePropagation();
-    }
-  };
 
   // Tracked separately from dragDropContainer.value itself: Vue nulls a root
   // element's template ref as the very first step of unmounting it (before
