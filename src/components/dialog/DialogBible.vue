@@ -243,6 +243,10 @@ import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getBibleMedia } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import {
+  getVerseSelectionState,
+  type VerseSelectionState,
+} from 'src/utils/bible-verses';
 import { decodeEntities } from 'src/utils/general';
 import { timeToSeconds } from 'src/utils/time';
 import { computed, ref, watch } from 'vue';
@@ -449,26 +453,16 @@ const resetBibleBook = (closeBook = false, closeDialog = false) => {
   hoveredVerse.value = null;
 };
 
-const getVerseClass = (verse: number) => {
-  if (chosenVerses.value.includes(verse)) {
-    return 'bg-primary text-white';
-  } else if (
-    chosenVerses.value.length === 2 &&
-    verse > Math.min(...chosenVerses.value) &&
-    verse < Math.max(...chosenVerses.value)
-  ) {
-    return 'bg-primary-semi-transparent text-white';
-  } else if (
-    chosenVerses.value.length === 1 &&
-    chosenVerses.value?.[0] &&
-    verse > Math.min(chosenVerses.value[0], hoveredVerse.value ?? 0) &&
-    verse < Math.max(chosenVerses.value[0], hoveredVerse.value ?? 0)
-  ) {
-    return 'bg-primary-semi-transparent text-white';
-  } else {
-    return 'bg-primary-light';
-  }
+const VERSE_CLASSES: Record<VerseSelectionState, string> = {
+  chosen: 'bg-primary text-white',
+  'in-range': 'bg-primary-semi-transparent text-white',
+  none: 'bg-primary-light',
 };
+
+const getVerseClass = (verse: number) =>
+  VERSE_CLASSES[
+    getVerseSelectionState(verse, chosenVerses.value, hoveredVerse.value)
+  ];
 
 // Watch for dialog opening to get JW videos and reset state
 whenever(dialogValue, () => {
