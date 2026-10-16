@@ -75,7 +75,7 @@ function calculateBytesFreed(
         ? sizeSource.get(firstPath)
         : sizeSource[firstPath];
 
-    bytesFreed += size || 0;
+    bytesFreed += size ?? 0;
   }
 
   return bytesFreed;
@@ -311,7 +311,7 @@ async function wasFileUsedRecently(parentPath: string): Promise<boolean> {
   try {
     // Check current directory and parent directory (for subfolders)
     const lastUsedDateStr =
-      (await getLastUsedDate(parentPath)) ||
+      (await getLastUsedDate(parentPath)) ??
       (await getLastUsedDate(getParentDirectory(parentPath)));
 
     if (lastUsedDateStr) {

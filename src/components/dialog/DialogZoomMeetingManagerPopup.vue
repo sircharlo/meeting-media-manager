@@ -367,7 +367,7 @@ const restartingHelper = ref(false);
 const logsExpanded = ref(false);
 
 const meetingId = computed(
-  () => currentSettings.value?.zoomMeetingManagerMeetingId?.trim() || '',
+  () => currentSettings.value?.zoomMeetingManagerMeetingId?.trim() ?? '',
 );
 
 const showMeetingSettingsSection = computed(

@@ -1462,7 +1462,7 @@ const currentlySpotlit = computed(
 );
 
 const multipleMediaItemsSelected = computed(() => {
-  return (props.selectedMediaItems?.length || 0) >= 2;
+  return (props.selectedMediaItems?.length ?? 0) >= 2;
 });
 
 const selectedMediaForDay = computed(() => {
@@ -1670,9 +1670,8 @@ const displayMediaTitle = computed(() => {
   }
   return (
     props.media.title ||
-    (props.media.fileUrl && basename(props.media.fileUrl)) ||
-    props.media.extractCaption ||
-    ''
+    (props.media.fileUrl && basename(props.media.fileUrl)) || // NOSONAR: '' means not set
+    (props.media.extractCaption ?? '')
   );
 });
 
@@ -2051,9 +2050,11 @@ const appliedCustomDuration = computed(() => ({
 // Save is clicked. Cancel just discards whatever's in here.
 const draftCustomDuration = ref({
   max: props.media.duration
-    ? props.media.customDuration?.max || props.media.duration
+    ? props.media.customDuration?.max || props.media.duration // NOSONAR: 0 means not set
     : undefined,
-  min: props.media.duration ? props.media.customDuration?.min || 0 : undefined,
+  min: props.media.duration
+    ? (props.media.customDuration?.min ?? 0)
+    : undefined,
 });
 
 const customDurationMinUserInput = ref(

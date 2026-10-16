@@ -187,7 +187,7 @@ export function enrichSongsWithMetadata(songs: SongItem[]): SongItem[] {
   for (const [index, song] of enrichedSongs.entries()) {
     const songStartedAt = performance.now();
     song.duration = song.duration ?? 0;
-    song.title = song.title || basename(song.path);
+    song.title = song.title || basename(song.path); // NOSONAR: empty title uses the file name
     logBackgroundMusicTiming('API song metadata normalized', songStartedAt, {
       duration: song.duration,
       index: index + 1,
@@ -324,7 +324,7 @@ export async function getNextSongFromQueue(
       songQueue.push(nextSong);
     }
 
-    currentSongTitle(nextSong.title || basename(nextSong.path));
+    currentSongTitle(nextSong.title || basename(nextSong.path)); // NOSONAR: empty title uses the file name
     const playbackUrlStartedAt = performance.now();
     const nextSongUrl = await resolveBackgroundMusicPlaybackUrl(nextSong);
     logBackgroundMusicTiming(

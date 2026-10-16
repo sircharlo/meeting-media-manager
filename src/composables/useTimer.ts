@@ -244,7 +244,7 @@ const createTimer = () => {
       .map((section, index) => ({
         duration: 5,
         id: createCustomPartId(),
-        label: section.config?.label || `${t('meeting-part')} ${index + 1}`,
+        label: section.config?.label || `${t('meeting-part')} ${index + 1}`, // NOSONAR: empty label uses the default name
       }));
 
     selectedDateObject.value.timerParts = sectionParts.length
@@ -356,7 +356,7 @@ const createTimer = () => {
   };
 
   const getPartDurationSeconds = (part: MeetingPart) =>
-    (partDurations.value[part] || 0) * 60;
+    (partDurations.value[part] ?? 0) * 60;
 
   // --- Timings (per day) ------------------------------------------------------
 
@@ -692,7 +692,7 @@ const createTimer = () => {
   const resumeTimer = () => {
     const pauseDuration = computePauseDuration(
       Date.now(),
-      timerPausedTime.value || 0,
+      timerPausedTime.value ?? 0,
     );
     if (timerStartTime.value !== null) {
       timerStartTime.value += pauseDuration;
@@ -986,7 +986,7 @@ const createTimer = () => {
       const parts = val.split(':');
       const h = Number(parts[0]);
       const m = Number(parts[1]);
-      const meetingStart = meetingStartTime.value?.getTime() || 0;
+      const meetingStart = meetingStartTime.value?.getTime() || 0; // NOSONAR: NaN falls back too
       const endTime = new Date(meetingStart);
       endTime.setHours(h, m, 0, 0);
       const minTime = meetingStart + minOffsetMinutes * 60 * 1000;

@@ -882,7 +882,7 @@ const applyFetchedMemorialMedia = async (
 const downloadMemorialSong = async (songTrack: number) => {
   const songTrackItem: PublicationFetcher = {
     fileformat: 'MP4',
-    langwritten: currentSettings.value?.lang || 'E',
+    langwritten: currentSettings.value?.lang || 'E', // NOSONAR: '' means not set
     pub: currentSongbook.value?.pub,
     track: songTrack,
   };
@@ -894,7 +894,7 @@ const downloadMemorialSong = async (songTrack: number) => {
     ]);
 
     const files =
-      songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.MP4 || [];
+      songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.MP4 || []; // NOSONAR: '' means not set
     if (!files.length) return true;
 
     const downloadId = (await downloadAdditionalRemoteVideo({
@@ -1067,7 +1067,7 @@ const goToNextDayWithMedia = (ignoreTodaysDate = false) => {
               (section) => !!section.items?.length,
             );
             return (
-              getMeetingType(day.date) || isMemorialDay(day.date) || hasMedia
+              (getMeetingType(day.date) ?? isMemorialDay(day.date)) || hasMedia
             );
           })
           .map((day) => day.date)
@@ -1077,7 +1077,7 @@ const goToNextDayWithMedia = (ignoreTodaysDate = false) => {
               !isInPast(dateFromString(mediaDate), ignoreTodaysDate),
           )
           .map((mediaDate) => formatDate(mediaDate, 'YYYY/MM/DD'))
-          .sort()?.[0] || '';
+          .sort()?.[0] ?? '';
     }
   } catch (e) {
     errorCatcher(e);
@@ -1206,7 +1206,7 @@ useEventListener<
     currentFile.value = 0;
 
     const needsSectionChoice =
-      (selectedDateObject.value?.mediaSections?.length || 0) > 1 &&
+      (selectedDateObject.value?.mediaSections?.length ?? 0) > 1 &&
       !event.detail?.section;
 
     if (needsSectionChoice) {
@@ -1297,7 +1297,7 @@ useEventListener<
       !sectionToAddTo.value &&
       e.detail?.dbPath &&
       e.detail?.document &&
-      (selectedDateObject.value?.mediaSections?.length || 0) > 1
+      (selectedDateObject.value?.mediaSections?.length ?? 0) > 1
     ) {
       pendingJwpubMediaPicker.value = {
         dbPath: e.detail.dbPath,
@@ -1588,8 +1588,8 @@ const addMediaFileToMediaItems = async (
   if (matchingMissingItem) {
     const metadata = await getMetadataFromMediaPath(destPath);
     matchingMissingItem.fileUrl = pathToFileURL(destPath);
-    matchingMissingItem.duration = metadata.format.duration || 0;
-    matchingMissingItem.title = metadata.common.title || basename(destPath);
+    matchingMissingItem.duration = metadata.format.duration || 0; // NOSONAR: NaN duration falls back to 0
+    matchingMissingItem.title = metadata.common.title || basename(destPath); // NOSONAR: empty title uses the file name
     matchingMissingItem.isVideo = isVideo(filepath);
     matchingMissingItem.isAudio = isAudio(filepath);
     return;
@@ -1821,7 +1821,7 @@ const processImportFile = async (
 const finishImportedMediaItems = (mediaItemsToAdd: MediaItem[]) => {
   if (!mediaItemsToAdd.length) return;
 
-  const targetSection = sectionToAddTo.value || 'imported-media';
+  const targetSection = sectionToAddTo.value || 'imported-media'; // NOSONAR: '' means no section
   jwStore.addToAdditionMediaMap(
     mediaItemsToAdd,
     targetSection,
@@ -1843,7 +1843,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
   setDefaultSectionForImport();
   selectedFiles = pickPreferredSingleImportFile(selectedFiles);
   const mediaItemsToAdd: MediaItem[] = [];
-  const targetSection = sectionToAddTo.value || 'imported-media';
+  const targetSection = sectionToAddTo.value || 'imported-media'; // NOSONAR: '' means no section
 
   // All of mediaItemsToAdd lands in the store in one shot via
   // finishImportedMediaItems below, so the skeleton count is fixed up front
@@ -1958,7 +1958,7 @@ const onMediaPickerDismiss = () => {
 
 const dropActive = (event: DragEvent) => {
   sectionToAddTo.value = undefined;
-  if (['all', 'copyLink'].includes(event?.dataTransfer?.effectAllowed || '')) {
+  if (['all', 'copyLink'].includes(event?.dataTransfer?.effectAllowed ?? '')) {
     event.preventDefault();
 
     // Only show file import dialog for non-WE meetings
@@ -2002,7 +2002,7 @@ const handleDrop = (event: DragEvent) => {
 
       // Show section picker if...
       if (
-        (selectedDateObject.value?.mediaSections?.length || 0) > 1 && // ... more than one section exists AND
+        (selectedDateObject.value?.mediaSections?.length ?? 0) > 1 && // ... more than one section exists AND
         (!isWeMeetingDay(selectedDateObject.value?.date) || // ... EITHER this is not a WE meeting
           isCoWeek(selectedDateObject.value?.date)) // ... OR this is a CO week
       ) {
@@ -2165,7 +2165,7 @@ useEventListener(
 
     // If no current selection, return last item if possible, otherwise first
     if (!currentId) {
-      selectedMediaItems.value = [lastItem || sortedMediaIds[0]];
+      selectedMediaItems.value = [lastItem ?? sortedMediaIds[0]];
       return;
     }
 
@@ -2173,7 +2173,7 @@ useEventListener(
 
     // If current item not found, reset to last item if possible, otherwise first
     if (currentIndex === -1) {
-      selectedMediaItems.value = [lastItem || sortedMediaIds[0]];
+      selectedMediaItems.value = [lastItem ?? sortedMediaIds[0]];
       return;
     }
 
@@ -2287,7 +2287,7 @@ function findNextSelectableMedia(mediaList: MediaItem[], startIndex: number) {
   }
 
   // If no selectable item found, wrap to beginning
-  return mediaList[0]?.uniqueId || null;
+  return mediaList[0]?.uniqueId ?? null;
 }
 
 function findPreviousSelectableMedia(
@@ -2303,7 +2303,7 @@ function findPreviousSelectableMedia(
   }
 
   // If no selectable item found, wrap to end
-  return mediaList.at(-1)?.uniqueId || null;
+  return mediaList.at(-1)?.uniqueId ?? null;
 }
 
 function isMediaSelectable(mediaItem: MediaItem) {
@@ -2403,15 +2403,15 @@ const showEmptyState = computed(() => {
 
   // Count total media items across all sections
   const totalMediaCount = (selectedDateObject.value.mediaSections ?? []).reduce(
-    (total, section) => total + (section.items?.length || 0),
+    (total, section) => total + (section.items?.length ?? 0),
     0,
   );
 
   return (
-    (currentSettings.value?.disableMediaFetching && noMediaSections) ||
+    (currentSettings.value?.disableMediaFetching && noMediaSections) || // NOSONAR: boolean OR, false falls through
     (!currentSettings.value?.disableMediaFetching &&
       ((selectedDayMeetingType.value &&
-        (!selectedDateObject.value.status || totalMediaCount === 0)) ||
+        (!selectedDateObject.value.status || totalMediaCount === 0)) || // NOSONAR: boolean OR, false falls through
         (!selectedDayMeetingType.value && noMediaSections)))
   );
 });
@@ -2419,8 +2419,8 @@ const showEmptyState = computed(() => {
 // Banner column management for transitions
 const shouldShowBannerColumn = computed(
   () =>
-    showObsBanner.value ||
-    showObsSceneListErrorBanner.value ||
+    showObsBanner.value || // NOSONAR: boolean OR, false falls through
+    showObsSceneListErrorBanner.value || // NOSONAR: boolean OR, false falls through
     someItemsHiddenForSelectedDate.value ||
     duplicateSongsForWeMeeting.value ||
     showEmptyState.value,
@@ -2858,7 +2858,7 @@ const maybeSendLastSongShortcut = (
 
   const allSongs = getVisibleMeetingSongs();
   const lastSong = allSongs.at(-1);
-  const lastSongUrl = lastSong?.fileUrl || lastSong?.streamUrl;
+  const lastSongUrl = lastSong?.fileUrl || lastSong?.streamUrl; // NOSONAR: '' means no local file
   const stoppedWasLastSong =
     allSongs.length > 0 && lastSongUrl === oldMediaPlayingUrl;
 

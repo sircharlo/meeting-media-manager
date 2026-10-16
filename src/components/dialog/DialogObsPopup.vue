@@ -160,9 +160,9 @@ const ensureObsConnected = async () => {
 
 const getProgramSceneFromType = (sceneType: ObsSceneType) => {
   const settings = currentSettings.value;
-  const mediaScene = settings?.obsMediaScene || undefined;
-  const imageScene = settings?.obsImageScene || undefined;
-  const cameraScene = settings?.obsCameraScene || undefined;
+  const mediaScene = settings?.obsMediaScene || undefined; // NOSONAR: '' means not set
+  const imageScene = settings?.obsImageScene || undefined; // NOSONAR: '' means not set
+  const cameraScene = settings?.obsCameraScene || undefined; // NOSONAR: '' means not set
 
   let scene = mediaScene;
 

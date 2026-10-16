@@ -6,7 +6,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 export type WatchFolderEvent = Record<string, string>;
 
 const getEventKey = (event: WatchFolderEvent) =>
-  `${event.event}:${event.changedPath || ''}:${event.day || ''}`;
+  `${event.event}:${event.changedPath ?? ''}:${event.day ?? ''}`;
 
 /**
  * Queues watched-folder events and processes them one at a time, in order.

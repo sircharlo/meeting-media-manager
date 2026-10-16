@@ -42,5 +42,5 @@ const ZOOM_HELPER_ERROR_MESSAGE_KEYS: Record<string, string> = {
 };
 
 export const getZoomHelperErrorMessageKey = (error?: string) =>
-  (error && ZOOM_HELPER_ERROR_MESSAGE_KEYS[error]) ||
+  (error && ZOOM_HELPER_ERROR_MESSAGE_KEYS[error]) || // NOSONAR: '' means not set
   'zoom-helper-error-generic';

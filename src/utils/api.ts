@@ -141,7 +141,7 @@ export const fetchRaw = async (
     throw new TypeError('fetch failed', { cause: { code: 'ENOTFOUND' } });
   }
 
-  const method = init?.method?.toUpperCase() || 'GET';
+  const method = init?.method?.toUpperCase() ?? 'GET';
   const isCacheable = cache && (method === 'GET' || method === 'HEAD');
   const cacheKey = `${method}:${url}:${JSON.stringify(init?.headers || {})}`;
 
@@ -367,7 +367,7 @@ export const fetchYeartext = async (
   const result = await fetchJson<YeartextResult>(
     url,
     new URLSearchParams({
-      docid: `110${year || new Date().getFullYear()}800`,
+      docid: `110${year ?? new Date().getFullYear()}800`,
       format: 'json',
       snip: 'yes',
       wtlocale,
@@ -508,7 +508,7 @@ export const fetchPubMediaLinks = async (
 ): Promise<null | Publication> => {
   try {
     const videoExtensions: (keyof PublicationFiles)[] = ['MP4', 'M4V'];
-    const docid = publication.docid?.toString() || '';
+    const docid = publication.docid?.toString() ?? '';
     const hasPub = !!publication.pub;
 
     // docid is normally preferred over pub/issue/track when available, but
@@ -526,12 +526,12 @@ export const fetchPubMediaLinks = async (
         publication.fileformat &&
         videoExtensions.includes(publication.fileformat)
           ? videoExtensions.join(',')
-          : publication.fileformat || '',
-      issue: publication.issue?.toString() || '',
+          : (publication.fileformat ?? ''),
+      issue: publication.issue?.toString() ?? '',
       langwritten: publication.langwritten || '',
       output: 'json',
-      pub: useDocId ? '' : publication.pub || '',
-      track: publication.track?.toString() || '',
+      pub: useDocId ? '' : (publication.pub ?? ''),
+      track: publication.track?.toString() ?? '',
       txtCMSLang: 'E',
     });
 

@@ -552,7 +552,7 @@ const getMediaIcon = (item: JwPlaylistItem) => {
 };
 
 const formatDuration = (item: JwPlaylistItem) => {
-  const durationTicks = item?.BaseDurationTicks || item?.DurationTicks || 0;
+  const durationTicks = item?.BaseDurationTicks || item?.DurationTicks || 0; // NOSONAR: 0 means not set
   if (!durationTicks) return '';
 
   const seconds = Math.floor(durationTicks / 10_000 / 1000);
@@ -722,7 +722,7 @@ async function processVideoItem(
   durationTicks: number,
   sectionToUse?: MediaSectionIdentifier,
 ) {
-  const lang = getJwLangCode(item.MepsLanguage) || 'E';
+  const lang = getJwLangCode(item.MepsLanguage) ?? 'E';
 
   const mediaLookup: PublicationFetcher = {
     booknum: item.BookNumber,
@@ -754,7 +754,7 @@ async function processVideoItem(
     mediaItemLinks: videoLinks,
     meetingDate: selectedDate.value,
     onlyCreateItem: true,
-    section: sectionToUse || props.section,
+    section: sectionToUse ?? props.section,
     song: false,
     thumbnailLookup: mediaLookup,
     thumbnailUrl: thumbnailPath ? pathToFileURL(thumbnailPath) : undefined,

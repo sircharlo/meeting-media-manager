@@ -269,7 +269,7 @@ export function updateLookupPeriod({
 
 function countMedia(day: DateInfo) {
   return (
-    day.mediaSections?.reduce((sum, s) => sum + (s.items?.length || 0), 0) || 0
+    day.mediaSections?.reduce((sum, s) => sum + (s.items?.length ?? 0), 0) || 0
   );
 }
 

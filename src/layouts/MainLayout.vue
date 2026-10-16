@@ -835,7 +835,7 @@ const initListeners = () => {
       error: existing?.error,
       filename: args.filename,
       loaded: existing?.loaded,
-      meetingDate: existing?.meetingDate || '',
+      meetingDate: existing?.meetingDate ?? '',
       progressCategory: existing?.progressCategory,
       total: args.totalBytes,
     };
@@ -1080,7 +1080,7 @@ const checkYeartextPreview = () => {
           // Auto-dismiss after 10 seconds
           setTimeout(() => {
             // Restore the current yeartext
-            const currentYeartext = currentState.yeartext || '';
+            const currentYeartext = currentState.yeartext ?? '';
             postYeartext(currentYeartext);
             createTemporaryNotification({
               message: t('yeartext-cleared', {

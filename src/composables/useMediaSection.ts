@@ -22,7 +22,7 @@ import { computed, ref, watch } from 'vue';
 // section-level indicators in useMediaSection go stale the moment that
 // happens.
 const isItemEffectivelyHidden = (item: MediaItem) =>
-  item.hidden ||
+  item.hidden || // NOSONAR: boolean OR, not a default
   (!!item.children?.length && item.children.every((child) => child.hidden));
 
 export function useMediaSection(mediaList: MediaSectionWithConfig) {
@@ -54,7 +54,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
   const someItemsAreHidden = computed(() => {
     return (
-      sectionData.value?.items?.some((item) => isItemEffectivelyHidden(item)) ||
+      sectionData.value?.items?.some((item) => isItemEffectivelyHidden(item)) ??
       false
     );
   });
@@ -68,7 +68,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
   // Check if section is empty
   const isEmpty = computed(() => {
-    return (sectionData.value?.items?.length || 0) === 0;
+    return (sectionData.value?.items?.length ?? 0) === 0;
   });
 
   const hasAddMediaButton = computed(() => {
@@ -113,7 +113,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
     return visibleItems.value.some(
       (m) =>
-        m.streamUrl?.includes(currentSongbook?.pub) ||
+        m.streamUrl?.includes(currentSongbook?.pub) || // NOSONAR: boolean OR, not a default
         m.fileUrl?.includes(currentSongbook?.pub),
     );
   });
@@ -124,7 +124,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     const isCircuitOverseerSection =
       mediaList.config?.uniqueId === 'circuit-overseer';
     const sectionContainsAtLeastOneSong = visibleItems.value.some(
-      (m) => m.streamUrl?.includes('sjj') || m.fileUrl?.includes('sjj'),
+      (m) => m.streamUrl?.includes('sjj') || m.fileUrl?.includes('sjj'), // NOSONAR: boolean OR, not a default
     );
     const result =
       (isPublicTalkSection || isCircuitOverseerSection) &&

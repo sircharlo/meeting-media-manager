@@ -702,7 +702,7 @@ export async function downloadFile(
     // reachable today (gated by isSelf(), and every current renderer call
     // site only ever passes a plain filename), but a defense-in-depth
     // backstop against a future caller passing something untrusted through.
-    destFilename = basename(destFilename || url);
+    destFilename = basename(destFilename || url); // NOSONAR: '' means not set
 
     const fileToDownload = { destFilename, saveDir: resolvedSaveDir, url };
     const key = url + resolvedSaveDir;
@@ -923,12 +923,12 @@ export async function isDownloadErrorExpected(): Promise<boolean> {
         },
       ).catch(() => null);
 
-      let marker = payload?.countryCode || '';
+      let marker = payload?.countryCode ?? '';
 
       if (!marker) {
         const tz = new Intl.DateTimeFormat().resolvedOptions().timeZone;
         const hint = getCountriesForTimezone(tz);
-        if (hint.length === 1) marker = hint[0]?.id || '';
+        if (hint.length === 1) marker = hint[0]?.id ?? '';
       }
 
       if (!marker) {

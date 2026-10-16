@@ -252,10 +252,10 @@ const applyCongregation = async (congregation: CongregationSuggestion) => {
     if (selectedMeeting.languageGuid) {
       const languageMap = await getMeetingLanguageMap();
       const mappedLanguageCode =
-        languageMap.get(selectedMeeting.languageGuid) || '';
+        languageMap.get(selectedMeeting.languageGuid) ?? '';
       const resolvedLangCode =
         jwLanguages.value?.list.find((l) => l.langcode === mappedLanguageCode)
-          ?.langcode || '';
+          ?.langcode ?? '';
       currentSettings.value.lang = resolvedLangCode || 'E';
       currentSettings.value.langSubtitles = resolvedLangCode || null;
     }
@@ -362,7 +362,7 @@ const dismissPopup = () => {
 
 // Focus the input when dialog opens
 whenever(dialogValue, () => {
-  congregationFilter.value = currentSettings.value?.congregationName || '';
+  congregationFilter.value = currentSettings.value?.congregationName ?? '';
   results.value = [];
   lookupCongregation();
   setTimeout(() => {

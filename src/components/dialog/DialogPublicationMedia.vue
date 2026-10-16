@@ -742,7 +742,7 @@ async function buildDocumentPreviews(db: string) {
         if (!docId) return;
 
         const previewPath =
-          (await getFirstLinkedImage(docId)) || (await getFallbackImage(docId));
+          (await getFirstLinkedImage(docId)) || (await getFallbackImage(docId)); // NOSONAR: '' means not set
 
         if (!previewPath) return;
 
@@ -774,7 +774,7 @@ const searchEndpoints = computed(() => [
     name: 'Publications',
     queryParam: 'q',
     url: mediaApiOrigin.value
-      ? `${mediaApiOrigin.value}/apis/search/results/${currentSettings.value?.lang || 'E'}/publications`
+      ? `${mediaApiOrigin.value}/apis/search/results/${currentSettings.value?.lang || 'E'}/publications` // NOSONAR: '' means not set
       : '',
   },
 ]);
@@ -801,7 +801,7 @@ const buildIssue = (year: number | string, month: number, pub: string) => {
 async function buildMonthChoices() {
   try {
     loading.value = true;
-    const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
+    const lang = (currentSettings.value?.lang || 'E') as JwLangCode; // NOSONAR: '' means not set
     const pub = selection.publication;
     const year = selection.year;
     const promises = Array.from({ length: 12 }, async (_, idx) => {
@@ -844,7 +844,7 @@ async function buildMonthChoices() {
 async function buildPublicationItemsWithStatus(
   raw: FilterChoice[],
 ): Promise<(FilterChoice & { available?: boolean; downloaded?: boolean })[]> {
-  const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
+  const lang = (currentSettings.value?.lang || 'E') as JwLangCode; // NOSONAR: '' means not set
   return Promise.all(
     raw.map(async (c) => {
       const pubFetcher: PublicationFetcher = {
@@ -1121,7 +1121,7 @@ async function importPdfVersion() {
   try {
     if (!pdfImportAvailable.value || loading.value) return;
     loading.value = true;
-    const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
+    const lang = (currentSettings.value?.lang || 'E') as JwLangCode; // NOSONAR: '' means not set
     const issue = selection.month
       ? buildIssue(selection.year, selection.month, selection.publication)
       : '0';
@@ -1200,7 +1200,7 @@ function normalizePublicationAndIssue(
 ): null | { issue: string; publication: string } {
   const url = new URL(jwOrgLink);
   let publication = url.searchParams.get('pub');
-  let issue = url.searchParams.get('issue') || '0';
+  let issue = url.searchParams.get('issue') || '0'; // NOSONAR: '' means not set
 
   if (!publication) return null;
 
@@ -1338,7 +1338,7 @@ async function refreshPdfAvailability(issueOverride?: string) {
   try {
     pdfImportAvailable.value = false;
     if (step.value !== 'article' || !selection.publication) return;
-    const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
+    const lang = (currentSettings.value?.lang || 'E') as JwLangCode; // NOSONAR: '' means not set
     const issue =
       issueOverride ??
       (selection.month
@@ -1425,7 +1425,7 @@ async function selectCategory(key: string) {
       const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
         url,
         new URLSearchParams({
-          contentLanguageFilter: currentLangObject.value?.symbol || 'en',
+          contentLanguageFilter: currentLangObject.value?.symbol ?? 'en',
           pubFilter: 'mwb',
           yearFilter: '',
         }),
@@ -1445,7 +1445,7 @@ async function selectCategory(key: string) {
       const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
         url,
         new URLSearchParams({
-          contentLanguageFilter: currentLangObject.value?.symbol || 'en',
+          contentLanguageFilter: currentLangObject.value?.symbol ?? 'en',
           pubFilter: '',
           sortBy: '1',
         }),
@@ -1467,7 +1467,7 @@ async function selectCategory(key: string) {
       const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
         url,
         new URLSearchParams({
-          contentLanguageFilter: currentLangObject.value?.symbol || 'en',
+          contentLanguageFilter: currentLangObject.value?.symbol ?? 'en',
           pubFilter: '',
           sortBy: '1',
         }),
@@ -1489,7 +1489,7 @@ async function selectCategory(key: string) {
       const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
         url,
         new URLSearchParams({
-          contentLanguageFilter: currentLangObject.value?.symbol || 'en',
+          contentLanguageFilter: currentLangObject.value?.symbol ?? 'en',
           pubFilter: '',
           sortBy: '1',
         }),
@@ -1521,7 +1521,7 @@ async function selectMagazine(choice: FilterChoice) {
     const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
       url,
       new URLSearchParams({
-        contentLanguageFilter: currentLangObject.value?.symbol || 'en',
+        contentLanguageFilter: currentLangObject.value?.symbol ?? 'en',
         pubFilter: selection.publication,
         yearFilter: '',
       }),
@@ -1541,7 +1541,7 @@ async function selectMonth(m: number) {
     selection.month = m;
     loading.value = true;
     // Download jwpub and open DB
-    const lang = currentSettings.value?.lang || 'E';
+    const lang = currentSettings.value?.lang || 'E'; // NOSONAR: '' means not set
     const pub = selection.publication;
     const issue = buildIssue(selection.year, m, pub);
 
@@ -1579,7 +1579,7 @@ async function selectPublication(choice: FilterChoice) {
     selection.publication = String(choice.optionValue);
     selection.brochureLabel = decodeEntities(choice.optionName);
     // Download jwpub and open DB
-    const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
+    const lang = (currentSettings.value?.lang || 'E') as JwLangCode; // NOSONAR: '' means not set
     const db = await getDbFromJWPUB(
       {
         fileformat: 'JWPUB',
@@ -1625,7 +1625,7 @@ async function selectSearchResult(result: SearchResultItem) {
     const { issue, publication } = normalized;
     selection.publication = publication;
     selection.brochureLabel = result.title;
-    const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
+    const lang = (currentSettings.value?.lang || 'E') as JwLangCode; // NOSONAR: '' means not set
 
     const mediaFetcher: PublicationFetcher = {
       issue,

@@ -204,7 +204,7 @@ export function useMediaSectionRepeat() {
       return;
     }
 
-    const nextUrl = nextItem.fileUrl || nextItem.streamUrl || '';
+    const nextUrl = nextItem.fileUrl || nextItem.streamUrl || ''; // NOSONAR: '' means not set
     const isSameItem = mediaPlaying.value.url === nextUrl;
 
     log(
@@ -237,7 +237,7 @@ export function useMediaSectionRepeat() {
       seekTo: 0,
       shouldLoop: false,
       slideshowAudioUrl: '',
-      subtitlesUrl: nextItem.subtitlesUrl || '',
+      subtitlesUrl: nextItem.subtitlesUrl ?? '',
       uniqueId: nextItem.uniqueId,
       url: nextUrl,
       zoom: 1,

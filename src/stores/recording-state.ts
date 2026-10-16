@@ -134,7 +134,7 @@ export const useRecordingStore = defineStore('recording', () => {
 
       // Generic shortcut-driven recording
       const stopShortcut =
-        currentSettings.value?.recordingStopShortcut ||
+        currentSettings.value?.recordingStopShortcut || // NOSONAR: '' means not set
         currentSettings.value?.recordingStartShortcut;
       if (stopShortcut) {
         sendKeyboardShortcut(stopShortcut, 'Recording');

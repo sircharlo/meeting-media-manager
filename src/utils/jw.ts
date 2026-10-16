@@ -29,7 +29,7 @@ export const getPubId = (
   }
 
   return [
-    ...(full ? [docid, pub] : [pub || docid]),
+    ...(full ? [docid, pub] : [pub || docid]), // NOSONAR: '' means not set
     langwritten,
     issue,
     ...(full ? [track, fileformat] : []),
@@ -84,7 +84,7 @@ export function findBestResolution(
 
     let bestItem = mediaLinks[0];
     const parsedMaxRes = Number.parseInt(
-      maxRes?.replaceAll(/\D/g, '') || '720',
+      maxRes?.replaceAll(/\D/g, '') || '720', // NOSONAR: no digits uses the 720 default
     );
     mediaLinks.forEach((m) => {
       if (parsedMaxRes && getMediaResolution(m) <= parsedMaxRes) {

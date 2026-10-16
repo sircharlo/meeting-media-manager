@@ -678,7 +678,7 @@ const visibleGroupKeys = computed(() =>
 // remembered per congregation profile (session-only, see current-state.ts).
 const activeGroup = ref<SettingsGroupKey>(
   (currentCongregation.value &&
-    activeSettingsGroup.value[currentCongregation.value]) ||
+    activeSettingsGroup.value[currentCongregation.value]) || // NOSONAR: '' means no congregation
     (settingsGroupsEntries[0]?.[0] as SettingsGroupKey),
 );
 

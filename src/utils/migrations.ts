@@ -63,13 +63,13 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
     // properties" diagnostic for the object as a whole.
     const migratedPrefs: Partial<SettingsValues> = {
       autoStartAtLogin: oldPrefs.app?.autoRunAtBoot || false,
-      autoStartMusic: oldPrefs.meeting?.autoStartMusic || true,
+      autoStartMusic: oldPrefs.meeting?.autoStartMusic ?? true,
       baseUrl: 'jw.org',
-      cacheFolder: oldPrefs.app?.customCachePath || null,
+      cacheFolder: oldPrefs.app?.customCachePath || null, // NOSONAR: '' means not set
       congregationName: oldPrefs.app?.congregationName || '',
       convertFilesToMp4: oldPrefs.media?.enableMp4Conversion || false,
       // @ts-expect-error: coWeek is a string
-      coWeek: oldPrefs.meeting?.coWeek || '',
+      coWeek: oldPrefs.meeting?.coWeek ?? '',
       darkMode: 'auto',
       disableHardwareAcceleration:
         oldPrefs.app?.disableHardwareAcceleration || false,
@@ -78,25 +78,25 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       enableFolderWatcher: false,
       enableKeyboardShortcuts: !!(
         oldPrefs.media?.mediaWinShortcut ||
-        oldPrefs.media?.ppBackward ||
-        oldPrefs.media?.ppForward ||
+        oldPrefs.media?.ppBackward || // NOSONAR: '' means not set
+        oldPrefs.media?.ppForward || // NOSONAR: '' means not set
         oldPrefs.meeting?.shuffleShortcut
       ),
       enableMediaAutoExport: oldPrefs.media?.enableMp4Conversion || false,
       enableMediaDisplayButton:
-        oldPrefs.media?.enableMediaDisplayButton || true,
-      enableMusicButton: oldPrefs.meeting?.enableMusicButton || true,
+        oldPrefs.media?.enableMediaDisplayButton ?? true,
+      enableMusicButton: oldPrefs.meeting?.enableMusicButton ?? true,
       // enableMusicFadeOut: oldPrefs.meeting?.enableMusicFadeOut || true,
       enableSubtitles: oldPrefs.media?.enableSubtitles || false,
       excludeFootnotes: oldPrefs.media?.excludeFootnotes || false,
-      excludeTh: oldPrefs.media?.excludeTh || true,
+      excludeTh: oldPrefs.media?.excludeTh ?? true,
       firstDayOfWeek: 0,
       folderToWatch: '',
       hideMediaLogo: oldPrefs.media?.hideMediaLogo || false,
-      includePrinted: oldPrefs.media?.includePrinted || true,
+      includePrinted: oldPrefs.media?.includePrinted ?? true,
       lang: oldPrefs.media?.lang || '',
-      langFallback: oldPrefs.media?.langFallback || null,
-      langSubtitles: oldPrefs.media?.langSubs || null,
+      langFallback: oldPrefs.media?.langFallback || null, // NOSONAR: '' means not set
+      langSubtitles: oldPrefs.media?.langSubs || null, // NOSONAR: '' means not set
       localAppLang:
         ((oldPrefs.app?.localAppLang?.includes('-')
           ? kebabToCamelCase(oldPrefs.app?.localAppLang)
@@ -110,23 +110,23 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       meetingScheduleChangeWeDay: null,
       meetingScheduleChangeWeStartTime: null,
       memorialDate: null,
-      musicVolume: oldPrefs.meeting?.musicVolume || 100,
+      musicVolume: oldPrefs.meeting?.musicVolume ?? 100,
       mwDay: oldPrefs.meeting?.mwDay ? `${oldPrefs.meeting.mwDay}` : null,
       // @ts-expect-error: mwStartTime is a string
       mwStartTime: oldPrefs.meeting?.mwStartTime?.toString() || null,
-      obsCameraScene: oldPrefs.app?.obs?.cameraScene || '',
+      obsCameraScene: oldPrefs.app?.obs?.cameraScene ?? '',
       obsEnable: oldPrefs.app?.obs?.enable || false,
       obsHideIcons: false,
-      obsImageScene: oldPrefs.app?.obs?.imageScene || '',
-      obsMediaScene: oldPrefs.app?.obs?.mediaScene || '',
-      obsPassword: oldPrefs.app?.obs?.password || '',
-      obsPort: oldPrefs.app?.obs?.port?.toString() || '',
+      obsImageScene: oldPrefs.app?.obs?.imageScene ?? '',
+      obsMediaScene: oldPrefs.app?.obs?.mediaScene ?? '',
+      obsPassword: oldPrefs.app?.obs?.password ?? '',
+      obsPort: oldPrefs.app?.obs?.port?.toString() ?? '',
       obsPostponeImages: false,
       obsQuickToggle: false,
       obsSwitchSceneAfterMedia: false,
-      shortcutMediaNext: oldPrefs.media?.ppForward || '',
+      shortcutMediaNext: oldPrefs.media?.ppForward ?? '',
       shortcutMediaPauseResume: '',
-      shortcutMediaPrevious: oldPrefs.media?.ppBackward || '',
+      shortcutMediaPrevious: oldPrefs.media?.ppBackward ?? '',
       shortcutMediaStop: '',
       shortcutMediaWindow: oldPrefs.media?.mediaWinShortcut || '',
       shortcutMusic: oldPrefs.meeting?.shuffleShortcut || '',

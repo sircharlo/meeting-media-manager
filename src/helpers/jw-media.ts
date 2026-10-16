@@ -376,7 +376,7 @@ const trackInvalidJwpubRedownload = async (
 const getMemorialMediaCacheKey = (
   langwritten: JwLangCode,
   memorialDate?: null | string,
-) => `${langwritten}:${memorialDate || 'none'}`;
+) => `${langwritten}:${memorialDate || 'none'}`; // NOSONAR: '' means not set
 
 const memorialMediaCache = new Map<
   string,
@@ -426,7 +426,7 @@ export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
     (l) => l.LanguageId === mepsId,
   );
   if (match) return match.Symbol;
-  return mepslangs[mepsId] || null;
+  return mepslangs[mepsId] ?? null;
 };
 
 const getJwLangId = (symbol?: JwLangCode): number | undefined => {
@@ -771,7 +771,7 @@ const getMediaFromJwPlaylist = async (
           }
         }
         const durationTicks =
-          item?.BaseDurationTicks || item?.DurationTicks || 0;
+          item?.BaseDurationTicks || item?.DurationTicks || 0; // NOSONAR: 0 falls back too
         const EndTime =
           durationTicks &&
           item?.EndTrimOffsetTicks &&
@@ -1233,9 +1233,7 @@ export const unzipJwpub = async (
   try {
     const currentState = useCurrentStateStore();
     if (!isJwpub(jwpubPath)) return jwpubPath;
-    if (!outputPath) {
-      outputPath = join(await getTempPath(), basename(jwpubPath));
-    }
+    outputPath ||= join(await getTempPath(), basename(jwpubPath)); // NOSONAR: '' means not set
 
     const cacheKey = `${jwpubPath}->${outputPath}`;
 
@@ -1415,10 +1413,10 @@ export const createMediaItemFromPath = async (
         ? await getMetadataFromMediaPath(additionalFilePath)
         : undefined;
 
-    const duration = additionalInfo?.duration || metadata?.format.duration || 0;
+    const duration = additionalInfo?.duration || metadata?.format.duration || 0; // NOSONAR: 0 falls back too
     const title =
-      additionalInfo?.title ||
-      metadata?.common.title ||
+      additionalInfo?.title || // NOSONAR: empty title uses the file name
+      metadata?.common.title || // NOSONAR: empty title uses the file name
       basename(additionalFilePath).replace(extname(additionalFilePath), '');
 
     if (!uniqueId) {
@@ -1568,7 +1566,7 @@ export const addJwpubDocumentMediaToFiles = async (
     );
     await processMissingMediaInfo({
       allMedia: filteredMultimediaItems,
-      meetingDate: meetingDate || currentStateStore.selectedDate,
+      meetingDate: meetingDate || currentStateStore.selectedDate, // NOSONAR: '' means not set
     });
     const mediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
@@ -1694,14 +1692,14 @@ export const downloadFileIfNeeded = async ({
     const currentStateStore = useCurrentStateStore();
     const dirIsUsable = await isUsablePath(dir);
     if (!dirIsUsable) throw new Error('Unusable path');
-    if (!filename) filename = basename(url);
+    if (!filename) filename = basename(url); // NOSONAR: '' means not set
     filename = sanitizeFilename(filename);
     destinationPath = join(dir, filename);
     const remoteSize: number =
-      size ||
+      size || // NOSONAR: 0 falls back too
       (await fetchRaw(url, { method: 'HEAD' }, true)
         .then((response) => {
-          return +(response?.headers?.get('content-length') || 0);
+          return +(response?.headers?.get('content-length') ?? 0);
         })
         .catch(() => 0));
     if (await pathExists(destinationPath)) {
@@ -2433,7 +2431,7 @@ const getEmptyStudyBibleResult = (): StudyBibleResult => ({
 const getStudyBibleCacheKey = (
   cacheFolder: null | string | undefined,
   languages: JwLangCode[],
-) => [cacheFolder || 'default', languages.join(':') || 'none'].join(':');
+) => [cacheFolder || 'default', languages.join(':') || 'none'].join(':'); // NOSONAR: '' means not set
 
 const getStudyBibleLanguages = () => {
   const currentStateStore = useCurrentStateStore();
@@ -2987,7 +2985,7 @@ const prepareStudyBibleMediaItem = async (
     : itemWithPath;
   updatedItem.VerseNumber = item.VerseLabel
     ? Number.parseInt(
-        new RegExp(/>(\d+)</).exec(item.VerseLabel)?.[1] || '',
+        new RegExp(/>(\d+)</).exec(item.VerseLabel)?.[1] ?? '',
         10,
       )
     : null;
@@ -3049,7 +3047,7 @@ const applyBibleBookBackupNames = async (
   if (!(nwtStyDb || nwtDb)) return;
 
   const bibleBookLocalNames = await getLocalBibleBookNames(
-    nwtStyDb || nwtDb || '',
+    nwtStyDb ?? nwtDb ?? '',
   );
   for (const booknum of backupNameNeeded) {
     const placeholder = returnedItems.find((item) => item.booknum === booknum);
@@ -3512,13 +3510,13 @@ export const dynamicMediaMapper = async (
     const isMeetingWe = isWeMeetingDay(lookupDate);
     const isAdditional = calculatedSource === 'additional';
 
-    const lastParagraph = allMedia.at(-1)?.BeginParagraphOrdinal || 0;
+    const lastParagraph = allMedia.at(-1)?.BeginParagraphOrdinal ?? 0;
 
     // --- Determine middle song paragraph ----------------------------------
     const songs = allMedia.filter((element) => isSong(element));
     const middleSongParagraph =
       !isAdditional && isMeetingMw && songs.length >= 2
-        ? songs[1]?.BeginParagraphOrdinal || 0
+        ? (songs[1]?.BeginParagraphOrdinal ?? 0)
         : 0;
 
     // --- Helper: resolve duration -----------------------------------------
@@ -3538,7 +3536,7 @@ export const dynamicMediaMapper = async (
 
       if (!m.KeySymbol) return 0;
 
-      const lang = currentSettings?.lang || currentSettings?.langFallback;
+      const lang = currentSettings?.lang || currentSettings?.langFallback; // NOSONAR: '' means not set
       if (!lang) return 0;
 
       const mediaInfo = await getJwMediaInfo({
@@ -3564,7 +3562,7 @@ export const dynamicMediaMapper = async (
       const base =
         m.KeySymbol || m.IssueTagNumber
           ? [m.KeySymbol, m.IssueTagNumber]
-          : [m.MepsDocumentId || m.MultimediaId];
+          : [m.MepsDocumentId || m.MultimediaId]; // NOSONAR: 0 falls back too
 
       const extra = [
         m.MepsLanguageIndex === undefined
@@ -3599,7 +3597,7 @@ export const dynamicMediaMapper = async (
     );
     const filteredMedia = excludeCbsPubs.length
       ? allMedia.filter((m) => {
-          const symbol = m.ExtractSymbol || m.KeySymbol;
+          const symbol = m.ExtractSymbol || m.KeySymbol; // NOSONAR: '' means not set
           if (!symbol) return true;
           if (!isCbsParagraph(m, { isAdditional, isMeetingMw, lastParagraph }))
             return true;
@@ -3816,9 +3814,9 @@ const mapDynamicMediaItem = async (
       : '';
   const uniqueId = sanitizeId(`${datePart}-${durationPart}${fileUrl}`);
   const thumbnailUrl =
-    media.ThumbnailUrl ||
-    pathToFileURL(media.LinkedPreviewFilePath || '') ||
-    (await getThumbnailUrl(media.ThumbnailFilePath || media.FilePath));
+    media.ThumbnailUrl || // NOSONAR: '' means not set
+    pathToFileURL(media.LinkedPreviewFilePath ?? '') ||
+    (await getThumbnailUrl(media.ThumbnailFilePath || media.FilePath)); // NOSONAR: '' means not set
 
   return {
     cbs: isCbsParagraph(media, context),
@@ -3878,8 +3876,8 @@ export const watchedItemMapper: (
         ? await getMetadataFromMediaPath(watchedItemPath)
         : undefined;
 
-    const duration = metadata?.format.duration || 0;
-    const title = metadata?.common.title || basename(watchedItemPath);
+    const duration = metadata?.format.duration || 0; // NOSONAR: NaN falls back too
+    const title = metadata?.common.title || basename(watchedItemPath); // NOSONAR: empty title uses the file name
 
     const uniqueId = sanitizeId(
       formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl,
@@ -3960,8 +3958,8 @@ const getWatchedMediaPlacement = async ({
   return {
     order: filenamePlacement?.order,
     section:
-      filenamePlacement?.section ||
-      getLegacyWatchedSection(filename) ||
+      filenamePlacement?.section ??
+      getLegacyWatchedSection(filename) ??
       getDefaultWatchedSection(parentDate),
   };
 };
@@ -4093,7 +4091,7 @@ const applyMepsLanguageOverrides = async (
 const groupMediaByOriginalSection = (mediaForDay: MediaItem[]) => {
   const groupedMedia: Record<string, MediaItem[]> = {};
   mediaForDay.forEach((mediaItem) => {
-    const section = mediaItem.originalSection || 'tgw';
+    const section = mediaItem.originalSection || 'tgw'; // NOSONAR: '' means not set
     groupedMedia[section] ??= [];
     groupedMedia[section].push(mediaItem);
   });
@@ -4263,7 +4261,7 @@ const processWeekendMedia = (
   );
 
   // Sort those with BeginPosition
-  withBegin.sort((a, b) => (a.BeginPosition || 0) - (b.BeginPosition || 0));
+  withBegin.sort((a, b) => (a.BeginPosition ?? 0) - (b.BeginPosition ?? 0));
 
   // Final result: Insert all withoutBegin *before* the last item with BeginPosition
   let final: MultimediaItem[] = [];
@@ -4343,7 +4341,7 @@ const mergeWeekendSongs = (
   } catch (e: unknown) {
     errorCatcher(e);
     songMepsLanguageCodes = songs.map(
-      () => currentStateStore.currentSettings?.lang || 'E',
+      () => currentStateStore.currentSettings?.lang || 'E', // NOSONAR: '' means not set
     );
   }
 
@@ -4807,7 +4805,7 @@ const getBibleVerseDuration = (
   min = timeToSeconds(
     chapterMedia.map((item) =>
       item.markers.markers.find((marker) => marker.verseNumber === verses[0]),
-    )?.[0]?.startTime || '0',
+    )?.[0]?.startTime ?? '0',
   );
 
   const endVerse = chapterMedia.map((item) =>
@@ -4839,7 +4837,7 @@ const downloadBibleMissingMedia = async (
   return downloadAdditionalRemoteVideo({
     customDuration: getBibleVerseDuration(media, chapterMedia),
     mediaItemLinks: chapterMedia,
-    meetingDate: meetingDate || undefined,
+    meetingDate: meetingDate || undefined, // NOSONAR: '' means not set
     section: undefined,
     song: false,
     thumbnailUrl: media.ThumbnailFilePath,
@@ -4866,14 +4864,14 @@ const downloadStandardMissingMedia = async ({
     const { FilePath, Label, StreamDuration, StreamThumbnailUrl, StreamUrl } =
       await downloadMissingMedia(
         publicationFetcher,
-        meetingDate || currentStateStore.selectedDate,
+        meetingDate || currentStateStore.selectedDate, // NOSONAR: '' means not set
         isDynamicMedia,
         true,
       );
     media.FilePath = FilePath ?? media.FilePath;
     media.Label = keepMediaLabels
-      ? media.Label || Label || ''
-      : Label || media.Label;
+      ? media.Label || Label || '' // NOSONAR: '' means not set
+      : Label || media.Label; // NOSONAR: '' means not set
     media.StreamUrl = StreamUrl ?? media.StreamUrl;
     media.Duration = StreamDuration ?? media.Duration;
     media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
@@ -5408,7 +5406,7 @@ const downloadMissingMedia = async (
     const pubDir = await getPublicationDirectory(publication);
     await updateLastUsedDate(
       pubDir,
-      meetingDate || currentStateStore.selectedDate,
+      meetingDate || currentStateStore.selectedDate, // NOSONAR: '' means not set
     );
     const responseObject = await getPubMediaLinks(
       publication,
@@ -5582,7 +5580,7 @@ const resolveRemoteThumbnailUrl = async (
 ): Promise<{ localUrl: string | undefined; remoteUrl: string | undefined }> => {
   try {
     const resolvedUrl =
-      thumbnailUrl ||
+      thumbnailUrl || // NOSONAR: '' means not set
       (thumbnailLookup
         ? (await getJwMediaInfo(thumbnailLookup)).thumbnail || undefined
         : undefined);
@@ -5663,7 +5661,7 @@ export const downloadAdditionalRemoteVideo = async (
 
     await updateLastUsedDate(
       datedAdditionalMediaDir,
-      meetingDate || currentStateStore.selectedDate,
+      meetingDate || currentStateStore.selectedDate, // NOSONAR: '' means not set
     );
 
     const { localUrl: thumbnailUrl, remoteUrl: thumbnailStreamUrl } =
@@ -6101,7 +6099,7 @@ const downloadJwpub = async (
       return handleDownloadError();
     }
 
-    await updateLastUsedDate(publicationDir, meetingDate || new Date());
+    await updateLastUsedDate(publicationDir, meetingDate || new Date()); // NOSONAR: '' means not set
     let lowPriority = false;
 
     if (!isMemorialMeeting && meetingDate) {

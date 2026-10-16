@@ -42,7 +42,7 @@ export const sendKeyboardShortcut = (
 
     // Convert keys to robotjs format
     const robotKeys = keys.map((key: string) =>
-      (keyMap[key] || key).toString(),
+      (keyMap[key] ?? key).toString(),
     );
 
     // Send the key combination

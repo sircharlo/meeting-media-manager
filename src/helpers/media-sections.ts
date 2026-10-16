@@ -222,7 +222,7 @@ export const createMeetingSections = (day: DateInfo) => {
 export const getSectionBgColor = (section: MediaSection | undefined) => {
   if (!section || isStandardSection(section.uniqueId))
     return 'var(--q-primary)';
-  return section.bgColor || 'var(--q-primary)';
+  return section.bgColor || 'var(--q-primary)'; // NOSONAR: '' means not set
 };
 
 // Parses a "#rgb"/"#rrggbb" or "rgb(a)(...)" color string into channels.
@@ -313,7 +313,7 @@ export const getSectionAccentColor = (
   const section = sectionId
     ? findMediaSection(mediaSections ?? [], sectionId)
     : undefined;
-  return section?.config.bgColor || defaultAdditionalSection.config.bgColor;
+  return section?.config.bgColor || defaultAdditionalSection.config.bgColor; // NOSONAR: '' means not set
 };
 
 export const withAlpha = (color: string, alpha: number): string => {

@@ -189,7 +189,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         // resolves against process.cwd() - the app's own install directory
         // in a packaged build. Default to today instead of ever returning
         // an unusable empty directory.
-        if (!destDate) destDate = this.selectedDate || undefined;
+        if (!destDate) destDate = this.selectedDate || undefined; // NOSONAR: '' means not set
         const additionalMediaPath = await getAdditionalMediaPath();
         const dateString = formatDate(
           destDate ? new Date(destDate) : new Date(),
@@ -211,7 +211,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       congregation?: number | string,
     ): (keyof SettingsValues)[] {
       try {
-        if (!congregation) congregation = this.currentCongregation;
+        if (!congregation) congregation = this.currentCongregation; // NOSONAR: '' means not set
         if (!congregation) return [];
         const invalidSettings = new Set<keyof SettingsValues>();
 
@@ -266,7 +266,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       }
     },
     invalidSettings(congregation?: number | string) {
-      if (!congregation) congregation = this.currentCongregation;
+      if (!congregation) congregation = this.currentCongregation; // NOSONAR: '' means not set
       if (!congregation) return false;
       return this.getInvalidSettings(congregation).length > 0;
     },
@@ -431,7 +431,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       const getSceneId = (scene: JsonObject): string => {
         const sceneUuid = getObsSceneField(scene, 'sceneUuid');
         if (scenesAreUUIDS && sceneUuid) return sceneUuid;
-        return getObsSceneField(scene, 'sceneName') || '';
+        return getObsSceneField(scene, 'sceneName') ?? '';
       };
       return scenes
         .map((scene) => getSceneId(scene))
@@ -457,7 +457,7 @@ export const useCurrentStateStore = defineStore('current-state', {
 
       Object.values(this.selectedDateObject.mediaSections).forEach(
         (sectionMedia) => {
-          count += sectionMedia.items?.length || 0;
+          count += sectionMedia.items?.length ?? 0;
         },
       );
 
@@ -644,7 +644,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         (sectionMedia) =>
           sectionMedia.items?.some(
             (item: MediaItem) =>
-              item.hidden ||
+              item.hidden || // NOSONAR: false checks the next condition
               item.children?.some((child: MediaItem) => child.hidden),
           ),
       );
@@ -661,7 +661,7 @@ export const useCurrentStateStore = defineStore('current-state', {
 
       const { lang, langFallback } = this.currentSettings;
 
-      return textsForYear[lang] || (langFallback && textsForYear[langFallback]);
+      return textsForYear[lang] || (langFallback && textsForYear[langFallback]); // NOSONAR: empty yeartext uses the fallback language
     },
   },
   persist: {

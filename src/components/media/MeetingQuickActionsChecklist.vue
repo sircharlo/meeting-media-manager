@@ -109,10 +109,10 @@ const groups = computed(() => {
 const getCategoryLabel = (category: MeetingChecklistCategory) =>
   category.isDefault
     ? t(category.id)
-    : category.label || t('quick-actions-custom-category');
+    : category.label || t('quick-actions-custom-category'); // NOSONAR: '' means not set
 
 const getItemLabel = (item: MeetingChecklistItem) =>
-  item.isDefault ? t(item.id) : item.label || t('quick-actions-custom-item');
+  item.isDefault ? t(item.id) : item.label || t('quick-actions-custom-item'); // NOSONAR: '' means not set
 </script>
 
 <style scoped>

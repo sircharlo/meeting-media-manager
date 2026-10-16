@@ -221,8 +221,8 @@ export function replaceMissingMediaByPubMediaId(
       // Determine the correct target section based on the item's originalSection property
       // If children, use the first child's originalSection
       const targetSectionId = item.children?.length
-        ? item.children[0]?.originalSection || 'tgw'
-        : item.originalSection || 'tgw'; // Default to 'tgw' if no section assigned
+        ? (item.children[0]?.originalSection ?? 'tgw')
+        : (item.originalSection ?? 'tgw'); // Default to 'tgw' if no section assigned
       const targetSection = findMediaSection(
         targetDay.mediaSections,
         targetSectionId,
@@ -482,7 +482,7 @@ export const useJwStore = defineStore('jw-store', {
         let targetSection: MediaSectionIdentifier = 'imported-media';
         if (coWeek) {
           targetSection =
-            section ||
+            section || // NOSONAR: '' means not set
             (isMeetingDay(selectedDateObject.date)
               ? 'circuit-overseer'
               : 'imported-media');
@@ -949,8 +949,8 @@ export const useJwStore = defineStore('jw-store', {
         // periodically, so a baked-in URL inevitably goes stale. Discovered
         // dynamically via updateYeartextFontUrls(), same as the other
         // WT/Manna yeartext fonts below.
-        'Wt-BaeumMyungjo': state.yeartextFontUrls['Wt-BaeumMyungjo'] || '',
-        'Wt-ClearText-Bold': state.yeartextFontUrls['Wt-ClearText-Bold'] || '',
+        'Wt-BaeumMyungjo': state.yeartextFontUrls['Wt-BaeumMyungjo'] ?? '',
+        'Wt-ClearText-Bold': state.yeartextFontUrls['Wt-ClearText-Bold'] ?? '',
         ...state.yeartextFontUrls,
       } as Record<FontName, string>;
     },
