@@ -104,6 +104,28 @@ describe('ObsStatus - scene list retry', () => {
     expect(obsState.currentScene).toBe('Camera');
   }, 10000);
 
+  it('gives up on an empty scene list reply instead of looping on it', async () => {
+    const obsState = setupObsSettings();
+    // An empty reply used to restart the loop without counting an attempt
+    // or waiting, spinning the renderer forever. Fail after a few calls so a
+    // regression shows up as extra calls rather than a hung test.
+    callMock.mockImplementation(async () => {
+      if (callMock.mock.calls.length > 10) throw new Error('still looping');
+      return undefined;
+    });
+
+    const { default: ObsStatus } = await import('../ObsStatus.vue');
+    mount(ObsStatus, { props: { modelValue: false } });
+    await wait(50);
+
+    await triggerObsEvent('Identified');
+    await wait(50);
+
+    expect(callMock).toHaveBeenCalledTimes(1);
+    expect(obsState.obsSceneListError).toBe(true);
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
   it('still reports a genuine failure', async () => {
     setupObsSettings();
     const error = new Error('boom');

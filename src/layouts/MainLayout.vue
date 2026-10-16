@@ -1635,7 +1635,7 @@ watch(
     currentSettings.value?.mediaAutoExportFolder,
     currentSettings.value?.convertFilesToMp4,
   ],
-  ([newMediaAutoExport, newMediaAutoExportFolder]) => {
+  ([, newMediaAutoExport, newMediaAutoExportFolder]) => {
     if (!!newMediaAutoExport && !!newMediaAutoExportFolder)
       void exportAllDays();
   },
