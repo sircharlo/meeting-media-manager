@@ -109,7 +109,7 @@ import ActionIsland from 'components/ui/ActionIsland.vue';
 import AnnouncementBanner from 'components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'components/ui/NavDrawer.vue';
 import { storeToRefs } from 'pinia';
-import { debounce, useMeta, useQuasar } from 'quasar';
+import { useMeta, useQuasar } from 'quasar';
 import { SORTER } from 'src/constants/general';
 import {
   cleanCache,
@@ -151,6 +151,7 @@ import {
   createTemporaryNotification,
 } from 'src/helpers/notifications';
 import { syncTimerRemote } from 'src/helpers/timer-remote';
+import { createWatchFolderEventQueue } from 'src/helpers/watch-folder-event-queue';
 import { cancelZoomRun, stopZoomSharingAfterMedia } from 'src/helpers/zoom';
 import {
   startHandAlertDisplaySync,
@@ -734,27 +735,7 @@ const updateWatchFolderRef = async ({
   }
 };
 
-const processWatchFolderEvents = debounce(
-  async (pendingEvents: Record<string, string>[]) => {
-    for (const evt of pendingEvents) {
-      await updateWatchFolderRef(evt); // NOSONAR: sequential - watch-folder events apply in order
-    }
-    pendingEventKeys.clear();
-    pendingEvents.length = 0;
-  },
-  100,
-);
-
-const pendingEvents: Record<string, string>[] = [];
-const pendingEventKeys = new Set<string>();
-
-const queueWatchFolderEvent = (event: Record<string, string>) => {
-  const eventKey = `${event.event}:${event.changedPath || ''}:${event.day || ''}`;
-  if (pendingEventKeys.has(eventKey)) return;
-  pendingEventKeys.add(eventKey);
-  pendingEvents.push(event);
-  processWatchFolderEvents(pendingEvents);
-};
+const watchFolderEventQueue = createWatchFolderEventQueue(updateWatchFolderRef);
 
 void cleanCache();
 cleanPersistedStores();
@@ -843,7 +824,7 @@ const initListeners = () => {
   });
 
   onWatchFolderUpdate(({ changedPath, day, event }) => {
-    queueWatchFolderEvent({ changedPath, day, event });
+    watchFolderEventQueue.queue({ changedPath, day, event });
   });
 
   onDownloadStarted((args) => {
@@ -1307,7 +1288,7 @@ watchImmediate(
     currentSettings.value?.enableFolderWatcher,
   ],
   async ([, newFolderToWatch, newEnableFolderWatcher]) => {
-    pendingEvents.length = 0;
+    watchFolderEventQueue.clear();
     await watchExternalFolder(
       newEnableFolderWatcher ? (newFolderToWatch as string) : undefined,
     );
