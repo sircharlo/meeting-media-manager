@@ -22,7 +22,7 @@ export const getPubId = (
   if (
     pub === 'w' &&
     issue &&
-    Number.parseInt(issue.toString()) >= 20080101 &&
+    Number.parseInt(issue.toString()) >= 20_080_101 &&
     issue.toString().endsWith('01')
   ) {
     pub = 'wp';

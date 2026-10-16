@@ -494,16 +494,16 @@ function hasHighPriorityActive(
   return Array.from(activeDownloads.values()).some((d) => !d.lowPriority);
 }
 
-function logDownloadQueueDebugState(reason: string): void {
-  const describe = ([key, download]: [string, OngoingDownload]) => ({
-    failedAttempts: download.failedAttempts,
-    isTransferring: !!download.controller,
-    key,
-    lowPriority: download.lowPriority,
-    state: download.state,
-    url: download.item.url,
-  });
+const describe = ([key, download]: [string, OngoingDownload]) => ({
+  failedAttempts: download.failedAttempts,
+  isTransferring: !!download.controller,
+  key,
+  lowPriority: download.lowPriority,
+  state: download.state,
+  url: download.item.url,
+});
 
+function logDownloadQueueDebugState(reason: string): void {
   log(
     `Download queue debug snapshot (${reason})`,
     'electronDownloads',
@@ -737,9 +737,12 @@ export async function downloadFile(
     // destination file once both are eventually dequeued.
     const isSameKey = (item: DownloadQueueItem) =>
       item.url + item.saveDir === key;
-    const queuedLowPriorityIndex = lowPriorityQueue.findIndex(isSameKey);
+    const queuedLowPriorityIndex = lowPriorityQueue.findIndex((item) =>
+      isSameKey(item),
+    );
     const alreadyQueued =
-      downloadQueue.some(isSameKey) || queuedLowPriorityIndex !== -1;
+      downloadQueue.some((item) => isSameKey(item)) ||
+      queuedLowPriorityIndex !== -1;
 
     if (alreadyQueued) {
       // Promote a still-queued low-priority item the same way an

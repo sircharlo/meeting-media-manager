@@ -849,20 +849,16 @@ const { currentCongregation, currentLangObject, currentSettings, online } =
 // until a connection attempt has actually happened - a user who's typed
 // nothing yet shouldn't see an alarming red banner.
 const { obsConnectionState, obsMessage } = storeToRefs(useObsStateStore());
-const obsConnectionBannerClass = computed(() =>
-  obsConnectionState.value === 'connected'
-    ? 'bg-positive text-white'
-    : obsConnectionState.value === 'connecting'
-      ? 'bg-warning text-white'
-      : 'bg-negative text-white',
-);
-const obsConnectionBannerTextKey = computed(() =>
-  obsConnectionState.value === 'connected'
-    ? 'obs.connected'
-    : obsConnectionState.value === 'connecting'
-      ? 'obs.connecting'
-      : 'obs-studio-setup-connection-failed',
-);
+const obsConnectionBannerClass = computed(() => {
+  if (obsConnectionState.value === 'connected') return 'bg-positive text-white';
+  if (obsConnectionState.value === 'connecting') return 'bg-warning text-white';
+  return 'bg-negative text-white';
+});
+const obsConnectionBannerTextKey = computed(() => {
+  if (obsConnectionState.value === 'connected') return 'obs.connected';
+  if (obsConnectionState.value === 'connecting') return 'obs.connecting';
+  return 'obs-studio-setup-connection-failed';
+});
 
 const congregationSettings = useCongregationSettingsStore();
 const { deleteCongregation } = congregationSettings;
@@ -944,11 +940,9 @@ onMounted(() => {
 });
 
 const goToPage = (path: string) => {
-  try {
-    void router.push({ path });
-  } catch (error) {
-    errorCatcher(error);
-  }
+  router.push({ path }).catch((error: unknown) => {
+    errorCatcher(error, { contexts: { fn: { name: 'goToPage', path } } });
+  });
 };
 
 // Shared by the explicit Cancel button and the route-leave guard below -

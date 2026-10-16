@@ -440,6 +440,7 @@ import {
   toggleBetaUpdates,
   updatesDisabled,
 } from 'src/utils/fs';
+import { getObsSceneField } from 'src/utils/obs-scene';
 import {
   exportProfileSettingsToFile,
   importProfileSettingsFromFile,
@@ -724,7 +725,9 @@ const getGroupRuns = (groupId: SettingsGroupKey): SettingRun[] => {
   for (const entry of filteredSettingsByGroup.value[groupId] || []) {
     const subgroup = entry[1].subgroup;
     const lastRun = runs.at(-1);
-    if (lastRun && lastRun.subgroup === subgroup) {
+    // Entries always carry a subgroup (getSettingSubgroups falls back to ''),
+    // so with no run yet this never matches undefined === undefined.
+    if (lastRun?.subgroup === subgroup) {
       lastRun.items.push(entry);
     } else {
       runs.push({ items: [entry], subgroup });
@@ -743,7 +746,7 @@ const selectGroup = (groupId: SettingsGroupKey) => {
 };
 
 const escapeRegExp = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+  value.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 
 const highlightSearchParts = (
   value: string,
@@ -815,8 +818,8 @@ const listOptionLabels = (item: SettingsItem): string[] => {
 
   if (item.list?.startsWith('obs')) {
     return (scenes.value ?? []).flatMap((scene) => [
-      scene.sceneName?.toString() ?? '',
-      scene.sceneUuid?.toString() ?? '',
+      getObsSceneField(scene, 'sceneName') ?? '',
+      getObsSceneField(scene, 'sceneUuid') ?? '',
     ]);
   }
 
@@ -923,21 +926,17 @@ const importCurrentProfileSettings = async () => {
 };
 
 // Validation function
+// QForm.validate() never throws synchronously (it turns a throwing rule into
+// a failed validation), so the .catch below sees every failure.
 const validateSettingsLocal = () => {
-  try {
-    if (settingsFormDynamic.value) {
-      settingsFormDynamic.value
-        .validate()
-        .then((success: boolean) => {
-          settingsValid.value = success;
-        })
-        .catch(() => {
-          settingsValid.value = false;
-        });
-    }
-  } catch (error) {
-    errorCatcher(error);
-  }
+  settingsFormDynamic.value
+    ?.validate()
+    .then((success: boolean) => {
+      settingsValid.value = success;
+    })
+    .catch(() => {
+      settingsValid.value = false;
+    });
 };
 
 const shouldShowSetting = (
@@ -1085,7 +1084,7 @@ watch(autoUpdateEnabled, (enabled) => {
   } else {
     dismissUpdatesDisabledWarning = createTemporaryNotification({
       message: t('updates-disabled-warning'),
-      timeout: 10000,
+      timeout: 10_000,
       type: 'info',
     });
   }
@@ -1102,7 +1101,7 @@ watch(betaUpdatesEnabled, (enabled) => {
     dismissBetaUpdatesWarning = createTemporaryNotification({
       caption: t('receive-beta-updates-explain'),
       message: t('beta-updates-are-dangerous'),
-      timeout: 10000,
+      timeout: 10_000,
       type: 'warning',
     });
   } else {

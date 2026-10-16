@@ -1130,7 +1130,7 @@ const checkCoDate = () => {
       deferWhileDialogOpen: true,
       icon: 'mmm-error',
       message: t('no-circuit-overseer-date-set'),
-      timeout: 30000,
+      timeout: 30_000,
       type: 'primary',
     });
   }
@@ -2161,7 +2161,7 @@ useEventListener(
 
     const currentId = selectedMediaItems.value[0];
 
-    const lastItem = sortedMediaIds[sortedMediaIds.length - 1];
+    const lastItem = sortedMediaIds.at(-1);
 
     // If no current selection, return last item if possible, otherwise first
     if (!currentId) {
@@ -2303,7 +2303,7 @@ function findPreviousSelectableMedia(
   }
 
   // If no selectable item found, wrap to end
-  return mediaList[mediaList.length - 1]?.uniqueId || null;
+  return mediaList.at(-1)?.uniqueId || null;
 }
 
 function isMediaSelectable(mediaItem: MediaItem) {
@@ -2539,8 +2539,7 @@ const handleMediaItemClick = (payload: {
       .flatMap((section) => (section.items || []).map((item) => item.uniqueId))
       .filter(Boolean) as string[];
 
-    const lastSelectedId =
-      selectedMediaItems.value[selectedMediaItems.value.length - 1];
+    const lastSelectedId = selectedMediaItems.value.at(-1);
     if (!lastSelectedId) return;
 
     const startIndex = allMediaItems.indexOf(lastSelectedId);
@@ -2858,7 +2857,7 @@ const maybeSendLastSongShortcut = (
   );
 
   const allSongs = getVisibleMeetingSongs();
-  const lastSong = allSongs[allSongs.length - 1];
+  const lastSong = allSongs.at(-1);
   const lastSongUrl = lastSong?.fileUrl || lastSong?.streamUrl;
   const stoppedWasLastSong =
     allSongs.length > 0 && lastSongUrl === oldMediaPlayingUrl;
@@ -3342,7 +3341,7 @@ function notifyBackgroundMusicStillPlaying() {
     caption: t('background-music-still-playing-explain'),
     group: 'background-music-still-playing',
     message: t('background-music-still-playing'),
-    timeout: 15000,
+    timeout: 15_000,
     type: 'warning',
   });
 }
@@ -3438,7 +3437,7 @@ watch(
         ),
         group: 'meetingMediaDownloadError',
         message: t('errorDownloadingMeetingMedia'),
-        timeout: 15000,
+        timeout: 15_000,
         type: 'negative',
       });
       seenErrors.add(currentCongregation.value + errorVal);
@@ -3465,7 +3464,7 @@ watch(
         group: 'missingMeetingMedia',
         icon: 'mmm-file-missing',
         message: t('some-media-items-are-missing'),
-        timeout: 15000,
+        timeout: 15_000,
         type: 'warning',
       });
       seenErrors.add(currentCongregation.value + missingFileUrl);
@@ -3696,11 +3695,13 @@ watch(
       selectedDateObject.value?.date &&
       !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
     ) {
-      try {
-        void addDayToExportQueue(selectedDateObject.value.date);
-      } catch (e) {
-        errorCatcher(e);
-      }
+      addDayToExportQueue(selectedDateObject.value.date).catch(
+        (error: unknown) => {
+          errorCatcher(error, {
+            contexts: { fn: { name: 'addDayToExportQueue' } },
+          });
+        },
+      );
     }
   },
 );
@@ -3709,11 +3710,13 @@ watch(
   () => filesDownloaded.value,
   () => {
     if (selectedDateObject.value?.date) {
-      try {
-        void addDayToExportQueue(selectedDateObject.value.date);
-      } catch (e) {
-        errorCatcher(e);
-      }
+      addDayToExportQueue(selectedDateObject.value.date).catch(
+        (error: unknown) => {
+          errorCatcher(error, {
+            contexts: { fn: { name: 'addDayToExportQueue' } },
+          });
+        },
+      );
     }
   },
 );

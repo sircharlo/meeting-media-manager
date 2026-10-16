@@ -239,7 +239,7 @@ const getWorker = () => {
 // On old hardware during startup (many downloads and extractions at once)
 // a single millisecond-scale query was still unanswered after 8s, and the
 // stall threw away every queued query as an empty result (MMM-V2-3KT).
-export const SQLITE_TIMEOUT_MS = 30000;
+export const SQLITE_TIMEOUT_MS = 30_000;
 
 export class SqliteWorkerStallError extends Error {
   constructor(
@@ -320,8 +320,17 @@ const postToWorkerWithTimeout = (
 // defense-in-depth backstop against, say, a crafted ATTACH DATABASE
 // statement reaching a file this dbPath check never sees. All real query
 // shapes in use were confirmed to start with SELECT or PRAGMA before adding
-// this.
-const ALLOWED_QUERY_PREFIX = /^\s*\(?\s*(pragma|select)\b/i;
+// this. The optional "(" carries its own trailing whitespace so the two
+// whitespace runs can't overlap and backtrack on a long blank prefix.
+const ALLOWED_QUERY_PREFIX = /^\s*(?:\(\s*)?(?:pragma|select)\b/i;
+
+/**
+ * Whether a query is shaped like the read-only SELECT/PRAGMA queries every
+ * real call site sends (see ALLOWED_QUERY_PREFIX).
+ * @param query The SQL query to check
+ */
+export const isAllowedQuery = (query: string) =>
+  ALLOWED_QUERY_PREFIX.test(query);
 
 // SQLite's primary result code for an OS-level read/write failure (the
 // extended codes, e.g. 266 SQLITE_IOERR_READ, share it in their low byte).
@@ -362,7 +371,7 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
   query: string,
   params: QueryParams = [],
 ): Promise<T[]> => {
-  if (!ALLOWED_QUERY_PREFIX.test(query)) {
+  if (!isAllowedQuery(query)) {
     captureElectronError(new Error('Rejected non-SELECT/PRAGMA query'), {
       contexts: { fn: { name: 'executeQuery', path: dbPath, query } },
     });

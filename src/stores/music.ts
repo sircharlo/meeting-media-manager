@@ -68,7 +68,16 @@ export const isIgnorablePlaybackError = (message?: null | string) =>
 
 // Kept in src/constants so the Zoom helpers, which this store imports, can
 // use it too; re-exported for the existing importers.
-export { AUTO_START_WINDOW_HOURS };
+export { AUTO_START_WINDOW_HOURS } from 'src/constants/date';
+
+const getDebugTimestamp = () => new Date().toISOString();
+
+const getElapsedMilliseconds = (startedAt: number) => {
+  return Math.round(performance.now() - startedAt);
+};
+
+const formatClockTime = (date: Date) =>
+  date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
 export const useMusicStore = defineStore('music', () => {
   // The store can be instantiated outside component setup (e.g. the dev-menu
@@ -118,7 +127,13 @@ export const useMusicStore = defineStore('music', () => {
       musicPlayer.value = document.createElement('audio');
       musicPlayer.value.style.display = 'none';
       document.body.appendChild(musicPlayer.value);
-      musicPlayer.value.addEventListener('ended', handleMusicEnded);
+      musicPlayer.value.addEventListener('ended', () => {
+        handleMusicEnded().catch((error: unknown) => {
+          errorCatcher(error, {
+            contexts: { fn: { name: 'handleMusicEnded' } },
+          });
+        });
+      });
       musicPlayer.value.addEventListener('error', handleMusicPlayerError);
     }
     return musicPlayer.value;
@@ -166,12 +181,6 @@ export const useMusicStore = defineStore('music', () => {
   }>(null);
 
   // ─── Diagnostic logging ────────────────────────────────────────────────────
-  const getDebugTimestamp = () => new Date().toISOString();
-
-  const getElapsedMilliseconds = (startedAt: number) => {
-    return Math.round(performance.now() - startedAt);
-  };
-
   const logMusicStartTiming = (
     message: string,
     type: 'debug' | 'info' | 'warn' = 'debug',
@@ -295,9 +304,6 @@ export const useMusicStore = defineStore('music', () => {
   });
 
   // ─── Clock-time computeds ──────────────────────────────────────────────────
-
-  const formatClockTime = (date: Date) =>
-    date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   const meetingStartDateTime = computed(() =>
     isMeetingToday.value ? getTodaysMeetingStartDateTime(getClockDate()) : null,

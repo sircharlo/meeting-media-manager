@@ -464,14 +464,14 @@
               ref="titleInput"
               v-model="mediaTitle"
               dense
-              @blur="handleTitleEdit(false)"
-              @keyup.enter="handleTitleEdit(false)"
-              @keyup.esc="handleTitleEdit(false)"
+              @blur="finishTitleEdit()"
+              @keyup.enter="finishTitleEdit()"
+              @keyup.esc="finishTitleEdit()"
             />
             <div
               v-else-if="isTiny"
               class="text-chip ellipsis fades-under-hover-actions"
-              @dblclick="handleTitleEdit(true)"
+              @dblclick="startTitleEdit()"
             >
               {{ displayMediaTitle }}
               <q-tooltip :delay="500">{{ displayMediaTitle }}</q-tooltip>
@@ -485,7 +485,7 @@
                   ? 'ellipsis-3-lines'
                   : 'ellipsis',
               ]"
-              @dblclick="handleTitleEdit(true)"
+              @dblclick="startTitleEdit()"
             >
               <q-badge
                 v-if="
@@ -997,7 +997,7 @@
               v-close-popup
               clickable
               :disable="isCurrentlyPlaying"
-              @click="handleTitleEdit(true)"
+              @click="startTitleEdit()"
             >
               <q-item-section avatar>
                 <q-icon name="mmm-edit" />
@@ -1503,8 +1503,8 @@ const slideshowVideoPair = computed(() => {
   const bothCanProvideAudio =
     canProvideSlideshowAudio(firstMedia) &&
     canProvideSlideshowAudio(secondMedia);
-  const selectedVideoItems = selectedMediaForDay.value.filter(
-    canProvideSlideshowVideo,
+  const selectedVideoItems = selectedMediaForDay.value.filter((item) =>
+    canProvideSlideshowVideo(item),
   );
 
   if (!bothCanProvideAudio || !selectedVideoItems.length) return null;
@@ -1540,7 +1540,7 @@ const deletableSelectedMediaItems = computed(() => {
     ?.map((selectedId) =>
       mediaItemsForDay.find((item) => item?.uniqueId === selectedId),
     )
-    ?.filter((item) => item && item.source === 'additional')
+    ?.filter((item) => item?.source === 'additional')
     .map((item) => item?.uniqueId)
     .filter((id): id is string => !!id);
 });
@@ -1659,7 +1659,7 @@ const { basename, dirname, fileUrlToPath, fs, openFileDialog } =
   globalThis.electronApi;
 
 const { pathExists, stat } = fs;
-const PATH_ACCESS_WARNING_THROTTLE_MS = 30000;
+const PATH_ACCESS_WARNING_THROTTLE_MS = 30_000;
 
 let lastPathAccessWarningAt = 0;
 
@@ -1732,7 +1732,7 @@ function escapeHtml(value: string): string {
 }
 
 function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+  return value.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 }
 
 function textMatchesMediaFilter(value: string): boolean {
@@ -1771,7 +1771,7 @@ const highlightedDisplayMediaTitle = computed(() => {
     .sort((a, b) => b.length - a.length);
   if (!uniqueTerms.length) return escapeHtml(title);
 
-  const termPattern = uniqueTerms.map(escapeRegExp).join('|');
+  const termPattern = uniqueTerms.map((term) => escapeRegExp(term)).join('|');
   const matcher = new RegExp(`(${termPattern})`, 'gi');
   return escapeHtml(title).replace(
     matcher,
@@ -1997,25 +1997,24 @@ const tagValueFontSize = computed(() => {
   return '10.5px';
 });
 
-const handleTitleEdit = (value: boolean) => {
-  if (value) {
-    // Start editing
-    isEditingTitle.value = true;
-    // Initialize mediaTitle with current title when starting to edit
-    mediaTitle.value = props.media.title || '';
-    void nextTick(() => {
-      if (titleInput.value) {
-        titleInput.value.focus();
-      }
-    });
-  } else {
-    // End editing - emit the updated title
-    isEditingTitle.value = false;
-    // Use nextTick to ensure the input disappears first, then emit
-    void nextTick(() => {
-      emit('update:title', mediaTitle.value);
-    });
-  }
+const startTitleEdit = () => {
+  isEditingTitle.value = true;
+  // Initialize mediaTitle with current title when starting to edit
+  mediaTitle.value = props.media.title || '';
+  void nextTick(() => {
+    if (titleInput.value) {
+      titleInput.value.focus();
+    }
+  });
+};
+
+// End editing - emit the updated title
+const finishTitleEdit = () => {
+  isEditingTitle.value = false;
+  // Use nextTick to ensure the input disappears first, then emit
+  void nextTick(() => {
+    emit('update:title', mediaTitle.value);
+  });
 };
 
 const updateMediaCustomDuration = (customDuration?: {
@@ -2079,7 +2078,7 @@ const notifyPathAccessWarning = () => {
     caption: t('path-probe-network-warning-caption'),
     group: 'pathProbeNetworkWarning',
     message: t('path-probe-network-warning-message'),
-    timeout: 15000,
+    timeout: 15_000,
     type: 'negative',
   });
 };
@@ -2131,7 +2130,7 @@ const getPlaybackUrl = (media: MediaItem) => {
 // to the fast phase whenever a cache clear might have changed something (see
 // the lastCacheClearAt watch below).
 const LOCAL_FILE_POLL_FAST_INTERVAL_MS = 1000;
-const LOCAL_FILE_POLL_SLOW_INTERVAL_MS = 60000;
+const LOCAL_FILE_POLL_SLOW_INTERVAL_MS = 60_000;
 const LOCAL_FILE_POLL_FAST_ATTEMPTS = 30;
 
 let localFilePollAttempts = 0;
@@ -2148,7 +2147,7 @@ const localFilePollInterval = computed(() =>
 // "locate missing file" picker. Throttled independently of the (much
 // cheaper) pathExists poll above so a persistently missing file doesn't
 // retry the actual network request every second.
-const REDOWNLOAD_MIN_INTERVAL_MS = 15000;
+const REDOWNLOAD_MIN_INTERVAL_MS = 15_000;
 let redownloadInFlight = false;
 let lastRedownloadAttemptAt = 0;
 
@@ -2422,9 +2421,9 @@ const playSlideshowVideo = async () => {
 const getMarkerTimes = (m: VideoMarker) => {
   const max =
     (m.StartTimeTicks + m.DurationTicks - (m.EndTransitionDurationTicks || 0)) /
-    10000 /
+    10_000 /
     1000;
-  const min = m.StartTimeTicks / 10000 / 1000;
+  const min = m.StartTimeTicks / 10_000 / 1000;
   return { max, min };
 };
 
@@ -2433,7 +2432,7 @@ const setRangeAndPlay = (min: number, max: number) => {
   skipCustomDurationUpdateOnce.value = true;
   void setMediaPlaying(props.media, true);
   // mark all markers in this range as played
-  if (props.media.markers && props.media.markers.length) {
+  if (props.media.markers?.length) {
     props.media.markers.forEach((m) => {
       const { max: mMax, min: mMin } = getMarkerTimes(m);
       if (mMin >= min && mMax <= max) {
@@ -2589,14 +2588,14 @@ async function findThumbnailUrl() {
   let fileRetryCount = 0;
   let thumbnailRetryCount = 0;
 
-  const runThumbnailCheck = async () => {
+  const checkThumbnail = async () => {
     const filePath = fileUrlToPath(props.media.fileUrl);
     const fileExists = await pathExists(filePath);
 
     if (!fileExists) {
       if (fileRetryCount < 30) {
         fileRetryCount++;
-        setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds
+        scheduleThumbnailCheck(); // Retry after 2 seconds
         return;
       }
       thumbnailLookupInProgress = false;
@@ -2612,10 +2611,28 @@ async function findThumbnailUrl() {
     const retryLimit = mediaIsAudio.value ? 0 : 5;
     if (!discoveredThumbnailUrl.value && thumbnailRetryCount < retryLimit) {
       thumbnailRetryCount++;
-      setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds
+      scheduleThumbnailCheck(); // Retry after 2 seconds
       return;
     }
     thumbnailLookupInProgress = false;
+  };
+
+  // A failed check (e.g. a malformed file URL) must end the lookup instead of
+  // leaving thumbnailLookupInProgress stuck, which would block every later
+  // lookup for this item.
+  const runThumbnailCheck = async () => {
+    try {
+      await checkThumbnail();
+    } catch (error) {
+      thumbnailLookupInProgress = false;
+      errorCatcher(error, { contexts: { fn: { name: 'findThumbnailUrl' } } });
+    }
+  };
+
+  const scheduleThumbnailCheck = () => {
+    setTimeout(() => {
+      void runThumbnailCheck();
+    }, 2000);
   };
 
   // Run immediately

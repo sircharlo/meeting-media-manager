@@ -70,7 +70,7 @@ import { useI18n } from 'vue-i18n';
 const props = defineProps<{
   label?: string;
   loading?: boolean;
-  progressCategory?: DownloadProgressItem['progressCategory'];
+  progressCategory?: NonNullable<DownloadProgressItem['progressCategory']>;
 }>();
 
 const { t } = useI18n();

@@ -494,7 +494,7 @@ const delayedCacheClear = () => {
         'cacheAutoClear',
         'info',
       );
-      setTimeout(checkAndClear, 10000); // Check again in 10 seconds
+      setTimeout(checkAndClear, 10_000); // Check again in 10 seconds
       return;
     }
 
@@ -521,7 +521,7 @@ const delayedCacheClear = () => {
   };
 
   // Start checking after 30 seconds
-  setTimeout(checkAndClear, 30000);
+  setTimeout(checkAndClear, 30_000);
 };
 
 const showCongregationSwitcher = (opts?: { isBootstrap?: boolean }) => {
@@ -761,13 +761,13 @@ bcClose.onmessage = (event) => {
         caption: t('clicking-the-close-button-again-will-close-app'),
         message: t('make-sure-that-m-is-in-not-use-before-quitting'),
         noClose: true,
-        timeout: 10000,
+        timeout: 10_000,
         type: 'negative',
       });
       closeAttempts.value += 1;
       setTimeout(() => {
         closeAttempts.value = 0;
-      }, 10000);
+      }, 10_000);
     } else {
       bcClose.postMessage({ authorizedClose: true });
     }
@@ -805,7 +805,7 @@ const initListeners = () => {
       createTemporaryNotification({
         caption: t('watch-folder-error-caption'),
         message: t('watch-folder-error-message'),
-        timeout: 15000,
+        timeout: 15_000,
         type: 'negative',
       });
     }
@@ -817,7 +817,7 @@ const initListeners = () => {
       createTemporaryNotification({
         caption: t('path-probe-network-warning-caption'),
         message: t('path-probe-network-warning-message'),
-        timeout: 15000,
+        timeout: 15_000,
         type: 'negative',
       });
     }
@@ -886,7 +886,7 @@ const initListeners = () => {
     createTemporaryNotification({
       caption: t('camera-access-required-explain'),
       message: t('camera-access-required'),
-      timeout: 10000,
+      timeout: 10_000,
       type: 'negative',
     });
   });
@@ -895,7 +895,7 @@ const initListeners = () => {
     createTemporaryNotification({
       caption: t('gpu-crash-detected-explain'),
       message: t('gpu-crash-detected'),
-      timeout: 10000,
+      timeout: 10_000,
       type: 'warning',
     });
   });
@@ -951,7 +951,7 @@ const initListeners = () => {
         caption: t('media-window-restarted-explain'),
         group: 'mediaWindowRendererGone',
         message: t('media-window-restarted'),
-        timeout: 15000,
+        timeout: 15_000,
         type: 'warning',
       });
     }
@@ -1053,6 +1053,69 @@ const checkYeartextPreview = () => {
       'log',
     );
 
+    const previewNextYearYeartext = async () => {
+      let success = false;
+      try {
+        // Fetch next year's yeartext
+        const result = await fetchYeartext(
+          lang,
+          jwStore.urlVariables.base,
+          nextYear,
+        );
+        if (result.yeartext) {
+          success = true;
+          // Pause the yeartext watcher to prevent immediate override
+          yeartextWatcherPaused.value = true;
+
+          // Post the next year yeartext temporarily
+          postYeartext(result.yeartext);
+
+          // Show success notification
+          createTemporaryNotification({
+            message: t('yeartext-preview-success', { year: nextYear }),
+            timeout: 5000,
+            type: 'positive',
+          });
+
+          // Auto-dismiss after 10 seconds
+          setTimeout(() => {
+            // Restore the current yeartext
+            const currentYeartext = currentState.yeartext || '';
+            postYeartext(currentYeartext);
+            createTemporaryNotification({
+              message: t('yeartext-cleared', {
+                currentYear: currentYear,
+              }),
+              timeout: 5000,
+              type: 'positive',
+            });
+            // Save to prevent asking every time
+            appSettingsStore.yeartextPreviewDismissed[nextYear] = true;
+            // Resume the watcher after a brief delay to allow the current yeartext to be posted
+            setTimeout(() => {
+              yeartextWatcherPaused.value = false;
+            }, 100);
+          }, 10_000);
+        } else {
+          createTemporaryNotification({
+            message: t('yeartext-preview-failed'),
+            type: 'negative',
+          });
+        }
+      } catch (error) {
+        errorCatcher(error);
+        createTemporaryNotification({
+          message: t('yeartext-preview-failed'),
+          type: 'negative',
+        });
+      } finally {
+        // Only resume if we didn't succeed (if we succeeded, the timeout will handle it)
+        if (!success) {
+          yeartextWatcherPaused.value = false;
+        }
+      }
+    };
+
     // Show notification
     createTemporaryNotification({
       actions: [
@@ -1072,67 +1135,8 @@ const checkYeartextPreview = () => {
         },
         {
           color: 'positive',
-          handler: async () => {
-            let success = false;
-            try {
-              // Fetch next year's yeartext
-              const result = await fetchYeartext(
-                lang,
-                jwStore.urlVariables.base,
-                nextYear,
-              );
-              if (result.yeartext) {
-                success = true;
-                // Pause the yeartext watcher to prevent immediate override
-                yeartextWatcherPaused.value = true;
-
-                // Post the next year yeartext temporarily
-                postYeartext(result.yeartext);
-
-                // Show success notification
-                createTemporaryNotification({
-                  message: t('yeartext-preview-success', { year: nextYear }),
-                  timeout: 5000,
-                  type: 'positive',
-                });
-
-                // Auto-dismiss after 10 seconds
-                setTimeout(() => {
-                  // Restore the current yeartext
-                  const currentYeartext = currentState.yeartext || '';
-                  postYeartext(currentYeartext);
-                  createTemporaryNotification({
-                    message: t('yeartext-cleared', {
-                      currentYear: currentYear,
-                    }),
-                    timeout: 5000,
-                    type: 'positive',
-                  });
-                  // Save to prevent asking every time
-                  appSettingsStore.yeartextPreviewDismissed[nextYear] = true;
-                  // Resume the watcher after a brief delay to allow the current yeartext to be posted
-                  setTimeout(() => {
-                    yeartextWatcherPaused.value = false;
-                  }, 100);
-                }, 10000);
-              } else {
-                createTemporaryNotification({
-                  message: t('yeartext-preview-failed'),
-                  type: 'negative',
-                });
-              }
-            } catch (error) {
-              errorCatcher(error);
-              createTemporaryNotification({
-                message: t('yeartext-preview-failed'),
-                type: 'negative',
-              });
-            } finally {
-              // Only resume if we didn't succeed (if we succeeded, the timeout will handle it)
-              if (!success) {
-                yeartextWatcherPaused.value = false;
-              }
-            }
+          handler: () => {
+            void previewNextYearYeartext();
           },
           label: t('yes'),
         },
@@ -1444,7 +1448,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
       createTemporaryNotification({
         deferWhileDialogOpen: true,
         message: t('beta-version-warning'),
-        timeout: 30000,
+        timeout: 30_000,
         type: 'warning',
       });
     } else if (areUpdatesDisabled) {
@@ -1460,7 +1464,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
         ],
         deferWhileDialogOpen: true,
         message: t('updates-disabled-warning'),
-        timeout: 10000,
+        timeout: 10_000,
         type: 'info',
       });
     }
@@ -1469,7 +1473,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
         caption: t('architecture-mismatch-explain'),
         deferWhileDialogOpen: true,
         message: t('architecture-mismatch'),
-        timeout: 30000,
+        timeout: 30_000,
         type: 'info',
       });
     }
@@ -1519,7 +1523,7 @@ watch(
         caption: t('automatic-sync-disabled-explain'),
         deferWhileDialogOpen: true,
         message: t('automatic-sync-disabled'),
-        timeout: 10000,
+        timeout: 10_000,
         type: 'warning',
       });
     } else if (!newCongregationNameModified && oldCongregationNameModified) {
@@ -1527,7 +1531,7 @@ watch(
       createTemporaryNotification({
         deferWhileDialogOpen: true,
         message: t('automatic-sync-enabled'),
-        timeout: 10000,
+        timeout: 10_000,
         type: 'positive',
       });
     }
@@ -1894,7 +1898,7 @@ watchImmediate(
             ],
             caption: t('hardwareAccelerationDisabledExplain'),
             message: t('hardwareAccelerationDisabled'),
-            timeout: 10000,
+            timeout: 10_000,
             type: 'info',
           });
       } else {

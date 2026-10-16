@@ -95,7 +95,9 @@ const {
   scenes,
 } = storeToRefs(obsState);
 const { sceneExists } = obsState;
-const obsSettingsConnect = () => obsConnect(true);
+const obsSettingsConnect = () => {
+  void obsConnect(true);
+};
 
 const recording = useRecordingStore();
 const { isRecording } = storeToRefs(recording);
@@ -128,7 +130,7 @@ const notifySceneNotFound = () =>
     group: 'scene-not-found',
     icon: 'mmm-obs-studio',
     message: t('scene-not-found'),
-    timeout: 10000,
+    timeout: 10_000,
     type: 'negative',
   });
 
@@ -253,12 +255,9 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
   }
 };
 
+// setObsScene reports its own errors, so it can't reject.
 const setObsSceneListener = (event: CustomEvent<{ scene: ObsSceneType }>) => {
-  try {
-    void setObsScene(event.detail.scene);
-  } catch (error) {
-    errorCatcher(error);
-  }
+  void setObsScene(event.detail.scene);
 };
 
 const sceneList = computed(() =>
@@ -345,6 +344,11 @@ useEventListener(globalThis, 'obsSceneEvent', setObsSceneListener, {
   passive: true,
 });
 
+const handleRecordStateChanged = (data: { outputActive: boolean }) => {
+  log('RecordStateChanged', 'obs', 'log', data);
+  syncObsRecordingState(data.outputActive);
+};
+
 // FE-15 (full-audit-2026-09-05.md): keyed on obsConnectionState too (not
 // just the settings values) so every transition to 'connected' - including
 // FE-6's auto-reconnect after OBS crashes/closes/restarts, not just the
@@ -365,10 +369,6 @@ watchImmediate(
     if (!recordingControls) return;
     if (connectionState !== 'connected') return;
 
-    const handleRecordStateChanged = (data: { outputActive: boolean }) => {
-      log('RecordStateChanged', 'obs', 'log', data);
-      syncObsRecordingState(data.outputActive);
-    };
     obsWebSocketInfo.obsWebSocket.on(
       'RecordStateChanged',
       handleRecordStateChanged,

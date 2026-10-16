@@ -237,7 +237,7 @@ const catchUpUpdaterState = async () => {
     // now-stale catch-up snapshot here would redundantly replay
     // handleUpdateAvailable() and reset the notification it just built.
     if (updateEventReceived) return;
-    if (!state || !state.phase) return;
+    if (!state?.phase) return;
 
     // Build the base notification first (it may not exist yet if the
     // update-available event was also missed), then apply the current step.
@@ -290,7 +290,7 @@ onMounted(() => {
       createTemporaryNotification({
         caption: t('update-failed'),
         message: t('update-error-read-only-volume'),
-        timeout: 10000,
+        timeout: 10_000,
         type: 'negative',
       });
     });

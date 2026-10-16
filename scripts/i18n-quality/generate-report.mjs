@@ -18,7 +18,7 @@ const __dirname = dirname(__filename);
 const REPO_ROOT = resolve(__dirname, '../..');
 
 function escapeCell(text) {
-  return text.replaceAll('|', '\\|').replaceAll('\n', '<br>');
+  return text.replaceAll('|', String.raw`\|`).replaceAll('\n', '<br>');
 }
 
 async function main() {
@@ -80,9 +80,8 @@ function renderRecord(record, index, language) {
   if (record.glossaryRefs?.length > 0) {
     lines.push('', '**Glossary references**:');
     for (const ref of record.glossaryRefs) {
-      lines.push(
-        `- "${ref.termEn}" -> "${ref.official}"${ref.sourceUrl ? ` ([source](${ref.sourceUrl}))` : ''}`,
-      );
+      const sourceLink = ref.sourceUrl ? ` ([source](${ref.sourceUrl}))` : '';
+      lines.push(`- "${ref.termEn}" -> "${ref.official}"${sourceLink}`);
     }
   }
   lines.push('', `_id: \`${record.id}\` | file: \`${record.filePath}\`_`, '');

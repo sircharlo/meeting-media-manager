@@ -73,8 +73,9 @@ async function crowdinRequest(
   });
   if (!response.ok) {
     const detail = await response.text().catch(() => '');
+    const suffix = detail ? `: ${detail.slice(0, 400)}` : '';
     const error = new Error(
-      `Crowdin API ${method} ${path} -> ${response.status} ${response.statusText}${detail ? `: ${detail.slice(0, 400)}` : ''}`,
+      `Crowdin API ${method} ${path} -> ${response.status} ${response.statusText}${suffix}`,
     );
     error.body = detail;
     throw error;

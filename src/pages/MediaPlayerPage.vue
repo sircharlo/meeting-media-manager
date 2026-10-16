@@ -1141,17 +1141,17 @@ const notifyAccessDenied = (isCamera: boolean) => {
     ),
     message: t(isCamera ? 'camera-access-required' : 'screen-access-required'),
     noClose: true,
-    timeout: 10000,
+    timeout: 10_000,
     type: 'negative',
   });
 };
 
-const requestStream = async (isCamera: boolean, deviceId?: string) => {
-  const checkAccess = async () => {
-    const status = await getScreenAccessStatus();
-    return status === 'granted';
-  };
+const checkAccess = async () => {
+  const status = await getScreenAccessStatus();
+  return status === 'granted';
+};
 
+const requestStream = async (isCamera: boolean, deviceId?: string) => {
   const getMedia = () => {
     if (isCamera) {
       return navigator.mediaDevices.getUserMedia({

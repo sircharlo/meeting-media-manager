@@ -1002,8 +1002,7 @@ const openJwPlaylistPicker = (
 const canEditCustomSections = computed(() => {
   return !!(
     !selectedDayMeetingType.value &&
-    selectedDateObject.value?.mediaSections &&
-    selectedDateObject.value.mediaSections.some(
+    selectedDateObject.value?.mediaSections?.some(
       (section) => !!section.items?.length,
     )
   );

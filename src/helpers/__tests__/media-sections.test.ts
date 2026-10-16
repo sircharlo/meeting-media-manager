@@ -70,6 +70,48 @@ describe('getExportedFilenamePlacement', () => {
     expect(getExportedFilenamePlacement('MTG Start.mp4')).toBeNull();
     expect(getExportedFilenamePlacement('Video1.mp4')).toBeNull();
   });
+
+  it.each([
+    [
+      'extra spaces before the section name',
+      '03   Public talk - 07 Foo.mp4',
+      3007,
+      'pt',
+    ],
+    [
+      'a tab before the section name',
+      '03\tPublic talk - 07 Foo.mp4',
+      3007,
+      'pt',
+    ],
+    [
+      'a section name with its own " - "',
+      '04 A - B - 02 Foo.mp4',
+      4002,
+      undefined,
+    ],
+    [
+      'a title with its own " - "',
+      '01 Public talk - 01 Foo - 99 Bar.mp4',
+      1001,
+      'pt',
+    ],
+  ])('parses a filename with %s', async (_name, filename, order, section) => {
+    const { getExportedFilenamePlacement } = await import('../media-sections');
+
+    expect(getExportedFilenamePlacement(filename)).toEqual({ order, section });
+  });
+
+  it.each([
+    ['a section number over three digits', '1234 Public talk - 01 Foo.mp4'],
+    ['an item number over three digits', '01 Public talk - 1234 Foo.mp4'],
+    ['no space after the item number', '01 Public talk - 01.mp4'],
+    ['a blank section name', '01   - 02 Foo.mp4'],
+  ])('returns null for a filename with %s', async (_name, filename) => {
+    const { getExportedFilenamePlacement } = await import('../media-sections');
+
+    expect(getExportedFilenamePlacement(filename)).toBeNull();
+  });
 });
 
 describe('watched media layout persistence', () => {

@@ -16,6 +16,15 @@ import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
 
+// A group with children renders nothing (see MediaGroup's root v-if) once
+// every one of its children is hidden, even though the group item itself
+// was never marked hidden - so it must count as hidden here too, or the
+// section-level indicators in useMediaSection go stale the moment that
+// happens.
+const isItemEffectivelyHidden = (item: MediaItem) =>
+  item.hidden ||
+  (!!item.children?.length && item.children.every((child) => child.hidden));
+
 export function useMediaSection(mediaList: MediaSectionWithConfig) {
   const currentStateStore = useCurrentStateStore();
   const selectedDateObject = computed(
@@ -43,21 +52,18 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     return sectionData.value?.items?.filter((item) => !item.hidden) || [];
   });
 
-  // A group with children renders nothing (see MediaGroup's root v-if) once
-  // every one of its children is hidden, even though the group item itself
-  // was never marked hidden - so it must count as hidden here too, or the
-  // section-level indicators below go stale the moment that happens.
-  const isItemEffectivelyHidden = (item: MediaItem) =>
-    item.hidden ||
-    (!!item.children?.length && item.children.every((child) => child.hidden));
-
   const someItemsAreHidden = computed(() => {
-    return sectionData.value?.items?.some(isItemEffectivelyHidden) || false;
+    return (
+      sectionData.value?.items?.some((item) => isItemEffectivelyHidden(item)) ||
+      false
+    );
   });
 
   const allItemsAreHidden = computed(() => {
     const items = sectionData.value?.items;
-    return !!items?.length && items.every(isItemEffectivelyHidden);
+    return (
+      !!items?.length && items.every((item) => isItemEffectivelyHidden(item))
+    );
   });
 
   // Check if section is empty

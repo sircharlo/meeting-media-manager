@@ -59,11 +59,11 @@ const VERSION_HEADER_PATTERN = /^##(?!#)\s+v?\d+\.\d+\.\d+/;
 const LINK_TARGET_RE = /@:\{?'?([^'}\s,.;:!?)]+)'?\}?/g;
 const PARAM_NAME_RE = /\{([\w]+)\}/g;
 const CORRUPTION_SIGNATURES = [
-  new RegExp(`@:\\{[^{}]*[${TYPOGRAPHIC_QUOTES}][^{}]*\\}`),
+  new RegExp(String.raw`@:\{[^{}]*[${TYPOGRAPHIC_QUOTES}][^{}]*\}`),
   /@:[ \t]+(?=[\p{L}\p{N}_-])/u,
   /\{#[\w-]+\}\s*\{#/,
   /^(?:##\s*)?\d+\.\d+\s+v\d+\.\d+\s*$/,
-  /^(?:##\s*)?v\d+[ ,]\d+[,.]?\d*\s*$/,
+  /^(?:##\s*)?v\d+[ ,]\d+(?:[,.]\d*)?\s*$/,
   /@:[^\s]*-(?=[\s.,;:!?]|$)/,
 ];
 
@@ -147,7 +147,8 @@ async function main() {
     process.exit(1);
   }
 
-  const resolvedRunId = runId ?? new Date().toISOString().replace(/[:.]/g, '-');
+  const resolvedRunId =
+    runId ?? new Date().toISOString().replaceAll(/[:.]/g, '-');
   const outDir = resolve(
     REPO_ROOT,
     'reports/translation-quality',

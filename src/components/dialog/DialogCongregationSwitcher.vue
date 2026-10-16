@@ -509,7 +509,7 @@ watchImmediate(congregationSwitcherOpen, async (open) => {
       caption: t('successfully-migrated-from-the-previous-version'),
       deferWhileDialogOpen: true,
       message: t('welcome-to-mmm'),
-      timeout: 15000,
+      timeout: 15_000,
       type: 'positive',
     });
   }

@@ -24,7 +24,7 @@ const requiredRule: ValidationRule = (val: boolean | string) =>
 export const portNumberValidator = (val: string): boolean => {
   if (typeof val !== 'string' || val.trim() === '') return false;
   const num = Number(val);
-  return Number.isInteger(num) && num > 0 && num < 65536;
+  return Number.isInteger(num) && num > 0 && num < 65_536;
 };
 
 const portNumberRule: ValidationRule = (val: string) =>

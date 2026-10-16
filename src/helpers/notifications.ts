@@ -181,7 +181,7 @@ export const checkLowDiskSpaceAndNotify = async (): Promise<void> => {
       caption: i18n.global.t('low-disk-space-warning'),
       deferWhileDialogOpen: true,
       message: i18n.global.t('disk-space-is-running-low'),
-      timeout: 10000,
+      timeout: 10_000,
       type: 'warning',
     });
   } catch (error) {
@@ -216,7 +216,7 @@ export const maybeWarnAboutExpectedDownloadIssue = (): void => {
     caption: i18n.global.t('download-issues-warning'),
     deferWhileDialogOpen: true,
     message: i18n.global.t('download-issues-warning-explain'),
-    timeout: 10000,
+    timeout: 10_000,
     type: 'warning',
   });
 };

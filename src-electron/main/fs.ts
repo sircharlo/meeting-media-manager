@@ -53,8 +53,8 @@ import {
 
 const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 
-const MAX_FILES = 10000;
-const MAX_SIZE = 2000000000; // 2 GB
+const MAX_FILES = 10_000;
+const MAX_SIZE = 2_000_000_000; // 2 GB
 // A single-pass DEFLATE stream can't exceed ~1032:1; legitimate archives
 // (sparse databases, repetitive JSON/text) can still land in the low
 // hundreds, so this stays close to the real ceiling to avoid false
@@ -64,16 +64,16 @@ const THRESHOLD_RATIO = 1032;
 // to resource exhaustion (already bounded separately by MAX_SIZE/MAX_FILES),
 // so skip the ratio check to avoid flagging small, highly-compressible
 // legitimate files.
-const MIN_RATIO_CHECK_SIZE = 10000000; // 10 MB
-const MAX_IN_MEMORY_ZIP_ENTRY_SIZE = 150000000; // 150 MB
-const MAX_IN_MEMORY_ZIP_TOTAL_SIZE = 250000000; // 250 MB
+const MIN_RATIO_CHECK_SIZE = 10_000_000; // 10 MB
+const MAX_IN_MEMORY_ZIP_ENTRY_SIZE = 150_000_000; // 150 MB
+const MAX_IN_MEMORY_ZIP_TOTAL_SIZE = 250_000_000; // 250 MB
 const PATH_PROBE_SETTLE_DELAY_MS = 50;
 const PATH_PROBE_RETRY_DELAY_MS = 50;
 const PATH_PROBE_RETRY_COUNT = 4;
 const ZIP_ENTRY_DIAGNOSTIC_LIMIT = 50;
 const SHARED_PATH_BACKOFF_MS = 10 * 60 * 1000;
 const SHARED_PATH_HEALTH_FILENAME = 'shared-path-health.json';
-const PATH_PROBE_NETWORK_WARNING_THROTTLE_MS = 30000;
+const PATH_PROBE_NETWORK_WARNING_THROTTLE_MS = 30_000;
 const ZIP_OPEN_RETRY_COUNT = 3;
 const ZIP_OPEN_RETRY_DELAY_MS = 1000;
 const SECURITY_SCOPED_BOOKMARKS_FILENAME = 'security-scoped-bookmarks.json';
@@ -208,6 +208,19 @@ const stopSecurityScopedAccess = () => {
 app.once('will-quit', stopSecurityScopedAccess);
 
 /**
+ * Removes every trailing `/` from a path (e.g. a directory zip entry's
+ * `folder/`). A plain loop instead of `/\/+$/`, which backtracks
+ * quadratically on a long run of slashes that isn't at the end.
+ * @param value The path to trim
+ * @returns The path without trailing slashes
+ */
+const stripTrailingSlashes = (value: string) => {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === '/') end--;
+  return value.slice(0, end);
+};
+
+/**
  * Resolves a zip entry's target path and guards against "Zip Slip": a
  * malicious entry name (e.g. containing `../` sequences) that would
  * otherwise resolve outside of `output` and let a crafted archive write
@@ -228,7 +241,7 @@ const resolveZipEntryPath = (output: string, entryFileName: string) => {
     throw new Error(`Unsafe zip entry path: ${entryFileName}`);
   }
 
-  return fullPath.replace(/\/+$/, '');
+  return stripTrailingSlashes(fullPath);
 };
 
 /**

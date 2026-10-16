@@ -176,10 +176,10 @@ export function createTimerWindow() {
   });
 }
 
-export const moveTimerWindowThrottled = throttleWithTrailing(
-  () => moveTimerWindow(),
-  WINDOW_MOVE_THROTTLE_MS,
-);
+export const moveTimerWindowThrottled = throttleWithTrailing(() => {
+  // Never rejects: moveTimerWindow catches and logs its own errors.
+  void moveTimerWindow();
+}, WINDOW_MOVE_THROTTLE_MS);
 
 export const moveTimerWindow = async (
   displayNr?: number,

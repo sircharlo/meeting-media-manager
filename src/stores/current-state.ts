@@ -12,6 +12,7 @@ import type {
   SettingsItems,
   SettingsValues,
 } from 'src/types';
+import type { JsonObject } from 'type-fest';
 
 import { defineStore } from 'pinia';
 import { i18n } from 'src/boot/i18n';
@@ -31,6 +32,7 @@ import {
   registerCachePathProvider,
 } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
+import { getObsSceneField } from 'src/utils/obs-scene';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
@@ -426,21 +428,14 @@ export const useCurrentStateStore = defineStore('current-state', {
       const scenesAreUUIDS = configuredScenes.every((element) =>
         isUUID(element),
       );
+      const getSceneId = (scene: JsonObject): string => {
+        const sceneUuid = getObsSceneField(scene, 'sceneUuid');
+        if (scenesAreUUIDS && sceneUuid) return sceneUuid;
+        return getObsSceneField(scene, 'sceneName') || '';
+      };
       return scenes
-        .filter(
-          (scene) =>
-            !configuredScenes.includes(
-              (scenesAreUUIDS && scene.sceneUuid
-                ? scene.sceneUuid.toString()
-                : scene.sceneName?.toString()) || '',
-            ),
-        )
-        .map(
-          (scene): string =>
-            (scenesAreUUIDS && scene.sceneUuid
-              ? scene.sceneUuid.toString()
-              : scene.sceneName?.toString()) || '',
-        )
+        .map((scene) => getSceneId(scene))
+        .filter((sceneId) => !configuredScenes.includes(sceneId))
         .filter(Boolean);
     },
     configuredScenesAreAllUUIDs(): boolean {

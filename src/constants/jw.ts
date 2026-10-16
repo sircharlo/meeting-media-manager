@@ -1,4 +1,4 @@
-export const FEB_2023 = 20230200;
+export const FEB_2023 = 20_230_200;
 export const FOOTNOTE_TARGET_PARAGRAPH = 1500;
 export const LAST_SONG_ORDINAL = 2000;
 export const LONG_MEDIA_DURATION = 2100;

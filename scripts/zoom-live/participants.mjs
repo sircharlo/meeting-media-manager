@@ -43,17 +43,17 @@ const SESSION_FILE = join(
 const MAX_PARTICIPANTS = 5;
 const JOIN_STAGGER_MS = 5000;
 const JOIN_ATTEMPTS = 3;
-const BLOCKED_RETRY_DELAY_MS = 15000;
+const BLOCKED_RETRY_DELAY_MS = 15_000;
 const WATCHDOG_INTERVAL_MS = 1000;
 
-const ACTIONS = [
+const ACTIONS = new Set([
   'accept-unmute-requests', // future "please unmute" prompts are accepted
   'ignore-unmute-requests', // ...or left unanswered
   'leave',
   'mute',
   'reset-events',
   'try-unmute', // the participant tries to unmute themselves
-];
+]);
 
 const readEnvFile = () => {
   try {
@@ -273,10 +273,10 @@ const runAction = async (participant, action) => {
 
 const submitJoinForm = async (page, name) => {
   await page.goto(`https://app.zoom.us/wc/join/${meetingId}`, {
-    timeout: 60000,
+    timeout: 60_000,
     waitUntil: 'domcontentloaded',
   });
-  await page.locator('#input-for-name').waitFor({ timeout: 30000 });
+  await page.locator('#input-for-name').waitFor({ timeout: 30_000 });
   await sleep(2000);
   if (passcode && (await page.locator('#input-for-pwd').count())) {
     await page.locator('#input-for-pwd').fill('');
@@ -399,7 +399,7 @@ const server = createServer(async (req, res) => {
     }
     if (req.method === 'POST' && url.pathname === '/action') {
       const { action, index } = await readBody(req);
-      if (!ACTIONS.includes(action)) {
+      if (!ACTIONS.has(action)) {
         return sendJson(res, 400, { error: `Unknown action: ${action}` });
       }
       const targets =
@@ -407,7 +407,7 @@ const server = createServer(async (req, res) => {
       const results = await Promise.all(
         targets
           .filter((p) => p && p.phase !== 'left')
-          .map((p) => runAction(p, action).catch((error) => String(error))),
+          .map((p) => runAction(p, action).catch(String)),
       );
       return sendJson(res, 200, { results });
     }

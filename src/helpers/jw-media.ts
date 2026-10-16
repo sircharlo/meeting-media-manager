@@ -154,7 +154,7 @@ const publicationMediaLinksCache = new Map<string, Promise<MediaLink[]>>();
 const mediaItemIsDynamic = (item?: MediaItem): boolean => {
   if (!item) return false;
   if (item.source === 'dynamic') return true;
-  return item.children?.some(mediaItemIsDynamic) ?? false;
+  return item.children?.some((child) => mediaItemIsDynamic(child)) ?? false;
 };
 
 export const ensureWatchedMeetingDayFolders = async () => {
@@ -191,7 +191,7 @@ export const ensureWatchedMeetingDayFolders = async () => {
         }
 
         return Object.values(day.mediaSections ?? {}).some((section) =>
-          section.items?.some(mediaItemIsDynamic),
+          section.items?.some((item) => mediaItemIsDynamic(item)),
         );
       })
       .map((day) => formatDate(day.date, 'YYYY-MM-DD'));
@@ -440,7 +440,7 @@ const getJwLangId = (symbol?: JwLangCode): number | undefined => {
 
 const ongoingUnzips = new Map<string, Promise<string | undefined>>();
 const ZIP_ENTRY_DIAGNOSTIC_LIMIT = 50;
-const MAX_IDENTIFY_IN_MEMORY_CONTENTS_SIZE = 150000000; // 150 MB
+const MAX_IDENTIFY_IN_MEMORY_CONTENTS_SIZE = 150_000_000; // 150 MB
 
 const isCloudStorageReadError = (error: unknown) => {
   const errorCode = (error as { code?: string })?.code;
@@ -537,7 +537,7 @@ const warnJwpubUnavailable = (jwpubPath: string, error: unknown) => {
     caption: getJwpubUnavailableCaption(jwpubPath),
     group: 'jwpubFileUnavailable',
     message: t('jwpub-file-unavailable-message'),
-    timeout: 15000,
+    timeout: 15_000,
     type: 'warning',
   });
 
@@ -776,12 +776,12 @@ const getMediaFromJwPlaylist = async (
           durationTicks &&
           item?.EndTrimOffsetTicks &&
           durationTicks >= item.EndTrimOffsetTicks
-            ? (durationTicks - item.EndTrimOffsetTicks) / 10000 / 1000
+            ? (durationTicks - item.EndTrimOffsetTicks) / 10_000 / 1000
             : null;
 
         const StartTime =
           item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
-            ? item.StartTrimOffsetTicks / 10000 / 1000
+            ? item.StartTrimOffsetTicks / 10_000 / 1000
             : null;
 
         const VerseNumbers = (
@@ -884,7 +884,7 @@ const warnCloudJwpubUnavailable = (jwpubPath: string, error: unknown) => {
     caption: t('cloud-file-unavailable-caption'),
     group: 'cloudJwpubUnavailable',
     message: t('cloud-file-unavailable-message'),
-    timeout: 15000,
+    timeout: 15_000,
     type: 'warning',
   });
 };
@@ -1601,7 +1601,7 @@ interface DownloadProgress {
 // slow-but-working connections (this app explicitly serves congregations
 // with poor connectivity), so this only fires on genuinely zero forward
 // progress, never on a connection that's just slow.
-const DOWNLOAD_STALL_TIMEOUT_MS = 45000;
+const DOWNLOAD_STALL_TIMEOUT_MS = 45_000;
 
 const pollUntilDownloaded = (
   downloadId: string,
@@ -3333,8 +3333,12 @@ const getWtIssue = async (
   }
 };
 
-const CAPTION_NUMBER_PATTERN =
-  /\d+(?:(?:\s*[-–—,;]\s*|\s+\p{L}{1,20}\s+)\d+)?/gu;
+const CAPTION_NUMBER_PATTERN = /\d+/gu;
+// What can join a second number onto a caption number to make one range or
+// list ("11-12", "4, 5", "4 y 5"): a separator, or a short word between
+// spaces. Anchored: it's matched against the text right after a number.
+const CAPTION_NUMBER_CONTINUATION_PATTERN =
+  /^(?:\s*[-–—,;]\s*|\s+\p{L}{1,20}\s+)\d+/u;
 const REFERENCE_SYMBOL_PATTERN = /(?:[^\p{L}\p{N}\s]|\p{L}\.)\s*$/u;
 const TRAILING_PUNCTUATION_PATTERN = /^[\s.!?,;:，。！？；：)\]}»”'’…]*$/u;
 
@@ -3344,12 +3348,23 @@ interface CaptionNumberCandidate {
   text: string;
 }
 
-const getCaptionNumberCandidates = (caption: string) =>
-  Array.from(caption.matchAll(CAPTION_NUMBER_PATTERN), (match) => ({
-    end: (match.index ?? 0) + match[0].length,
-    start: match.index ?? 0,
-    text: match[0].trim(),
-  }));
+const getCaptionNumberCandidates = (caption: string) => {
+  const candidates: CaptionNumberCandidate[] = [];
+  let consumedUntil = 0;
+  for (const match of caption.matchAll(CAPTION_NUMBER_PATTERN)) {
+    const start = match.index ?? 0;
+    // Already part of the previous candidate's range or list.
+    if (start < consumedUntil) continue;
+    const numberEnd = start + match[0].length;
+    const continuation = CAPTION_NUMBER_CONTINUATION_PATTERN.exec(
+      caption.slice(numberEnd),
+    );
+    const end = numberEnd + (continuation?.[0].length ?? 0);
+    candidates.push({ end, start, text: caption.slice(start, end).trim() });
+    consumedUntil = end;
+  }
+  return candidates;
+};
 
 const getCandidateNumbers = (candidate: CaptionNumberCandidate) =>
   Array.from(candidate.text.matchAll(/\d+/g), (match) =>
@@ -3381,7 +3396,7 @@ const isCandidateCompatibleWithParagraphLabel = (
 
 const getTrailingParenthetical = (caption: string) => {
   const match = /\([^()]*\)\s*[.!?,;:，。！？；：]*$/u.exec(caption);
-  if (!match || match.index === undefined) return undefined;
+  if (match?.index === undefined) return undefined;
 
   return {
     content: match[0].slice(1, match[0].lastIndexOf(')')),
@@ -4691,7 +4706,7 @@ const normalizeWatchtowerMagazineSymbol = (media: MultimediaItem) => {
   if (
     media.KeySymbol === 'w' &&
     media.IssueTagNumber &&
-    Number.parseInt(media.IssueTagNumber.toString()) >= 20080101 &&
+    Number.parseInt(media.IssueTagNumber.toString()) >= 20_080_101 &&
     media.IssueTagNumber.toString().endsWith('01')
   ) {
     media.KeySymbol = 'wp';
@@ -4910,10 +4925,10 @@ export async function processMissingMediaInfo({
     const currentStateStore = useCurrentStateStore();
     const errors = [];
 
-    allMedia.forEach(normalizeWatchtowerMagazineSymbol);
+    allMedia.forEach((media) => normalizeWatchtowerMagazineSymbol(media));
 
     const mediaChecksResults = await Promise.all(
-      allMedia.map(checkMediaFileExistence),
+      allMedia.map((media) => checkMediaFileExistence(media)),
     );
 
     const mediaToProcess = mediaChecksResults.filter(
@@ -5072,7 +5087,9 @@ const extractMatchingZipEntry = async (
   matches: (entryName: string) => boolean,
 ) => {
   try {
-    const entryName = Object.keys(await getZipEntries(zipPath)).find(matches);
+    const entryName = Object.keys(await getZipEntries(zipPath)).find((name) =>
+      matches(name),
+    );
     if (!entryName) return undefined;
     const [extracted] = await unzip(zipPath, outputDir, {
       includes: [entryName],
@@ -5594,7 +5611,7 @@ export interface DownloadAdditionalRemoteVideoOptions {
   mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[];
   meetingDate?: string;
   onlyCreateItem?: boolean;
-  progressCategory?: FileDownloader['progressCategory'];
+  progressCategory?: NonNullable<FileDownloader['progressCategory']>;
   section?: MediaSectionIdentifier;
   song?: false | number | string;
   thumbnailLookup?: PublicationFetcher;
@@ -6137,6 +6154,26 @@ const downloadJwpub = async (
 
 const requestControllers: AbortController[] = [];
 
+const isHttpsUrl = (value?: string) => {
+  if (!value) return false;
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
+const isValidUrlBasePart = (basePart?: string) => {
+  if (!basePart) return false;
+  const basePartWithoutPath = basePart.split('/')[0];
+  if (!basePartWithoutPath) return false;
+  const domainSegments = basePartWithoutPath.split('.');
+  const eachSegmentIsAtLeastTwoChars = domainSegments.every(
+    (segment) => segment.length >= 2,
+  );
+  return eachSegmentIsAtLeastTwoChars;
+};
+
 export const setUrlVariables = async (baseUrl: string | undefined) => {
   const jwStore = useJwStore();
 
@@ -6144,26 +6181,6 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     if (base) jwStore.urlVariables.base = '';
     jwStore.urlVariables.mediator = '';
     jwStore.urlVariables.pubMedia = '';
-  };
-
-  const isHttpsUrl = (value?: string) => {
-    if (!value) return false;
-    try {
-      return new URL(value).protocol === 'https:';
-    } catch {
-      return false;
-    }
-  };
-
-  const isValidUrlBasePart = (basePart?: string) => {
-    if (!basePart) return false;
-    const basePartWithoutPath = basePart.split('/')[0];
-    if (!basePartWithoutPath) return false;
-    const domainSegments = basePartWithoutPath.split('.');
-    const eachSegmentIsAtLeastTwoChars = domainSegments.every(
-      (segment) => segment.length >= 2,
-    );
-    return eachSegmentIsAtLeastTwoChars;
   };
 
   if (!baseUrl || !isValidUrlBasePart(baseUrl)) {

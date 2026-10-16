@@ -558,8 +558,7 @@ const getFrameFit = (element: HTMLVideoElement, canvas: HTMLCanvasElement) => {
   const { height: canvasHeight, width: canvasWidth } = canvas;
 
   if (
-    lastFrameFit &&
-    lastFrameFit.sourceWidth === sourceWidth &&
+    lastFrameFit?.sourceWidth === sourceWidth &&
     lastFrameFit.sourceHeight === sourceHeight &&
     lastFrameFit.canvasWidth === canvasWidth &&
     lastFrameFit.canvasHeight === canvasHeight
@@ -734,7 +733,7 @@ const fallBackPreviewToVideoMode = () => {
     caption: t('media-preview-fallback-explain'),
     group: 'media-preview-fallback',
     message: t('media-preview-fallback'),
-    timeout: 15000,
+    timeout: 15_000,
     type: 'warning',
   });
 };
@@ -770,7 +769,7 @@ const disablePreviewForPerformance = () => {
     caption: t('media-preview-auto-disabled-explain'),
     group: 'media-preview-auto-disabled',
     message: t('media-preview-auto-disabled'),
-    timeout: 15000,
+    timeout: 15_000,
     type: 'warning',
   });
 
@@ -1259,13 +1258,13 @@ useEventListener(globalThis, 'pointerup', () => {
 // the current one keeps running until its replacement is in hand, so nothing
 // goes black in between.
 const CAPTURE_REACQUIRE_RATIO = 1.25;
+const ratio = (a: number, b: number) => Math.max(a, b) / Math.min(a, b);
 const reacquireCaptureForViewport = () => {
   if (!activeCaptureStream || !activeCaptureBounds || !isCaptureMode.value) {
     return;
   }
 
   const next = getViewportCaptureSizeBounds();
-  const ratio = (a: number, b: number) => Math.max(a, b) / Math.min(a, b);
   if (
     ratio(next.maxWidth, activeCaptureBounds.maxWidth) <
       CAPTURE_REACQUIRE_RATIO &&

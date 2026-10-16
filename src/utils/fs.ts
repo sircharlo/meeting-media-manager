@@ -368,6 +368,8 @@ export const getPublicationDirectoryContents = async (
   }
 };
 
+const getSize = (str: string) => Buffer.byteLength(str, 'utf8');
+
 /**
  * Trims a filepath to comply with the maximum path length (UTF-8 bytes).
  * @param filepath The filepath to trim.
@@ -377,8 +379,6 @@ export const getPublicationDirectoryContents = async (
 export const trimFilepathAsNeeded = (filepath: string, maxBytes = 230) => {
   const fileDir = dirname(filepath);
   const ext = extname(filepath);
-
-  const getSize = (str: string) => Buffer.byteLength(str, 'utf8');
 
   let size = getSize(filepath);
 

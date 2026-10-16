@@ -14,11 +14,11 @@ const sendCommand = (command: DevMenuCommand) => {
   sendToWindow(mainWindowInfo.mainWindow, 'dev-menu-command', command);
 };
 
-const MEETING_STAGE_LABELS = [
-  'Jump to Pre-Meeting',
-  'Jump to Last Song',
+const MEETING_STAGE_LABELS = new Set([
   'Finish Last Song',
-];
+  'Jump to Last Song',
+  'Jump to Pre-Meeting',
+]);
 
 const findDevMenu = () => {
   const appMenu = Menu.getApplicationMenu();
@@ -49,7 +49,7 @@ export const updateDevMenuState = (state: DevMenuState) => {
   if (offlineItem) offlineItem.checked = state.offline;
 
   items.forEach((item) => {
-    if (MEETING_STAGE_LABELS.includes(item.label)) {
+    if (MEETING_STAGE_LABELS.has(item.label)) {
       item.enabled = state.demoEnabled;
     }
   });

@@ -110,8 +110,10 @@ export const isReplacedByMemorial = (lookupDate?: Date) => {
     const memorialDates = [
       ...Object.values(jwStore.memorials ?? {}),
       currentState.currentSettings?.memorialDate,
-    ].filter((memorialDate): memorialDate is `${number}/${number}/${number}` =>
-      Boolean(memorialDate),
+    ].filter(
+      // Not `.filter(Boolean)`: that wouldn't narrow out null/undefined.
+      (memorialDate): memorialDate is `${number}/${number}/${number}` =>
+        !!memorialDate,
     );
 
     return memorialDates.some((memorialDate) => {
@@ -385,7 +387,7 @@ function resetSingleCongregation(
     : days;
 
   if (targetDays.length) {
-    targetDays.forEach(resetDay);
+    targetDays.forEach((day) => resetDay(day));
   }
 }
 
@@ -414,7 +416,7 @@ function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
   createTemporaryNotification({
     deferWhileDialogOpen: true,
     message: i18n.global.t('meeting-schedule-change-applied'),
-    timeout: 10000,
+    timeout: 10_000,
     type: 'info',
   });
 

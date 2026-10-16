@@ -201,7 +201,7 @@ const getDemoAudioUrl = () => {
   const view = new DataView(bytes.buffer);
   const writeText = (offset: number, value: string) => {
     for (let index = 0; index < value.length; index++) {
-      view.setUint8(offset + index, value.charCodeAt(index));
+      view.setUint8(offset + index, value.codePointAt(index) ?? 0);
     }
   };
   writeText(0, 'RIFF');
@@ -221,7 +221,7 @@ const getDemoAudioUrl = () => {
 
   let binary = '';
   for (let index = 0; index < bytes.length; index += 8192) {
-    binary += String.fromCharCode(...bytes.subarray(index, index + 8192));
+    binary += String.fromCodePoint(...bytes.subarray(index, index + 8192));
   }
   demoAudioUrl = `data:audio/wav;base64,${globalThis.btoa(binary)}`;
   return demoAudioUrl;

@@ -33,6 +33,7 @@ import {
   type IslandButtonStatus,
   useIslandButton,
 } from 'src/composables/useIslandButton';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { getRendererPlatform } from 'src/helpers/fs';
 import { getZoomMeetingState, isAroundMeetingTime } from 'src/helpers/zoom';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -110,10 +111,15 @@ const poll = async () => {
   }
 };
 
-const { pause, resume } = useIntervalFn(poll, POLL_INTERVAL_MS, {
-  immediate: false,
-  immediateCallback: true,
-});
+const { pause, resume } = useIntervalFn(
+  () => {
+    poll().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'pollZoomMeeting' } } });
+    });
+  },
+  POLL_INTERVAL_MS,
+  { immediate: false, immediateCallback: true },
+);
 
 watch(
   enabled,

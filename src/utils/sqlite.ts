@@ -776,7 +776,7 @@ const getExtractSymbol = (
   if (
     symbol === 'w' &&
     issueTagNumber &&
-    Number.parseInt(issueTagNumber.toString()) >= 20080101 &&
+    Number.parseInt(issueTagNumber.toString()) >= 20_080_101 &&
     issueTagNumber.toString().endsWith('01')
   ) {
     symbol = 'wp';

@@ -85,7 +85,7 @@ export function createMainWindow() {
         closeAttempts++;
         setTimeout(() => {
           closeAttempts = 0;
-        }, 10000);
+        }, 10_000);
       }
     });
 

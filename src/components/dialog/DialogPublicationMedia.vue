@@ -1215,7 +1215,7 @@ function normalizePublicationAndIssue(
     issue.length >= 8 &&
     issue.startsWith('20') &&
     issue.endsWith('01') &&
-    Number.parseInt(issue) >= 20080101
+    Number.parseInt(issue) >= 20_080_101
   ) {
     publication = 'wp';
   }

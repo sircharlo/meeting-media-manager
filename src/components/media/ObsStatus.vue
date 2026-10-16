@@ -23,6 +23,8 @@
 </template>
 
 <script setup lang="ts">
+import type { OBSResponseTypes } from 'obs-websocket-js';
+
 import { storeToRefs } from 'pinia';
 import {
   type IslandButtonStatus,
@@ -84,6 +86,38 @@ const onClick = () => {
   }
 };
 
+const applySceneList = (sceneList: OBSResponseTypes['GetSceneList']) => {
+  obsSceneListError.value = false;
+  scenes.value = sceneList.scenes.toReversed();
+  currentScene.value =
+    configuredScenesAreAllUUIDs.value && sceneList.currentProgramSceneUuid
+      ? sceneList.currentProgramSceneUuid
+      : sceneList.currentProgramSceneName;
+
+  [
+    currentSettings.value?.obsCameraScene,
+    currentSettings.value?.obsMediaScene,
+    currentSettings.value?.obsImageScene,
+  ]
+    .filter((s): s is string => !!s)
+    .forEach((scene) => {
+      if (!sceneExists(scene)) notifySceneNotFound();
+    });
+};
+
+const reportSceneListFailure = (error: unknown, isTransient: boolean) => {
+  obsSceneListError.value = true;
+  // OBS still loading after every retry (big scene collections or plugins can
+  // take longer), or the socket closing mid-way (the reconnect flow fetches
+  // the list again): the scene-list warning state above already tells the
+  // user, and neither is a bug (MMM-V2-3FG).
+  if (isTransient) {
+    log('Could not fetch the OBS scene list yet', 'obs', 'warn', error);
+  } else {
+    errorCatcher(error, { contexts: { fn: { name: 'fetchSceneList' } } });
+  }
+};
+
 const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
   let attempts = 0;
   while (attempts < maxRetries) {
@@ -91,24 +125,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
       const sceneList =
         await obsWebSocketInfo.obsWebSocket?.call('GetSceneList'); // NOSONAR: sequential - retry loop
       if (sceneList) {
-        obsSceneListError.value = false;
-        scenes.value = sceneList.scenes.reverse();
-        const current =
-          configuredScenesAreAllUUIDs.value && sceneList.currentProgramSceneUuid
-            ? sceneList.currentProgramSceneUuid
-            : sceneList.currentProgramSceneName;
-
-        currentScene.value = current;
-
-        [
-          currentSettings.value?.obsCameraScene,
-          currentSettings.value?.obsMediaScene,
-          currentSettings.value?.obsImageScene,
-        ]
-          .filter((s): s is string => !!s)
-          .forEach((scene) => {
-            if (!sceneExists(scene)) notifySceneNotFound();
-          });
+        applySceneList(sceneList);
         return;
       }
       // No socket or an empty reply: there is nothing to retry, and going
@@ -122,17 +139,10 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
         log(`Retrying... (${attempts}/${maxRetries})`, 'obs', 'log');
         await sleep(retryInterval); // NOSONAR: sequential - retry loop
       } else {
-        obsSceneListError.value = true;
-        // OBS still loading after every retry (big scene collections or
-        // plugins can take longer), or the socket closing mid-way (the
-        // reconnect flow fetches the list again): the scene-list warning
-        // state above already tells the user, and neither is a bug
-        // (MMM-V2-3FG).
-        if (isTransient) {
-          log('Could not fetch the OBS scene list yet', 'obs', 'warn', error);
-        } else {
-          errorCatcher(error, { contexts: { fn: { name: 'fetchSceneList' } } });
-        }
+        reportSceneListFailure(error, isTransient);
+        // Retries are only for transient errors: stop here instead of
+        // re-requesting (and re-reporting) straight away.
+        return;
       }
     }
   }
@@ -146,7 +156,7 @@ const notifySceneNotFound = () =>
     group: 'scene-not-found',
     icon: 'mmm-obs-studio',
     message: t('scene-not-found'),
-    timeout: 10000,
+    timeout: 10_000,
     type: 'negative',
   });
 
@@ -186,7 +196,7 @@ const initObsListeners = async () => {
       void fetchSceneList();
     });
     obsWebSocketInfo.obsWebSocket.on('SceneListChanged', (data) => {
-      scenes.value = data.scenes.reverse();
+      scenes.value = data.scenes.toReversed();
     });
     void obsConnect();
   } catch (error) {

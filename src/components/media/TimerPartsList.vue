@@ -205,6 +205,15 @@ const {
   updateCustomTimerPart,
 } = useTimer();
 
+// Custom part labels are shown as "Label (N min.)"; strip that suffix (and
+// the whitespace before it) to edit the bare label. Trimming with string ops
+// instead of a leading \s* keeps the match linear on long whitespace runs.
+const DURATION_SUFFIX_PATTERN = /\(\d+ min\.\)$/;
+const stripDurationSuffix = (label: string) => {
+  const match = DURATION_SUFFIX_PATTERN.exec(label);
+  return match ? label.slice(0, match.index).trimEnd() : label;
+};
+
 // Edit dialog
 const editDialogOpen = ref(false);
 const editPart = ref<MeetingPartOption | null>(null);
@@ -215,7 +224,7 @@ const openEditDialog = (part: MeetingPartOption) => {
   editPart.value = part;
   editDuration.value = partDurations.value[part.value] ?? 0;
   editLabel.value = part.value.startsWith('custom-')
-    ? part.label.replace(/\s*\(\d+ min\.\)$/, '')
+    ? stripDurationSuffix(part.label)
     : '';
   editDialogOpen.value = true;
 };

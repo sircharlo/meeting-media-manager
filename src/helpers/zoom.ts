@@ -532,22 +532,28 @@ const rememberRowButtonTitles = (result: ZoomCommandResult) => {
   }
 };
 
+const getNamedFailureReasonKey = (error: string | undefined) => {
+  switch (error) {
+    case 'lower-hand-item-not-found':
+    case 'participant-mic-button-not-found':
+      return 'zoom-hand-mic-ambiguous';
+    case 'mic-titles-not-captured':
+      return 'zoom-hand-mic-not-learned';
+    case 'participant-name-ambiguous':
+      return 'zoom-hand-name-ambiguous';
+    case 'participant-not-found':
+      return 'zoom-hand-participant-gone';
+    default:
+      return null;
+  }
+};
+
 const notifyNamedFailure = (
   messageKey: string,
   name: string,
   error: string | undefined,
 ) => {
-  const reasonKey =
-    error === 'participant-name-ambiguous'
-      ? 'zoom-hand-name-ambiguous'
-      : error === 'participant-not-found'
-        ? 'zoom-hand-participant-gone'
-        : error === 'mic-titles-not-captured'
-          ? 'zoom-hand-mic-not-learned'
-          : error === 'lower-hand-item-not-found' ||
-              error === 'participant-mic-button-not-found'
-            ? 'zoom-hand-mic-ambiguous'
-            : null;
+  const reasonKey = getNamedFailureReasonKey(error);
   createTemporaryNotification({
     caption: reasonKey ? t(reasonKey) : undefined,
     group: 'zoom-participants',

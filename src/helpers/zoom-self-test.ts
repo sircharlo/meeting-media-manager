@@ -126,6 +126,14 @@ const expectOk = (result: ZoomCommandResult, what: string) => {
   return result;
 };
 
+const meetingState = async () =>
+  (await getZoomMeetingState(true)) ?? fail('The Zoom helper did not answer');
+
+const hasEvent = (
+  participant: ZoomTestParticipant,
+  type: ZoomTestParticipant['events'][number]['type'],
+) => participant.events.some((event) => event.type === type);
+
 /** Runs the self-test; it reports each step itself, without notifications. */
 export const runZoomSelfTest = (
   options: ZoomSelfTestOptions,
@@ -159,9 +167,6 @@ const runSteps = async (
     return { done: isDone(value), value };
   };
 
-  const meetingState = async () =>
-    (await getZoomMeetingState(true)) ?? fail('The Zoom helper did not answer');
-
   let participantsReady = false;
 
   const connectedParticipants = (): ZoomTestParticipantsProbe =>
@@ -185,7 +190,8 @@ const runSteps = async (
   ) => {
     const { done, value } = await waitFor(
       inMeeting,
-      (list) => list.length > 0 && list.every(check),
+      (list) =>
+        list.length > 0 && list.every((participant) => check(participant)),
     );
     if (!done) {
       const offenders = value.filter((p) => !check(p)).map((p) => p.name);
@@ -193,11 +199,6 @@ const runSteps = async (
     }
     return `${description} (${value.length} participant${value.length === 1 ? '' : 's'})`;
   };
-
-  const hasEvent = (
-    participant: ZoomTestParticipant,
-    type: ZoomTestParticipant['events'][number]['type'],
-  ) => participant.events.some((event) => event.type === type);
 
   let restoreMediaWindow: (() => Promise<void> | void) | undefined;
   let initialAudioJoined: boolean | null | undefined;
@@ -346,7 +347,10 @@ const runSteps = async (
             : 'No test participant reached the meeting',
         );
       }
-      return `${joined.length}/${value.length} in the meeting${blocked.length ? ` (${blocked.length} turned away by Zoom)` : ''}`;
+      const turnedAway = blocked.length
+        ? ` (${blocked.length} turned away by Zoom)`
+        : '';
+      return `${joined.length}/${value.length} in the meeting${turnedAway}`;
     },
     'post-meeting-sequence': async () => {
       if (participants && participantsReady) {

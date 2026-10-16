@@ -116,7 +116,7 @@ const dateFormatTokens = [
 const dateFormatTokenGroups = computed(() => {
   const groups: Record<string, string[]> = {};
   for (const fmt of dateFormatTokens) {
-    const match = fmt.match(/[A-Za-z]/);
+    const match = /[A-Za-z]/.exec(fmt);
     const key = match ? match[0] : fmt;
     if (!groups[key]) groups[key] = [];
     groups[key].push(fmt);

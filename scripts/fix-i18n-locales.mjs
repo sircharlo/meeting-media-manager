@@ -49,7 +49,7 @@ function fixLinkedMessageSyntax(message) {
   // `@:{‘key’}` / `@:{“key”}` / `@:{„key“}` -> `@:{'key'}` - typographic
   // quotes around the linked key instead of straight ones (compiler error
   // code 2, "Invalid token in placeholder").
-  fixed = fixed.replace(
+  fixed = fixed.replaceAll(
     new RegExp(
       String.raw`@:\{\s*[${TYPOGRAPHIC_QUOTE_CLASS}]([^{}${TYPOGRAPHIC_QUOTE_CLASS}]*)[${TYPOGRAPHIC_QUOTE_CLASS}]\s*\}`,
       'g',
@@ -59,7 +59,7 @@ function fixLinkedMessageSyntax(message) {
 
   // `@:  key` -> `@:key` - stray whitespace between `@:` and a bare linked
   // key (compiler error code 10, "Invalid linked format").
-  fixed = fixed.replace(/@:[ \t]+(?=[\p{L}\p{N}_-])/gu, '@:');
+  fixed = fixed.replaceAll(/@:[ \t]+(?=[\p{L}\p{N}_-])/gu, '@:');
 
   // A stray closing quote+brace left over from a mangled `@:{'key'}`
   // (compiler error code 6, "Unbalanced closing brace"). Protect the
@@ -67,12 +67,12 @@ function fixLinkedMessageSyntax(message) {
   // collide with real text, then drop any orphaned `'}`/"}` left behind in
   // what remains before restoring the protected occurrences.
   const placeholders = [];
-  const protectedText = fixed.replace(/@:\{'[^']*'\}/g, (match) => {
+  const protectedText = fixed.replaceAll(/@:\{'[^']*'\}/g, (match) => {
     placeholders.push(match);
     return `${PLACEHOLDER_MARKER}${placeholders.length - 1}${PLACEHOLDER_MARKER}`;
   });
-  const strippedText = protectedText.replace(/['"]\}/g, '');
-  fixed = strippedText.replace(
+  const strippedText = protectedText.replaceAll(/['"]\}/g, '');
+  fixed = strippedText.replaceAll(
     new RegExp(
       String.raw`${PLACEHOLDER_MARKER}(\d+)${PLACEHOLDER_MARKER}`,
       'g',

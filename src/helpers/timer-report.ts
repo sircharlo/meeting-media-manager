@@ -119,7 +119,7 @@ export const buildTimerReportHtml = (
   const title = escapeHtml(t('timer-report-title'));
   const heading = [congregationName, formatReportDate(date)]
     .filter(Boolean)
-    .map(escapeHtml)
+    .map((part) => escapeHtml(part))
     .join(' · ');
 
   const headerCells = [
