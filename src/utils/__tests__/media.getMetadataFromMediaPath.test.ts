@@ -3,7 +3,7 @@ import type { ElectronApi } from 'src/types';
 import { electronApi } from 'app/test/vitest/mocks/electronApi';
 import { parseBuffer } from 'music-metadata';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: vi.fn(),
@@ -124,5 +124,77 @@ describe('getMetadataFromMediaPath', () => {
 
     expect(metadata.format.duration).toBe(0);
     expect(errorCatcher).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('getMetadataFromMediaPath for a file without a duration in its metadata', () => {
+  // The file's metadata has no duration, so a hidden <video> is asked
+  // instead - and happy-dom's never loads anything, like a cloud placeholder
+  // that never finishes downloading.
+  const stubFileWithoutDuration = () => {
+    vi.stubGlobal('electronApi', {
+      ...electronApi,
+      fileUrlToPath: (fileurl: string) => fileurl,
+      fs: { ...electronApi.fs, pathExists: vi.fn(async () => true) },
+      parseMediaFile: vi.fn(async () => ({
+        common: {},
+        format: { duration: 0 },
+        native: {},
+        quality: { warnings: [] },
+      })),
+      pathToFileURL: (path: string) => path,
+    } as unknown as ElectronApi);
+  };
+
+  const captureCreatedVideos = () => {
+    const videos: HTMLVideoElement[] = [];
+    const createElement = document.createElement.bind(document);
+    vi.spyOn(document, 'createElement').mockImplementation(((
+      tagName: string,
+      options?: ElementCreationOptions,
+    ) => {
+      const element = createElement(tagName, options);
+      if (element instanceof HTMLVideoElement) videos.push(element);
+      return element;
+    }) as typeof document.createElement);
+    return videos;
+  };
+
+  beforeEach(() => {
+    vi.mocked(errorCatcher).mockClear();
+    stubFileWithoutDuration();
+    vi.resetModules();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  it('reads the duration from the video element once it has loaded', async () => {
+    const videos = captureCreatedVideos();
+    const { getMetadataFromMediaPath } = await import('../media');
+
+    const pending = getMetadataFromMediaPath('C:/media/clip.webm');
+    await vi.waitFor(() => expect(videos).toHaveLength(1));
+    const [video] = videos;
+    Object.defineProperty(video, 'duration', { value: 12.5 });
+    video?.onloadedmetadata?.(new Event('loadedmetadata'));
+
+    expect((await pending).format.duration).toBe(12.5);
+  });
+
+  it('gives up on a video that never loads, releases it, and reports nothing', async () => {
+    vi.useFakeTimers();
+    const videos = captureCreatedVideos();
+    const { getMetadataFromMediaPath, MEDIA_ELEMENT_TIMEOUT_MS } =
+      await import('../media');
+
+    const pending = getMetadataFromMediaPath('C:/media/clip.webm');
+    await vi.advanceTimersByTimeAsync(MEDIA_ELEMENT_TIMEOUT_MS);
+
+    expect((await pending).format.duration).toBe(0);
+    expect(errorCatcher).not.toHaveBeenCalled();
+    expect(videos[0]?.getAttribute('src')).toBeNull();
   });
 });

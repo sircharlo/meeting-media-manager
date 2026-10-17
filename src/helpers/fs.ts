@@ -17,7 +17,13 @@ import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 import { fetchJson } from 'src/utils/api';
 import { getCachedUserDataPath, getPublicationDirectory } from 'src/utils/fs';
-import { isAudio, isImage, isVideo } from 'src/utils/media';
+import {
+  isAudio,
+  isImage,
+  isVideo,
+  MediaElementTimeoutError,
+  withMediaElementTimeout,
+} from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
@@ -188,6 +194,16 @@ const waitOnce = (emitter: HTMLVideoElement, event: string): Promise<void> => {
   });
 };
 
+// Loads the video and seeks to the frame used as its thumbnail.
+const seekToThumbnailFrame = async (
+  videoRef: HTMLVideoElement,
+  errorPromise: Promise<never>,
+) => {
+  await Promise.race([waitOnce(videoRef, 'loadeddata'), errorPromise]);
+  videoRef.currentTime = 5; // Seek to 5 seconds to get the thumbnail
+  await Promise.race([waitOnce(videoRef, 'seeked'), errorPromise]);
+};
+
 const captureVideoFrame = (
   videoRef: HTMLVideoElement,
 ): { blobUrl: string; imageData: Buffer } => {
@@ -262,13 +278,11 @@ const getThumbnailFromVideoPath = async (
       );
     });
 
-    const loadedPromise = waitOnce(videoRef, 'loadeddata');
-
-    await Promise.race([loadedPromise, errorPromise]);
-
-    videoRef.currentTime = 5; // Seek to 5 seconds to get the thumbnail
-
-    await Promise.race([waitOnce(videoRef, 'seeked'), errorPromise]);
+    await withMediaElementTimeout(
+      seekToThumbnailFrame(videoRef, errorPromise),
+      videoRef,
+      videoPath,
+    );
 
     const { blobUrl, imageData } = captureVideoFrame(videoRef);
 
@@ -314,6 +328,11 @@ export const getThumbnailUrl = async (
     return withCacheBust(thumbnailUrl, forceRefresh);
   } catch (error) {
     if (error instanceof Event) return '';
+    // Environmental (a video that never loads), not a bug: no report.
+    if (error instanceof MediaElementTimeoutError) {
+      log(error.message, 'mediaProcessing', 'warn');
+      return '';
+    }
     errorCatcher(error, {
       contexts: {
         fn: {
