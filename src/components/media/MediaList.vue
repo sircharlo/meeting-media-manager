@@ -416,11 +416,6 @@ watch(
       color: var(--bg-color);
     }
 
-    .custom-bg-color {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-    }
-
     &:before {
       background-color: var(--bg-color);
     }
@@ -429,23 +424,5 @@ watch(
 
 .sortable-media {
   transition: background-color 0.2s ease;
-}
-
-[data-dragging='true'] {
-  opacity: 0.5;
-  transform: rotate(2deg);
-}
-
-[data-drag-placeholder='true'] {
-  background-color: rgba(0, 0, 0, 0.1);
-  border: 2px dashed #ccc;
-  border-radius: 4px;
-  height: 60px;
-  margin: 4px 0;
-
-  body.body--dark & {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: #666;
-  }
 }
 </style>
