@@ -1,7 +1,5 @@
 <template>
-  <q-header
-    class="header-elevated bg-primary text-white text-bigger text-weight-medium"
-  >
+  <q-header class="header-elevated text-white text-bigger text-weight-medium">
     <DialogAbout
       v-model="aboutModal"
       :dialog-id="dialogId"
@@ -188,13 +186,16 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 // A subtle gradient + shadow instead of a flat fill and a hard bottom
 // border, so the bar reads as sitting above the content rather than just
-// being a different-colored block next to it.
+// being a different-colored block next to it. The primary color is set here
+// rather than with Quasar's .bg-primary, whose !important background
+// shorthand would reset the gradient.
 .header-elevated {
+  background-color: var(--q-primary);
   background-image: linear-gradient(
     180deg,
     color-mix(in srgb, white 8%, transparent),
     transparent
-  ) !important; /* NOSONAR: overrides Quasar's !important .bg-primary background shorthand, which resets background-image */
+  );
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
 }
 </style>

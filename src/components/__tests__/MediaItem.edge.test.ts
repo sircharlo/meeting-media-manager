@@ -37,7 +37,7 @@ describe('MediaItem component resilience - edge cases', () => {
     });
 
     // The thumbnail container dims when not a local file URL
-    const container = wrapper.find('.bg-black');
+    const container = wrapper.find('.media-thumbnail-frame');
     expect(container.exists()).toBe(true);
     expect(container.attributes('style') || '').toContain('opacity: 0.64');
   });
@@ -57,7 +57,7 @@ describe('MediaItem component resilience - edge cases', () => {
     });
 
     // Not a local file URL -> dimmed preview
-    const container = wrapper.find('.bg-black');
+    const container = wrapper.find('.media-thumbnail-frame');
     expect(container.exists()).toBe(true);
     expect(container.attributes('style') || '').toContain('opacity: 0.64');
 

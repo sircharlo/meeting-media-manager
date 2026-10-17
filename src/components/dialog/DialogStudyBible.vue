@@ -148,7 +148,7 @@
               color="accent-200"
               :disable="!chapterHasMedia(0) || isProcessing"
               :label="t('introduction')"
-              text-color="black"
+              :text-color="chapterTextColor(0)"
               unelevated
               @click="selectChapter(0)"
             />
@@ -167,7 +167,7 @@
               color="accent-200"
               :disable="!chapterHasMedia(chapter) || isProcessing"
               :label="chapter"
-              text-color="black"
+              :text-color="chapterTextColor(chapter)"
               unelevated
               @click="selectChapter(chapter)"
             />
@@ -267,12 +267,14 @@ import type { MediaSectionIdentifier, MultimediaItem } from 'src/types';
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
+import { useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getStudyBibleBooks, getStudyBibleMedia } from 'src/helpers/jw-media';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+const $q = useQuasar();
 
 // Props
 const props = defineProps<{
@@ -444,6 +446,17 @@ const selectChapter = (chapter: number) => {
 const chapterHasMedia = (chapter: number) =>
   chaptersWithMedia.value.has(chapter);
 
+// A chapter with no media gets a muted gray label instead of black - the
+// "unavailable" cue - still readable on its gray button (4.5:1 or better).
+const unavailableChapterTextColor = computed(() =>
+  $q.dark.isActive ? 'grey-6' : 'grey-8',
+);
+
+const chapterTextColor = (chapter: number) => {
+  if (chapterHasMedia(chapter)) return 'black';
+  return unavailableChapterTextColor.value;
+};
+
 const fetchStudyBibleMedia = async () => {
   try {
     loadingMedia.value = true;
@@ -507,15 +520,14 @@ body.body--dark .study-bible-item :deep(img) {
 }
 
 /* .q-btn outranks the button's own bg-accent-200 color class
-   (body.body--light .bg-accent-200) without needing !important. */
+   (body.body--light .bg-accent-200) without needing !important. The label's
+   gray comes from the button's text-color (chapterTextColor), and its full
+   opacity from app.scss. */
 .q-btn.study-bible-chapter-unavailable {
   background-color: #e0e0e0;
-  color: #757575 !important; /* NOSONAR: overrides Quasar's !important .text-black from text-color="black"; the low contrast is intended - only on disabled chapter buttons (no media), which WCAG 1.4.3 exempts, and the muted gray is the "unavailable" cue */
-  opacity: 1 !important; /* NOSONAR: overrides Quasar's !important .disabled / .q-btn.disabled opacity */
 }
 
 body.body--dark .study-bible-chapter-unavailable {
   background-color: #343434;
-  color: #9e9e9e !important; /* NOSONAR: overrides Quasar's !important .text-black and the light-mode !important color above */
 }
 </style>
