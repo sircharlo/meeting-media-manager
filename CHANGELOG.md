@@ -34,6 +34,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🛠️ **Show Image for Zoom Participants**: The button that shows an image to Zoom participants has a clearer new icon: the picture on a meeting's main screen, above the participants.
 - 🛠️ **Shared Folder**: The folder monitoring settings are now called "Shared folder" and have moved to the top of the Integrations category in Settings, where they're easier to find, with clearer explanations of how the dated folders work.
 - 🛠️ **Shared Folder**: A new "Delete past meeting folders" setting lets you keep each week's dated folders and their files, instead of having them deleted from the shared folder (for everyone who uses it) once the week is over. It's on by default, as before.
+- 🛠️ **Accessibility**: The "Drag and drop files here or click to browse" area of the "Add more media" dialog, and the video tiles in the "Publication media" dialog, can now be reached with Tab and used with Enter or Space, not just the mouse; a video tile is also highlighted while it has the keyboard focus, as it is on hover.
 
 ### 🐞 Bug Fixes
 

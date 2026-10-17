@@ -53,9 +53,11 @@ def load_jw_languages_cache(path: Path) -> dict[str, dict]:
 LOCALE_IMPORT_LINE = re.compile(
     r"^\s*(?://\s*)?import\s+\w+\s+from\s+'\.\/[\w-]+\.json'(?:\s+with\s*\{[^}]*\})?;"
 )
-# Matches the % annotation comments this script generates
+# Matches the % annotation comments this script generates. The decimal part is
+# one optional group (rather than `\d+\.?\d*`) so a long digit run can't be
+# split between two adjacent digit quantifiers in every possible way.
 PCT_COMMENT_LINE = re.compile(
-    r"^\s*//\s*\d+\.?\d*%\s+translated\s+as\s+of\s+\d{4}-\d{2}-\d{2}"
+    r"^\s*//\s*\d+(?:\.\d*)?%\s+translated\s+as\s+of\s+\d{4}-\d{2}-\d{2}"
 )
 
 
@@ -356,10 +358,12 @@ def split_object_blocks(array_body: str) -> list[str]:
 
 def build_locale_entry(entry: dict) -> str:
     """Render a single locales[] object entry as a TypeScript string."""
-    lines = ["{"]
-    lines.append(f"    englishName: '{entry.get('englishName', 'PLACEHOLDER')}',")
-    lines.append(f"    label: '{entry.get('label', 'PLACEHOLDER')}',")
-    lines.append(f"    langcode: '{entry.get('langcode', 'PLACEHOLDER')}',")
+    lines = [
+        "{",
+        f"    englishName: '{entry.get('englishName', 'PLACEHOLDER')}',",
+        f"    label: '{entry.get('label', 'PLACEHOLDER')}',",
+        f"    langcode: '{entry.get('langcode', 'PLACEHOLDER')}',",
+    ]
     if "signLangCodes" in entry and entry["signLangCodes"]:
         codes = ", ".join(f"'{c}'" for c in entry["signLangCodes"])
         lines.append(f"    signLangCodes: [{codes}],")
@@ -454,8 +458,15 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
         "];"
     )
 
+    # Same match as the lazy `\{[\s\S]*?\}\[\]\s*=\s*\[[\s\S]*?\];`, spelled
+    # with tempered tokens instead: the type literal runs up to the first
+    # `}[] = [`, the array up to the first `];`. Each token can only stop at
+    # that one delimiter, so a missing `];` fails in linear time instead of
+    # retrying every later `}[]` with every later `];`.
     updated = re.sub(
-        r"export\s+const\s+locales\s*:\s*\{[\s\S]*?\}\[\]\s*=\s*\[[\s\S]*?\];",
+        r"export\s+const\s+locales\s*:\s*"
+        r"\{(?:[^}]|\}(?!\[\]\s*=\s*\[))*\}\[\]\s*=\s*"
+        r"\[(?:[^\]]|\](?!;))*\];",
         new_locales,
         updated,
     )

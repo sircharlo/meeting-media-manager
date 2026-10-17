@@ -510,7 +510,7 @@ body.body--dark .study-bible-item :deep(img) {
    (body.body--light .bg-accent-200) without needing !important. */
 .q-btn.study-bible-chapter-unavailable {
   background-color: #e0e0e0;
-  color: #757575 !important; /* NOSONAR: overrides Quasar's !important .text-black from text-color="black" */
+  color: #757575 !important; /* NOSONAR: overrides Quasar's !important .text-black from text-color="black"; the low contrast is intended - only on disabled chapter buttons (no media), which WCAG 1.4.3 exempts, and the muted gray is the "unavailable" cue */
   opacity: 1 !important; /* NOSONAR: overrides Quasar's !important .disabled / .q-btn.disabled opacity */
 }
 

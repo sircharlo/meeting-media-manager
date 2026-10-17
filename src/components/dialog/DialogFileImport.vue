@@ -91,19 +91,19 @@
               <q-tooltip>
                 <div class="row">
                   <strong>{{ t('images:') }}&nbsp;</strong>
-                  {{ IMG_EXTENSIONS.sort().join(', ') }}
+                  {{ imageExtensionsLabel }}
                 </div>
                 <div class="row">
                   <strong>{{ t('videos:') }}&nbsp;</strong>
-                  {{ VIDEO_EXTENSIONS.sort().join(', ') }}
+                  {{ videoExtensionsLabel }}
                 </div>
                 <div class="row">
                   <strong>{{ t('audio:') }}&nbsp;</strong>
-                  {{ AUDIO_EXTENSIONS.sort().join(', ') }}
+                  {{ audioExtensionsLabel }}
                 </div>
                 <div class="row">
                   <strong>{{ t('other:') }}&nbsp;</strong>
-                  {{ OTHER_EXTENSIONS.sort().join(', ') }}
+                  {{ otherExtensionsLabel }}
                 </div>
               </q-tooltip>
             </q-icon>
@@ -114,19 +114,15 @@
             ref="dropArea"
             class="col rounded-borders dashed-border items-center justify-center flex bg-accent-100 animated slow"
             :class="{
-              'cursor-pointer': !totalFiles && !(!!jwpubDb || jwpubLoading),
+              'cursor-pointer': canBrowseLocalFiles,
               'bg-accent-200':
-                isOverDropZone ||
-                (hovering && !totalFiles && !(!!jwpubDb || jwpubLoading)),
+                isOverDropZone || (hovering && canBrowseLocalFiles),
             }"
+            :role="canBrowseLocalFiles ? 'button' : undefined"
             style="min-height: 200px"
-            @click="
-              () => {
-                if (!totalFiles && !(!!jwpubDb || jwpubLoading)) {
-                  getLocalFiles();
-                }
-              }
-            "
+            :tabindex="canBrowseLocalFiles ? 0 : undefined"
+            @click="browseLocalFiles"
+            @keydown.enter.space.prevent="browseLocalFiles"
           >
             <template v-if="totalFiles || (!!jwpubDb && jwpubLoading)">
               <q-circular-progress
@@ -181,6 +177,15 @@ import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+
+// toSorted, not sort: the extension lists are shared constants, and sorting
+// them in place would reorder them for every other module that reads them.
+const formatExtensions = (extensions: string[]) =>
+  extensions.toSorted().join(', ');
+const imageExtensionsLabel = formatExtensions(IMG_EXTENSIONS);
+const videoExtensionsLabel = formatExtensions(VIDEO_EXTENSIONS);
+const audioExtensionsLabel = formatExtensions(AUDIO_EXTENSIONS);
+const otherExtensionsLabel = formatExtensions(OTHER_EXTENSIONS);
 
 const props = defineProps<{
   currentFile: number;
@@ -274,6 +279,16 @@ const getLocalFiles = () => {
     .catch((error) => {
       errorCatcher(error);
     });
+};
+
+// The drop zone doubles as a "browse" button, but only while it shows its
+// idle prompt - not while it shows import progress or a JWPUB is loading.
+const canBrowseLocalFiles = computed(
+  () => !props.totalFiles && !(!!jwpubDb.value || jwpubLoading.value),
+);
+
+const browseLocalFiles = () => {
+  if (canBrowseLocalFiles.value) getLocalFiles();
 };
 
 const dropHandler = (event: DragEvent, eventType: string) => {

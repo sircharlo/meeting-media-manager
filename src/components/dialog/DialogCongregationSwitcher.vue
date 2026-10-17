@@ -209,17 +209,15 @@
           </div>
         </q-list>
 
-        <div
+        <button
           v-ripple
           class="congregation-new cursor-pointer"
-          role="button"
-          tabindex="0"
+          type="button"
           @click="createNewCongregation"
-          @keydown.enter.space.prevent="createNewCongregation"
         >
           <q-icon class="q-mr-sm" name="mmm-plus" />
           {{ t('new-profile') }}
-        </div>
+        </button>
       </q-card-section>
     </q-card>
   </BaseDialog>
@@ -678,8 +676,13 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
   transition-delay: 400ms;
 }
 
+// A native <button> (Enter/Space activation and the button role for free),
+// so the UA's button chrome is reset here - Quasar's normalize already
+// inherits the font - to keep it looking like the full-width dashed tile.
 .congregation-new {
   align-items: center;
+  appearance: none;
+  background: none;
   border: 1.5px dashed var(--q-primary);
   border-radius: 0.75em;
   color: var(--q-primary);
@@ -688,5 +691,7 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
   justify-content: center;
   margin-top: 0.5em;
   padding: 0.75em;
+  text-align: inherit;
+  width: 100%;
 }
 </style>

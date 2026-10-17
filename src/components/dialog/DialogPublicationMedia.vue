@@ -401,8 +401,9 @@
                 :key="video.file.url"
                 class="col col-xs-6 col-sm-4 col-md-3 col-lg-2"
               >
-                <div
+                <button
                   v-ripple
+                  class="publication-media-tile"
                   :class="{
                     'cursor-pointer': !isProcessing,
                     'rounded-borders-lg': true,
@@ -410,8 +411,10 @@
                     'bg-accent-100': hoveredRemoteVideo === video.file.url,
                     disabled: isProcessing,
                   }"
-                  flat
+                  type="button"
+                  @blur="hoveredRemoteVideo = ''"
                   @click="!isProcessing && downloadMediaItem(video)"
+                  @focus="hoveredRemoteVideo = video.file.url"
                   @mouseout="hoveredRemoteVideo = ''"
                   @mouseover="hoveredRemoteVideo = video.file.url"
                 >
@@ -445,7 +448,7 @@
                       </div>
                     </q-img>
                   </q-card-section>
-                </div>
+                </button>
               </div>
             </template>
           </div>
@@ -1182,6 +1185,33 @@ async function importPdfVersion() {
   }
 }
 
+/**
+ * Show the publication listing for one of the library's flat categories
+ * (brochures, tracts, programs) - they all come from the same pseudo-search
+ * filter, just under a different library path. Errors and the final
+ * `loading` reset are left to the caller (selectCategory).
+ */
+async function loadPublicationListing(libraryPath: string) {
+  step.value = 'publicationListing';
+  loading.value = true;
+  const url = getLibraryFilterUrl(
+    urlVariables.value.base,
+    libraryPath,
+    'PseudoSearchViewsFilter',
+  );
+  const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
+    url,
+    new URLSearchParams({
+      contentLanguageFilter: currentLangObject.value?.symbol ?? 'en',
+      pubFilter: '',
+      sortBy: '1',
+    }),
+  );
+  publicationItems.value = await buildPublicationItemsWithStatus(
+    (result?.choices || []).filter((c) => c.optionName && c.optionValue !== ''),
+  );
+}
+
 function normalizeIssue(publication: string, issue: string): string {
   if (!['w', 'wp', 'ws'].includes(publication) || issue.length >= 8) {
     return issue;
@@ -1435,70 +1465,13 @@ async function selectCategory(key: string) {
       );
     } else if (key === 'brochures-and-booklets') {
       // Fetch brochure/booklet list
-      step.value = 'publicationListing';
-      loading.value = true;
-      const url = getLibraryFilterUrl(
-        urlVariables.value.base,
-        'brochures',
-        'PseudoSearchViewsFilter',
-      );
-      const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
-        url,
-        new URLSearchParams({
-          contentLanguageFilter: currentLangObject.value?.symbol ?? 'en',
-          pubFilter: '',
-          sortBy: '1',
-        }),
-      );
-      publicationItems.value = await buildPublicationItemsWithStatus(
-        (result?.choices || []).filter(
-          (c) => c.optionName && c.optionValue !== '',
-        ),
-      );
+      await loadPublicationListing('brochures');
     } else if (key === 'tracts-and-invitations') {
       // Fetch tracts and invitations list
-      step.value = 'publicationListing';
-      loading.value = true;
-      const url = getLibraryFilterUrl(
-        urlVariables.value.base,
-        'tracts',
-        'PseudoSearchViewsFilter',
-      );
-      const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
-        url,
-        new URLSearchParams({
-          contentLanguageFilter: currentLangObject.value?.symbol ?? 'en',
-          pubFilter: '',
-          sortBy: '1',
-        }),
-      );
-      publicationItems.value = await buildPublicationItemsWithStatus(
-        (result?.choices || []).filter(
-          (c) => c.optionName && c.optionValue !== '',
-        ),
-      );
+      await loadPublicationListing('tracts');
     } else if (key === 'programs') {
       // Fetch programs list
-      step.value = 'publicationListing';
-      loading.value = true;
-      const url = getLibraryFilterUrl(
-        urlVariables.value.base,
-        'programs',
-        'PseudoSearchViewsFilter',
-      );
-      const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
-        url,
-        new URLSearchParams({
-          contentLanguageFilter: currentLangObject.value?.symbol ?? 'en',
-          pubFilter: '',
-          sortBy: '1',
-        }),
-      );
-      publicationItems.value = await buildPublicationItemsWithStatus(
-        (result?.choices || []).filter(
-          (c) => c.optionName && c.optionValue !== '',
-        ),
-      );
+      await loadPublicationListing('programs');
     }
   } catch (e) {
     errorCatcher(e);
@@ -1671,3 +1644,23 @@ watch(
   },
 );
 </script>
+
+<style lang="scss" scoped>
+// Media tiles are native <button>s (Enter/Space activation and the button
+// role for free), so the UA's button chrome is reset here - Quasar's
+// normalize already inherits the font - to keep them looking like the plain
+// full-width tile they replaced. A column flexbox rather than display: block,
+// because a button vertically centers its content when it's taller than it
+// (these are full-height in their grid row) where the old div started at the top.
+.publication-media-tile {
+  appearance: none;
+  background: none;
+  border: 0;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  text-align: inherit;
+  width: 100%;
+}
+</style>

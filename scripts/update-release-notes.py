@@ -30,8 +30,11 @@ def extract_new_features():
     
     # Split by version headers (## vX.Y.Z), plus the UPCOMING VERSION section
     # so upcoming features get synced to Crowdin for early translation.
+    # The rest of the header line only starts at a non-digit, so it can't
+    # trade digits back and forth with the last version number when a line
+    # has no trailing newline (same match as `\d+.*`, without the backtracking).
     version_blocks = re.split(
-        r'\n(## (?:UPCOMING VERSION|v?\d+\.\d+\.\d+.*))\n',
+        r'\n(## (?:UPCOMING VERSION|v?\d+\.\d+\.\d+(?:[^\d\n].*)?))\n',
         content,
     )
     
