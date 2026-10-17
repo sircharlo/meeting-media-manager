@@ -35,10 +35,18 @@
           }"
         >
           <template v-if="media.isImage">
+            <!-- Panning and wheel/pinch zoom are ours, not the library's
+                 (see startThumbnailPan and zoomThumbnailWithWheel): it only
+                 renders the zoom/pan and handles Ctrl/Shift + double-click -->
             <VueZoomable
               v-if="media.isImage"
               :button-pan-step="15"
               :button-zoom-step="0.2"
+              class="thumbnail-pan-viewport"
+              :class="{
+                'thumbnail-pan-viewport--zoomed': isThumbnailZoomed,
+                'thumbnail-pan-viewport--panning': isPanningThumbnail,
+              }"
               :dbl-click-zoom-step="0.35"
               :enable-control-button="false"
               :initial-pan-x="0"
@@ -46,20 +54,24 @@
               :initial-zoom="1"
               :max-zoom="5"
               :min-zoom="1"
+              :mouse-enabled="false"
               :pan="mediaPan"
               :pan-enabled="false"
               :selector="'#' + randomId"
               :style="{ width: thumbnailWidth, height: thumbnailHeight }"
-              :wheel-zoom-step="0.1"
+              :wheel-enabled="false"
               :zoom="mediaZoom"
               :zoom-enabled="control || shift"
-              @pan="
-                mediaPan = $event.pan;
-                mediaZoom = $event.zoom;
-              "
+              @click.capture="swallowClickAfterThumbnailPan"
+              @lostpointercapture="cancelThumbnailPan"
+              @pointercancel="cancelThumbnailPan"
+              @pointerdown="startThumbnailPan"
+              @pointermove="moveThumbnailPan"
+              @pointerup="endThumbnailPan"
+              @wheel="zoomThumbnailWithWheel"
               @zoom="
                 mediaZoom = $event.zoom;
-                mediaPan = $event.pan;
+                setPan($event.pan.x, $event.pan.y);
               "
             >
               <div
@@ -117,61 +129,9 @@
               </div>
             </VueZoomable>
 
-            <transition
-              appear
-              enter-active-class="animated fadeIn"
-              leave-active-class="animated fadeOut"
-              mode="out-in"
-              name="fade"
-            >
-              <template
-                v-if="media.isImage && mediaZoom > 1.01 && hoveringMediaItem"
-              >
-                <div class="absolute-top-right q-mr-xs q-mt-xs row">
-                  <div class="bg-semi-black row rounded-borders">
-                    <q-badge
-                      color="transparent"
-                      style="padding: 5px; cursor: pointer"
-                      @mousedown="startPan('up')"
-                      @mouseleave="stopPan"
-                      @mouseup="stopPan"
-                    >
-                      <q-icon color="white" name="mmm-up" />
-                    </q-badge>
-                    <q-separator class="bg-grey-8 q-my-xs" vertical />
-                    <q-badge
-                      color="transparent"
-                      style="padding: 5px; cursor: pointer"
-                      @mousedown="startPan('down')"
-                      @mouseleave="stopPan"
-                      @mouseup="stopPan"
-                    >
-                      <q-icon color="white" name="mmm-down" />
-                    </q-badge>
-                    <q-separator class="bg-grey-8 q-my-xs" vertical />
-                    <q-badge
-                      color="transparent"
-                      style="padding: 5px; cursor: pointer"
-                      @mousedown="startPan('left')"
-                      @mouseleave="stopPan"
-                      @mouseup="stopPan"
-                    >
-                      <q-icon color="white" name="mmm-left" />
-                    </q-badge>
-                    <q-separator class="bg-grey-8 q-my-xs" vertical />
-                    <q-badge
-                      color="transparent"
-                      style="padding: 5px; cursor: pointer"
-                      @mousedown="startPan('right')"
-                      @mouseleave="stopPan"
-                      @mouseup="stopPan"
-                    >
-                      <q-icon color="white" name="mmm-right" />
-                    </q-badge>
-                  </div>
-                </div>
-              </template>
-            </transition>
+            <!-- pointerdown.stop on the controls: holding one down and
+                 moving even slightly would otherwise also arm the row's
+                 reorder drag, since the whole thumbnail is its handle -->
             <transition
               appear
               enter-active-class="animated fadeIn"
@@ -180,11 +140,12 @@
               name="fade"
             >
               <div
-                v-if="mediaZoom > 1.01"
+                v-if="isThumbnailZoomed"
                 class="absolute-bottom-left q-ml-xs q-mb-xs row"
+                @pointerdown.stop
               >
                 <q-badge
-                  class="q-mr-xs"
+                  class="q-mr-xs thumbnail-zoom-control"
                   color="warning"
                   style="padding: 5px; cursor: pointer"
                   @click="zoomReset(true)"
@@ -204,11 +165,14 @@
               <div
                 v-if="hoveringMediaItem"
                 class="absolute-bottom-right q-mr-xs q-mb-xs row"
+                @pointerdown.stop
               >
-                <div class="bg-semi-black row rounded-borders">
+                <div
+                  class="bg-semi-black row rounded-borders thumbnail-zoom-control"
+                >
                   <q-badge
                     color="transparent"
-                    :disabled="!mediaZoom || mediaZoom < 1.01 || undefined"
+                    :disabled="!isThumbnailZoomed || undefined"
                     style="padding: 5px; cursor: pointer"
                     @mousedown="startZoom('out')"
                     @mouseleave="stopZoom"
@@ -1419,6 +1383,10 @@ import {
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import {
+  getThumbnailZoomPan,
+  saveThumbnailZoomPan,
+} from 'src/helpers/thumbnail-zoom-pan';
 import {
   automateZoomMediaSharing,
   stopZoomSharingAfterMedia,
@@ -2842,82 +2810,166 @@ const stopButtonHasPrecedingButton = computed(() => {
   );
 });
 
-const mediaPan = ref<{ x: number; y: number }>({
-  x: 0,
-  y: 0,
-});
-const mediaZoom = ref(1);
+// Restored when this row is rebuilt, e.g. after a move to another section -
+// see thumbnail-zoom-pan.ts.
+const savedZoomPan = getThumbnailZoomPan(props.media.uniqueId);
+const mediaPan = ref<{ x: number; y: number }>(
+  savedZoomPan?.pan ?? { x: 0, y: 0 },
+);
+const mediaZoom = ref(savedZoomPan?.zoom ?? 1);
 
-const panTimeout = ref<NodeJS.Timeout | null>(null);
-const panAnimationFrame = ref<null | number>(null);
 const zoomTimeout = ref<NodeJS.Timeout | null>(null);
 const zoomAnimationFrame = ref<null | number>(null);
 
-const panStep = 1.5;
+const isThumbnailZoomed = computed(() => mediaZoom.value > 1.01);
 
-const pan = (direction: 'down' | 'left' | 'right' | 'up', step = panStep) => {
-  // Calculate new pan values
-  let newX = mediaPan.value.x || 0;
-  let newY = mediaPan.value.y || 0;
-
-  if (direction === 'up') newY += step;
-  if (direction === 'down') newY -= step;
-  if (direction === 'left') newX += step;
-  if (direction === 'right') newX -= step;
-
-  // Calculate maximum pan distance based on zoom level and image dimensions
-  // At zoom level 1, no panning is allowed
-  // At higher zoom levels, the max pan is half the difference between zoomed and original size
+// Keeps the zoomed image covering the whole thumbnail: at zoom z it can move
+// at most half its overflow, size * (z - 1) / 2, either way - so not at all
+// at zoom 1. Every zoom change goes through here too, since zooming out
+// shrinks that range and would otherwise leave the image pushed past its
+// edge, showing the empty frame behind it.
+const setPan = (x: number, y: number) => {
   const zoom = mediaZoom.value;
   const imageWidth = mediaImage.value?.$el?.clientWidth ?? 0;
   const imageHeight = mediaImage.value?.$el?.clientHeight ?? 0;
 
-  if (zoom > 1 && imageWidth > 0 && imageHeight > 0) {
-    // Maximum pan = (zoomed_size - viewport_size) / 2
-    // Since zoomed_size = viewport_size * zoom, this becomes:
-    // max_pan = viewport_size * (zoom - 1) / 2
-    const maxPanX = (imageWidth * (zoom - 1)) / 2;
-    const maxPanY = (imageHeight * (zoom - 1)) / 2;
+  if (zoom <= 1 || imageWidth <= 0 || imageHeight <= 0) {
+    mediaPan.value = { x: 0, y: 0 };
+    return;
+  }
 
-    // Clamp pan values to prevent going past the edge
-    mediaPan.value.x = Math.max(-maxPanX, Math.min(maxPanX, newX));
-    mediaPan.value.y = Math.max(-maxPanY, Math.min(maxPanY, newY));
+  const maxPanX = (imageWidth * (zoom - 1)) / 2;
+  const maxPanY = (imageHeight * (zoom - 1)) / 2;
+  mediaPan.value = {
+    x: Math.max(-maxPanX, Math.min(maxPanX, x || 0)),
+    y: Math.max(-maxPanY, Math.min(maxPanY, y || 0)),
+  };
+};
+
+// Drag-to-pan for a zoomed-in thumbnail. The whole thumbnail is also the
+// row's reorder drag handle, so a press on a zoomed one is claimed here:
+// stopPropagation keeps it from formkit's node-level pointerdown, which is
+// what arms a reorder drag, and preventDefault suppresses the compatibility
+// mouse events, so the row's mouseup-driven selection can't fire at the end
+// of a pan either. A press that never moves far enough to pan is handed
+// back to the row as its usual click. At zoom 1 there's nothing to pan, so
+// the press goes through untouched and the thumbnail drags the row as before.
+const PAN_DRAG_THRESHOLD_PX = 3;
+const isPanningThumbnail = ref(false);
+let thumbnailPanDrag: null | {
+  panAtStart: { x: number; y: number };
+  pointerId: number;
+  startX: number;
+  startY: number;
+} = null;
+// The click the browser still fires once a pan's press is released, kept
+// from reaching anything clickable under it (the duration badge). Cleared on
+// the next press in case that click never came (released elsewhere).
+let swallowNextThumbnailClick = false;
+
+const startThumbnailPan = (event: PointerEvent) => {
+  swallowNextThumbnailClick = false;
+  if (!isThumbnailZoomed.value || !event.isPrimary || event.button !== 0) {
+    return;
+  }
+  event.stopPropagation();
+  event.preventDefault();
+  (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+  thumbnailPanDrag = {
+    panAtStart: { ...mediaPan.value },
+    pointerId: event.pointerId,
+    startX: event.clientX,
+    startY: event.clientY,
+  };
+};
+
+const moveThumbnailPan = (event: PointerEvent) => {
+  const drag = thumbnailPanDrag;
+  if (drag?.pointerId !== event.pointerId) return;
+  const deltaX = event.clientX - drag.startX;
+  const deltaY = event.clientY - drag.startY;
+  if (
+    !isPanningThumbnail.value &&
+    Math.hypot(deltaX, deltaY) < PAN_DRAG_THRESHOLD_PX
+  ) {
+    return;
+  }
+  isPanningThumbnail.value = true;
+  setPan(drag.panAtStart.x + deltaX, drag.panAtStart.y + deltaY);
+};
+
+const cancelThumbnailPan = (event: PointerEvent) => {
+  if (thumbnailPanDrag?.pointerId !== event.pointerId) return;
+  thumbnailPanDrag = null;
+  isPanningThumbnail.value = false;
+};
+
+const endThumbnailPan = (event: PointerEvent) => {
+  if (thumbnailPanDrag?.pointerId !== event.pointerId) return;
+  const panned = isPanningThumbnail.value;
+  cancelThumbnailPan(event);
+  if (panned) {
+    swallowNextThumbnailClick = true;
   } else {
-    // No zoom or invalid dimensions - no panning allowed
-    mediaPan.value.x = 0;
-    mediaPan.value.y = 0;
+    emit('click', event);
   }
 };
 
-const startPan = (direction: 'down' | 'left' | 'right' | 'up') => {
-  stopPan();
-  pan(direction, 5); // Initial big step
-
-  panTimeout.value = setTimeout(() => {
-    let currentStep = panStep;
-    const minStep = 0.5;
-    const decay = 1; // 0.95;
-
-    const animate = () => {
-      pan(direction, currentStep);
-      if (currentStep > minStep) {
-        currentStep *= decay;
-      }
-      panAnimationFrame.value = requestAnimationFrame(animate);
-    };
-    animate();
-  }, 500);
+const swallowClickAfterThumbnailPan = (event: MouseEvent) => {
+  if (!swallowNextThumbnailClick) return;
+  swallowNextThumbnailClick = false;
+  event.stopPropagation();
 };
 
-const stopPan = () => {
-  if (panTimeout.value) {
-    clearTimeout(panTimeout.value);
-    panTimeout.value = null;
-  }
-  if (panAnimationFrame.value) {
-    cancelAnimationFrame(panAnimationFrame.value);
-    panAnimationFrame.value = null;
-  }
+const MAX_WHEEL_ZOOM = 5;
+const MAX_WHEEL_ZOOM_STEP = 0.1;
+
+// Zooms toward the pointer: the point of the image under it stays put.
+const zoomThumbnailAt = (
+  targetZoom: number,
+  clientX: number,
+  clientY: number,
+  viewport: HTMLElement,
+) => {
+  const oldZoom = mediaZoom.value;
+  const newZoom = Math.max(1, Math.min(MAX_WHEEL_ZOOM, targetZoom));
+  if (newZoom === oldZoom) return;
+
+  const rect = viewport.getBoundingClientRect();
+  const imageCenterX = rect.left + rect.width / 2 + mediaPan.value.x;
+  const imageCenterY = rect.top + rect.height / 2 + mediaPan.value.y;
+  const growth = (newZoom - oldZoom) / oldZoom;
+  mediaZoom.value = newZoom;
+  setPan(
+    mediaPan.value.x + growth * (imageCenterX - clientX),
+    mediaPan.value.y + growth * (imageCenterY - clientY),
+  );
+};
+
+// Ctrl/Shift + mouse wheel, and touchpad pinch, which Chromium delivers as
+// wheel events with ctrlKey set but no Ctrl key actually down. vue-zoomable's
+// own wheel zoom can't take pinches: it only zooms while useMagicKeys sees a
+// real Ctrl/Shift key held, and it steps a fixed amount per event, far too
+// fast for a pinch's stream of tiny ones. This zooms in proportion to the
+// delta instead - a pinch's deltaY is -100 * ln(scale), so the image follows
+// the fingers - capped at about 10% per event so a mouse wheel notch stays
+// the same small step. A plain wheel or two-finger scroll still scrolls the
+// list.
+const zoomThumbnailWithWheel = (event: WheelEvent) => {
+  if (!event.ctrlKey && !event.shiftKey) return;
+  event.preventDefault();
+  // Shift + wheel arrives as a horizontal scroll on some setups.
+  const delta = event.deltaY === 0 ? event.deltaX : event.deltaY;
+  const step = Math.max(
+    -MAX_WHEEL_ZOOM_STEP,
+    Math.min(MAX_WHEEL_ZOOM_STEP, -delta / 100),
+  );
+  zoomThumbnailAt(
+    mediaZoom.value * Math.exp(step),
+    event.clientX,
+    event.clientY,
+    event.currentTarget as HTMLElement,
+  );
 };
 
 const zoom = (type: 'in' | 'out', factor = 1.1) => {
@@ -2927,6 +2979,7 @@ const zoom = (type: 'in' | 'out', factor = 1.1) => {
   if (type === 'out' && mediaZoom.value > 1.01) {
     mediaZoom.value = Math.max(mediaZoom.value / factor, 1);
   }
+  setPan(mediaPan.value.x, mediaPan.value.y);
 };
 
 const startZoom = (type: 'in' | 'out') => {
@@ -3131,6 +3184,10 @@ const mediaElapsed = computed({
 watch(
   () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
   (newValues) => {
+    saveThumbnailZoomPan(props.media.uniqueId, {
+      pan: mediaPan.value,
+      zoom: mediaZoom.value,
+    });
     if (!isCurrentlyPlaying.value) return;
     updateZoomPan(newValues as [number, number, number]);
   },
@@ -3298,6 +3355,31 @@ watch(
     rgba(255, 255, 255, 0.6),
     rgba(0, 0, 0, 0.8)
   );
+}
+
+// A zoomed-in thumbnail is panned by dragging it (it no longer drags the
+// row - see startThumbnailPan), so it says so with the grab cursor.
+.thumbnail-pan-viewport--zoomed {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.thumbnail-pan-viewport--panning {
+  cursor: grabbing;
+}
+
+// The zoom and reset buttons sit on the image itself, which can be anything
+// from white to black: a light halo stands them out from a dark image and a
+// dark one from a light image, so one of the two always shows.
+.thumbnail-zoom-control {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 6px 2px rgba(0, 0, 0, 0.65);
+
+  :deep(.q-icon) {
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9));
+  }
 }
 
 .media-item__time {
