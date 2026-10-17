@@ -28,7 +28,7 @@ import { join } from 'upath';
 const getTempWritePath = (dir: string, fileName: string) =>
   join(
     dir,
-    `${fileName}.${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}.tmp`,
+    `${fileName}.${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}.tmp`, // NOSONAR: only keeps concurrent temp names apart (with pid + time); renamed over the target right away, not a secret
   );
 
 async function writeJsonAtomic(

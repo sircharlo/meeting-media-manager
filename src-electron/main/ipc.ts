@@ -27,7 +27,6 @@ import {
   systemPreferences,
 } from 'electron';
 import { pathExists } from 'fs-extra/esm';
-import { stat } from 'node:fs/promises';
 import { arch, platform } from 'node:os';
 import { PLATFORM } from 'src-electron/constants';
 import { updateDevMenuState } from 'src-electron/main/dev-menu';
@@ -58,6 +57,7 @@ import {
   watchFolder,
 } from 'src-electron/main/fs';
 import { convertHeic } from 'src-electron/main/heic';
+import { openFolder } from 'src-electron/main/open-folder';
 import { getOsSupportWarning } from 'src-electron/main/os-support';
 import { exportHtmlToPdf } from 'src-electron/main/pdf';
 import { getAllScreens } from 'src-electron/main/screen';
@@ -138,7 +138,7 @@ import { isZoomCommand } from 'src-electron/main/zoom-helper-process';
 import { handleZoomTestParticipants } from 'src-electron/main/zoom-test-participants';
 import { join } from 'upath';
 
-const { openExternal, openPath } = shell;
+const { openExternal } = shell;
 
 // IPC send/on
 
@@ -624,22 +624,7 @@ handleIpcInvoke(
     exportHtmlToPdf(html, defaultFileName),
 );
 
-handleIpcInvoke('openFolder', async (_e, path: string) => {
-  // shell.openPath executes files (not just directories), so refuse to
-  // open anything that isn't an actual directory rather than trusting the
-  // caller's assumption that `path` points at a folder.
-  try {
-    const stats = await stat(path);
-    if (!stats.isDirectory()) return 'Path is not a directory';
-  } catch (error) {
-    captureElectronError(error, {
-      contexts: { fn: { name: 'openFolder', path } },
-    });
-    return 'Path does not exist';
-  }
-
-  return openPath(path);
-});
+handleIpcInvoke('openFolder', async (_e, path: unknown) => openFolder(path));
 
 handleIpcInvoke(
   'unzip',

@@ -37,7 +37,7 @@ function weightedShuffle(songs: SongItem[]): SongItem[] {
     .map((song) => {
       const normalizedTrack = (song.track ?? 0) / maxTrack;
       const weight = 1 + normalizedTrack * TRACK_WEIGHT_BIAS;
-      return { key: Math.random() ** (1 / weight), song };
+      return { key: Math.random() ** (1 / weight), song }; // NOSONAR: shuffles the background-music play order
     })
     .sort((a, b) => b.key - a.key)
     .map(({ song }) => song);

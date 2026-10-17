@@ -49,7 +49,7 @@ const ENSURE_DIR_RETRY_MAX_DELAY_MS = 1500;
 const getEnsureDirRetryDelay = (attempt: number) => {
   const exponentialDelay = ENSURE_DIR_RETRY_BASE_DELAY_MS * 2 ** attempt;
   const cappedDelay = Math.min(exponentialDelay, ENSURE_DIR_RETRY_MAX_DELAY_MS);
-  return Math.random() * cappedDelay;
+  return Math.random() * cappedDelay; // NOSONAR: retry-backoff jitter, not a security value
 };
 
 // BE-9 (full-audit-2026-09-04.md): a failed download is retried
@@ -68,7 +68,7 @@ const getDownloadErrorRetryDelay = (attempt: number) => {
     exponentialDelay,
     DOWNLOAD_ERROR_RETRY_MAX_DELAY_MS,
   );
-  return Math.random() * cappedDelay;
+  return Math.random() * cappedDelay; // NOSONAR: retry-backoff jitter, not a security value
 };
 
 interface EnsureDirAttemptDiagnostics {
@@ -916,7 +916,7 @@ export async function isDownloadErrorExpected(): Promise<boolean> {
 
       // 1. Retrieve general geo info
       const payload = await fetchJsonFromMainProcess<GeoInfo>(
-        'http://ip-api.com/json/',
+        'http://ip-api.com/json/', // NOSONAR: ip-api.com's keyless endpoint is HTTP-only; it sends nothing and only returns a country-code hint for classifying download errors
         undefined,
         {
           silent: true,

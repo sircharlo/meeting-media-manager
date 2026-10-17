@@ -413,9 +413,16 @@ function resolveDecision(ctx, decision, fileStrings, translationsByStringId) {
   };
 }
 
+// A failed request's message carries the Crowdin response body; flattening
+// its line breaks keeps that body from forging extra log lines (or GitHub
+// Actions workflow commands, `::error::...`, when run in CI).
+function toSingleLine(text) {
+  return String(text).replaceAll(/[\r\n]+/g, ' ');
+}
+
 try {
   await main();
 } catch (error) {
-  console.error(`[apply] ${error.message}`);
+  console.error(`[apply] ${toSingleLine(error.message)}`); // NOSONAR: line breaks stripped by toSingleLine
   process.exitCode = 1;
 }
