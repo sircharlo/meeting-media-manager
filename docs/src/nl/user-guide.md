@@ -82,7 +82,7 @@ The media player provides comprehensive controls:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
+- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
 - **Live Preview** - When enabled, show a preview of the audience media window in the main app
 - **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
 
@@ -103,8 +103,8 @@ Set custom start and end times for media:
 
 For images and videos:
 
-- **Zoom In/Out** - Use mouse wheel or zoom controls on the thumbnail
-- **Pan** - Click and drag the thumbnail to move the image around
+- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
+- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
 - **Reset Zoom** - Click to return to original zoom
 
 #### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}

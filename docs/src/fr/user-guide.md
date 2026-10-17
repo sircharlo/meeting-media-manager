@@ -82,7 +82,7 @@ Le lecteur multimédia fournit des contrôles complets :
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/panoramique** - Utilisez la molette de la souris pour zoomer, faites glisser pour faire un panoramique (pour les images)
+- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
 - **Aperçu en direct** - Lorsque cette option est activée, affiche, dans la fenêtre principale, un aperçu de la fenêtre multimédia que voit l'auditoire
 - **Vitesse de lecture** - Lorsque cette option est activée dans les paramètres, vous pouvez régler la vitesse de lecture audio et vidéo à partir du menu contextuel d'un élément multimédia
 
@@ -103,8 +103,8 @@ Définissez des temps de début et de fin personnalisés pour les médias :
 
 Pour les images et vidéos :
 
-- **Zoom avant/arrière** - Utilisez la molette de la souris ou les contrôles de zoom sur la miniature
-- **Panoramique** - Cliquez et faites glisser la miniature pour déplacer l'image
+- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
+- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
 - **Réinitialiser le zoom** - Cliquez pour revenir au zoom original
 
 #### Raccourcis clavier {#user-guide-keyboard-shortcuts}
