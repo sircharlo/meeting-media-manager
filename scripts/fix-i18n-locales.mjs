@@ -83,11 +83,59 @@ function fixLinkedMessageSyntax(message) {
   return fixed;
 }
 
+/**
+ * Fix every parsed locale in directory order (logging per-locale counts),
+ * returning the totals and the locales that need writing back (none in
+ * --check mode).
+ */
+function fixLocales(locales) {
+  let totalFixed = 0;
+  const totalUnfixable = [];
+  const pendingWrites = [];
+
+  for (const { file, messages, path } of locales) {
+    const totals = { fixed: 0, unfixable: [] };
+    walkAndFix(messages, totals);
+
+    if (totals.fixed > 0) {
+      totalFixed += totals.fixed;
+      console.log(
+        `[i18n] ${file}: fixed ${totals.fixed} message${totals.fixed === 1 ? '' : 's'}`,
+      );
+      if (!checkOnly) pendingWrites.push({ messages, path });
+    }
+    for (const failure of totals.unfixable) {
+      totalUnfixable.push({ file, ...failure });
+    }
+  }
+
+  return { pendingWrites, totalFixed, totalUnfixable };
+}
+
+/**
+ * Repair one string message in place (`obj[key]`), counting it in `totals`
+ * as fixed or unfixable. Messages without `@:` links, or that already
+ * compile, are left alone.
+ */
+function fixMessage(obj, key, value, totals) {
+  if (!value.includes('@:') || compiles(value)) return;
+  const fixed = fixLinkedMessageSyntax(value);
+  if (fixed !== value && compiles(fixed)) {
+    obj[key] = fixed;
+    totals.fixed += 1;
+    if (verbose) {
+      console.log(
+        `  ${key}: ${JSON.stringify(value)} -> ${JSON.stringify(fixed)}`,
+      );
+    }
+  } else {
+    totals.unfixable.push({ key, value });
+  }
+}
+
 async function main() {
   try {
     const files = (await readdir(I18N_DIR)).filter((f) => f.endsWith('.json'));
-    let totalFixed = 0;
-    const totalUnfixable = [];
 
     // Locale files are independent: read them concurrently, then fix and log
     // them in directory order so the console output stays deterministic.
@@ -98,23 +146,7 @@ async function main() {
         return { file, messages, path };
       }),
     );
-    const pendingWrites = [];
-
-    for (const { file, messages, path } of locales) {
-      const totals = { fixed: 0, unfixable: [] };
-      walkAndFix(messages, totals);
-
-      if (totals.fixed > 0) {
-        totalFixed += totals.fixed;
-        console.log(
-          `[i18n] ${file}: fixed ${totals.fixed} message${totals.fixed === 1 ? '' : 's'}`,
-        );
-        if (!checkOnly) pendingWrites.push({ messages, path });
-      }
-      for (const failure of totals.unfixable) {
-        totalUnfixable.push({ file, ...failure });
-      }
-    }
+    const { pendingWrites, totalFixed, totalUnfixable } = fixLocales(locales);
 
     // Each fixed locale is written to its own file, so order doesn't matter.
     await Promise.all(
@@ -123,14 +155,7 @@ async function main() {
       ),
     );
 
-    if (totalUnfixable.length > 0) {
-      console.warn(
-        `[i18n] ${totalUnfixable.length} message${totalUnfixable.length === 1 ? '' : 's'} could not be auto-repaired:`,
-      );
-      for (const { file, key, value } of totalUnfixable) {
-        console.warn(`  ${file}: ${key}: ${JSON.stringify(value)}`);
-      }
-    }
+    reportUnfixable(totalUnfixable);
 
     console.log(
       `Done. ${checkOnly ? 'Found' : 'Fixed'} ${totalFixed} message${totalFixed === 1 ? '' : 's'}.`,
@@ -145,22 +170,21 @@ async function main() {
   }
 }
 
+/** Warn about the messages that could not be auto-repaired, if any. */
+function reportUnfixable(totalUnfixable) {
+  if (totalUnfixable.length === 0) return;
+  console.warn(
+    `[i18n] ${totalUnfixable.length} message${totalUnfixable.length === 1 ? '' : 's'} could not be auto-repaired:`,
+  );
+  for (const { file, key, value } of totalUnfixable) {
+    console.warn(`  ${file}: ${key}: ${JSON.stringify(value)}`);
+  }
+}
+
 function walkAndFix(obj, totals) {
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === 'string') {
-      if (!value.includes('@:') || compiles(value)) continue;
-      const fixed = fixLinkedMessageSyntax(value);
-      if (fixed !== value && compiles(fixed)) {
-        obj[key] = fixed;
-        totals.fixed += 1;
-        if (verbose) {
-          console.log(
-            `  ${key}: ${JSON.stringify(value)} -> ${JSON.stringify(fixed)}`,
-          );
-        }
-      } else {
-        totals.unfixable.push({ key, value });
-      }
+      fixMessage(obj, key, value, totals);
     } else if (value && typeof value === 'object') {
       walkAndFix(value, totals);
     }

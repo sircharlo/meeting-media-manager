@@ -70,6 +70,9 @@ export const isIgnorablePlaybackError = (message?: null | string) =>
 // use it too; re-exported for the existing importers.
 export { AUTO_START_WINDOW_HOURS } from 'src/constants/date';
 
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : '';
+
 const getDebugTimestamp = () => new Date().toISOString();
 
 const getElapsedMilliseconds = (startedAt: number) => {
@@ -376,6 +379,53 @@ export const useMusicStore = defineStore('music', () => {
     }, AUTO_START_ERROR_COOLDOWN_MS);
   };
 
+  /**
+   * Puts a failed playMusic() start in the error state, reports it and
+   * schedules a retry - unless a newer start or a stop has replaced it.
+   */
+  const handleMusicStartFailure = (
+    error: unknown,
+    reason: string,
+    isStale: () => boolean,
+  ) => {
+    if (isStale()) return;
+    musicState.value = 'music.error';
+    logMusicStartTiming('start failed', 'warn');
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          lang: currentSettings.value?.lang,
+          name: 'playMusic',
+          pub: currentState.currentSongbook?.pub,
+          reason,
+        },
+      },
+    });
+    scheduleAutoStartRetry();
+  };
+
+  /**
+   * Seeks the first song to the offset that lines it up with the meeting
+   * time (0 outside a meeting day's queue).
+   * @returns The offset, in seconds.
+   */
+  const applyInitialStartOffset = () => {
+    const startTime = initialStartOffset.value;
+    if (startTime > 0) {
+      log(
+        `Starting ${startTime.toFixed(1)}s into first song to align with meeting time`,
+        'backgroundMusic',
+        'info',
+      );
+    }
+    const seekStartedAt = performance.now();
+    currentTime.value = startTime;
+    logMusicStartStep('initial currentTime applied', seekStartedAt, {
+      startTime,
+    });
+    return startTime;
+  };
+
   async function playMusic(reason = 'manual') {
     clearTimeout(autoStartRetryTimer);
     activeFadeId += 1;
@@ -530,19 +580,7 @@ export const useMusicStore = defineStore('music', () => {
       musicPlayer.value?.load();
       logMusicStartStep('audio load call returned', loadStartedAt);
 
-      const startTime = initialStartOffset.value;
-      if (startTime > 0) {
-        log(
-          `Starting ${startTime.toFixed(1)}s into first song to align with meeting time`,
-          'backgroundMusic',
-          'info',
-        );
-      }
-      const seekStartedAt = performance.now();
-      currentTime.value = startTime;
-      logMusicStartStep('initial currentTime applied', seekStartedAt, {
-        startTime,
-      });
+      const startTime = applyInitialStartOffset();
 
       const playStartedAt = performance.now();
       logMusicStartTiming('audio play requested');
@@ -553,9 +591,7 @@ export const useMusicStore = defineStore('music', () => {
           return;
         }
       } catch (error) {
-        if (
-          isIgnorablePlaybackError(error instanceof Error ? error.message : '')
-        ) {
+        if (isIgnorablePlaybackError(getErrorMessage(error))) {
           logMusicStartTiming('audio play interrupted (ignorable)', 'debug');
           return;
         }
@@ -585,20 +621,7 @@ export const useMusicStore = defineStore('music', () => {
       logMusicStartTiming('fade in starting', 'debug', { targetVolume });
       fadeToVolumeLevel(targetVolume, 1);
     } catch (error) {
-      if (isStale()) return;
-      musicState.value = 'music.error';
-      logMusicStartTiming('start failed', 'warn');
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            lang: currentSettings.value?.lang,
-            name: 'playMusic',
-            pub: currentState.currentSongbook?.pub,
-            reason,
-          },
-        },
-      });
-      scheduleAutoStartRetry();
+      handleMusicStartFailure(error, reason, isStale);
     }
   }
 

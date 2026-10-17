@@ -460,6 +460,14 @@ const isPermissionError = (error: unknown) => {
   return !!errorCode && PERMISSION_ERROR_CODES.has(errorCode);
 };
 
+/**
+ * Stops using the custom cache folder for the rest of the session when a
+ * real read/write against it just failed with a permission error.
+ */
+const invalidateCacheOnPermissionError = (error: unknown) => {
+  if (isPermissionError(error)) invalidateCustomCachePath(error);
+};
+
 interface DirectoryDiagnostic {
   entryCount?: number;
   errorCode?: string;
@@ -999,7 +1007,7 @@ const extractContentsFromJwpub = async (
       error,
     );
     warnCloudJwpubUnavailable(jwpubPath, error);
-    if (isPermissionError(error)) invalidateCustomCachePath(error);
+    invalidateCacheOnPermissionError(error);
     // If we can't read the entries to even start extraction, the file might be locked, damaged, or still downloading from cloud storage.
     // Cloud-managed placeholders should not be deleted because the provider may hydrate them after this attempt,
     // and permission errors mean the folder is inaccessible right now, not that the file itself is corrupt.
@@ -1040,7 +1048,7 @@ const extractContentsFromJwpub = async (
       });
     } catch (error) {
       warnCloudJwpubUnavailable(jwpubPath, error);
-      if (isPermissionError(error)) invalidateCustomCachePath(error);
+      invalidateCacheOnPermissionError(error);
       // If unzipping the JWPUB fails, it's likely corrupted.
       // Remove it to force a re-download on next attempt unless cloud storage may still
       // be hydrating the file, or the folder is just temporarily inaccessible.
@@ -1065,6 +1073,19 @@ const extractContentsFromJwpub = async (
   }
 };
 
+/**
+ * The name and size of the first .db entry in a jwpub's contents (an empty
+ * name and size 0 without one).
+ */
+const findDbEntry = (contentsEntries: Record<string, number>) => {
+  for (const [name, size] of Object.entries(contentsEntries)) {
+    if (name.endsWith('.db')) {
+      return { expectedDbName: name, expectedDbSize: size };
+    }
+  }
+  return { expectedDbName: '', expectedDbSize: 0 };
+};
+
 const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
   // Then, extract 'contents' into the output directory if needed
   // We check if the database exists and has the correct size to determine if we need to unzip
@@ -1084,16 +1105,7 @@ const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
     );
     throw error;
   }
-  let expectedDbSize = 0;
-  let expectedDbName = '';
-
-  for (const [name, size] of Object.entries(contentsEntries)) {
-    if (name.endsWith('.db')) {
-      expectedDbSize = size;
-      expectedDbName = name;
-      break;
-    }
-  }
+  const { expectedDbName, expectedDbSize } = findDbEntry(contentsEntries);
 
   const dbStats = dbFile
     ? await stat(dbFile).catch(() => undefined)
@@ -1127,7 +1139,7 @@ const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
       const dbFileAfterUnzip = await findDb(outputPath);
       if (!dbFileAfterUnzip) throw new Error('DB still not found after unzip');
     } catch (error) {
-      if (isPermissionError(error)) invalidateCustomCachePath(error);
+      invalidateCacheOnPermissionError(error);
       // Cloud-managed placeholders and permission errors mean the files are
       // temporarily inaccessible, not that they're corrupt — don't delete them.
       if (isCloudStorageReadError(error) || isPermissionError(error))

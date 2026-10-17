@@ -642,6 +642,56 @@ const getPercentCompleted = (receivedBytes: number, totalBytes: number) => {
   return Math.min(Number(((receivedBytes / totalBytes) * 100).toFixed(2)), 100);
 };
 
+/**
+ * Applies a new request for a download that has already started: one asked
+ * for at normal priority stops being low priority, and resumes right away if
+ * it's paused.
+ */
+const promoteOngoingDownload = (
+  existing: OngoingDownload,
+  lowPriority: boolean,
+) => {
+  // If active and we want normal priority but it's low, promote it
+  if (!lowPriority && existing.lowPriority) {
+    existing.lowPriority = false;
+  }
+
+  // If paused and we want normal priority, promote it and trigger resume
+  if (existing.state === DownloadState.PAUSED && !lowPriority) {
+    existing.lowPriority = false;
+    // Stop other low priority downloads to free up slots
+    stopLowPriorityDownloads();
+    processQueue();
+    addQueueBreadcrumb('priority-promoted-paused-download', {
+      force: true,
+    });
+  }
+};
+
+/** Whether, and where, a download is queued but not started yet. */
+const findQueuedDownload = (key: string) => {
+  const isSameKey = (item: DownloadQueueItem) =>
+    item.url + item.saveDir === key;
+  const lowPriorityIndex = lowPriorityQueue.findIndex((item) =>
+    isSameKey(item),
+  );
+  const isQueued =
+    downloadQueue.some((item) => isSameKey(item)) || lowPriorityIndex !== -1;
+  return { isQueued, lowPriorityIndex };
+};
+
+/** Moves a still-queued low-priority download to the normal-priority queue. */
+const promoteQueuedDownload = (lowPriorityIndex: number) => {
+  const [promoted] = lowPriorityQueue.splice(lowPriorityIndex, 1);
+  if (!promoted) return;
+  stopLowPriorityDownloads();
+  downloadQueue.push(promoted);
+  processQueue();
+  addQueueBreadcrumb('priority-promoted-queued-download', {
+    force: true,
+  });
+};
+
 export interface DownloadFileResult {
   /** The queue/progress-tracking key: the url concatenated with the resolved saveDir. */
   key: string;
@@ -710,22 +760,7 @@ export async function downloadFile(
     // Check if already in progress
     const existing = ongoingDownloads.get(key);
     if (existing) {
-      // If active and we want normal priority but it's low, promote it
-      if (!lowPriority && existing.lowPriority) {
-        existing.lowPriority = false;
-      }
-
-      // If paused and we want normal priority, promote it and trigger resume
-      if (existing.state === DownloadState.PAUSED && !lowPriority) {
-        existing.lowPriority = false;
-        // Stop other low priority downloads to free up slots
-        stopLowPriorityDownloads();
-        processQueue();
-        addQueueBreadcrumb('priority-promoted-paused-download', {
-          force: true,
-        });
-      }
-
+      promoteOngoingDownload(existing, lowPriority);
       return { key, saveDir: resolvedSaveDir };
     }
 
@@ -735,28 +770,13 @@ export async function downloadFile(
     // URL/directory while the queue is saturated could both miss each other
     // here and enqueue the same download twice, racing to write the same
     // destination file once both are eventually dequeued.
-    const isSameKey = (item: DownloadQueueItem) =>
-      item.url + item.saveDir === key;
-    const queuedLowPriorityIndex = lowPriorityQueue.findIndex((item) =>
-      isSameKey(item),
-    );
-    const alreadyQueued =
-      downloadQueue.some((item) => isSameKey(item)) ||
-      queuedLowPriorityIndex !== -1;
+    const queued = findQueuedDownload(key);
 
-    if (alreadyQueued) {
+    if (queued.isQueued) {
       // Promote a still-queued low-priority item the same way an
       // already-ongoing one is promoted above.
-      if (!lowPriority && queuedLowPriorityIndex !== -1) {
-        const [promoted] = lowPriorityQueue.splice(queuedLowPriorityIndex, 1);
-        if (promoted) {
-          stopLowPriorityDownloads();
-          downloadQueue.push(promoted);
-          processQueue();
-          addQueueBreadcrumb('priority-promoted-queued-download', {
-            force: true,
-          });
-        }
+      if (!lowPriority && queued.lowPriorityIndex !== -1) {
+        promoteQueuedDownload(queued.lowPriorityIndex);
       }
       return { key, saveDir: resolvedSaveDir };
     }

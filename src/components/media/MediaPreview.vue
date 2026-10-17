@@ -806,6 +806,40 @@ const registerDriftCorrection = () => {
   }
 };
 
+// The media window isn't playing: pause the preview and show the same frame.
+const syncPausedPreview = (element: HTMLVideoElement) => {
+  if (!element.paused) {
+    // Only pause if the video preview is playing. If it is already paused,
+    // do nothing. This prevents the video from being paused unnecessarily.
+    log('Pausing video preview', 'mediaPreview');
+    element.pause();
+  }
+
+  // Sync the video time to the media window position. Uses the same
+  // rate- and report-age-aware tolerance as live playback: the media
+  // window reports a frame-quantized position, and at high playback
+  // speeds the preview's own seek rounding alone would otherwise
+  // re-trigger a visible jump on every report even when the scrub
+  // position hasn't meaningfully moved. (The return value is ignored
+  // here, so this never feeds the drift auto-disable counter.)
+  syncVideoTime(element, getAcceptableDrift());
+  if (isCanvasMode.value) drawCurrentFrame();
+};
+
+// Keeps the playing preview muted and at the media window's speed.
+const matchPreviewPlaybackSettings = (element: HTMLVideoElement) => {
+  if (!element.muted) {
+    log('Muting video preview', 'mediaPreview');
+    element.muted = true;
+  }
+
+  const playbackRate = mediaPlaying.value.playbackRate || 1;
+  if (element.playbackRate !== playbackRate) {
+    log('Syncing video preview playback speed', 'mediaPreview');
+    element.playbackRate = playbackRate;
+  }
+};
+
 const syncVideos = async () => {
   try {
     if (isCaptureMode.value) return;
@@ -824,35 +858,11 @@ const syncVideos = async () => {
     }
 
     if (mediaAction.value !== 'play') {
-      if (!element.paused) {
-        // Only pause if the video preview is playing. If it is already paused,
-        // do nothing. This prevents the video from being paused unnecessarily.
-        log('Pausing video preview', 'mediaPreview');
-        element.pause();
-      }
-
-      // Sync the video time to the media window position. Uses the same
-      // rate- and report-age-aware tolerance as live playback: the media
-      // window reports a frame-quantized position, and at high playback
-      // speeds the preview's own seek rounding alone would otherwise
-      // re-trigger a visible jump on every report even when the scrub
-      // position hasn't meaningfully moved. (The return value is ignored
-      // here, so this never feeds the drift auto-disable counter.)
-      syncVideoTime(element, getAcceptableDrift());
-      if (isCanvasMode.value) drawCurrentFrame();
+      syncPausedPreview(element);
       return;
     }
 
-    if (!element.muted) {
-      log('Muting video preview', 'mediaPreview');
-      element.muted = true;
-    }
-
-    const playbackRate = mediaPlaying.value.playbackRate || 1;
-    if (element.playbackRate !== playbackRate) {
-      log('Syncing video preview playback speed', 'mediaPreview');
-      element.playbackRate = playbackRate;
-    }
+    matchPreviewPlaybackSettings(element);
 
     if (getPositionReportAgeSeconds() > POSITION_REPORT_STALE_SECONDS) {
       // Chasing a position extrapolated from a long-dead report seeks to

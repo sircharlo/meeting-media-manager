@@ -3,6 +3,11 @@ import fsx from 'fs-extra';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import {
+  getTrailingHeadingAnchors,
+  replaceHeadingAnchor,
+} from './heading-anchors.mjs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const { pathExists, readdir, readFile, writeFile } = fsx;
@@ -278,25 +283,6 @@ function getRelativePath(path) {
   return relative(resolve(__dirname, '../..'), path).replaceAll('\\', '/');
 }
 
-function getTrailingHeadingAnchors(line) {
-  const anchors = [];
-  let cursor = trimEndIndex(line);
-
-  while (cursor > 0 && line[cursor - 1] === '}') {
-    const openIndex = line.lastIndexOf('{#', cursor - 1);
-    if (openIndex === -1) break;
-
-    const anchor = line.slice(openIndex + 2, cursor - 1);
-    if (!isValidAnchor(anchor)) break;
-
-    anchors.unshift(anchor);
-    cursor = trimEndIndex(line, openIndex);
-  }
-
-  const start = anchors.length > 0 ? cursor : line.length;
-  return { anchors, start };
-}
-
 /**
  * A link: value with no localizable slug: empty, non-path, or containing
  * quote characters (translators have mangled slugs into `""`).
@@ -307,12 +293,6 @@ function isCorruptLinkValue(value) {
   if (/^https?:\/\//i.test(trimmed)) return false;
   if (!trimmed.startsWith('/')) return true;
   return /["']/.test(trimmed);
-}
-
-function isValidAnchor(anchor) {
-  if (!anchor) return false;
-
-  return [...anchor].every((char) => char !== '}' && char.trim() !== '');
 }
 
 function logAnchorReplacement(
@@ -416,11 +396,6 @@ function parseHeadings(content) {
   return headings;
 }
 
-function replaceHeadingAnchor(line, anchor) {
-  const withoutAnchors = line.slice(0, getTrailingHeadingAnchors(line).start);
-  return `${withoutAnchors} {#${anchor}}`;
-}
-
 function reportHeadingCountMismatch(
   localePath,
   localeHeadings,
@@ -431,14 +406,6 @@ function reportHeadingCountMismatch(
   console.warn(
     `[anchor] ${getRelativePath(localePath)}: heading count differs from English (${localeHeadings.length} vs ${enHeadings.length})`,
   );
-}
-
-function trimEndIndex(value, end = value.length) {
-  let cursor = end;
-  while (cursor > 0 && value[cursor - 1].trim() === '') {
-    cursor -= 1;
-  }
-  return cursor;
 }
 
 await main();

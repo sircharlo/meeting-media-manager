@@ -366,6 +366,62 @@ const isCorruptionErrcode = (errcode: number | undefined) => {
   return primaryErrcode === SQLITE_CORRUPT || primaryErrcode === SQLITE_NOTADB;
 };
 
+/**
+ * Reports a failed query to Sentry, unless it's environmental or a repeat
+ * of a failure already reported for the same database (then it's logged).
+ */
+const handleQueryError = (e: unknown, dbPath: string, query: string) => {
+  const errcode = getSqliteErrcode(e);
+  const cloudProvider = getCloudStorageProvider(dbPath);
+  const isIoError = errcode !== undefined && (errcode & 0xff) === SQLITE_IOERR;
+
+  // A cloud-sync client (OneDrive, ...) locking or hydrating the file
+  // makes opening/reading it fail with SQLITE_IOERR - environmental, not
+  // a bug (MMM-V2-3JJ). Elsewhere, report an I/O error once per db per
+  // session instead of once per query in the same burst.
+  if (isIoError && (cloudProvider || reportedIoErrorPaths.has(dbPath))) {
+    log('SQLite I/O error', 'sqlite', 'warn', {
+      cloudProvider,
+      errcode,
+      path: dbPath,
+    });
+    return;
+  }
+  if (isIoError) reportedIoErrorPaths.add(dbPath);
+
+  // A damaged file fails every query against it the same way: mark it so
+  // the next isDbCorrupt() check gets it replaced, and report it once per
+  // db per session instead of once per query in the same burst.
+  if (isCorruptionErrcode(errcode)) {
+    corruptDbPaths.add(dbPath);
+    if (reportedCorruptDbPaths.has(dbPath)) {
+      log('SQLite database is corrupt', 'sqlite', 'warn', {
+        errcode,
+        path: dbPath,
+      });
+      return;
+    }
+    reportedCorruptDbPaths.add(dbPath);
+  }
+
+  captureElectronError(e, {
+    contexts: {
+      fn: {
+        cloudProvider,
+        errcode,
+        errstr: (e as { errstr?: unknown }).errstr,
+        name: 'executeQuery',
+        outstandingRequests:
+          e instanceof SqliteWorkerStallError
+            ? e.outstandingRequests
+            : undefined,
+        path: dbPath,
+        query,
+      },
+    },
+  });
+};
+
 export const executeQuery = async <T extends object = QueryResponseItem>(
   dbPath: string,
   query: string,
@@ -406,56 +462,7 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
   } catch (e) {
     // The worker dropped the connection it used when a query fails, so a
     // later query reopens it fresh.
-    const errcode = getSqliteErrcode(e);
-    const cloudProvider = getCloudStorageProvider(dbPath);
-    const isIoError =
-      errcode !== undefined && (errcode & 0xff) === SQLITE_IOERR;
-
-    // A cloud-sync client (OneDrive, ...) locking or hydrating the file
-    // makes opening/reading it fail with SQLITE_IOERR - environmental, not
-    // a bug (MMM-V2-3JJ). Elsewhere, report an I/O error once per db per
-    // session instead of once per query in the same burst.
-    if (isIoError && (cloudProvider || reportedIoErrorPaths.has(dbPath))) {
-      log('SQLite I/O error', 'sqlite', 'warn', {
-        cloudProvider,
-        errcode,
-        path: dbPath,
-      });
-      return [];
-    }
-    if (isIoError) reportedIoErrorPaths.add(dbPath);
-
-    // A damaged file fails every query against it the same way: mark it so
-    // the next isDbCorrupt() check gets it replaced, and report it once per
-    // db per session instead of once per query in the same burst.
-    if (isCorruptionErrcode(errcode)) {
-      corruptDbPaths.add(dbPath);
-      if (reportedCorruptDbPaths.has(dbPath)) {
-        log('SQLite database is corrupt', 'sqlite', 'warn', {
-          errcode,
-          path: dbPath,
-        });
-        return [];
-      }
-      reportedCorruptDbPaths.add(dbPath);
-    }
-
-    captureElectronError(e, {
-      contexts: {
-        fn: {
-          cloudProvider,
-          errcode,
-          errstr: (e as { errstr?: unknown }).errstr,
-          name: 'executeQuery',
-          outstandingRequests:
-            e instanceof SqliteWorkerStallError
-              ? e.outstandingRequests
-              : undefined,
-          path: dbPath,
-          query,
-        },
-      },
-    });
+    handleQueryError(e, dbPath, query);
     return [];
   }
 };

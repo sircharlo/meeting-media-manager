@@ -172,6 +172,16 @@ const detectPhase = ({ labels, text }, current) => {
   return current;
 };
 
+// Zoom's "would like you to unmute" prompt stays up across watchdog ticks
+// until it is answered, so it is only recorded when it isn't already the
+// latest event.
+const recordUnmuteRequest = (participant) => {
+  const lastEvent = participant.events.at(-1);
+  if (lastEvent?.type !== 'unmute-requested') {
+    addEvent(participant, 'unmute-requested');
+  }
+};
+
 // Keeps each participant in a known, steady state between test steps and
 // records the prompts Zoom shows them, so a test can still check that a
 // prompt appeared after it has been answered or dismissed.
@@ -196,14 +206,12 @@ const watch = async (participant) => {
     }
 
     if (/would like you to unmute/i.test(info.text)) {
-      const lastEvent = participant.events.at(-1);
-      if (lastEvent?.type !== 'unmute-requested') {
-        addEvent(participant, 'unmute-requested');
-      }
-      if (participant.unmuteRequestPolicy === 'accept') {
-        if (await clickButton(page, /^unmute$/i)) {
-          addEvent(participant, 'unmute-request-accepted');
-        }
+      recordUnmuteRequest(participant);
+      if (
+        participant.unmuteRequestPolicy === 'accept' &&
+        (await clickButton(page, /^unmute$/i))
+      ) {
+        addEvent(participant, 'unmute-request-accepted');
       }
     }
   } catch (error) {
@@ -363,6 +371,15 @@ const sendJson = (res, status, data) => {
   res.end(JSON.stringify(data));
 };
 
+// Who a POST /action applies to: the participant at `index` when one is
+// given, otherwise everyone - minus an out-of-range index and anyone who has
+// already left.
+const actionTargets = (index) => {
+  const targets =
+    typeof index === 'number' ? [participants[index]] : participants;
+  return targets.filter((p) => p && p.phase !== 'left');
+};
+
 let shuttingDown = false;
 const shutdown = async () => {
   if (shuttingDown) return;
@@ -402,12 +419,8 @@ const server = createServer(async (req, res) => {
       if (!ACTIONS.has(action)) {
         return sendJson(res, 400, { error: `Unknown action: ${action}` });
       }
-      const targets =
-        typeof index === 'number' ? [participants[index]] : participants;
       const results = await Promise.all(
-        targets
-          .filter((p) => p && p.phase !== 'left')
-          .map((p) => runAction(p, action).catch(String)),
+        actionTargets(index).map((p) => runAction(p, action).catch(String)),
       );
       return sendJson(res, 200, { results });
     }

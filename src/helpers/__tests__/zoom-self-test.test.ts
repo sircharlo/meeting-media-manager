@@ -244,3 +244,156 @@ describe('runZoomSelfTest', () => {
     );
   });
 });
+
+describe('runZoomSelfTest step reporting', () => {
+  it('skips every step as stopped when the run was aborted', async () => {
+    const controller = new AbortController();
+    controller.abort();
+
+    const steps = await runZoomSelfTest({
+      signal: controller.signal,
+      steps: ['meeting', 'join-audio'],
+      timeouts: FAST,
+      titles: TITLES,
+    });
+
+    expect(steps).toEqual([
+      { detail: 'Stopped', id: 'meeting', status: 'skipped' },
+      { detail: 'Stopped', id: 'join-audio', status: 'skipped' },
+    ]);
+  });
+
+  it('explains why the steps after a failed meeting check were skipped', async () => {
+    world.found = false;
+
+    const steps = await runZoomSelfTest({
+      steps: ['meeting', 'join-audio'],
+      timeouts: FAST,
+      titles: TITLES,
+    });
+
+    expect(steps).toEqual([
+      {
+        detail: 'No Zoom meeting window found',
+        id: 'meeting',
+        status: 'failed',
+      },
+      { detail: 'No Zoom meeting', id: 'join-audio', status: 'skipped' },
+    ]);
+  });
+
+  it('reports what a step returned, and nothing for a step that returned no text', async () => {
+    const steps = await runZoomSelfTest({
+      steps: ['meeting', 'join-audio', 'mic-off'],
+      timeouts: FAST,
+      titles: { ...TITLES, micOnTitle: null },
+    });
+
+    expect(steps).toEqual([
+      { detail: 'Zoom Meeting', id: 'meeting', status: 'passed' },
+      { detail: undefined, id: 'join-audio', status: 'passed' },
+      {
+        detail: 'Capture both microphone button titles in Settings first',
+        id: 'mic-off',
+        status: 'skipped',
+      },
+    ]);
+  });
+
+  it('drops an empty detail', async () => {
+    const { getZoomMeetingState } = await import('src/helpers/zoom');
+    vi.mocked(getZoomMeetingState).mockResolvedValueOnce({
+      audioJoined: true,
+      found: true,
+      micTitle: 'Unmute',
+      sharing: false,
+      title: '',
+      videoTitle: 'Stop Video',
+    } as Awaited<ReturnType<typeof getZoomMeetingState>>);
+
+    const steps = await runZoomSelfTest({
+      steps: ['meeting'],
+      timeouts: FAST,
+      titles: TITLES,
+    });
+
+    expect(steps).toEqual([
+      { detail: undefined, id: 'meeting', status: 'passed' },
+    ]);
+  });
+
+  it('reports a thrown non-Error as its text and stops after a failed meeting check', async () => {
+    const { getZoomMeetingState } = await import('src/helpers/zoom');
+    vi.mocked(getZoomMeetingState).mockRejectedValueOnce('helper crashed');
+
+    const steps = await runZoomSelfTest({
+      steps: ['meeting', 'leave-audio'],
+      timeouts: FAST,
+      titles: TITLES,
+    });
+
+    expect(steps).toEqual([
+      { detail: 'helper crashed', id: 'meeting', status: 'failed' },
+      { detail: 'No Zoom meeting', id: 'leave-audio', status: 'skipped' },
+    ]);
+  });
+
+  it('keeps going after a failed step other than the meeting check', async () => {
+    const { leaveZoomAudio } = await import('src/helpers/zoom');
+    vi.mocked(leaveZoomAudio).mockResolvedValueOnce({
+      error: 'not-found',
+      ok: false,
+    });
+
+    const steps = await runZoomSelfTest({
+      steps: ['meeting', 'leave-audio', 'join-audio'],
+      timeouts: FAST,
+      titles: TITLES,
+    });
+
+    expect(steps).toEqual([
+      { detail: 'Zoom Meeting', id: 'meeting', status: 'passed' },
+      { detail: 'Leave audio: not-found', id: 'leave-audio', status: 'failed' },
+      { detail: undefined, id: 'join-audio', status: 'passed' },
+    ]);
+  });
+
+  it('reports progress before and after every step', async () => {
+    const progress = vi.fn<(steps: ZoomSelfTestStep[]) => void>();
+
+    await runZoomSelfTest({
+      onProgress: progress,
+      steps: ['meeting', 'join-audio'],
+      timeouts: FAST,
+      titles: TITLES,
+    });
+
+    expect(
+      progress.mock.calls.map(([steps]) =>
+        steps.map((step) => step.status).join(','),
+      ),
+    ).toEqual([
+      'running,pending',
+      'passed,pending',
+      'passed,running',
+      'passed,passed',
+    ]);
+  });
+
+  it('puts the media window back when sharing was started but not stopped', async () => {
+    const restore = vi.fn();
+
+    const steps = await runZoomSelfTest({
+      prepareMediaWindow: async () => restore,
+      steps: ['meeting', 'share-start'],
+      timeouts: FAST,
+      titles: TITLES,
+    });
+
+    expect(statuses(steps)).toEqual({
+      meeting: 'passed',
+      'share-start': 'passed',
+    });
+    expect(restore).toHaveBeenCalledOnce();
+  });
+});

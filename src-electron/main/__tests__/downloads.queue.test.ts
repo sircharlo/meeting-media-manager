@@ -304,6 +304,110 @@ describe('download queue', () => {
     expect(latestTransfer('normal').settled).toBe(false);
   });
 
+  it('stops treating a running download as low priority once it is requested at normal priority', async () => {
+    await startDownloads(['low'], true);
+    await waitUntil(() => transfersFor('low').length === 1);
+
+    // Asking for it at low priority again changes nothing.
+    await startDownloads(['low'], true);
+    await startDownloads(['low']);
+    await startDownloads(['low'], true);
+    await startDownloads(['normal']);
+    await waitUntil(() => transfersFor('normal').length === 1);
+    await flush();
+
+    expect(latestTransfer('low').options.signal.aborted).toBe(false);
+    expect(transfersFor('low')).toHaveLength(1);
+    expect(mocks.addElectronBreadcrumb).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'priority-promoted-paused-download',
+      }),
+    );
+  });
+
+  it('records promoting a paused download in a breadcrumb', async () => {
+    await startDownloads(['low'], true);
+    await waitUntil(() => transfersFor('low').length === 1);
+    await startDownloads(['normal']);
+    await waitUntil(() => latestTransfer('low').settled);
+
+    // A paused download asked for at low priority again stays paused.
+    await startDownloads(['low'], true);
+    await flush();
+    expect(transfersFor('low')).toHaveLength(1);
+
+    await startDownloads(['low']);
+
+    await waitUntil(() => transfersFor('low').length === 2);
+    expect(mocks.addElectronBreadcrumb).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'priority-promoted-paused-download',
+      }),
+    );
+  });
+
+  it('moves a queued low-priority download ahead once it is requested at normal priority', async () => {
+    await startDownloads(['a', 'b', 'c']);
+    await waitUntil(() => runningTransfers().length === 3);
+    await startDownloads(['x', 'q'], true);
+
+    // Asking for it at low priority again changes nothing.
+    await startDownloads(['q'], true);
+    expect(mocks.addElectronBreadcrumb).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'priority-promoted-queued-download',
+      }),
+    );
+
+    await startDownloads(['q']);
+    expect(mocks.addElectronBreadcrumb).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'priority-promoted-queued-download',
+      }),
+    );
+
+    complete('a');
+    await waitUntil(() => transfersFor('q').length === 1);
+    await flush();
+    expect(transfersFor('x')).toHaveLength(0);
+
+    // It now runs at normal priority: another normal one doesn't pause it.
+    await startDownloads(['normal']);
+    await flush();
+    expect(latestTransfer('q').options.signal.aborted).toBe(false);
+  });
+
+  it('returns the queue key and directory for new, running and queued downloads alike', async () => {
+    const { downloadFile } = await loadDownloads();
+    const expected = (name: string) => ({ key: keyFor(name), saveDir: DIR });
+
+    await expect(downloadFile(url('a'), DIR)).resolves.toEqual(expected('a'));
+    await expect(downloadFile(url('b'), DIR)).resolves.toEqual(expected('b'));
+    await expect(downloadFile(url('c'), DIR)).resolves.toEqual(expected('c'));
+    await expect(downloadFile(url('d'), DIR)).resolves.toEqual(expected('d'));
+    await waitUntil(() => runningTransfers().length === 3);
+
+    // Running, then still queued.
+    await expect(downloadFile(url('a'), DIR)).resolves.toEqual(expected('a'));
+    await expect(downloadFile(url('d'), DIR)).resolves.toEqual(expected('d'));
+    await expect(downloadFile(url('d'), DIR, undefined, true)).resolves.toEqual(
+      expected('d'),
+    );
+  });
+
+  it('downloads nothing without a URL, a directory or a window to report to', async () => {
+    const { downloadFile } = await loadDownloads();
+
+    await expect(downloadFile('', DIR)).resolves.toBeNull();
+    await expect(downloadFile(url('a'), '')).resolves.toBeNull();
+    windowState.mainWindow = null;
+    await expect(downloadFile(url('a'), DIR)).resolves.toBeNull();
+    await flush();
+
+    expect(mocks.mkdir).not.toHaveBeenCalled();
+    expect(mocks.transfers).toHaveLength(0);
+  });
+
   it('does not resume a paused download until its transfer has finished stopping', async () => {
     await startDownloads(['low'], true);
     await waitUntil(() => transfersFor('low').length === 1);
