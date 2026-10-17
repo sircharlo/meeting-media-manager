@@ -91,6 +91,10 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
+import {
+  getTrailingHeadingAnchors,
+  replaceHeadingAnchor,
+} from '../docs/utils/heading-anchors.mjs';
 import { compiles, fixLinkedMessageSyntax } from './fix-i18n-locales.mjs';
 import { crowdinRequest, getConfig, listAll } from './lib/crowdin-api.mjs';
 
@@ -122,9 +126,6 @@ const DOCS_LANGUAGE_ID_OVERRIDES = { 'cmn-hans': 'zh-CN' };
 // (`## v26.7.0`, including the legacy separator-less `## 25.6.0` form). The
 // `(?!#)` keeps `### ...` subsection headers out.
 const VERSION_HEADER_PATTERN = /^##(?!#)\s+v?\d+\.\d+\.\d+/;
-
-// ── Pure repair logic (mirrors scripts/fix-i18n-locales.mjs and
-//    docs/utils/fix-doc-markdown.mjs) ─────────────────────────────────────────
 
 function computeAnchorFix(enText, translationText, usedAnchors) {
   if (!isHeadingString(enText)) return null;
@@ -281,25 +282,6 @@ function docsAnchorFix(item, sources, usedAnchors) {
   return computeAnchorFix(source, item.text, usedAnchors);
 }
 
-function getTrailingHeadingAnchors(line) {
-  const anchors = [];
-  let cursor = trimEndIndex(line);
-
-  while (cursor > 0 && line[cursor - 1] === '}') {
-    const openIndex = line.lastIndexOf('{#', cursor - 1);
-    if (openIndex === -1) break;
-
-    const anchor = line.slice(openIndex + 2, cursor - 1);
-    if (!isValidAnchor(anchor)) break;
-
-    anchors.unshift(anchor);
-    cursor = trimEndIndex(line, openIndex);
-  }
-
-  const start = anchors.length > 0 ? cursor : line.length;
-  return { anchors, start };
-}
-
 /**
  * Docs index.md - the only file with hero-action `link:` frontmatter, which
  * class 3 repairs directly via the API (see computeDocsLinkFix).
@@ -312,13 +294,6 @@ function isHeadingString(text) {
   return (
     /^[ \t]*#{1,6}[ \t]+\S/.test(text) ||
     getTrailingHeadingAnchors(text).anchors.length > 0
-  );
-}
-
-function isValidAnchor(anchor) {
-  return (
-    anchor.length > 0 &&
-    [...anchor].every((char) => char !== '}' && char.trim() !== '')
   );
 }
 
@@ -366,11 +341,6 @@ function repairLinkedMessage(translation) {
   return fixed !== translation && compiles(fixed) ? fixed : null;
 }
 
-function replaceHeadingAnchor(line, anchor) {
-  const withoutAnchors = line.slice(0, getTrailingHeadingAnchors(line).start);
-  return `${withoutAnchors.trimEnd()} {#${anchor}}`;
-}
-
 /**
  * A docs locale folder's Crowdin language id. Most folders match a target
  * language id directly (`fr` -> `fr`) or via its twoLettersCode (`es` ->
@@ -391,14 +361,6 @@ function resolveDocsLanguageId(
     return DOCS_LANGUAGE_ID_OVERRIDES[folder];
   }
   return languageIdByTwoLetters.get(folder) ?? null;
-}
-
-function trimEndIndex(value, end = value.length) {
-  let cursor = end;
-  while (cursor > 0 && value[cursor - 1].trim() === '') {
-    cursor -= 1;
-  }
-  return cursor;
 }
 
 /**
@@ -590,8 +552,6 @@ function getFailedPatchIndices(body) {
   return indices.length > 0 ? indices : null;
 }
 
-// ── Crowdin API layer ────────────────────────────────────────────────────────
-
 function isCorruptedSegment(text) {
   return CORRUPTION_SIGNATURES.some((signature) => signature.test(text));
 }
@@ -663,8 +623,6 @@ function logUnmatchedPaths(ctx, files, max = 15) {
 function normalizePath(filePath) {
   return filePath.replaceAll('\\', '/').replace(/^\/+/, '');
 }
-
-// ── Repair passes ────────────────────────────────────────────────────────────
 
 function parseArgs(argv) {
   const args = {
@@ -828,8 +786,6 @@ async function purgeCorruptedTmSegments(ctx) {
   }
 }
 
-// ── docs repair ───────────────────────────────────────────────────────────────
-
 async function repairDocsFile(ctx, file) {
   const strings = await listAll(
     ctx.baseUrl,
@@ -924,8 +880,6 @@ async function repairDocsFiles(ctx, normalizedFiles) {
   }
 }
 
-// ── i18n linked-message repair ─────────────────────────────────────────────────
-
 async function repairI18nLinkedSyntax(ctx, file) {
   const strings = await listAll(
     ctx.baseUrl,
@@ -957,8 +911,6 @@ async function repairI18nLinkedSyntax(ctx, file) {
     }
   }
 }
-
-// ── release-notes version-header repair ────────────────────────────────────────
 
 async function repairI18nLinkTargets(ctx, file) {
   if (ctx.enKeys.size === 0) {
@@ -999,8 +951,6 @@ async function repairI18nLinkTargets(ctx, file) {
     }
   }
 }
-
-// ── i18n link/param target repair ──────────────────────────────────────────────
 
 async function repairReleaseNotesVersions(ctx, file) {
   const strings = await listAll(
@@ -1181,8 +1131,6 @@ async function runRepairPasses(ctx, normalizedFiles) {
     );
   }
 }
-
-// ── Main ─────────────────────────────────────────────────────────────────────
 
 function runSelfTest() {
   const refusesCrowdinId = (value) => {

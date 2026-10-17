@@ -696,6 +696,10 @@ describe('runTransfer', () => {
 
   it('reports how far it got when it stalls mid-body', async () => {
     const body = createControlledBody();
+    // Queued before the transfer starts, so the first 5 bytes are there the
+    // moment the body is read: pushing them later would race the 50 ms stall
+    // timer on a slow machine.
+    body.push('hello');
     mocks.fetch.mockResolvedValue(
       respond(body.stream, {
         headers: { 'content-length': '11', etag: '"v1"' },
@@ -704,8 +708,6 @@ describe('runTransfer', () => {
     const onProgress = vi.fn();
 
     const pending = transfer({ onProgress, stallTimeoutMs: 50 });
-    await waitUntil(() => mocks.fetch.mock.calls.length > 0);
-    body.push('hello');
 
     expect(await pending).toEqual({
       error: new Error('Download stalled: no data for 50 ms'),
