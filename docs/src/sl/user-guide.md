@@ -82,7 +82,7 @@ Multimedijski predvajalnik omogoča celovito upravljanje:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Povečanje/premikanje slike** – za povečanje slike uporabi kolesce miške, za premikanje slike pa povleci z miško
+- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
 - **Predogled v živo** – Ko je to omogočeno, se v glavnem oknu aplikacije prikaže predogled občinskega multimedijskega okna
 - **Hitrost predvajanja** – Ko je v nastavitvah to omogočeno, lahko iz kontekstnega menija multimedijskega elementa prilagodiš hitrost predvajanja zvoka in videa
 
@@ -103,8 +103,8 @@ Nastavi začetni in končni čas predvajanja multimedijske vsebine:
 
 Za slike in videoposnetke:
 
-- **Povečaj/Pomanjšaj** - Uporabi kolesce miške ali gumbe za povečavo na sličici
-- **Premikanje** - Klikni in povleci sličico, da jo premakneš
+- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
+- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
 - **Ponastavi povečavo** - Klikni, da se vrneš na prvotno povečavo
 
 #### Bližnjice na tipkovnici {#user-guide-keyboard-shortcuts}
