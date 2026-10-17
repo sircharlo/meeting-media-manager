@@ -326,6 +326,53 @@ describe('updater install flow', () => {
         version: updateVersion,
       });
     });
+
+    const isDowngradeFrom = async (
+      installedVersion: string,
+      updateVersion: string,
+    ) => {
+      getVersionMock.mockReturnValue(installedVersion);
+      const { getUpdaterState, initUpdater } = await import('../updater');
+      await initUpdater();
+      handlers.get('update-available')?.({ version: updateVersion });
+      return getUpdaterState().versionInfo?.isDowngrade;
+    };
+
+    it.each([
+      ['26.6.0', '26.6.1'],
+      ['26.9.0', '26.10.0'],
+      ['26.12.5', '27.0.0'],
+      ['26.6.0', '26.6.0.1'],
+      ['26.6.0-beta.2', '26.6.0-beta.10'],
+      ['26.6.0-alpha.1', '26.6.0-beta.1'],
+      ['26.6.0-beta', '26.6.0-beta.1'],
+      ['26.6.0-beta.1', '26.6.0-beta.x'],
+      ['26.6.0-beta', '26.6.0-rc'],
+      ['26.6.0-beta.9', '26.6.0'],
+      ['26.6.0-1.alpha', '26.6.0-1.beta'],
+      ['', '26.6.0'],
+    ])('orders %j before %j', async (lower, higher) => {
+      expect(await isDowngradeFrom(higher, lower)).toBe(true);
+      vi.resetModules();
+      expect(await isDowngradeFrom(lower, higher)).toBe(false);
+    });
+
+    it.each([
+      ['26.6', '26.6.0'],
+      ['26.6.0-beta.1', '26.6.0-beta.1'],
+      ['26.6.0-', '26.6.0'],
+      ['26.6.0-beta.01', '26.6.0-beta.1'],
+      ['26.6.0-beta.', '26.6.0-beta.0'],
+      ['26.6.0-beta.Infinity', '26.6.0-beta.Infinity'],
+      // Only the first "-" starts the prerelease tag.
+      ['26.6.0-beta-2', '26.6.0-beta-3'],
+      // Not a number: neither is lower.
+      ['26.x.0', '26.6.0'],
+    ])('treats %j and %j as no downgrade either way', async (a, b) => {
+      expect(await isDowngradeFrom(a, b)).toBe(false);
+      vi.resetModules();
+      expect(await isDowngradeFrom(b, a)).toBe(false);
+    });
   });
 
   it('logs update download progress as readable text', async () => {

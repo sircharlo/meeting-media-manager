@@ -109,6 +109,134 @@ describe('predictLastSongEndDateTime', () => {
   });
 });
 
+describe('predictLastSongEndDateTime with several visible items', () => {
+  const NOW = 1_000_000;
+
+  const item = (
+    uniqueId: string,
+    duration: number | undefined,
+    extra: Record<string, unknown> = {},
+  ) => ({ duration, type: 'media', uniqueId, ...extra });
+  const song = (uniqueId: string, duration?: number) =>
+    item(uniqueId, duration, { tag: { type: 'song' } });
+
+  const day = (...sections: Record<string, unknown>[][]): DateInfo =>
+    ({
+      date: new Date(),
+      mediaSections: sections.map((items) => ({ items })),
+      status: null,
+    }) as unknown as DateInfo;
+
+  const predict = (
+    dateInfo: DateInfo | null | undefined,
+    overrides: Partial<MediaPlayingState> = {},
+  ) =>
+    predictLastSongEndDateTime(
+      createPlayingState({
+        currentPosition: 10,
+        currentPositionUpdatedAt: NOW,
+        uniqueId: 'video',
+        ...overrides,
+      }),
+      dateInfo,
+      NOW,
+    )?.getTime();
+
+  // Opening song, a video, the last song, then a trailing image.
+  const meeting = () =>
+    day(
+      [song('opening', 180), item('video', 60)],
+      [item('talk', 120), song('last', 200), item('image', 0)],
+    );
+
+  it('returns null without a day or without visible items', () => {
+    expect(predict(undefined)).toBeUndefined();
+    expect(predict(day([item('video', 60, { hidden: true })]))).toBeUndefined();
+  });
+
+  it('returns null when no visible item is a song', () => {
+    expect(
+      predict(
+        day([item('video', 60), { ...song('hidden', 30), hidden: true }]),
+      ),
+    ).toBeUndefined();
+  });
+
+  it('adds up what is left of the current item and everything up to the end of the last song', () => {
+    // 50s left of the video, then the 120s talk and the 200s last song.
+    expect(predict(meeting())).toBe(NOW + (50 + 120 + 200) * 1000);
+  });
+
+  it('ignores items after the last song', () => {
+    expect(predict(meeting(), { uniqueId: 'last' })).toBe(
+      NOW + (200 - 10) * 1000,
+    );
+  });
+
+  it('returns null once playback has moved past the last song', () => {
+    expect(predict(meeting(), { uniqueId: 'image' })).toBeUndefined();
+  });
+
+  it('returns null when nothing has played yet or the item is not on the list', () => {
+    expect(predict(meeting(), { action: '' })).toBeUndefined();
+    expect(predict(meeting(), { uniqueId: '' })).toBeUndefined();
+    expect(predict(meeting(), { uniqueId: 'elsewhere' })).toBeUndefined();
+  });
+
+  it('returns null when the current item or one before the last song has no known duration', () => {
+    const unknownCurrent = day([item('video', 0), song('last', 200)]);
+    const unknownBetween = day([
+      item('video', 60),
+      item('talk', undefined),
+      song('last', 200),
+    ]);
+
+    expect(predict(unknownCurrent)).toBeUndefined();
+    expect(predict(unknownBetween)).toBeUndefined();
+  });
+
+  it('extrapolates a playing item at its playback rate, but not a paused one', () => {
+    const playing = predict(meeting(), {
+      currentPositionUpdatedAt: NOW - 4000,
+      playbackRate: 2,
+    });
+    const paused = predict(meeting(), {
+      action: 'pause',
+      currentPositionUpdatedAt: NOW - 4000,
+      playbackRate: 2,
+    });
+
+    // 4s of playing at 2x moved 8s further into the video.
+    expect(playing).toBe(NOW + (50 - 8 + 120 + 200) * 1000);
+    expect(paused).toBe(NOW + (50 + 120 + 200) * 1000);
+  });
+
+  it('treats a missing playback rate as 1x and a missing position as the start', () => {
+    expect(
+      predict(meeting(), {
+        currentPosition: undefined,
+        currentPositionUpdatedAt: NOW - 4000,
+        playbackRate: undefined,
+      } as unknown as Partial<MediaPlayingState>),
+    ).toBe(NOW + (60 - 4 + 120 + 200) * 1000);
+  });
+
+  it('does not extrapolate without a position report time, nor backwards from one in the future', () => {
+    expect(predict(meeting(), { currentPositionUpdatedAt: 0 })).toBe(
+      NOW + (50 + 120 + 200) * 1000,
+    );
+    expect(predict(meeting(), { currentPositionUpdatedAt: NOW + 5000 })).toBe(
+      NOW + (50 + 120 + 200) * 1000,
+    );
+  });
+
+  it('never counts a negative remainder for the current item', () => {
+    expect(predict(meeting(), { currentPosition: 90 })).toBe(
+      NOW + (120 + 200) * 1000,
+    );
+  });
+});
+
 describe('getTodaysScheduledMeetingEndDateTime', () => {
   it.each(['midweek', 'weekend'])(
     'adds 105 minutes for a %s meeting',

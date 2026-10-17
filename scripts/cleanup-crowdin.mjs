@@ -271,6 +271,16 @@ function computeVersionHeaderFix(source, translation) {
   return { kind: 'version', text: source };
 }
 
+/**
+ * collectReplaceOps fixer for class 2 (docs heading anchors). `usedAnchors`
+ * carries the anchors already seen earlier in the same file.
+ */
+function docsAnchorFix(item, sources, usedAnchors) {
+  if (typeof item.text !== 'string') return null;
+  const source = sources.get(item.stringId) ?? '';
+  return computeAnchorFix(source, item.text, usedAnchors);
+}
+
 function getTrailingHeadingAnchors(line) {
   const anchors = [];
   let cursor = trimEndIndex(line);
@@ -310,6 +320,28 @@ function isValidAnchor(anchor) {
     anchor.length > 0 &&
     [...anchor].every((char) => char !== '}' && char.trim() !== '')
   );
+}
+
+/**
+ * collectReplaceOps fixer for class 1 (linked-message syntax), limited to
+ * the strings whose source uses `@:` links (`candidateIds`).
+ */
+function linkedSyntaxFix(item, candidateIds) {
+  if (typeof item.text !== 'string' || !candidateIds.has(item.stringId)) {
+    return null;
+  }
+  const fixed = repairLinkedMessage(item.text);
+  return fixed ? { text: fixed } : null;
+}
+
+/**
+ * collectReplaceOps fixer for class 5 (link/param targets), limited to the
+ * strings whose source has links or params (`sources`).
+ */
+function linkTargetFix(item, sources, validKeys) {
+  const source = sources.get(item.stringId);
+  if (source === undefined || typeof item.text !== 'string') return null;
+  return computeLinkTargetFix(source, item.text, validKeys);
 }
 
 function linkTargetMatches(text) {
@@ -369,6 +401,16 @@ function trimEndIndex(value, end = value.length) {
   return cursor;
 }
 
+/**
+ * collectReplaceOps fixer for class 4 (release-notes version headers),
+ * limited to the version-header strings (`sources`).
+ */
+function versionHeaderFix(item, sources) {
+  const source = sources.get(item.stringId);
+  if (source === undefined) return null;
+  return computeVersionHeaderFix(source, item.text);
+}
+
 const CORRUPTION_SIGNATURES = [
   // Typographic quotes inside @:{...} (e.g. @:{‚cbs‘}).
   new RegExp(String.raw`@:\{[^{}]*[${TYPOGRAPHIC_QUOTES}][^{}]*\}`),
@@ -386,6 +428,113 @@ const CORRUPTION_SIGNATURES = [
   // token ending in a hyphen is never valid.
   /@:[^\s]*-(?=[\s.,;:!?]|$)/,
 ];
+
+/**
+ * Maps each of the project's target languages that has an active docs
+ * locale folder (see loadActiveDocsLocales) to that folder.
+ */
+function buildDocsLocaleFolderMap(project) {
+  const docsLocaleFolderByLanguage = new Map();
+  const targetLanguageIdSet = new Set(project.targetLanguageIds ?? []);
+  const languageIdByTwoLetters = new Map(
+    (project.targetLanguages ?? []).map((lang) => [
+      lang.twoLettersCode,
+      lang.id,
+    ]),
+  );
+  for (const folder of loadActiveDocsLocales()) {
+    const languageId = resolveDocsLanguageId(
+      folder,
+      targetLanguageIdSet,
+      languageIdByTwoLetters,
+    );
+    if (languageId) docsLocaleFolderByLanguage.set(languageId, folder);
+  }
+  return docsLocaleFolderByLanguage;
+}
+
+/**
+ * Class 3 for one language of a docs file: every hero-action `link:` string
+ * whose translation isn't the localized path (see computeDocsLinkFix) becomes
+ * a `replace` op on the stale translation, or a create when there is no
+ * translation yet. Only runs for languages that resolved to an active docs
+ * locale folder (see loadActiveDocsLocales/resolveDocsLanguageId) - anything
+ * else (an orphaned or docs-less target language) is left alone.
+ */
+function collectHeroLinkFixes(
+  ctx,
+  translations,
+  { file, heroLinkStrings, language, localeFolder, sources },
+) {
+  const ops = [];
+  const creates = [];
+  if (!localeFolder) return { creates, ops };
+
+  const translationByStringId = new Map(
+    translations.map((t) => [t.stringId, t]),
+  );
+  for (const heroString of heroLinkStrings) {
+    const sourceText = sources.get(heroString.id);
+    const existing = translationByStringId.get(heroString.id);
+    const fix = computeDocsLinkFix(sourceText, existing?.text, localeFolder);
+    if (fix === null) continue;
+
+    ctx.totals.docsLinks += 1;
+    const label = `${file.normalizedPath} (${language}, string ${heroString.id})`;
+    if (ctx.verbose) {
+      ctx.log(
+        `[docs-link] ${label}: ${JSON.stringify(existing?.text ?? '(untranslated)')} -> ${JSON.stringify(fix)}`,
+      );
+    }
+    if (existing) {
+      ops.push({
+        op: 'replace',
+        path: `/${existing.translationId}`,
+        value: { text: fix },
+      });
+    } else {
+      creates.push({
+        languageId: language,
+        stringId: heroString.id,
+        text: fix,
+      });
+    }
+  }
+  return { creates, ops };
+}
+
+/**
+ * One language's pass of a per-translation repair (classes 1, 2, 4 and 5):
+ * `computeFix(item)` returns a `{ text }` fix for one translation of `file`
+ * (or a falsy value when there is nothing to repair); each fix is counted in
+ * `ctx.totals[totalsKey]`, logged as `[tag] ...` with --verbose, and turned
+ * into a batch-PATCH `replace` op.
+ */
+function collectReplaceOps(
+  ctx,
+  translations,
+  { computeFix, file, language, tag, totalsKey },
+) {
+  const ops = [];
+  for (const item of translations) {
+    const fix = computeFix(item);
+    if (!fix) continue;
+
+    ctx.totals[totalsKey] += 1;
+    const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
+    if (ctx.verbose) {
+      ctx.log(
+        `[${tag}] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
+      );
+    }
+    ops.push({
+      op: 'replace',
+      path: `/${item.translationId}`,
+      value: { text: fix.text },
+    });
+  }
+  return ops;
+}
 
 async function createTranslations(ctx, creates, label) {
   // Unlike editing, adding a brand-new translation has no batch endpoint
@@ -718,74 +867,28 @@ async function repairDocsFile(ctx, file) {
         (stringOrder.get(a.stringId) ?? -1) -
         (stringOrder.get(b.stringId) ?? -1),
     );
-    const translationByStringId = new Map(
-      translations.map((t) => [t.stringId, t]),
-    );
-
-    const ops = [];
-    const creates = [];
 
     // Class 2: heading anchors.
     const usedAnchors = new Map();
-    for (const item of translations) {
-      if (typeof item.text !== 'string') continue;
-      const source = sources.get(item.stringId) ?? '';
+    const anchorOps = collectReplaceOps(ctx, translations, {
+      computeFix: (item) => docsAnchorFix(item, sources, usedAnchors),
+      file,
+      language,
+      tag: 'anchor',
+      totalsKey: 'anchors',
+    });
 
-      const fix = computeAnchorFix(source, item.text, usedAnchors);
-      if (!fix) continue;
+    // Class 3: docs hero-action link: frontmatter.
+    const heroLinkFixes = collectHeroLinkFixes(ctx, translations, {
+      file,
+      heroLinkStrings,
+      language,
+      localeFolder,
+      sources,
+    });
 
-      ctx.totals.anchors += 1;
-      const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
-      if (ctx.verbose) {
-        ctx.log(
-          `[anchor] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
-        );
-      }
-      ops.push({
-        op: 'replace',
-        path: `/${item.translationId}`,
-        value: { text: fix.text },
-      });
-    }
-
-    // Class 3: docs hero-action link: frontmatter. Only runs for languages
-    // that resolved to an active docs locale folder (see
-    // loadActiveDocsLocales/resolveDocsLanguageId) - anything else (an
-    // orphaned or docs-less target language) is left alone.
-    if (localeFolder) {
-      for (const heroString of heroLinkStrings) {
-        const sourceText = sources.get(heroString.id);
-        const existing = translationByStringId.get(heroString.id);
-        const fix = computeDocsLinkFix(
-          sourceText,
-          existing?.text,
-          localeFolder,
-        );
-        if (fix === null) continue;
-
-        ctx.totals.docsLinks += 1;
-        const label = `${file.normalizedPath} (${language}, string ${heroString.id})`;
-        if (ctx.verbose) {
-          ctx.log(
-            `[docs-link] ${label}: ${JSON.stringify(existing?.text ?? '(untranslated)')} -> ${JSON.stringify(fix)}`,
-          );
-        }
-        if (existing) {
-          ops.push({
-            op: 'replace',
-            path: `/${existing.translationId}`,
-            value: { text: fix },
-          });
-        } else {
-          creates.push({
-            languageId: language,
-            stringId: heroString.id,
-            text: fix,
-          });
-        }
-      }
-    }
-
+    const ops = [...anchorOps, ...heroLinkFixes.ops];
+    const { creates } = heroLinkFixes;
     const fileLabel = `${file.normalizedPath} (${language})`;
     if (ctx.apply && ops.length > 0) {
       await patchTranslations(ctx, ops, fileLabel); // NOSONAR: sequential - rate-limited API
@@ -793,6 +896,31 @@ async function repairDocsFile(ctx, file) {
     if (ctx.apply && creates.length > 0) {
       await createTranslations(ctx, creates, fileLabel); // NOSONAR: sequential - rate-limited API
     }
+  }
+}
+
+/**
+ * Classes 2+3 (heading anchors + hero-action link: frontmatter), one docs
+ * source file at a time.
+ */
+async function repairDocsFiles(ctx, normalizedFiles) {
+  const docsFiles = normalizedFiles.filter(
+    (file) =>
+      file.normalizedPath.includes(DOCS_SOURCE_PREFIX) &&
+      file.normalizedPath.endsWith('.md'),
+  );
+  if (docsFiles.length > 0) {
+    ctx.log(
+      `[crowdin] classes 2+3: heading anchors + hero-action link: frontmatter (${docsFiles.length} files, ${ctx.docsLocaleFolderByLanguage.size} active docs locales)`,
+    );
+    for (const file of docsFiles) {
+      await repairDocsFile(ctx, file); // NOSONAR: sequential - rate-limited API
+    }
+  } else {
+    ctx.log(
+      `[crowdin] WARN: no ${DOCS_SOURCE_PREFIX}**/*.md files found; skipping classes 2+3`,
+    );
+    logUnmatchedPaths(ctx, normalizedFiles, 15);
   }
 }
 
@@ -817,27 +945,13 @@ async function repairI18nLinkedSyntax(ctx, file) {
   for (const language of ctx.languages) {
     const translations = await listFileTranslations(ctx, language, file.id); // NOSONAR: sequential - rate-limited API
 
-    const ops = [];
-    for (const item of translations) {
-      if (typeof item.text !== 'string' || !candidateIds.has(item.stringId))
-        continue;
-
-      const fixed = repairLinkedMessage(item.text);
-      if (!fixed) continue;
-
-      ctx.totals.linked += 1;
-      const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
-      if (ctx.verbose) {
-        ctx.log(
-          `[linked] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fixed)}`,
-        );
-      }
-      ops.push({
-        op: 'replace',
-        path: `/${item.translationId}`,
-        value: { text: fixed },
-      });
-    }
+    const ops = collectReplaceOps(ctx, translations, {
+      computeFix: (item) => linkedSyntaxFix(item, candidateIds),
+      file,
+      language,
+      tag: 'linked',
+      totalsKey: 'linked',
+    });
     if (ctx.apply && ops.length > 0) {
       await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`); // NOSONAR: sequential - rate-limited API
     }
@@ -873,27 +987,13 @@ async function repairI18nLinkTargets(ctx, file) {
   for (const language of ctx.languages) {
     const translations = await listFileTranslations(ctx, language, file.id); // NOSONAR: sequential - rate-limited API
 
-    const ops = [];
-    for (const item of translations) {
-      const source = sources.get(item.stringId);
-      if (source === undefined || typeof item.text !== 'string') continue;
-
-      const fix = computeLinkTargetFix(source, item.text, ctx.enKeys);
-      if (!fix) continue;
-
-      ctx.totals.links += 1;
-      const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
-      if (ctx.verbose) {
-        ctx.log(
-          `[links] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
-        );
-      }
-      ops.push({
-        op: 'replace',
-        path: `/${item.translationId}`,
-        value: { text: fix.text },
-      });
-    }
+    const ops = collectReplaceOps(ctx, translations, {
+      computeFix: (item) => linkTargetFix(item, sources, ctx.enKeys),
+      file,
+      language,
+      tag: 'links',
+      totalsKey: 'links',
+    });
     if (ctx.apply && ops.length > 0) {
       await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`); // NOSONAR: sequential - rate-limited API
     }
@@ -922,27 +1022,13 @@ async function repairReleaseNotesVersions(ctx, file) {
   for (const language of ctx.languages) {
     const translations = await listFileTranslations(ctx, language, file.id); // NOSONAR: sequential - rate-limited API
 
-    const ops = [];
-    for (const item of translations) {
-      const source = sources.get(item.stringId);
-      if (source === undefined) continue;
-
-      const fix = computeVersionHeaderFix(source, item.text);
-      if (!fix) continue;
-
-      ctx.totals.versions += 1;
-      const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
-      if (ctx.verbose) {
-        ctx.log(
-          `[version] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
-        );
-      }
-      ops.push({
-        op: 'replace',
-        path: `/${item.translationId}`,
-        value: { text: fix.text },
-      });
-    }
+    const ops = collectReplaceOps(ctx, translations, {
+      computeFix: (item) => versionHeaderFix(item, sources),
+      file,
+      language,
+      tag: 'version',
+      totalsKey: 'versions',
+    });
     if (ctx.apply && ops.length > 0) {
       await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`); // NOSONAR: sequential - rate-limited API
     }
@@ -992,21 +1078,7 @@ async function run() {
 
   // Class 3's language -> docs-folder mapping (e.g. `es-ES` -> `es`,
   // `zh-CN` -> `cmn-hans`), scoped to the app's active docs locales only.
-  const targetLanguageIdSet = new Set(project.targetLanguageIds ?? []);
-  const languageIdByTwoLetters = new Map(
-    (project.targetLanguages ?? []).map((lang) => [
-      lang.twoLettersCode,
-      lang.id,
-    ]),
-  );
-  for (const folder of loadActiveDocsLocales()) {
-    const languageId = resolveDocsLanguageId(
-      folder,
-      targetLanguageIdSet,
-      languageIdByTwoLetters,
-    );
-    if (languageId) ctx.docsLocaleFolderByLanguage.set(languageId, folder);
-  }
+  ctx.docsLocaleFolderByLanguage = buildDocsLocaleFolderMap(project);
 
   ctx.log(
     `[crowdin] project ${projectId} - ${ctx.apply ? 'APPLYING fixes' : 'dry run (use --apply to commit)'}`,
@@ -1024,64 +1096,7 @@ async function run() {
     ...file,
     normalizedPath: normalizePath(file.path ?? file.name ?? ''),
   }));
-
-  const i18nFile = normalizedFiles.find((file) =>
-    file.normalizedPath.endsWith(I18N_SOURCE_PATH),
-  );
-  if (i18nFile) {
-    ctx.log(
-      `[crowdin] class 1: linked-message syntax in ${i18nFile.normalizedPath}`,
-    );
-    await repairI18nLinkedSyntax(ctx, i18nFile);
-  } else {
-    ctx.log(
-      `[crowdin] WARN: source file ${I18N_SOURCE_PATH} not found in project; skipping class 1`,
-    );
-    logUnmatchedPaths(ctx, normalizedFiles, 15);
-  }
-
-  const docsFiles = normalizedFiles.filter(
-    (file) =>
-      file.normalizedPath.includes(DOCS_SOURCE_PREFIX) &&
-      file.normalizedPath.endsWith('.md'),
-  );
-  if (docsFiles.length > 0) {
-    ctx.log(
-      `[crowdin] classes 2+3: heading anchors + hero-action link: frontmatter (${docsFiles.length} files, ${ctx.docsLocaleFolderByLanguage.size} active docs locales)`,
-    );
-    for (const file of docsFiles) {
-      await repairDocsFile(ctx, file); // NOSONAR: sequential - rate-limited API
-    }
-  } else {
-    ctx.log(
-      `[crowdin] WARN: no ${DOCS_SOURCE_PREFIX}**/*.md files found; skipping classes 2+3`,
-    );
-    logUnmatchedPaths(ctx, normalizedFiles, 15);
-  }
-
-  const releaseNotesFile = normalizedFiles.find((file) =>
-    file.normalizedPath.endsWith(RELEASE_NOTES_SOURCE_PATH),
-  );
-  if (releaseNotesFile) {
-    ctx.log(
-      `[crowdin] class 4: release-notes version headers in ${releaseNotesFile.normalizedPath}`,
-    );
-    await repairReleaseNotesVersions(ctx, releaseNotesFile);
-  } else {
-    ctx.log(
-      `[crowdin] WARN: source file ${RELEASE_NOTES_SOURCE_PATH} not found in project; skipping class 4`,
-    );
-    logUnmatchedPaths(ctx, normalizedFiles, 15);
-  }
-
-  ctx.log('[crowdin] class 5: i18n link/param targets');
-  if (i18nFile) {
-    await repairI18nLinkTargets(ctx, i18nFile);
-  } else {
-    ctx.log(
-      `[crowdin] WARN: source file ${I18N_SOURCE_PATH} not found in project; skipping class 5`,
-    );
-  }
+  await runRepairPasses(ctx, normalizedFiles);
 
   ctx.log('[crowdin] class 6: purging corrupted translation-memory segments');
   try {
@@ -1117,6 +1132,54 @@ async function run() {
     return 1;
   }
   return ctx.failures.length > 0 ? 1 : 0;
+}
+
+/**
+ * Classes 1-5, in order: the repairs of the stored translations of the
+ * project's source files (class 6 purges translation memory instead - see
+ * run).
+ */
+async function runRepairPasses(ctx, normalizedFiles) {
+  const i18nFile = normalizedFiles.find((file) =>
+    file.normalizedPath.endsWith(I18N_SOURCE_PATH),
+  );
+  if (i18nFile) {
+    ctx.log(
+      `[crowdin] class 1: linked-message syntax in ${i18nFile.normalizedPath}`,
+    );
+    await repairI18nLinkedSyntax(ctx, i18nFile);
+  } else {
+    ctx.log(
+      `[crowdin] WARN: source file ${I18N_SOURCE_PATH} not found in project; skipping class 1`,
+    );
+    logUnmatchedPaths(ctx, normalizedFiles, 15);
+  }
+
+  await repairDocsFiles(ctx, normalizedFiles);
+
+  const releaseNotesFile = normalizedFiles.find((file) =>
+    file.normalizedPath.endsWith(RELEASE_NOTES_SOURCE_PATH),
+  );
+  if (releaseNotesFile) {
+    ctx.log(
+      `[crowdin] class 4: release-notes version headers in ${releaseNotesFile.normalizedPath}`,
+    );
+    await repairReleaseNotesVersions(ctx, releaseNotesFile);
+  } else {
+    ctx.log(
+      `[crowdin] WARN: source file ${RELEASE_NOTES_SOURCE_PATH} not found in project; skipping class 4`,
+    );
+    logUnmatchedPaths(ctx, normalizedFiles, 15);
+  }
+
+  ctx.log('[crowdin] class 5: i18n link/param targets');
+  if (i18nFile) {
+    await repairI18nLinkTargets(ctx, i18nFile);
+  } else {
+    ctx.log(
+      `[crowdin] WARN: source file ${I18N_SOURCE_PATH} not found in project; skipping class 5`,
+    );
+  }
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────────

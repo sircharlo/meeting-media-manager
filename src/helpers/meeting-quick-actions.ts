@@ -1,4 +1,4 @@
-import type { DateInfo, SettingsValues } from 'src/types';
+import type { DateInfo, MediaItem, SettingsValues } from 'src/types';
 
 import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -46,6 +46,44 @@ export const getVisibleChecklistItemIds = (
 };
 
 /**
+ * Extrapolates the current playback position from its last report (same
+ * pattern as MediaPreview's getExpectedPosition).
+ */
+const getExtrapolatedPosition = (
+  playingState: MediaPlayingState,
+  now: number,
+) => {
+  let extrapolatedPosition = playingState.currentPosition || 0;
+  if (playingState.action === 'play' && playingState.currentPositionUpdatedAt) {
+    const elapsedSeconds = Math.max(
+      0,
+      (now - playingState.currentPositionUpdatedAt) / 1000,
+    );
+    extrapolatedPosition += elapsedSeconds * (playingState.playbackRate || 1);
+  }
+  return extrapolatedPosition;
+};
+
+/**
+ * Adds the durations of `items[from]` to `items[to]` (inclusive) to
+ * `seconds`, or returns null as soon as one of them has no known duration.
+ */
+const addDurationsUpTo = (
+  seconds: number,
+  items: MediaItem[],
+  from: number,
+  to: number,
+): null | number => {
+  let total = seconds;
+  for (let i = from; i <= to; i++) {
+    const itemDuration = items[i]?.duration;
+    if (!itemDuration) return null;
+    total += itemDuration;
+  }
+  return total;
+};
+
+/**
  * Predicts when the last visible meeting song will end, based on the current
  * media playback state and the visible items on the selected date. Returns:
  *
@@ -62,13 +100,9 @@ export const predictLastSongEndDateTime = (
   if (!visibleItems.length) return null;
 
   // Find the index of the last visible song
-  let lastSongIndex = -1;
-  for (let i = visibleItems.length - 1; i >= 0; i--) {
-    if (visibleItems[i]?.tag?.type === 'song') {
-      lastSongIndex = i;
-      break;
-    }
-  }
+  const lastSongIndex = visibleItems.findLastIndex(
+    (item) => item.tag?.type === 'song',
+  );
   if (lastSongIndex === -1) return null;
 
   // Duration unknown - can't predict an end time at all (an unset/zero
@@ -88,16 +122,7 @@ export const predictLastSongEndDateTime = (
   // Song already passed (current item is after the last song)
   if (currentIndex > lastSongIndex) return null;
 
-  // Extrapolate current position (same pattern as MediaPreview's
-  // getExpectedPosition)
-  let extrapolatedPosition = playingState.currentPosition || 0;
-  if (playingState.action === 'play' && playingState.currentPositionUpdatedAt) {
-    const elapsedSeconds = Math.max(
-      0,
-      (now - playingState.currentPositionUpdatedAt) / 1000,
-    );
-    extrapolatedPosition += elapsedSeconds * (playingState.playbackRate || 1);
-  }
+  const extrapolatedPosition = getExtrapolatedPosition(playingState, now);
 
   // Every item's duration between the current position and the last song
   // (inclusive) must be known - silently treating an unset duration as 0
@@ -107,15 +132,13 @@ export const predictLastSongEndDateTime = (
   const currentDuration = visibleItems[currentIndex]?.duration;
   if (!currentDuration) return null;
 
-  let remainingSeconds = Math.max(0, currentDuration - extrapolatedPosition);
-
-  if (currentIndex !== lastSongIndex) {
-    for (let i = currentIndex + 1; i <= lastSongIndex; i++) {
-      const itemDuration = visibleItems[i]?.duration;
-      if (!itemDuration) return null;
-      remainingSeconds += itemDuration;
-    }
-  }
+  const remainingSeconds = addDurationsUpTo(
+    Math.max(0, currentDuration - extrapolatedPosition),
+    visibleItems,
+    currentIndex + 1,
+    lastSongIndex,
+  );
+  if (remainingSeconds === null) return null;
 
   // Note: 0 is a valid, meaningful result here ("ending right now") now that
   // the duration-unknown case is ruled out above - it must NOT be treated as

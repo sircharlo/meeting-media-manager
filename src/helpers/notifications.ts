@@ -71,23 +71,64 @@ type NoExtraKeys<T> = Record<
 // Track all active notification dismiss functions
 const activeTemporaryNotifications: (() => void)[] = [];
 
+/**
+ * When a dialog is open, waits for every open dialog to close and then calls
+ * `show` once.
+ * @returns Whether it's waiting (false: nothing open, so nothing to wait for).
+ */
+const waitForOpenDialogsToClose = (show: () => void) => {
+  const dialogStateStore = useDialogStateStore();
+  if (!dialogStateStore.isAnyDialogOpen) return false;
+
+  const stopWaiting = watch(
+    () => dialogStateStore.isAnyDialogOpen,
+    (stillOpen) => {
+      if (stillOpen) return;
+      stopWaiting();
+      show();
+    },
+  );
+  return true;
+};
+
+/** The default actions of a closable notification: just a close button. */
+const getCloseActions = (
+  type: AllowedNotifyType | undefined,
+): QNotifyCreateOptions['actions'] => [
+  {
+    color: type === 'warning' ? 'dark' : 'white',
+    icon: 'close',
+    round: true,
+  },
+];
+
+/**
+ * Tracks a notification's dismiss function for
+ * dismissAllTemporaryNotifications(), until its timeout (if any) has passed.
+ */
+const trackTemporaryNotification = (dismiss: () => void, timeout: number) => {
+  activeTemporaryNotifications.push(dismiss);
+
+  // Auto-remove from tracking after timeout (if not indefinite)
+  if (timeout > 0) {
+    setTimeout(() => {
+      const index = activeTemporaryNotifications.indexOf(dismiss);
+      if (index > -1) {
+        activeTemporaryNotifications.splice(index, 1);
+      }
+    }, timeout);
+  }
+};
+
 export const createTemporaryNotification = (
   props: NoExtraKeys<AllowedNotifyProps>,
 ) => {
   try {
-    if (props.deferWhileDialogOpen) {
-      const dialogStateStore = useDialogStateStore();
-      if (dialogStateStore.isAnyDialogOpen) {
-        const stopWaiting = watch(
-          () => dialogStateStore.isAnyDialogOpen,
-          (stillOpen) => {
-            if (stillOpen) return;
-            stopWaiting();
-            createTemporaryNotification(props);
-          },
-        );
-        return undefined;
-      }
+    if (
+      props.deferWhileDialogOpen &&
+      waitForOpenDialogsToClose(() => createTemporaryNotification(props))
+    ) {
+      return undefined;
     }
 
     const {
@@ -130,32 +171,12 @@ export const createTemporaryNotification = (
       ...(type && { type }),
       ...(resolvedIcon && { icon: resolvedIcon }),
       ...(group && { group }),
-      ...(!noClose && {
-        actions: actions ?? [
-          {
-            color: type === 'warning' ? 'dark' : 'white',
-            icon: 'close',
-            round: true,
-          },
-        ],
-      }),
+      ...(!noClose && { actions: actions ?? getCloseActions(type) }),
     });
 
     // Track the dismiss function if it exists, unless it's protected from
     // being swept up by dismissAllTemporaryNotifications()
-    if (dismiss && !protect) {
-      activeTemporaryNotifications.push(dismiss);
-
-      // Auto-remove from tracking after timeout (if not indefinite)
-      if (timeout > 0) {
-        setTimeout(() => {
-          const index = activeTemporaryNotifications.indexOf(dismiss);
-          if (index > -1) {
-            activeTemporaryNotifications.splice(index, 1);
-          }
-        }, timeout);
-      }
-    }
+    if (dismiss && !protect) trackTemporaryNotification(dismiss, timeout);
 
     return dismiss;
   } catch (error) {

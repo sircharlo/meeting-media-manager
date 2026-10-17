@@ -121,6 +121,29 @@ const isWafChallengeResponse = (response: Response) =>
   response.headers.get('x-amzn-waf-action') === 'challenge';
 
 /**
+ * A copy of the cached response for `cacheKey` while it's younger than the
+ * cache TTL; an older one is dropped from the cache instead.
+ * @param cacheKey The fetch cache key.
+ * @param logDetails What fetchRaw logs for a cache hit.
+ * @returns The cached response, or undefined when there's no fresh one.
+ */
+function getFreshCachedResponse(
+  cacheKey: string,
+  logDetails: { cache: boolean; init?: RequestInit; url: string },
+) {
+  const cachedResponse = fetchCache.get(cacheKey);
+  if (!cachedResponse) return undefined;
+  if (Date.now() - cachedResponse.cachedAt < FETCH_CACHE_TTL_MS) {
+    if (!import.meta.env.VITEST) {
+      log('fetchRaw (cached)', 'api', 'debug', logDetails);
+    }
+    return buildCachedResponse(cachedResponse);
+  }
+  fetchCache.delete(cacheKey);
+  return undefined;
+}
+
+/**
  * Fetches data from the given url.
  * @param url The url to fetch data from.
  * @param init Initialization options for the fetch.
@@ -146,16 +169,12 @@ export const fetchRaw = async (
   const cacheKey = `${method}:${url}:${JSON.stringify(init?.headers || {})}`;
 
   if (isCacheable) {
-    const cachedResponse = fetchCache.get(cacheKey);
-    if (cachedResponse) {
-      if (Date.now() - cachedResponse.cachedAt < FETCH_CACHE_TTL_MS) {
-        if (!import.meta.env.VITEST) {
-          log('fetchRaw (cached)', 'api', 'debug', { cache, init, url });
-        }
-        return buildCachedResponse(cachedResponse);
-      }
-      fetchCache.delete(cacheKey);
-    }
+    const cachedResponse = getFreshCachedResponse(cacheKey, {
+      cache,
+      init,
+      url,
+    });
+    if (cachedResponse) return cachedResponse;
   }
 
   if (!import.meta.env.VITEST)

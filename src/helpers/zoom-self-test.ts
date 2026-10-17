@@ -134,6 +134,28 @@ const hasEvent = (
   type: ZoomTestParticipant['events'][number]['type'],
 ) => participant.events.some((event) => event.type === type);
 
+/** A step's result as its report detail: only a non-empty text counts. */
+const toStepDetail = (result: unknown) =>
+  typeof result === 'string' && result ? result : undefined;
+
+/**
+ * Marks a step skipped or failed, depending on what it threw.
+ * @returns The step's new status.
+ */
+const recordStepError = (
+  step: ZoomSelfTestStep,
+  error: unknown,
+): ZoomSelfTestStatus => {
+  if (error instanceof StepSkipped) {
+    step.status = 'skipped';
+    step.detail = error.message;
+  } else {
+    step.status = 'failed';
+    step.detail = error instanceof Error ? error.message : String(error);
+  }
+  return step.status;
+};
+
 /** Runs the self-test; it reports each step itself, without notifications. */
 export const runZoomSelfTest = (
   options: ZoomSelfTestOptions,
@@ -430,16 +452,10 @@ const runSteps = async (
     try {
       const detail = await run[step.id](); // NOSONAR: sequential - Zoom UI automation must not overlap
       step.status = 'passed';
-      step.detail = typeof detail === 'string' && detail ? detail : undefined;
+      step.detail = toStepDetail(detail);
     } catch (error) {
-      if (error instanceof StepSkipped) {
-        step.status = 'skipped';
-        step.detail = error.message;
-      } else {
-        step.status = 'failed';
-        step.detail = error instanceof Error ? error.message : String(error);
-      }
-      if (step.id === 'meeting' && step.status === 'failed') {
+      const status = recordStepError(step, error);
+      if (step.id === 'meeting' && status === 'failed') {
         meetingFound = false;
       }
     }

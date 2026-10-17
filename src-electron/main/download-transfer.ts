@@ -241,6 +241,166 @@ const httpFailure = (
   status,
 });
 
+const stalledFailure = (
+  stallTimeoutMs: number,
+  reachedBytes: number,
+  resume: null | ResumeInfo,
+): TransferFailure => ({
+  error: new Error(`Download stalled: no data for ${stallTimeoutMs} ms`),
+  kind: 'failed',
+  reachedBytes,
+  reason: 'stalled',
+  resume,
+  retryable: true,
+});
+
+/** The failure for an error a transfer ended with on its own. */
+const errorFailure = (
+  error: unknown,
+  reachedBytes: number,
+  resume: null | ResumeInfo,
+): TransferFailure => {
+  if (FILESYSTEM_SYSCALLS.has(getFilesystemErrorSyscall(error) ?? '')) {
+    return filesystemFailure(error, reachedBytes, resume);
+  }
+  // Still retried - it may well be transient - but flagged as unexpected
+  // rather than passed off as a network problem, since it's likely a bug.
+  return {
+    error: toError(error),
+    kind: 'failed',
+    reachedBytes,
+    reason: isNetworkError(error) ? 'network' : 'unexpected',
+    resume,
+    retryable: true,
+  };
+};
+
+/** Whether an earlier attempt already received the whole `.part` file. */
+const isAlreadyReceived = (resume: null | ResumeInfo, offset: number) =>
+  !!resume && resume.totalBytes > 0 && offset === resume.totalBytes;
+
+/** The headers that resume the `.part` file `offset` bytes in, if they can. */
+const getRangeHeaders = (
+  resume: null | ResumeInfo,
+  offset: number,
+): Record<string, string> =>
+  resume && offset > 0
+    ? { 'If-Range': resume.validator, Range: `bytes=${offset}-` }
+    : {};
+
+/** Where a successful response's body goes in the `.part` file. */
+const getBodyPlacement = (
+  response: Response,
+  isRangeRequest: boolean,
+  offset: number,
+) => {
+  // A 200 to a range request means the server is sending the whole file
+  // (it changed, or the server doesn't do ranges): start over.
+  const contentRange = parseContentRange(response);
+  const isAppending =
+    isRangeRequest && response.status === 206 && contentRange?.start === offset;
+  const startOffset = isAppending ? offset : 0;
+
+  let totalBytes = 0;
+  if (!isContentEncoded(response)) {
+    totalBytes =
+      isAppending && contentRange?.total
+        ? contentRange.total
+        : startOffset + getContentLength(response);
+  }
+
+  return { isAppending, startOffset, totalBytes };
+};
+
+const getResumeInfo = (
+  response: Response,
+  totalBytes: number,
+): null | ResumeInfo => {
+  const validator = getValidator(response);
+  return validator && !isContentEncoded(response)
+    ? { totalBytes, validator }
+    : null;
+};
+
+const toNodeReadable = (response: Response) =>
+  response.body
+    ? Readable.fromWeb(
+        response.body as unknown as NodeReadableStream<Uint8Array>,
+      )
+    : Readable.from([]);
+
+/** Renames the finished `.part` file into place. */
+const completeTransfer = async (
+  partialPath: string,
+  destPath: string,
+  reachedBytes: number,
+  resume: null | ResumeInfo,
+): Promise<TransferResult> => {
+  try {
+    await finalizeDownload(partialPath, destPath);
+  } catch (error) {
+    return filesystemFailure(error, reachedBytes, resume);
+  }
+  return { filePath: destPath, kind: 'completed' };
+};
+
+/** Discards an error response's body, and returns the failure it stands for. */
+const failErrorResponse = async (
+  response: Response,
+  isRangeRequest: boolean,
+  partialPath: string,
+  reachedBytes: number,
+  resume: null | ResumeInfo,
+): Promise<TransferFailure> => {
+  await response.body?.cancel().catch(() => undefined);
+  if (response.status === 416 && isRangeRequest) {
+    // The `.part` file doesn't match the file on the server any more:
+    // discard it, and the next attempt downloads the file from scratch.
+    await removePartial(partialPath);
+    return { ...httpFailure(416, 0, null), retryable: true };
+  }
+  return httpFailure(response.status, reachedBytes, resume);
+};
+
+/** The failure for a body that ended up a different size than promised. */
+const failSizeMismatch = async (
+  partialPath: string,
+  receivedBytes: number,
+  totalBytes: number,
+  resume: null | ResumeInfo,
+): Promise<TransferFailure> => {
+  // Fewer bytes than promised: the connection ended early, and the
+  // `.part` file can be resumed. More than promised: it's corrupt.
+  let resumeAfter = resume;
+  if (receivedBytes > totalBytes) {
+    await removePartial(partialPath);
+    resumeAfter = null;
+  }
+  return {
+    error: new Error(
+      `Download ended after ${receivedBytes} of ${totalBytes} bytes`,
+    ),
+    kind: 'failed',
+    reachedBytes: receivedBytes,
+    reason: 'network',
+    resume: resumeAfter,
+    retryable: true,
+  };
+};
+
+/** The result of a transfer stopped from outside, via its abort signal. */
+const getStoppedResult = async (
+  reason: unknown,
+  partialPath: string,
+  resume: null | ResumeInfo,
+): Promise<TransferResult> => {
+  if (reason === 'cancel') {
+    await removePartial(partialPath);
+    return { kind: 'cancelled' };
+  }
+  return { kind: 'paused', resume };
+};
+
 /**
  * Downloads `url` to `destPath`, resuming the `.part` file from an earlier
  * attempt when `resume` allows it. Never throws: every outcome, including
@@ -267,21 +427,13 @@ export async function runTransfer(
   let writeStream: undefined | WriteStream;
 
   // Only the final rename failed last time: nothing left to download.
-  if (resume && resume.totalBytes > 0 && offset === resume.totalBytes) {
-    try {
-      await finalizeDownload(partialPath, destPath);
-      return { filePath: destPath, kind: 'completed' };
-    } catch (error) {
-      return filesystemFailure(error, receivedBytes, resume);
-    }
+  if (isAlreadyReceived(resume, offset)) {
+    return completeTransfer(partialPath, destPath, receivedBytes, resume);
   }
 
   try {
     const isRangeRequest = !!resume && offset > 0;
-    const headers: Record<string, string> =
-      resume && isRangeRequest
-        ? { 'If-Range': resume.validator, Range: `bytes=${offset}-` }
-        : {};
+    const headers = getRangeHeaders(resume, offset);
 
     resetStallTimer();
     const response = await net.fetch(url, {
@@ -291,40 +443,22 @@ export async function runTransfer(
     });
     resetStallTimer();
 
-    if (response.status === 416 && isRangeRequest) {
-      // The `.part` file doesn't match the file on the server any more:
-      // discard it, and the next attempt downloads the file from scratch.
-      await response.body?.cancel().catch(() => undefined);
-      await removePartial(partialPath);
-      return { ...httpFailure(416, 0, null), retryable: true };
-    }
     if (!response.ok) {
-      await response.body?.cancel().catch(() => undefined);
-      return httpFailure(response.status, receivedBytes, resume);
+      return await failErrorResponse(
+        response,
+        isRangeRequest,
+        partialPath,
+        receivedBytes,
+        resume,
+      );
     }
 
-    // A 200 to a range request means the server is sending the whole file
-    // (it changed, or the server doesn't do ranges): start over.
-    const contentRange = parseContentRange(response);
-    const isAppending =
-      isRangeRequest &&
-      response.status === 206 &&
-      contentRange?.start === offset;
-    const startOffset = isAppending ? offset : 0;
-
-    let totalBytes = 0;
-    if (!isContentEncoded(response)) {
-      totalBytes =
-        isAppending && contentRange?.total
-          ? contentRange.total
-          : startOffset + getContentLength(response);
-    }
-
-    const validator = getValidator(response);
-    resume =
-      validator && !isContentEncoded(response)
-        ? { totalBytes, validator }
-        : null;
+    const { isAppending, startOffset, totalBytes } = getBodyPlacement(
+      response,
+      isRangeRequest,
+      offset,
+    );
+    resume = getResumeInfo(response, totalBytes);
 
     notifyListener(() => options.onStarted(totalBytes));
 
@@ -342,39 +476,20 @@ export async function runTransfer(
       flags: isAppending ? 'a' : 'w',
     });
 
-    const body = response.body
-      ? Readable.fromWeb(
-          response.body as unknown as NodeReadableStream<Uint8Array>,
-        )
-      : Readable.from([]);
+    const body = toNodeReadable(response);
     await pipeline(body, progress, writeStream, { signal: requestSignal });
     clearTimeout(stallTimer);
 
     if (totalBytes > 0 && receivedBytes !== totalBytes) {
-      // Fewer bytes than promised: the connection ended early, and the
-      // `.part` file can be resumed. More than promised: it's corrupt.
-      if (receivedBytes > totalBytes) {
-        await removePartial(partialPath);
-        resume = null;
-      }
-      return {
-        error: new Error(
-          `Download ended after ${receivedBytes} of ${totalBytes} bytes`,
-        ),
-        kind: 'failed',
-        reachedBytes: receivedBytes,
-        reason: 'network',
+      return await failSizeMismatch(
+        partialPath,
+        receivedBytes,
+        totalBytes,
         resume,
-        retryable: true,
-      };
+      );
     }
 
-    try {
-      await finalizeDownload(partialPath, destPath);
-    } catch (error) {
-      return filesystemFailure(error, receivedBytes, resume);
-    }
-    return { filePath: destPath, kind: 'completed' };
+    return await completeTransfer(partialPath, destPath, receivedBytes, resume);
   } catch (error) {
     clearTimeout(stallTimer);
     // Let in-flight writes land before anything touches the `.part` file
@@ -382,36 +497,12 @@ export async function runTransfer(
     if (writeStream) await waitForClose(writeStream);
 
     if (signal.aborted) {
-      if (signal.reason === 'cancel') {
-        await removePartial(partialPath);
-        return { kind: 'cancelled' };
-      }
-      return { kind: 'paused', resume };
+      return await getStoppedResult(signal.reason, partialPath, resume);
     }
-
     if (stall.signal.aborted) {
-      return {
-        error: new Error(`Download stalled: no data for ${stallTimeoutMs} ms`),
-        kind: 'failed',
-        reachedBytes: receivedBytes,
-        reason: 'stalled',
-        resume,
-        retryable: true,
-      };
+      return stalledFailure(stallTimeoutMs, receivedBytes, resume);
     }
-    if (FILESYSTEM_SYSCALLS.has(getFilesystemErrorSyscall(error) ?? '')) {
-      return filesystemFailure(error, receivedBytes, resume);
-    }
-    // Still retried - it may well be transient - but flagged as unexpected
-    // rather than passed off as a network problem, since it's likely a bug.
-    return {
-      error: toError(error),
-      kind: 'failed',
-      reachedBytes: receivedBytes,
-      reason: isNetworkError(error) ? 'network' : 'unexpected',
-      resume,
-      retryable: true,
-    };
+    return errorFailure(error, receivedBytes, resume);
   } finally {
     clearTimeout(stallTimer);
   }

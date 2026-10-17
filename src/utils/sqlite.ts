@@ -436,6 +436,63 @@ const getDbMetadata = async (db: string) => {
   };
 };
 
+/**
+ * The WHERE clause (and its parameters) of buildDocumentMultimediaQuery:
+ * the document, the kinds of media to keep, and the paragraph range.
+ */
+const buildDocumentMultimediaWhere = (
+  source: MultimediaItemsFetcher,
+  {
+    includePrinted,
+    mmTable,
+    ParagraphColumnsExist,
+    suppressZoomExists,
+  }: {
+    includePrinted: boolean | undefined;
+    mmTable: string | undefined;
+    ParagraphColumnsExist: boolean;
+    suppressZoomExists: boolean;
+  },
+) => {
+  const params: (number | string)[] = [];
+  let where = 'WHERE ';
+  if (source.docId || source.docId === 0) {
+    where += 'Document.DocumentId = ?';
+    params.push(source.docId);
+  } else {
+    where += 'Document.MepsDocumentId = ?';
+    params.push(source.mepsId as number);
+  }
+
+  const videoString =
+    "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')";
+  const imgString = `(Multimedia.MimeType LIKE '%image%'${
+    includePrinted
+      ? ''
+      : ' AND Multimedia.CategoryType <> 4 AND Multimedia.CategoryType <> 6'
+  } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`;
+
+  where += ` AND (${videoString} OR ${imgString})`;
+
+  if (
+    'BeginParagraphOrdinal' in source &&
+    'EndParagraphOrdinal' in source &&
+    ParagraphColumnsExist
+  ) {
+    where += ` AND ${mmTable}.BeginParagraphOrdinal >= ? AND ${mmTable}.EndParagraphOrdinal <= ?`;
+    params.push(
+      source.BeginParagraphOrdinal ?? 0,
+      source.EndParagraphOrdinal ?? 0,
+    );
+  }
+
+  if (suppressZoomExists) {
+    where += ' AND Multimedia.SuppressZoom <> 1';
+  }
+
+  return { params, where };
+};
+
 const buildDocumentMultimediaQuery = async (
   db: string,
   source: MultimediaItemsFetcher,
@@ -509,41 +566,12 @@ const buildDocumentMultimediaQuery = async (
     from += ` LEFT JOIN Question ON Question.DocumentId = ${mmTable}.DocumentId AND Question.TargetParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal`;
   }
 
-  const params: (number | string)[] = [];
-  let where = 'WHERE ';
-  if (source.docId || source.docId === 0) {
-    where += 'Document.DocumentId = ?';
-    params.push(source.docId);
-  } else {
-    where += 'Document.MepsDocumentId = ?';
-    params.push(source.mepsId as number);
-  }
-
-  const videoString =
-    "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')";
-  const imgString = `(Multimedia.MimeType LIKE '%image%'${
-    includePrinted
-      ? ''
-      : ' AND Multimedia.CategoryType <> 4 AND Multimedia.CategoryType <> 6'
-  } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`;
-
-  where += ` AND (${videoString} OR ${imgString})`;
-
-  if (
-    'BeginParagraphOrdinal' in source &&
-    'EndParagraphOrdinal' in source &&
-    ParagraphColumnsExist
-  ) {
-    where += ` AND ${mmTable}.BeginParagraphOrdinal >= ? AND ${mmTable}.EndParagraphOrdinal <= ?`;
-    params.push(
-      source.BeginParagraphOrdinal ?? 0,
-      source.EndParagraphOrdinal ?? 0,
-    );
-  }
-
-  if (suppressZoomExists) {
-    where += ' AND Multimedia.SuppressZoom <> 1';
-  }
+  const { params, where } = buildDocumentMultimediaWhere(source, {
+    includePrinted,
+    mmTable,
+    ParagraphColumnsExist,
+    suppressZoomExists,
+  });
 
   const groupAndSort = ParagraphColumnsExist
     ? 'GROUP BY Multimedia.MultimediaId ORDER BY DocumentMultimedia.BeginParagraphOrdinal'

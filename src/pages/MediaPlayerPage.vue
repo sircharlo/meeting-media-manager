@@ -1137,6 +1137,33 @@ const checkAccess = async () => {
   return status === 'granted';
 };
 
+// Logs an expected failure of requestStream's permission-prompt probe and
+// reports any other.
+const reportMediaAccessProbeError = (error: unknown, isCamera: boolean) => {
+  if (isExpectedMediaAccessError(error)) {
+    log('Media access probe failed', 'mediaPlayer', 'warn', error);
+    return;
+  }
+  errorCatcher(error, {
+    contexts: {
+      fn: {
+        name: isCamera ? 'requestCameraAccess' : 'requestDisplayAccess',
+      },
+    },
+  });
+};
+
+// Reports a failure to get requestStream's stream, except a busy/denied
+// camera.
+const reportStreamError = (error: unknown, isCamera: boolean) => {
+  if (isCamera && isExpectedMediaAccessError(error)) return;
+  errorCatcher(error, {
+    contexts: {
+      fn: { name: isCamera ? 'streamCamera' : 'streamDisplay' },
+    },
+  });
+};
+
 const requestStream = async (isCamera: boolean, deviceId?: string) => {
   const getMedia = () => {
     if (isCamera) {
@@ -1161,17 +1188,7 @@ const requestStream = async (isCamera: boolean, deviceId?: string) => {
         // it failing with a denied/unavailable source is an expected
         // outcome, and the checkAccess() below tells the user
         // (MMM-V2-3J5).
-        if (isExpectedMediaAccessError(e)) {
-          log('Media access probe failed', 'mediaPlayer', 'warn', e);
-        } else {
-          errorCatcher(e, {
-            contexts: {
-              fn: {
-                name: isCamera ? 'requestCameraAccess' : 'requestDisplayAccess',
-              },
-            },
-          });
-        }
+        reportMediaAccessProbeError(e, isCamera);
       }
 
       if (!(await checkAccess())) {
@@ -1184,13 +1201,7 @@ const requestStream = async (isCamera: boolean, deviceId?: string) => {
   } catch (e) {
     // The camera path tells the user below; a busy/denied camera is
     // environmental, not a bug.
-    if (!(isCamera && isExpectedMediaAccessError(e))) {
-      errorCatcher(e, {
-        contexts: {
-          fn: { name: isCamera ? 'streamCamera' : 'streamDisplay' },
-        },
-      });
-    }
+    reportStreamError(e, isCamera);
     if (isCamera) notifyAccessDenied(isCamera);
     return null;
   }

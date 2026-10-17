@@ -530,59 +530,73 @@ if (gotTheLock) {
       }
     }
 
-    if (isGpuCrash) {
-      gpuCrashCount++;
-      log(`GPU crash count this session: ${gpuCrashCount}`, 'electron', 'log');
-
-      // Once Chromium exhausts its own GPU fallback modes it kills the whole
-      // browser process (IntentionallyCrashBrowserForUnusableGpuProcess), with
-      // no JS event and no chance for the user to see the disabled-hw-accel
-      // flag above take effect. Relaunch proactively on a second crash in the
-      // same session so the flag is picked up before Chromium can do that.
-      if (gpuCrashCount >= 2 && !hasRelaunchedForGpuCrash) {
-        hasRelaunchedForGpuCrash = true;
-        log(
-          'Repeated GPU crashes this session. Relaunching with hardware acceleration disabled.',
-          'electron',
-          'warn',
-        );
-        app.relaunch();
-        app.exit(0);
-        return;
-      }
-    }
+    if (isGpuCrash && countGpuCrash()) return;
 
     if (type === 'Video Capture' && details.reason === 'crashed') {
-      videoCaptureCrashCount++;
+      countVideoCaptureCrash(details);
+    }
+  }
+
+  /**
+   * Counts a GPU crash, relaunching the app on the second one this session.
+   * @returns Whether the app is relaunching
+   */
+  function countGpuCrash() {
+    gpuCrashCount++;
+    log(`GPU crash count this session: ${gpuCrashCount}`, 'electron', 'log');
+
+    // Once Chromium exhausts its own GPU fallback modes it kills the whole
+    // browser process (IntentionallyCrashBrowserForUnusableGpuProcess), with
+    // no JS event and no chance for the user to see the disabled-hw-accel
+    // flag above take effect. Relaunch proactively on a second crash in the
+    // same session so the flag is picked up before Chromium can do that.
+    if (gpuCrashCount >= 2 && !hasRelaunchedForGpuCrash) {
+      hasRelaunchedForGpuCrash = true;
       log(
-        `Video Capture crash count: ${videoCaptureCrashCount}`,
+        'Repeated GPU crashes this session. Relaunching with hardware acceleration disabled.',
         'electron',
-        'log',
+        'warn',
       );
+      app.relaunch();
+      app.exit(0);
+      return true;
+    }
+    return false;
+  }
 
-      if (videoCaptureCrashCount >= 2) {
-        captureElectronError(
-          new Error('Video Capture process crashed multiple times.'),
-          {
-            contexts: {
-              fn: {
-                crashCount: videoCaptureCrashCount,
-                details,
-                name: 'handleProcessCrash',
-              },
-            },
+  /**
+   * Counts a Video Capture crash, reporting it and telling the main window
+   * from the second one this session on.
+   */
+  function countVideoCaptureCrash(
+    details: Electron.Details | Electron.RenderProcessGoneDetails,
+  ) {
+    videoCaptureCrashCount++;
+    log(
+      `Video Capture crash count: ${videoCaptureCrashCount}`,
+      'electron',
+      'log',
+    );
+
+    if (videoCaptureCrashCount < 2) return;
+
+    captureElectronError(
+      new Error('Video Capture process crashed multiple times.'),
+      {
+        contexts: {
+          fn: {
+            crashCount: videoCaptureCrashCount,
+            details,
+            name: 'handleProcessCrash',
           },
-        );
+        },
+      },
+    );
 
-        if (
-          mainWindowInfo.mainWindow &&
-          !mainWindowInfo.mainWindow.isDestroyed()
-        ) {
-          mainWindowInfo.mainWindow.webContents.send(
-            'video-capture-crash-detected',
-          );
-        }
-      }
+    if (mainWindowInfo.mainWindow && !mainWindowInfo.mainWindow.isDestroyed()) {
+      mainWindowInfo.mainWindow.webContents.send(
+        'video-capture-crash-detected',
+      );
     }
   }
 
