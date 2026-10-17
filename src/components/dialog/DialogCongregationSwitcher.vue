@@ -39,11 +39,18 @@
               active: currentCongregation === id,
               'congregation--switching': isSwitchingCongregation,
             }"
-            role="button"
-            tabindex="0"
-            @click="chooseCongregation(id)"
-            @keydown.enter.space.prevent="chooseCongregation(id)"
           >
+            <!-- Chooses the profile: a transparent native button stretched
+                 over the whole row (the row itself can't be one, as it holds
+                 its own menu button; clicks on the rest of the row pass through
+                 to this button - see .congregation-choose). -->
+            <button
+              :aria-current="currentCongregation === id ? 'true' : undefined"
+              :aria-label="prefs.congregationName || t('noName')"
+              class="congregation-choose"
+              type="button"
+              @click="chooseCongregation(id)"
+            />
             <q-item class="items-center">
               <div
                 class="congregation-avatar q-mr-md"
@@ -104,7 +111,7 @@
                      instead of a hover-revealed action. Also reachable via
                      right-click anywhere on the row - same dual-trigger
                      idiom as MediaItem.vue's own context menu: the q-menu
-                     below (a direct child of q-item, not nested in the
+                     below (a direct child of the row, not nested in the
                      button) defaults its anchor to the whole row via
                      `context-menu` + no explicit target, while this button's
                      click handler temporarily points `menuTarget` at itself
@@ -142,70 +149,70 @@
               >
                 <q-icon name="mmm-check" size="xs" />
               </div>
-              <q-menu
-                context-menu
-                data-congregation-switcher-menu
-                :model-value="contextMenuCongId === id"
-                :target="contextMenuCongId === id ? menuTarget : true"
-                touch-position
-                @update:model-value="
-                  (val) => {
-                    if (val) contextMenuCongId = id;
-                    else if (contextMenuCongId === id)
-                      contextMenuCongId = undefined;
-                  }
-                "
-              >
-                <q-list role="menu" style="min-width: 150px">
-                  <q-item
-                    v-if="currentCongregation !== id"
-                    v-close-popup
-                    clickable
-                    @click="
-                      contextMenuCongId = undefined;
-                      chooseCongregation(id);
-                    "
-                  >
-                    <q-item-section avatar>
-                      <q-icon name="mmm-check" />
-                    </q-item-section>
-                    <q-item-section>
-                      {{ t('select-this-profile') }}
-                    </q-item-section>
-                  </q-item>
-                  <q-item
-                    v-close-popup
-                    clickable
-                    @click="
-                      contextMenuCongId = undefined;
-                      exportCongregationSettings(prefs);
-                    "
-                  >
-                    <q-item-section avatar>
-                      <q-icon name="mmm-export" />
-                    </q-item-section>
-                    <q-item-section>
-                      {{ t('export-profile-settings') }}
-                    </q-item-section>
-                  </q-item>
-                  <q-item
-                    v-close-popup
-                    clickable
-                    @click="
-                      contextMenuCongId = undefined;
-                      congToDelete = id;
-                    "
-                  >
-                    <q-item-section avatar>
-                      <q-icon color="negative" name="mmm-delete" />
-                    </q-item-section>
-                    <q-item-section class="text-negative">
-                      {{ t('delete') }}
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
             </q-item>
+            <q-menu
+              context-menu
+              data-congregation-switcher-menu
+              :model-value="contextMenuCongId === id"
+              :target="contextMenuCongId === id ? menuTarget : true"
+              touch-position
+              @update:model-value="
+                (val) => {
+                  if (val) contextMenuCongId = id;
+                  else if (contextMenuCongId === id)
+                    contextMenuCongId = undefined;
+                }
+              "
+            >
+              <q-list role="menu" style="min-width: 150px">
+                <q-item
+                  v-if="currentCongregation !== id"
+                  v-close-popup
+                  clickable
+                  @click="
+                    contextMenuCongId = undefined;
+                    chooseCongregation(id);
+                  "
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mmm-check" />
+                  </q-item-section>
+                  <q-item-section>
+                    {{ t('select-this-profile') }}
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  v-close-popup
+                  clickable
+                  @click="
+                    contextMenuCongId = undefined;
+                    exportCongregationSettings(prefs);
+                  "
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mmm-export" />
+                  </q-item-section>
+                  <q-item-section>
+                    {{ t('export-profile-settings') }}
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  v-close-popup
+                  clickable
+                  @click="
+                    contextMenuCongId = undefined;
+                    congToDelete = id;
+                  "
+                >
+                  <q-item-section avatar>
+                    <q-icon color="negative" name="mmm-delete" />
+                  </q-item-section>
+                  <q-item-section class="text-negative">
+                    {{ t('delete') }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </div>
         </q-list>
 
@@ -666,9 +673,36 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
 // keeps it reachable without a mouse. Fade-out on mouse-leave/blur stays
 // instant (no delay), only the appearing direction is delayed - same idiom
 // as the tag-chip pencil hint badge in app.scss.
+// Covers the whole row (.media-section is position: relative) so a click
+// anywhere on it chooses the profile, with its focus ring around the row.
+.congregation-choose {
+  appearance: none;
+  background: none;
+  border: 0;
+  border-radius: inherit;
+  cursor: pointer;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+}
+
+// The row's content is only layout, drawn above .congregation-choose (every
+// .q-item gets z-index: 1500, see app.scss), so clicks pass through it to
+// that button - except on the menu button, which opens its menu instead.
+.media-section.congregation > .q-item {
+  pointer-events: none;
+}
+
 .congregation-dots-btn {
   opacity: 0.5;
+  pointer-events: auto;
   transition: opacity 0.15s ease;
+}
+
+// ...but not while a switch is in progress (see .congregation--switching).
+.media-section.congregation.congregation--switching .congregation-dots-btn {
+  pointer-events: none;
 }
 
 .media-section.congregation:focus-within .congregation-dots-btn,

@@ -1,8 +1,14 @@
 <template>
+  <!-- Clicking the dimmed backdrop closes the fullscreen preview. It's a
+       button, but out of the tab order: any key closes the preview already
+       (see the keydown listener below). -->
   <transition name="media-preview-backdrop">
-    <div
+    <button
       v-if="modalOpen"
+      :aria-label="t('close')"
       class="media-preview-backdrop"
+      tabindex="-1"
+      type="button"
       @click="modalOpen = false"
     />
   </transition>
@@ -1510,6 +1516,10 @@ onMounted(() => {
   height: 100dvh;
   z-index: 10000;
   cursor: zoom-out;
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
 }

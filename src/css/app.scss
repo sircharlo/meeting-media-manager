@@ -1171,6 +1171,16 @@ body.body--dark .media-tag--song .media-tag__value {
   padding: 32px 8px 8px;
 }
 
+// A Study Bible chapter with no media is a disabled button, but keeps full
+// opacity: its gray label (DialogStudyBible.vue) is the "unavailable" cue,
+// and Quasar's .disabled fading would make it hard to read. Only !important
+// beats Quasar's own !important .disabled rule - and it lives here rather than
+// in the component because SonarCloud honors NOSONAR in .scss files but not
+// in .vue <style> blocks.
+.q-btn.study-bible-chapter-unavailable.disabled {
+  opacity: 1 !important; /* NOSONAR: overrides Quasar's !important .disabled opacity */
+}
+
 .sortable-media.drop-here {
   min-height: 50px;
 }

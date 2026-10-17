@@ -664,3 +664,21 @@ describe('MediaPreview canvas frame geometry', () => {
     expect(context.clearRect).toHaveBeenCalledWith(0, 0, 320, 180);
   });
 });
+
+describe('MediaPreview fullscreen backdrop', () => {
+  it('closes the fullscreen preview from a backdrop button kept out of the tab order', async () => {
+    const currentState = seedStores();
+    currentState.mediaPlaying.url = IMAGE_URL;
+    const wrapper = mountPreview();
+    await flushPromises();
+
+    await wrapper.find('button.media-preview').trigger('click');
+    const backdrop = wrapper.find('.media-preview-backdrop');
+    expect(backdrop.element.tagName).toBe('BUTTON');
+    expect(backdrop.attributes('tabindex')).toBe('-1');
+    expect(backdrop.attributes('aria-label')).toBeTruthy();
+
+    await backdrop.trigger('click');
+    expect(wrapper.find('.media-preview-backdrop').exists()).toBe(false);
+  });
+});

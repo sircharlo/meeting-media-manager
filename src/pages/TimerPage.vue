@@ -128,15 +128,16 @@
     </transition>
 
     <!-- Hand alert: someone on Zoom raised their hand (or the operator
-         switched it on), shown big enough to catch the chairman's eye. -->
+         switched it on), shown big enough to catch the chairman's eye.
+         An <output> is a status region by itself; its children are spans
+         (it only takes phrasing content), laid out as blocks by its flexbox. -->
     <transition name="q-transition--scale">
-      <div
+      <output
         v-if="timerData?.handAlertActive"
         aria-live="polite"
         class="hand-alert"
-        role="status"
       >
-        <div class="hand-alert__hand">
+        <span class="hand-alert__hand">
           <svg
             aria-hidden="true"
             class="hand-alert__icon"
@@ -147,11 +148,14 @@
               d="M22 58c-5 0-9-3-11-7L4 36c-1-3 1-6 4-6s4 2 5 4l4 8V12c0-2 2-4 4-4s4 2 4 4v18h2V7c0-2 2-4 4-4s4 2 4 4v23h2V10c0-2 2-4 4-4s4 2 4 4v20h2V17c0-2 2-4 4-4s4 2 4 4v27c0 8-6 14-14 14H22z"
             />
           </svg>
-        </div>
-        <div v-if="timerData?.handAlertNames?.length" class="hand-alert__names">
+        </span>
+        <span
+          v-if="timerData?.handAlertNames?.length"
+          class="hand-alert__names"
+        >
           {{ timerData.handAlertNames.join(' · ') }}
-        </div>
-      </div>
+        </span>
+      </output>
     </transition>
 
     <!-- Ahead/Behind overlay -->

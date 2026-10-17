@@ -285,7 +285,7 @@ def update_index(
         new_export = f"const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {{\n  {keys_str},\n}};"
         updated = re.sub(r"const\s+messages:\s*Partial<Record<LanguageValue,\s*Partial<typeof\s*en>>>\s*=\s*\{[\s\S]*?\};", new_export, updated)
 
-    path.write_text(updated, encoding="utf-8")  # NOSONAR: path is one of the two fixed repo index files main() passes in; only the content is derived, from that same file and the local locale JSON
+    path.write_text(updated, encoding="utf-8")  # NOSONAR(S2083) false positive: the "user input" is this fixed repo file's own text (read above), written back to the same path
     print(f"✅  Updated {path}")
 
 

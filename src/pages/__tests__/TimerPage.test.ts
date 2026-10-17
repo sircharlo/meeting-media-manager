@@ -91,3 +91,21 @@ describe('TimerPage - clock-face arc warning colour', () => {
     ).toBe(ORANGE);
   });
 });
+
+describe('TimerPage - hand alert', () => {
+  it('announces a raised hand in an <output> status region, with the names', async () => {
+    const { default: TimerPage } = await import('../TimerPage.vue');
+    wrapper = mount(TimerPage);
+    timerData.value = runningPart({
+      handAlertActive: true,
+      handAlertNames: ['Ann', 'Bob'],
+    });
+    await nextTick();
+    await nextTick();
+
+    const alert = wrapper.find('output.hand-alert');
+    expect(alert.exists()).toBe(true);
+    expect(alert.attributes('aria-live')).toBe('polite');
+    expect(alert.find('.hand-alert__names').text()).toBe('Ann · Bob');
+  });
+});

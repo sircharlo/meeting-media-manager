@@ -27,7 +27,7 @@ afterEach(() => {
 // @click> with no tabindex/role/keyboard handler - a keyboard-only or
 // screen-reader user could not select/deselect a single PDF page at all.
 describe('DialogPdfPageSelection - keyboard page selection', () => {
-  it('toggles a page via Enter/Space on its tile, and exposes the toggle state via aria-pressed', async () => {
+  it('makes each page tile a native toggle button that exposes its state via aria-pressed', async () => {
     const wrapper = mount(DialogPdfPageSelection, {
       attachTo: document.body,
       props: { dialogId: 'pdf-page-selection-test' },
@@ -51,21 +51,19 @@ describe('DialogPdfPageSelection - keyboard page selection', () => {
     // Every page starts selected (selectPdfPages() defaults to "all"), so
     // this is a deselect.
     expect(firstPage.getAttribute('aria-pressed')).toBe('true');
-    expect(firstPage.getAttribute('tabindex')).toBe('0');
-    expect(firstPage.getAttribute('role')).toBe('button');
+    // A native button: reachable with Tab, and the browser turns Enter and
+    // Space into the click below.
+    expect(firstPage.tagName).toBe('BUTTON');
+    expect(firstPage.getAttribute('type')).toBe('button');
 
-    firstPage.dispatchEvent(
-      new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' }),
-    );
+    firstPage.click();
     await nextTick();
     expect(firstPage.getAttribute('aria-pressed')).toBe('false');
     expect(firstPage.classList.contains('pdf-page-thumb--selected')).toBe(
       false,
     );
 
-    firstPage.dispatchEvent(
-      new KeyboardEvent('keydown', { bubbles: true, key: ' ' }),
-    );
+    firstPage.click();
     await nextTick();
     expect(firstPage.getAttribute('aria-pressed')).toBe('true');
     expect(firstPage.classList.contains('pdf-page-thumb--selected')).toBe(true);

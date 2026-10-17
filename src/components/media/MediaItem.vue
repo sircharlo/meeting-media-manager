@@ -29,7 +29,7 @@
     >
       <div class="col-shrink">
         <div
-          class="q-pr-none rounded-borders overflow-hidden relative-position bg-black media-thumbnail-frame"
+          class="q-pr-none rounded-borders overflow-hidden relative-position media-thumbnail-frame"
           :style="{
             opacity: !fileIsAvailable && !streamIsAvailable ? 0.64 : undefined,
           }"
@@ -3288,13 +3288,16 @@ watch(
 
 // A subtle diagonal wash instead of flat black - so the letterboxed edges
 // around a contained image/video, and the audio fallback's own background,
-// read as an intentional frame rather than a missing image.
+// read as an intentional frame rather than a missing image. The black is
+// set here rather than with Quasar's .bg-black, whose !important background
+// shorthand would reset the gradient.
 .media-thumbnail-frame {
+  background-color: black;
   background-image: linear-gradient(
     155deg,
     rgba(255, 255, 255, 0.6),
     rgba(0, 0, 0, 0.8)
-  ) !important; /* NOSONAR: overrides Quasar's !important .bg-black background shorthand, which resets background-image */
+  );
 }
 
 .media-item__time {

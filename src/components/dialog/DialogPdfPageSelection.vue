@@ -26,15 +26,13 @@
             :key="page"
             class="col-4 col-sm-3 col-md-2"
           >
-            <div
-              v-ripple
+            <button
+              v-ripple="NATIVE_BUTTON_RIPPLE"
               :aria-pressed="selectedPages.has(page)"
               class="pdf-page-thumb cursor-pointer rounded-borders-lg relative-position"
               :class="{ 'pdf-page-thumb--selected': selectedPages.has(page) }"
-              role="button"
-              tabindex="0"
+              type="button"
               @click="togglePage(page)"
-              @keydown.enter.space.prevent="togglePage(page)"
             >
               <q-img
                 v-if="thumbnails[page]"
@@ -64,7 +62,7 @@
               <div class="pdf-page-thumb__number text-caption text-center">
                 {{ page }}
               </div>
-            </div>
+            </button>
           </div>
         </div>
       </q-card-section>
@@ -127,6 +125,7 @@
 // guard, so a PDF dragged/dropped or browsed-in directly (MediaCalendarPage's
 // processImportFile) always converted every page, no matter how many.
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import { NATIVE_BUTTON_RIPPLE } from 'src/constants/general';
 import {
   getNrOfPdfPages,
   openPdfThumbnailSession,
@@ -376,10 +375,20 @@ defineExpose({ selectPdfPages });
   overflow-y: auto;
 }
 
+// A native <button> (Enter/Space activation and its pressed state for free),
+// so the UA's button chrome is reset - Quasar's normalize already inherits
+// the font - keeping only the 2px border the selection outline uses.
 .pdf-page-thumb {
+  appearance: none;
+  background: none;
   border: 2px solid transparent;
+  color: inherit;
+  display: block;
   overflow: hidden;
+  padding: 0;
+  text-align: inherit;
   transition: border-color 0.15s ease;
+  width: 100%;
 }
 
 .pdf-page-thumb--selected {
