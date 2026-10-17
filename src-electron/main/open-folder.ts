@@ -1,5 +1,5 @@
 import { shell } from 'electron';
-import { stat } from 'node:fs/promises';
+import { realpath, stat } from 'node:fs/promises';
 import { PLATFORM } from 'src-electron/constants';
 import { captureElectronError } from 'src-electron/main/utils';
 import { log } from 'src/shared/vanilla';
@@ -93,6 +93,25 @@ export async function openFolder(path: unknown): Promise<string> {
   try {
     const stats = await stat(path); // NOSONAR: read-only stat of an absolute path that passed getUnsafeFolderPathReason
     if (!stats.isDirectory()) return 'Path is not a directory';
+
+    // stat follows symlinks, and so does Finder: a symlinked folder is
+    // checked where it really points, or a link to an app bundle would
+    // launch it.
+    if (PLATFORM === 'darwin') {
+      const realPathReason = getUnsafeFolderPathReason(
+        await realpath(path), // NOSONAR: read-only realpath of an existing directory that passed getUnsafeFolderPathReason
+        'darwin',
+      );
+      if (realPathReason) {
+        log(
+          `Refused to open folder: ${realPathReason}`,
+          'electronFilesystem',
+          'warn',
+          path,
+        );
+        return realPathReason;
+      }
+    }
   } catch (error) {
     captureElectronError(error, {
       contexts: { fn: { name: 'openFolder', path } },

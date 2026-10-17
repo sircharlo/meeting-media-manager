@@ -519,14 +519,15 @@ const probeSharedSubfolder = async (sharedPath: string, folder: string) => {
   await rm(testDir, { force: true, recursive: true });
 };
 
-// Each subfolder gets its own uniquely named probe directory, so the probes
-// are independent of one another and can run together.
+// One subfolder at a time, stopping at the first that fails: the caller
+// then reports that folder (always the first failing one in this order) and
+// falls back to userData, and no other probe is left running against a
+// shared folder that has just proved unusable - only to leave its own
+// .health-check-* folder behind when it fails too.
 const probeSharedSubfolders = async (sharedPath: string) => {
-  await Promise.all(
-    SHARED_PATH_HEALTH_FOLDERS.map((folder) =>
-      probeSharedSubfolder(sharedPath, folder),
-    ),
-  );
+  for (const folder of SHARED_PATH_HEALTH_FOLDERS) {
+    await probeSharedSubfolder(sharedPath, folder); // NOSONAR: sequential - stops at the first unusable subfolder
+  }
 };
 
 /**

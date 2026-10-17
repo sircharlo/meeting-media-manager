@@ -61,9 +61,14 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
     // branded template-literal types, assigned plain strings) suppressed
     // TypeScript's separate "object literal is missing the following
     // properties" diagnostic for the object as a whole.
+    // autoStartMusic, enableMediaDisplayButton, enableMusicButton, excludeTh
+    // and includePrinted are always turned on, whatever the old app stored:
+    // its defaults for them were `false`, and electron-store writes the
+    // defaults into prefs.json, so a stored `false` almost always means
+    // "never touched" rather than "turned off".
     const migratedPrefs: Partial<SettingsValues> = {
       autoStartAtLogin: oldPrefs.app?.autoRunAtBoot || false,
-      autoStartMusic: oldPrefs.meeting?.autoStartMusic ?? true,
+      autoStartMusic: true,
       baseUrl: 'jw.org',
       cacheFolder: oldPrefs.app?.customCachePath || null, // NOSONAR: '' means not set
       congregationName: oldPrefs.app?.congregationName || '',
@@ -83,17 +88,16 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
         oldPrefs.meeting?.shuffleShortcut
       ),
       enableMediaAutoExport: oldPrefs.media?.enableMp4Conversion || false,
-      enableMediaDisplayButton:
-        oldPrefs.media?.enableMediaDisplayButton ?? true,
-      enableMusicButton: oldPrefs.meeting?.enableMusicButton ?? true,
+      enableMediaDisplayButton: true,
+      enableMusicButton: true,
       // enableMusicFadeOut: oldPrefs.meeting?.enableMusicFadeOut || true,
       enableSubtitles: oldPrefs.media?.enableSubtitles || false,
       excludeFootnotes: oldPrefs.media?.excludeFootnotes || false,
-      excludeTh: oldPrefs.media?.excludeTh ?? true,
+      excludeTh: true,
       firstDayOfWeek: 0,
       folderToWatch: '',
       hideMediaLogo: oldPrefs.media?.hideMediaLogo || false,
-      includePrinted: oldPrefs.media?.includePrinted ?? true,
+      includePrinted: true,
       lang: oldPrefs.media?.lang || '',
       langFallback: oldPrefs.media?.langFallback || null, // NOSONAR: '' means not set
       langSubtitles: oldPrefs.media?.langSubs || null, // NOSONAR: '' means not set

@@ -42,7 +42,11 @@ describe('buildNewPrefsObject', () => {
     expect(result.mwDay).toBe('2');
   });
 
-  it('keeps options the old app had turned off and a muted music volume', () => {
+  // The old app wrote its defaults (`false` for these five) into prefs.json,
+  // so a stored `false` can't be told apart from "never touched": the
+  // migration turns them on, as it always has. A volume of 0 is different -
+  // the old default was 100 - so it is kept.
+  it('turns the old app’s off-by-default options on, and keeps a muted music volume', () => {
     const oldPrefs = {
       media: {
         enableMediaDisplayButton: false,
@@ -58,15 +62,15 @@ describe('buildNewPrefsObject', () => {
 
     const result = buildNewPrefsObject(oldPrefs);
 
-    expect(result.autoStartMusic).toBe(false);
-    expect(result.enableMediaDisplayButton).toBe(false);
-    expect(result.enableMusicButton).toBe(false);
-    expect(result.excludeTh).toBe(false);
-    expect(result.includePrinted).toBe(false);
+    expect(result.autoStartMusic).toBe(true);
+    expect(result.enableMediaDisplayButton).toBe(true);
+    expect(result.enableMusicButton).toBe(true);
+    expect(result.excludeTh).toBe(true);
+    expect(result.includePrinted).toBe(true);
     expect(result.musicVolume).toBe(0);
   });
 
-  it('still defaults those options when the old app never saved them', () => {
+  it('turns those options on and uses full volume when the old app never saved them', () => {
     const result = buildNewPrefsObject({} as OldAppConfig);
 
     expect(result.autoStartMusic).toBe(true);

@@ -120,7 +120,9 @@ export const shouldUpdateList = (
 };
 
 interface Store {
-  jwBibleFiles: Partial<Record<JwLangCode, CacheList<Partial<Publication>>>>;
+  // Keyed by the languages the list was built from, joined with '+' (e.g.
+  // 'E' or 'E+F'). Not persisted, so the key format needs no migration.
+  jwBibleFiles: Partial<Record<string, CacheList<Partial<Publication>>>>;
   jwIconsUrl: string;
   jwLanguages: CacheList<JwLanguage>;
   jwMepsLanguages: CacheList<JwMepsLanguage>;

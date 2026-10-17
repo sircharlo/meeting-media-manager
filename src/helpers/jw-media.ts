@@ -3004,8 +3004,15 @@ export const getBibleMedia = async (
     const lang = langwritten ?? currentStateStore.currentSettings?.lang;
     if (!lang) return;
 
+    const languages = getBibleMediaLanguages(langwritten);
+    // Each book comes from the first of these languages that has it, so the
+    // list is cached per language combination: a main-language-only list
+    // (meeting media) must never be served where one that falls back to the
+    // secondary language (Bible dialog) is expected, and vice versa.
+    const cacheKey = languages.join('+');
+
     if (!force) {
-      const bibleFilesList = jwStore.jwBibleFiles?.[lang];
+      const bibleFilesList = jwStore.jwBibleFiles?.[cacheKey];
       if (bibleFilesList && !shouldUpdateList(bibleFilesList, 3)) {
         return bibleFilesList.list;
       }
@@ -3020,14 +3027,13 @@ export const getBibleMedia = async (
       langwritten: '',
       pub: 'nwt',
     };
-    const languages = getBibleMediaLanguages(langwritten);
     const { backupNameNeeded, returnedItems } = await fetchBibleBookMedia(
       publication,
       languages,
     );
     await applyBibleBookBackupNames(returnedItems, backupNameNeeded);
 
-    jwStore.jwBibleFiles[lang] = {
+    jwStore.jwBibleFiles[cacheKey] = {
       list: returnedItems,
       updated: new Date(),
     };
