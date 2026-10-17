@@ -413,12 +413,12 @@ watch(
 .media-section {
   &.custom {
     .custom-text-color {
-      color: var(--bg-color) !important;
+      color: var(--bg-color);
     }
 
     .custom-bg-color {
-      background-color: var(--bg-color) !important;
-      color: var(--text-color) !important;
+      background-color: var(--bg-color);
+      color: var(--text-color);
     }
 
     &:before {

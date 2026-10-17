@@ -1662,11 +1662,6 @@ onBeforeUnmount(() => {
   z-index: 2;
 }
 
-.display-layer.is-audio {
-  background-color: green;
-  opacity: 0 !important;
-}
-
 .display-layer {
   position: absolute;
   top: 0;
@@ -1682,5 +1677,12 @@ onBeforeUnmount(() => {
 .display-layer.is-live {
   opacity: 1;
   z-index: 3;
+}
+
+/* Kept after .is-live (same specificity) so an audio layer stays invisible
+   even while it's the live one. */
+.display-layer.is-audio {
+  background-color: green;
+  opacity: 0;
 }
 </style>

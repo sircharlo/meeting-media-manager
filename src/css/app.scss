@@ -36,9 +36,9 @@
 .app-main-scroll {
   height: calc(100vh - 56px);
   margin-top: 56px;
-  overflow-x: hidden !important;
+  overflow-x: hidden;
   overflow-y: auto;
-  padding-top: 0 !important;
+  padding-top: 0 !important; /* NOSONAR: overrides QPageContainer's inline padding-top (the header height) - margin-top above already offsets the header */
 }
 
 .feature-carousel__scroll::-webkit-scrollbar {
@@ -77,7 +77,7 @@ body.body--dark .feature-carousel__scroll {
   font-family: 'Wt-ClearText-Bold', 'Noto Serif Variable', serif;
   align-content: center;
   text-align: center;
-  color: white !important;
+  color: white;
   font-size: 4vw;
   line-height: 2vw;
   font-weight: 400;
@@ -103,8 +103,8 @@ body.body--dark .feature-carousel__scroll {
   position: absolute;
   bottom: 13vh;
   right: 13vh;
-  color: black !important;
-  line-height: normal !important;
+  color: black;
+  line-height: normal;
   box-sizing: unset;
   background: rgba(255, 255, 255, 0.2);
   border: rgba(255, 255, 255, 0) 1.5vh solid;
@@ -141,9 +141,12 @@ span.etitle {
   font-weight: 500;
 }
 
-.sortable-selected:not(.media-children) {
-  background-color: $sorting-bg !important;
-  border-color: $sorting-border !important;
+// Only MediaItem's root q-item gets .sortable-selected. The .q-item makes
+// this outrank MediaItem's scoped .media-filter-filename-match background
+// (which loads later) without needing !important.
+.q-item.sortable-selected:not(.media-children) {
+  background-color: $sorting-bg;
+  border-color: $sorting-border;
 }
 
 .big-button {
@@ -206,7 +209,7 @@ body.body--light {
   }
 
   .list-primary .q-hoverable:hover {
-    background: $accent-100 !important;
+    background: $accent-100;
   }
 
   .media-section {
@@ -301,11 +304,11 @@ body.body--dark {
   }
 
   .text-secondary {
-    color: $secondary-contrast !important;
+    color: $secondary-contrast !important; /* NOSONAR: overrides Quasar's !important .text-secondary color */
   }
 
   .list-primary .q-hoverable:hover {
-    background: $accent-300-dark !important;
+    background: $accent-300-dark;
   }
 
   .media-section {
@@ -343,9 +346,9 @@ body.body--dark {
     border-color: $accent-200-dark;
   }
 
-  .sortable-selected:not(.media-children) {
-    background-color: $sorting-bg-dark !important;
-    border-color: $sorting-border-dark !important;
+  .q-item.sortable-selected:not(.media-children) {
+    background-color: $sorting-bg-dark;
+    border-color: $sorting-border-dark;
   }
 
   .q-menu,
@@ -363,7 +366,7 @@ body.body--dark {
 
 .list-primary .q-hoverable:hover {
   > .q-focus-helper {
-    opacity: 0 !important;
+    opacity: 0;
   }
 }
 
@@ -489,7 +492,7 @@ body.body--dark {
 }
 
 .bg-semi-negative {
-  background-color: $negative-semi-transparent !important;
+  background-color: $negative-semi-transparent;
 }
 
 .q-btn {
@@ -1109,7 +1112,7 @@ body.body--dark .media-tag--song .media-tag__value {
 }
 
 .q-drawer .disabled {
-  opacity: 1 !important;
+  opacity: 1 !important; /* NOSONAR: overrides Quasar's !important .disabled opacity */
 }
 
 .rounded-borders-lg {
@@ -1148,30 +1151,36 @@ body.body--dark .media-tag--song .media-tag__value {
 }
 
 .study-bible-item .q-badge {
-  padding: 8px !important;
+  padding: 8px;
 }
 
 .aspect-ratio-1 {
   aspect-ratio: 1;
 }
 
-.col-grid {
+// .col makes this outrank Quasar's `.row > .col { width: auto; max-width:
+// 100% }` (every .col-grid is also a .col inside a .row) without !important.
+.col.col-grid {
   height: auto;
-  width: 3em !important;
-  max-width: 3em !important;
+  width: 3em;
+  max-width: 3em;
   flex: auto;
 }
 
-.gradient-transparent-to-black {
+// Inside a q-img, Quasar gives each direct child of the content slot a flat
+// translucent background (`.q-img__content > div`), which the second
+// selector outranks without !important.
+.gradient-transparent-to-black,
+.q-img__content > .gradient-transparent-to-black {
   background: linear-gradient(
     0deg,
     rgba(0, 0, 0, 0.75) 20%,
     rgba(0, 0, 0, 0) 100%
-  ) !important;
+  );
 }
 
 .study-bible-item .gradient-transparent-to-black {
-  padding: 32px 8px 8px !important;
+  padding: 32px 8px 8px;
 }
 
 .sortable-media.drop-here {
@@ -1184,5 +1193,5 @@ body.body--dark .media-tag--song .media-tag__value {
 .sortable-selected,
 [data-drag-placeholder='true'],
 .q-item {
-  z-index: 1500 !important; // Lower than headers (2000) but still above other content
+  z-index: 1500 !important; /* NOSONAR: overrides the inline z-index: 9999 FormKit sets on the dragged item; lower than headers (2000) but still above other content */
 }

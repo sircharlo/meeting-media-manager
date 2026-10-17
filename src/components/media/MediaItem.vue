@@ -87,7 +87,7 @@
                   <q-badge
                     v-if="media.duration"
                     class="q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm bg-semi-black"
-                    style="padding: 5px !important"
+                    style="padding: 5px"
                     @click="showMediaDurationPopup()"
                   >
                     <q-icon
@@ -131,7 +131,7 @@
                   <div class="bg-semi-black row rounded-borders">
                     <q-badge
                       color="transparent"
-                      style="padding: 5px !important; cursor: pointer"
+                      style="padding: 5px; cursor: pointer"
                       @mousedown="startPan('up')"
                       @mouseleave="stopPan"
                       @mouseup="stopPan"
@@ -141,7 +141,7 @@
                     <q-separator class="bg-grey-8 q-my-xs" vertical />
                     <q-badge
                       color="transparent"
-                      style="padding: 5px !important; cursor: pointer"
+                      style="padding: 5px; cursor: pointer"
                       @mousedown="startPan('down')"
                       @mouseleave="stopPan"
                       @mouseup="stopPan"
@@ -151,7 +151,7 @@
                     <q-separator class="bg-grey-8 q-my-xs" vertical />
                     <q-badge
                       color="transparent"
-                      style="padding: 5px !important; cursor: pointer"
+                      style="padding: 5px; cursor: pointer"
                       @mousedown="startPan('left')"
                       @mouseleave="stopPan"
                       @mouseup="stopPan"
@@ -161,7 +161,7 @@
                     <q-separator class="bg-grey-8 q-my-xs" vertical />
                     <q-badge
                       color="transparent"
-                      style="padding: 5px !important; cursor: pointer"
+                      style="padding: 5px; cursor: pointer"
                       @mousedown="startPan('right')"
                       @mouseleave="stopPan"
                       @mouseup="stopPan"
@@ -186,7 +186,7 @@
                 <q-badge
                   class="q-mr-xs"
                   color="warning"
-                  style="padding: 5px !important; cursor: pointer"
+                  style="padding: 5px; cursor: pointer"
                   @click="zoomReset(true)"
                 >
                   <q-icon color="white" name="mmm-reset" />
@@ -209,7 +209,7 @@
                   <q-badge
                     color="transparent"
                     :disabled="!mediaZoom || mediaZoom < 1.01 || undefined"
-                    style="padding: 5px !important; cursor: pointer"
+                    style="padding: 5px; cursor: pointer"
                     @mousedown="startZoom('out')"
                     @mouseleave="stopZoom"
                     @mouseup="stopZoom"
@@ -221,7 +221,7 @@
                   <q-badge
                     color="transparent"
                     :disabled="!mediaZoom || mediaZoom > 4.99 || undefined"
-                    style="padding: 5px !important; cursor: pointer"
+                    style="padding: 5px; cursor: pointer"
                     @mousedown="startZoom('in')"
                     @mouseleave="stopZoom"
                     @mouseup="stopZoom"
@@ -261,7 +261,7 @@
             <q-badge
               v-if="media.duration"
               class="absolute-top-left q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm bg-semi-black"
-              style="padding: 5px !important"
+              style="padding: 5px"
               @click="showMediaDurationPopup()"
             >
               <q-icon
@@ -3289,7 +3289,7 @@ watch(
     155deg,
     rgba(255, 255, 255, 0.6),
     rgba(0, 0, 0, 0.8)
-  ) !important;
+  ) !important; /* NOSONAR: overrides Quasar's !important .bg-black background shorthand, which resets background-image */
 }
 
 .media-item__time {

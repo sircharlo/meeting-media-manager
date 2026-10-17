@@ -568,8 +568,12 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
 // visible on screen *before* this dialog opens: it would otherwise stay
 // stacked on top for as long as both are showing. Force this dialog itself
 // above that, so opening it always covers whatever's already live.
-:global([data-congregation-switcher]) {
-  z-index: $congregation-switcher-z-dialog !important;
+//
+// Here and below, the Quasar class in each selector (.q-dialog, .q-menu,
+// .q-tooltip) makes it outrank Quasar's own single-class z-index rule for
+// that element (.fullscreen, .q-menu, .q-tooltip) without !important.
+:global(.q-dialog[data-congregation-switcher]) {
+  z-index: $congregation-switcher-z-dialog;
 }
 
 // The 3-dot overflow q-menu teleports to its own portal, a sibling of the
@@ -578,16 +582,16 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
 // z-index it would otherwise win on DOM order alone since it opens after the
 // dialog). Without this, the menu still opens (confirmed structurally) but
 // renders invisibly behind the dialog's own now-higher-stacked content.
-:global([data-congregation-switcher-menu]) {
-  z-index: $congregation-switcher-z-portal !important;
+:global(.q-menu[data-congregation-switcher-menu]) {
+  z-index: $congregation-switcher-z-portal;
 }
 
 // Same root cause once more: the dots button's own q-tooltip (added so its
 // otherwise-icon-only action is screen-reader- and glance-discoverable) is a
 // third independently-teleported portal, defaulting to Quasar's tooltip
 // z-index which also sits below this dialog's forced 9600.
-:global([data-congregation-switcher-tooltip]) {
-  z-index: $congregation-switcher-z-portal !important;
+:global(.q-tooltip[data-congregation-switcher-tooltip]) {
+  z-index: $congregation-switcher-z-portal;
 }
 
 // Same root cause again, one level deeper: the delete-confirmation
@@ -596,8 +600,8 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
 // boost it stays at Quasar's default dialog z-index (6000) and renders
 // invisibly *behind* this dialog's own forced 9600, even though it's
 // meant to sit on top of it as the next step in the flow.
-:global([data-congregation-switcher-confirm]) {
-  z-index: $congregation-switcher-z-confirm !important;
+:global(.q-dialog[data-congregation-switcher-confirm]) {
+  z-index: $congregation-switcher-z-confirm;
 }
 
 // Same root cause a third time, in the other direction: a notification
@@ -614,7 +618,7 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
 // dismissed and removed from the DOM, `:has()` stops matching and the list
 // falls back to Quasar's default 9500 automatically.
 :global(.q-notifications__list:has(.congregation-switcher-notify)) {
-  z-index: $congregation-switcher-z-notify !important;
+  z-index: $congregation-switcher-z-notify;
 }
 
 .congregation-switcher {
