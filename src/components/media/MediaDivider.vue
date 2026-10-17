@@ -2,10 +2,7 @@
   <q-item
     :class="['media-divider hover-reveal-group', { 'is-editing': isEditing }]"
     dense
-    :style="{
-      ...dividerStyles,
-      '--divider-bg-color': divider.bgColor || 'var(--q-secondary)',
-    }"
+    :style="dividerStyles"
   >
     <q-item-section avatar>
       <q-icon
@@ -232,11 +229,6 @@ whenever(isEditing, () => {
   margin: 4px 0 4px -1px;
   transition: all 0.2s ease;
   border-radius: 0px;
-
-  &.sortable-selected {
-    transform: none;
-    background-color: var(--divider-bg-color);
-  }
 
   &.is-editing {
     box-shadow: 0 0 0 2px var(--q-primary);

@@ -219,10 +219,6 @@ body.body--light {
       0px 2px 12px 0px rgba(35, 60, 120, 0.06),
       0px 6px 20px 0px rgba(35, 60, 120, 0.05);
 
-    & .q-item.selected-to-drag {
-      background-color: $accent-200;
-    }
-
     &
       .clip:not(.bg-accent-100):not(.bg-accent-100-transparent):not(
         .bg-accent-200
@@ -336,10 +332,6 @@ body.body--dark {
       0 1px 5px $shadow,
       0 2px 2px $shadow,
       0 3px 1px -2px $shadow;
-  }
-
-  & .q-item.selected-to-drag {
-    background-color: $accent-300-dark;
   }
 
   .media-children {
@@ -489,10 +481,6 @@ body.body--dark {
 
 .bg-white-transparent {
   background: $whiteTransparent;
-}
-
-.bg-semi-negative {
-  background-color: $negative-semi-transparent;
 }
 
 .q-btn {
@@ -1189,9 +1177,7 @@ body.body--dark .media-tag--song .media-tag__value {
 
 // Override FormKit drag and drop z-index to prevent covering headers
 // FormKit applies z-index: 9999 to dragged items, but headers have z-index: 2000
-[data-dragging='true'],
 .sortable-selected,
-[data-drag-placeholder='true'],
 .q-item {
   z-index: 1500 !important; /* NOSONAR: overrides the inline z-index: 9999 FormKit sets on the dragged item; lower than headers (2000) but still above other content */
 }
