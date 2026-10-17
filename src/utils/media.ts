@@ -13,6 +13,7 @@ import {
   ZIP_EXTENSIONS,
 } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 
 const {
   fileUrlToPath,
@@ -421,6 +422,58 @@ const isTruncatedMediaError = (error: unknown) => {
 };
 
 /**
+ * How long a hidden media element may take to read what's needed from a
+ * file (its duration, or a frame for its thumbnail) before that's given up
+ * on. A file that never loads and never errors - a cloud placeholder that
+ * never finishes downloading, a stalled network share - would otherwise be
+ * waited on forever, along with anything queued behind it (such as the
+ * watched-folder queue). Generous for a cloud file still being downloaded on
+ * access, and short enough that a duration lookup and a thumbnail together
+ * stay within the watched-folder queue's 2-minute watchdog.
+ */
+export const MEDIA_ELEMENT_TIMEOUT_MS = 45_000;
+
+export class MediaElementTimeoutError extends Error {
+  constructor(mediaPath: string) {
+    super(`Gave up loading ${mediaPath} after ${MEDIA_ELEMENT_TIMEOUT_MS} ms`);
+    this.name = 'MediaElementTimeoutError';
+  }
+}
+
+/**
+ * Waits for `loading` - work that settles once `element` has read enough of
+ * `mediaPath` - for up to MEDIA_ELEMENT_TIMEOUT_MS. Past that, `element`
+ * stops reading the file (releasing it) and a MediaElementTimeoutError is
+ * thrown. The element's handlers are detached first, so emptying it can't
+ * run them.
+ * @param loading Settles when the element has loaded what's needed.
+ * @param element The media element reading the file.
+ * @param mediaPath The file being read, for the error message.
+ * @returns What `loading` resolves to.
+ */
+export const withMediaElementTimeout = async <T>(
+  loading: Promise<T>,
+  element: HTMLMediaElement,
+  mediaPath: string,
+): Promise<T> => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      element.onerror = null;
+      element.onloadedmetadata = null;
+      element.removeAttribute('src');
+      element.load();
+      reject(new MediaElementTimeoutError(mediaPath));
+    }, MEDIA_ELEMENT_TIMEOUT_MS);
+  });
+  try {
+    return await Promise.race([loading, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+};
+
+/**
  * Gets the metadata of a media file.
  * @param mediaPath The path to the media file.
  * @returns The metadata of the media file.
@@ -461,8 +514,8 @@ export const getMetadataFromMediaPath = async (
     }
 
     if (!metadata.format.duration) {
-      await new Promise<void>((resolve, reject) => {
-        const video = document.createElement('video');
+      const video = document.createElement('video');
+      const loading = new Promise<void>((resolve, reject) => {
         video.src = pathToFileURL(mediaPath);
         video.onloadedmetadata = () => {
           metadata = {
@@ -490,10 +543,16 @@ export const getMetadataFromMediaPath = async (
         };
         video.load();
       });
+      await withMediaElementTimeout(loading, video, mediaPath);
     }
     return metadata;
   } catch (error) {
     if (error instanceof Event || isTruncatedMediaError(error)) {
+      return defaultMetadata;
+    }
+    // Environmental (a file that never loads), not a bug: no report.
+    if (error instanceof MediaElementTimeoutError) {
+      log(error.message, 'mediaProcessing', 'warn');
       return defaultMetadata;
     }
     errorCatcher(error, {
