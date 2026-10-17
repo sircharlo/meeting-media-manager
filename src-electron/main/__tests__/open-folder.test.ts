@@ -1,19 +1,24 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const openPathMock = vi.fn();
+const realpathMock = vi.fn();
 const statMock = vi.fn();
 const captureElectronErrorMock = vi.fn();
+const platform = vi.hoisted(() => ({ value: 'linux' as NodeJS.Platform }));
 
 vi.mock('electron', () => ({
   shell: { openPath: openPathMock },
 }));
 
 vi.mock('node:fs/promises', () => ({
+  realpath: realpathMock,
   stat: statMock,
 }));
 
 vi.mock('src-electron/constants', () => ({
-  PLATFORM: 'linux',
+  get PLATFORM() {
+    return platform.value;
+  },
 }));
 
 vi.mock('src-electron/main/utils', () => ({
@@ -91,6 +96,39 @@ describe('getUnsafeFolderPathReason', () => {
 describe('openFolder', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    platform.value = 'linux';
+  });
+
+  it('refuses a symlinked folder that points at an app bundle on macOS', async () => {
+    platform.value = 'darwin';
+    statMock.mockResolvedValue({ isDirectory: () => true });
+    realpathMock.mockResolvedValue('/Applications/Calculator.app');
+    const { openFolder } = await import('../open-folder');
+
+    await expect(openFolder('/Users/me/Recordings')).resolves.toBe(
+      'Path is an application bundle',
+    );
+    expect(openPathMock).not.toHaveBeenCalled();
+  });
+
+  it('opens a symlinked folder that points at a plain folder on macOS', async () => {
+    platform.value = 'darwin';
+    statMock.mockResolvedValue({ isDirectory: () => true });
+    realpathMock.mockResolvedValue('/Volumes/Media/Recordings');
+    openPathMock.mockResolvedValue('');
+    const { openFolder } = await import('../open-folder');
+
+    await expect(openFolder('/Users/me/Recordings')).resolves.toBe('');
+    expect(openPathMock).toHaveBeenCalledWith('/Users/me/Recordings');
+  });
+
+  it('does not resolve symlinks outside macOS', async () => {
+    statMock.mockResolvedValue({ isDirectory: () => true });
+    openPathMock.mockResolvedValue('');
+    const { openFolder } = await import('../open-folder');
+
+    await expect(openFolder('/home/me/Recordings')).resolves.toBe('');
+    expect(realpathMock).not.toHaveBeenCalled();
   });
 
   it('opens an existing directory', async () => {

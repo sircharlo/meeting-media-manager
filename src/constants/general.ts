@@ -11,3 +11,9 @@ export const DOWNLOAD_ROW_AUTO_COLLAPSE_MS = 4000;
 // own `xs` (600px) breakpoint already handles - see EmptyState.vue and
 // MediaItem.vue.
 export const TINY_SCREEN_WIDTH = 550;
+
+// v-ripple options for a native <button>. The browser already turns Enter
+// and Space into a click, so v-ripple's own key handling (Enter by default)
+// would show a second ripple on top of the click's; and a keyboard click has
+// no pointer position, so the ripple starts from the center.
+export const NATIVE_BUTTON_RIPPLE = { center: true, keyCodes: [] as number[] };

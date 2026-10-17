@@ -402,7 +402,7 @@
                 class="col col-xs-6 col-sm-4 col-md-3 col-lg-2"
               >
                 <button
-                  v-ripple
+                  v-ripple="NATIVE_BUTTON_RIPPLE"
                   class="publication-media-tile"
                   :class="{
                     'cursor-pointer': !isProcessing,
@@ -509,6 +509,7 @@ import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue
 import DialogPdfPageSelection from 'components/dialog/DialogPdfPageSelection.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { NATIVE_BUTTON_RIPPLE } from 'src/constants/general';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import {
@@ -1652,6 +1653,7 @@ watch(
 // full-width tile they replaced. A column flexbox rather than display: block,
 // because a button vertically centers its content when it's taller than it
 // (these are full-height in their grid row) where the old div started at the top.
+// position: relative keeps v-ripple's absolutely positioned layer inside it.
 .publication-media-tile {
   appearance: none;
   background: none;
@@ -1660,6 +1662,7 @@ watch(
   display: flex;
   flex-direction: column;
   padding: 0;
+  position: relative;
   text-align: inherit;
   width: 100%;
 }

@@ -210,7 +210,7 @@
         </q-list>
 
         <button
-          v-ripple
+          v-ripple="NATIVE_BUTTON_RIPPLE"
           class="congregation-new cursor-pointer"
           type="button"
           @click="createNewCongregation"
@@ -249,6 +249,7 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { NATIVE_BUTTON_RIPPLE } from 'src/constants/general';
 import { removeCongregationCache } from 'src/helpers/cleanup';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadSongbookVideos } from 'src/helpers/jw-media';
@@ -679,6 +680,7 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
 // A native <button> (Enter/Space activation and the button role for free),
 // so the UA's button chrome is reset here - Quasar's normalize already
 // inherits the font - to keep it looking like the full-width dashed tile.
+// position: relative keeps v-ripple's absolutely positioned layer inside it.
 .congregation-new {
   align-items: center;
   appearance: none;
@@ -691,6 +693,7 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
   justify-content: center;
   margin-top: 0.5em;
   padding: 0.75em;
+  position: relative;
   text-align: inherit;
   width: 100%;
 }

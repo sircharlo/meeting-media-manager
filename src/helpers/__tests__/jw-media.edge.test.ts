@@ -1,4 +1,4 @@
-import type { Publication } from 'src/types';
+import type { MultimediaItem, Publication } from 'src/types';
 
 import { fetchPubMediaLinks } from 'src/utils/api';
 import { findBestResolution, isMediaLink } from 'src/utils/jw';
@@ -668,6 +668,40 @@ describe('jw-media edge cases', () => {
       const list = await getBibleBookList();
 
       expect(list.map((book) => book.booknum)).toEqual(allBooks);
+    });
+
+    it('still uses the fallback language once meeting media has looked up a Bible book in the main language', async () => {
+      // A meeting part plays a Bible reading that isn't on disk yet: its
+      // download looks the book up in a list of the main language alone.
+      const { processMissingMediaInfo } = await import('../jw-media');
+      await processMissingMediaInfo({
+        allMedia: [
+          {
+            BookNumber: 1,
+            ChapterNumber: 1,
+            KeySymbol: 'nwt',
+            MimeType: 'audio/mpeg',
+          } as MultimediaItem,
+        ],
+      });
+      expect(
+        vi
+          .mocked(fetchPubMediaLinks)
+          .mock.calls.some(
+            ([publication]) =>
+              publication.booknum === 10 && publication.langwritten === 'X',
+          ),
+      ).toBe(true);
+
+      // The Bible dialog opened afterwards still lists book 10 from the
+      // fallback language, not as a book without a recording.
+      const books = (await getBibleBookList()).filter(
+        (book) => book.booknum === 10,
+      );
+
+      expect(books).toHaveLength(1);
+      expect(books[0]?.pubName).toBe('Y book 10');
+      expect(Object.keys(books[0]?.files ?? {})).toEqual(['Y']);
     });
   });
 });
