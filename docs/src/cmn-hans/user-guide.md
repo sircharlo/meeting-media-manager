@@ -82,7 +82,7 @@ M³ 会按聚会类型和节目部分自动整理媒体：
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **缩放/平移** —— 对图片使用鼠标滚轮缩放，并通过拖动来平移
+- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
 - **实时预览** —— 启用后，可以在主应用程序中预览观众看到的媒体窗口
 - **播放速度** —— 在设置中启用后，可以从媒体项目菜单调整音频和视频的播放速度
 
@@ -103,8 +103,8 @@ M³ 会按聚会类型和节目部分自动整理媒体：
 
 适用于图片和视频：
 
-- **缩放** —— 使用鼠标滚轮或缩略图上的缩放控制
-- **平移** —— 在缩略图上按住并拖动
+- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
+- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
 - **重置** —— 一键恢复原始缩放比例
 
 #### 键盘快捷键 {#user-guide-keyboard-shortcuts}

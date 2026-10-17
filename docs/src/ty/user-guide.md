@@ -82,7 +82,7 @@ E hōro’a te ta’o’o rorouira i te mau taviri fa’atere ato’a:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- Fa’a’ahi / Fa’a’ati — ’A fa’a’ohipa i te huira o te ’iri nō te fa’a’ahi, ’a tu’u nō te fa’a’ati (nō te mau hoho’a)
+- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
 - Fa’a’ite-ātea i te ha’amata-ra’a - Ia fa’a’ohipahia, a fa’a’ite i te hō’ē fa’a’ite-ātea o te ha’amāramarama o te rāve’a ha’ata’i nō te feiā mata’ita’i i roto i te tauihaa matamua
 - Tere o te fa’ata’i-ra’a - Ia fa’a’ohipahia i roto i te mau fa’anahora’a, a fa’atano i te tere o te haruharu ’e te hōho’a mai roto mai i te tāpura fa’anahora’a o te rāve’a ha’ata’i
 
@@ -103,8 +103,8 @@ E hōro’a te ta’o’o rorouira i te mau taviri fa’atere ato’a:
 
 Nō te mau hoho’a e te mau video:
 
-- Fa’arahi/Fa’aiti - ’Ia fa’a’ohipa i te huira o te ’imo’i aore rā te mau rāve’a fa’arahi/fa’aiti i ni’a i te hōho’a iti
-- Fa’anu’u - ’Ia tu’i i te hōho’a iti e ’ia tu’i-turi ’ei fa’anu’u i te hōho’a
+- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
+- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
 - Fa’aho’i i te rahira’a tumu - ’Ia tu’i i te reira nō te fa’aho’i i te rahira’a hōho’a i tō na huru mātāmua
 
 #### Mau rāve’a poto nō te tāpapa-matini {#user-guide-keyboard-shortcuts}

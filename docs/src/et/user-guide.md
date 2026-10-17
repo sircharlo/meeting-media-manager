@@ -82,7 +82,7 @@ Meediamängija pakub põhjalikke juhtnuppe:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Suurenda/Liiguta** – Kasuta hiirerulli suurendamiseks, lohista pildi liigutamiseks
+- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
 - **Reaalajas eelvaade** – Kui see on sisse lülitatud, kuvatakse peaaknas vaatajaskonna meediaakna eelvaade
 - **Taasesituskiirus** – Kui see on seadetes sisse lülitatud, saad meediaelemendi kontekstimenüüst reguleerida heli ja video taasesituskiirust
 
@@ -103,8 +103,8 @@ Määra meediale kohandatud algus- ja lõpuajad:
 
 Piltide ja videote puhul:
 
-- **Suum sisse/välja** – Kasuta hiirerulli või pisipildi suumikontrolle
-- **Nihutamine** – Klõpsa ja lohista, et pilti ümber paigutada
+- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
+- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
 - **Suurenduse lähtestamine** – Ühe klõpsuga algvaatele
 
 #### Kiirklahvid {#user-guide-keyboard-shortcuts}
