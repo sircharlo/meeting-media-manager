@@ -192,6 +192,7 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { sleep } from 'src/utils/general';
+import { mmmIconMapFn } from 'src/utils/icon-map';
 import {
   isAudio,
   isExpectedMediaAccessError,
@@ -219,23 +220,7 @@ const { getScreenAccessStatus, PLATFORM } = globalThis.electronApi;
 
 const $q = useQuasar();
 
-$q.iconMapFn = (iconName) => {
-  if (iconName.startsWith('chevron_')) {
-    iconName = iconName.replace('chevron_', 'mmm-');
-  } else if (iconName.startsWith('keyboard_arrow_')) {
-    iconName = iconName.replace('keyboard_arrow_', 'mmm-');
-  } else if (iconName.startsWith('arrow_drop_')) {
-    iconName = 'mmm-dropdown-arrow';
-  } else if (iconName === 'cancel' || iconName === 'close') {
-    iconName = 'clear';
-  }
-  if (!iconName.startsWith('mmm-')) {
-    iconName = 'mmm-' + iconName;
-  }
-  return {
-    cls: iconName,
-  };
-};
+$q.iconMapFn = mmmIconMapFn;
 
 // UX-11 (full-audit-2026-09-05.md): clearing an element's src as part of
 // deliberate teardown below can fire a spurious `error` event on some

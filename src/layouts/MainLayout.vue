@@ -170,6 +170,7 @@ import { useJwStore } from 'src/stores/jw';
 import { fetchYeartext } from 'src/utils/api';
 import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
+import { mmmIconMapFn } from 'src/utils/icon-map';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
@@ -189,23 +190,7 @@ useMeta({
 // Icon mapping
 const $q = useQuasar();
 
-$q.iconMapFn = (iconName) => {
-  if (iconName.startsWith('chevron_')) {
-    iconName = iconName.replace('chevron_', 'mmm-');
-  } else if (iconName.startsWith('keyboard_arrow_')) {
-    iconName = iconName.replace('keyboard_arrow_', 'mmm-');
-  } else if (iconName.startsWith('arrow_drop_')) {
-    iconName = 'mmm-dropdown-arrow';
-  } else if (iconName === 'cancel' || iconName === 'close') {
-    iconName = 'clear';
-  }
-  if (!iconName.startsWith('mmm-')) {
-    iconName = 'mmm-' + iconName;
-  }
-  return {
-    cls: iconName,
-  };
-};
+$q.iconMapFn = mmmIconMapFn;
 
 // Routes and translations
 const router = useRouter();

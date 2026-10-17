@@ -92,13 +92,12 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { compiles, fixLinkedMessageSyntax } from './fix-i18n-locales.mjs';
+import { crowdinRequest, getConfig, listAll } from './lib/crowdin-api.mjs';
 
-const API_VERSION = '/api/v2';
 const I18N_SOURCE_PATH = 'src/i18n/en.json';
 const DOCS_SOURCE_PREFIX = 'docs/src/en/';
 const DOCS_SRC_DIR = 'docs/src';
 const RELEASE_NOTES_SOURCE_PATH = 'release-notes/en.md';
-const PAGE_SIZE = 500;
 const TYPOGRAPHIC_QUOTES = '‚‘’‛“”„‟';
 
 // Matches a hero-action link string's Crowdin context, e.g.
@@ -145,7 +144,7 @@ function computeAnchorFix(enText, translationText, usedAnchors) {
 // `@:key`, `@:{key}` and `@:{'key'}` spellings. Deliberately unicode-safe
 // (`[\w-]` would stop at ü/ö/ä and slice German compounds in half).
 const LINK_TARGET_RE = /@:\{?'?([^'}\s]+)'?\}?/g;
-const PARAM_NAME_RE = /\{([\w]+)\}/g;
+const PARAM_NAME_RE = /\{(\w+)\}/g;
 
 /**
  * Repair dangling i18n link/param targets (class 5) by aligning them with
@@ -406,38 +405,6 @@ async function createTranslations(ctx, creates, label) {
   }
 }
 
-async function crowdinRequest(
-  baseUrl,
-  token,
-  path,
-  { body, method = 'GET' } = {},
-) {
-  const response = await fetch(`${baseUrl}${API_VERSION}${path}`, {
-    body: body === undefined ? undefined : JSON.stringify(body),
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Bearer ${token}`,
-      ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
-    },
-    method,
-  });
-
-  if (!response.ok) {
-    const detail = await response.text().catch(() => '');
-    const suffix = detail ? `: ${detail.slice(0, 400)}` : '';
-    const error = new Error(
-      `Crowdin API ${method} ${path} -> ${response.status} ${response.statusText}${suffix}`,
-    );
-    // Keep the raw body so callers can inspect structured error payloads
-    // (e.g. per-op indices in ErrorPatchCollectionResource).
-    error.body = detail;
-    throw error;
-  }
-
-  if (response.status === 204) return null;
-  return response.json();
-}
-
 async function deleteTmSegment(ctx, tmId, segmentId, label) {
   try {
     await crowdinRequest(
@@ -449,31 +416,6 @@ async function deleteTmSegment(ctx, tmId, segmentId, label) {
   } catch (error) {
     ctx.failures.push(`${label}: ${error.message}`);
   }
-}
-
-// ── Config ───────────────────────────────────────────────────────────────────
-
-function getConfig() {
-  const token = process.env.CROWDIN_PERSONAL_TOKEN;
-  if (!token) {
-    throw new Error(
-      'Missing CROWDIN_PERSONAL_TOKEN env var (create one at https://crowdin.com/settings#api).',
-    );
-  }
-
-  const projectId =
-    process.env.CROWDIN_PROJECT_ID ?? parseProjectIdFromCrowdinYml();
-  if (!projectId) {
-    throw new Error(
-      'Missing CROWDIN_PROJECT_ID env var and no project_id found in crowdin.yml.',
-    );
-  }
-
-  return {
-    baseUrl: process.env.CROWDIN_BASE_URL ?? 'https://api.crowdin.com',
-    projectId,
-    token,
-  };
 }
 
 function getFailedPatchIndices(body) {
@@ -503,25 +445,6 @@ function getFailedPatchIndices(body) {
 
 function isCorruptedSegment(text) {
   return CORRUPTION_SIGNATURES.some((signature) => signature.test(text));
-}
-
-async function listAll(baseUrl, token, path) {
-  const items = [];
-  let offset = 0;
-
-  for (;;) {
-    const separator = path.includes('?') ? '&' : '?';
-    const pagePath = `${path}${separator}limit=${PAGE_SIZE}&offset=${offset}`;
-    const page = await crowdinRequest(baseUrl, token, pagePath); // NOSONAR: sequential - paginated, stops at the last page
-    const rows = page.data ?? [];
-    for (const row of rows) {
-      items.push(row.data);
-    }
-    if (rows.length < PAGE_SIZE) break;
-    offset += PAGE_SIZE;
-  }
-
-  return items;
 }
 
 function listFileTranslations(ctx, language, fileId) {
@@ -626,19 +549,6 @@ function parseArgs(argv) {
   }
 
   return args;
-}
-
-function parseProjectIdFromCrowdinYml() {
-  try {
-    const content = readFileSync(
-      resolve(process.cwd(), 'crowdin.yml'),
-      'utf-8',
-    );
-    const match = /^project_id:\s*['"]?(\d+)['"]?\s*$/m.exec(content);
-    return match?.[1] ?? null;
-  } catch {
-    return null;
-  }
 }
 
 async function patchTranslations(ctx, ops, label) {
@@ -954,7 +864,7 @@ async function repairI18nLinkTargets(ctx, file) {
       .filter(
         (string) =>
           typeof string.text === 'string' &&
-          (string.text.includes('@:') || /\{[\w]+\}/.test(string.text)),
+          (string.text.includes('@:') || /\{\w+\}/.test(string.text)),
       )
       .map((string) => [string.id, string.text]),
   );

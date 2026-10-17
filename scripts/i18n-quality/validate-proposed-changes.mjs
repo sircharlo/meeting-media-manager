@@ -43,12 +43,26 @@ const VALID_CATEGORIES = new Set(['phrasing', 'terminology']);
 // trailing sentence punctuation, unlike cleanup-crowdin.mjs's same-purpose
 // regex.
 const LINK_TARGET_RE = /@:\{?'?([^'}\s,.;:!?)]+)'?\}?/g;
-const PARAM_NAME_RE = /\{([\w]+)\}/g;
+const PARAM_NAME_RE = /\{(\w+)\}/g;
+
+// Plain UTF-16 code-unit order - the same order a bare .sort() gives -
+// spelled out so it reads as intended rather than as a forgotten comparator
+// (token lists are only compared as multisets, so this just keeps them in a
+// deterministic order; localeCompare would reorder them for no benefit).
+function compareCodeUnits(a, b) {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}
 
 function extractTokens(text) {
   return {
-    links: [...text.matchAll(LINK_TARGET_RE)].map((m) => m[1]).sort(),
-    params: [...text.matchAll(PARAM_NAME_RE)].map((m) => m[1]).sort(),
+    links: [...text.matchAll(LINK_TARGET_RE)]
+      .map((m) => m[1])
+      .sort(compareCodeUnits),
+    params: [...text.matchAll(PARAM_NAME_RE)]
+      .map((m) => m[1])
+      .sort(compareCodeUnits),
   };
 }
 

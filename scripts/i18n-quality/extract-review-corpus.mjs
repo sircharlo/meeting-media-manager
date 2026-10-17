@@ -57,7 +57,7 @@ const VERSION_HEADER_PATTERN = /^##(?!#)\s+v?\d+\.\d+\.\d+/;
 // Russian "@:key,") would otherwise extract a different token shape per
 // language purely from incidental trailing characters.
 const LINK_TARGET_RE = /@:\{?'?([^'}\s,.;:!?)]+)'?\}?/g;
-const PARAM_NAME_RE = /\{([\w]+)\}/g;
+const PARAM_NAME_RE = /\{(\w+)\}/g;
 const CORRUPTION_SIGNATURES = [
   new RegExp(String.raw`@:\{[^{}]*[${TYPOGRAPHIC_QUOTES}][^{}]*\}`),
   /@:[ \t]+(?=[\p{L}\p{N}_-])/u,

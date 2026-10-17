@@ -1070,7 +1070,7 @@
                       {{ t('decrease-playback-speed') }}
                     </q-tooltip>
                   </q-btn>
-                  <span
+                  <!-- //NOSONAR: a mouse shortcut - the item's own playback-speed button resets the rate too, and the -/+ buttons here are keyboard-reachable --><span
                     class="text-caption text-weight-bold"
                     style="min-width: 36px; text-align: center"
                     @click.stop="changePlaybackRate(0, true)"

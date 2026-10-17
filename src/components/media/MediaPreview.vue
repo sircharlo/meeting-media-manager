@@ -115,7 +115,7 @@
         {{ previewMode }}
       </button>
       <template v-if="!modalOpen">
-        <span
+        <!-- //NOSONAR: pointer-drag resize grips - @click.stop only keeps a grip click from toggling the preview, so there is no action to mirror for the keyboard --><span
           v-for="handle in resizeHandles"
           :key="handle"
           class="media-preview-resize-handle"
