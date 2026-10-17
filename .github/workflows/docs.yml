@@ -31,8 +31,15 @@ jobs:
         with:
           node-version: 24
           cache: 'yarn'
+      # Linting and testing the docs runs no native code from dependencies,
+      # so their install/postinstall scripts are skipped: a compromised
+      # package then gets no chance to run code at install time.
+      # --mode=skip-build is Yarn 4's install flag for that, and
+      # YARN_ENABLE_SCRIPTS=false the config-level equivalent.
       - name: Install dependencies
-        run: yarn install
+        env:
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: yarn install --mode=skip-build
       - name: Prepare Quasar
         run: yarn quasar prepare
       - name: Lint files
@@ -54,7 +61,11 @@ jobs:
           node-version: 24
           cache: 'yarn'
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
-      - run: yarn install
+      # Same as the quality job: the logos (sharp, prebuilt per platform) and
+      # the VitePress build need no dependency build scripts.
+      - run: yarn install --mode=skip-build
+        env:
+          YARN_ENABLE_SCRIPTS: 'false'
       - run: yarn quasar prepare
       - run: |
           yarn generate:logos
