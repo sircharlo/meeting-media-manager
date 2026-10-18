@@ -82,7 +82,7 @@ Il lettore multimediale offre comandi completi:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
+- **Zoom/Pan** - Tenere premuto Ctrl o Maiusc e utilizzare la rotellina del mouse, o pizzicare su un touchpad, per ingrandire, quindi trascinare sul pannello (per le immagini)
 - **Anteprima dal vivo** - Quando abilitata, mostra un'anteprima della finestra multimediale destinata al pubblico nell'app principale
 - **Velocità di riproduzione** - Quando abilitata nelle impostazioni, regola la velocità di audio e video dal menu contestuale dell'elemento multimediale
 
@@ -103,8 +103,8 @@ Imposta orari di inizio e di fine personalizzati per i media:
 
 Per immagini e video:
 
-- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
-- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
+- **Zoom In/Out** - Tenere premuto Ctrl o Maiusc e utilizzare la rotellina del mouse, pizzicare su un touchpad, o utilizzare i controlli di zoom sulla miniatura
+- **Pan** - Una volta ingrandito, clicca e trascina la miniatura per spostare l'immagine (trascina il resto della riga per riordinare l'elemento)
 - **Ripristina zoom** - Fai clic per tornare allo zoom originale
 
 #### Scorciatoie da tastiera {#user-guide-keyboard-shortcuts}
