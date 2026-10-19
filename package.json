@@ -89,7 +89,7 @@
     "@eslint/js": "^10.0.1",
     "@intlify/message-compiler": "11.4.14",
     "@intlify/unplugin-vue-i18n": "^11.2.6",
-    "@pinia/testing": "^2.0.1",
+    "@pinia/testing": "^2.0.2",
     "@quasar/app-vite": "^3.10.3",
     "@quasar/vite-plugin": "^2.0.2",
     "@sentry/rollup-plugin": "^11.8.0",
