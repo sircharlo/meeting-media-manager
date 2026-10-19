@@ -82,7 +82,7 @@ El reproductor multimedia ofrece controles completos:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
+- **Zoom/Desplazar** - Mantén pulsada la tecla Ctrl o Mayús y usa la rueda del ratón, o pellizca en el panel táctil, para hacer zoom, luego arrastra para desplazarte (para imágenes)
 - **Vista previa en vivo** - Cuando está activada, muestra en la aplicación principal una vista previa de la ventana de archivos multimedia que ve el auditorio
 - **Velocidad de reproducción** - Cuando está activada en la configuración, ajusta la velocidad del audio y video desde el menú contextual del archivo multimedia
 
@@ -103,8 +103,8 @@ Establece horas personalizadas de inicio y finalización para los archivos multi
 
 Para imágenes y videos:
 
-- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
-- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
+- **Acercar/Alejar** - Mantén pulsada la tecla Ctrl o Mayús y usa la rueda del ratón, pellizca en el panel táctil o usa los controles de zoom en la miniatura
+- **Desplazar** - Una vez ampliado, haz clic y arrastra la miniatura para mover la imagen (arrastra el resto de la fila para cambiar el orden del elemento)
 - **Restablecer zoom** - Haz clic para volver al zoom original
 
 #### Atajos de teclado {#user-guide-keyboard-shortcuts}
