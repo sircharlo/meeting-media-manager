@@ -2517,6 +2517,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/browser-utils@npm:11.8.0":
+  version: 11.8.0
+  resolution: "@sentry/browser-utils@npm:11.8.0"
+  dependencies:
+    "@sentry/conventions": "npm:^0.27.0"
+    "@sentry/core": "npm:11.8.0"
+    web-vitals: "npm:^6.2.3"
+  checksum: 10c0/c51cfdbcea7ff23ae9f62c92743d4ab61d2e3cecdc4593066b3a66f1406676d3a99d80e1bf0ba990de184cdb767d855b22a5aacb0790bc5dcde1df14dddd256c
+  languageName: node
+  linkType: hard
+
 "@sentry/browser@npm:11.7.0":
   version: 11.7.0
   resolution: "@sentry/browser@npm:11.7.0"
@@ -2528,6 +2539,20 @@ __metadata:
     "@sentry/replay": "npm:11.7.0"
     "@sentry/replay-canvas": "npm:11.7.0"
   checksum: 10c0/95eaf0c5b08d0e906feebf54d7b81f7f67bace818afe76101a7d6fab816df9f6a60bf8b87a9e687f66f87a79db2d7d0a58baf20891681dd8948c5ffa571fb219
+  languageName: node
+  linkType: hard
+
+"@sentry/browser@npm:11.8.0":
+  version: 11.8.0
+  resolution: "@sentry/browser@npm:11.8.0"
+  dependencies:
+    "@sentry/browser-utils": "npm:11.8.0"
+    "@sentry/conventions": "npm:^0.27.0"
+    "@sentry/core": "npm:11.8.0"
+    "@sentry/feedback": "npm:11.8.0"
+    "@sentry/replay": "npm:11.8.0"
+    "@sentry/replay-canvas": "npm:11.8.0"
+  checksum: 10c0/66eff45b112fd94eb428bd380c741a41e7305d681dc996c37cd2d2ca4f04f2f3aee8be3eb31028cd971e038c367ce9636df57574fc4dde376bfe49da10a69fd4
   languageName: node
   linkType: hard
 
@@ -2635,6 +2660,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/feedback@npm:11.8.0":
+  version: 11.8.0
+  resolution: "@sentry/feedback@npm:11.8.0"
+  dependencies:
+    "@sentry/core": "npm:11.8.0"
+  checksum: 10c0/5a7e28366240fcdf291ef22fb4b8760fd824296284cfb714bdda45f525af8b03737e987f51067d5a2e644b5c650928bba5106b386c10b2ba59ffeb521175509b
+  languageName: node
+  linkType: hard
+
 "@sentry/node@npm:11.7.0":
   version: 11.7.0
   resolution: "@sentry/node@npm:11.7.0"
@@ -2672,6 +2706,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/replay-canvas@npm:11.8.0":
+  version: 11.8.0
+  resolution: "@sentry/replay-canvas@npm:11.8.0"
+  dependencies:
+    "@sentry/core": "npm:11.8.0"
+    "@sentry/replay": "npm:11.8.0"
+  checksum: 10c0/6215d78558e284eaab6ebaa2405736b3c21f783f3f7627e102805734f720c757ed3e159a89bc2b6de4f90c1bdef8b3d6368ddcfcda313e27cbff49239ba00037
+  languageName: node
+  linkType: hard
+
 "@sentry/replay@npm:11.7.0":
   version: 11.7.0
   resolution: "@sentry/replay@npm:11.7.0"
@@ -2679,6 +2723,16 @@ __metadata:
     "@sentry/browser-utils": "npm:11.7.0"
     "@sentry/core": "npm:11.7.0"
   checksum: 10c0/18ed35368e19ad4a364643111cd809c19fcd94950b4c20da822a124eb5a198e9f47855e7d67a0b650b6e8f6c8ca2879edc49bb0fcc6e51f6966018ab48de453b
+  languageName: node
+  linkType: hard
+
+"@sentry/replay@npm:11.8.0":
+  version: 11.8.0
+  resolution: "@sentry/replay@npm:11.8.0"
+  dependencies:
+    "@sentry/browser-utils": "npm:11.8.0"
+    "@sentry/core": "npm:11.8.0"
+  checksum: 10c0/828446d2a37238e4e9e74d9b515c6a2fc18231c5f13c576409c41c2e58c9136f4b372245280ccc6e6913601e42bc6661e3d4d8df3104f8ea0cb16610479d67b4
   languageName: node
   linkType: hard
 
@@ -2726,13 +2780,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vue@npm:^11.7.0":
-  version: 11.7.0
-  resolution: "@sentry/vue@npm:11.7.0"
+"@sentry/vue@npm:^11.8.0":
+  version: 11.8.0
+  resolution: "@sentry/vue@npm:11.8.0"
   dependencies:
-    "@sentry/browser": "npm:11.7.0"
+    "@sentry/browser": "npm:11.8.0"
     "@sentry/conventions": "npm:^0.27.0"
-    "@sentry/core": "npm:11.7.0"
+    "@sentry/core": "npm:11.8.0"
   peerDependencies:
     "@tanstack/vue-router": ^1.64.0
     pinia: 2.x || 3.x || 4.x
@@ -2742,7 +2796,7 @@ __metadata:
       optional: true
     pinia:
       optional: true
-  checksum: 10c0/51a406432fd68a35635cac50bfb22eac74fb2aa374ab26f036090e9522834bdd3148d36049af3af952ef7679f04fabd3268a12834235e834192ef1aa8b934ad0
+  checksum: 10c0/e9ae6a8cfb14d4a6dd03d98bc63cf9ec23bc7dd7d3712d3c62c14cc2aec37218db3d8863d3970e3b71bd06999f79cd2839aa383afcdaf518537ab30dd97737e3
   languageName: node
   linkType: hard
 
@@ -8086,7 +8140,7 @@ __metadata:
     "@sentry/electron": "npm:^8.2.0"
     "@sentry/rollup-plugin": "npm:^11.8.0"
     "@sentry/vite-plugin": "npm:^11.8.0"
-    "@sentry/vue": "npm:^11.7.0"
+    "@sentry/vue": "npm:^11.8.0"
     "@types/fluent-ffmpeg": "npm:^2.1.28"
     "@types/fontkit": "npm:^2.0.9"
     "@types/fs-extra": "npm:^11.0.4"
