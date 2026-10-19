@@ -418,41 +418,41 @@ Pretvori izvoženo multimedijsko vsebino v format MP4 za boljšo združljivost.
 
 **Privzeto**: `false`
 
-### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
+### Mapa v skupni rabi (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-These settings are in the **Integrations** category.
+Te nastavitve so v kategoriji **Povezovanje**.
 
-M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+M³ lahko doda multimedijsko vsebino k tvojim shodom iz mape, ki jo sinhronizira aplikacija za shranjevanje v oblaku, kot je Dropbox, OneDrive, iCloud Drive ali Google Drive. To je uporabno, kadar drugi pripravijo multimedijsko vsebino za svoje točke in jo delijo s teboj, ali kadar se M³ uporablja na več kot enem računalniku. Deluje tudi mapa na tem računalniku ali v tvojem omrežju.
 
-M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. To add files for another day, create a folder for it, named the same way. Anything else in the shared folder is ignored.
+M³ v mapi v skupni rabi ustvari mapo za vsak prihajajoči shod, poimenovano z datumom shoda, zapisanim kot leto-mesec-dan (na primer `2026-03-25`). Daj fotografije, videoposnetke, avdioposnetke ali sezname predvajanja iz JW Library v mapo posameznega shoda in samodejno bodo dodani na seznam multimedijske vsebine za ta shod. Če želiš dodati datoteke za drug dan, ustvari zanj mapo, poimenovano na enak način. Vse drugo v mapi v skupni rabi bo prezrto.
 
 :::tip Namig
 
-Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+Ustvari novo mapo, ki se uporablja samo za to, na primer »Multimedijska vsebina za shode«, in v svoji aplikaciji za shranjevanje v oblaku nastavi, da je vedno na voljo na tem računalniku (pogosto imenovano »na voljo brez povezave«), da bodo datoteke pripravljene, preden se shod začne.
 
 :::
 
-#### Add Media From a Shared Folder {#enable-folder-watcher}
+#### Dodaj multimedijsko vsebino iz mape v skupni rabi {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Add the files put in the shared folder to the right meeting automatically.
+Samodejno dodajaj datoteke, ki jih daš v mapo v skupni rabi, k ustreznemu shodu.
 
 **Privzeto**: `false`
 
-#### Shared Folder {#folder-to-watch}
+#### Mapa v skupni rabi {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder to add media from. The setup wizard offers to set it up for you.
+Mapa, iz katere se dodaja multimedijska vsebina. Čarovnik za nastavitev ponudi možnost, da jo nastavi namesto tebe.
 
 **Privzeto**: Prazno
 
-#### Delete Past Meeting Folders {#delete-past-watched-folders}
+#### Izbriši mape preteklih shodov {#delete-past-watched-folders}
 
 <!-- **Setting**: `deletePastWatchedFolders` -->
 
-When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+Ko je teden mimo, se izbrišejo datumske mape tega tedna skupaj z datotekami, ki so v njih, da ostane mapa v skupni rabi urejena. Ker je mapa v skupni rabi, so datoteke izbrisane tudi za vse druge, ki jo uporabljajo. Če želiš datoteke ohraniti, to možnost izklopi.
 
 **Privzeto**: `true`
 
@@ -513,7 +513,7 @@ Prilagodi velikost besedila časovnika in barve ter nastavi indikatorje prekora�
 
 ## Povezovanje {#integrations}
 
-This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
+Ta kategorija vsebuje tudi nastavitve za [mapo v skupni rabi](#settings-guide-folder-monitoring) za dodajanje multimedijske vsebine iz Dropboxa, OneDrivea, iCloud Drivea ali Google Drivea.
 
 ### Združevanje z Zoomom {#settings-guide-zoom-integration}
 
@@ -806,7 +806,7 @@ Popolnoma onemogoči samodejni prenos multimedijske vsebine. To možnost uporabi
 
 ### Za napredne uporabnike {#advanced-users}
 
-1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
+1. Uporabi mapo v skupni rabi za dodajanje multimedijske vsebine iz shrambe v oblaku, kot sta Dropbox ali OneDrive
 2. Omogočite samodejni izvoz multimedijske vsebine zaradi varnostnega kopiranja
 3. Nastavite bližnjice na tipkovnici za učinkovito upravljanje
 4. Nastavite združevanje z Zoomom za samodejno deljenje zaslona
