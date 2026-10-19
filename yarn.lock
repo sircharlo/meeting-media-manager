@@ -645,7 +645,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint-community/eslint-utils@npm:^4.4.0, @eslint-community/eslint-utils@npm:^4.8.0, @eslint-community/eslint-utils@npm:^4.9.1":
+"@eslint-community/eslint-utils@npm:^4.8.0, @eslint-community/eslint-utils@npm:^4.9.1":
   version: 4.10.1
   resolution: "@eslint-community/eslint-utils@npm:4.10.1"
   dependencies:
@@ -1110,9 +1110,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/bundle-utils@npm:11.2.5":
-  version: 11.2.5
-  resolution: "@intlify/bundle-utils@npm:11.2.5"
+"@intlify/bundle-utils@npm:11.2.6":
+  version: 11.2.6
+  resolution: "@intlify/bundle-utils@npm:11.2.6"
   dependencies:
     "@intlify/message-compiler": "npm:~11.4.2"
     "@intlify/shared": "npm:~11.4.2"
@@ -1128,7 +1128,7 @@ __metadata:
       optional: true
     vue-i18n:
       optional: true
-  checksum: 10c0/7bbb8712a412911eae44166c75b461389e85e4bae9935824ccb20a33d36f9c704037fbde98233412f1746de2e2857de3b85f46be97170478ce83fe6d1aa7f7e6
+  checksum: 10c0/a1ce07b881cede5d942197cb19f95210bbf85ccb2c12dd5daa8675e14852fd2ccfd32e6837cf84db5a25873873cbd76b315977f2db22dd941f51092a85ad3bd9
   languageName: node
   linkType: hard
 
@@ -1214,21 +1214,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/unplugin-vue-i18n@npm:^11.2.5":
-  version: 11.2.5
-  resolution: "@intlify/unplugin-vue-i18n@npm:11.2.5"
+"@intlify/unplugin-vue-i18n@npm:^11.2.6":
+  version: 11.2.6
+  resolution: "@intlify/unplugin-vue-i18n@npm:11.2.6"
   dependencies:
-    "@eslint-community/eslint-utils": "npm:^4.4.0"
-    "@intlify/bundle-utils": "npm:11.2.5"
+    "@intlify/bundle-utils": "npm:11.2.6"
     "@intlify/shared": "npm:~11.4.2"
     "@intlify/vue-i18n-extensions": "npm:^8.0.0"
     "@rollup/pluginutils": "npm:^5.1.0"
     "@typescript-eslint/scope-manager": "npm:^8.13.0"
     "@typescript-eslint/typescript-estree": "npm:^8.13.0"
     debug: "npm:^4.3.3"
-    fast-glob: "npm:^3.2.12"
     pathe: "npm:^2.0.3"
     picocolors: "npm:^1.0.0"
+    tinyglobby: "npm:^0.2.15"
     unplugin: "npm:^2.3.4"
     vue: "npm:~3.5.34"
   peerDependencies:
@@ -1243,7 +1242,7 @@ __metadata:
       optional: true
     vue-i18n:
       optional: true
-  checksum: 10c0/6a3adeb642d97105cf1660697a3343871495d5b24287cdfc6e3d2cf54dcad0b62fccfbd4037721f1ef5068e1209cca11835477dec1be8fa60154ab9aae4dabd0
+  checksum: 10c0/8fdb35bfafe9c42eed1d8763117064ca160098fe61bb1dbf2ac03f6ebbd88aad4814bbbc456e97fbc2ad05ecefbe3c6ffb6f52a9e533a1821f5054746bbb1691
   languageName: node
   linkType: hard
 
@@ -6429,7 +6428,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-glob@npm:^3.2.12, fast-glob@npm:^3.3.3":
+"fast-glob@npm:^3.3.3":
   version: 3.3.3
   resolution: "fast-glob@npm:3.3.3"
   dependencies:
@@ -8282,7 +8281,7 @@ __metadata:
     "@fontsource-variable/noto-serif": "npm:^5.3.0"
     "@formkit/drag-and-drop": "npm:^0.6.1"
     "@intlify/message-compiler": "npm:11.4.14"
-    "@intlify/unplugin-vue-i18n": "npm:^11.2.5"
+    "@intlify/unplugin-vue-i18n": "npm:^11.2.6"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@pinia/testing": "npm:^2.0.1"
     "@quasar/app-vite": "npm:^3.10.2"
