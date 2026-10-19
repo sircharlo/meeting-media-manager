@@ -168,12 +168,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@carboneio/image-size@npm:3.0.0":
-  version: 3.0.0
-  resolution: "@carboneio/image-size@npm:3.0.0"
+"@carboneio/image-size@npm:3.0.1":
+  version: 3.0.1
+  resolution: "@carboneio/image-size@npm:3.0.1"
   bin:
     image-size: bin/image-size.js
-  checksum: 10c0/c39cd7b5e954acbac1a1d3b3d5108b9d8dbb2cc25731994eed5d6a2a58f5ce82ef4e1ea383b0eb11c989a557b8fd9470ac2498ec47edd099b57d30d5b5fd70d9
+  checksum: 10c0/99e42755f946d5503f0d90d8521ec4e63c3d78426de3f65053051c59c10a3fee1aff33b0848614e9459912b1e747b98636ffba0ec797280a1295e065302cb746
   languageName: node
   linkType: hard
 
@@ -8067,7 +8067,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "meeting-media-manager@workspace:."
   dependencies:
-    "@carboneio/image-size": "npm:3.0.0"
+    "@carboneio/image-size": "npm:3.0.1"
     "@electron/rebuild": "npm:^4.2.1"
     "@eslint/config-helpers": "npm:^0.7.0"
     "@eslint/js": "npm:^10.0.1"
