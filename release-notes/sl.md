@@ -24,7 +24,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 - ✨ **Časovnik shodov**: Nov, neobvezen oddaljeni časovnik. Ko je vklopljen, M³ streže kopijo prikaza časovnika kot spletno stran v lokalnem omrežju, tako da lahko tablica ali telefon na govorniškem pultu pokaže govorniku preostali čas, ne da bi bil prikazan na občinskem zaslonu ali deljen prek Zooma. Stran sledi časovniku v realnem času (točke, odštevanje pred shodom, ura, barve za prekoračitev, opozorilo glede dvignjene roke), vse kontrole pa ostanejo v M³. Naslovi za odpiranje so prikazani v pojavnem oknu časovnika, skupaj z gumbom za kopiranje.
 
-- ✨ **Setup Wizard**: The setup wizard now asks whether you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive. If you do, it helps you choose a shared folder there and shows how it works: M³ creates a folder for each upcoming meeting, named with the meeting's date, and the files put in it are added to that meeting automatically, on every computer that uses the folder.
+- ✨ **Čarovnik za nastavitev**: Čarovnik za nastavitev zdaj vpraša, ali shranjuješ datoteke za shode v aplikaciji za shranjevanje v oblaku, kot je Dropbox, OneDrive, iCloud Drive ali Google Drive. Če jih, ti pomaga izbrati mapo v skupni rabi in ti pokaže, kako deluje: M³ ustvari mapo za vsak prihajajoči shod, poimenovano z datumom shoda, in datoteke, ki jih daš vanjo, so samodejno dodane k temu shodu na vsakem računalniku, ki uporablja to mapo.
 
 ## v26.9.0
 

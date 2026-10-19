@@ -178,16 +178,16 @@ M³ nima vgrajenega snemalnika, lahko pa pomaga pri nadzoru snemanja na dva nač
 
 ## Napredne funkcije {#faq-advanced-features}
 
-### :cloud: How does the shared folder work? {#faq-folder-monitoring}
+### :cloud: Kako deluje mapa v skupni rabi? {#faq-folder-monitoring}
 
-If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
+Če shranjuješ datoteke za shode v aplikaciji za shranjevanje v oblaku, kot je Dropbox, OneDrive, iCloud Drive ali Google Drive, lahko M³ samodejno doda datoteke k ustreznemu shodu:
 
-1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
-2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
-3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
-4. To add files for another day, create a folder for it, named the same way.
+1. Izberi mapo v svoji aplikaciji za shranjevanje v oblaku, v čarovniku za nastavitev ali v **Nastavitve** > **Povezovanje** > **Mapa v skupni rabi**. Najboljša je nova mapa, ki se uporablja samo za to.
+2. M³ v njej ustvari mapo za vsak prihajajoči shod, poimenovano z datumom shoda, zapisanim kot leto-mesec-dan (na primer `2026-03-25`).
+3. Kadar koli je potrebno, daj fotografije, videoposnetke, avdioposnetke ali sezname predvajanja iz JW Library v mapo posameznega shoda. Samodejno bodo dodani na seznam multimedijske vsebine za ta shod na vsakem računalniku, ki uporablja isto mapo.
+4. Če želiš dodati datoteke za drug dan, ustvari zanj mapo, poimenovano na enak način.
 
-When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
+Ko je teden mimo, M³ izbriše datumske mape tega tedna in datoteke v njih za vse, ki uporabljajo mapo v skupni rabi. Če želiš datoteke ohraniti, izklopi možnost **Izbriši mape preteklih shodov**.
 
 ### :file_folder: Kaj pomeni samodejni izvoz multimedijske vsebine? {#faq-media-export}
 
