@@ -537,6 +537,8 @@
   "number-of-ayfm-parts": "Number of @:ayfm parts",
   "number-of-lac-parts": "Number of @:lac parts, excluding the @:cbs",
   "obs-password-not-encrypted-warning": "This password can't be encrypted on this computer and is being stored as plain text.",
+  "obs-recording-not-started": "@:obsStudio didn't start recording",
+  "obs-recording-not-started-explain": "@:obsStudio received the request but isn't recording. Look in @:obsStudio for the reason: for example, its recording path may not exist, or the disk may be nearly full.",
   "obs-studio-disconnected-banner": "M³ is unable to connect to @:{'obsStudio'}. Please ensure that @:obsStudio is running and configured correctly.",
   "obs-studio-integration": "@:obsStudio integration",
   "obs-studio-is-a-free-app-used-to-manage-camera-and-video-feeds-in-many-kingdom-halls": "@:obsStudio is a free app used to manage camera and video feeds in many Kingdom Halls.",

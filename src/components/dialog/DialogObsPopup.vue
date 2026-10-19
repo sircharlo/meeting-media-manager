@@ -32,6 +32,7 @@
         :color="isRecording ? 'negative' : 'primary'"
         :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
         :label="isRecording ? t('stop-recording') : t('start-recording')"
+        :loading="togglePending"
         unelevated
         @click="toggleRecording()"
       />
@@ -100,7 +101,7 @@ const obsSettingsConnect = () => {
 };
 
 const recording = useRecordingStore();
-const { isRecording } = storeToRefs(recording);
+const { isRecording, togglePending } = storeToRefs(recording);
 const { syncObsRecordingState, toggleRecording } = recording;
 
 const { t } = useI18n();

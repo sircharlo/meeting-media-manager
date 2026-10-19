@@ -58,6 +58,7 @@
         :disable="!canStopRecording"
         icon="mmm-stop"
         :label="t('quick-actions-stop-recording')"
+        :loading="togglePending"
         unelevated
         @click="stopRecording"
       />
@@ -140,7 +141,7 @@ const { mediaIsActivelyPlaying, musicPlaying, musicState } = storeToRefs(music);
 const { formatClockTime, playMusic, stopMusic } = music;
 
 const recording = useRecordingStore();
-const { canStopRecording, isRecording } = storeToRefs(recording);
+const { canStopRecording, isRecording, togglePending } = storeToRefs(recording);
 const { stopRecording } = recording;
 
 const scheduledEnd = computed(() =>
