@@ -90,7 +90,7 @@
     "@intlify/message-compiler": "11.4.14",
     "@intlify/unplugin-vue-i18n": "^11.2.5",
     "@pinia/testing": "^2.0.1",
-    "@quasar/app-vite": "^3.10.2",
+    "@quasar/app-vite": "^3.10.3",
     "@quasar/vite-plugin": "^2.0.2",
     "@sentry/rollup-plugin": "^11.8.0",
     "@sentry/vite-plugin": "^11.8.0",
