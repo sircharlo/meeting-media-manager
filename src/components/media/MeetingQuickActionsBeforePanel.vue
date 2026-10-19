@@ -78,6 +78,7 @@
             ? t('quick-actions-stop-recording')
             : t('quick-actions-start-recording')
         "
+        :loading="togglePending"
         unelevated
         @click="toggleRecording"
       />
@@ -146,7 +147,7 @@ const { musicPlaying, musicState, timeUntilMusicStops } = storeToRefs(music);
 const { formatClockTime, playMusic, stopMusic } = music;
 
 const recording = useRecordingStore();
-const { canStartRecording, canStopRecording, isRecording } =
+const { canStartRecording, canStopRecording, isRecording, togglePending } =
   storeToRefs(recording);
 const { toggleRecording } = recording;
 

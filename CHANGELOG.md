@@ -39,6 +39,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🐞 Bug Fixes
 
+- 🐞 **OBS Recording**: M³ no longer shows a recording in progress when OBS Studio didn't actually start it, for example because its recording path doesn't exist or its disk is nearly full. M³ now waits for OBS Studio to confirm that it's recording, with a spinner on the button, and says so if it doesn't. Stopping a recording that OBS Studio had already stopped also no longer leaves M³ showing a recording that can't be stopped.
 - 🐞 **Bible Dialog**: After choosing a first verse, the verses before it no longer show as selected while the mouse isn't over the verse list; the range now only previews up to the verse under the mouse.
 - 🐞 **Shared Folder**: Fixed files added to, replaced in or removed from the shared folder sometimes not being picked up when many changes arrived at once, as often happens with cloud storage apps: a new file could fail to appear in the media list, a replaced file could disappear from it, or a removed one could stay listed.
 - 🐞 **Videos That Never Load**: A video that never finishes loading, such as a cloud storage file that never downloads, no longer leaves the app waiting forever for its duration and thumbnail, which could also hold up every later change in the shared folder. After 45 seconds it's added without them.

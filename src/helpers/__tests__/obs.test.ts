@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const errorCatcherMock = vi.fn();
+const createTemporaryNotificationMock = vi.fn();
 const sleepMock = vi.fn(() => Promise.resolve());
 const connectMock = vi.fn();
 const disconnectMock = vi.fn();
@@ -25,8 +26,16 @@ const obsStateStore = {
   scenes: [] as unknown[],
 };
 
+vi.mock('boot/i18n', () => ({
+  i18n: { global: { t: (key: string) => key } },
+}));
+
 vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: errorCatcherMock,
+}));
+
+vi.mock('src/helpers/notifications', () => ({
+  createTemporaryNotification: createTemporaryNotificationMock,
 }));
 
 vi.mock('src/utils/general', () => ({
@@ -219,5 +228,99 @@ describe('OBS recording queries while OBS is still loading', () => {
 
     await expect(obsGetRecordingState()).resolves.toBe(false);
     expect(errorCatcherMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+// MMM-V2-3MA: StartRecord answers success before OBS has even tried to
+// record, and OBS can then skip the recording without a word.
+describe('obsStartRecording', () => {
+  const callMock = vi.fn();
+  const recordStatus = (outputActive: boolean) => ({ outputActive });
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    obsStateStore.obsConnectionState = 'connected';
+    const obsUtils = await import('src/utils/obs');
+    obsUtils.obsWebSocketInfo.obsWebSocket = { call: callMock } as never;
+  });
+
+  it('counts the recording as started once OBS reports it active', async () => {
+    callMock
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(recordStatus(false))
+      .mockResolvedValueOnce(recordStatus(true));
+    const { obsStartRecording } = await import('../obs');
+
+    await expect(obsStartRecording()).resolves.toBe(true);
+    expect(callMock).toHaveBeenNthCalledWith(1, 'StartRecord');
+    expect(callMock).toHaveBeenLastCalledWith('GetRecordStatus');
+    expect(createTemporaryNotificationMock).not.toHaveBeenCalled();
+  });
+
+  it('tells the user, and does not count it, when OBS never starts recording', async () => {
+    callMock.mockImplementation(async (request: string) =>
+      request === 'StartRecord' ? undefined : recordStatus(false),
+    );
+    const { obsStartRecording } = await import('../obs');
+
+    await expect(obsStartRecording()).resolves.toBe(false);
+    expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        caption: 'obs-recording-not-started',
+        type: 'negative',
+      }),
+    );
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('treats "already recording" (OutputRunning) as started, without reporting it', async () => {
+    callMock.mockRejectedValue(Object.assign(new Error(''), { code: 500 }));
+    const { obsStartRecording } = await import('../obs');
+
+    await expect(obsStartRecording()).resolves.toBe(true);
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('reports any other failure under its own name', async () => {
+    const error = new Error('Something unexpected');
+    callMock.mockRejectedValue(error);
+    const { obsStartRecording } = await import('../obs');
+
+    await expect(obsStartRecording()).resolves.toBe(false);
+    expect(errorCatcherMock).toHaveBeenCalledWith(error, {
+      contexts: { fn: { name: 'obsStartRecording' } },
+    });
+  });
+});
+
+describe('obsStopRecording', () => {
+  const callMock = vi.fn();
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    obsStateStore.obsConnectionState = 'connected';
+    const obsUtils = await import('src/utils/obs');
+    obsUtils.obsWebSocketInfo.obsWebSocket = { call: callMock } as never;
+  });
+
+  // MMM-V2-3MA: OBS answers OutputNotRunning (501), with no message, when
+  // it isn't recording - the recording M³ was showing never existed.
+  it('treats "not recording" (OutputNotRunning) as stopped, without reporting it', async () => {
+    callMock.mockRejectedValue(Object.assign(new Error(''), { code: 501 }));
+    const { obsStopRecording } = await import('../obs');
+
+    await expect(obsStopRecording()).resolves.toBe(true);
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('reports any other failure under its own name', async () => {
+    const error = Object.assign(new Error('Output failed'), { code: 702 });
+    callMock.mockRejectedValue(error);
+    const { obsStopRecording } = await import('../obs');
+
+    await expect(obsStopRecording()).resolves.toBe(false);
+    expect(errorCatcherMock).toHaveBeenCalledWith(error, {
+      contexts: { fn: { name: 'obsStopRecording' } },
+    });
   });
 });

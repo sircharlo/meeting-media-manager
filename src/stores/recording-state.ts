@@ -25,7 +25,9 @@ export const useRecordingStore = defineStore('recording', () => {
   // or toggling obsEnableRecordingControls mid-recording would route the
   // stop call to the wrong backend entirely (see startRecording/stopRecording).
   const activeBackend = ref<null | RecordingBackend>(null);
-  let togglePending = false;
+  // Starting through OBS waits up to a few seconds for OBS to confirm the
+  // recording, so the buttons show this as in progress.
+  const togglePending = ref(false);
 
   const { pause: pauseTimer, resume: resumeTimer } = useIntervalFn(
     () => {
@@ -90,12 +92,15 @@ export const useRecordingStore = defineStore('recording', () => {
   };
 
   const startRecording = async () => {
-    if (isRecording.value || togglePending) return;
-    togglePending = true;
+    if (isRecording.value || togglePending.value) return;
+    togglePending.value = true;
     try {
       if (usesObs.value) {
         const success = await obsStartRecording();
-        if (success) markRecordingStarted('obs');
+        // OBS's RecordStateChanged event can mark it started while
+        // obsStartRecording() still waits for OBS to confirm, and that start
+        // time is the right one.
+        if (success && !isRecording.value) markRecordingStarted('obs');
         return;
       }
 
@@ -110,13 +115,13 @@ export const useRecordingStore = defineStore('recording', () => {
         contexts: { fn: { name: 'startRecording' } },
       });
     } finally {
-      togglePending = false;
+      togglePending.value = false;
     }
   };
 
   const stopRecording = async () => {
-    if (!isRecording.value || togglePending) return;
-    togglePending = true;
+    if (!isRecording.value || togglePending.value) return;
+    togglePending.value = true;
     try {
       // Falls back to the current settings-derived backend only if a
       // recording was somehow already in progress without ever going
@@ -145,7 +150,7 @@ export const useRecordingStore = defineStore('recording', () => {
         contexts: { fn: { name: 'stopRecording' } },
       });
     } finally {
-      togglePending = false;
+      togglePending.value = false;
     }
   };
 
@@ -180,6 +185,7 @@ export const useRecordingStore = defineStore('recording', () => {
     startRecording,
     stopRecording,
     syncObsRecordingState,
+    togglePending,
     toggleRecording,
   };
 });
