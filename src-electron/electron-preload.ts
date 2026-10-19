@@ -133,6 +133,7 @@ const electronApi: ElectronApi = {
   isUsablePath: (p) => invoke('isUsablePath', p),
   join,
   launchZoomMeeting,
+  markUserWarnedAboutDiskSpace: () => send('markUserWarnedAboutDiskSpace'),
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   moveTimerWindow: (t, w) => send('moveTimerWindow', t, w),
   navigateWebsiteWindow,

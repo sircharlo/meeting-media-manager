@@ -10,6 +10,18 @@ const getErrorCode = (error: unknown) => (error as { code?: string })?.code;
 /** Below this much free space, the user is warned that disk space is low. */
 export const LOW_DISK_SPACE_WARNING_GB = 10;
 
+// Whether the renderer has shown the user a disk space warning this session
+// (low disk space, or a full disk). From then on, a write failing for lack
+// of space is the user's to fix, so it isn't reported (see
+// captureElectronError).
+let userWarnedAboutDiskSpace = false;
+
+export const markUserWarnedAboutDiskSpace = () => {
+  userWarnedAboutDiskSpace = true;
+};
+
+export const wasUserWarnedAboutDiskSpace = () => userWarnedAboutDiskSpace;
+
 const getFreeBytesFromStatfs = async (path: string): Promise<number> => {
   const info = await statfs(path, { bigint: true });
   return Number(info.bavail * info.bsize);

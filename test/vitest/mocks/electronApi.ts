@@ -124,6 +124,9 @@ export const electronApi: ElectronApi = {
   launchZoomMeeting: function (meetingId) {
     throw new Error('Function not implemented.');
   },
+  markUserWarnedAboutDiskSpace: function () {
+    return undefined;
+  },
   moveMediaWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
   },

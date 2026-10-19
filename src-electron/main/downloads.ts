@@ -23,6 +23,7 @@ import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import {
   getFilesystemErrorCode,
   getFilesystemErrorSyscall,
+  isDiskFullError,
   isExpectedNetworkPathAccessError,
 } from 'src/shared/filesystem-errors';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
@@ -1305,7 +1306,11 @@ function failDownload(
   });
   reportUnexpectedDownloadFailure(download, failure);
 
-  sendToWindow(getDownloadWindow(), 'downloadError', { id: key });
+  // A full disk is shown to the user, since it's theirs to fix.
+  sendToWindow(getDownloadWindow(), 'downloadError', {
+    diskFull: isDiskFullError(failure.error),
+    id: key,
+  });
   releaseDownload(key, download);
   discardPartialDownload(getPartialPath(download)).catch(() => undefined);
   addQueueBreadcrumb('download-error', { force: true });
@@ -1389,8 +1394,6 @@ async function handleFailedTransfer(
   startTransfer(key, download);
 }
 
-const EXPECTED_FILESYSTEM_FAILURE_CODES = new Set(['EDQUOT', 'ENOSPC']);
-
 /**
  * Network and HTTP failures (stalls included) are connectivity or upstream
  * problems - expected for many users, and not something M³ can fix - so
@@ -1418,14 +1421,14 @@ function reportUnexpectedDownloadFailure(
   }
   if (failure.reason !== 'filesystem') return;
 
-  const code = getFilesystemErrorCode(error);
   if (
-    EXPECTED_FILESYSTEM_FAILURE_CODES.has(code ?? '') ||
+    isDiskFullError(error) ||
     isExpectedNetworkPathAccessError(error, download.saveDir, process.platform)
   ) {
     return;
   }
 
+  const code = getFilesystemErrorCode(error);
   const syscall = getFilesystemErrorSyscall(error);
   captureElectronError(error, {
     contexts: {

@@ -5,6 +5,8 @@ const mocks = vi.hoisted(() => ({
   dialogState: { isAnyDialogOpen: false },
   errorCatcher: vi.fn(),
   getLowDiskSpaceStatus: vi.fn(async () => false),
+  markUserWarnedAboutDiskSpace: vi.fn(),
+  markUserWarnedAboutDiskSpaceInMain: vi.fn(),
   notifyCreate: vi.fn<(options: unknown) => (() => void) | undefined>(() =>
     vi.fn(),
   ),
@@ -22,6 +24,7 @@ vi.mock('quasar', () => ({
 
 vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: mocks.errorCatcher,
+  markUserWarnedAboutDiskSpace: mocks.markUserWarnedAboutDiskSpace,
 }));
 
 vi.mock('stores/dialog-state', () => ({
@@ -43,6 +46,7 @@ describe('checkLowDiskSpaceAndNotify', () => {
     mocks.getLowDiskSpaceStatus.mockResolvedValue(false);
     globalThis.electronApi = {
       getLowDiskSpaceStatus: mocks.getLowDiskSpaceStatus,
+      markUserWarnedAboutDiskSpace: mocks.markUserWarnedAboutDiskSpaceInMain,
     } as unknown as typeof globalThis.electronApi;
   });
 
@@ -69,6 +73,7 @@ describe('checkLowDiskSpaceAndNotify', () => {
 
     expect(mocks.getLowDiskSpaceStatus).toHaveBeenCalled();
     expect(mocks.notifyCreate).not.toHaveBeenCalled();
+    expect(mocks.markUserWarnedAboutDiskSpace).not.toHaveBeenCalled();
   });
 
   it('shows a warning notification when disk space is critically low', async () => {
@@ -85,6 +90,17 @@ describe('checkLowDiskSpaceAndNotify', () => {
     );
   });
 
+  // MMM-V2-3M6..3M9: once warned, a full disk is no longer reported.
+  it('records the warning in both processes', async () => {
+    mocks.getLowDiskSpaceStatus.mockResolvedValue(true);
+
+    const { checkLowDiskSpaceAndNotify } = await import('../notifications');
+    await checkLowDiskSpaceAndNotify();
+
+    expect(mocks.markUserWarnedAboutDiskSpace).toHaveBeenCalled();
+    expect(mocks.markUserWarnedAboutDiskSpaceInMain).toHaveBeenCalled();
+  });
+
   it('reports failures via errorCatcher instead of throwing', async () => {
     mocks.getLowDiskSpaceStatus.mockRejectedValue(new Error('statfs failed'));
 
@@ -97,6 +113,53 @@ describe('checkLowDiskSpaceAndNotify', () => {
         contexts: { fn: { name: 'checkLowDiskSpaceAndNotify' } },
       }),
     );
+  });
+});
+
+describe('notifyDiskFull', () => {
+  const originalElectronApi = globalThis.electronApi;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.resetModules();
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-19T10:00:00Z'));
+    globalThis.electronApi = {
+      markUserWarnedAboutDiskSpace: mocks.markUserWarnedAboutDiskSpaceInMain,
+    } as unknown as typeof globalThis.electronApi;
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    globalThis.electronApi = originalElectronApi;
+  });
+
+  it('tells the user the disk is full, and records the warning in both processes', async () => {
+    const { notifyDiskFull } = await import('../notifications');
+
+    notifyDiskFull();
+
+    expect(mocks.notifyCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        caption: 'disk-full',
+        message: 'disk-full-explain',
+        type: 'negative',
+      }),
+    );
+    expect(mocks.markUserWarnedAboutDiskSpace).toHaveBeenCalled();
+    expect(mocks.markUserWarnedAboutDiskSpaceInMain).toHaveBeenCalled();
+  });
+
+  it('shows one warning for a burst of failures, and another after a few minutes', async () => {
+    const { notifyDiskFull } = await import('../notifications');
+
+    notifyDiskFull();
+    notifyDiskFull();
+    expect(mocks.notifyCreate).toHaveBeenCalledTimes(1);
+
+    vi.setSystemTime(new Date('2026-10-19T10:05:00Z'));
+    notifyDiskFull();
+    expect(mocks.notifyCreate).toHaveBeenCalledTimes(2);
   });
 });
 

@@ -124,7 +124,7 @@ import {
   remainingTimeBeforeMeetingStart,
   updateLookupPeriod,
 } from 'src/helpers/date';
-import { errorCatcher } from 'src/helpers/error-catcher';
+import { DISK_FULL_ERROR_EVENT, errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
 import { setElementFont } from 'src/helpers/fonts';
 import { watchExternalFolder } from 'src/helpers/fs';
@@ -149,6 +149,7 @@ import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import {
   checkLowDiskSpaceAndNotify,
   createTemporaryNotification,
+  notifyDiskFull,
 } from 'src/helpers/notifications';
 import { syncTimerRemote } from 'src/helpers/timer-remote';
 import { createWatchFolderEventQueue } from 'src/helpers/watch-folder-event-queue';
@@ -842,6 +843,7 @@ const initListeners = () => {
   onDownloadError((args) => {
     const existing = downloadProgress.value[args.id];
     if (existing) existing.error = true;
+    if (args.diskFull) notifyDiskFull();
   });
 
   onDownloadProgress((args) => {
@@ -1941,4 +1943,8 @@ useIntervalFn(
   },
   2 * 60 * 1000,
 );
+
+// Tells the user the disk is full whenever a write fails for lack of space
+// (downloads say so through onDownloadError instead).
+useEventListener(globalThis, DISK_FULL_ERROR_EVENT, notifyDiskFull);
 </script>

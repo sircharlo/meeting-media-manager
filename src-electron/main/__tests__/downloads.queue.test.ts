@@ -442,7 +442,9 @@ describe('download queue', () => {
     await waitUntil(() => transfersFor('d').length === 1);
 
     expect(transfersFor('a')).toHaveLength(3);
-    expect(sentTo('downloadError')).toEqual([{ id: keyFor('a') }]);
+    expect(sentTo('downloadError')).toEqual([
+      { diskFull: false, id: keyFor('a') },
+    ]);
     expect(mocks.discardPartialDownload).toHaveBeenCalledWith(
       partialPathFor('a'),
     );
@@ -549,6 +551,13 @@ describe('download queue', () => {
       expect.objectContaining({
         fingerprint: ['download-filesystem-error', 'EACCES', 'open'],
       }),
+    );
+    // The full disk is the user's to fix, so the renderer tells them.
+    expect(sentTo('downloadError')).toEqual(
+      expect.arrayContaining([
+        { diskFull: false, id: keyFor('a') },
+        { diskFull: true, id: keyFor('b') },
+      ]),
     );
   });
 

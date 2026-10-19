@@ -30,7 +30,10 @@ import { pathExists } from 'fs-extra/esm';
 import { arch, platform } from 'node:os';
 import { PLATFORM } from 'src-electron/constants';
 import { updateDevMenuState } from 'src-electron/main/dev-menu';
-import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
+import {
+  getLowDiskSpaceStatus,
+  markUserWarnedAboutDiskSpace,
+} from 'src-electron/main/disk-space';
 import {
   cancelAllDownloads,
   downloadFile,
@@ -269,6 +272,10 @@ handleIpcSend('resumeAllDownloads', () => {
 
 handleIpcSend('pauseAllDownloads', () => {
   pauseAllDownloads('renderer-manual');
+});
+
+handleIpcSend('markUserWarnedAboutDiskSpace', () => {
+  markUserWarnedAboutDiskSpace();
 });
 
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());

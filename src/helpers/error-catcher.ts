@@ -1,8 +1,41 @@
 import { captureException } from '@sentry/vue';
-import { getNodeFsErrorFingerprint } from 'src/shared/filesystem-errors';
+import {
+  getNodeFsErrorFingerprint,
+  isDiskFullError,
+} from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
+
+/**
+ * Dispatched on `globalThis` for every disk-full error, so the main window
+ * can tell the user (see notifyDiskFull).
+ */
+export const DISK_FULL_ERROR_EVENT = 'diskFullError';
+
+// Whether the user has seen a disk space warning this session (low disk
+// space, or a full disk). From then on, a write failing for lack of space
+// is the user's to fix, so it isn't reported.
+let userWarnedAboutDiskSpace = false;
+
+export const markUserWarnedAboutDiskSpace = () => {
+  userWarnedAboutDiskSpace = true;
+};
+
+/**
+ * Has the main window tell the user the disk is full (see notifyDiskFull).
+ * @param error The disk-full error
+ * @returns 'already-warned' if the user had been warned before this error
+ */
+const showDiskFullWarning = (error: unknown) => {
+  // Read first: the warning this event shows marks the user as warned.
+  const alreadyWarned = userWarnedAboutDiskSpace;
+  globalThis.dispatchEvent(new CustomEvent(DISK_FULL_ERROR_EVENT));
+  if (!alreadyWarned) return 'first-warning';
+
+  log('Disk full (user already warned)', 'errorHandling', 'warn', error);
+  return 'already-warned';
+};
 
 export const errorCatcher = (error: unknown, context?: CaptureCtx): void => {
   if (!error) return;
@@ -31,6 +64,15 @@ export const errorCatcher = (error: unknown, context?: CaptureCtx): void => {
     // The cause is the actual failure; the outer error is just a wrapper
     // adding context, so only the cause needs its own Sentry report.
     errorCatcher(cause, context);
+    return;
+  }
+
+  // MMM-V2-3M7/3M9: a full disk is always shown to the user, but only
+  // reported until they've been warned.
+  if (
+    isDiskFullError(error) &&
+    showDiskFullWarning(error) === 'already-warned'
+  ) {
     return;
   }
 

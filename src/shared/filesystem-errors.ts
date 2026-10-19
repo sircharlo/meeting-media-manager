@@ -97,6 +97,30 @@ export const getFilesystemErrorSyscall = (error: unknown) => {
     ?.syscall;
 };
 
+// A full disk, or a used-up disk quota.
+const DISK_FULL_ERROR_CODES = new Set(['EDQUOT', 'ENOSPC']);
+
+// Also finds the code in an error an IPC invoke wrapped on its way to the
+// renderer, e.g. "Error invoking remote method 'unzip': Error: ENOSPC: no
+// space left on device, write" (MMM-V2-3M9), which no longer starts with it.
+const DISK_FULL_MESSAGE_PATTERN = /\b(?:EDQUOT|ENOSPC):/;
+
+/**
+ * Whether an error means there was no disk space left to write to.
+ * @param error The error to check
+ * @returns Whether the disk (or the user's disk quota) is full
+ */
+export const isDiskFullError = (error: unknown) => {
+  if (DISK_FULL_ERROR_CODES.has(getFilesystemErrorCode(error) ?? '')) {
+    return true;
+  }
+  const message =
+    typeof error === 'object' && error !== null
+      ? (error as { message?: unknown }).message
+      : undefined;
+  return typeof message === 'string' && DISK_FULL_MESSAGE_PATTERN.test(message);
+};
+
 /**
  * Node fs errors (ENOENT, EPERM, EBUSY, ...) embed the full dynamic file
  * path in their message. Sentry's default grouping picks that up, so what's

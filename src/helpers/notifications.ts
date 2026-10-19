@@ -1,6 +1,9 @@
 import { i18n } from 'boot/i18n';
 import { Notify, type QNotifyCreateOptions } from 'quasar';
-import { errorCatcher } from 'src/helpers/error-catcher';
+import {
+  errorCatcher,
+  markUserWarnedAboutDiskSpace,
+} from 'src/helpers/error-catcher';
 import { useDialogStateStore } from 'stores/dialog-state';
 import { watch } from 'vue';
 
@@ -185,6 +188,15 @@ export const createTemporaryNotification = (
 };
 
 /**
+ * Records that the user has seen a disk space warning, so that neither
+ * process reports disk-full errors from then on.
+ */
+const recordDiskSpaceWarning = () => {
+  markUserWarnedAboutDiskSpace();
+  globalThis.electronApi?.markUserWarnedAboutDiskSpace();
+};
+
+/**
  * Checks disk space and warns the user if it's running low. Shared so both
  * the one-time congregation-switch check (DialogCongregationSwitcher.vue)
  * and the periodic during-downloads check (MainLayout.vue, added for BE-8 in
@@ -205,11 +217,34 @@ export const checkLowDiskSpaceAndNotify = async (): Promise<void> => {
       timeout: 10_000,
       type: 'warning',
     });
+    recordDiskSpaceWarning();
   } catch (error) {
     errorCatcher(error, {
       contexts: { fn: { name: 'checkLowDiskSpaceAndNotify' } },
     });
   }
+};
+
+const DISK_FULL_WARNING_THROTTLE_MS = 5 * 60 * 1000;
+let lastDiskFullWarningAt = 0;
+
+/**
+ * Tells the user that M³ couldn't save a file because the disk is full.
+ * Throttled, since a full disk tends to fail many writes in a row.
+ */
+export const notifyDiskFull = (): void => {
+  const now = Date.now();
+  if (now - lastDiskFullWarningAt < DISK_FULL_WARNING_THROTTLE_MS) return;
+  lastDiskFullWarningAt = now;
+
+  createTemporaryNotification({
+    caption: i18n.global.t('disk-full'),
+    deferWhileDialogOpen: true,
+    message: i18n.global.t('disk-full-explain'),
+    timeout: 15_000,
+    type: 'negative',
+  });
+  recordDiskSpaceWarning();
 };
 
 const EXPECTED_DOWNLOAD_ISSUE_WARNING_THROTTLE_MS = 5 * 60 * 1000;
