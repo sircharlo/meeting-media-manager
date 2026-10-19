@@ -4,6 +4,7 @@ import {
   getCloudStorageProvider,
   getFilesystemErrorCode,
   isCloudStoragePath,
+  isDiskFullError,
   isExpectedNetworkPathAccessError,
   isPhoneStoragePath,
   isPossiblyNetworkFolderPath,
@@ -275,5 +276,33 @@ describe('filesystem error helpers', () => {
         'win32',
       ),
     ).toBe(false);
+  });
+});
+
+describe('isDiskFullError', () => {
+  it('recognizes a full disk or a used-up quota by its code', () => {
+    const diskFull = Object.assign(new Error('no space'), { code: 'ENOSPC' });
+    const quotaFull = Object.assign(new Error('quota'), { code: 'EDQUOT' });
+
+    expect(isDiskFullError(diskFull)).toBe(true);
+    expect(isDiskFullError(quotaFull)).toBe(true);
+  });
+
+  // MMM-V2-3M9: IPC keeps only the message, with the code no longer first.
+  it('recognizes one wrapped by an IPC invoke', () => {
+    const wrapped = new Error(
+      "Error invoking remote method 'unzip': Error: ENOSPC: no space left on device, write",
+    );
+
+    expect(isDiskFullError(wrapped)).toBe(true);
+  });
+
+  it('leaves other errors alone', () => {
+    const notFound = Object.assign(new Error('missing'), { code: 'ENOENT' });
+
+    expect(isDiskFullError(notFound)).toBe(false);
+    expect(isDiskFullError(new Error('ffmpeg exited with code 1'))).toBe(false);
+    expect(isDiskFullError('ENOSPC')).toBe(false);
+    expect(isDiskFullError(null)).toBe(false);
   });
 });

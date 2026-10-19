@@ -234,6 +234,11 @@ export interface ElectronApi {
   isUsablePath: (path: string) => Promise<boolean>;
   join: typeof join;
   launchZoomMeeting: (meetingId: string) => void;
+  /**
+   * Tells the main process the user has seen a disk space warning, so it
+   * stops reporting disk-full errors.
+   */
+  markUserWarnedAboutDiskSpace: () => void;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
@@ -253,7 +258,9 @@ export interface ElectronApi {
   onDownloadCompleted: (
     callback: (args: { filePath: string; id: string }) => void,
   ) => void;
-  onDownloadError: (callback: (args: { id: string }) => void) => void;
+  onDownloadError: (
+    callback: (args: { diskFull: boolean; id: string }) => void,
+  ) => void;
   onDownloadProgress: (
     callback: (args: {
       bytesReceived: number;
@@ -580,6 +587,7 @@ export type ElectronIpcSendKey =
   | 'dev-menu-state'
   | 'focusMediaWindow'
   | 'launchZoomMeeting'
+  | 'markUserWarnedAboutDiskSpace'
   | 'moveMediaWindow'
   | 'moveTimerWindow'
   | 'navigateWebsiteWindow'

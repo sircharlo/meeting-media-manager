@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // test/vitest/setup/setup.quasar.ts globally stubs this module out for
 // every quasar-project test; undo that here to exercise the real thing.
@@ -124,5 +124,58 @@ describe('errorCatcher', () => {
     errorCatcher(error);
 
     expect(captureExceptionMock).toHaveBeenCalledWith(error, undefined);
+  });
+});
+
+// MMM-V2-3M7/3M9: a full disk is the user's to fix once they've been told.
+describe('errorCatcher with a full disk', () => {
+  const diskFullError = () =>
+    new Error(
+      "Error invoking remote method 'unzip': Error: ENOSPC: no space left on device, write",
+    );
+  const onDiskFull = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.resetModules();
+    globalThis.addEventListener('diskFullError', onDiskFull);
+  });
+
+  afterEach(() => {
+    globalThis.removeEventListener('diskFullError', onDiskFull);
+  });
+
+  it('tells the user, and reports it while they have not been warned', async () => {
+    const { errorCatcher } = await import('../error-catcher');
+    const error = diskFullError();
+
+    errorCatcher(error);
+
+    expect(onDiskFull).toHaveBeenCalledTimes(1);
+    expect(captureExceptionMock).toHaveBeenCalledWith(error, undefined);
+  });
+
+  it('tells the user, but stops reporting it once they have been warned', async () => {
+    const { errorCatcher, markUserWarnedAboutDiskSpace } =
+      await import('../error-catcher');
+    markUserWarnedAboutDiskSpace();
+
+    errorCatcher(diskFullError());
+
+    expect(onDiskFull).toHaveBeenCalledTimes(1);
+    expect(captureExceptionMock).not.toHaveBeenCalled();
+  });
+
+  it('still reports the error that first warns the user', async () => {
+    const { errorCatcher, markUserWarnedAboutDiskSpace } =
+      await import('../error-catcher');
+    // The main window's listener shows the warning, which marks the user
+    // as warned, synchronously from within errorCatcher.
+    onDiskFull.mockImplementationOnce(() => markUserWarnedAboutDiskSpace());
+
+    errorCatcher(diskFullError());
+    errorCatcher(diskFullError());
+
+    expect(captureExceptionMock).toHaveBeenCalledTimes(1);
   });
 });

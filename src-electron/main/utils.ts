@@ -12,9 +12,13 @@ import {
   PRODUCT_NAME,
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
+import { wasUserWarnedAboutDiskSpace } from 'src-electron/main/disk-space';
 import { isUsablePath } from 'src-electron/main/fs';
 import { urlVariables } from 'src-electron/main/session';
-import { getNodeFsErrorFingerprint } from 'src/shared/filesystem-errors';
+import {
+  getNodeFsErrorFingerprint,
+  isDiskFullError,
+} from 'src/shared/filesystem-errors';
 import {
   isFetchNetworkError,
   NETWORK_ERROR_CODES,
@@ -558,6 +562,12 @@ export const fetchJsonFromMainProcess = async <T>(
  * @param context The context to log with the error
  */
 export function captureElectronError(error: unknown, context?: CaptureCtx) {
+  // MMM-V2-3M8: a full disk is the user's to fix once they've been told.
+  if (isDiskFullError(error) && wasUserWarnedAboutDiskSpace()) {
+    log('Disk full (user already warned)', 'electron', 'warn', error);
+    return;
+  }
+
   if (IS_DEV) {
     log(error, 'electron', 'error');
     log('context', 'electron', 'warn', context);

@@ -167,6 +167,41 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     expect(remove).toHaveBeenCalledWith('/tmp/be3-error.mp4');
   });
 
+  // MMM-V2-3M7: AVERROR(ENOSPC), reported as 4294967268 on Windows and 228
+  // elsewhere, is a full disk.
+  it.each([4294967268, 228])(
+    'reports ffmpeg exit code %i as a full disk',
+    async (exitCode) => {
+      const conversionPromise = createVideoFromNonVideo(
+        `/tmp/disk-full-${exitCode}.mp3`,
+        '/bin/ffmpeg',
+      );
+      await waitUntil(() => typeof ffmpegOnMap.error === 'function');
+
+      ffmpegOnMap.error?.(
+        new Error(`ffmpeg exited with code ${exitCode}: Conversion failed!`),
+      );
+
+      await expect(conversionPromise).rejects.toMatchObject({
+        code: 'ENOSPC',
+        message: `ENOSPC: no space left on device, ffmpeg exited with code ${exitCode}: Conversion failed!`,
+      });
+    },
+  );
+
+  it('leaves other ffmpeg exit codes as they are', async () => {
+    const conversionPromise = createVideoFromNonVideo(
+      '/tmp/out-of-memory.mp3',
+      '/bin/ffmpeg',
+    );
+    await waitUntil(() => typeof ffmpegOnMap.error === 'function');
+
+    const error = new Error('ffmpeg exited with code 4294967284: frame=0');
+    ffmpegOnMap.error?.(error);
+
+    await expect(conversionPromise).rejects.toBe(error);
+  });
+
   it('resolves once the ffmpeg process reports completion', async () => {
     const { pathExists } = await import('fs-extra/esm');
     (

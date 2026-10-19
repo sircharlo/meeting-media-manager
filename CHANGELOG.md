@@ -36,6 +36,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🛠️ **Shared Folder**: A new "Delete past meeting folders" setting lets you keep each week's dated folders and their files, instead of having them deleted from the shared folder (for everyone who uses it) once the week is over. It's on by default, as before.
 - 🛠️ **Accessibility**: The "Drag and drop files here or click to browse" area of the "Add more media" dialog, and the video tiles in the "Publication media" dialog, can now be reached with Tab and used with Enter or Space, not just the mouse; a video tile is also highlighted while it has the keyboard focus, as it is on hover.
 - 🛠️ **Zoom/Pan**: Image thumbnails can now be zoomed by pinching on a touchpad, and a zoomed-in image is moved around by dragging its thumbnail with the mouse, instead of with arrow buttons. While an image is zoomed in, dragging its thumbnail only pans it and can no longer move the item in the list by accident; the rest of the row still drags it as usual. An image now also stays zoomed when its item is moved to another section, so its thumbnail keeps matching the media window. The zoom and reset buttons have a soft glow so they stay visible on any image, and zooming out no longer leaves the image pushed past its edge.
+- 🛠️ **Disk Space**: M³ now says when it couldn't save a file because the disk is full, whether while downloading media, converting images to videos or unpacking a publication, instead of failing without explanation.
 
 ### 🐞 Bug Fixes
 
