@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "Сцена в @:{'obsStudio'}, которая будет использоваться в качестве сцены по умолчанию. Согласно последнему руководству, это должен быть широкий снимок.",
   "obsEnable": "Интегрировать M³ с @:obsStudio",
   "obsEnable-explain": "Подключите M³ к @:obsStudio чтобы включить автоматическое переключение между сценами мультимедиа и камеры.",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "Не отображать иконки в переключателе сцен",
   "obsHideIcons-explain": "Если эта функция включена, иконки будут скрыты в переключателе сцен. Это может облегчить чтение названий сцен.",
   "obsImageScene": "Сцена для отображения изображений в @:obsStudio (необязательно)",
