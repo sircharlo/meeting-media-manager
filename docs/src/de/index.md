@@ -46,8 +46,8 @@ features:
     details: Synchronisieren Sie Medien automatisch aus überwachten Ordnern (wie Dropbox oder OneDrive) und exportieren Sie Medien in Ordner.
   - icon: 🎯
     title: Erweiterte Funktionen
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, Study Bible media, public talk media, and manage multiple congregations.
+    details: Importieren Sie benutzerdefinierte Medien, JWPUB-Dateien, Wiedergabelisten, Audioaufnahmen der Bibel, Medien aus der Studienbibel sowie Medien für öffentliche Vorträge und verwalten Sie mehrere Versammlungen.
   - icon: ⏱️
-    title: Meeting Timer and Recording Controls
-    details: Use an optional timer display for participant timing and control OBS or external recording apps from M³.
+    title: Zusammenkunfts-Timer und Aufnahmesteuerung
+    details: Nutzen Sie eine optionale Timer-Anzeige für die Zeitmessung der Mitwirkenden und steuern Sie OBS oder externe Aufnahme-Apps direkt aus M³.
 ---
