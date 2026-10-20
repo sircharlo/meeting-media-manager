@@ -24,8 +24,8 @@ O código fonte para este aplicativo está disponível para todos examinarem e v
 
 M³ supports Windows, macOS, and Linux:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) ou posterior (build Universal)
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - **Linux**: Most modern Linux distributions (AppImage format)
 
 ### :globe_with_meridians: Does M³ work in my language? {#language-support}
@@ -312,8 +312,8 @@ Obrigado pelo seu interesse em apoiar o projeto! No entanto, no espírito de Mat
 
 O M³ foi projetado para funcionar em uma ampla variedade de sistemas operacionais:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) ou posterior (build Universal)
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - **Linux**: Most modern Linux distributions (AppImage format)
 
 O M³ tem os seguintes requisitos de hardware:
