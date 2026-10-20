@@ -9,7 +9,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Platform Support**: M³ now requires a 64-bit version of Windows 10 or later, or macOS 13 (Ventura) or later. v26.10.1 is the last version that runs on 32-bit Windows and macOS 12 (Monterey), and it stays available from the download page.
-- 🛠️ **OBS Studio and Zoom**: The OBS Studio integration can no longer be turned on together with Zoom's media sharing ("Automate media sharing" in the Zoom Meeting Manager, or "Trigger Zoom screen sharing automatically"), since both would show the media in Zoom. The Zoom Meeting Manager's other automations still work alongside OBS Studio. The Zoom setup assistant offers to let Zoom share the media instead of OBS Studio, and the setup wizard turns Zoom's media sharing off when OBS Studio is chosen to show the media.
+- 🛠️ **OBS Studio and Zoom**: An OBS Studio media scene can no longer be set while Zoom's media sharing is on ("Automate media sharing" in the Zoom Meeting Manager, or "Trigger Zoom screen sharing automatically"), and vice versa, since both would show the media in Zoom. The rest of the OBS Studio integration (camera scene, recording controls) and of the Zoom Meeting Manager still work together. The Zoom setup assistant offers to let Zoom share the media instead of OBS Studio's media scene, and the setup wizard turns Zoom's media sharing off once an OBS Studio media scene is chosen. Images also no longer switch OBS Studio to its image scene when no media scene is set, matching what Settings shows.
 
 ## v26.10.1
 

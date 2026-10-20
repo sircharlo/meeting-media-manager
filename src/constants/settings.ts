@@ -577,9 +577,9 @@ export const settingsDefinitions: SettingsItems = {
     type: 'toggle',
   },
   zoomEnable: {
-    // OBS Studio shows media in Zoom through its own scenes, so letting Zoom
-    // share the media window as well would show it twice.
-    disableWhen: ['obsEnable', 'zoomMeetingManagerEnable'],
+    // With a media scene, OBS Studio shows media in Zoom itself, so letting
+    // Zoom share the media window as well would show it twice.
+    disableWhen: ['obsMediaScene', 'zoomMeetingManagerEnable'],
     group: 'integrations',
     subgroup: 'zoomIntegration',
     type: 'toggle',
@@ -693,7 +693,7 @@ export const settingsDefinitions: SettingsItems = {
   },
   zoomMeetingManagerAutomateMediaSharing: {
     depends: 'zoomMeetingManagerEnable',
-    disableWhen: 'obsEnable',
+    disableWhen: 'obsMediaScene',
     group: 'integrations',
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
@@ -739,9 +739,6 @@ export const settingsDefinitions: SettingsItems = {
   },
   obsEnable: {
     actions: ['obsConnect'],
-    // Only Zoom's media sharing conflicts with OBS Studio (both would show
-    // the media); the Zoom Meeting Manager's other automations don't.
-    disableWhen: ['zoomEnable', 'zoomMeetingManagerAutomateMediaSharing'],
     group: 'integrations',
     subgroup: 'obsStudio',
     type: 'toggle',
@@ -770,6 +767,11 @@ export const settingsDefinitions: SettingsItems = {
   },
   obsMediaScene: {
     depends: ['obsEnable', 'obsPort', 'obsPassword'],
+    // Only the media scene conflicts with Zoom's media sharing (both would
+    // show the media in Zoom). The rest of the OBS Studio integration
+    // (camera scene, recording) and of the Zoom Meeting Manager still work
+    // together.
+    disableWhen: ['zoomEnable', 'zoomMeetingManagerAutomateMediaSharing'],
     group: 'integrations',
     list: 'obsAllScenes',
     subgroup: 'obsStudio',

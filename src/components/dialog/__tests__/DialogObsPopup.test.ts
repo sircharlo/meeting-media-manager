@@ -294,3 +294,46 @@ describe('DialogObsPopup - recording footer', () => {
     openFolderSpy.mockRestore();
   });
 });
+
+// Like in Settings (obsImageScene depends on obsMediaScene), the image scene
+// only applies along with a media scene: clearing the media scene (e.g. to
+// let Zoom share the media instead) must stop OBS Studio showing images too.
+describe('DialogObsPopup - image scene', () => {
+  const showImage = async () => {
+    useCurrentStateStore().mediaPlaying.url = 'file:///media/picture.jpg';
+    globalThis.dispatchEvent(
+      new CustomEvent('obsSceneEvent', { detail: { scene: 'media' } }),
+    );
+    await flushPromises();
+  };
+
+  const setupConnected = (overrides: Partial<typeof defaultSettings>) => {
+    const obsState = setupObsSettings(overrides);
+    obsState.obsConnectionState = 'connected';
+    obsState.scenes = [
+      { sceneName: 'Camera' },
+      { sceneName: 'Media' },
+      { sceneName: 'Images' },
+    ];
+    mount(DialogObsPopup, { props: { modelValue: true } });
+  };
+
+  it('switches to the image scene for an image when a media scene is set', async () => {
+    setupConnected({ obsImageScene: 'Images', obsMediaScene: 'Media' });
+    await showImage();
+
+    expect(callMock).toHaveBeenCalledWith('SetCurrentProgramScene', {
+      sceneName: 'Images',
+    });
+  });
+
+  it("doesn't switch to the image scene without a media scene", async () => {
+    setupConnected({ obsImageScene: 'Images', obsMediaScene: null });
+    await showImage();
+
+    expect(callMock).not.toHaveBeenCalledWith(
+      'SetCurrentProgramScene',
+      expect.anything(),
+    );
+  });
+});

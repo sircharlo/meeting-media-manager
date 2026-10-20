@@ -435,9 +435,17 @@ describe('DialogZoomSetupAssistant', () => {
     expect(settings().zoomMeetingManagerEnable).toBe(true);
   });
 
-  // OBS Studio already shows the media in Zoom, so Zoom mustn't share it too
-  it('leaves media sharing off while OBS Studio is on, and offers to switch', async () => {
-    await mountAssistant({ obsEnable: true });
+  // With a media scene, OBS Studio already shows the media in Zoom, so Zoom
+  // mustn't share it too
+  it('leaves media sharing off while OBS Studio has a media scene, and offers to switch', async () => {
+    await mountAssistant({
+      obsCameraScene: 'Camera',
+      obsEnable: true,
+      obsImageScene: 'Images',
+      obsMediaScene: 'Media',
+      obsPassword: 'secret',
+      obsPort: '4455',
+    });
     await reachVideoStep();
     await learnButtons();
     await click('Check sharing');
@@ -448,11 +456,31 @@ describe('DialogZoomSetupAssistant', () => {
       true,
     );
     expect(text()).toContain(
-      "Zoom can't share the media window while the OBS Studio integration is on",
+      "Zoom can't share the media window while OBS Studio has a media scene set",
     );
 
     await click('Let Zoom share media instead');
-    expect(settings().obsEnable).toBe(false);
+    expect(settings().obsMediaScene).toBeNull();
+    expect(settings().obsImageScene).toBeNull();
+    // The rest of the OBS Studio integration stays on
+    expect(settings().obsEnable).toBe(true);
+    expect(settings().obsCameraScene).toBe('Camera');
+    expect(settings().zoomMeetingManagerAutomateMediaSharing).toBe(true);
+    expect(text()).not.toContain("Zoom can't share the media window");
+  });
+
+  it('preselects media sharing when OBS Studio has no media scene', async () => {
+    await mountAssistant({
+      obsCameraScene: 'Camera',
+      obsEnable: true,
+      obsPassword: 'secret',
+      obsPort: '4455',
+    });
+    await reachVideoStep();
+    await learnButtons();
+    await click('Check sharing');
+    await click('Continue');
+
     expect(settings().zoomMeetingManagerAutomateMediaSharing).toBe(true);
     expect(text()).not.toContain("Zoom can't share the media window");
   });

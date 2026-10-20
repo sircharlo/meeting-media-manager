@@ -1162,10 +1162,18 @@ watch(
   (newObsIntegrate) => {
     if (newObsIntegrate && obsUsed.value && currentSettings.value) {
       currentSettings.value.obsEnable = true;
-      // OBS Studio now shows the media in Zoom, so Zoom mustn't share it too
-      currentSettings.value.zoomEnable = false;
-      currentSettings.value.zoomMeetingManagerAutomateMediaSharing = false;
     }
+  },
+);
+
+watch(
+  () => currentSettings.value?.obsMediaScene,
+  (mediaScene) => {
+    if (!mediaScene || !currentSettings.value) return;
+    // With a media scene, OBS Studio shows the media in Zoom, so Zoom
+    // mustn't share it too (see obsMediaScene's disableWhen).
+    currentSettings.value.zoomEnable = false;
+    currentSettings.value.zoomMeetingManagerAutomateMediaSharing = false;
   },
 );
 

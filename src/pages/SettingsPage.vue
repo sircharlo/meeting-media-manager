@@ -352,11 +352,7 @@
                         class="text-primary"
                       >
                         <q-icon name="mmm-info" size="xs" />
-                        {{
-                          t('setting-unavailable-while-enabled', {
-                            setting: getBlockingSettingNames(settingId),
-                          })
-                        }}
+                        {{ getBlockingSettingsMessage(settingId) }}
                       </q-item-label>
                     </q-item-section>
                     <q-item-section
@@ -445,7 +441,10 @@ import {
   exportProfileSettingsToFile,
   importProfileSettingsFromFile,
 } from 'src/utils/profile-settings';
-import { getBlockingSettings } from 'src/utils/settings';
+import {
+  getBlockingSettingReasons,
+  getBlockingSettings,
+} from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
@@ -997,10 +996,10 @@ const shouldShowSetting = (
 const isSettingDisabled = (settingId: keyof SettingsValues): boolean =>
   getBlockingSettings(currentSettings.value, settingId).length > 0;
 
-const getBlockingSettingNames = (settingId: keyof SettingsValues): string =>
-  getBlockingSettings(currentSettings.value, settingId)
-    .map((blocker) => t(blocker))
-    .join(', ');
+const getBlockingSettingsMessage = (settingId: keyof SettingsValues): string =>
+  getBlockingSettingReasons(currentSettings.value, settingId)
+    .map(({ messageKey, setting }) => t(messageKey, { setting: t(setting) }))
+    .join(' ');
 
 const settingParam = useRouteParams<keyof SettingsValues | undefined>(
   'setting',

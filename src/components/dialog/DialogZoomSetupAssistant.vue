@@ -360,7 +360,7 @@
                 />
               </div>
               <div
-                v-if="currentSettings.obsEnable"
+                v-if="obsShowsMedia"
                 class="row items-center no-wrap q-mt-sm text-caption text-warning"
               >
                 <q-icon class="q-mr-xs" name="mmm-info" size="14px" />
@@ -494,6 +494,7 @@ import {
   runZoomSelfTest,
   type ZoomSelfTestStep,
 } from 'src/helpers/zoom-self-test';
+import { isSettingInEffect } from 'src/utils/settings';
 import { parseZoomMeetingId } from 'src/utils/zoom';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
@@ -819,6 +820,13 @@ const tryShareEntry = async () => {
 
 // --- Automations -------------------------------------------------------------
 
+/** Whether OBS Studio has a media scene, so it shows the media in Zoom itself. */
+const obsShowsMedia = computed(
+  () =>
+    !!currentSettings.value &&
+    isSettingInEffect(currentSettings.value, 'obsMediaScene'),
+);
+
 const automations = computed(() => [
   {
     disabled: !currentSettings.value?.zoomMeetingManagerMeetingId,
@@ -833,9 +841,9 @@ const automations = computed(() => [
     setting: 'zoomMeetingManagerAutomatePostMeetingAudioSettings' as const,
   },
   {
-    // OBS Studio already shows the media in Zoom (see obsEnable's disableWhen)
-    disabled:
-      shareStatus.value !== 'passed' || !!currentSettings.value?.obsEnable,
+    // OBS Studio already shows the media in Zoom (see obsMediaScene's
+    // disableWhen)
+    disabled: shareStatus.value !== 'passed' || obsShowsMedia.value,
     setting: 'zoomMeetingManagerAutomateMediaSharing' as const,
   },
   {
@@ -845,13 +853,16 @@ const automations = computed(() => [
 ]);
 
 /**
- * Lets Zoom share the media window instead of OBS Studio switching scenes:
- * the two can't both be on, so this turns the OBS Studio integration off.
+ * Lets Zoom share the media window instead of OBS Studio switching to its
+ * media scene: the two can't both be on, so this clears OBS Studio's media
+ * and image scenes. The rest of the OBS Studio integration (camera scene,
+ * recording) stays on.
  */
 const switchMediaSharingFromObs = () => {
   const settings = currentSettings.value;
   if (!settings) return;
-  settings.obsEnable = false;
+  settings.obsMediaScene = null;
+  settings.obsImageScene = null;
   if (shareStatus.value === 'passed') {
     settings.zoomMeetingManagerAutomateMediaSharing = true;
   }

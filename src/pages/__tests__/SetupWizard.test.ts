@@ -144,7 +144,7 @@ describe('SetupWizard, OBS Studio', () => {
   // The wizard's "does the Kingdom Hall use OBS Studio?" question.
   const OBS_STEP = 103;
 
-  it('turns Zoom media sharing off when OBS Studio is chosen to show the media', async () => {
+  it('turns Zoom media sharing off once OBS Studio gets a media scene', async () => {
     await mountWizard();
     Object.assign(settings(), {
       zoomMeetingManagerAutomateMediaSharing: true,
@@ -154,11 +154,16 @@ describe('SetupWizard, OBS Studio', () => {
     await click('Yes'); // uses OBS Studio
 
     expect(text()).toContain(
-      "If M³ works with OBS Studio, OBS Studio will show the media in Zoom instead, and Zoom's media sharing will be turned off.",
+      "If you choose a media scene for OBS Studio, OBS Studio will show the media in Zoom instead, and Zoom's media sharing will be turned off.",
     );
     await click('Yes'); // integrate M³ with it
-
     expect(settings().obsEnable).toBe(true);
+    // Integrating alone doesn't show media in Zoom yet
+    expect(settings().zoomMeetingManagerAutomateMediaSharing).toBe(true);
+
+    settings().obsMediaScene = 'Media'; // as picked on the scenes step
+    await flushPromises();
+
     expect(settings().zoomMeetingManagerAutomateMediaSharing).toBe(false);
     // The Meeting Manager's other automations still work with OBS Studio
     expect(settings().zoomMeetingManagerEnable).toBe(true);
