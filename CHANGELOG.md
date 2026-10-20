@@ -18,6 +18,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🐞 Bug Fixes
 
 - 🐞 **OBS Studio**: The setting that shows recording controls in the OBS Studio popup now has a proper name and explanation, instead of showing an internal identifier.
+- 🐞 **OBS Studio**: The warning shown when M³ can't get the list of OBS Studio scenes now names OBS Studio properly, instead of showing "obsStudio".
 
 ## v26.10.1
 

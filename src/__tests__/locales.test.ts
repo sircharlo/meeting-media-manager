@@ -165,4 +165,36 @@ describe('Locales', () => {
         .join('\n')}`,
     ).toHaveLength(0);
   });
+
+  it('should only link to English messages that exist', async () => {
+    // vue-i18n reads everything after a bare @:key up to a space as part of
+    // the key, so "Try reconnecting @:obsStudio, or…" looked up "obsStudio,"
+    // and showed the raw key. Parse each message as the runtime does and
+    // check every linked key resolves; @:{'key'} ends the key explicitly.
+    const { createParser } = await import('@intlify/message-compiler');
+    const parser = createParser({ location: false });
+    const LINKED_NODE = 6; // NodeTypes.Linked, not exported at runtime
+
+    const linkedKeys = (node: unknown): string[] => {
+      if (!node || typeof node !== 'object') return [];
+      const { key, type } = node as { key?: { value?: string }; type?: number };
+      const own = type === LINKED_NODE && key?.value ? [key.value] : [];
+      const nested = Object.values(node).flatMap((child) =>
+        Array.isArray(child) ? child.flatMap(linkedKeys) : linkedKeys(child),
+      );
+      return [...own, ...nested];
+    };
+
+    const keys = new Set(Object.keys(appMessages.en));
+    const broken = Object.entries(appMessages.en).flatMap(([key, value]) =>
+      linkedKeys(parser.parse(value))
+        .filter((linked) => !keys.has(linked))
+        .map((linked) => `  ${key}: @:${linked}`),
+    );
+
+    expect(
+      broken,
+      `These English messages link to missing keys:\n${broken.join('\n')}`,
+    ).toHaveLength(0);
+  });
 });
