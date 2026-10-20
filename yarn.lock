@@ -5055,10 +5055,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"countries-and-timezones@npm:^3.10.0":
-  version: 3.10.0
-  resolution: "countries-and-timezones@npm:3.10.0"
-  checksum: 10c0/94d71134a76c6f1fd7f938c46243ee0e055590e9e59b94d750ce17f080cf27e5e06c72ec414ef5872e826120d11aaa712e62a7bdf1dd6fae602139f3cc3e679a
+"countries-and-timezones@npm:^3.11.0":
+  version: 3.11.0
+  resolution: "countries-and-timezones@npm:3.11.0"
+  checksum: 10c0/353b9f4aeb259938f4521caa69c69c2e1e5551f7d0f81912db35ce99f75eb9e404bc04b0940e59a1cfe53d9680f9469ba08f4617b9bc1fd81bfc12c09bcc380f
   languageName: node
   linkType: hard
 
@@ -8160,7 +8160,7 @@ __metadata:
     check-disk-space: "npm:^3.4.0"
     cheerio: "npm:^1.2.0"
     chokidar: "npm:^5.0.0"
-    countries-and-timezones: "npm:^3.10.0"
+    countries-and-timezones: "npm:^3.11.0"
     depcheck: "npm:^1.4.7"
     dompurify: "npm:^3.4.17"
     electron: "npm:^44.9.0"
