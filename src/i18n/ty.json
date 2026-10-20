@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "Te hōho’a ’āua i roto i te @:obsStudio e fa’arirohia ’ei ’āua tūra’i mātauhia. I tōna rorororora’a ’āpī roa a’e, e tītauhia ’ia riro teie ’ei tātā’ura’a ’ā’ano.",
   "obsEnable": "’A fa’atupu piri ia M³ ’e te @:obsStudio",
   "obsEnable-explain": "’A tū’ati ia M³ ’e te @:obsStudio nō te fa’ananeva noa i te mau hōho’a ’āua media ’e te hōho’a ’āua tātā’ura’a.",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "’Eiaha e fa’ariro i te mau tāpa’o i roto i te fa’ananeva hōho’a",
   "obsHideIcons-explain": "’Ia fa’atā’ihia, e hunahia te mau tāpa’o i roto i te fa’ananeva hōho’a. E nehenehe teie e fa’ahau atu i te pāpū o te tai’ora’a i te mau i’oa hōho’a.",
   "obsImageScene": "Hōho’a ’āua nō te fa’ariro i te mau hōho’a i roto i te @:obsStudio (e nehenehe noa)",
