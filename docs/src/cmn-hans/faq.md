@@ -24,8 +24,8 @@
 
 M³ 支持 Windows、macOS 和 Linux：
 
-- **Windows**：Windows 10 及更高版本（提供 64 位和 32 位版本）
-- **macOS**：macOS 10.15（Catalina）及更高版本（通用版）
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - **Linux**：大多数现代 Linux 发行版（AppImage 格式）
 
 ### :globe_with_meridians: M³ 支持我的语言吗？ {#language-support}
@@ -312,8 +312,8 @@ Thank you for your interest in supporting the project! However, in the spirit of
 
 M³ 可以在多种操作系统上运行：
 
-- **Windows**：Windows 10及更高版本（提供64位和32位版本）
-- **macOS**：macOS 10.15（Catalina）及更高版本（通用版）
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - **Linux**：大多数现代Linux发行版（AppImage格式）
 
 :computer: M³ 的硬件和软件要求是什么？ {#hardware-and-software-requirements}

@@ -24,8 +24,8 @@ Te vai noa nei te nure parau tumu a teie fa’anahora’a nō te hi’opō’ara
 
 Te tauturu nei M³ i te Windows, macOS, e te Linux:
 
-- Windows: Windows 10 e te mau nure i muri mai (e vai nei te huru parau 64-bit e te 32-bit)
-- macOS: macOS 10.15 (Catalina) e te mau nure i muri mai (fa’anahora’a tura’i-’āmui-hia)
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - Linux: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
 
 ### :globe_with_meridians: Te ’ohipa nei ānei o M³ nō tō’u iho reo? {#language-support}
@@ -312,8 +312,8 @@ Māuruuru i tō ’oe hina’aro ’ia turu i te ’ohipa nei! Inaha rā, ma te 
 
 Ua hāmanihia te M³ nō te ohipa i ni’a i te mau huru anairaa porotarama e rave rahi:
 
-- Windows: Windows 10 e te mau nure i muri mai (e vai nei te huru parau 64-bit e te 32-bit)
-- macOS: macOS 10.15 (Catalina) e te mau nure i muri mai (fa’anahora’a tura’i-’āmui-hia)
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - Linux: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
 
 Teie te mau titaura’a nō ni’a i te matini nō M³:
