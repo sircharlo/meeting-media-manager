@@ -24,8 +24,8 @@ Te vai noa nei te nure parau tumu a teie fa’anahora’a nō te hi’opō’ara
 
 Te tauturu nei M³ i te Windows, macOS, e te Linux:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**: Windows 10 ’e te mau neneira’a i muri mai (64-bit). Te version hope’a nō Windows 32-bit, o te v26.10.1 ïa, i ni’a i te [api tu’u-haere](download).
+- **macOS**: macOS 13 (Ventura) ’e te mau neneira’a i muri mai (Universal). Te version hope’a nō macOS 12 (Monterey), o te v26.10.1 ïa, i ni’a i te [api tu’u-haere](download).
 - Linux: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
 
 ### :globe_with_meridians: Te ’ohipa nei ānei o M³ nō tō’u iho reo? {#language-support}
@@ -126,9 +126,9 @@ Teie te mau rāve’a nō te hīmene aratō:
 - Te fa’atere-ano’i-’ō’oā o te pūai reo
 - Te taime fa’ata’ara’a-tāpū-muri e nehenehe e fa’ahuru ’ē
 
-### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³? {#faq-meeting-timer}
+### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³?  {#faq-meeting-timer}
 
-E. Ia ha’amā-hia, e nehenehe te M³ e fa’a’ite i te ho’ē ha’amaramarama taime taa ’ē nō te faito i te taime o te feiā e paraparau ra. E nehenehe te reira e taio i ni’a aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te taime fa’ataime nō te putuputura’a, e mai te peu e hina’aro ’oe, e fa’a’ite i te taime hau aore rā mai te peu e te mua ra te putuputura’a aore rā te muri ra i ni’a i te porotarama. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
+E. Ia ha’amā-hia, e nehenehe te M³ e fa’a’ite i te ho’ē ha’amaramarama taime taa ’ē nō te faito i te taime o te feiā e paraparau ra. E nehenehe te reira e taio i ni’a aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te taime fa’ataime nō te putuputura’a, e mai te peu e hina’aro ’oe, e fa’a’ite i te taime hau aore rā mai te peu e te mua ra te putuputura’a aore rā te muri ra i ni’a i te porotarama. E nehenehe e taui noa i te roara’a o te mau tuha’a, e nehenehe e ’āmui i te mau tuha’a ta’a ’ē nō te mau porotarama ta’a ’ē, ’e e nehenehe e fa’atere i te fa’atere-hora nā ni’a i te motu ha’atere (noa atu ’ia tu’uhia te ’iore i ni’a iho) ’aore rā nā roto i te hō’ē ’api i tāpirihia i roto i te ha’amāramarama matamua.
 
 E hoho’a-taata beta teie ha’amaramarama taime, eiaha e fa’a’ohipa i te reira ma te ’ore e fāriihia e te mau ti’a o te amuira’a.
 
@@ -158,18 +158,18 @@ E taui noa te fa’anahora’a M³ i te mau ’āfata OBS ia au i te:
 
 - Huru pāpāho (teata, hōho’a, tōpāto)
 - Tō ’oe fa’anahora’a tiri
-- Settings like "Do not automatically share images"
+- Te mau fa’anahora’a mai te "’Eiaha e ’ōpere noa i te mau hōho’a"
 - Ē ho’i ā rānei i ni’a i te tiri nā mua atu i muri a’e i te pāpāho
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: Eaha te ohipa a te fa’anahora’a "’Eiaha e ’ōpere noa i te mau hōho’a"? {#faq-postpone-images}
 
-This setting delays sharing images to OBS until you manually trigger them. E mea faufa’a teie nō:
+E fa’ataere teie fa’anahora’a i te ’ōperera’a i te mau hōho’a i ni’a ia OBS e tae noa atu ’ia fa’ahoro ’oe iho i te reira. E mea faufa’a teie nō:
 
 - Te fa’ahōho’ara’a nā mua i te mau hōho’a i mua i te feiā e fāri’i-tinana-hia ra
 - Te fā’fa’ahiahia o te rāve’a nō te fa’atere pāpū i te taime
 - Te ’ape’ara’a i te tauira’a tiri vitiviti roa
 
-### :record_button: E nehenehe anei te M³ e haruharu i te putuputura’a? {#faq-recordings}
+### :record_button: E nehenehe anei te M³ e haruharu i te putuputura’a?  {#faq-recordings}
 
 Aita te M³ e fa’a’ohipa ra i te ho’ē matini haruharu-reo o roto, tera rā, e nehenehe te reira e tauturu i te fa’atere-ra’a i te haruharu-reo nā roto e piti huru:
 
@@ -178,16 +178,16 @@ Aita te M³ e fa’a’ohipa ra i te ho’ē matini haruharu-reo o roto, tera r�
 
 ## Mau tātara’a hōhonu {#faq-advanced-features}
 
-### :cloud: How does the shared folder work? {#faq-folder-monitoring}
+### :cloud: Nāfea te pu'e 'ite tufahia e ha’a ai? {#faq-folder-monitoring}
 
-If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
+Mai te peu e vaiiho ’oe i te mau dosie nō te mau putuputura’a i roto i te hō’ē porotarama vaira’a nā ni’a i te itenati mai ia Dropbox, OneDrive, iCloud Drive ’aore rā Google Drive, e nehenehe tā M³ e ’āmui otometi i te reira i te putuputura’a tano:
 
-1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
-2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
-3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
-4. To add files for another day, create a folder for it, named the same way.
+1. ’A mā’iti i te hō’ē fā’ari parau i roto i tā ’oe porotarama vaira’a, i roto i te tauturu fa’aineinera’a ’aore rā i roto i **Te mau fa’anahora’a** > **Te mau tū’atira’a fa’anahora’a** > **Pu'e 'ite tufahia**. E mea maita’i a’e te hō’ē fā’ari parau ’āpī nō teie ana’e ohipa.
+2. E hāmani M³ i roto i te reira i te hō’ē fā’ari parau nō te putuputura’a tā’itahi e tae mai, ma te i’oa o te mahana o te putuputura’a i pāpa’ihia mai teie te huru: matahiti-’āva’e-mahana (ei hi’ora’a, `2026-03-25`).
+3. ’A tu’u i te mau hōho’a, te mau video, te mau dosie reo ’aore rā te mau tāpura ha’uti JW Library i roto i te fā’ari parau o te hō’ē putuputura’a i te mau taime ato’a e tītauhia ai. E ’āmuihia te reira i roto i te tāpura media o taua putuputura’a ra, i ni’a i te mau roro uira ato’a e fa’a’ohipa ra i taua fā’ari parau ra.
+4. Nō te ’āmui i te mau dosie nō te tahi atu mahana, ’a hāmani i te hō’ē fā’ari parau nō te reira, ma te i’oa i pāpa’ihia mai te reira ato’a te huru.
 
-When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
+’Ia oti te hō’ē hepetoma, e fa’a’ore M³ i te mau fā’ari parau o taua hepetoma ra ’e tō rātou mau dosie, nō te feiā ato’a e fa’a’ohipa ra i te pu'e 'ite tufahia. Nō te vaiiho i te reira, ’a tāpū i **A faaore i te mau pu'e 'ite o te mau taro'oraa i ma'iri**.
 
 ### :file_folder: E aha te huru nō te fa’atahe-ti’amā-ra’a pāpāho? {#faq-media-export}
 
@@ -250,7 +250,7 @@ Nō te aha e mea faufa’a ai teie rāve’a?
 
 ’A tāmata i teie mau rāve’a nō te ha’amaita’i i te terera’a:
 
-1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
+1. **E tōtautā i te mau tōta’a tōna’a hīmene i roto i te cache**: ’A tu’u nā mua i te mau video ato’a o te puta hīmene i roto i te cache, i roto i te mau fa’anahora’a
 2. ’A piri i te tahi atu mau rorouira ’ohipa: ’A piri i te mau rorouira ’ohipa faufa’a ’ore
 3. Hi’opo’a i te vāhi vata o te ha’aputura’a parau: ’A ha’apāpū ē tē vai ra te vāhi vata nahu i ni’a i tā ’outou rorouira
 4. Fa’ahā’ha’i i te hōho’a: ’A fa’aha’ama’i i te fa’anahora’a teitei roa a’e o te hōho’a
@@ -312,8 +312,8 @@ Māuruuru i tō ’oe hina’aro ’ia turu i te ’ohipa nei! Inaha rā, ma te 
 
 Ua hāmanihia te M³ nō te ohipa i ni’a i te mau huru anairaa porotarama e rave rahi:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**: Windows 10 ’e te mau neneira’a i muri mai (64-bit). Te version hope’a nō Windows 32-bit, o te v26.10.1 ïa, i ni’a i te [api tu’u-haere](download).
+- **macOS**: macOS 13 (Ventura) ’e te mau neneira’a i muri mai (Universal). Te version hope’a nō macOS 12 (Monterey), o te v26.10.1 ïa, i ni’a i te [api tu’u-haere](download).
 - Linux: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
 
 Teie te mau titaura’a nō ni’a i te matini nō M³:
