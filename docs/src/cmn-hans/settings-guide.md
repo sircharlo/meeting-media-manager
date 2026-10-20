@@ -575,7 +575,7 @@ Zoom marks raised hands in its own language, so M³ first needs to learn how: wi
 
 **默认**：`false`
 
-:::warning 优先使用拼音版诗歌 {#enable-pinyin-songs}
+:::warning 重要提示
 
 **需要配置音频**：OBS Studio 集成仅处理屏幕共享。使用 OBS Studio 时，M³ 媒体的音频**不会自动传输**给 Zoom 与会者。您必须配置 Zoom 的“原始音频 (Original Audio)”设置或使用“共享电脑声音”以确保与会者能听到媒体。有关详细的音频设置说明，请参阅[用户指南](/user-guide#audio-configuration)。**需要配置音频**：OBS Studio 集成只负责视频和场景切换。M³ 媒体的声音不会通过视频流自动传输给 Zoom。视频流类似一个没有声音的虚拟摄像头。您必须配置 Zoom 原始音频设置或使用 “共享计算机声音” 以确保聚会参与者能够听到媒体。详细说明请参阅[用户指南](/user-guide#audio-configuration)。
 
@@ -616,7 +616,7 @@ OBS Studio WebSocket 连接所使用的密码。
 - **隐藏图标**：在场景切换器中隐藏图标
 - **录制控制**：从 M³ 中控制 OBS Studio 开始或停止录制
 
-:::warning Important Note
+:::warning 重要提示
 
 **需要音频配置**：OBS Studio 集成只处理视频/场景切换。来自 M3 媒体的音频**不会自动传输**到 Zoom 或 OBS。视频流像一个没有声音的虚拟摄像头，类似于摄像头一样。您必须配置 Zoom 原始音频设置或使用 “共享计算机声音” 以确保聚会参与者能够听到媒体。详细说明请参阅[用户指南](/user-guide#audio-configuration)。
 
