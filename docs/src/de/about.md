@@ -2,7 +2,7 @@
 
 ![M³ banner](./../assets/m3-banner.png)
 
-## Was ist diese Anwendung? {#what-is-this-app}
+## Was ist diese Anwendung?  {#what-is-this-app}
 
 **Meeting Media Manager**, oder kurz **M³**, ist eine umfassende, plattformübergreifende Anwendung für Windows, macOS und Linux, die automatisch Bilder und Videos für die Zusammenkünfte der Zeugen Jehovas herunterlädt, organisiert und präsentiert. Sie unterstützt jede auf der offiziellen Website der Zeugen Jehovas verfügbare Sprache und bietet leistungsstarke Werkzeuge für die Verwaltung von Medien während hybrider und persönlicher Zusammenkünfte.
 
@@ -14,7 +14,7 @@ Diese App war früher als JWMMF (JW Meeting Media Fetcher) bekannt, wurde aber i
 
 :::
 
-## Warum M³ wählen? {#why-choose-m3}
+## Warum M³ wählen?  {#why-choose-m3}
 
 M³ ist das ultimative Werkzeug zur Verwaltung von Zusammenkunftsmedien und bietet eine nahtlose, zuverlässige und funktionsreiche Erfahrung auf allen Plattformen. Es wurde speziell für die Bedürfnisse von Zusammenkünften entwickelt und bietet alles, was für eine effektive Medienpräsentation erforderlich ist.
 
@@ -32,7 +32,7 @@ M³ ist das ultimative Werkzeug zur Verwaltung von Zusammenkunftsmedien und biet
 
 - **Erweiterte Präsentationswerkzeuge**: Erweiterte Mediensteuerung, Zoom/Schwenk-Funktionen, benutzerdefinierte Zeitsteuerung und nahtlose Integration von Zoom und OBS Studio.
 
-## Was kann M³ tun? {#what-can-m3-do}
+## Was kann M³ tun?  {#what-can-m3-do}
 
 M³ ist eine umfassende Medienverwaltungslösung, mit der Sie alle Zusammenkunftsmedien einfach und automatisch herunterladen, synchronisieren, teilen und präsentieren können. Das macht M³ so leistungsstark:
 
@@ -50,7 +50,7 @@ Für **hybride** oder **persönliche** Zusammenkünfte umfasst der integrierte M
 - **Erweiterte Mediensteuerung**: Medien-Vorschaubilder mit Zoom- und Schwenkfunktionen
 - **Benutzerdefinierte Zeitsteuerung**: Legen Sie benutzerdefinierte Start- und Endzeiten für die Medienwiedergabe fest
 - **Wiedergabesteuerung**: Einfach zu bedienende Pause/Wiedergabe/Stopp-Tasten mit Tastenkürzeln
-- **Live preview and speed control**: Preview the audience display and optionally adjust audio or video playback speed
+- **Live-Vorschau und Geschwindigkeitssteuerung**: Zeigen Sie eine Vorschau der Anzeige für das Publikum an und passen Sie optional die Wiedergabegeschwindigkeit von Audio- oder Videodateien an
 - **Unterstützung mehrerer Monitore**: Automatische Erkennung und Verwaltung externer Monitore
 - **Saubere Präsentation**: Ablenkungsfreie Medienpräsentationsoberfläche
 
@@ -68,27 +68,27 @@ Für **hybride** oder **persönliche** Zusammenkünfte umfasst der integrierte M
 
 - **Automatischer Szenenwechsel**: Nahtlose Integration mit OBS Studio für hybride Zusammenkünfte
 - **Szenenverwaltung**: Automatisches Wechseln zwischen Kamera, Medien und anderen Szenen
-- **Recording controls**: Start and stop OBS recordings from M³ when enabled
+- **Aufnahmesteuerung**: Starten und stoppen Sie OBS-Aufnahmen aus M³ heraus, sofern aktiviert
 
 ### Medienimport und -verwaltung {#about-media-import}
 
 - **JWPUB-Dateien**: Importieren und verwalten Sie JWPUB-Dateien mit Leichtigkeit
 - **JWLPLAYLIST-Dateien**: Unterstützung für JW Library-Wiedergabelistendateien
 - **Benutzerdefinierte Medien**: Importieren Sie benutzerdefinierte Videos, Bilder, Audiodateien und PDF-Dateien
-- **Bible media**: Import Study Bible media, sign-language Bible media, and audio recordings of the New World Translation
+- **Bibelmedien**: Importieren Sie Medien aus der Studienbibel, aus der Bibel in Gebärdensprache sowie Audioaufnahmen der Neuen-Welt-Übersetzung
 - **Öffentliche Vorträge**: Haben Sie mit dem S-34-Importeur immer eine Übersicht über die Medien für öffentliche Vorträge parat
 
 ### Erweiterte Funktionen {#about-advanced-features}
 
-- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
+- **Geteilter Ordner**: Fügen Sie Zusammenkünften automatisch Medien aus einem Ordner hinzu, der über Dropbox, OneDrive, iCloud Drive oder Google Drive synchronisiert wird
 - **Medienexport**: Exportieren Sie Medien automatisch in Ordner, organisiert nach Datum
 - **Webseiten-Präsentation**: Präsentieren Sie die offizielle Website auf externen Monitoren
-- **Meeting timer**: Optional timer window for timing meeting parts
-- **Meeting recording helpers**: Control OBS recording or an external recording application
+- **Zusammenkunfts-Timer**: Optionales Timer-Fenster zur Zeitmessung der Programmpunkte
+- **Hilfen zur Aufzeichnung von Zusammenkünften**: Steuern Sie die Aufnahme in OBS oder in einer externen Aufnahmeanwendung
 - **Tastenkürzel**: Anpassbare Tastenkürzel für viele Funktionen
-- **Multiple profiles**: Manage different congregations or groups with separate profiles, including profile settings import and export
+- **Mehrere Profile**: Verwalten Sie verschiedene Versammlungen oder Gruppen mit separaten Profilen, einschließlich Import und Export der Profileinstellungen
 
-## Funktioniert M³ in meiner Sprache? {#does-m3-work-in-my-language}
+## Funktioniert M³ in meiner Sprache?  {#does-m3-work-in-my-language}
 
 **Ja!** M³ bietet umfassende Mehrsprachenunterstützung:
 
