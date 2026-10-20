@@ -590,6 +590,9 @@
               )
             }}
           </p>
+          <p v-if="zoomSharesMedia" class="text-warning">
+            {{ t('setup-wizard-obs-replaces-zoom-sharing') }}
+          </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
@@ -1039,6 +1042,14 @@ const setZoomChosen = (chosen: boolean) => {
   }
 };
 
+/** Whether Zoom is set to share the media window, which OBS Studio would replace. */
+const zoomSharesMedia = computed(
+  () =>
+    !!currentSettings.value?.zoomEnable ||
+    (!!currentSettings.value?.zoomMeetingManagerEnable &&
+      !!currentSettings.value.zoomMeetingManagerAutomateMediaSharing),
+);
+
 /** Whether the Zoom setup assistant has learned what it needs from Zoom. */
 const zoomManagerReady = computed(() =>
   areZoomButtonsLearned(currentSettings.value),
@@ -1151,6 +1162,9 @@ watch(
   (newObsIntegrate) => {
     if (newObsIntegrate && obsUsed.value && currentSettings.value) {
       currentSettings.value.obsEnable = true;
+      // OBS Studio now shows the media in Zoom, so Zoom mustn't share it too
+      currentSettings.value.zoomEnable = false;
+      currentSettings.value.zoomMeetingManagerAutomateMediaSharing = false;
     }
   },
 );

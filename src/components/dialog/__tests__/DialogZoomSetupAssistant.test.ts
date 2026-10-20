@@ -435,6 +435,28 @@ describe('DialogZoomSetupAssistant', () => {
     expect(settings().zoomMeetingManagerEnable).toBe(true);
   });
 
+  // OBS Studio already shows the media in Zoom, so Zoom mustn't share it too
+  it('leaves media sharing off while OBS Studio is on, and offers to switch', async () => {
+    await mountAssistant({ obsEnable: true });
+    await reachVideoStep();
+    await learnButtons();
+    await click('Check sharing');
+    await click('Continue');
+
+    expect(settings().zoomMeetingManagerAutomateMediaSharing).toBe(false);
+    expect(settings().zoomMeetingManagerAutomateMeetingAudioSettings).toBe(
+      true,
+    );
+    expect(text()).toContain(
+      "Zoom can't share the media window while the OBS Studio integration is on",
+    );
+
+    await click('Let Zoom share media instead');
+    expect(settings().obsEnable).toBe(false);
+    expect(settings().zoomMeetingManagerAutomateMediaSharing).toBe(true);
+    expect(text()).not.toContain("Zoom can't share the media window");
+  });
+
   it('lets optional steps be skipped', async () => {
     await mountAssistant();
     await reachVideoStep();

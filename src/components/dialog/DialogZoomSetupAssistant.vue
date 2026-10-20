@@ -359,6 +359,21 @@
                   @click="currentSettings.enableMusicButton = true"
                 />
               </div>
+              <div
+                v-if="currentSettings.obsEnable"
+                class="row items-center no-wrap q-mt-sm text-caption text-warning"
+              >
+                <q-icon class="q-mr-xs" name="mmm-info" size="14px" />
+                <div class="col">{{ t('zoom-setup-obs-sharing-off') }}</div>
+                <q-btn
+                  color="primary"
+                  dense
+                  flat
+                  :label="t('zoom-setup-obs-switch')"
+                  no-caps
+                  @click="switchMediaSharingFromObs"
+                />
+              </div>
             </template>
           </div>
 
@@ -818,7 +833,9 @@ const automations = computed(() => [
     setting: 'zoomMeetingManagerAutomatePostMeetingAudioSettings' as const,
   },
   {
-    disabled: shareStatus.value !== 'passed',
+    // OBS Studio already shows the media in Zoom (see obsEnable's disableWhen)
+    disabled:
+      shareStatus.value !== 'passed' || !!currentSettings.value?.obsEnable,
     setting: 'zoomMeetingManagerAutomateMediaSharing' as const,
   },
   {
@@ -826,6 +843,19 @@ const automations = computed(() => [
     setting: 'zoomMeetingManagerHandAlert' as const,
   },
 ]);
+
+/**
+ * Lets Zoom share the media window instead of OBS Studio switching scenes:
+ * the two can't both be on, so this turns the OBS Studio integration off.
+ */
+const switchMediaSharingFromObs = () => {
+  const settings = currentSettings.value;
+  if (!settings) return;
+  settings.obsEnable = false;
+  if (shareStatus.value === 'passed') {
+    settings.zoomMeetingManagerAutomateMediaSharing = true;
+  }
+};
 
 // --- Test --------------------------------------------------------------------
 

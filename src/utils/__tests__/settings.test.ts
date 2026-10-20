@@ -196,10 +196,53 @@ describe('Settings Utilities', () => {
       expect(
         getBlockingSettings({ zoomEnable: false }, 'zoomMeetingManagerEnable'),
       ).toEqual([]);
-      expect(getBlockingSettings({ zoomEnable: true }, 'obsEnable')).toEqual(
-        [],
-      );
+      expect(
+        getBlockingSettings({ zoomMeetingManagerEnable: true }, 'obsEnable'),
+      ).toEqual([]);
       expect(getBlockingSettings(undefined, 'zoomEnable')).toEqual([]);
+    });
+
+    // Both would show the media in Zoom: OBS Studio through its scenes, Zoom
+    // by sharing the media window. The Meeting Manager's other automations
+    // (launching, muting, camera, raised hands) work alongside OBS Studio.
+    it('keeps OBS Studio and Zoom media sharing from running together', () => {
+      expect(getBlockingSettings({ zoomEnable: true }, 'obsEnable')).toEqual([
+        'zoomEnable',
+      ]);
+      expect(
+        getBlockingSettings(
+          {
+            zoomMeetingManagerAutomateMediaSharing: true,
+            zoomMeetingManagerEnable: true,
+          },
+          'obsEnable',
+        ),
+      ).toEqual(['zoomMeetingManagerAutomateMediaSharing']);
+      expect(getBlockingSettings({ obsEnable: true }, 'zoomEnable')).toEqual([
+        'obsEnable',
+      ]);
+      expect(
+        getBlockingSettings(
+          { obsEnable: true },
+          'zoomMeetingManagerAutomateMediaSharing',
+        ),
+      ).toEqual(['obsEnable']);
+    });
+
+    it("doesn't let OBS Studio block the rest of the Zoom Meeting Manager", () => {
+      expect(
+        getBlockingSettings({ obsEnable: true }, 'zoomMeetingManagerEnable'),
+      ).toEqual([]);
+      // Media sharing only counts while the Meeting Manager itself is on
+      expect(
+        getBlockingSettings(
+          {
+            zoomMeetingManagerAutomateMediaSharing: true,
+            zoomMeetingManagerEnable: false,
+          },
+          'obsEnable',
+        ),
+      ).toEqual([]);
     });
 
     it('never locks a toggle that is on, so it can be turned off', () => {
