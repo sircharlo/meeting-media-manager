@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "La escena de @:obsStudio que se usará como vista predeterminada de la plataforma. Según las indicaciones más recientes, debería ser un plano general.",
   "obsEnable": "Integrar M³ con @:obsStudio",
   "obsEnable-explain": "Conecta M³ a @:obsStudio para cambiar automáticamente entre escenas de archivos multimedia y de cámara.",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "No mostrar iconos en el selector de escenas",
   "obsHideIcons-explain": "Si está activado, los iconos se ocultarán en el selector de escenas. Esto puede hacer que los nombres de las escenas sean más fáciles de leer.",
   "obsImageScene": "Escena para mostrar imágenes en @:obsStudio (opcional)",

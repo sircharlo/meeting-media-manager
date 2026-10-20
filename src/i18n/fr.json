@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "La scène dans @:obsStudio qui sera utilisée comme vue d'estrade par défaut. Selon les dernières directives, ceci devrait être un plan large de l'estrade.",
   "obsEnable": "Intégrer M³ à @:obsStudio",
   "obsEnable-explain": "Connectez M³ à @:obsStudio pour activer le basculement automatique entre les scènes de média et d'estrade.",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "Ne pas afficher les icônes dans le sélecteur de scène",
   "obsHideIcons-explain": "Lorsque cette option est activée, les icônes seront cachées dans le sélecteur de scènes. Cela peut améliorer la lisibilité des noms de scènes.",
   "obsImageScene": "Scène pour afficher les images dans @:obsStudio (facultatif)",

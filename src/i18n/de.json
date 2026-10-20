@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "Die Szene in @:obsStudio die als Standard-Bühnenansicht verwendet wird. Gemäß den neuesten Anweisungen sollte dies eine Totale sein.",
   "obsEnable": "M³ mit @:obsStudio integrieren",
   "obsEnable-explain": "Verbinde M³ mit @:obsStudio um das automatische Umschalten zwischen Medien- und Kameraszenen zu ermöglichen.",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "Keine Symbole im Szene-Umschalter anzeigen",
   "obsHideIcons-explain": "Wenn aktiviert, werden Symbole im Szenen-Umschalter versteckt. Dies kann die Lesbarkeit von Szenennamen erhöhen.",
   "obsImageScene": "Szene zum Anzeigen von Bildern in @:obsStudio (optional)",

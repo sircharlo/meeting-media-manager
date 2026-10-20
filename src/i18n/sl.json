@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "Prizor v programu @:obsStudio ki bo uporabljen kot privzeti pogled na oder. V skladu z zadnjimi navodili mora biti to širok kader.",
   "obsEnable": "Poveži M³ s programom @:obsStudio",
   "obsEnable-explain": "Poveži M³ s programom @:obsStudio da bo možno samodejno preklapljati med multimedijskim prizorom in prizorom kamere.",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "Ne prikaži ikon v preklopniku prizorov",
   "obsHideIcons-explain": "Če je ta možnost vključena, bodo ikone v preklopniku prizorov skrite. To lahko poveča čitljivost imen prizorov.",
   "obsImageScene": "Prizor za prikaz slik v programu @:obsStudio (neobvezno)",
