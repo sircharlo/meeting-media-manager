@@ -1,8 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { appOn, isSelfMock, setPermissionRequestHandler } = vi.hoisted(() => ({
+const {
+  appOn,
+  isSelfMock,
+  isTrustedNavigationTargetMock,
+  setPermissionRequestHandler,
+} = vi.hoisted(() => ({
   appOn: vi.fn(),
   isSelfMock: vi.fn(),
+  isTrustedNavigationTargetMock: vi.fn(() => false),
   setPermissionRequestHandler: vi.fn(),
 }));
 
@@ -15,7 +21,7 @@ vi.mock('electron', () => ({
 vi.mock('src-electron/main/utils', () => ({
   captureElectronError: vi.fn(),
   isSelf: isSelfMock,
-  isTrustedNavigationTarget: vi.fn(() => false),
+  isTrustedNavigationTarget: isTrustedNavigationTargetMock,
 }));
 
 vi.mock('src-electron/main/window/window-base', () => ({
@@ -45,6 +51,7 @@ describe('permission request handler', () => {
     vi.resetModules();
     vi.clearAllMocks();
     isSelfMock.mockImplementation((url: string) => url === 'app://index.html');
+    isTrustedNavigationTargetMock.mockReturnValue(false);
   });
 
   // MMM-V2-3JN: a request made before the webContents committed its first
@@ -69,5 +76,48 @@ describe('permission request handler', () => {
     });
 
     expect(callback).toHaveBeenCalledWith(false);
+  });
+
+  // Electron 45 requests screen/window/tab capture as `display-capture`
+  // rather than `media`; the media preview and website mirroring need it.
+  it('grants display-capture to our own pages', async () => {
+    const handler = await getPermissionHandler();
+    const callback = vi.fn();
+
+    handler(
+      { getURL: () => 'app://index.html', id: 1 },
+      'display-capture',
+      callback,
+    );
+
+    expect(callback).toHaveBeenCalledWith(true);
+  });
+
+  it('denies display-capture to trusted remote sites', async () => {
+    isTrustedNavigationTargetMock.mockReturnValue(true);
+    const handler = await getPermissionHandler();
+    const callback = vi.fn();
+
+    handler(
+      { getURL: () => 'https://trusted.example/', id: 1 },
+      'display-capture',
+      callback,
+    );
+
+    expect(callback).toHaveBeenCalledWith(false);
+  });
+
+  it('still grants media and notifications to trusted remote sites', async () => {
+    isTrustedNavigationTargetMock.mockReturnValue(true);
+    const handler = await getPermissionHandler();
+    const media = vi.fn();
+    const notifications = vi.fn();
+    const webContents = { getURL: () => 'https://trusted.example/', id: 1 };
+
+    handler(webContents, 'media', media);
+    handler(webContents, 'notifications', notifications);
+
+    expect(media).toHaveBeenCalledWith(true);
+    expect(notifications).toHaveBeenCalledWith(true);
   });
 });

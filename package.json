@@ -109,7 +109,7 @@
     "@vue/test-utils": "^2.5.1",
     "autoprefixer": "^10.6.1",
     "depcheck": "^1.4.7",
-    "electron": "^44.9.0",
+    "electron": "^45.0.0-beta.5",
     "electron-builder": "26.15.3",
     "eslint": "^10.13.0",
     "eslint-plugin-perfectionist": "^5.12.1",
