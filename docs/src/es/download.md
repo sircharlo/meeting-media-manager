@@ -56,8 +56,12 @@ onMounted(() => {
   function isAndroid(s: string) { return /Android/i.test(s) }
 
   if (isWindows) {
+    // 32-bit Windows can only run the last version that supports it
     const href = isIa32 ? downloads.win32 : downloads.win64
-    recommended.value = { href, label: isIa32 ? msg.value.windows32Bit : msg.value.windows64Bit }
+    const label = isIa32
+      ? `${msg.value.windows32Bit} (${downloads.legacyVersion})`
+      : msg.value.windows64Bit
+    recommended.value = { href, label }
     return
   }
 
@@ -88,12 +92,13 @@ onMounted(() => {
 ## Windows
 
 - **Windows de 64 bits (.exe)**: <a :href="downloads.win64">Descargar</a>
-- **Windows de 32 bits (.exe)**: <a :href="downloads.win32">Descargar</a>
+- **Windows 32-bit (.exe)**, last version for 32-bit Windows ({{ downloads.legacyVersion }}): <a :href="downloads.win32">Download</a>
 - **Windows portátil (.exe)**: <a :href="downloads.winPortable">Descargar</a>
 
 ## macOS
 
 - **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Descargar</a>
+- **macOS 12 (Monterey) (.dmg)**, last version for macOS 12 ({{ downloads.legacyVersion }}): <a :href="downloads.macLegacy">Download</a>
 
 ## Linux
 

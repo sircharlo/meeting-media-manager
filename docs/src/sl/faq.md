@@ -24,8 +24,8 @@ Izvorna koda tega programa je na voljo vsem, da jo lahko preučijo in preverijo,
 
 M³ deluje na Windows, macOS in Linux:
 
-- **Windows**: Windows 10 in novejši (na voljo 64-bitna in 32-bitna različica)
-- **macOS**: macOS 10.15 (Catalina) in novejše različice (univerzalna različica)
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - **Linux**: Večina sodobnih distribucij Linuxa (v formatu AppImage)
 
 ### :globe_with_meridians: Ali M³ deluje v mojem jeziku? {#language-support}
@@ -312,8 +312,8 @@ Hvala za tvojo pripravljenost, da podpreš projekt! Vendar pa v duhu tega, kar p
 
 M³ je zasnovan tako, da deluje na širokem naboru operacijskih sistemov:
 
-- **Windows**: Windows 10 in novejši (na voljo 64-bitna in 32-bitna različica)
-- **macOS**: macOS 10.15 (Catalina) in novejše različice (univerzalna različica)
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - **Linux**: Večina sodobnih distribucij Linuxa (v formatu AppImage)
 
 M³ ima naslednje strojne zahteve:

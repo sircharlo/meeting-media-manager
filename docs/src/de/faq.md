@@ -24,8 +24,8 @@ Der Quellcode dieser Anwendung ist für jedermann einsehbar, um zu überprüfen,
 
 M³ unterstützt Windows, macOS und Linux:
 
-- **Windows**: Windows 10 und neuer (64-Bit- und 32-Bit-Versionen verfügbar)
-- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - **Linux**: Die meisten modernen Linux-Distrubutionen (AppImage-Format)
 
 ### :globe_with_meridians: Funktioniert M³ in meiner Sprache? {#language-support}
@@ -312,8 +312,8 @@ Vielen Dank für Ihr Interesse, das Projekt zu unterstützen! Im Geiste von Matt
 
 M³ ist so konzipiert, dass es auf einer Vielzahl von Betriebssystemen funktioniert:
 
-- **Windows**: Windows 10 und neuer (64-Bit- und 32-Bit-Versionen verfügbar)
-- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - **Linux**: Die meisten modernen Linux-Distrubutionen (AppImage-Format)
 
 M³ hat die folgenden Hardwareanforderungen:
