@@ -12,16 +12,16 @@ hero:
       link: /uk/download
     - theme: brand
       text: Про програму
-      link: /about
+      link: /uk/about
     - theme: brand
       text: Посібник користувача
-      link: /user-guide
+      link: /uk/user-guide
     - theme: brand
       text: Посібник із налаштувань
-      link: /settings-guide
+      link: /uk/settings-guide
     - theme: brand
       text: Часті питання
-      link: /faq
+      link: /uk/faq
 features:
   - icon: 🚀
     title: Автоматичне керування медіа
