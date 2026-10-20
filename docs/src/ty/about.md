@@ -90,7 +90,7 @@ Nō te mau putuputura’a ’āmui ’aore rā i te vāhi rurura’a, te vai ra 
 
 ## E tano ānei te M³ i roto i tō’u reo? {#does-m3-work-in-my-language}
 
-’Ēiaha! E pū’oira’a parau nō te rave rau reo tō roto i te M³:
+**’Ē!** E pū’oira’a parau nō te rave rau reo tō roto i te M³:
 
 E nehenehe e tātari i’oa-noa i te mau media nō te mau putuputura’a a te mau Ite nō Iehova i roto i te mau rau reo e vai nei i ni’a i te pae natirara mana a te mau Ite nō Iehova. Te tāmāhanahia nei te tāpura o te mau reo e vai nei; e mā’iti noa ’oe i te reo e hina’arohia i te taime nō te fa’anahora’a.
 
