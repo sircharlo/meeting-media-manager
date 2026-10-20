@@ -17,12 +17,12 @@ import fr from './fr.json' with { type: 'json' };
 import it from './it.json' with { type: 'json' };
 
 // 98.5% translated as of 2026-10-19
-import sl from './sl.json' with { type: 'json' };
-
-// 98.0% translated as of 2026-10-19
 import es from './es.json' with { type: 'json' };
 
-// 86.4% translated as of 2026-10-19
+// 98.5% translated as of 2026-10-19
+import sl from './sl.json' with { type: 'json' };
+
+// 89.7% translated as of 2026-10-19
 import ty from './ty.json' with { type: 'json' };
 
 // 74.4% translated as of 2026-10-19
