@@ -1,828 +1,828 @@
-# Settings Guide {#settings-guide}
+# Útmutató a beállításokhoz {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Ez az átfogó útmutató kategóriák szerint csoportosítva ismerteti az M³-ban elérhető összes beállítást. Ezen beállítások megértése segít abban, hogy az M³-at úgy konfigurálja, hogy az tökéletesen megfeleljen a gyülekezet szükségleteinek.
 
-## General {#application-configuration}
+## Általános {#application-configuration}
 
-### Display Language {#display-language}
+### Alkalmazás megjelenítési nyelve {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Válassza ki az M³ felületének nyelvét. Ez független a média letöltéséhez használt nyelvtől.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Opciók**: Minden elérhető felületnyelv (angol, spanyol, francia stb.)
 
-**Default**: English
+**Alapértelmezett**: angol
 
-### Dark Mode {#dark-mode}
+### Sötét mód {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Az M³ külső megjelenésének vezérlése.
 
-**Options**:
+**Opciók**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Automatikus váltás a rendszerbeállítások alapján
+- Mindig használjon sötét módot
+- Mindig használjon világos módot
 
-**Default**: Auto
+**Alapértelmezett**: Automatikus
 
-### First Day of Week {#first-day-of-week}
+### A hét első napja {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Állítsa be, hogy melyik napot kell a naptárban a hét első napjának tekinteni.
 
-**Options**: Sunday through Saturday
+**Opciók**: vasárnaptól szombatig
 
-**Default**: Sunday
+**Alapértelmezett**: vasárnap
 
-### Date Format {#date-format}
+### Dátumformátum {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Az alkalmazásban a dátumok megjelenítéséhez használt formátum.
 
-**Example**: D MMMM YYYY
+**Példa**: D MMMM YYYY
 
-**Default**: D MMMM YYYY
+**Alapértelmezett**: D MMMM YYYY
 
-### Auto-Start at Login {#auto-start-at-login}
+### Automatikus indítás bejelentkezéskor {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Automatikusan indítsa el az M³ programot a számítógép indításakor.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-## Congregation Meetings {#congregation-meetings}
+## Gyülekezeti összejövetelek {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Gyülekezet neve {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+A gyülekezet neve. Ez szervezési és megjelenítési célt szolgál.
 
-**Default**: Empty (must be set during setup)
+**Alapértelmezett**: Üres (a beállítás során kell megadni)
 
-### Meeting Language {#meeting-language}
+### Összejövetel nyelve {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+A média letöltéséhez használt elsődleges nyelv. Ennek meg kell felelnie a gyülekezet összejövetelein használt nyelvnek.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opciók**: Az összes elérhető nyelv Jehova Tanúi hivatalos weboldaláról
 
-**Default**: English (E)
+**Alapértelmezett**: angol (E)
 
-### Fallback Language {#fallback-language}
+### Tartalék nyelv {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Egy másodlagos nyelv, amelyet akkor kell használni, ha az elsődleges nyelven nem áll rendelkezésre média.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opciók**: Az összes elérhető nyelv Jehova Tanúi hivatalos weboldaláról
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Hét közbeni összejövetel napja {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+A nap, amikor a hét közbeni összejövetel megtartására kerül sor.
 
-**Options**: Sunday through Saturday
+**Opciók**: vasárnaptól szombatig
 
-**Default**: None (must be set during setup)
+**Alapértelmezett**: Nincs (a beállítás során kell megadni)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Hét közbeni összejövetel időpontja {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+A hét közbeni összejövetel kezdési időpontja.
 
-**Format**: HH:MM (24-hour format)
+**Formátum**: HH:MM (24 órás formátum)
 
-**Default**: None (must be set during setup)
+**Alapértelmezett**: Nincs (a beállítás során kell megadni)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Hétvégi összejövetel napja {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+A hét azon napja, amikor a hétvégi összejövetel megtartásra kerül.
 
-**Options**: Sunday through Saturday
+**Opciók**: vasárnaptól szombatig
 
-**Default**: None (must be set during setup)
+**Alapértelmezett**: Nincs (a beállítás során kell megadni)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Hétvégi összejövetel időpontja {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+A hétvégi összejövetel kezdési időpontja.
 
-**Format**: HH:MM (24-hour format)
+**Formátum**: HH:MM (24 órás formátum)
 
-**Default**: None (must be set during setup)
+**Alapértelmezett**: Nincs (a beállítás során kell megadni)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### A körzetfelvigyázó látogatásának hete {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+A körzetfelvigyázó következő látogatásának hete.
 
-**Format**: MM/DD/YYYY
+**Formátum**: HH/NN/ÉÉÉÉ
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
-### Memorial Date {#memorial-date}
+### Emlékünnep dátuma {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration.
+A következő emlékünnep dátuma.
 
-**Format**: MM/DD/YYYY
+**Formátum**: HH/NN/ÉÉÉÉ
 
-**Default**: Automatically retrieved periodically
+**Alapértelmezett**: Automatikus, időszakos lekérés
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Az összejövetelek időpontjának módosítása {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Ezekkel a beállításokkal ideiglenes módosításokat végezhet az összejövetelek ütemezésében:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Az időpontváltozás dátuma**: Mikortól érvényes a változás
+- **Az időpontváltozás csak egy hétre vonatkozik**: Ideiglenes vagy állandó-e a változás
+- **Hét közbeni összejövetel új napja**: Az új nap, amelyen a hét közbeni összejövetelt tartják
+- **Hét közbeni összejövetel új időpontja**: A hét közbeni összejövetel új kezdési időpontja
+- **Hétvégi összejövetel új napja**: Az új nap, amelyen a hétvégi összejövetelt tartják
+- **Hétvégi összejövetel új időpontja**: A hétvégi összejövetel új kezdési időpontja
 
-### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
+### Az összejövetelek időpontjainak automatikus frissítése {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
+Ha ez a funkció engedélyezve van, az M³ rendszeresen ellenőrzi Jehova Tanúi hivatalos honlapját, hogy van-e változás a gyülekezeti összejövetelek napjában és időpontjában, és automatikusan frissíti az aktuális profilt.
 
-This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
+Ez csak azoknál a profiloknál működik, amelyeket a gyülekezet-kereső segítségével adtak hozzá, és amelyek gyülekezetének nevét nem módosították kézzel. Ha a szinkronizálás a gyülekezet nevének megváltoztatása miatt lett letiltva, akkor az **Ütemezés szinkronizálásának engedélyezése** opcióval kapcsolhatja össze újra a profilt.
 
-#### Enable Schedule Sync {#relink-congregation}
+#### Ütemezés szinkronizálásának engedélyezése {#relink-congregation}
 
 <!-- **Setting**: `relinkCongregationButton` -->
 
-Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+Újra összekapcsolja az aktuális profilt a gyülekezetkeresővel, hogy az összejövetelek napjának és időpontjának automatikus frissítése folytatódhasson. Csak akkor jelenik meg, ha a gyülekezet nevét kézzel módosították, mivel éppen ez szakítja meg a kapcsolatot.
 
-#### Refresh Meeting Schedule {#refresh-meeting-schedule}
+#### Összejövetel ütemezésének frissítése {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Manually synchronize the current and future meeting schedule with the information from the official website.
+Kézzel szinkronizálja az aktuális és a jövőbeli összejövetelek ütemezését a hivatalos honlapon szereplő információkkal.
 
-## Media & Playback {#media-retrieval-and-playback}
+## Média és lejátszás {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Korlátozott adatkapcsolat {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+Ha korlátozott adatkapcsolattal rendelkezik, engedélyezze ezt a funkciót a sávszélesség-használat csökkentése érdekében.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-### Media Display {#media-display-button}
+### Médiamegjelenítés {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+A médiamegjelenítés funkció engedélyezése. Ez szükséges a média második kijelzőn való megjelenítéséhez.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Enable Media Preview {#enable-media-preview}
+#### Média-előnézet engedélyezése {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Show a live preview of the media window while an image or video is being displayed.
+Kép vagy videó kivetítése közben mutassa a médiaablak élő előnézetét.
 
-**Default**: `true`
+**Alapértelmezett**: `true`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Lejátszás megkezdése szüneteltetve {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+A lejátszás megkezdésekor a videókat szüneteltetett állapotba állítja.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-### Background Music {#settings-guide-background-music}
+### Háttérzene {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Zene engedélyezése {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Engedélyezi a háttérzenét.
 
-**Default**: `true`
+**Alapértelmezett**: `true`
 
-#### Auto-Start Music {#auto-start-music}
+#### Zene automatikus indítása {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+A háttérzene automatikus elindítása az M³ indításakor, ha szükséges.
 
-**Default**: `true`
+**Alapértelmezett**: `true`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### A háttérzene leállítása az összejövetel előtt {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+Hány másodperccel az összejövetel kezdete előtt kell leállítani a háttérzenét.
 
-**Range**: 0-300 seconds
+**Tartomány**: 0–300 másodperc
 
-**Default**: 60 seconds
+**Alapértelmezett**: 60 másodperc
 
-#### Music Volume {#music-volume}
+#### Zene hangereje {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+A háttérzene hangereje (1-100%).
 
-**Default**: 100%
+**Alapértelmezett**: 100%
 
-### Playback and Download Options {#media-display}
+### Lejátszási és letöltési beállítások {#media-display}
 
 <!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
 these control the media window's playback behavior and which downloaded media is
 filtered out, as distinct from the "Media Display" section above (which is about
 whether the media window feature is enabled at all). -->
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Halványítási átmenetek engedélyezése a médiaablaknál {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Engedélyezze az elsötétülést/kivilágosodást a médiaablak megjelenítésekor vagy elrejtésekor.
 
-**Default**: `true`
+**Alapértelmezett**: `true`
 
-#### Enable Playback Speed Control {#enable-playback-speed-control}
+#### A lejátszási sebesség szabályozásának engedélyezése {#enable-playback-speed-control}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
-Allow audio and video playback speed to be adjusted from the media item's context menu.
+Lehetővé teszi a hang- és videofájlok lejátszási sebességének módosítását a médiaelem helyi menüjéből.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Hide Media Logo {#hide-media-logo}
+#### Logó elrejtése a médiaablakban {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Rejtse el a logót a médiaablakban.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Maximális felbontás {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+A letöltött médiafájlok maximális felbontása.
 
-**Options**: 240p, 360p, 480p, 720p, 1080p
+**Opciók**: 240p, 360p, 480p, 720p, 1080p
 
-**Default**: 720p
+**Alapértelmezett**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### A nyomtatott média szerepeltetése {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+A nyomtatott kiadványokban szereplő média is bekerül a letöltött média közé.
 
-**Default**: `true`
+**Alapértelmezett**: `true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Lábjegyzetek kizárása {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Ha lehetséges, a lábjegyzetekben szereplő képek kimaradnak a letöltött médiából.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+#### További Őrtorony-tanulmányozási videók kizárása {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
-Exclude additional videos that are referenced in Watchtower Study paragraphs.
+Kizárja azokat a további videókat, amelyekre az Őrtorony-tanulmányozás bekezdései hivatkoznak.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+#### A gyülekezeti bibliatanulmányozás videóinak kizárása {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+Válassza ki azokat a kiadványokat, amelyekből hivatkozott videók ne jelenjenek meg a gyülekezeti bibliatanulmányozás alatt. Kereshet a kiadvány címe vagy rövidítése alapján.
 
-**Default**: Walk Courageously With God (`wcg`)
+**Alapértelmezett**: Walk Courageously With God (`wcg`)
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Média kizárása a Tanítás füzetből {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Kihagyja a letöltésekből a Tanítás (th) füzetben szereplő médiát.
 
-**Default**: `true`
+**Alapértelmezett**: `true`
 
-### Subtitles {#subtitles}
+### Feliratok {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Feliratok bekapcsolása {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Engedélyezi a feliratok megjelenítését a média lejátszásakor.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Subtitle Language {#subtitle-language}
+#### Feliratok nyelve {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Feliratok nyelve (eltérhet a média nyelvétől).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opciók**: Az összes elérhető nyelv Jehova Tanúi hivatalos weboldaláról
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
-### Cache Management {#cache-management}
+### Gyorsítótár-kezelés {#cache-management}
 
-#### Cache Songbook Video Files {#enable-extra-cache}
+#### Énekeskönyv videófájlok gyorsítótárba helyezése {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
+Az összes énekeskönyv-videó előzetes gyorsítótárba helyezése a jobb teljesítmény érdekében. Vegye figyelembe, hogy ez megnöveli a média gyorsítótárának méretét.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Cache Folder {#cache-folder}
+#### Gyorsítótár helye {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Egyedi hely a gyorsítótárban tárolt médiafájlok tárolásához.
 
-**Default**: System default location
+**Alapértelmezett**: A rendszer alapértelmezett helye
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Automatikus gyorsítótár-törlés engedélyezése {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+A régi gyorsítótárfájlok automatikus törlése a lemezterület megtakarítása érdekében.
 
-**Default**: `true`
+**Alapértelmezett**: `true`
 
-### Pinyin Song Titles {#pinyin-song-titles}
+### Pinyin énekek {#pinyin-song-titles}
 
-#### Prefer Pinyin Songs {#enable-pinyin-songs}
+#### Pinyin énekek előnyben részesítése {#enable-pinyin-songs}
 
 <!-- **Setting**: `enablePinyinSongs` -->
 
-When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+Ha egy összejöveteli ének pinyin változata megtalálható a pinyin-énekek mappájában, az M³ a szokásos ének helyett azt használja.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Pinyin Song Folder {#pinyin-song-folder}
+#### Pinyin-énekek mappája {#pinyin-song-folder}
 
 <!-- **Setting**: `pinyinSongFolder` -->
 
-Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+A pinyin videós énekeket tartalmazó mappa (pl. `sjjm_s-Pi_CHS_066_r720P.mp4`). Ha az M³ talál az összejöveteli ének számának megfelelő pinyin-fájlt, a szokásos ének helyett azt játssza le.
 
-**Default**: Empty
+**Alapértelmezett**: Üres
 
-### Media Export {#settings-guide-media-export}
+### Média exportálása {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Automatikus exportálás engedélyezése {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+A médiafájlok automatikus exportálása egy megadott mappába.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Media Export Folder {#media-export-folder}
+#### Auto-exportálási mappa {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+A mappa útvonala, ahová a médiafájlok automatikusan exportálásra kerülnek.
 
-**Default**: Empty
+**Alapértelmezett**: Üres
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Exportált fájlok átalakítása MP4-re {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Beállítás**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Konvertálja az exportált médiafájlokat MP4 formátumba a jobb kompatibilitás érdekében.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
+### Megosztott mappa (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-These settings are in the **Integrations** category.
+Ezek a beállítások az **Integrációk** kategóriában találhatók.
 
-M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+Az M³ egy felhőtárhely-alkalmazás, például a Dropbox, a OneDrive, az iCloud Drive vagy a Google Drive által szinkronizált mappából is hozzá tud adni médiát az összejövetelekhez. Ez akkor hasznos, ha mások készítik elő a programrészeikhez tartozó médiát, és megosztják Önnel, vagy ha az M³-at több számítógépen is használják. Egy ezen a számítógépen vagy a hálózaton lévő mappa is megfelel.
 
-M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. Ha egy másik napra szeretne fájlokat hozzáadni, hozzon létre neki egy ugyanígy elnevezett mappát. Anything else in the shared folder is ignored.
+Az M³ a megosztott mappán belül minden közelgő összejövetelhez létrehoz egy mappát, amelynek neve az összejövetel dátuma év-hónap-nap formában (például `2026-03-25`). Tegyen fényképeket, videókat, hangfájlokat vagy JW Library lejátszási listákat egy összejövetel mappájába, és ezek automatikusan bekerülnek az adott összejövetel médialistájába. Ha egy másik napra szeretne fájlokat hozzáadni, hozzon létre neki egy ugyanígy elnevezett mappát. A megosztott mappában lévő minden más tartalmat az M³ figyelmen kívül hagy.
 
 :::tip Tipp
 
-Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+Hozzon létre egy új mappát, amelyet csak erre használ, például „Összejöveteli média” néven, és a felhőtárhely-alkalmazásban állítsa be, hogy mindig ezen a számítógépen maradjon (ezt gyakran „offline is elérhető” beállításnak hívják), így a fájlok már az összejövetel kezdete előtt készen állnak.
 
 :::
 
-#### Add Media From a Shared Folder {#enable-folder-watcher}
+#### Média hozzáadása megosztott mappából {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Add the files put in the shared folder to the right meeting automatically.
+A megosztott mappába tett fájlok automatikus hozzáadása a megfelelő összejövetelhez.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Shared Folder {#folder-to-watch}
+#### Megosztott mappa {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder to add media from. The setup wizard offers to set it up for you.
+Az a mappa, amelyből az M³ a médiát hozzáadja. A beállítási varázsló felajánlja, hogy beállítja Ön helyett.
 
-**Default**: Empty
+**Alapértelmezett**: Üres
 
-#### Delete Past Meeting Folders {#delete-past-watched-folders}
+#### Korábbi összejövetelek mappáinak törlése {#delete-past-watched-folders}
 
 <!-- **Setting**: `deletePastWatchedFolders` -->
 
-When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+Ha egy hét véget ért, az adott hét dátummal ellátott mappái a bennük lévő fájlokkal együtt törlődnek, hogy a megosztott mappa rendezett maradjon. Mivel a mappa meg van osztva, ezek mindenki más számára is törlődnek, aki használja. Ha meg szeretné tartani őket, kapcsolja ki ezt a beállítást.
 
-**Default**: `true`
+**Alapértelmezett**: `true`
 
-## Meeting Timer {#meeting-timer}
+## Összejöveteli időzítő {#meeting-timer}
 
-### Enable Meeting Timer {#enable-meeting-timer}
+### Összejöveteli időzítő engedélyezése {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+Külön időzítőablakot engedélyez az összejövetel programrészeinek időméréséhez. Ez egy kísérleti funkció, amelyet csak akkor szabad engedélyezni, ha azt helyi szinten jóváhagyták.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-### Timer Window Behavior {#timer-window-behavior}
+### Az időzítőablak viselkedése {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+Beállíthatja, hogy az időzítőablak automatikusan megnyíljon-e, hogy a programot tartók időzítője alapértelmezés szerint felfelé számoljon vagy visszaszámoljon, hogy az óra 12 vagy 24 órás formátumot használjon, valamint hogy az időzítő aktuális értéke megjelenjen-e a műveleti panel időzítőgombján.
 
-### Quick Access to the Timer {#timer-quick-access}
+### Gyors hozzáférés az időzítőhöz {#timer-quick-access}
 
 <!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
 
-Choose how the timer is reached from the main window:
+Válassza ki, hogyan érhető el az időzítő a főablakból:
 
-- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
-- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+- **Gyorsvezérlők az időzítőgomb fölé víve az egeret**: ha a műveleti panel időzítőgombja fölé viszi az egeret, megjelenik az éppen mért programrész az Indítás, Szünet, Leállítás és Következő programrész gombokkal, a teljes időzítő felugró ablak megnyitása nélkül. Alapértelmezés szerint be van kapcsolva.
+- **Időzítőpanel megjelenítése a főablakban**: az összejövetel programrészeinek teljes listája és az időzítő vezérlői a főablak jobb oldalán rögzített panelen maradnak, mindig szem előtt. Az ablak- és megjelenítési beállításokhoz a teljes felugró ablak továbbra is elérhető a műveleti panelről.
 
-### Timer Remote {#timer-remote}
+### Távoli időzítő {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
 
-When turned on, M³ serves a read-only copy of the timer display as a web page on your local network, for a tablet or phone at the lectern: the speaker sees the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time, including the pre-meeting countdown, the clock, overtime colors and the hand alert, and all the controls stay in M³.
+Ha be van kapcsolva, az M³ a helyi hálózaton weboldalként teszi elérhetővé az időzítő kijelzőjének csak olvasható másolatát a pulpitusnál lévő táblagép vagy telefon számára: így az előadó látja a hátralévő időt anélkül, hogy az megjelenne a gyülekezet kijelzőjén vagy a Zoom-megosztásban. Az oldal valós időben követi az időzítőt, beleértve az összejövetel előtti visszaszámlálást, az órát, az időtúllépés színeit és a kézfelemelés-jelzést, a vezérlők pedig mind az M³-ban maradnak.
 
-The addresses to open on the device are listed in the timer popup, with a copy button. Change the port only if another program already uses it. Note that anyone on the same network can open the page while this is on; it shows nothing but the timer.
+Az eszközön megnyitandó címek az időzítő felugró ablakában vannak felsorolva, egy másolás gombbal együtt. A portot csak akkor módosítsa, ha egy másik program már használja. Vegye figyelembe, hogy amíg ez be van kapcsolva, ugyanazon a hálózaton bárki megnyithatja az oldalt; az oldal azonban csak az időzítőt mutatja.
 
-**Default**: `false`, port `8787`
+**Alapértelmezett**: `false`, port: `8787`
 
-### Timer Display Formats {#timer-display-formats}
+### Az időzítő megjelenítési formátumai {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+Válasszon analóg vagy digitális megjelenítési formátumot a pontos időhöz és a visszaszámláló időzítőkhöz. A visszaszámlálás figyelmeztető jelzése az utolsó percben fokozatosan figyelmeztető színűre változtathatja az analóg visszaszámláló gyűrűt.
 
-The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
+Az **Analóg óra időívvel** visszaszámlálási formátum a programrészből hátralévő időt körcikkként mutatja egy analóg óra számlapján, a percmutatótól a tervezett befejezésig, így egyetlen pillantással látható a pontos idő és a hátralévő idő is. Az időtúllépés egy második körcikként jelenik meg az időtúllépés színében. Ez az összejövetel előtti visszaszámlálásra is vonatkozik, és felfelé számláló módban is működik.
 
-### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+### Összejöveteli visszaszámlálás és ütemezési állapot {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+Visszaszámlálás megjelenítése a tervezett összejövetelek előtt, és igény szerint annak jelzése, hogy az összejövetel előrébb jár-e vagy le van-e maradva az ütemtervhez képest. Az összejöveteli visszaszámlálás csak az időzítő kijelzőjén jelenik meg, a médiaablakban nem.
 
-### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+### Az időzítő megjelenése és az időtúllépés {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
-Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
+Testreszabhatja az időzítő szövegméretét és színeit, valamint beállíthatja az időtúllépés jelzéseit, például az eltérő színeket, a villogást, illetve azt, hogy felfelé számláló módban csak a túllépés mértéke jelenjen meg.
 
-## Integrations {#integrations}
+## Integrációk {#integrations}
 
-This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
+Ebben a kategóriában találhatók a [megosztott mappa](#settings-guide-folder-monitoring) beállításai is, amelyekkel a Dropboxból, a OneDrive-ból, az iCloud Drive-ból vagy a Google Drive-ból adhat hozzá médiát.
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Zoom-integráció {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Zoom engedélyezése {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+A Zoom-értekezletekkel való integráció funkcióinak engedélyezése.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Billentyűparancs a Zoom képernyőmegosztáshoz {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+A Zoom képernyőmegosztás elindításához használt billentyűparancs.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
-#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+#### A médiaablak automatikus fókuszba helyezése {#zoom-auto-focus-media-window}
 
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
-Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+A Zoom képernyőmegosztás elindítása után a médiaablak automatikusan fókuszba kerül. Erre általában nincs szükség, de egyes rendszereken segíthet, ha a médiaablak a képernyőmegosztás elindítása után rendszeresen elveszíti a fókuszt.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-### Zoom Meeting Manager {#zoom-meeting-manager}
+### Zoom-értekezletkezelő {#zoom-meeting-manager}
 
-The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+A Zoom-értekezletkezelő (béta, csak Windowson) minden összejövetelnél Ön helyett kezeli a Zoom asztali alkalmazást. A beállítási segéd, amelyet a funkció bekapcsolásakor felajánl, végigvezeti Önt az egyes automatizálásokon.
 
-#### While M³ Operates Zoom {#zoom-meeting-manager-overlay}
+#### Amikor az M³ vezérli a Zoomot {#zoom-meeting-manager-overlay}
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom offers no proper automation interface, so M³ drives the Zoom app through its accessibility interface, which works without the mouse for nearly everything (the participants list, its menus, the Share window). A few actions can still have to move the mouse or the focused window for a moment, for example to bring Zoom's auto-hidden toolbar back. Whenever that happens, M³ covers its own window with a "M³ is operating Zoom" notice naming what is going on, with a **Cancel this automation** button. The same notice shows during the setup assistant's checks and the self-test. A global keyboard shortcut (default `Ctrl+Alt+Escape`), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Cancelling stops M³ at once; Zoom may then be left part-way, so check it.
+A Zoom nem kínál megfelelő automatizálási felületet, ezért az M³ az akadálymentesítési felületén keresztül vezérli a Zoom alkalmazást, ami szinte mindenhez egér nélkül működik (a résztvevőlista, annak menüi, a Share ablak). Néhány műveletnek azonban egy pillanatra mégis mozgatnia kell az egeret vagy a fókuszban lévő ablakot, például ahhoz, hogy visszahozza a Zoom automatikusan elrejtett eszköztárát. Ilyenkor az M³ a saját ablakát egy „Az M³ vezérli a Zoomot” értesítéssel takarja le, amely megnevezi, mi történik, és **Az automatizálás megszakítása** gombot is tartalmazza. Ugyanez az értesítés jelenik meg a beállítási segéd ellenőrzései és az öntesztelés közben is. Egy globális billentyűparancs (alapértelmezés szerint `Ctrl+Alt+Escape`), amely csak egy automatizálás futása közben aktív, bárhonnan megszakítja azt, akkor is, ha a Zoom van fókuszban. A megszakítás azonnal leállítja az M³ műveletét; a Zoom ilyenkor félkész állapotban maradhat, ezért ellenőrizze.
 
-**Default**: `Ctrl+Alt+Escape`
+**Alapértelmezett**: `Ctrl+Alt+Escape`
 
-#### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
+#### Kézfelemelés-segéd {#zoom-meeting-manager-hand-alert}
 
 <!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
 
-During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
+Az összejövetel alatt az M³ figyeli a Zoom résztvevőlistáján a felemelt kezeket. Amikor valaki felemeli a kezét, az M³ értesítésében egy kattintással **feloldhatja a résztvevő némítását**, majd amikor befejezte a hozzászólást, egy újabb kattintással **ismét némíthatja, és leengedheti a kezét**. A műveleti panel Zoom-gombja ugyanezekkel a gombokkal sorolja fel a felemelt kezeket. Minden művelet az adott résztvevő saját sorára vonatkozik a Zoomban, a pontos neve alapján; ha két résztvevőnek ugyanaz a neve, az M³ egyikükhöz sem nyúl.
 
-If the [meeting timer](#meeting-timer) is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and a **Hand alert** button in the timer and Zoom popups shows it by hand. This part needs the timer display; the notifications and buttons work without it.
+Ha az [összejöveteli időzítő](#meeting-timer) engedélyezve van, az elnök számára az időzítő kijelzőjén is megjelenik egy nagy kéz a résztvevő nevével, az időzítő és a Zoom felugró ablakában pedig a **Kézfelemelés-jelzés** gombbal kézzel is megjeleníthető. Ehhez a részhez szükség van az időzítő kijelzőjére; az értesítések és a gombok nélküle is működnek.
 
-Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list and which menu entry lowers it, then lowers it again. The setup assistant offers this step too.
+A Zoom a saját nyelvén jelöli a felemelt kezeket, ezért az M³-nak először meg kell tanulnia, hogyan: miközben az értekezlet meg van nyitva a Zoomban, kattintson az **Annak betanítása, hogyan jelöli a Zoom a felemelt kezeket** gombra. Az M³ felemeli az Ön kezét, kiolvassa, hogyan jelöli ezt a Zoom a résztvevőlistában, és melyik menüpont engedi le, majd újra leengedi. A beállítási segéd is felkínálja ezt a lépést.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### OBS Studio-integráció {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### OBS engedélyezése {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Az OBS Studio-integráció engedélyezése az automatikus jelenetváltáshoz.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-:::warning Important Note
+:::warning Fontos megjegyzés
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Hangbeállítás szükséges**: Az OBS Studio-integráció csak a képernyőmegosztást kezeli. Az OBS Studio használatakor az M³ által lejátszott média hangja **nem jut el automatikusan** a Zoom-résztvevőkhöz. Be kell állítania a Zoom Original Audio beállításait, vagy használnia kell a „Share Computer Sound” (Számítógép hangjának megosztása) funkciót, hogy az összejövetel résztvevői hallhassák a médiát. A hang beállításának részletes leírását a [Felhasználói útmutatóban](/user-guide#audio-configuration) találja.
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Megjegyzés**: A Zoom-integráció a Zoom saját képernyőmegosztását használja, amely az OBS Studio-integrációnál gördülékenyebben kezeli a hangot.
 
 :::
 
-#### OBS Port {#obs-port}
+#### OBS-port {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+Az OBS Studio WebSockethez való csatlakozás portszáma.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
-#### OBS Password {#obs-password}
+#### OBS-jelszó {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+Az OBS Studio WebSocket-kapcsolat jelszava.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
-#### OBS Scenes {#obs-scenes}
+#### OBS-jelenetek {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Állítsa be, hogy mely OBS-jeleneteket szeretné különböző célokra használni:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Kamerajelenet**: A kamera, illetve a pulpitus képét mutató jelenet
+- **Médiajelenet**: A média megjelenítésére szolgáló jelenet
+- **Képjelenet**: Képek megjelenítésére szolgáló jelenet (például egy PIP (kép a képben) jelenet, amely egyszerre mutatja a médiát és az előadót)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### Haladó OBS-beállítások {#obs-advanced-options}
 
-- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
-- **Recording Controls**: Show controls that start and stop OBS recording from M³
+- **Ne osszon meg automatikusan képeket**: A képek csak kézi indításra kerülnek megosztásra az OBS-ben
+- **Gyors kapcsoló**: Az OBS-integráció gyors be- és kikapcsolásának engedélyezése
+- **Jelenetváltás a média után**: A média lejátszása után automatikusan visszatér az előző jelenethez
+- **Előző jelenet megjegyzése**: Megjegyzi az előző jelenetet és visszaállítja azt
+- **Ikonok elrejtése**: Az OBS-hez kapcsolódó ikonok elrejtése a felületen
+- **Felvételvezérlők**: Olyan vezérlők megjelenítése, amelyekkel az M³-ból elindítható és leállítható az OBS-felvétel
 
-:::warning Important Note
+:::warning Fontos megjegyzés
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Hangbeállítás szükséges**: Az OBS Studio-integráció csak a videót, illetve a jelenetváltást kezeli. Az M³ média hangja **nem kerül automatikusan továbbításra** a Zoom vagy az OBS alkalmazásba. A videofolyam úgy működik, mint egy hang nélküli virtuális kamera, akárcsak egy webkamera. Be kell állítania a Zoom Original Audio beállításait, vagy használnia kell a „Share Computer Sound” (Számítógép hangjának megosztása) funkciót, hogy az összejövetel résztvevői hallhassák a médiát. A hang beállításának részletes leírását a [Felhasználói útmutatóban](/user-guide#audio-configuration) találja.
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Alternatíva**: Fontolja meg inkább a Zoom-integráció használatát, mivel az a Zoom saját képernyőmegosztását használja, amely gördülékenyebben kezeli a hangot.
 
 :::
 
-### Custom Events {#custom-events}
+### Egyéni események {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Egyéni események engedélyezése {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Egyéni billentyűparancsok engedélyezése, amelyek egy adott esemény észlelésekor aktiválódnak (pl. a média lejátszásakor, szüneteltetésekor vagy leállításakor).
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Egyéni események billentyűparancsai {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Médialejátszás esemény billentyűparancsa {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+A média lejátszásakor aktiválódó billentyűparancs.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Média szüneteltetve esemény billentyűparancsa {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+A média szüneteltetésekor aktiválódó billentyűparancs.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Média leállítva esemény billentyűparancsa {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+A média leállításakor aktiválódó billentyűparancs.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Utolsó összejöveteli ének esemény billentyűparancsa {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Billentyűparancs, amely akkor aktiválódik, amikor az összejövetel utolsó éneke lejátszásra kerül.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
-### Meeting Recordings {#meeting-recordings}
+### Összejövetel-felvételek {#meeting-recordings}
 
-#### Enable External Recording App Integration {#enable-external-recording-app-integration}
+#### Külső felvételi alkalmazás integrációjának engedélyezése {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
+Megengedi, hogy az M³ billentyűparancsokkal vezéreljen egy külső felvételi alkalmazást. Ez nem az M³-on belül készít felvételt; a beállított billentyűparancsokat küldi el, amikor az Összejövetel-felvételek felugró ablakban a **Felvétel indítása** vagy a **Felvétel leállítása** gombra kattint.
 
-This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
+Ez az opció el van rejtve, ha az OBS felvételi vezérlői engedélyezve vannak. Ha az OBS Studio programot használja, akkor inkább az OBS-integrációban található OBS-felvételi vezérlőket érdemes használni.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
+#### Felvételi billentyűparancsok és mappa {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
+Állítsa be a felvétel elindításához szükséges billentyűparancsot, a felvétel leállításához szükséges opcionális billentyűparancsot, valamint azt a mappát, ahová a külső alkalmazás a felvételeket menti. Ha nem ad meg leállítási billentyűparancsot, az M³ az indítási billentyűparancsot használja újra. Ha egy mappa be van állítva, az M³ megjeleníti a mappa megnyitásához szükséges gombot.
 
-## Interface & Shortcuts {#interface-shortcuts}
+## Felület és billentyűparancsok {#interface-shortcuts}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Billentyűparancsok {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Billentyűparancsok engedélyezése {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Engedélyezze a testreszabható billentyűparancsokat a média vezérléséhez.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Médiavezérlési billentyűparancsok {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Billentyűparancsok beállítása a médialejátszáshoz:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Médiaablak**: Médiaablak megnyitása/bezárása
+- **Előző média**: Ugrás az előző médiaelemre
+- **Következő média**: Ugrás a következő médiaelemre
+- **Szünet/Folytatás**: A média lejátszásának szüneteltetése vagy folytatása
+- **Média leállítása**: A média lejátszásának leállítása
+- **Zene be-/kikapcsolása**: Háttérzene be-/kikapcsolása
 
-### Add More Media Button {#add-more-media-button}
+### További média hozzáadása gomb {#add-more-media-button}
 
-#### Sections with an Add Media Button {#add-media-button-sections}
+#### „További média hozzáadása” gombbal rendelkező szakaszok {#add-media-button-sections}
 
 <!-- **Setting**: `addMediaButtonSections` -->
 
-Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
+Válassza ki, mely összejöveteli szakaszokban jelenjen meg saját gomb a saját média hozzáadásához, a felső eszköztár „Média hozzáadása” gombja mellett, amely mindig minden szakasznál működik.
 
-**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
+**Alapértelmezett**: Nyilvános előadás, Keresztényi életünk, a körzetfelvigyázó látogatása és az egyéni szakaszok
 
-#### Compact Add Media Button {#compact-add-media-button}
+#### Kompakt mód a média hozzáadása gombhoz {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
-Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
+A szakaszfejlécekben csak ikon jelenjen meg a „További média hozzáadása”/„Ének hozzáadása” gombhoz. Ha ki van kapcsolva, a gomb elég hely esetén szöveget is mutat az ikon mellett.
 
-**Default**: `true`
+**Alapértelmezett**: `true`
 
-### Media Drag Handle {#media-drag-handle}
+### Húzási fogantyú a médiaelemeken {#media-drag-handle}
 
-#### Show Drag Handle {#show-media-drag-handle}
+#### Húzási fogantyú megjelenítése {#show-media-drag-handle}
 
 <!-- **Setting**: `showMediaDragHandle` -->
 
-Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
+Kis fogantyú megjelenítése minden médiaelemen az átrendezéshez. A médiaelemek bárhol megfogva mindig átrendezhetők húzással; ez a beállítás csak azt befolyásolja, hogy maga a fogantyúikon megjelenik-e.
 
-**Default**: `true`
+**Alapértelmezett**: `true`
 
-### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
+### Összejövetel előtti/utáni gyorsműveletek {#before-after-meeting-quick-actions}
 
-#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
+#### Összejöveteli gyorsműveletek megjelenítése {#enable-meeting-quick-actions}
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
-Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
+Összejövetel előtti és utáni panel megjelenítése hasznos vezérlőkkel (háttérzene, felvétel), mindkettőhöz testreszabható ellenőrzőlistával.
 
-**Default**: `true`
+**Alapértelmezett**: `true`
 
-The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
+Az összejövetel előtti és utáni panel ellenőrzőlistáinak kategóriái és feladatai ugyanebben a beállításszakaszban kezelhetők: a gyülekezet igényei szerint hozzáadhat, átnevezhet, átrendezhet vagy törölhet kategóriákat és feladatokat.
 
-## Advanced {#advanced-settings}
+## Haladó {#advanced-settings}
 
-### Profile Settings Transfer {#profile-settings-transfer}
+### Profilbeállítások átvitele {#profile-settings-transfer}
 
-Export the current profile's settings to a JSON file or import a previously exported profile settings file. Az importálás felülírja az aktuális profil beállításait.
+Exportálja az aktuális profil beállításait JSON-fájlba, vagy importáljon egy korábban exportált profilbeállítás-fájlt. Az importálás felülírja az aktuális profil beállításait.
 
-### Danger Zone {#danger-zone}
+### Veszélyes zóna {#danger-zone}
 
 :::warning Figyelmeztetés
 
-These settings should only be changed if you understand their implications.
+Ezeket a beállításokat csak akkor módosítsa, ha tisztában van azok következményeivel.
 
 :::
 
-#### Base URL {#base-url}
+#### Alap-URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+A kiadványok és média letöltésére használt fő domain.
 
-**Default**: `jw.org`
+**Alapértelmezett**: `jw.org`
 
-#### Disable Hardware Acceleration {#disable-hardware-acceleration}
+#### Hardveres gyorsítás kikapcsolása {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
+Az M³ újraindítása után kikapcsolja a hardveres gyorsítást. Ez egyes rendszereken segíthet a grafikai hibák vagy összeomlások esetén, de egyébként nem ajánlott.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
+#### Hardveres gyorsítás emlékeztető elrejtése {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
+Elrejti a hardveres gyorsítás újbóli bekapcsolására figyelmeztető emlékeztetőt, miután azt kézzel kikapcsolták.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Média lekérésének letiltása {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Teljesen letiltja a média automatikus letöltését. Ezt csak olyan profilokhoz használja, amelyeket különleges eseményekhez vagy egyéb egyedi célokra használ.
 
-**Default**: `false`
+**Alapértelmezett**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Tippek az optimális konfigurációhoz {#configuration-tips}
 
-### For New Users {#new-users}
+### Új felhasználók számára {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Turn on "Enable media playback" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Az alapbeállítások megadásához kezdje a beállítási varázslóval
+2. Kapcsolja be a „Médialejátszás engedélyezése” beállítást a bemutatási funkciók eléréséhez
+3. Állítsa be pontosan az összejövetelek ütemezését
+4. Állítsa be az OBS-integrációt, ha hibrid összejöveteleket tart
 
-### For Advanced Users {#advanced-users}
+### Haladó felhasználók számára {#advanced-users}
 
-1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Használjon megosztott mappát, ha felhőtárhelyről, például a Dropboxból vagy a OneDrive-ból szeretne médiát hozzáadni
+2. Engedélyezze a média automatikus exportálását biztonsági mentés céljából
+3. A hatékony működéshez konfigurálja a billentyűparancsokat
+4. Konfigurálja a Zoom-integrációt az automatikus képernyőmegosztáshoz
 
-### Performance Optimization {#performance-optimization}
+### Teljesítményoptimalizálás {#performance-optimization}
 
-1. Cache songbook video files for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. A jobb teljesítmény érdekében helyezze gyorsítótárba az énekeskönyv videófájljait
+2. Használja az igényeinek megfelelő maximális felbontást
+3. Konfigurálja a gyorsítótár automatikus törlését, hogy tárhelyet takarítson meg
+4. Korlátozott adatforgalom esetén fontolja meg a korlátozott adatkapcsolat beállítását
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Hibaelhárítás {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Ha a média nem töltődik le, ellenőrizze az összejövetel ütemezésének beállításait
+- Ha az OBS-integráció nem működik, ellenőrizze a port és a jelszó beállításait
+- Ha gyenge a teljesítmény, próbálja meg engedélyezni az extra gyorsítótárat vagy csökkenteni a felbontást
+- Ha nyelvi problémák merülnek fel, ellenőrizze mind a kezelőfelület, mind a média nyelvi beállításait
+- Ha a Zoom-résztvevők nem hallják a média hangját, állítsa be a Zoom Original Audio beállításait, vagy használja a „Share Computer Sound” (Számítógép hangjának megosztása) funkciót
+- **Tipp**: Az egyszerűbb hangkezelés érdekében fontolja meg a Zoom-integráció használatát az OBS Studio helyett
