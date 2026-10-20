@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "A cena no @:obsStudio que será usada como a visualização de palco padrão. Conforme as instruções mais recentes, deve ser uma tomada ampla.",
   "obsEnable": "Integrar o M³ com o @:obsStudio",
   "obsEnable-explain": "Conecte o M³ ao @:obsStudio para habilitar a mudança automatizada entre cenas de mídia e câmera.",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "Não exibir ícones no seletor de cenas",
   "obsHideIcons-explain": "Quando ativado, os ícones ficarão ocultos no seletor de cenas. Isso pode melhorar a visualização dos textos das cenas.",
   "obsImageScene": "Cena para exibir imagens no @:obsStudio (opcional)",
