@@ -33,8 +33,9 @@ installQuasarPlugin();
 installPinia({ stubActions: false });
 
 const CONGREGATION_ID = 'nudge-cong';
-const FIRST_TRY_MS = 45 * 1000;
+const FIRST_TRY_MS = 30 * 1000;
 const RETRY_MS = 60 * 1000;
+const NOTIFICATION_RETRY_MS = 2 * 1000;
 
 let wrapper: undefined | VueWrapper;
 let router: Router;
@@ -133,7 +134,7 @@ afterEach(() => {
 });
 
 describe('DialogFeatureNudge', () => {
-  it('suggests a feature once the media calendar has been open for 45 seconds', async () => {
+  it('suggests a feature once the media calendar has been open for 30 seconds', async () => {
     await mountNudge();
     await wait(FIRST_TRY_MS - 1000);
     expect(text()).not.toContain('Did you know?');
@@ -234,17 +235,26 @@ describe('DialogFeatureNudge', () => {
   });
 
   // Notifications sit above dialogs and would cover the suggestion
-  it('waits while a notification is showing', async () => {
+  it('waits for a notification to go, then shows right away', async () => {
     await mountNudge();
     const toast = document.createElement('div');
     toast.className = 'q-notification';
     document.body.append(toast);
-    await wait(FIRST_TRY_MS);
+    await wait(FIRST_TRY_MS + 10 * 1000);
     expect(text()).not.toContain('Did you know?');
 
     toast.remove();
-    await wait(RETRY_MS);
+    await wait(NOTIFICATION_RETRY_MS);
     expect(text()).toContain('Did you know?');
+  });
+
+  it('gives up after half an hour of bad timing', async () => {
+    await mountNudge({ route: '/settings' });
+    await wait(31 * 60 * 1000);
+
+    await router.push('/media-calendar');
+    await wait(5 * RETRY_MS);
+    expect(text()).not.toContain('Did you know?');
   });
 
   it('holds off from 15 minutes before the meeting', async () => {

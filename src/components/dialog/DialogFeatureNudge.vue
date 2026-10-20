@@ -111,12 +111,13 @@ const { congregationSwitcherOpen, currentCongregation, currentSettings } =
   storeToRefs(currentStateStore);
 const dialogStateStore = useDialogStateStore();
 
-// Let startup settle first (its notifications last up to 30 s, the Zoom
-// startup check, OBS connecting), then retry while the moment isn't right,
-// up to half an hour.
-const FIRST_TRY_DELAY_MS = 45 * 1000;
+// Let startup settle first (the Zoom startup check, OBS connecting), then
+// retry while the moment isn't right, for up to half an hour. A notification
+// is usually gone within seconds, so that's checked again sooner.
+const FIRST_TRY_DELAY_MS = 30 * 1000;
 const RETRY_DELAY_MS = 60 * 1000;
-const MAX_TRIES = 30;
+const NOTIFICATION_RETRY_DELAY_MS = 2 * 1000;
+const GIVE_UP_AFTER_MS = 30 * 60 * 1000;
 
 const open = ref(false);
 const nudge = ref<FeatureNudge | null>(null);
@@ -192,20 +193,31 @@ const isProfileReady = (congId: string) =>
 const isNotificationShowing = () => !!document.querySelector('.q-notification');
 
 // Only on the media calendar, over nothing else, while no media is shown and
-// not from shortly before the meeting until it ends.
+// not from shortly before the meeting until it ends. Notifications are
+// checked separately, as they go away on their own soon.
 const isGoodMoment = (congId: string) =>
   currentCongregation.value === congId &&
   route.name === 'media-calendar' &&
   !congregationSwitcherOpen.value &&
   !dialogStateStore.isAnyDialogOpen &&
-  !isNotificationShowing() &&
   !currentStateStore.mediaPlaying.url &&
   isOutsideMeetingTime();
 
-const tryToSuggest = async (congId: string, tries: number) => {
+/** How long to wait before trying again, or null when it's time to show. */
+const getRetryDelay = (congId: string) => {
+  if (!isGoodMoment(congId)) return RETRY_DELAY_MS;
+  if (isNotificationShowing()) return NOTIFICATION_RETRY_DELAY_MS;
+  return null;
+};
+
+const tryToSuggest = async (congId: string, giveUpAt: number) => {
   if (currentCongregation.value !== congId || !isProfileReady(congId)) return;
-  if (!isGoodMoment(congId)) {
-    if (tries < MAX_TRIES) scheduleTry(congId, tries + 1, RETRY_DELAY_MS);
+
+  const retryDelay = getRetryDelay(congId);
+  if (retryDelay !== null) {
+    if (Date.now() + retryDelay <= giveUpAt) {
+      scheduleTry(congId, giveUpAt, retryDelay);
+    }
     return;
   }
 
@@ -218,7 +230,7 @@ const tryToSuggest = async (congId: string, tries: number) => {
     context,
     congregationSettingsStore.featureNudges[congId],
   );
-  if (!next || !isGoodMoment(congId)) return;
+  if (!next || getRetryDelay(congId) !== null) return;
 
   nudge.value = next;
   body.value = next.getBody(context);
@@ -227,16 +239,17 @@ const tryToSuggest = async (congId: string, tries: number) => {
   open.value = true;
 };
 
-const scheduleTry = (congId: string, tries: number, delay: number) => {
+const scheduleTry = (congId: string, giveUpAt: number, delay: number) => {
   stopTrying();
-  retryTimer = setTimeout(() => void tryToSuggest(congId, tries), delay);
+  retryTimer = setTimeout(() => void tryToSuggest(congId, giveUpAt), delay);
 };
 
 onBeforeUnmount(stopTrying);
 
 watchImmediate(currentCongregation, (congId) => {
   stopTrying();
-  if (congId) scheduleTry(congId, 1, FIRST_TRY_DELAY_MS);
+  if (!congId) return;
+  scheduleTry(congId, Date.now() + GIVE_UP_AFTER_MS, FIRST_TRY_DELAY_MS);
 });
 </script>
 
