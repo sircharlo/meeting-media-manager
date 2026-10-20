@@ -1,312 +1,267 @@
 <template>
-  <q-menu
-    ref="displayPopup"
+  <ActionPopup
     v-model="open"
-    anchor="top middle"
-    no-parent-event
-    :offset="[0, 8]"
-    self="bottom middle"
-    transition-hide="jump-down"
-    transition-show="jump-up"
+    :status-color="statusColor"
+    :status-icon="statusIcon"
+    :status-text="statusText"
+    :title="t('media-display-settings')"
   >
-    <div
-      ref="popupContent"
-      class="action-popup action-popup--scroll-layout q-py-md"
-    >
-      <div class="card-title row q-px-md q-mb-none">
-        {{ t('media-display-settings') }}
+    <template v-if="screenList?.length > 1">
+      <p class="card-section-title text-dark-grey q-px-md q-pt-sm">
+        {{ t('window-type') }}
+      </p>
+      <div class="row q-px-md q-pb-sm q-col-gutter-sm">
+        <div class="col-6">
+          <q-btn
+            class="full-width full-height"
+            color="primary"
+            :disable="screenList?.length < 2"
+            icon="mmm-fullscreen"
+            :label="t('full-screen')"
+            :outline="
+              screenList?.length < 2 || screenPreferences.preferWindowed
+            "
+            unelevated
+            @click="
+              () => {
+                log('🔍 [Full Screen Button] Clicked', 'display');
+                screenPreferences.preferWindowed = false;
+                log(
+                  '🔍 [Full Screen Button] Calling moveMediaWindow with:',
+                  'display',
+                  'log',
+                  {
+                    screen: screenPreferences.preferredScreenNumber,
+                    fullscreen: true,
+                  },
+                );
+                moveMediaWindow(screenPreferences.preferredScreenNumber, true);
+              }
+            "
+          />
+        </div>
+        <div class="col-6">
+          <q-btn
+            class="full-width full-height"
+            color="primary"
+            :disable="screenList?.length < 2"
+            icon="mmm-window"
+            :label="t('windowed')"
+            :outline="
+              !(screenList?.length < 2 || screenPreferences.preferWindowed)
+            "
+            :text-color="
+              screenList?.length < 2 || screenPreferences.preferWindowed
+                ? ''
+                : 'primary'
+            "
+            unelevated
+            @click="
+              () => {
+                log('🔍 [Windowed Button] Clicked', 'display');
+                screenPreferences.preferWindowed = true;
+                log(
+                  '🔍 [Windowed Button] Calling moveMediaWindow with:',
+                  'display',
+                  'log',
+                  {
+                    screen: screenPreferences.preferredScreenNumber,
+                    fullscreen: false,
+                  },
+                );
+                moveMediaWindow(screenPreferences.preferredScreenNumber, false);
+              }
+            "
+          />
+        </div>
       </div>
-      <div class="action-popup__scroll">
-        <template v-if="screenList?.length > 1">
-          <div class="card-section-title row q-px-md">
-            {{ t('window-type') }}
-          </div>
-          <div class="row q-px-md q-pb-sm q-col-gutter-sm">
-            <div class="col-6">
-              <q-btn
-                class="full-width full-height"
-                color="primary"
-                :disable="screenList?.length < 2"
-                :outline="
-                  screenList?.length < 2 || screenPreferences.preferWindowed
-                "
-                unelevated
-                @click="
-                  () => {
-                    log('🔍 [Full Screen Button] Clicked', 'display');
-                    screenPreferences.preferWindowed = false;
-                    log(
-                      '🔍 [Full Screen Button] Calling moveMediaWindow with:',
-                      'display',
-                      'log',
-                      {
-                        screen: screenPreferences.preferredScreenNumber,
-                        fullscreen: true,
-                      },
-                    );
-                    moveMediaWindow(
-                      screenPreferences.preferredScreenNumber,
-                      true,
-                    );
-                  }
-                "
-              >
-                <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
-                {{ t('full-screen') }}
-              </q-btn>
-            </div>
-            <div class="col-6">
-              <q-btn
-                class="full-width full-height"
-                color="primary"
-                :disable="screenList?.length < 2"
-                :outline="
-                  !(screenList?.length < 2 || screenPreferences.preferWindowed)
-                "
-                :text-color="
-                  screenList?.length < 2 || screenPreferences.preferWindowed
-                    ? ''
-                    : 'primary'
-                "
-                unelevated
-                @click="
-                  () => {
-                    log('🔍 [Windowed Button] Clicked', 'display');
-                    screenPreferences.preferWindowed = true;
-                    log(
-                      '🔍 [Windowed Button] Calling moveMediaWindow with:',
-                      'display',
-                      'log',
-                      {
-                        screen: screenPreferences.preferredScreenNumber,
-                        fullscreen: false,
-                      },
-                    );
-                    moveMediaWindow(
-                      screenPreferences.preferredScreenNumber,
-                      false,
-                    );
-                  }
-                "
-              >
-                <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
-                {{ t('windowed') }}
-              </q-btn>
-            </div>
-          </div>
-          <q-separator class="bg-accent-200 q-mb-md" />
-          <template
-            v-if="!screenPreferences.preferWindowed && screenList?.length > 2"
+      <q-separator class="bg-accent-200 q-my-sm" />
+      <template
+        v-if="!screenPreferences.preferWindowed && screenList?.length > 2"
+      >
+        <p class="card-section-title text-dark-grey q-px-md q-pt-sm">
+          {{ t('display') }}
+        </p>
+        <div class="q-px-md q-pb-sm">
+          <div
+            class="display-map"
+            :style="{
+              position: 'relative',
+              width: '100%',
+              aspectRatio: virtualBounds.width + ' / ' + virtualBounds.height,
+              overflow: 'hidden',
+              '--screen-gap': '1%',
+            }"
           >
-            <div class="card-section-title row q-px-md">
-              {{ t('display') }}
-            </div>
-            <div class="q-px-md q-pb-sm">
-              <div
-                class="display-map"
-                :style="{
-                  position: 'relative',
-                  width: '100%',
-                  aspectRatio:
-                    virtualBounds.width + ' / ' + virtualBounds.height,
-                  overflow: 'hidden',
-                  '--screen-gap': '1%',
+            <template v-for="(screen, index) in screenList" :key="screen.id">
+              <q-btn
+                class="screen-rect column items-center justify-center"
+                :class="{
+                  'border-dashed': screen.mainWindow,
                 }"
+                :color="!screen.mainWindow ? 'primary' : 'secondary'"
+                :disable="screen.mainWindow"
+                :outline="!isScreenSelected(index, screen)"
+                :style="{
+                  position: 'absolute',
+                  left:
+                    'calc(' +
+                    (screenRects[index]?.left ?? 0) +
+                    '% + var(--screen-gap))',
+                  top:
+                    'calc(' +
+                    (screenRects[index]?.top ?? 0) +
+                    '% + var(--screen-gap))',
+                  width:
+                    'calc(' +
+                    (screenRects[index]?.width ?? 0) +
+                    '% - (var(--screen-gap) * 2))',
+                  height:
+                    'calc(' +
+                    (screenRects[index]?.height ?? 0) +
+                    '% - (var(--screen-gap) * 2))',
+                  borderRadius: '6px',
+                }"
+                unelevated
+                @click="
+                  () => {
+                    if (screen.mainWindow) return;
+                    log(
+                      '🔍 [Screen Map] Clicked for index:',
+                      'display',
+                      'log',
+                      index,
+                    );
+                    screenPreferences.preferredScreenNumber = index;
+                    const isFullscreen = !screenPreferences.preferWindowed;
+                    log(
+                      '🔍 [Screen Map] Calling moveMediaWindow with:',
+                      'display',
+                      'log',
+                      { index, isFullscreen },
+                    );
+                    moveMediaWindow(index, isFullscreen);
+                  }
+                "
               >
-                <template
-                  v-for="(screen, index) in screenList"
-                  :key="screen.id"
+                <q-tooltip v-if="screen.mainWindow" :delay="1000">
+                  {{ t('main-window-is-on-this-screen') }}
+                </q-tooltip>
+                <div
+                  v-if="screen.mainWindow && scaledMainWindowRect(index)"
+                  class="main-window-rect"
+                  :style="{
+                    position: 'absolute',
+                    left: scaledMainWindowRect(index)?.left + '%',
+                    top: scaledMainWindowRect(index)?.top + '%',
+                    width: scaledMainWindowRect(index)?.width + '%',
+                    height: scaledMainWindowRect(index)?.height + '%',
+                    pointerEvents: 'none',
+                  }"
                 >
-                  <q-btn
-                    class="screen-rect column items-center justify-center"
-                    :class="{
-                      'border-dashed': screen.mainWindow,
-                    }"
-                    :color="!screen.mainWindow ? 'primary' : 'secondary'"
-                    :disable="screen.mainWindow"
-                    :outline="!isScreenSelected(index, screen)"
-                    :style="{
-                      position: 'absolute',
-                      left:
-                        'calc(' +
-                        (screenRects[index]?.left ?? 0) +
-                        '% + var(--screen-gap))',
-                      top:
-                        'calc(' +
-                        (screenRects[index]?.top ?? 0) +
-                        '% + var(--screen-gap))',
-                      width:
-                        'calc(' +
-                        (screenRects[index]?.width ?? 0) +
-                        '% - (var(--screen-gap) * 2))',
-                      height:
-                        'calc(' +
-                        (screenRects[index]?.height ?? 0) +
-                        '% - (var(--screen-gap) * 2))',
-                      borderRadius: '6px',
-                    }"
-                    unelevated
-                    @click="
-                      () => {
-                        if (screen.mainWindow) return;
-                        log(
-                          '🔍 [Screen Map] Clicked for index:',
-                          'display',
-                          'log',
-                          index,
-                        );
-                        screenPreferences.preferredScreenNumber = index;
-                        const isFullscreen = !screenPreferences.preferWindowed;
-                        log(
-                          '🔍 [Screen Map] Calling moveMediaWindow with:',
-                          'display',
-                          'log',
-                          { index, isFullscreen },
-                        );
-                        moveMediaWindow(index, isFullscreen);
-                      }
-                    "
-                  >
-                    <q-tooltip v-if="screen.mainWindow" :delay="1000">
-                      {{ t('main-window-is-on-this-screen') }}
-                    </q-tooltip>
-                    <div
-                      v-if="screen.mainWindow && scaledMainWindowRect(index)"
-                      class="main-window-rect"
-                      :style="{
-                        position: 'absolute',
-                        left: scaledMainWindowRect(index)?.left + '%',
-                        top: scaledMainWindowRect(index)?.top + '%',
-                        width: scaledMainWindowRect(index)?.width + '%',
-                        height: scaledMainWindowRect(index)?.height + '%',
-                        pointerEvents: 'none',
-                      }"
-                    >
-                      <q-icon
-                        name="mmm-logo"
-                        size="sm"
-                        style="pointer-events: none; color: var(--q-primary)"
-                      />
-                    </div>
-                    <q-icon
-                      v-if="!screen.mainWindow"
-                      class="q-mr-sm"
-                      name="mmm-media-display-active"
-                      size="xs"
-                    />
-                    {{
-                      !screen.mainWindow ? t('display') + ' ' + (index + 1) : ''
-                    }}
-                  </q-btn>
-                </template>
-              </div>
-            </div>
-            <q-separator class="bg-accent-200 q-mb-md" />
-          </template>
-        </template>
-        <template v-if="currentSettings">
-          <div class="row items-center no-wrap q-px-md q-pb-sm">
-            <div class="col q-pr-md">
-              <div class="text-subtitle2">
-                {{ t('enableMediaPreview') }}
-              </div>
-              <div class="text-body2 text-dark-grey">
-                {{ t('enableMediaPreview-explain') }}
-              </div>
-            </div>
-            <q-toggle
-              v-model="currentSettings.enableMediaPreview"
-              checked-icon="mmm-check"
-              color="primary"
-            />
+                  <q-icon
+                    name="mmm-logo"
+                    size="sm"
+                    style="pointer-events: none; color: var(--q-primary)"
+                  />
+                </div>
+                <q-icon
+                  v-if="!screen.mainWindow"
+                  class="q-mr-sm"
+                  name="mmm-media-display-active"
+                  size="xs"
+                />
+                {{ !screen.mainWindow ? t('display') + ' ' + (index + 1) : '' }}
+              </q-btn>
+            </template>
           </div>
-          <q-separator class="bg-accent-200 q-mb-md" />
-        </template>
-        <div class="card-section-title row q-px-md q-pb-sm">
-          {{ t('custom-background') }}
         </div>
-        <div class="row q-px-md q-pb-sm">
-          <q-btn
-            class="full-width"
-            color="primary"
-            :outline="!mediaWindowCustomBackground"
-            unelevated
-            @click="chooseCustomBackground(!!mediaWindowCustomBackground)"
-          >
-            <q-icon
-              class="q-mr-sm"
-              :name="
-                mediaWindowCustomBackground
-                  ? 'mmm-background-remove'
-                  : 'mmm-background'
-              "
-              size="xs"
-            />
-            {{
-              mediaWindowCustomBackground
-                ? t('reset-custom-background')
-                : t('set-custom-background')
-            }}
-          </q-btn>
+        <q-separator class="bg-accent-200 q-my-sm" />
+      </template>
+    </template>
+    <template v-if="currentSettings">
+      <div class="row items-center no-wrap q-px-md q-py-sm">
+        <div class="col q-pr-md">
+          <div class="text-subtitle2">
+            {{ t('enableMediaPreview') }}
+          </div>
+          <div class="text-body2 text-dark-grey">
+            {{ t('enableMediaPreview-explain') }}
+          </div>
         </div>
-        <template v-if="currentLangObject?.isSignLanguage && cameras.length">
-          <q-separator class="bg-accent-200 q-mb-md" />
-          <div class="card-section-title row q-px-md q-pb-sm">
-            {{ t('camera-as-background') }}
-          </div>
-          <div class="row q-px-md q-pb-sm">
-            <q-select
-              v-model="displayCameraId"
-              clearable
-              emit-value
-              :label="t('select-camera')"
-              map-options
-              :options="cameras"
-              outlined
-              style="width: 100%"
-            />
-          </div>
-        </template>
+        <q-toggle
+          v-model="currentSettings.enableMediaPreview"
+          checked-icon="mmm-check"
+          color="primary"
+        />
       </div>
-      <q-separator class="bg-accent-200" />
-      <div class="action-popup__footer q-px-md q-pt-md row">
-        <div class="col">
-          <div class="row text-subtitle1 text-weight-medium">
-            {{ mediaWindowVisible ? t('projecting') : t('inactive') }}
-          </div>
-          <div class="row text-dark-grey">
-            {{
-              t(
-                screenList?.length < 2 || screenPreferences.preferWindowed
-                  ? 'windowed'
-                  : 'external-screen',
-              )
-            }}
-          </div>
-        </div>
-        <div class="col-grow">
-          <q-btn
-            v-if="mediaWindowVisible"
-            class="full-width"
-            color="primary"
-            unelevated
-            @click="toggleMediaWindowVisibility(false)"
-          >
-            {{ t('hide-media-display') }}
-          </q-btn>
-          <q-btn
-            v-else
-            class="full-width"
-            color="primary"
-            unelevated
-            @click="toggleMediaWindowVisibility(true)"
-          >
-            {{ t('show-media-display') }}
-          </q-btn>
-        </div>
-      </div>
+      <q-separator class="bg-accent-200 q-my-sm" />
+    </template>
+    <p class="card-section-title text-dark-grey q-px-md q-pt-sm">
+      {{ t('custom-background') }}
+    </p>
+    <div class="q-px-md q-pb-sm">
+      <q-btn
+        v-if="mediaWindowCustomBackground"
+        class="full-width"
+        color="negative"
+        flat
+        icon="mmm-reset"
+        :label="t('reset-custom-background')"
+        no-caps
+        @click="chooseCustomBackground(true)"
+      />
+      <q-btn
+        v-else
+        class="full-width"
+        color="primary"
+        icon="mmm-background"
+        :label="t('set-custom-background')"
+        no-caps
+        outline
+        @click="chooseCustomBackground(false)"
+      />
     </div>
-  </q-menu>
+    <template v-if="currentLangObject?.isSignLanguage && cameras.length">
+      <q-separator class="bg-accent-200 q-my-sm" />
+      <p class="card-section-title text-dark-grey q-px-md q-pt-sm">
+        {{ t('camera-as-background') }}
+      </p>
+      <div class="row q-px-md q-pb-sm">
+        <q-select
+          v-model="displayCameraId"
+          clearable
+          emit-value
+          :label="t('select-camera')"
+          map-options
+          :options="cameras"
+          outlined
+          style="width: 100%"
+        />
+      </div>
+    </template>
+
+    <template #footer>
+      <q-btn
+        v-if="mediaWindowVisible"
+        class="full-width"
+        color="primary"
+        icon="mmm-media-display-inactive"
+        :label="t('hide-media-display')"
+        unelevated
+        @click="toggleMediaWindowVisibility(false)"
+      />
+      <q-btn
+        v-else
+        class="full-width"
+        color="primary"
+        icon="mmm-media-display-active"
+        :label="t('show-media-display')"
+        unelevated
+        @click="toggleMediaWindowVisibility(true)"
+      />
+    </template>
+  </ActionPopup>
   <BaseDialog v-model="showCustomBackgroundPicker" :dialog-id="props.dialogId">
     <div class="bg-secondary-contrast flex q-px-none" style="flex-flow: column">
       <div
@@ -353,14 +308,7 @@
         />
       </div>
       <div class="q-px-md q-py-md row justify-end">
-        <q-btn
-          flat
-          @click="
-            jwpubImportFilePath = '';
-            jwpubImages = [];
-            showCustomBackgroundPicker = false;
-          "
-        >
+        <q-btn flat @click="showCustomBackgroundPicker = false">
           {{ t('cancel') }}
         </q-btn>
       </div>
@@ -377,8 +325,9 @@ import {
   whenever,
 } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import ActionPopup from 'components/ui/ActionPopup.vue';
 import { storeToRefs } from 'pinia';
-import { QMenu } from 'quasar';
+import { useScreenLayout } from 'src/composables/useScreenLayout';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   copyToDatedAdditionalMedia,
@@ -396,12 +345,8 @@ import { isImage, isJwpub } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-
-const displayPopup = useTemplateRef<QMenu>('displayPopup');
-const popupContent = useTemplateRef<HTMLElement>('popupContent');
-let popupResizeObserver: ResizeObserver | undefined;
 
 const { t } = useI18n();
 
@@ -438,6 +383,27 @@ const {
 
 const { copyFile } = fs;
 
+// "Projecting · External screen": whether the media display is shown, and
+// where.
+const statusText = computed(() => {
+  const visibility = mediaWindowVisible.value ? t('projecting') : t('inactive');
+  const windowed =
+    (screenList.value?.length ?? 0) < 2 ||
+    screenPreferences.value.preferWindowed;
+  const placement = windowed ? t('windowed') : t('external-screen');
+  return [visibility, placement].join(' · ');
+});
+
+const statusIcon = computed(() =>
+  mediaWindowVisible.value
+    ? 'mmm-media-display-active'
+    : 'mmm-media-display-inactive',
+);
+
+const statusColor = computed(() =>
+  mediaWindowVisible.value ? 'positive' : 'grey',
+);
+
 const getBasename = (filename: string) => {
   if (!filename) return '';
   return basename(filename);
@@ -448,52 +414,13 @@ const getFileUrlFromPath = (filepath: string) => {
   return pathToFileURL(filepath);
 };
 
-// Virtual desktop extents across all displays (in physical pixels as provided by Electron)
-const virtualBounds = computed(() => {
-  const list = screenList.value;
-  if (!list || list.length === 0) {
-    return { height: 9, width: 16, x: 0, y: 0 };
-  }
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  for (const d of list) {
-    const b = d.bounds;
-    if (!b) continue;
-    minX = Math.min(minX, b.x);
-    minY = Math.min(minY, b.y);
-    maxX = Math.max(maxX, b.x + b.width);
-    maxY = Math.max(maxY, b.y + b.height);
-  }
-  const width = Math.max(1, maxX - minX);
-  const height = Math.max(1, maxY - minY);
-  return { height, width, x: minX, y: minY };
-});
-
-// Percentage-based rectangles for each screen relative to the virtual desktop
-const screenRects = computed(() => {
-  const vb = virtualBounds.value;
-  const list = screenList.value ?? [];
-  return list.map((d) => {
-    const b = d.bounds;
-    const left = ((b.x - vb.x) / vb.width) * 100;
-    const top = ((b.y - vb.y) / vb.height) * 100;
-    const width = (b.width / vb.width) * 100;
-    const height = (b.height / vb.height) * 100;
-    return {
-      height: Number.isFinite(height) ? height : 0,
-      left: Number.isFinite(left) ? left : 0,
-      top: Number.isFinite(top) ? top : 0,
-      width: Number.isFinite(width) ? width : 0,
-    };
-  });
-});
+// Virtual desktop extents and per-screen rectangles for the screen map
+const { screenRects, virtualBounds } = useScreenLayout(screenList);
 
 const scaledMainWindowRect = (index: number) => {
   const list = screenList.value ?? [];
   const screen = list[index];
-  if (!screen || !screen.mainWindowBounds) return undefined;
+  if (!screen?.mainWindowBounds) return undefined;
 
   const b = screen.bounds;
   const mw = screen.mainWindowBounds;
@@ -522,9 +449,18 @@ const isScreenSelected = (_index: number, screen: Display) => {
 const jwpubImportFilePath = ref('');
 const jwpubImages = ref<{ FilePath: string }[]>([]);
 
-const showCustomBackgroundPicker = computed(
-  () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
-);
+// The picker's visibility is derived from the import state, so closing it
+// (Cancel, Esc or a backdrop click through BaseDialog's v-model) must clear
+// that state. A getter-only computed would silently ignore the write and
+// leave the dialog open.
+const showCustomBackgroundPicker = computed({
+  get: () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
+  set: (value: boolean) => {
+    if (value) return;
+    jwpubImportFilePath.value = '';
+    jwpubImages.value = [];
+  },
+});
 
 const processJwpubBackground = async (filepath: string) => {
   jwpubImportFilePath.value = filepath;
@@ -543,7 +479,7 @@ const processJwpubBackground = async (filepath: string) => {
   >(db, query);
 
   jwpubImages.value = results.map((multimediaItem) => ({
-    FilePath: join(unzipDir, multimediaItem.FilePath || ''),
+    FilePath: join(unzipDir, multimediaItem.FilePath ?? ''),
   }));
 
   if (jwpubImages.value.length === 0) {
@@ -793,7 +729,7 @@ const stopListeningToScreens = ref<(() => void) | null>(null);
 watch(
   () => mediaWindowCustomBackground.value,
   (newMediaBackground) => {
-    loadMemorialBackground(newMediaBackground);
+    void loadMemorialBackground(newMediaBackground);
   },
 );
 
@@ -810,7 +746,9 @@ watch(
         stopListeningToScreens.value = useEventListener(
           globalThis,
           'screen-trigger-update',
-          fetchScreens,
+          () => {
+            void fetchScreens();
+          },
           {
             passive: true,
           },
@@ -831,28 +769,11 @@ watch(
 
 whenever(
   () => open.value,
-  async () => {
-    fetchScreens();
-    getCameras();
+  () => {
+    void fetchScreens();
+    void getCameras();
   },
 );
-
-// Anchored bottom-up (self="bottom middle") so it visually grows out of the
-// action island. A ResizeObserver repositions it whenever its rendered size
-// actually changes - screen list thresholds, camera picker, custom
-// background label, etc. - instead of guessing which reactive values might
-// affect height.
-watch(popupContent, (el) => {
-  popupResizeObserver?.disconnect();
-  popupResizeObserver = undefined;
-  if (!el) return;
-  popupResizeObserver = new ResizeObserver(() => {
-    displayPopup.value?.updatePosition();
-  });
-  popupResizeObserver.observe(el);
-});
-
-onBeforeUnmount(() => popupResizeObserver?.disconnect());
 
 watchImmediate(
   () => getCurrentMediaWindowVariables.value,

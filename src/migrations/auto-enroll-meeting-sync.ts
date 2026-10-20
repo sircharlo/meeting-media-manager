@@ -76,15 +76,14 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
 
       const congregationName = congregationSettings.congregationName;
 
-      const suggestions = await fetchCongregationSuggestions(congregationName);
+      const suggestions = await fetchCongregationSuggestions(congregationName); // NOSONAR: sequential - one JW.org lookup at a time
       const exactSuggestion = suggestions.find(
         (suggestion) =>
           suggestion.name.toLowerCase() === congregationName.toLowerCase(),
       );
       if (!exactSuggestion) continue;
-      const response = await fetchMeetingLocations(
-        exactSuggestion.congregationGuid,
-      );
+      const { congregationGuid } = exactSuggestion;
+      const response = await fetchMeetingLocations(congregationGuid); // NOSONAR: sequential - one JW.org lookup at a time
 
       const exactMatch = response?.items?.some((item) =>
         item.congregationMeetings.some(

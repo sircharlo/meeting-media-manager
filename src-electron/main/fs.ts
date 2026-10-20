@@ -53,8 +53,8 @@ import {
 
 const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 
-const MAX_FILES = 10000;
-const MAX_SIZE = 2000000000; // 2 GB
+const MAX_FILES = 10_000;
+const MAX_SIZE = 2_000_000_000; // 2 GB
 // A single-pass DEFLATE stream can't exceed ~1032:1; legitimate archives
 // (sparse databases, repetitive JSON/text) can still land in the low
 // hundreds, so this stays close to the real ceiling to avoid false
@@ -64,16 +64,16 @@ const THRESHOLD_RATIO = 1032;
 // to resource exhaustion (already bounded separately by MAX_SIZE/MAX_FILES),
 // so skip the ratio check to avoid flagging small, highly-compressible
 // legitimate files.
-const MIN_RATIO_CHECK_SIZE = 10000000; // 10 MB
-const MAX_IN_MEMORY_ZIP_ENTRY_SIZE = 150000000; // 150 MB
-const MAX_IN_MEMORY_ZIP_TOTAL_SIZE = 250000000; // 250 MB
+const MIN_RATIO_CHECK_SIZE = 10_000_000; // 10 MB
+const MAX_IN_MEMORY_ZIP_ENTRY_SIZE = 150_000_000; // 150 MB
+const MAX_IN_MEMORY_ZIP_TOTAL_SIZE = 250_000_000; // 250 MB
 const PATH_PROBE_SETTLE_DELAY_MS = 50;
 const PATH_PROBE_RETRY_DELAY_MS = 50;
 const PATH_PROBE_RETRY_COUNT = 4;
 const ZIP_ENTRY_DIAGNOSTIC_LIMIT = 50;
 const SHARED_PATH_BACKOFF_MS = 10 * 60 * 1000;
 const SHARED_PATH_HEALTH_FILENAME = 'shared-path-health.json';
-const PATH_PROBE_NETWORK_WARNING_THROTTLE_MS = 30000;
+const PATH_PROBE_NETWORK_WARNING_THROTTLE_MS = 30_000;
 const ZIP_OPEN_RETRY_COUNT = 3;
 const ZIP_OPEN_RETRY_DELAY_MS = 1000;
 const SECURITY_SCOPED_BOOKMARKS_FILENAME = 'security-scoped-bookmarks.json';
@@ -182,7 +182,7 @@ interface ZipGuardState {
   totalUncompressedSize: number;
 }
 
-let securityScopedBookmarksLoaded = false;
+let securityScopedBookmarksLoad: Promise<void> | undefined;
 const securityScopedBookmarks = new Map<string, string>();
 const securityScopedAccessStops = new Map<string, () => void>();
 
@@ -208,6 +208,19 @@ const stopSecurityScopedAccess = () => {
 app.once('will-quit', stopSecurityScopedAccess);
 
 /**
+ * Removes every trailing `/` from a path (e.g. a directory zip entry's
+ * `folder/`). A plain loop instead of `/\/+$/`, which backtracks
+ * quadratically on a long run of slashes that isn't at the end.
+ * @param value The path to trim
+ * @returns The path without trailing slashes
+ */
+const stripTrailingSlashes = (value: string) => {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === '/') end--;
+  return value.slice(0, end);
+};
+
+/**
  * Resolves a zip entry's target path and guards against "Zip Slip": a
  * malicious entry name (e.g. containing `../` sequences) that would
  * otherwise resolve outside of `output` and let a crafted archive write
@@ -228,7 +241,7 @@ const resolveZipEntryPath = (output: string, entryFileName: string) => {
     throw new Error(`Unsafe zip entry path: ${entryFileName}`);
   }
 
-  return fullPath.replace(/\/+$/, '');
+  return stripTrailingSlashes(fullPath);
 };
 
 /**
@@ -304,9 +317,9 @@ const collectDirectoryZipEntries = async (
       const fullPath = join(currentPath, dirent.name);
       if (dirent.isDirectory()) {
         entries.push({ fileName: `${entryName}/`, uncompressedSize: 0 });
-        await walk(fullPath, entryName);
+        await walk(fullPath, entryName); // NOSONAR: sequential - ordered recursive directory walk
       } else if (dirent.isFile()) {
-        const fileStats = await stat(fullPath);
+        const fileStats = await stat(fullPath); // NOSONAR: sequential - ordered recursive directory walk
         entries.push({
           fileName: entryName,
           uncompressedSize: fileStats.size,
@@ -393,10 +406,7 @@ const normalizeBookmarkPath = (filePath: string) => toUnix(resolve(filePath));
 const isSameOrChildPath = (parentPath: string, childPath: string) =>
   childPath === parentPath || childPath.startsWith(`${parentPath}/`);
 
-const loadSecurityScopedBookmarks = async () => {
-  if (securityScopedBookmarksLoaded) return;
-  securityScopedBookmarksLoaded = true;
-
+const readSecurityScopedBookmarks = async () => {
   try {
     const raw = await readFile(getSecurityScopedBookmarksFile(), 'utf8');
     const parsed = JSON.parse(raw) as unknown;
@@ -410,6 +420,13 @@ const loadSecurityScopedBookmarks = async () => {
   } catch {
     securityScopedBookmarks.clear();
   }
+};
+
+// Every caller awaits the same in-flight read, so none of them sees (or
+// persists) the map before the stored bookmarks are in it.
+const loadSecurityScopedBookmarks = () => {
+  securityScopedBookmarksLoad ??= readSecurityScopedBookmarks();
+  return securityScopedBookmarksLoad;
 };
 
 const persistSecurityScopedBookmarks = async () => {
@@ -493,14 +510,23 @@ export const startSecurityScopedAccess = async (filePath: string) => {
   }
 };
 
+const probeSharedSubfolder = async (sharedPath: string, folder: string) => {
+  const dirPath = join(sharedPath, folder);
+  const testDir = join(dirPath, `.health-check-${uuid()}`);
+  const testFile = join(testDir, 'test.txt');
+  await mkdir(testDir, { recursive: true });
+  await writeFile(testFile, 'ok', 'utf8');
+  await rm(testDir, { force: true, recursive: true });
+};
+
+// One subfolder at a time, stopping at the first that fails: the caller
+// then reports that folder (always the first failing one in this order) and
+// falls back to userData, and no other probe is left running against a
+// shared folder that has just proved unusable - only to leave its own
+// .health-check-* folder behind when it fails too.
 const probeSharedSubfolders = async (sharedPath: string) => {
   for (const folder of SHARED_PATH_HEALTH_FOLDERS) {
-    const dirPath = join(sharedPath, folder);
-    const testDir = join(dirPath, `.health-check-${uuid()}`);
-    const testFile = join(testDir, 'test.txt');
-    await mkdir(testDir, { recursive: true });
-    await writeFile(testFile, 'ok', 'utf8');
-    await rm(testDir, { force: true, recursive: true });
+    await probeSharedSubfolder(sharedPath, folder); // NOSONAR: sequential - stops at the first unusable subfolder
   }
 };
 
@@ -627,7 +653,7 @@ const findExistingProbeFile = async (
   }
 
   for (const subdir of subdirs) {
-    const found = await findExistingProbeFile(subdir, depth + 1);
+    const found = await findExistingProbeFile(subdir, depth + 1); // NOSONAR: sequential - stops at first match
     if (found) return found;
   }
 
@@ -702,7 +728,7 @@ const cleanupProbePath = async (
 
   for (let attempt = 0; attempt <= PATH_PROBE_RETRY_COUNT; attempt += 1) {
     try {
-      await rm(targetPath, options);
+      await rm(targetPath, options); // NOSONAR: sequential - retry loop
       return;
     } catch (error) {
       lastError = error;
@@ -712,7 +738,7 @@ const cleanupProbePath = async (
       ) {
         break;
       }
-      await delay(PATH_PROBE_RETRY_DELAY_MS);
+      await delay(PATH_PROBE_RETRY_DELAY_MS); // NOSONAR: sequential - retry loop
     }
   }
 
@@ -1281,7 +1307,7 @@ const decompress = async (
     try {
       const dirEntries = await collectDirectoryZipEntries(input);
       for (const entry of dirEntries) {
-        await handleDirectoryZipEntry(entry, input, context, state);
+        await handleDirectoryZipEntry(entry, input, context, state); // NOSONAR: sequential - ordered extraction with shared size guards
       }
     } catch (error) {
       captureElectronError(error, {
@@ -1334,7 +1360,7 @@ const openZipFileForUnzip = async (
 
   for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
     try {
-      return await openPromise(input);
+      return await openPromise(input); // NOSONAR: sequential - retry loop
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
@@ -1358,7 +1384,7 @@ const openZipFileForUnzip = async (
 
       if (!shouldRetry) throw error;
 
-      await delay(getZipRetryDelay(attempt + 1));
+      await delay(getZipRetryDelay(attempt + 1)); // NOSONAR: sequential - retry loop
     }
   }
 
@@ -1458,7 +1484,7 @@ const getZipFileStats = async (zipPath: string) => {
 
   for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
     try {
-      return await stat(zipPath);
+      return await stat(zipPath); // NOSONAR: sequential - retry loop
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
@@ -1496,7 +1522,7 @@ const getZipFileStats = async (zipPath: string) => {
         throw error;
       }
 
-      await delay(getZipRetryDelay(attempt + 1));
+      await delay(getZipRetryDelay(attempt + 1)); // NOSONAR: sequential - retry loop
     }
   }
 
@@ -1511,7 +1537,7 @@ const openZipFileForEntries = async (
 
   for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
     try {
-      return await openPromise(zipPath);
+      return await openPromise(zipPath); // NOSONAR: sequential - retry loop
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
@@ -1528,7 +1554,7 @@ const openZipFileForEntries = async (
         throw error;
       }
 
-      await delay(getZipRetryDelay(attempt + 1));
+      await delay(getZipRetryDelay(attempt + 1)); // NOSONAR: sequential - retry loop
     }
   }
 
@@ -1701,7 +1727,7 @@ const readDirectoryEntriesIntoMemory = async (
 
         const sourcePath = resolveZipEntryPath(dirPath, entry.fileName);
         entries.push({
-          data: await readFile(sourcePath),
+          data: await readFile(sourcePath), // NOSONAR: sequential - shared size guards, stops after the last requested entry
           path: entry.fileName,
         });
         if (entries.length === includes.length) break;
@@ -1958,21 +1984,41 @@ const decompressWithLocalFallback = async (
 const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
 const WATCH_POLL_INTERVAL_MS = 1000;
+// The media calendar starts on the current week's first day, at most 6 days
+// ago, so a dated folder older than this can never match a day it shows.
+const PAST_DAY_FOLDER_MAX_AGE_DAYS = 7;
+
+/**
+ * Whether a YYYY-MM-DD folder is too old to show up in the media calendar.
+ * Users can keep past dated folders in the watched folder (by turning off
+ * their automatic deletion), and watching all of them would only slow the
+ * watcher down, especially when it polls a network folder.
+ */
+export const isLongPastDayFolder = (folderName: string, now = new Date()) => {
+  const [year, month, day] = folderName.split('-').map(Number);
+  if (!year || !month || !day) return false;
+  const cutoff = new Date(now);
+  cutoff.setHours(0, 0, 0, 0);
+  cutoff.setDate(cutoff.getDate() - PAST_DAY_FOLDER_MAX_AGE_DAYS);
+  return new Date(year, month - 1, day) < cutoff;
+};
+
+const closeWatcher = async (watcher: FSWatcher) => {
+  try {
+    if (!watcher?.closed) await watcher?.close();
+    watchers.delete(watcher);
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'unwatchFolders' } },
+    });
+  }
+};
 
 export async function unwatchFolders() {
-  for (const watcher of watchers) {
-    try {
-      if (!watcher?.closed) await watcher?.close();
-      watchers.delete(watcher);
-    } catch (error) {
-      captureElectronError(error, {
-        contexts: { fn: { name: 'unwatchFolders' } },
-      });
-    }
-  }
+  await Promise.all([...watchers].map((watcher) => closeWatcher(watcher)));
 }
 
-export async function watchFolder(folderPath: string) {
+export function watchFolder(folderPath: string) {
   const pathIsPossiblyNetwork = isPossiblyNetworkFolderPath(
     folderPath,
     process.platform,
@@ -1988,7 +2034,9 @@ export async function watchFolder(folderPath: string) {
           if (!stats) return false; // Don't ignore anything if no stats are available
           const dirPath = toUnix(stats.isDirectory() ? fp : dirname(fp)); // If this isn't a directory, get the parent directory
           const dirOfNote = basename(dirPath); // Get the name of the directory
-          return !datePattern.test(dirOfNote); // Ignore files in a directory whose name doesn't match YYYY-MM-DD
+          // Ignore files in a directory whose name doesn't match YYYY-MM-DD,
+          // or whose date is long past
+          return !datePattern.test(dirOfNote) || isLongPastDayFolder(dirOfNote);
         } catch (error) {
           captureElectronError(error, {
             contexts: {

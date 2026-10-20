@@ -247,8 +247,8 @@ function ensureWindowVisibleOnSomeDisplay(
 }
 
 function getMaxBounds(bounds: WindowState, boundsToCheck: Rectangle) {
-  if (!bounds.x) bounds.x = 0;
-  if (!bounds.y) bounds.y = 0;
+  bounds.x ??= 0;
+  bounds.y ??= 0;
 
   // If x or y are out of bounds because of window snapping, move them back
   const x = Math.max(bounds.x, boundsToCheck.x);
@@ -317,7 +317,7 @@ function refineOptionsAndState(
 
 function validateState(state: null | WindowState) {
   const isValid =
-    state && (hasBounds(state) || state.isMaximized || state.isFullScreen);
+    state && (hasBounds(state) || state.isMaximized || state.isFullScreen); // NOSONAR: false checks the next condition
   if (!isValid) return null;
 
   if (hasBounds(state) && state.displayBounds) {
@@ -325,8 +325,8 @@ function validateState(state: null | WindowState) {
     const display = getDisplayMatchingSafe({
       height: state.displayBounds?.height || 0,
       width: state.displayBounds?.width || 0,
-      x: state.x || 0,
-      y: state.y || 0,
+      x: state.x ?? 0,
+      y: state.y ?? 0,
     });
 
     if (!display) return state;

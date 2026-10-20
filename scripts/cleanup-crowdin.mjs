@@ -91,20 +91,24 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
+import {
+  getTrailingHeadingAnchors,
+  replaceHeadingAnchor,
+} from '../docs/utils/heading-anchors.mjs';
 import { compiles, fixLinkedMessageSyntax } from './fix-i18n-locales.mjs';
+import { crowdinRequest, getConfig, listAll } from './lib/crowdin-api.mjs';
 
-const API_VERSION = '/api/v2';
 const I18N_SOURCE_PATH = 'src/i18n/en.json';
 const DOCS_SOURCE_PREFIX = 'docs/src/en/';
 const DOCS_SRC_DIR = 'docs/src';
 const RELEASE_NOTES_SOURCE_PATH = 'release-notes/en.md';
-const PAGE_SIZE = 500;
 const TYPOGRAPHIC_QUOTES = '‚‘’‛“”„‟';
 
 // Matches a hero-action link string's Crowdin context, e.g.
 // "CXPath: //yaml/hero/actions[0]/link" - identifies the 5 docs/src/en/
 // index.md link: fields (Download/About/User Guide/Settings Guide/FAQ).
-const HERO_ACTION_LINK_CONTEXT = /^CXPath: \/\/yaml\/hero\/actions\[\d+\]\/link$/;
+const HERO_ACTION_LINK_CONTEXT =
+  /^CXPath: \/\/yaml\/hero\/actions\[\d+\]\/link$/;
 
 // docs/src folders that exist in the repo but aren't part of the app's
 // active language list (src/constants/locales.ts) - leftovers from past
@@ -122,9 +126,6 @@ const DOCS_LANGUAGE_ID_OVERRIDES = { 'cmn-hans': 'zh-CN' };
 // (`## v26.7.0`, including the legacy separator-less `## 25.6.0` form). The
 // `(?!#)` keeps `### ...` subsection headers out.
 const VERSION_HEADER_PATTERN = /^##(?!#)\s+v?\d+\.\d+\.\d+/;
-
-// ── Pure repair logic (mirrors scripts/fix-i18n-locales.mjs and
-//    docs/utils/fix-doc-markdown.mjs) ─────────────────────────────────────────
 
 function computeAnchorFix(enText, translationText, usedAnchors) {
   if (!isHeadingString(enText)) return null;
@@ -144,7 +145,7 @@ function computeAnchorFix(enText, translationText, usedAnchors) {
 // `@:key`, `@:{key}` and `@:{'key'}` spellings. Deliberately unicode-safe
 // (`[\w-]` would stop at ü/ö/ä and slice German compounds in half).
 const LINK_TARGET_RE = /@:\{?'?([^'}\s]+)'?\}?/g;
-const PARAM_NAME_RE = /\{([\w]+)\}/g;
+const PARAM_NAME_RE = /\{(\w+)\}/g;
 
 /**
  * Repair dangling i18n link/param targets (class 5) by aligning them with
@@ -271,23 +272,14 @@ function computeVersionHeaderFix(source, translation) {
   return { kind: 'version', text: source };
 }
 
-function getTrailingHeadingAnchors(line) {
-  const anchors = [];
-  let cursor = trimEndIndex(line);
-
-  while (cursor > 0 && line[cursor - 1] === '}') {
-    const openIndex = line.lastIndexOf('{#', cursor - 1);
-    if (openIndex === -1) break;
-
-    const anchor = line.slice(openIndex + 2, cursor - 1);
-    if (!isValidAnchor(anchor)) break;
-
-    anchors.unshift(anchor);
-    cursor = trimEndIndex(line, openIndex);
-  }
-
-  const start = anchors.length > 0 ? cursor : line.length;
-  return { anchors, start };
+/**
+ * collectReplaceOps fixer for class 2 (docs heading anchors). `usedAnchors`
+ * carries the anchors already seen earlier in the same file.
+ */
+function docsAnchorFix(item, sources, usedAnchors) {
+  if (typeof item.text !== 'string') return null;
+  const source = sources.get(item.stringId) ?? '';
+  return computeAnchorFix(source, item.text, usedAnchors);
 }
 
 /**
@@ -305,11 +297,26 @@ function isHeadingString(text) {
   );
 }
 
-function isValidAnchor(anchor) {
-  return (
-    anchor.length > 0 &&
-    [...anchor].every((char) => char !== '}' && char.trim() !== '')
-  );
+/**
+ * collectReplaceOps fixer for class 1 (linked-message syntax), limited to
+ * the strings whose source uses `@:` links (`candidateIds`).
+ */
+function linkedSyntaxFix(item, candidateIds) {
+  if (typeof item.text !== 'string' || !candidateIds.has(item.stringId)) {
+    return null;
+  }
+  const fixed = repairLinkedMessage(item.text);
+  return fixed ? { text: fixed } : null;
+}
+
+/**
+ * collectReplaceOps fixer for class 5 (link/param targets), limited to the
+ * strings whose source has links or params (`sources`).
+ */
+function linkTargetFix(item, sources, validKeys) {
+  const source = sources.get(item.stringId);
+  if (source === undefined || typeof item.text !== 'string') return null;
+  return computeLinkTargetFix(source, item.text, validKeys);
 }
 
 function linkTargetMatches(text) {
@@ -334,11 +341,6 @@ function repairLinkedMessage(translation) {
   return fixed !== translation && compiles(fixed) ? fixed : null;
 }
 
-function replaceHeadingAnchor(line, anchor) {
-  const withoutAnchors = line.slice(0, getTrailingHeadingAnchors(line).start);
-  return `${withoutAnchors.trimEnd()} {#${anchor}}`;
-}
-
 /**
  * A docs locale folder's Crowdin language id. Most folders match a target
  * language id directly (`fr` -> `fr`) or via its twoLettersCode (`es` ->
@@ -346,7 +348,11 @@ function replaceHeadingAnchor(line, anchor) {
  * explicit override (confirmed live: `zh-CN`'s own twoLettersCode is `zh`,
  * which belongs to the separate, orphaned `zh` folder, not `cmn-hans`).
  */
-function resolveDocsLanguageId(folder, targetLanguageIds, languageIdByTwoLetters) {
+function resolveDocsLanguageId(
+  folder,
+  targetLanguageIds,
+  languageIdByTwoLetters,
+) {
   if (targetLanguageIds.has(folder)) return folder;
   if (
     DOCS_LANGUAGE_ID_OVERRIDES[folder] &&
@@ -357,17 +363,19 @@ function resolveDocsLanguageId(folder, targetLanguageIds, languageIdByTwoLetters
   return languageIdByTwoLetters.get(folder) ?? null;
 }
 
-function trimEndIndex(value, end = value.length) {
-  let cursor = end;
-  while (cursor > 0 && value[cursor - 1].trim() === '') {
-    cursor -= 1;
-  }
-  return cursor;
+/**
+ * collectReplaceOps fixer for class 4 (release-notes version headers),
+ * limited to the version-header strings (`sources`).
+ */
+function versionHeaderFix(item, sources) {
+  const source = sources.get(item.stringId);
+  if (source === undefined) return null;
+  return computeVersionHeaderFix(source, item.text);
 }
 
 const CORRUPTION_SIGNATURES = [
   // Typographic quotes inside @:{...} (e.g. @:{‚cbs‘}).
-  new RegExp(`@:\\{[^{}]*[${TYPOGRAPHIC_QUOTES}][^{}]*\\}`),
+  new RegExp(String.raw`@:\{[^{}]*[${TYPOGRAPHIC_QUOTES}][^{}]*\}`),
   // Stray whitespace after @: (e.g. @: cbs), which is never valid.
   /@:[ \t]+(?=[\p{L}\p{N}_-])/u,
   // Doubled heading anchors left over from mangled {#a} {#a} runs.
@@ -375,25 +383,131 @@ const CORRUPTION_SIGNATURES = [
   // Scrambled release-notes version headers (e.g. `7.0 v26.0` for `v26.7.0`).
   /^(?:##\s*)?\d+\.\d+\s+v\d+\.\d+\s*$/,
   // Localized separators in release-notes versions (`v26,3.0`, `v26 6.1`).
-  /^(?:##\s*)?v\d+[ ,]\d+[,.]?\d*\s*$/,
+  // The optional separator owns its trailing digits so the two digit runs
+  // can't overlap (and backtrack) when there is no separator.
+  /^(?:##\s*)?v\d+[ ,]\d+(?:[,.]\d*)?\s*$/,
   // Truncated vue-i18n linked keys (`@:study- ` for `@:study-bible`): a link
   // token ending in a hyphen is never valid.
   /@:[^\s]*-(?=[\s.,;:!?]|$)/,
 ];
+
+/**
+ * Maps each of the project's target languages that has an active docs
+ * locale folder (see loadActiveDocsLocales) to that folder.
+ */
+function buildDocsLocaleFolderMap(project) {
+  const docsLocaleFolderByLanguage = new Map();
+  const targetLanguageIdSet = new Set(project.targetLanguageIds ?? []);
+  const languageIdByTwoLetters = new Map(
+    (project.targetLanguages ?? []).map((lang) => [
+      lang.twoLettersCode,
+      lang.id,
+    ]),
+  );
+  for (const folder of loadActiveDocsLocales()) {
+    const languageId = resolveDocsLanguageId(
+      folder,
+      targetLanguageIdSet,
+      languageIdByTwoLetters,
+    );
+    if (languageId) docsLocaleFolderByLanguage.set(languageId, folder);
+  }
+  return docsLocaleFolderByLanguage;
+}
+
+/**
+ * Class 3 for one language of a docs file: every hero-action `link:` string
+ * whose translation isn't the localized path (see computeDocsLinkFix) becomes
+ * a `replace` op on the stale translation, or a create when there is no
+ * translation yet. Only runs for languages that resolved to an active docs
+ * locale folder (see loadActiveDocsLocales/resolveDocsLanguageId) - anything
+ * else (an orphaned or docs-less target language) is left alone.
+ */
+function collectHeroLinkFixes(
+  ctx,
+  translations,
+  { file, heroLinkStrings, language, localeFolder, sources },
+) {
+  const ops = [];
+  const creates = [];
+  if (!localeFolder) return { creates, ops };
+
+  const translationByStringId = new Map(
+    translations.map((t) => [t.stringId, t]),
+  );
+  for (const heroString of heroLinkStrings) {
+    const sourceText = sources.get(heroString.id);
+    const existing = translationByStringId.get(heroString.id);
+    const fix = computeDocsLinkFix(sourceText, existing?.text, localeFolder);
+    if (fix === null) continue;
+
+    ctx.totals.docsLinks += 1;
+    const label = `${file.normalizedPath} (${language}, string ${heroString.id})`;
+    if (ctx.verbose) {
+      ctx.log(
+        `[docs-link] ${label}: ${JSON.stringify(existing?.text ?? '(untranslated)')} -> ${JSON.stringify(fix)}`,
+      );
+    }
+    if (existing) {
+      ops.push({
+        op: 'replace',
+        path: `/${existing.translationId}`,
+        value: { text: fix },
+      });
+    } else {
+      creates.push({
+        languageId: language,
+        stringId: heroString.id,
+        text: fix,
+      });
+    }
+  }
+  return { creates, ops };
+}
+
+/**
+ * One language's pass of a per-translation repair (classes 1, 2, 4 and 5):
+ * `computeFix(item)` returns a `{ text }` fix for one translation of `file`
+ * (or a falsy value when there is nothing to repair); each fix is counted in
+ * `ctx.totals[totalsKey]`, logged as `[tag] ...` with --verbose, and turned
+ * into a batch-PATCH `replace` op.
+ */
+function collectReplaceOps(
+  ctx,
+  translations,
+  { computeFix, file, language, tag, totalsKey },
+) {
+  const ops = [];
+  for (const item of translations) {
+    const fix = computeFix(item);
+    if (!fix) continue;
+
+    ctx.totals[totalsKey] += 1;
+    const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
+    if (ctx.verbose) {
+      ctx.log(
+        `[${tag}] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
+      );
+    }
+    ops.push({
+      op: 'replace',
+      path: `/${item.translationId}`,
+      value: { text: fix.text },
+    });
+  }
+  return ops;
+}
 
 async function createTranslations(ctx, creates, label) {
   // Unlike editing, adding a brand-new translation has no batch endpoint
   // (POST /projects/{id}/translations takes one {stringId, languageId,
   // text} object per call) - so these go one at a time, same failure
   // handling as patchTranslations' per-op retry path.
+  const translationsPath = `/projects/${ctx.projectId}/translations`;
   for (const create of creates) {
+    const options = { body: create, method: 'POST' };
     try {
-      await crowdinRequest(
-        ctx.baseUrl,
-        ctx.token,
-        `/projects/${ctx.projectId}/translations`,
-        { body: create, method: 'POST' },
-      );
+      await crowdinRequest(ctx.baseUrl, ctx.token, translationsPath, options); // NOSONAR: sequential - rate-limited API
     } catch (error) {
       ctx.failures.push(
         `${label} (string ${create.stringId}): ${error.message}`,
@@ -402,74 +516,17 @@ async function createTranslations(ctx, creates, label) {
   }
 }
 
-async function crowdinRequest(
-  baseUrl,
-  token,
-  path,
-  { body, method = 'GET' } = {},
-) {
-  const response = await fetch(`${baseUrl}${API_VERSION}${path}`, {
-    body: body === undefined ? undefined : JSON.stringify(body),
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Bearer ${token}`,
-      ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
-    },
-    method,
-  });
-
-  if (!response.ok) {
-    const detail = await response.text().catch(() => '');
-    const suffix = detail ? `: ${detail.slice(0, 400)}` : '';
-    const error = new Error(
-      `Crowdin API ${method} ${path} -> ${response.status} ${response.statusText}${suffix}`,
-    );
-    // Keep the raw body so callers can inspect structured error payloads
-    // (e.g. per-op indices in ErrorPatchCollectionResource).
-    error.body = detail;
-    throw error;
-  }
-
-  if (response.status === 204) return null;
-  return response.json();
-}
-
 async function deleteTmSegment(ctx, tmId, segmentId, label) {
   try {
     await crowdinRequest(
       ctx.baseUrl,
       ctx.token,
-      `/tms/${tmId}/segments/${segmentId}`,
+      `/tms/${toCrowdinId(tmId)}/segments/${toCrowdinId(segmentId)}`,
       { method: 'DELETE' },
     );
   } catch (error) {
     ctx.failures.push(`${label}: ${error.message}`);
   }
-}
-
-// ── Config ───────────────────────────────────────────────────────────────────
-
-function getConfig() {
-  const token = process.env.CROWDIN_PERSONAL_TOKEN;
-  if (!token) {
-    throw new Error(
-      'Missing CROWDIN_PERSONAL_TOKEN env var (create one at https://crowdin.com/settings#api).',
-    );
-  }
-
-  const projectId =
-    process.env.CROWDIN_PROJECT_ID ?? parseProjectIdFromCrowdinYml();
-  if (!projectId) {
-    throw new Error(
-      'Missing CROWDIN_PROJECT_ID env var and no project_id found in crowdin.yml.',
-    );
-  }
-
-  return {
-    baseUrl: process.env.CROWDIN_BASE_URL ?? 'https://api.crowdin.com',
-    projectId,
-    token,
-  };
 }
 
 function getFailedPatchIndices(body) {
@@ -495,32 +552,16 @@ function getFailedPatchIndices(body) {
   return indices.length > 0 ? indices : null;
 }
 
-// ── Crowdin API layer ────────────────────────────────────────────────────────
-
 function isCorruptedSegment(text) {
   return CORRUPTION_SIGNATURES.some((signature) => signature.test(text));
 }
 
-async function listAll(baseUrl, token, path) {
-  const items = [];
-  let offset = 0;
-
-  for (;;) {
-    const separator = path.includes('?') ? '&' : '?';
-    const page = await crowdinRequest(
-      baseUrl,
-      token,
-      `${path}${separator}limit=${PAGE_SIZE}&offset=${offset}`,
-    );
-    const rows = page.data ?? [];
-    for (const row of rows) {
-      items.push(row.data);
-    }
-    if (rows.length < PAGE_SIZE) break;
-    offset += PAGE_SIZE;
-  }
-
-  return items;
+function listFileTranslations(ctx, language, fileId) {
+  return listAll(
+    ctx.baseUrl,
+    ctx.token,
+    `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${fileId}`,
+  );
 }
 
 /**
@@ -572,20 +613,16 @@ function loadEnKeys() {
 }
 
 function logUnmatchedPaths(ctx, files, max = 15) {
-  const sample = files
-    .slice(0, max)
-    .map((file) => file.normalizedPath || file.name || `id ${file.id}`)
-    .join('\n  ');
-  ctx.log(
-    `[crowdin] DEBUG: sample of ${files.length} file paths in project:\n  ${sample}`,
-  );
+  ctx.log(`[crowdin] DEBUG: sample of ${files.length} file paths in project:`);
+  for (const file of files.slice(0, max)) {
+    const label = file.normalizedPath || file.name || `id ${file.id}`;
+    ctx.log(`  ${label}`);
+  }
 }
 
 function normalizePath(filePath) {
   return filePath.replaceAll('\\', '/').replace(/^\/+/, '');
 }
-
-// ── Repair passes ────────────────────────────────────────────────────────────
 
 function parseArgs(argv) {
   const args = {
@@ -621,19 +658,6 @@ function parseArgs(argv) {
   return args;
 }
 
-function parseProjectIdFromCrowdinYml() {
-  try {
-    const content = readFileSync(
-      resolve(process.cwd(), 'crowdin.yml'),
-      'utf-8',
-    );
-    const match = /^project_id:\s*['"]?(\d+)['"]?\s*$/m.exec(content);
-    return match?.[1] ?? null;
-  } catch {
-    return null;
-  }
-}
-
 async function patchTranslations(ctx, ops, label) {
   // Editing translation text is a JSON Patch on the batch endpoint
   // (PATCH /projects/{id}/translations) - the per-id PUT is "Restore
@@ -663,16 +687,13 @@ async function patchTranslations(ctx, ops, label) {
         `[patch] ${label}: batch failed for ${failedIndices.length} of ${ops.length} op(s) - retrying individually`,
       );
     }
+    const translationsPath = `/projects/${ctx.projectId}/translations`;
     for (const index of failedIndices) {
       const op = ops[index];
       if (!op) continue;
+      const options = { body: [op], method: 'PATCH' };
       try {
-        await crowdinRequest(
-          ctx.baseUrl,
-          ctx.token,
-          `/projects/${ctx.projectId}/translations`,
-          { body: [op], method: 'PATCH' },
-        );
+        await crowdinRequest(ctx.baseUrl, ctx.token, translationsPath, options); // NOSONAR: sequential - rate-limited API
       } catch (opError) {
         ctx.failures.push(`${label} (op ${index}): ${opError.message}`);
       }
@@ -746,7 +767,7 @@ async function purgeCorruptedTmSegments(ctx) {
   const segments = await listAll(
     ctx.baseUrl,
     ctx.token,
-    `/tms/${tmId}/segments`,
+    `/tms/${toCrowdinId(tmId)}/segments`,
   );
 
   for (const segment of segments) {
@@ -760,12 +781,10 @@ async function purgeCorruptedTmSegments(ctx) {
       );
     }
     if (ctx.apply) {
-      await deleteTmSegment(ctx, tmId, segment.id, `tm segment ${segment.id}`);
+      await deleteTmSegment(ctx, tmId, segment.id, `tm segment ${segment.id}`); // NOSONAR: sequential - rate-limited API
     }
   }
 }
-
-// ── docs repair ───────────────────────────────────────────────────────────────
 
 async function repairDocsFile(ctx, file) {
   const strings = await listAll(
@@ -789,11 +808,7 @@ async function repairDocsFile(ctx, file) {
 
   for (const language of ctx.languages) {
     const localeFolder = ctx.docsLocaleFolderByLanguage.get(language);
-    const translations = await listAll(
-      ctx.baseUrl,
-      ctx.token,
-      `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
-    );
+    const translations = await listFileTranslations(ctx, language, file.id); // NOSONAR: sequential - rate-limited API
     // A language with no translations at all in this file still needs class
     // 3 (every hero link is untranslated, which is exactly what needs
     // fixing), so only skip outright when there's neither an existing
@@ -808,80 +823,62 @@ async function repairDocsFile(ctx, file) {
         (stringOrder.get(a.stringId) ?? -1) -
         (stringOrder.get(b.stringId) ?? -1),
     );
-    const translationByStringId = new Map(
-      translations.map((t) => [t.stringId, t]),
-    );
-
-    const ops = [];
-    const creates = [];
 
     // Class 2: heading anchors.
     const usedAnchors = new Map();
-    for (const item of translations) {
-      if (typeof item.text !== 'string') continue;
-      const source = sources.get(item.stringId) ?? '';
+    const anchorOps = collectReplaceOps(ctx, translations, {
+      computeFix: (item) => docsAnchorFix(item, sources, usedAnchors),
+      file,
+      language,
+      tag: 'anchor',
+      totalsKey: 'anchors',
+    });
 
-      const fix = computeAnchorFix(source, item.text, usedAnchors);
-      if (!fix) continue;
+    // Class 3: docs hero-action link: frontmatter.
+    const heroLinkFixes = collectHeroLinkFixes(ctx, translations, {
+      file,
+      heroLinkStrings,
+      language,
+      localeFolder,
+      sources,
+    });
 
-      ctx.totals.anchors += 1;
-      const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
-      if (ctx.verbose) {
-        ctx.log(
-          `[anchor] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
-        );
-      }
-      ops.push({
-        op: 'replace',
-        path: `/${item.translationId}`,
-        value: { text: fix.text },
-      });
-    }
-
-    // Class 3: docs hero-action link: frontmatter. Only runs for languages
-    // that resolved to an active docs locale folder (see
-    // loadActiveDocsLocales/resolveDocsLanguageId) - anything else (an
-    // orphaned or docs-less target language) is left alone.
-    if (localeFolder) {
-      for (const heroString of heroLinkStrings) {
-        const sourceText = sources.get(heroString.id);
-        const existing = translationByStringId.get(heroString.id);
-        const fix = computeDocsLinkFix(sourceText, existing?.text, localeFolder);
-        if (fix === null) continue;
-
-        ctx.totals.docsLinks += 1;
-        const label = `${file.normalizedPath} (${language}, string ${heroString.id})`;
-        if (ctx.verbose) {
-          ctx.log(
-            `[docs-link] ${label}: ${JSON.stringify(existing?.text ?? '(untranslated)')} -> ${JSON.stringify(fix)}`,
-          );
-        }
-        if (existing) {
-          ops.push({
-            op: 'replace',
-            path: `/${existing.translationId}`,
-            value: { text: fix },
-          });
-        } else {
-          creates.push({ languageId: language, stringId: heroString.id, text: fix });
-        }
-      }
-    }
-
+    const ops = [...anchorOps, ...heroLinkFixes.ops];
+    const { creates } = heroLinkFixes;
+    const fileLabel = `${file.normalizedPath} (${language})`;
     if (ctx.apply && ops.length > 0) {
-      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
+      await patchTranslations(ctx, ops, fileLabel); // NOSONAR: sequential - rate-limited API
     }
     if (ctx.apply && creates.length > 0) {
-      await createTranslations(
-        ctx,
-        creates,
-        `${file.normalizedPath} (${language})`,
-      );
+      await createTranslations(ctx, creates, fileLabel); // NOSONAR: sequential - rate-limited API
     }
   }
 }
 
-// ── i18n linked-message repair ─────────────────────────────────────────────────
+/**
+ * Classes 2+3 (heading anchors + hero-action link: frontmatter), one docs
+ * source file at a time.
+ */
+async function repairDocsFiles(ctx, normalizedFiles) {
+  const docsFiles = normalizedFiles.filter(
+    (file) =>
+      file.normalizedPath.includes(DOCS_SOURCE_PREFIX) &&
+      file.normalizedPath.endsWith('.md'),
+  );
+  if (docsFiles.length > 0) {
+    ctx.log(
+      `[crowdin] classes 2+3: heading anchors + hero-action link: frontmatter (${docsFiles.length} files, ${ctx.docsLocaleFolderByLanguage.size} active docs locales)`,
+    );
+    for (const file of docsFiles) {
+      await repairDocsFile(ctx, file); // NOSONAR: sequential - rate-limited API
+    }
+  } else {
+    ctx.log(
+      `[crowdin] WARN: no ${DOCS_SOURCE_PREFIX}**/*.md files found; skipping classes 2+3`,
+    );
+    logUnmatchedPaths(ctx, normalizedFiles, 15);
+  }
+}
 
 async function repairI18nLinkedSyntax(ctx, file) {
   const strings = await listAll(
@@ -900,40 +897,20 @@ async function repairI18nLinkedSyntax(ctx, file) {
   if (candidateIds.size === 0) return;
 
   for (const language of ctx.languages) {
-    const translations = await listAll(
-      ctx.baseUrl,
-      ctx.token,
-      `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
-    );
+    const translations = await listFileTranslations(ctx, language, file.id); // NOSONAR: sequential - rate-limited API
 
-    const ops = [];
-    for (const item of translations) {
-      if (typeof item.text !== 'string' || !candidateIds.has(item.stringId))
-        continue;
-
-      const fixed = repairLinkedMessage(item.text);
-      if (!fixed) continue;
-
-      ctx.totals.linked += 1;
-      const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
-      if (ctx.verbose) {
-        ctx.log(
-          `[linked] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fixed)}`,
-        );
-      }
-      ops.push({
-        op: 'replace',
-        path: `/${item.translationId}`,
-        value: { text: fixed },
-      });
-    }
+    const ops = collectReplaceOps(ctx, translations, {
+      computeFix: (item) => linkedSyntaxFix(item, candidateIds),
+      file,
+      language,
+      tag: 'linked',
+      totalsKey: 'linked',
+    });
     if (ctx.apply && ops.length > 0) {
-      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
+      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`); // NOSONAR: sequential - rate-limited API
     }
   }
 }
-
-// ── release-notes version-header repair ────────────────────────────────────────
 
 async function repairI18nLinkTargets(ctx, file) {
   if (ctx.enKeys.size === 0) {
@@ -953,47 +930,27 @@ async function repairI18nLinkTargets(ctx, file) {
       .filter(
         (string) =>
           typeof string.text === 'string' &&
-          (string.text.includes('@:') || /\{[\w]+\}/.test(string.text)),
+          (string.text.includes('@:') || /\{\w+\}/.test(string.text)),
       )
       .map((string) => [string.id, string.text]),
   );
   if (sources.size === 0) return;
 
   for (const language of ctx.languages) {
-    const translations = await listAll(
-      ctx.baseUrl,
-      ctx.token,
-      `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
-    );
+    const translations = await listFileTranslations(ctx, language, file.id); // NOSONAR: sequential - rate-limited API
 
-    const ops = [];
-    for (const item of translations) {
-      const source = sources.get(item.stringId);
-      if (source === undefined || typeof item.text !== 'string') continue;
-
-      const fix = computeLinkTargetFix(source, item.text, ctx.enKeys);
-      if (!fix) continue;
-
-      ctx.totals.links += 1;
-      const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
-      if (ctx.verbose) {
-        ctx.log(
-          `[links] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
-        );
-      }
-      ops.push({
-        op: 'replace',
-        path: `/${item.translationId}`,
-        value: { text: fix.text },
-      });
-    }
+    const ops = collectReplaceOps(ctx, translations, {
+      computeFix: (item) => linkTargetFix(item, sources, ctx.enKeys),
+      file,
+      language,
+      tag: 'links',
+      totalsKey: 'links',
+    });
     if (ctx.apply && ops.length > 0) {
-      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
+      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`); // NOSONAR: sequential - rate-limited API
     }
   }
 }
-
-// ── i18n link/param target repair ──────────────────────────────────────────────
 
 async function repairReleaseNotesVersions(ctx, file) {
   const strings = await listAll(
@@ -1013,35 +970,17 @@ async function repairReleaseNotesVersions(ctx, file) {
   if (sources.size === 0) return;
 
   for (const language of ctx.languages) {
-    const translations = await listAll(
-      ctx.baseUrl,
-      ctx.token,
-      `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
-    );
+    const translations = await listFileTranslations(ctx, language, file.id); // NOSONAR: sequential - rate-limited API
 
-    const ops = [];
-    for (const item of translations) {
-      const source = sources.get(item.stringId);
-      if (source === undefined) continue;
-
-      const fix = computeVersionHeaderFix(source, item.text);
-      if (!fix) continue;
-
-      ctx.totals.versions += 1;
-      const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
-      if (ctx.verbose) {
-        ctx.log(
-          `[version] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
-        );
-      }
-      ops.push({
-        op: 'replace',
-        path: `/${item.translationId}`,
-        value: { text: fix.text },
-      });
-    }
+    const ops = collectReplaceOps(ctx, translations, {
+      computeFix: (item) => versionHeaderFix(item, sources),
+      file,
+      language,
+      tag: 'version',
+      totalsKey: 'versions',
+    });
     if (ctx.apply && ops.length > 0) {
-      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
+      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`); // NOSONAR: sequential - rate-limited API
     }
   }
 }
@@ -1065,7 +1004,7 @@ async function run() {
     enKeys: loadEnKeys(),
     failures: [],
     languages: [],
-    log: (message) => console.log(message),
+    log: (message) => console.log(toSingleLine(message)), // NOSONAR: line breaks stripped by toSingleLine
     projectId,
     token,
     totals: {
@@ -1089,21 +1028,7 @@ async function run() {
 
   // Class 3's language -> docs-folder mapping (e.g. `es-ES` -> `es`,
   // `zh-CN` -> `cmn-hans`), scoped to the app's active docs locales only.
-  const targetLanguageIdSet = new Set(project.targetLanguageIds ?? []);
-  const languageIdByTwoLetters = new Map(
-    (project.targetLanguages ?? []).map((lang) => [
-      lang.twoLettersCode,
-      lang.id,
-    ]),
-  );
-  for (const folder of loadActiveDocsLocales()) {
-    const languageId = resolveDocsLanguageId(
-      folder,
-      targetLanguageIdSet,
-      languageIdByTwoLetters,
-    );
-    if (languageId) ctx.docsLocaleFolderByLanguage.set(languageId, folder);
-  }
+  ctx.docsLocaleFolderByLanguage = buildDocsLocaleFolderMap(project);
 
   ctx.log(
     `[crowdin] project ${projectId} - ${ctx.apply ? 'APPLYING fixes' : 'dry run (use --apply to commit)'}`,
@@ -1121,7 +1046,50 @@ async function run() {
     ...file,
     normalizedPath: normalizePath(file.path ?? file.name ?? ''),
   }));
+  await runRepairPasses(ctx, normalizedFiles);
 
+  ctx.log('[crowdin] class 6: purging corrupted translation-memory segments');
+  try {
+    await purgeCorruptedTmSegments(ctx);
+  } catch (error) {
+    ctx.failures.push(`translation-memory purge: ${error.message}`);
+  }
+
+  const { anchors, docsLinks, linked, links, segments, versions } = ctx.totals;
+  const total = anchors + docsLinks + linked + links + segments + versions;
+  ctx.log('');
+  ctx.log(
+    `Done. ${ctx.apply ? 'Applied' : 'Found (dry run - rerun with --apply to commit)'}:`,
+  );
+  ctx.log(`  linked-syntax repairs:   ${linked}`);
+  ctx.log(`  heading-anchor fixes:    ${anchors}`);
+  ctx.log(`  docs link: fixes:        ${docsLinks}`);
+  ctx.log(`  version-header repairs:  ${versions}`);
+  ctx.log(`  link/param target fixes: ${links}`);
+  ctx.log(`  corrupted TM segments:   ${segments}`);
+
+  if (ctx.failures.length > 0) {
+    ctx.log('');
+    ctx.log(`${ctx.failures.length} failure(s):`);
+    for (const failure of ctx.failures) {
+      ctx.log(`  ${failure}`);
+    }
+  }
+
+  if (!ctx.apply && total > 0) {
+    ctx.log('');
+    ctx.log('Changes pending - pass --apply to commit them to Crowdin.');
+    return 1;
+  }
+  return ctx.failures.length > 0 ? 1 : 0;
+}
+
+/**
+ * Classes 1-5, in order: the repairs of the stored translations of the
+ * project's source files (class 6 purges translation memory instead - see
+ * run).
+ */
+async function runRepairPasses(ctx, normalizedFiles) {
   const i18nFile = normalizedFiles.find((file) =>
     file.normalizedPath.endsWith(I18N_SOURCE_PATH),
   );
@@ -1137,24 +1105,7 @@ async function run() {
     logUnmatchedPaths(ctx, normalizedFiles, 15);
   }
 
-  const docsFiles = normalizedFiles.filter(
-    (file) =>
-      file.normalizedPath.includes(DOCS_SOURCE_PREFIX) &&
-      file.normalizedPath.endsWith('.md'),
-  );
-  if (docsFiles.length > 0) {
-    ctx.log(
-      `[crowdin] classes 2+3: heading anchors + hero-action link: frontmatter (${docsFiles.length} files, ${ctx.docsLocaleFolderByLanguage.size} active docs locales)`,
-    );
-    for (const file of docsFiles) {
-      await repairDocsFile(ctx, file);
-    }
-  } else {
-    ctx.log(
-      `[crowdin] WARN: no ${DOCS_SOURCE_PREFIX}**/*.md files found; skipping classes 2+3`,
-    );
-    logUnmatchedPaths(ctx, normalizedFiles, 15);
-  }
+  await repairDocsFiles(ctx, normalizedFiles);
 
   const releaseNotesFile = normalizedFiles.find((file) =>
     file.normalizedPath.endsWith(RELEASE_NOTES_SOURCE_PATH),
@@ -1179,45 +1130,18 @@ async function run() {
       `[crowdin] WARN: source file ${I18N_SOURCE_PATH} not found in project; skipping class 5`,
     );
   }
-
-  ctx.log('[crowdin] class 6: purging corrupted translation-memory segments');
-  try {
-    await purgeCorruptedTmSegments(ctx);
-  } catch (error) {
-    ctx.failures.push(`translation-memory purge: ${error.message}`);
-  }
-
-  const { anchors, docsLinks, linked, links, segments, versions } =
-    ctx.totals;
-  const total = anchors + docsLinks + linked + links + segments + versions;
-  ctx.log('');
-  ctx.log(
-    `Done. ${ctx.apply ? 'Applied' : 'Found (dry run - rerun with --apply to commit)'}:`,
-  );
-  ctx.log(`  linked-syntax repairs:   ${linked}`);
-  ctx.log(`  heading-anchor fixes:    ${anchors}`);
-  ctx.log(`  docs link: fixes:        ${docsLinks}`);
-  ctx.log(`  version-header repairs:  ${versions}`);
-  ctx.log(`  link/param target fixes: ${links}`);
-  ctx.log(`  corrupted TM segments:   ${segments}`);
-
-  if (ctx.failures.length > 0) {
-    ctx.log(`\n${ctx.failures.length} failure(s):`);
-    for (const failure of ctx.failures) {
-      ctx.log(`  ${failure}`);
-    }
-  }
-
-  if (!ctx.apply && total > 0) {
-    ctx.log('\nChanges pending - pass --apply to commit them to Crowdin.');
-    return 1;
-  }
-  return ctx.failures.length > 0 ? 1 : 0;
 }
 
-// ── Main ─────────────────────────────────────────────────────────────────────
-
 function runSelfTest() {
+  const refusesCrowdinId = (value) => {
+    try {
+      toCrowdinId(value);
+      return false;
+    } catch {
+      return true;
+    }
+  };
+
   const cases = [
     // Linked-message repairs (real samples from commit 535970092).
     [
@@ -1357,6 +1281,14 @@ function runSelfTest() {
     ],
     ['tm scrambled version header', isCorruptedSegment('## 7.0 v26.0'), true],
     ['tm localized version separators', isCorruptedSegment('## v26,3.0'), true],
+    ['tm space-separated version', isCorruptedSegment('## v26 6.1'), true],
+    ['tm separator-less version tail', isCorruptedSegment('v26 61 '), true],
+    ['tm trailing-comma version', isCorruptedSegment('v26,3,'), true],
+    [
+      'tm version followed by text left alone',
+      isCorruptedSegment('## v26 6.1 notes'),
+      false,
+    ],
     [
       'tm clean version header left alone',
       isCorruptedSegment('## v26.7.0'),
@@ -1574,6 +1506,21 @@ function runSelfTest() {
       null,
     ],
     ['empty body returns null', getFailedPatchIndices(''), null],
+
+    // Log and request-path hardening for data from the Crowdin API.
+    [
+      'log text flattened to one line',
+      toSingleLine('404 Not Found\r\n::error::forged\nline'),
+      '404 Not Found ::error::forged line',
+    ],
+    ['numeric crowdin id kept', toCrowdinId('12345'), 12_345],
+    [
+      'path-like crowdin ids refused',
+      ['..', '1/../projects', '1?limit=1', '', 0, -3, 1.5, null].map((value) =>
+        refusesCrowdinId(value),
+      ),
+      [true, true, true, true, true, true, true, true],
+    ],
   ];
 
   let failed = 0;
@@ -1593,9 +1540,29 @@ function runSelfTest() {
   return failed === 0;
 }
 
+// Crowdin ids are positive integers. The TM ids put into request paths come
+// from API responses (the project's defaultTmId, the TM and segment
+// listings), so anything else is refused rather than allowed to change the
+// path (`..`, `/`, a query string) the token is sent to.
+function toCrowdinId(value) {
+  const id = Number(value);
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    throw new Error(`Unexpected Crowdin id: ${JSON.stringify(value)}`);
+  }
+  return id;
+}
+
+// Crowdin API data (file paths, language ids, error response bodies) ends up
+// in this script's log lines, which CI prints; flattening its line breaks
+// keeps that data from forging extra log lines or GitHub Actions workflow
+// commands (`::error::...`).
+function toSingleLine(text) {
+  return String(text).replaceAll(/[\r\n]+/g, ' ');
+}
+
 try {
   process.exitCode = await run();
 } catch (error) {
-  console.error(`[crowdin] ${error.message}`);
+  console.error(`[crowdin] ${toSingleLine(error.message)}`); // NOSONAR: line breaks stripped by toSingleLine
   process.exitCode = 1;
 }

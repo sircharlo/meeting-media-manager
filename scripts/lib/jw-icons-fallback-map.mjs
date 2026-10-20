@@ -79,7 +79,10 @@ export const applyGlyphMap = (fallbackEntries, glyphMap) => {
     }
 
     const newEscape = glyphToUnicodeEscape(codePoint);
-    if (newEscape.toLowerCase() !== `\\u${existingCodePoint.toLowerCase()}`) {
+    if (
+      newEscape.toLowerCase() !==
+      String.raw`\u${existingCodePoint.toLowerCase()}`
+    ) {
       changedKeys.push(key);
     }
     return `  ${rawKey}: '${newEscape}',`;

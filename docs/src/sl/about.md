@@ -80,7 +80,7 @@ Za **hibridne** občinske shode ali za shode **v živo** aplikacija omogoča:
 
 ### Napredne možnosti {#about-advanced-features}
 
-- **Spremljanje map**: Samodejno sinhroniziraj multimedijsko vsebino iz spremljanih map (Dropbox, OneDrive itd.)
+- **Mapa v skupni rabi**: Samodejno dodaja multimedijsko vsebino k shodom iz mape, ki se sinhronizirana z Dropbox, OneDrive, iCloud Drive ali Google Drive
 - **Izvoz multimedijske vsebine**: Multimedijsko vsebino samodejno izvozi v mape, razporejene po datumu
 - **Predstavitev spletnega mesta**: Prikaži uradno spletno mesto na zunanjih zaslonih
 - **Časovnik shodov**: Izbirno okno časovnika za merjenje posameznih delov shoda

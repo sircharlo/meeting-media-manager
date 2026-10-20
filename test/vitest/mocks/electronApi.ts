@@ -8,6 +8,7 @@ import {
   pathToFileURL,
   readDirectory,
 } from 'src-electron/preload/fs';
+import { log } from 'src/shared/vanilla';
 import {
   basename,
   changeExt,
@@ -61,6 +62,7 @@ export const electronApi: ElectronApi = {
   executeQuery: async function (dbPath, query) {
     throw new Error('Function not implemented.');
   },
+  exportHtmlToPdf: async () => ({ canceled: true }),
   extname,
   extractNestedZipEntry: function () {
     throw new Error('Function not implemented.');
@@ -112,10 +114,17 @@ export const electronApi: ElectronApi = {
   isDownloadErrorExpected: async () => false,
   isOnline: async () => true,
   isSecretEncryptionAvailableSync: () => true,
+  isSqliteDbCorrupt: async () => false,
   isUsablePath: async function (path) {
     return true;
   },
   join,
+  launchZoomMeeting: function (meetingId) {
+    throw new Error('Function not implemented.');
+  },
+  markUserWarnedAboutDiskSpace: function () {
+    return undefined;
+  },
   moveMediaWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
   },
@@ -153,23 +162,29 @@ export const electronApi: ElectronApi = {
   onLog: function (callback) {
     throw new Error('Function not implemented.');
   },
+  onMediaWindowRendererGone: function (callback) {
+    throw new Error('Function not implemented.');
+  },
   onPathProbeNetworkWarning: function (callback) {
     throw new Error('Function not implemented.');
   },
   onShortcut: function (callback) {
     throw new Error('Function not implemented.');
   },
+  onTimerWindowClosed: function () {
+    return () => void 0;
+  },
   onUpdateAvailable: function (callback) {
-    console.log('onUpdateAvailable called but not implemented');
+    log('onUpdateAvailable called but not implemented');
   },
   onUpdateDownloaded: function (callback) {
-    console.log('onUpdateDownloaded called but not implemented');
+    log('onUpdateDownloaded called but not implemented');
   },
   onUpdateDownloadProgress: function (callback) {
-    console.log('onUpdateDownloadProgress called but not implemented');
+    log('onUpdateDownloadProgress called but not implemented');
   },
   onUpdateError: function (callback) {
-    console.log('onUpdateError called but not implemented');
+    log('onUpdateError called but not implemented');
   },
   onVideoCaptureCrashDetected: function () {
     throw new Error('Function not implemented.');
@@ -181,7 +196,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   onWebsiteWindowClosed: function (callback) {
-    console.log('onWebsiteWindowClosed called but not implemented');
+    log('onWebsiteWindowClosed called but not implemented');
     return () => undefined;
   },
   openDiscussion: function (category, title, params) {
@@ -226,6 +241,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   resolve,
+  restartZoomHelper: async () => ({ ok: true }),
   resumeAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
@@ -254,6 +270,15 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   showFileOnWindows: async () => undefined,
+  startTimerRemote: async () => ({ running: true, urls: [] }),
+  startZoomHelper: async () => ({ ok: true }),
+  stopTimerRemote: () => void 0,
+  stopZoomHelper: () => void 0,
+  timerRemoteText: () => void 0,
+  timerRemoteUpdate: () => void 0,
+  toggleAuthorizedClose: function () {
+    throw new Error('Function not implemented.');
+  },
   toggleMediaWindow: function (show) {
     throw new Error('Function not implemented.');
   },
@@ -274,6 +299,15 @@ export const electronApi: ElectronApi = {
   },
   watchFolder: async function (path) {
     throw new Error('Function not implemented.');
+  },
+  zoomCommand: async function (command) {
+    if (command.type === 'meeting') {
+      return { meeting: { found: false, sharing: false }, ok: true };
+    }
+    return { error: 'helper-not-running', ok: false };
+  },
+  zoomTestParticipants: async function () {
+    return { error: 'development-builds-only', ok: false };
   },
   zoomWebsiteWindow: function (direction) {
     throw new Error('Function not implemented.');

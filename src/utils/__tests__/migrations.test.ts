@@ -42,6 +42,45 @@ describe('buildNewPrefsObject', () => {
     expect(result.mwDay).toBe('2');
   });
 
+  // The old app wrote its defaults (`false` for these five) into prefs.json,
+  // so a stored `false` can't be told apart from "never touched": the
+  // migration turns them on, as it always has. A volume of 0 is different -
+  // the old default was 100 - so it is kept.
+  it('turns the old app’s off-by-default options on, and keeps a muted music volume', () => {
+    const oldPrefs = {
+      media: {
+        enableMediaDisplayButton: false,
+        excludeTh: false,
+        includePrinted: false,
+      },
+      meeting: {
+        autoStartMusic: false,
+        enableMusicButton: false,
+        musicVolume: 0,
+      },
+    } as OldAppConfig;
+
+    const result = buildNewPrefsObject(oldPrefs);
+
+    expect(result.autoStartMusic).toBe(true);
+    expect(result.enableMediaDisplayButton).toBe(true);
+    expect(result.enableMusicButton).toBe(true);
+    expect(result.excludeTh).toBe(true);
+    expect(result.includePrinted).toBe(true);
+    expect(result.musicVolume).toBe(0);
+  });
+
+  it('turns those options on and uses full volume when the old app never saved them', () => {
+    const result = buildNewPrefsObject({} as OldAppConfig);
+
+    expect(result.autoStartMusic).toBe(true);
+    expect(result.enableMediaDisplayButton).toBe(true);
+    expect(result.enableMusicButton).toBe(true);
+    expect(result.excludeTh).toBe(true);
+    expect(result.includePrinted).toBe(true);
+    expect(result.musicVolume).toBe(100);
+  });
+
   it('gives each migrated congregation its own independent Meeting Quick Actions arrays', () => {
     const first = buildNewPrefsObject({} as OldAppConfig);
     const second = buildNewPrefsObject({} as OldAppConfig);

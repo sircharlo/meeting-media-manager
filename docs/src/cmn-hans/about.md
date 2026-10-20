@@ -80,7 +80,7 @@ M³ 是一套完整的聚会媒体管理工具，可以帮助你自动下载、�
 
 ### 高级功能 {#about-advanced-features}
 
-- **文件夹监视**：可以自动从指定文件夹（例如 Dropbox、OneDrive 等同步文件夹）导入媒体
+- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 - **媒体导出**：可以自动将媒体按日期整理并导出到指定文件夹
 - **网站展示**：可以在外部显示器上展示耶和华见证人官方网站
 - **聚会计时器**：可以使用单独的计时器窗口为聚会节目计时

@@ -82,7 +82,7 @@ El reproductor multimedia ofrece controles completos:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Desplazamiento** - Usa la rueda del mouse para acercar o alejar y arrastra para desplazarte (en imágenes)
+- **Zoom/Desplazar** - Mantén pulsada la tecla Ctrl o Mayús y usa la rueda del ratón, o pellizca en el panel táctil, para hacer zoom, luego arrastra para desplazarte (para imágenes)
 - **Vista previa en vivo** - Cuando está activada, muestra en la aplicación principal una vista previa de la ventana de archivos multimedia que ve el auditorio
 - **Velocidad de reproducción** - Cuando está activada en la configuración, ajusta la velocidad del audio y video desde el menú contextual del archivo multimedia
 
@@ -103,8 +103,8 @@ Establece horas personalizadas de inicio y finalización para los archivos multi
 
 Para imágenes y videos:
 
-- **Acercar/Alejar** - Usa la rueda del mouse o los controles de zoom de la miniatura
-- **Desplazamiento** - Haz clic y arrastra la miniatura para mover la imagen
+- **Acercar/Alejar** - Mantén pulsada la tecla Ctrl o Mayús y usa la rueda del ratón, pellizca en el panel táctil o usa los controles de zoom en la miniatura
+- **Desplazar** - Una vez ampliado, haz clic y arrastra la miniatura para mover la imagen (arrastra el resto de la fila para cambiar el orden del elemento)
 - **Restablecer zoom** - Haz clic para volver al zoom original
 
 #### Atajos de teclado {#user-guide-keyboard-shortcuts}
@@ -148,6 +148,26 @@ Ten en cuenta que los fondos personalizados son temporales y no se guardan despu
 Cuando el cronómetro de la reunión está activado, M³ puede mostrar una ventana independiente para controlar el tiempo de las partes de los participantes. El cronómetro puede contar de forma progresiva o regresiva, mostrar la hora actual, mostrar una cuenta regresiva antes de las reuniones programadas y, si quieres, indicar el tiempo excedido o si la reunión va adelantada o atrasada con respecto al programa.
 
 El cronómetro es una función beta y solo debería usarse si se ha aprobado localmente.
+
+#### Partes de la reunión {#user-guide-timer-parts}
+
+La ventana emergente del cronómetro en la isla de acciones muestra las partes de la reunión del día seleccionado. Para las reuniones de entre semana, elige cuántas partes hay de Seamos mejores maestros y Nuestra vida cristiana; los minutos de la sección se reparten de manera uniforme, y cada parte se puede ajustar libremente con los botones **+** y **−** o haciendo clic sobre ella. Cualquier parte se puede configurar con cualquier número de minutos, incluido 0 para omitirla. Un icono de advertencia señala las secciones cuyas partes no suman el tiempo que tienen asignado, pero nunca cambia nada por su cuenta.
+
+Se pueden añadir **partes personalizadas** cualquier día para informes del Cuerpo Gobernante, programas especiales o cualquier otra cosa que no esté en el programa habitual. Los días sin reunión, el cronómetro inicia con una parte personalizada por cada sección multimedia personalizada.
+
+El número de partes, las duraciones modificadas, las partes personalizadas y los tiempos registrados se guardan para cada día, por lo que se mantienen aunque se reinicie M³ y nunca se mezclan los tiempos de una reunión con los de otra. Los tiempos registrados de un día se pueden borrar todos juntos con **Restablecer todos los tiempos de este día**, y se puede exportar un informe de tiempos en PDF en cualquier momento.
+
+#### Aviso de mano levantada {#user-guide-timer-hand-alert}
+
+El botón **Aviso de mano levantada** en la ventana emergente del cronómetro muestra una mano grande en la pantalla del cronómetro para llamar la atención del presidente, por ejemplo, cuando alguien en Zoom levanta la mano. Con el [ayudante para manos levantadas de Zoom Meeting Manager](/settings-guide#zoom-meeting-manager-hand-alert), M³ la muestra automáticamente cada vez que alguien levanta la mano en Zoom, junto con su nombre, y te permite activar su micrófono, y luego volver a silenciarlo y bajarle la mano con un solo clic en cada caso.
+
+#### El cronómetro en una tableta {#user-guide-timer-remote}
+
+El [control remoto del cronómetro](/settings-guide#timer-remote) opcional sirve una copia de solo lectura de la pantalla del cronómetro como página web en tu red local. Abre la dirección que se muestra en la ventana emergente del cronómetro en el navegador de una tableta o teléfono en el atril, y el discursante verá el tiempo restante de forma privada mientras todos los controles permanecen en M³.
+
+#### Acceso rápido {#user-guide-timer-quick-access}
+
+Al pasar el ratón sobre el botón del cronómetro en la isla de acciones, se muestra la parte que se está cronometrando, con botones para Iniciar, Pausar, Detener y Siguiente parte. Un ajuste también puede anclar un panel del cronómetro a la derecha de la ventana principal con la lista completa de partes y los controles del cronómetro, siempre a la vista. Consulta la [Guía de configuración](/settings-guide#timer-quick-access).
 
 ## Música de fondo {#user-guide-background-music}
 
@@ -194,12 +214,12 @@ M³ cambia automáticamente las escenas de OBS durante las presentaciones:
 
 ### Funciones avanzadas de OBS {#advanced-obs}
 
-#### Posponer imágenes {#user-guide-postpone-images}
+#### No compartir imágenes automáticamente {#user-guide-postpone-images}
 
 Activa esta opción para retrasar el envío de imágenes a OBS hasta que se active manualmente:
 
-1. Activa "Posponer imágenes" en la configuración de OBS
-2. Las imágenes solo se compartirán cuando hagas clic en el botón para mostrarlas mediante OBS Studio. Esto es útil para mostrar primero las imágenes al auditorio presencial.
+1. Activa "No compartir imágenes automáticamente" en los ajustes de OBS
+2. Las imágenes solo se compartirán cuando hagas clic en el botón **Mostrar imagen a los participantes de Zoom** sobre la imagen en pantalla. Esto es útil para mostrar primero las imágenes al auditorio presencial.
 
 #### Comportamiento del cambio de escenas {#user-guide-scene-switching}
 
@@ -265,7 +285,7 @@ Añade tus propios archivos multimedia a M³:
 
 1. **Importar archivo** - Usa el botón de importación para añadir videos, imágenes o archivos de audio
 2. **Arrastrar y soltar** - Arrastra archivos directamente a M³
-3. **Supervisión de carpetas** - Configura una carpeta supervisada para importar archivos automáticamente
+3. **Carpeta compartida** - Añade archivos multimedia automáticamente desde una carpeta sincronizada con Dropbox, OneDrive, iCloud Drive o Google Drive
 4. **Archivos JWPUB y listas de reproducción** - Importa publicaciones y listas de reproducción
 5. **Archivos multimedia de discursos públicos (S-34 / S-34mp)** - Importa archivos multimedia de discursos públicos mediante archivos JWPUB S‑34 o S‑34mp
 6. **Videos del sitio web oficial** - Busca videos y añádelos a la fecha seleccionada
@@ -292,16 +312,17 @@ Importa grabaciones de audio de versículos bíblicos:
 
 La configuración de cada perfil se puede exportar a un archivo JSON desde Configuración. Importar un archivo de configuración de perfil reemplaza la configuración del perfil actual, lo que resulta útil al trasladar una configuración a otra computadora o restaurar una configuración conocida.
 
-## Supervisión y exportación de carpetas {#user-guide-folder-monitoring}
+## Carpeta compartida y exportación {#user-guide-folder-monitoring}
 
-### Configurar la supervisión de carpetas {#folder-monitoring-setup}
+### Configuración de una carpeta compartida {#folder-monitoring-setup}
 
-Supervisa una carpeta en busca de nuevos archivos multimedia:
+Añade archivos multimedia desde una carpeta sincronizada con una aplicación de almacenamiento en la nube, como Dropbox, OneDrive, iCloud Drive o Google Drive:
 
-1. **Activar supervisión de carpetas** - Activa la supervisión de carpetas en la configuración
-2. **Seleccionar carpeta** - Elige la carpeta que se supervisará
-3. **Importación automática** - Los archivos nuevos se añaden automáticamente a M³
-4. **Organización** - Los archivos se organizan por fecha según la estructura de carpetas
+1. **Actívalo** - Responde "Sí" cuando el asistente de configuración pregunte sobre aplicaciones de almacenamiento en la nube, o ve a **Configuración** > **Integraciones** > **Carpeta compartida** y activa **Añadir archivos multimedia desde una carpeta compartida**
+2. **Elige la carpeta** - Elige una carpeta dentro de tu aplicación de almacenamiento en la nube, preferiblemente una nueva dedicada solo a esto
+3. **Carpetas fechadas** - M³ crea una carpeta dentro para cada próxima reunión, nombrada con la fecha de la reunión escrita como año-mes-día (por ejemplo, `2026-03-25`)
+4. **Añade archivos** - Pon fotos, videos, archivos de audio o listas de reproducción de JW Library en la carpeta de una reunión y se añadirán automáticamente a la lista de multimedia de esa reunión. Para otro día, crea una carpeta nombrada de la misma manera
+5. **Carpetas pasadas** - Cuando termina una semana, M³ elimina las carpetas de esa semana y sus archivos para todos los que usan la carpeta compartida. Desactiva **Eliminar carpetas de reuniones pasadas** para conservarlos
 
 ### Exportación de archivos multimedia {#user-guide-media-export}
 
@@ -385,7 +406,7 @@ Configura atajos de teclado personalizados para trabajar con eficiencia:
 
 #### Problemas de rendimiento {#user-guide-performance-issues}
 
-- Activa la caché adicional
+- Guardar en caché los archivos de video del cancionero
 - Reduce la resolución máxima
 - Borra archivos antiguos de la caché
 - Comprueba el espacio disponible en disco

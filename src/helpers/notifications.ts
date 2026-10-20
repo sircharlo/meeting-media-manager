@@ -1,6 +1,9 @@
 import { i18n } from 'boot/i18n';
 import { Notify, type QNotifyCreateOptions } from 'quasar';
-import { errorCatcher } from 'src/helpers/error-catcher';
+import {
+  errorCatcher,
+  markUserWarnedAboutDiskSpace,
+} from 'src/helpers/error-catcher';
 import { useDialogStateStore } from 'stores/dialog-state';
 import { watch } from 'vue';
 
@@ -71,23 +74,64 @@ type NoExtraKeys<T> = Record<
 // Track all active notification dismiss functions
 const activeTemporaryNotifications: (() => void)[] = [];
 
+/**
+ * When a dialog is open, waits for every open dialog to close and then calls
+ * `show` once.
+ * @returns Whether it's waiting (false: nothing open, so nothing to wait for).
+ */
+const waitForOpenDialogsToClose = (show: () => void) => {
+  const dialogStateStore = useDialogStateStore();
+  if (!dialogStateStore.isAnyDialogOpen) return false;
+
+  const stopWaiting = watch(
+    () => dialogStateStore.isAnyDialogOpen,
+    (stillOpen) => {
+      if (stillOpen) return;
+      stopWaiting();
+      show();
+    },
+  );
+  return true;
+};
+
+/** The default actions of a closable notification: just a close button. */
+const getCloseActions = (
+  type: AllowedNotifyType | undefined,
+): QNotifyCreateOptions['actions'] => [
+  {
+    color: type === 'warning' ? 'dark' : 'white',
+    icon: 'close',
+    round: true,
+  },
+];
+
+/**
+ * Tracks a notification's dismiss function for
+ * dismissAllTemporaryNotifications(), until its timeout (if any) has passed.
+ */
+const trackTemporaryNotification = (dismiss: () => void, timeout: number) => {
+  activeTemporaryNotifications.push(dismiss);
+
+  // Auto-remove from tracking after timeout (if not indefinite)
+  if (timeout > 0) {
+    setTimeout(() => {
+      const index = activeTemporaryNotifications.indexOf(dismiss);
+      if (index > -1) {
+        activeTemporaryNotifications.splice(index, 1);
+      }
+    }, timeout);
+  }
+};
+
 export const createTemporaryNotification = (
   props: NoExtraKeys<AllowedNotifyProps>,
 ) => {
   try {
-    if (props.deferWhileDialogOpen) {
-      const dialogStateStore = useDialogStateStore();
-      if (dialogStateStore.isAnyDialogOpen) {
-        const stopWaiting = watch(
-          () => dialogStateStore.isAnyDialogOpen,
-          (stillOpen) => {
-            if (stillOpen) return;
-            stopWaiting();
-            createTemporaryNotification(props);
-          },
-        );
-        return undefined;
-      }
+    if (
+      props.deferWhileDialogOpen &&
+      waitForOpenDialogsToClose(() => createTemporaryNotification(props))
+    ) {
+      return undefined;
     }
 
     const {
@@ -130,37 +174,26 @@ export const createTemporaryNotification = (
       ...(type && { type }),
       ...(resolvedIcon && { icon: resolvedIcon }),
       ...(group && { group }),
-      ...(!noClose && {
-        actions: actions ?? [
-          {
-            color: type === 'warning' ? 'dark' : 'white',
-            icon: 'close',
-            round: true,
-          },
-        ],
-      }),
+      ...(!noClose && { actions: actions ?? getCloseActions(type) }),
     });
 
     // Track the dismiss function if it exists, unless it's protected from
     // being swept up by dismissAllTemporaryNotifications()
-    if (dismiss && !protect) {
-      activeTemporaryNotifications.push(dismiss);
-
-      // Auto-remove from tracking after timeout (if not indefinite)
-      if (timeout > 0) {
-        setTimeout(() => {
-          const index = activeTemporaryNotifications.indexOf(dismiss);
-          if (index > -1) {
-            activeTemporaryNotifications.splice(index, 1);
-          }
-        }, timeout);
-      }
-    }
+    if (dismiss && !protect) trackTemporaryNotification(dismiss, timeout);
 
     return dismiss;
   } catch (error) {
     errorCatcher(error);
   }
+};
+
+/**
+ * Records that the user has seen a disk space warning, so that neither
+ * process reports disk-full errors from then on.
+ */
+const recordDiskSpaceWarning = () => {
+  markUserWarnedAboutDiskSpace();
+  globalThis.electronApi?.markUserWarnedAboutDiskSpace();
 };
 
 /**
@@ -181,14 +214,37 @@ export const checkLowDiskSpaceAndNotify = async (): Promise<void> => {
       caption: i18n.global.t('low-disk-space-warning'),
       deferWhileDialogOpen: true,
       message: i18n.global.t('disk-space-is-running-low'),
-      timeout: 10000,
+      timeout: 10_000,
       type: 'warning',
     });
+    recordDiskSpaceWarning();
   } catch (error) {
     errorCatcher(error, {
       contexts: { fn: { name: 'checkLowDiskSpaceAndNotify' } },
     });
   }
+};
+
+const DISK_FULL_WARNING_THROTTLE_MS = 5 * 60 * 1000;
+let lastDiskFullWarningAt = 0;
+
+/**
+ * Tells the user that M³ couldn't save a file because the disk is full.
+ * Throttled, since a full disk tends to fail many writes in a row.
+ */
+export const notifyDiskFull = (): void => {
+  const now = Date.now();
+  if (now - lastDiskFullWarningAt < DISK_FULL_WARNING_THROTTLE_MS) return;
+  lastDiskFullWarningAt = now;
+
+  createTemporaryNotification({
+    caption: i18n.global.t('disk-full'),
+    deferWhileDialogOpen: true,
+    message: i18n.global.t('disk-full-explain'),
+    timeout: 15_000,
+    type: 'negative',
+  });
+  recordDiskSpaceWarning();
 };
 
 const EXPECTED_DOWNLOAD_ISSUE_WARNING_THROTTLE_MS = 5 * 60 * 1000;
@@ -216,7 +272,7 @@ export const maybeWarnAboutExpectedDownloadIssue = (): void => {
     caption: i18n.global.t('download-issues-warning'),
     deferWhileDialogOpen: true,
     message: i18n.global.t('download-issues-warning-explain'),
-    timeout: 10000,
+    timeout: 10_000,
     type: 'warning',
   });
 };

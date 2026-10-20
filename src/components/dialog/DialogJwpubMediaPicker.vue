@@ -269,7 +269,7 @@ const getMediaIcon = (item: MultimediaItem) => {
 const isImageItem = (item: MultimediaItem) =>
   item.MimeType?.startsWith('image/');
 
-const getCleanText = (value: null | string | undefined) => value?.trim() || '';
+const getCleanText = (value: null | string | undefined) => value?.trim() ?? '';
 
 const getFileBasename = (item: MultimediaItem) =>
   item.FilePath ? basename(item.FilePath) : '';
@@ -279,9 +279,7 @@ const getMediaIdentifier = (item: MultimediaItem) =>
     item.KeySymbol,
     item.IssueTagNumber,
     item.MepsDocumentId,
-    (item.MepsLanguageIndex !== undefined &&
-      getJwLangCode(item.MepsLanguageIndex)) ||
-      '',
+    getJwLangCode(item.MepsLanguageIndex) ?? '',
     item.Track,
   ]
     .filter((x) => !!x)
@@ -308,7 +306,7 @@ const getMediaCaption = (item: MultimediaItem) => {
     : [getFileBasename(item), getMediaIdentifier(item)];
 
   return (
-    captionCandidates.find((caption) => caption && caption !== label) || ''
+    captionCandidates.find((caption) => caption && caption !== label) ?? ''
   );
 };
 
@@ -332,7 +330,7 @@ const addSelectedItems = () => {
   // section's skeleton placeholder (from withPendingSectionImport) cover
   // the wait matches every other "add media" dialog's behavior.
   void withPendingSectionImport(
-    props.section || 'imported-media',
+    props.section ?? 'imported-media',
     selectedMultimediaIds.length,
     () =>
       addJwpubDocumentMediaToFiles(
@@ -361,7 +359,7 @@ watch(
   () => dialogValue.value,
   (isOpen) => {
     if (isOpen) {
-      loadMediaItems();
+      void loadMediaItems();
     } else {
       selectedItems.value = [];
       mediaItems.value = [];

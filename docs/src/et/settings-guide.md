@@ -350,11 +350,11 @@ Subtiitrite keel (võib erineda meedia keelest).
 
 ### Vahemälu haldamine {#cache-management}
 
-#### Lisavahemälu lubamine {#enable-extra-cache}
+#### Cache Songbook Video Files {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Luba lisavahemälu rakenduse paremaks toimimiseks.
+Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
 
 **Vaikimisi**: `väljas`
 
@@ -418,23 +418,43 @@ Salvesta eksporditud meediafailid MP4-vormingusse, et saavutada parem ühilduvus
 
 **Vaikimisi**: `väljas`
 
-### Kausta jälgimine {#settings-guide-folder-monitoring}
+### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-#### Luba kausta jälgimine {#enable-folder-watcher}
+These settings are in the **Integrations** category.
+
+M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+
+M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. To add files for another day, create a folder for it, named the same way. Anything else in the shared folder is ignored.
+
+:::tip Nõuanne
+
+Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+
+:::
+
+#### Add Media From a Shared Folder {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Jälgi kausta uute meediafailide lisandumist ja lisa need automaatselt M³-e.
+Add the files put in the shared folder to the right meeting automatically.
 
 **Vaikimisi**: `väljas`
 
-#### Jälgitav kaust {#folder-to-watch}
+#### Shared Folder {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-Kausta tee, mida jälgida uute meediafailide jaoks.
+The folder to add media from. The setup wizard offers to set it up for you.
 
 **Vaikimisi**: Tühi
+
+#### Delete Past Meeting Folders {#delete-past-watched-folders}
+
+<!-- **Setting**: `deletePastWatchedFolders` -->
+
+When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+
+**Vaikimisi**: `lubatud`
 
 ## Koosoleku taimer {#meeting-timer}
 
@@ -452,11 +472,32 @@ Luba eraldi taimeri akna kasutamine koosoleku osade ajastamiseks. Taimer on beet
 
 Määrake, kas ajastuse aken avatakse automaatselt, kas osalejate taimerid loevad vaikimisi üles või alla, kas kell kasutab 12- või 24-tunnist ajavormingut ning kas ajastuse hetkeväärtus kuvatakse tegevusala ajastuse nupul.
 
+### Quick Access to the Timer {#timer-quick-access}
+
+<!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
+
+Choose how the timer is reached from the main window:
+
+- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
+- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+
+### Timer Remote {#timer-remote}
+
+<!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
+
+When turned on, M³ serves a read-only copy of the timer display as a web page on your local network, for a tablet or phone at the lectern: the speaker sees the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time, including the pre-meeting countdown, the clock, overtime colors and the hand alert, and all the controls stay in M³.
+
+The addresses to open on the device are listed in the timer popup, with a copy button. Change the port only if another program already uses it. Note that anyone on the same network can open the page while this is on; it shows nothing but the timer.
+
+**Default**: `false`, port `8787`
+
 ### Taimeri kuvamisvormingud {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Vali kellaaja ja tagasilugemistimeri jaoks analoog- või digitaalne kuvamisviis. Tagasilugemise hoiatusnäidik võib viimasel minutil muuta analoogse tagasilugemise ringi hoiatusvärviks.
+
+The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
 
 ### Koosoleku taimer ja ajakava staatus {#meeting-countdown-and-schedule-status}
 
@@ -471,6 +512,8 @@ Näita enne planeeritud koosolekuid tagasiarvestust ja vajaduse korral ka seda, 
 Saate kohandada taimeri teksti suurust ja värve ning seadistada üle aja näitajaid, nagu näiteks vahelduvad värvid, vilkumine ja ainult möödunud üle aja kuvamine loendamisrežiimis.
 
 ## Koostöö {#integrations}
+
+This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
 
 ### Koostöö Zoomiga {#settings-guide-zoom-integration}
 
@@ -495,6 +538,30 @@ Klaviatuuri kiirklahv Zoom ekraani jagamise käivitamiseks.
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
 Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+
+**Vaikimisi**: `väljas`
+
+### Zoom Meeting Manager {#zoom-meeting-manager}
+
+The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+
+#### While M³ Operates Zoom {#zoom-meeting-manager-overlay}
+
+<!-- **Setting**: `zoomCancelAutomationShortcut` -->
+
+Zoom offers no proper automation interface, so M³ drives the Zoom app through its accessibility interface, which works without the mouse for nearly everything (the participants list, its menus, the Share window). A few actions can still have to move the mouse or the focused window for a moment, for example to bring Zoom's auto-hidden toolbar back. Whenever that happens, M³ covers its own window with a "M³ is operating Zoom" notice naming what is going on, with a **Cancel this automation** button. The same notice shows during the setup assistant's checks and the self-test. A global keyboard shortcut (default `Ctrl+Alt+Escape`), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Cancelling stops M³ at once; Zoom may then be left part-way, so check it.
+
+**Default**: `Ctrl+Alt+Escape`
+
+#### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
+
+<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+
+During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
+
+If the [meeting timer](#meeting-timer) is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and a **Hand alert** button in the timer and Zoom popups shows it by hand. This part needs the timer display; the notifications and buttons work without it.
+
+Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list and which menu entry lowers it, then lowers it again. The setup assistant offers this step too.
 
 **Vaikimisi**: `väljas`
 
@@ -542,7 +609,7 @@ Määra, milliseid OBS-stseene kasutada erinevateks eesmärkideks:
 
 #### OBS Studio lisasätted {#obs-advanced-options}
 
-- **Pildid edasi lükkamine**: lükka piltide jagamine OBS-iga edasi, kuni see käsitsi käivitatakse
+- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
 - **Kiirlüliti**: Lülita sisse OBS-i koostöö kiirelt sisse-/välja nupu abil
 - **Vaheta stseeni pärast meediat**: naase automaatselt eelmisele stseenile pärast meediat
 - **Eelmise stseeni meeldejätmine**: Eelmise stseeni meeldejätmine ja taastamine
@@ -733,20 +800,20 @@ Lülita automaatne meedia allalaadimine täielikult välja. Kasuta seda ainult p
 ### Uutele kasutajatele {#new-users}
 
 1. Alusta määramiste abil, et seadistada põhilised sätted
-2. Lülita sisse „Meedia kuvamise nupp“, et pääseda juurde nende esitluse funktsioonidele
+2. Turn on "Enable media playback" to access presentation features
 3. Seadista koosolekute ajakava
 4. Kui sa kasutad hübriidkoosolekuid, siis seadista OBS Studio koostöö
 
 ### Edasijõudnud kasutajatele {#advanced-users}
 
-1. Kasuta kausta jälgimist, et sünkroonida meediat pilvesalvestusest
+1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
 2. Luba meedia automaatne eksportimine varundamise eesmärgil
 3. Seadista kiirklahvid tõhusaks tööks
 4. Zoom-koostöö seadistamine automaatseks ekraani jagamiseks
 
 ### Jõudluse parandamise nipid {#performance-optimization}
 
-1. Luba lisavahemälu rakenduse paremaks toimimiseks
+1. Cache songbook video files for better performance
 2. Kasuta oma vajadustele vastavat maksimaalset resolutsiooni
 3. Seadista vahemälu automaatne tühjendamine, et hallata kettaruumi
 4. Kui andmemaht on piiratud, kaalu mõõdetud ühenduse seadistamist

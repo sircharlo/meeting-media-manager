@@ -1,21 +1,14 @@
 <template>
   <q-btn
-    class="super-rounded position-relative"
-    :color="downloadPopup ? 'white' : online ? 'white-transparent' : 'negative'"
+    class="super-rounded"
+    :class="classes"
+    :color="color"
     rounded
-    :text-color="downloadPopup ? (online ? 'primary' : 'negative') : ''"
+    :text-color="textColor"
     unelevated
     @click="downloadPopup = !downloadPopup"
   >
-    <template v-if="someAreLoading && !someHaveError">
-      <q-icon name="mmm-cloud" />
-      <q-spinner
-        class="absolute"
-        :color="downloadPopup ? 'white' : 'primary'"
-        size="8px"
-        style="top: 14"
-      />
-    </template>
+    <q-spinner v-if="busy" size="sm" />
     <q-icon
       v-else
       :name="someHaveError ? 'mmm-cloud-error' : 'mmm-cloud-done'"
@@ -27,7 +20,8 @@
       :offset="[14, 22]"
       self="top left"
     >
-      {{ t('download-status') }}
+      <div class="text-weight-medium">{{ t('download-status') }}</div>
+      <div v-if="statusLine">{{ statusLine }}</div>
     </q-tooltip>
   </q-btn>
 </template>
@@ -37,6 +31,10 @@ import type { DownloadProgressItem } from 'src/types';
 
 import { useIntervalFn } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
+import {
+  type IslandButtonStatus,
+  useIslandButton,
+} from 'src/composables/useIslandButton';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getDateDiff } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -64,11 +62,11 @@ const updateOnline = async () => {
 // settings, or switching to a congregation with different values for them),
 // so a bare setInterval here would accumulate a new timer on every remount.
 useIntervalFn(() => {
-  updateOnline();
-}, 10000);
+  void updateOnline();
+}, 10_000);
 
 onMounted(() => {
-  updateOnline();
+  void updateOnline();
 });
 
 function isErrorInCurrentWindow(item: DownloadProgressItem) {
@@ -84,4 +82,32 @@ const someHaveError = computed(() => {
 });
 
 const someAreLoading = computed(() => currentState.hasActiveMediaWork);
+
+const failedCount = computed(
+  () =>
+    Object.values(downloadProgress.value).filter(
+      (item: DownloadProgressItem) =>
+        item.error && isErrorInCurrentWindow(item),
+    ).length,
+);
+
+const status = computed<IslandButtonStatus>(() => {
+  if (someHaveError.value) return 'error';
+  if (!online.value) return 'attention';
+  if (someAreLoading.value) return 'busy';
+  return 'normal';
+});
+
+const statusLine = computed(() => {
+  if (status.value === 'error') {
+    return t('n-items-failed', failedCount.value);
+  }
+  if (status.value === 'attention') return t('download-status-offline');
+  return '';
+});
+
+const { busy, classes, color, textColor } = useIslandButton(
+  status,
+  downloadPopup,
+);
 </script>

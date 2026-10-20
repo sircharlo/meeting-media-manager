@@ -165,6 +165,30 @@ describe('Zip Slip protection', () => {
     expect(createWriteStreamMock).toHaveBeenCalledWith('/tmp/out/safe.txt');
   });
 
+  it.each([
+    { expected: '/tmp/out/sub/inner', fileName: 'sub/inner/' },
+    { expected: '/tmp/out/sub', fileName: 'sub//' },
+  ])(
+    'creates directory entry $fileName without its trailing slashes',
+    async ({ expected, fileName }) => {
+      const dirEntry = { compressedSize: 0, fileName, uncompressedSize: 0 };
+      const zipfile = {
+        close: vi.fn(),
+        eachEntry: async function* () {
+          yield dirEntry;
+        },
+      };
+      yauzlOpenMock.mockResolvedValue(zipfile);
+
+      const { unzipFile } = await import('../fs');
+
+      await expect(unzipFile('/tmp/safe.jwpub', '/tmp/out')).resolves.toEqual(
+        [],
+      );
+      expect(ensureDirMock).toHaveBeenCalledWith(expected);
+    },
+  );
+
   it('rejects a nested zip entry that traverses outside the output directory', async () => {
     const outerEntry = {
       compressedSize: 5,

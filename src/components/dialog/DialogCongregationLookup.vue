@@ -252,10 +252,10 @@ const applyCongregation = async (congregation: CongregationSuggestion) => {
     if (selectedMeeting.languageGuid) {
       const languageMap = await getMeetingLanguageMap();
       const mappedLanguageCode =
-        languageMap.get(selectedMeeting.languageGuid) || '';
+        languageMap.get(selectedMeeting.languageGuid) ?? '';
       const resolvedLangCode =
         jwLanguages.value?.list.find((l) => l.langcode === mappedLanguageCode)
-          ?.langcode || '';
+          ?.langcode ?? '';
       currentSettings.value.lang = resolvedLangCode || 'E';
       currentSettings.value.langSubtitles = resolvedLangCode || null;
     }
@@ -321,31 +321,35 @@ const selectCongregation = (congregation: CongregationSuggestion) => {
   if (hasConfiguredCongregationInfo.value) {
     pendingCongregation.value = congregation;
   } else {
-    applyCongregation(congregation);
+    void applyCongregation(congregation);
   }
 };
 
-const lookupCongregation = async () => {
-  if (lookupDebounce.value) clearTimeout(lookupDebounce.value);
-  lookupDebounce.value = setTimeout(async () => {
-    try {
-      loading.value = true;
-      lookupError.value = false;
+const runCongregationLookup = async () => {
+  try {
+    loading.value = true;
+    lookupError.value = false;
+    results.value = [];
+    if (congregationFilter.value?.length > 2) {
+      results.value = await fetchCongregationSuggestions(
+        congregationFilter.value,
+      );
+    } else {
       results.value = [];
-      if (congregationFilter.value?.length > 2) {
-        results.value = await fetchCongregationSuggestions(
-          congregationFilter.value,
-        );
-      } else {
-        results.value = [];
-      }
-    } catch (error) {
-      errorCatcher(error);
-      results.value = [];
-      lookupError.value = true;
-    } finally {
-      loading.value = false;
     }
+  } catch (error) {
+    errorCatcher(error);
+    results.value = [];
+    lookupError.value = true;
+  } finally {
+    loading.value = false;
+  }
+};
+
+const lookupCongregation = () => {
+  if (lookupDebounce.value) clearTimeout(lookupDebounce.value);
+  lookupDebounce.value = setTimeout(() => {
+    void runCongregationLookup();
   }, 500);
 };
 
@@ -358,7 +362,7 @@ const dismissPopup = () => {
 
 // Focus the input when dialog opens
 whenever(dialogValue, () => {
-  congregationFilter.value = currentSettings.value?.congregationName || '';
+  congregationFilter.value = currentSettings.value?.congregationName ?? '';
   results.value = [];
   lookupCongregation();
   setTimeout(() => {

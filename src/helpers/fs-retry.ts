@@ -23,7 +23,7 @@ export const withLockRetry = async <T>(fn: () => Promise<T>): Promise<T> => {
   let lastError: unknown;
   for (let attempt = 0; attempt <= RETRY_COUNT; attempt++) {
     try {
-      return await fn();
+      return await fn(); // NOSONAR: sequential - retry loop
     } catch (error) {
       lastError = error;
       const retryable =
@@ -32,7 +32,7 @@ export const withLockRetry = async <T>(fn: () => Promise<T>): Promise<T> => {
       if (!retryable || attempt === RETRY_COUNT) {
         throw error;
       }
-      await delay(BASE_RETRY_DELAY_MS * 2 ** attempt);
+      await delay(BASE_RETRY_DELAY_MS * 2 ** attempt); // NOSONAR: sequential - retry loop
     }
   }
   throw lastError;

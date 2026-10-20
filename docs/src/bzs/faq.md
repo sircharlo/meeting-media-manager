@@ -128,7 +128,7 @@ Background music features include:
 
 ### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
 
-Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
 The timer is a beta feature and should only be enabled if approved locally.
 
@@ -158,12 +158,12 @@ M³ automatically switches OBS scenes based on:
 
 - Media type (video, image, etc.)
 - Your scene configuration
-- Settings like "Postpone Images"
+- Settings like "Do not automatically share images"
 - Whether to return to previous scene after media
 
-### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
 
-This feature delays sharing images to OBS until you manually trigger them. This is useful for:
+This setting delays sharing images to OBS until you manually trigger them. This is useful for:
 
 - Showing images to in-person audience first
 - Having more control over timing
@@ -178,12 +178,16 @@ M³ does not include a built-in recorder, but it can help control recording in t
 
 ## Advanced Features {#faq-advanced-features}
 
-### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
+### :cloud: How does the shared folder work? {#faq-folder-monitoring}
 
-Folder monitoring allows you to:
+If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
 
-1. Select a folder to watch for new files
-2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
+1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
+2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
+3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
+4. To add files for another day, create a folder for it, named the same way.
+
+When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
 
 ### :file_folder: What is media auto-export? {#faq-media-export}
 
@@ -246,7 +250,7 @@ M³ plays media with sound on your computer, but this audio is not automatically
 
 Try these performance optimizations:
 
-1. **Enable Extra Cache**: Turn on additional caching in settings
+1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
 2. **Close Other Apps**: Close unnecessary applications
 3. **Check Disk Space**: Ensure you have sufficient free disk space
 4. **Reduce Resolution**: Lower the maximum resolution setting

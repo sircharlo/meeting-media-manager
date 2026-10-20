@@ -57,13 +57,13 @@ const VERSION_HEADER_PATTERN = /^##(?!#)\s+v?\d+\.\d+\.\d+/;
 // Russian "@:key,") would otherwise extract a different token shape per
 // language purely from incidental trailing characters.
 const LINK_TARGET_RE = /@:\{?'?([^'}\s,.;:!?)]+)'?\}?/g;
-const PARAM_NAME_RE = /\{([\w]+)\}/g;
+const PARAM_NAME_RE = /\{(\w+)\}/g;
 const CORRUPTION_SIGNATURES = [
-  new RegExp(`@:\\{[^{}]*[${TYPOGRAPHIC_QUOTES}][^{}]*\\}`),
+  new RegExp(String.raw`@:\{[^{}]*[${TYPOGRAPHIC_QUOTES}][^{}]*\}`),
   /@:[ \t]+(?=[\p{L}\p{N}_-])/u,
   /\{#[\w-]+\}\s*\{#/,
   /^(?:##\s*)?\d+\.\d+\s+v\d+\.\d+\s*$/,
-  /^(?:##\s*)?v\d+[ ,]\d+[,.]?\d*\s*$/,
+  /^(?:##\s*)?v\d+[ ,]\d+(?:[,.]\d*)?\s*$/,
   /@:[^\s]*-(?=[\s.,;:!?]|$)/,
 ];
 
@@ -147,7 +147,8 @@ async function main() {
     process.exit(1);
   }
 
-  const resolvedRunId = runId ?? new Date().toISOString().replace(/[:.]/g, '-');
+  const resolvedRunId =
+    runId ?? new Date().toISOString().replaceAll(/[:.]/g, '-');
   const outDir = resolve(
     REPO_ROOT,
     'reports/translation-quality',
@@ -159,13 +160,29 @@ async function main() {
 
   const summary = { language, runId: resolvedRunId, sources: [] };
 
-  for (const source of CONTENT_SOURCES) {
-    const { records, skippedCorrupted, skippedIdentical, totalSourceKeys } =
-      await extractForSource(source, language);
+  // Each content source reads its own local files and writes its own output
+  // file, so they are extracted concurrently and then summarized in order.
+  const extracted = await Promise.all(
+    CONTENT_SOURCES.map(async (source) => {
+      const result = await extractForSource(source, language);
+      const outPath = resolve(outDir, `${source.contentType}.json`);
+      await writeFile(
+        outPath,
+        `${JSON.stringify(result.records, null, 2)}\n`,
+        'utf-8',
+      );
+      return { ...result, outPath, source };
+    }),
+  );
 
-    const outPath = resolve(outDir, `${source.contentType}.json`);
-    await writeFile(outPath, `${JSON.stringify(records, null, 2)}\n`, 'utf-8');
-
+  for (const {
+    outPath,
+    records,
+    skippedCorrupted,
+    skippedIdentical,
+    source,
+    totalSourceKeys,
+  } of extracted) {
     summary.sources.push({
       contentType: source.contentType,
       emitted: records.length,

@@ -2,26 +2,10 @@
   <q-btn
     v-if="currentSettings?.obsEnable"
     class="super-rounded"
-    :color="
-      obsPopup
-        ? 'white'
-        : obsStatusVariant === 'connected'
-          ? 'white-transparent'
-          : obsStatusVariant === 'disconnected'
-            ? 'negative'
-            : 'warning'
-    "
-    :disable="obsConnectionState === 'connecting'"
+    :class="classes"
+    :color="color"
     rounded
-    :text-color="
-      obsPopup
-        ? obsStatusVariant === 'connected'
-          ? 'primary'
-          : obsStatusVariant === 'disconnected'
-            ? 'negative'
-            : 'warning'
-        : ''
-    "
+    :text-color="textColor"
     unelevated
     @click="onClick"
     @mouseenter="
@@ -30,22 +14,27 @@
         : undefined
     "
   >
-    <q-spinner v-if="obsConnectionState === 'connecting'" size="sm" />
-    <template v-else>
-      <q-icon name="mmm-obs-studio" />
-      <q-tooltip v-if="!obsPopup" :delay="1000" :offset="[14, 22]">
-        {{ t(tooltipMessageKey) }}
-      </q-tooltip>
-    </template>
+    <q-spinner v-if="busy" size="sm" />
+    <q-icon v-else name="mmm-obs-studio" />
+    <q-tooltip v-if="!obsPopup" :delay="1000" :offset="[14, 22]">
+      {{ t(tooltipMessageKey) }}
+    </q-tooltip>
   </q-btn>
 </template>
 
 <script setup lang="ts">
+import type { OBSResponseTypes } from 'obs-websocket-js';
+
 import { storeToRefs } from 'pinia';
+import {
+  type IslandButtonStatus,
+  useIslandButton,
+} from 'src/composables/useIslandButton';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { isTransientObsError, obsConnect } from 'src/helpers/obs';
 import { log } from 'src/shared/vanilla';
+import { sleep } from 'src/utils/general';
 import { initObsWebSocket, obsWebSocketInfo } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
@@ -70,14 +59,18 @@ const { obsCloseHandler, obsErrorHandler, sceneExists } = obsState;
 const obsPopup = defineModel<boolean>({ required: true });
 
 // Scene list fetch failures don't mean the socket is disconnected (it's
-// still identified and usable for recording/scene switching), so they get
-// their own warning state instead of overriding obsConnectionState.
-const obsStatusVariant = computed(() => {
-  if (obsConnectionState.value === 'disconnected') return 'disconnected';
-  if (obsConnectionState.value === 'connected')
-    return obsSceneListError.value ? 'warning' : 'connected';
-  return 'warning';
+// still identified and usable for recording/scene switching), so they only
+// call for attention instead of overriding obsConnectionState.
+const status = computed<IslandButtonStatus>(() => {
+  if (obsConnectionState.value === 'disconnected') return 'error';
+  if (obsConnectionState.value === 'connecting') return 'busy';
+  if (obsConnectionState.value === 'connected' && !obsSceneListError.value) {
+    return 'normal';
+  }
+  return 'attention';
 });
+
+const { busy, classes, color, textColor } = useIslandButton(status, obsPopup);
 
 const tooltipMessageKey = computed(() =>
   obsConnectionState.value === 'connected' && obsSceneListError.value
@@ -89,7 +82,39 @@ const onClick = () => {
   if (obsConnectionState.value === 'connected') {
     obsPopup.value = !obsPopup.value;
   } else if (obsConnectionState.value !== 'connecting') {
-    obsConnect();
+    void obsConnect();
+  }
+};
+
+const applySceneList = (sceneList: OBSResponseTypes['GetSceneList']) => {
+  obsSceneListError.value = false;
+  scenes.value = sceneList.scenes.toReversed();
+  currentScene.value =
+    configuredScenesAreAllUUIDs.value && sceneList.currentProgramSceneUuid
+      ? sceneList.currentProgramSceneUuid
+      : sceneList.currentProgramSceneName;
+
+  [
+    currentSettings.value?.obsCameraScene,
+    currentSettings.value?.obsMediaScene,
+    currentSettings.value?.obsImageScene,
+  ]
+    .filter((s): s is string => !!s)
+    .forEach((scene) => {
+      if (!sceneExists(scene)) notifySceneNotFound();
+    });
+};
+
+const reportSceneListFailure = (error: unknown, isTransient: boolean) => {
+  obsSceneListError.value = true;
+  // OBS still loading after every retry (big scene collections or plugins can
+  // take longer), or the socket closing mid-way (the reconnect flow fetches
+  // the list again): the scene-list warning state above already tells the
+  // user, and neither is a bug (MMM-V2-3FG).
+  if (isTransient) {
+    log('Could not fetch the OBS scene list yet', 'obs', 'warn', error);
+  } else {
+    errorCatcher(error, { contexts: { fn: { name: 'fetchSceneList' } } });
   }
 };
 
@@ -98,48 +123,26 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
   while (attempts < maxRetries) {
     try {
       const sceneList =
-        await obsWebSocketInfo.obsWebSocket?.call('GetSceneList');
+        await obsWebSocketInfo.obsWebSocket?.call('GetSceneList'); // NOSONAR: sequential - retry loop
       if (sceneList) {
-        obsSceneListError.value = false;
-        scenes.value = sceneList.scenes.reverse();
-        const current =
-          configuredScenesAreAllUUIDs.value && sceneList.currentProgramSceneUuid
-            ? sceneList.currentProgramSceneUuid
-            : sceneList.currentProgramSceneName;
-
-        currentScene.value = current;
-
-        [
-          currentSettings.value?.obsCameraScene,
-          currentSettings.value?.obsMediaScene,
-          currentSettings.value?.obsImageScene,
-        ]
-          .filter((s): s is string => !!s)
-          .forEach((scene) => {
-            if (!sceneExists(scene)) notifySceneNotFound();
-          });
+        applySceneList(sceneList);
         return;
       }
+      // No socket or an empty reply: there is nothing to retry, and going
+      // round again without awaiting anything would spin the renderer.
+      obsSceneListError.value = true;
+      return;
     } catch (error) {
       attempts++;
       const isTransient = isTransientObsError(error);
       if (attempts < maxRetries && isTransient) {
         log(`Retrying... (${attempts}/${maxRetries})`, 'obs', 'log');
-        await new Promise((resolve) => {
-          setTimeout(resolve, retryInterval);
-        });
+        await sleep(retryInterval); // NOSONAR: sequential - retry loop
       } else {
-        obsSceneListError.value = true;
-        // OBS still loading after every retry (big scene collections or
-        // plugins can take longer), or the socket closing mid-way (the
-        // reconnect flow fetches the list again): the scene-list warning
-        // state above already tells the user, and neither is a bug
-        // (MMM-V2-3FG).
-        if (isTransient) {
-          log('Could not fetch the OBS scene list yet', 'obs', 'warn', error);
-        } else {
-          errorCatcher(error, { contexts: { fn: { name: 'fetchSceneList' } } });
-        }
+        reportSceneListFailure(error, isTransient);
+        // Retries are only for transient errors: stop here instead of
+        // re-requesting (and re-reporting) straight away.
+        return;
       }
     }
   }
@@ -153,7 +156,7 @@ const notifySceneNotFound = () =>
     group: 'scene-not-found',
     icon: 'mmm-obs-studio',
     message: t('scene-not-found'),
-    timeout: 10000,
+    timeout: 10_000,
     type: 'negative',
   });
 
@@ -187,15 +190,15 @@ const initObsListeners = async () => {
         }
       },
     );
-    obsWebSocketInfo.obsWebSocket.on('Identified', async () => {
+    obsWebSocketInfo.obsWebSocket.on('Identified', () => {
       obsConnectionState.value = 'connected';
       obsMessage.value = 'obs.connected';
-      fetchSceneList();
+      void fetchSceneList();
     });
     obsWebSocketInfo.obsWebSocket.on('SceneListChanged', (data) => {
-      scenes.value = data.scenes.reverse();
+      scenes.value = data.scenes.toReversed();
     });
-    obsConnect();
+    void obsConnect();
   } catch (error) {
     errorCatcher(error);
   }
@@ -221,14 +224,14 @@ const removeObsListeners = () => {
 };
 
 onMounted(() => {
-  initObsListeners();
+  void initObsListeners();
 });
 
 watch(
   () => currentSettings.value?.obsEnable,
   (val) => {
     if (val) {
-      initObsListeners();
+      void initObsListeners();
     } else {
       removeObsListeners();
     }
@@ -244,7 +247,7 @@ watch(
 // this could ever see a close) can't retrigger it.
 watch(obsConnectionState, (newState) => {
   if (newState === 'disconnected' && currentSettings.value?.obsEnable) {
-    obsConnect();
+    void obsConnect();
   }
 });
 

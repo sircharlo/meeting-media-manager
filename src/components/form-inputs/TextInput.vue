@@ -14,6 +14,7 @@
       :class="settingId === 'localDateFormat' ? 'q-mb-xs' : ''"
       :clearable="settingId === 'localDateFormat' || settingId === 'baseUrl'"
       dense
+      :disable="disable"
       :error="customError"
       hide-bottom-space
       v-bind="{
@@ -115,9 +116,9 @@ const dateFormatTokens = [
 const dateFormatTokenGroups = computed(() => {
   const groups: Record<string, string[]> = {};
   for (const fmt of dateFormatTokens) {
-    const match = fmt.match(/[A-Za-z]/);
+    const match = /[A-Za-z]/.exec(fmt);
     const key = match ? match[0] : fmt;
-    if (!groups[key]) groups[key] = [];
+    groups[key] ??= [];
     groups[key].push(fmt);
   }
   return Object.entries(groups).map(([type, tokens]) => ({ tokens, type }));
@@ -136,7 +137,7 @@ const onClear = () => {
 };
 
 const addToModel = (value: string) => {
-  model.value = (model.value || '') + value;
+  model.value = (model.value ?? '') + value;
 };
 
 const customError = computed(
@@ -165,6 +166,7 @@ const customSuccess = computed(() => {
 
 const props = defineProps<{
   actions?: SettingsItemAction[];
+  disable?: boolean;
   label?: null | string;
   rules?: SettingsItemRule[];
   settingId?: keyof SettingsValues;

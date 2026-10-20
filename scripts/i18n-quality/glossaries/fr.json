@@ -14,13 +14,13 @@
     },
     {
       "termEn": "Kingdom Hall",
-      "official": "Salle du Royaume",
+      "official": "salle du Royaume",
       "sourceUrls": [
         "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/",
         "https://wol.jw.org/fr/wol/d/r30/lp-f/301995012"
       ],
       "confidence": "high",
-      "notes": "Official/media-facing Lexique gives the full form \"salle du Royaume des Témoins de Jéhovah\"; congregation-facing publications consistently shorten this to \"Salle du Royaume\"."
+      "notes": "Current official style is lowercase \"salle\" (Lexique: \"salle du Royaume des Témoins de Jéhovah\"); capitalize only at the start of a sentence, heading or label. Don't \"correct\" it to \"Salle du Royaume\"."
     },
     {
       "termEn": "circuit overseer",
@@ -34,13 +34,13 @@
     },
     {
       "termEn": "congregation",
-      "official": "congrégation",
+      "official": "assemblée",
       "sourceUrls": [
-        "https://wol.jw.org/fr/wol/d/r30/lp-f/201984244",
-        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/",
+        "https://wol.jw.org/fr/wol/d/r30/lp-f/1200276966"
       ],
       "confidence": "high",
-      "notes": "IMPORTANT false-friend risk: the official government/media Lexique defines \"congregation\" as \"assemblée locale\", not \"congrégation\" - and jw.org also uses bare \"assemblée\" to mean congregation in some official/formal text (e.g. an index heading renders \"Congregation Bible Study\" as \"étude biblique de l'assemblée\"). Everyday congregation-facing publications overwhelmingly use \"congrégation\" instead, which is almost certainly what the app should use, but a reviewer should not flag \"assemblée locale\" as wrong if encountered - and should double check any use of plain \"assemblée\" to make sure it isn't ambiguous with assembly/convention senses (see \"convention\"/\"assembly\" entries)."
+      "notes": "French JW usage for congregation is \"assemblée\" (Lexique: \"assemblée locale\"; the meeting part is \"Étude biblique de l'assemblée\"). The app uses \"assemblée\" and, where it helps disambiguate from conventions/assemblies, \"assemblée locale\" - both are correct, don't churn between them. Never use \"congrégation\" (a corrected earlier version of this entry wrongly recommended it)."
     },
     {
       "termEn": "elder",
@@ -98,10 +98,10 @@
     },
     {
       "termEn": "Congregation Bible Study",
-      "official": "étude biblique de la congrégation",
+      "official": "Étude biblique de l'assemblée",
       "sourceUrls": ["https://wol.jw.org/fr/wol/d/r30/lp-f/1200276966"],
-      "confidence": "medium",
-      "notes": "Not covered by the Lexique. A WOL index page for this exact meeting part is titled \"ÉTUDE BIBLIQUE DE L'ASSEMBLÉE\" (using \"assemblée\" in its congregation sense - see the \"congregation\" entry's false-friend note), with \"étude de livre de la congrégation\" listed as a formerly-used name. Search results paraphrasing current meeting-workbook text used \"étude biblique de la congrégation\", which is likely closer to what appears in the app, but this could not be independently verified verbatim from a fetched page - worth a spot check if precision matters."
+      "confidence": "high",
+      "notes": "Not covered by the Lexique. The WOL index page for this meeting part is titled \"ÉTUDE BIBLIQUE DE L'ASSEMBLÉE\", and the app's UI label (key cbs) is \"Étude biblique de l'assemblée\". Never \"de la congrégation\" (see the \"congregation\" entry)."
     },
     {
       "termEn": "midweek meeting",

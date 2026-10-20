@@ -109,7 +109,7 @@
                     <q-img
                       v-if="item.ResolvedPreviewPath"
                       size="md"
-                      :src="'file://' + item.ResolvedPreviewPath"
+                      :src="pathToFileURL(item.ResolvedPreviewPath)"
                     />
                     <q-icon
                       v-else
@@ -221,6 +221,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
 import { log, uuid } from 'src/shared/vanilla';
 import { getTempPath } from 'src/utils/fs';
+import { getJwPlaylistItemTrim } from 'src/utils/jw-playlist';
 import { isImage } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -475,7 +476,7 @@ const loadPlaylistItems = async () => {
 
         const verseNumbers = verseRows.map((v) => {
           // Matches e.g. "John 3:16" or "Genesis 1", captures the verse number
-          const match = v.Label.match(/^\S+ (?:\d+:)?(\d+)/);
+          const match = /^\S+ (?:\d+:)?(\d+)/.exec(v.Label);
           return match?.[1] ? Number.parseInt(match[1], 10) : 0;
         });
 
@@ -552,10 +553,10 @@ const getMediaIcon = (item: JwPlaylistItem) => {
 };
 
 const formatDuration = (item: JwPlaylistItem) => {
-  const durationTicks = item?.BaseDurationTicks || item?.DurationTicks || 0;
+  const { durationTicks } = getJwPlaylistItemTrim(item);
   if (!durationTicks) return '';
 
-  const seconds = Math.floor(durationTicks / 10000 / 1000);
+  const seconds = Math.floor(durationTicks / 10_000 / 1000);
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
 
@@ -585,22 +586,6 @@ function getItemLabelParts(i: number, item: JwPlaylistItem) {
   }
 
   return { prefix, rest };
-}
-
-function getTrimmedTimes(item: JwPlaylistItem) {
-  const durationTicks = item.BaseDurationTicks ?? item.DurationTicks ?? 0;
-
-  const StartTime =
-    item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
-      ? item.StartTrimOffsetTicks / 10000 / 1000
-      : null;
-
-  const EndTime =
-    item.EndTrimOffsetTicks && durationTicks >= item.EndTrimOffsetTicks
-      ? (durationTicks - item.EndTrimOffsetTicks) / 10000 / 1000
-      : null;
-
-  return { durationTicks, EndTime, StartTime };
 }
 
 async function processNonVideoItem(
@@ -681,7 +666,7 @@ async function processSingleItem(
   index: number,
   outputPath: string,
 ) {
-  const { durationTicks, EndTime, StartTime } = getTrimmedTimes(item);
+  const { durationTicks, EndTime, StartTime } = getJwPlaylistItemTrim(item);
   const itemLabel = getItemLabel(index, item);
   const isVideo = !item.OriginalFilename;
 
@@ -722,7 +707,7 @@ async function processVideoItem(
   durationTicks: number,
   sectionToUse?: MediaSectionIdentifier,
 ) {
-  const lang = getJwLangCode(item.MepsLanguage) || 'E';
+  const lang = getJwLangCode(item.MepsLanguage) ?? 'E';
 
   const mediaLookup: PublicationFetcher = {
     booknum: item.BookNumber,
@@ -741,7 +726,7 @@ async function processVideoItem(
   const customDuration =
     StartTime !== null || EndTime !== null
       ? {
-          max: EndTime ?? durationTicks / 10000 / 1000,
+          max: EndTime ?? durationTicks / 10_000 / 1000,
           min: StartTime ?? 0,
         }
       : undefined;
@@ -754,7 +739,7 @@ async function processVideoItem(
     mediaItemLinks: videoLinks,
     meetingDate: selectedDate.value,
     onlyCreateItem: true,
-    section: sectionToUse || props.section,
+    section: sectionToUse ?? props.section,
     song: false,
     thumbnailLookup: mediaLookup,
     thumbnailUrl: thumbnailPath ? pathToFileURL(thumbnailPath) : undefined,
@@ -785,7 +770,7 @@ const addSelectedItems = async () => {
 
     for (const [idx, item] of selectedPlaylistItems.entries()) {
       try {
-        const result = await processSingleItem(item, idx, outputPath);
+        const result = await processSingleItem(item, idx, outputPath); // NOSONAR: sequential - bulk import, avoid flooding network/disk
         if (result?.mappedItems?.length) {
           processedMediaItems.push(...result.mappedItems);
         }
@@ -840,7 +825,7 @@ watch(
   (newPath: string) => {
     log(`🎯 jwPlaylistPath changed to: ${newPath}`, 'jwPlaylist', 'info');
     if (newPath) {
-      loadPlaylistItems();
+      void loadPlaylistItems();
     }
   },
 );
@@ -856,7 +841,7 @@ watch(
     } else if (props.jwPlaylistPath) {
       // Load items when dialog opens if path is present
       // This handles the case where the same file is dropped twice
-      loadPlaylistItems();
+      void loadPlaylistItems();
     }
   },
 );

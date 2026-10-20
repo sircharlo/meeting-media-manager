@@ -96,7 +96,7 @@
                 >
                   <q-badge
                     class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
-                    style="padding: 5px !important"
+                    style="padding: 5px"
                   >
                     <q-icon class="q-mr-xs" color="white" name="mmm-play" />
                     {{ formatTime(video.duration) }}
@@ -263,6 +263,17 @@ const getJwVideos = async () => {
         online.value,
       );
     };
+    const getCategoryVideos = async (category: string) =>
+      await fetchJson<JwVideoCategory>(
+        `${urlVariables.value.mediator}/v1/categories/${
+          currentSettings.value?.lang
+        }/${category}`,
+        new URLSearchParams({
+          clientType: 'www',
+          detailed: '0',
+        }),
+        online.value,
+      );
     const subcategories: {
       key: string;
       parentCategory: string;
@@ -271,26 +282,16 @@ const getJwVideos = async () => {
     const subcategoriesFirstLevel =
       subcategoriesRequest?.category?.subcategories?.map((s) => s.key) || [];
     for (const subcategoryFirstLevel of subcategoriesFirstLevel) {
+      const subRequest = await getSubcategories(subcategoryFirstLevel); // NOSONAR: sequential - one JW.org lookup at a time
       subcategories.push(
-        ...((
-          await getSubcategories(subcategoryFirstLevel)
-        )?.category.subcategories.map((s) => {
+        ...(subRequest?.category.subcategories.map((s) => {
           return { key: s.key, parentCategory: subcategoryFirstLevel };
         }) || []),
       );
     }
     for (const category of subcategories) {
       if (!category?.key) continue;
-      const request = await fetchJson<JwVideoCategory>(
-        `${urlVariables.value.mediator}/v1/categories/${
-          currentSettings.value?.lang
-        }/${category.key}`,
-        new URLSearchParams({
-          clientType: 'www',
-          detailed: '0',
-        }),
-        online.value,
-      );
+      const request = await getCategoryVideos(category.key); // NOSONAR: sequential - one JW.org lookup at a time
       const newVideos = (request?.category?.media || []).filter(
         (video) => !remoteVideos.value.some((v) => v.guid === video.guid),
       );
@@ -312,7 +313,7 @@ const refreshVideos = async () => {
   await getJwVideos();
 };
 
-const addVideo = async (video: MediaItemsMediatorItem) => {
+const addVideo = (video: MediaItemsMediatorItem) => {
   // ✅ Always emit - parent handles section assignment
   emit('import', {
     mediaItemLinks: video.files,
@@ -328,7 +329,7 @@ watch(
   () => dialogValue.value,
   (isOpen) => {
     if (isOpen) {
-      getJwVideos();
+      void getJwVideos();
     } else {
       // Reset state when dialog closes
       resetDialogState();

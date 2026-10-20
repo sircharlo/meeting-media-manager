@@ -4,7 +4,7 @@ import { defaultSettings } from 'src/constants/settings';
 import { formatDate } from 'src/utils/date';
 import { registerCachePathProvider } from 'src/utils/fs';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { useCurrentStateStore } from '../current-state';
 
@@ -50,6 +50,25 @@ describe('getDatedAdditionalMediaDirectory', () => {
 
     expect(dir).toContain(formatDate(new Date('2026-07-19'), 'YYYYMMDD'));
     expect(dir).not.toContain(formatDate(new Date('2026-01-01'), 'YYYYMMDD'));
+  });
+});
+
+describe('addZoomHelperLog', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('prefixes each line with the local time, to the millisecond', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 9, 9, 7, 3, 12, 45));
+    const store = useCurrentStateStore();
+    store.zoomHelperLogs = [];
+
+    store.addZoomHelperLog('[Zoom Helper] Process started');
+
+    expect(store.zoomHelperLogs).toEqual([
+      '07:03:12.045 [Zoom Helper] Process started',
+    ]);
   });
 });
 

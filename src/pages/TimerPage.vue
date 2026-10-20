@@ -11,75 +11,151 @@
         :class="{
           blink: paused || (isOvertime && timerData?.timerOvertimeAnimation),
           'timer-display--combined': isCombinedDisplay,
+          'timer-display--labelled': !!displayLabel,
         }"
       >
+        <!-- What the number means: the pre-meeting countdown must never be
+             read as the time of day ("4:59" five minutes before a 5 PM
+             meeting), and the part being timed is useful to see. -->
         <div
-          v-if="showAnalogClock"
-          class="analog-clock"
-          :style="analogClockStyles"
+          v-if="displayLabel"
+          class="timer-display__label"
+          :style="labelStyles"
         >
-          <div
-            v-for="tick in clockTicks"
-            :key="tick"
-            class="analog-clock__tick"
-            :style="{ transform: `rotate(${tick * 30}deg)` }"
+          <q-icon
+            v-if="currentMode === 'countdown'"
+            class="timer-display__label-icon"
+            name="mmm-time"
           />
-          <div
-            class="analog-clock__hand analog-clock__hand--hour"
-            :style="{ transform: `rotate(${clockHands.hour}deg)` }"
-          />
-          <div
-            class="analog-clock__hand analog-clock__hand--minute"
-            :style="{ transform: `rotate(${clockHands.minute}deg)` }"
-          />
-          <div
-            class="analog-clock__hand analog-clock__hand--second"
-            :style="{ transform: `rotate(${clockHands.second}deg)` }"
-          />
-          <div class="analog-clock__center" />
+          {{ displayLabel }}
         </div>
 
-        <div
-          v-if="showAnalogCountdown"
-          class="analog-countdown"
-          :style="analogCountdownStyles"
-        >
-          <svg
-            aria-hidden="true"
-            class="analog-countdown__ring"
-            focusable="false"
-            viewBox="0 0 100 100"
+        <div class="timer-display__main">
+          <div
+            v-if="showAnalogClock"
+            class="analog-clock"
+            :style="analogClockStyles"
           >
-            <circle
-              class="analog-countdown__track"
-              cx="50"
-              cy="50"
-              fill="none"
-              r="44"
+            <svg
+              v-if="clockArc"
+              aria-hidden="true"
+              class="analog-clock__arc"
+              focusable="false"
+              viewBox="0 0 100 100"
+            >
+              <path
+                class="analog-clock__arc-remaining"
+                :d="clockArc.remainingPath"
+                :fill="clockArc.remainingColor"
+              />
+              <path
+                v-if="clockArc.overtimePath"
+                class="analog-clock__arc-overtime"
+                :d="clockArc.overtimePath"
+                :fill="clockArc.overtimeColor"
+              />
+            </svg>
+            <div
+              v-for="tick in clockTicks"
+              :key="tick"
+              class="analog-clock__tick"
+              :style="{ transform: `rotate(${tick * 30}deg)` }"
             />
-            <circle
-              class="analog-countdown__progress"
-              cx="50"
-              cy="50"
-              fill="none"
-              pathLength="100"
-              r="44"
+            <div
+              class="analog-clock__hand analog-clock__hand--hour"
+              :style="{ transform: `rotate(${clockHands.hour}deg)` }"
             />
-            <circle class="analog-countdown__dot" cx="94" cy="50" r="6" />
-          </svg>
-          <div class="analog-countdown__inner">
-            {{ displayTime }}
+            <div
+              class="analog-clock__hand analog-clock__hand--minute"
+              :style="{ transform: `rotate(${clockHands.minute}deg)` }"
+            />
+            <div
+              class="analog-clock__hand analog-clock__hand--second"
+              :style="{ transform: `rotate(${clockHands.second}deg)` }"
+            />
+            <div class="analog-clock__center" />
+            <div
+              v-if="clockArc"
+              class="analog-clock__inner-time"
+              :style="{ color: clockArc.textColor }"
+            >
+              {{ displayTime }}
+            </div>
+          </div>
+
+          <div
+            v-if="showAnalogCountdown"
+            class="analog-countdown"
+            :style="analogCountdownStyles"
+          >
+            <svg
+              aria-hidden="true"
+              class="analog-countdown__ring"
+              focusable="false"
+              viewBox="0 0 100 100"
+            >
+              <circle
+                class="analog-countdown__track"
+                cx="50"
+                cy="50"
+                fill="none"
+                r="44"
+              />
+              <circle
+                class="analog-countdown__progress"
+                cx="50"
+                cy="50"
+                fill="none"
+                pathLength="100"
+                r="44"
+              />
+              <circle class="analog-countdown__dot" cx="94" cy="50" r="6" />
+            </svg>
+            <div class="analog-countdown__inner">
+              {{ displayTime }}
+            </div>
+          </div>
+
+          <div
+            v-if="showDigitalDisplay"
+            class="digital-display"
+            :style="digitalTextStyles"
+          >
+            {{ digitalDisplayTime }}
           </div>
         </div>
-
-        <div
-          v-if="showDigitalDisplay"
-          class="digital-display"
-          :style="digitalTextStyles"
-        >
-          {{ digitalDisplayTime }}
-        </div>
       </div>
+    </transition>
+
+    <!-- Hand alert: someone on Zoom raised their hand (or the operator
+         switched it on), shown big enough to catch the chairman's eye.
+         An <output> is a status region by itself; its children are spans
+         (it only takes phrasing content), laid out as blocks by its flexbox. -->
+    <transition name="q-transition--scale">
+      <output
+        v-if="timerData?.handAlertActive"
+        aria-live="polite"
+        class="hand-alert"
+      >
+        <span class="hand-alert__hand">
+          <svg
+            aria-hidden="true"
+            class="hand-alert__icon"
+            focusable="false"
+            viewBox="0 0 64 64"
+          >
+            <path
+              d="M22 58c-5 0-9-3-11-7L4 36c-1-3 1-6 4-6s4 2 5 4l4 8V12c0-2 2-4 4-4s4 2 4 4v18h2V7c0-2 2-4 4-4s4 2 4 4v23h2V10c0-2 2-4 4-4s4 2 4 4v20h2V17c0-2 2-4 4-4s4 2 4 4v27c0 8-6 14-14 14H22z"
+            />
+          </svg>
+        </span>
+        <span
+          v-if="timerData?.handAlertNames?.length"
+          class="hand-alert__names"
+        >
+          {{ timerData.handAlertNames.join(' · ') }}
+        </span>
+      </output>
     </transition>
 
     <!-- Ahead/Behind overlay -->
@@ -97,6 +173,7 @@
 import type { TimerData } from 'src/types';
 
 import { useBroadcastChannel, useIntervalFn } from '@vueuse/core';
+import { formatAheadBehind } from 'src/composables/useTimerAheadBehindText';
 import { computed, type CSSProperties, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -109,26 +186,18 @@ const currentTime = ref<string>('');
 const meetingCountdownRemainingSeconds = ref<null | number>(null);
 const meetingCountdownTargetSeconds = ref<null | number>(null);
 const clockTicks = Array.from({ length: 12 }, (_, index) => index);
-const aheadBehindText = computed(() => {
-  const minutes = timerData.value?.aheadBehindMinutes;
-  if (minutes === null || minutes === undefined) return '';
-
-  const humanFriendlyMinutes = Math.round(Math.abs(minutes));
-  if (humanFriendlyMinutes < 1) {
-    return t('on-time');
-  } else {
-    const direction =
-      minutes > 0
-        ? t('minutes-behind', { humanFriendlyMinutes })
-        : t('minutes-ahead', { humanFriendlyMinutes });
-    return direction;
-  }
-});
 
 // Listen for timer updates from the dialog
 const { data: timerData } = useBroadcastChannel<TimerData, TimerData>({
   name: 'timer-display-data',
 });
+
+const aheadBehindText = computed(() =>
+  formatAheadBehind(
+    timerData.value?.aheadBehindMinutes,
+    t as (key: string, named?: Record<string, unknown>) => string,
+  ),
+);
 
 const currentMode = computed(() => {
   if (timerData.value?.running) return 'timer';
@@ -148,7 +217,11 @@ const currentDisplayFormat = computed(() => {
     return timerData.value?.timerCountdownDisplay ?? 'digital';
   }
 
-  return 'digital';
+  // Counting up: the arc on the clock face still shows the part's planned
+  // time, the other analog modes have nothing to count down from.
+  return timerData.value?.timerCountdownDisplay === 'analog-clock'
+    ? 'analog-clock'
+    : 'digital';
 });
 
 const displayKey = computed(
@@ -165,10 +238,17 @@ const isCombinedDisplay = computed(
   () => currentDisplayFormat.value === 'analog-digital',
 );
 
+const isClockArcDisplay = computed(
+  () =>
+    currentMode.value !== 'clock' &&
+    currentDisplayFormat.value === 'analog-clock',
+);
+
 const showAnalogClock = computed(
   () =>
-    currentMode.value === 'clock' &&
-    ['analog', 'analog-digital'].includes(currentDisplayFormat.value),
+    (currentMode.value === 'clock' &&
+      ['analog', 'analog-digital'].includes(currentDisplayFormat.value)) ||
+    isClockArcDisplay.value,
 );
 
 const showAnalogCountdown = computed(
@@ -187,9 +267,25 @@ const digitalDisplayTime = computed(() => {
   return currentMode.value === 'clock' ? currentTime.value : displayTime.value;
 });
 
+const displayLabel = computed(() => {
+  if (currentMode.value === 'countdown') return t('meeting-starts-in');
+  if (currentMode.value === 'timer') {
+    return timerData.value?.timerCurrentPartLabel ?? '';
+  }
+  return '';
+});
+
 // Check if timer is overtime
 const isOvertime = computed(() => {
   return timerData.value?.running && displayTime.value.startsWith('-');
+});
+
+const textColor = computed(() => {
+  const data = timerData.value;
+  const useOvertime = isOvertime.value && data?.timerOvertimeIndicator;
+  return useOvertime
+    ? data?.timerOvertimeTextColor || '#ffffff' // NOSONAR: '' means not set
+    : data?.timerTextColor || '#ffffff'; // NOSONAR: '' means not set
 });
 
 // Computed styles
@@ -201,11 +297,9 @@ const containerStyles = computed(() => {
     alignContent: 'center',
     alignItems: 'center',
     backgroundColor: useOvertime
-      ? data?.timerOvertimeBackgroundColor || '#000000'
-      : data?.timerBackgroundColor || '#000000',
-    color: useOvertime
-      ? data?.timerOvertimeTextColor || '#ffffff'
-      : data?.timerTextColor || '#ffffff',
+      ? data?.timerOvertimeBackgroundColor || '#000000' // NOSONAR: '' means not set
+      : data?.timerBackgroundColor || '#000000', // NOSONAR: '' means not set
+    color: textColor.value,
     display: 'flex',
     height: '100vh',
     justifyContent: 'center',
@@ -214,7 +308,7 @@ const containerStyles = computed(() => {
   };
 });
 
-const timerTextSize = computed(() => timerData.value?.timerTextSize || '10vw');
+const timerTextSize = computed(() => timerData.value?.timerTextSize || '10vw'); // NOSONAR: '' means not set
 
 const fittedDigitalFontSize = computed(() => {
   const characterCount = Math.max(digitalDisplayTime.value.length, 1);
@@ -234,6 +328,12 @@ const digitalTextStyles = computed(() => ({
   whiteSpace: 'nowrap',
 }));
 
+const labelStyles = computed<CSSProperties>(() => ({
+  color: textColor.value,
+  fontSize: `clamp(1rem, calc(${timerTextSize.value} / 4), 8vh)`,
+  opacity: 0.85,
+}));
+
 const clockHands = computed(() => {
   const date = currentDate.value;
   const seconds = date.getSeconds();
@@ -248,16 +348,15 @@ const clockHands = computed(() => {
 });
 
 const analogClockStyles = computed<CSSProperties>(() => ({
-  '--clock-color': timerData.value?.timerTextColor || '#ffffff',
+  '--clock-color': timerData.value?.timerTextColor || '#ffffff', // NOSONAR: '' means not set
 }));
 
 const countdownProgress = computed(() => {
   if (isOvertime.value) return 1;
 
   const totalSeconds =
-    timerData.value?.timerCountdownTargetSeconds ||
-    meetingCountdownTargetSeconds.value ||
-    0;
+    timerData.value?.timerCountdownTargetSeconds || // NOSONAR: 0 means no countdown target
+    (meetingCountdownTargetSeconds.value ?? 0);
   const remainingSeconds =
     currentMode.value === 'timer'
       ? Math.max(0, totalSeconds - (timerData.value?.timerElapsedSeconds ?? 0))
@@ -268,26 +367,40 @@ const countdownProgress = computed(() => {
   return Math.max(0, Math.min(1, remainingSeconds / totalSeconds));
 });
 
-const countdownRemainingSeconds = computed(() => {
-  const totalSeconds =
-    timerData.value?.timerCountdownTargetSeconds ||
-    meetingCountdownTargetSeconds.value ||
-    0;
+// How long the part being timed should take. Counting up, the countdown
+// target is 0, so the part's planned length is what the clock-face arc and
+// its last-minute warning count towards.
+const partTargetSeconds = computed(
+  () =>
+    timerData.value?.timerCountdownTargetSeconds || // NOSONAR: 0 means no countdown target
+    timerData.value?.timerPartTargetSeconds || // NOSONAR: 0 means no planned length
+    0,
+);
 
+const countdownRemainingSeconds = computed(() => {
   if (currentMode.value === 'timer') {
+    const totalSeconds =
+      partTargetSeconds.value || (meetingCountdownTargetSeconds.value ?? 0); // NOSONAR: 0 means no part target
     return totalSeconds - (timerData.value?.timerElapsedSeconds ?? 0);
   }
 
-  return meetingCountdownRemainingSeconds.value ?? totalSeconds;
+  return (
+    meetingCountdownRemainingSeconds.value ??
+    (timerData.value?.timerCountdownTargetSeconds || // NOSONAR: 0 means no countdown target
+      (meetingCountdownTargetSeconds.value ?? 0))
+  );
 });
+
+const GREEN = { b: 89, g: 199, r: 53 };
+const ORANGE = { b: 10, g: 149, r: 255 };
 
 const countdownRingColor = computed(() => {
   if (isOvertime.value) {
-    return timerData.value?.timerOvertimeTextColor || '#ff0000';
+    return timerData.value?.timerOvertimeTextColor || '#ff0000'; // NOSONAR: '' means not set
   }
 
   if (!timerData.value?.timerCountdownWarningIndicator) {
-    return '#35c759';
+    return `rgb(${GREEN.r}, ${GREEN.g}, ${GREEN.b})`;
   }
 
   const warningProgress = Math.max(
@@ -295,34 +408,99 @@ const countdownRingColor = computed(() => {
     Math.min(1, (60 - countdownRemainingSeconds.value) / 60),
   );
 
-  const startColor = { b: 89, g: 199, r: 53 };
-  const endColor = { b: 10, g: 149, r: 255 };
   const channel = (start: number, end: number) =>
     Math.round(start + (end - start) * warningProgress);
 
-  return `rgb(${channel(startColor.r, endColor.r)}, ${channel(startColor.g, endColor.g)}, ${channel(startColor.b, endColor.b)})`;
+  return `rgb(${channel(GREEN.r, ORANGE.r)}, ${channel(GREEN.g, ORANGE.g)}, ${channel(GREEN.b, ORANGE.b)})`;
 });
 
 const analogCountdownStyles = computed<CSSProperties>(() => {
   const isFull = countdownProgress.value >= 1;
   const progressPercent = countdownProgress.value * 100;
-  const textColor =
+  const countdownTextColor =
     isOvertime.value && timerData.value?.timerOvertimeIndicator
-      ? timerData.value?.timerOvertimeTextColor || '#ff0000'
-      : timerData.value?.timerTextColor || '#ffffff';
+      ? timerData.value?.timerOvertimeTextColor || '#ff0000' // NOSONAR: '' means not set
+      : timerData.value?.timerTextColor || '#ffffff'; // NOSONAR: '' means not set
 
   return {
     '--countdown-progress': isFull ? '100 0' : `${progressPercent} 100`,
     '--countdown-progress-color': countdownRingColor.value,
     '--countdown-progress-linecap': isFull ? 'butt' : 'round',
-    '--countdown-text-color': textColor,
+    '--countdown-text-color': countdownTextColor,
+  };
+});
+
+// --- The arc on the clock face ---------------------------------------------------
+//
+// Like a classroom timer: the minutes the part has left are a wedge on the
+// clock face, from the minute hand to the planned end, so a glance at the
+// clock shows both the time and what's left. Overtime shows as a second
+// wedge, from the planned end to the minute hand.
+
+const ARC_RADIUS = 46;
+const CENTER = 50;
+
+const polar = (angleDegrees: number) => {
+  const radians = ((angleDegrees - 90) * Math.PI) / 180;
+  return {
+    x: CENTER + ARC_RADIUS * Math.cos(radians),
+    y: CENTER + ARC_RADIUS * Math.sin(radians),
+  };
+};
+
+/** An SVG wedge from one clock angle to another, clockwise (degrees). */
+const wedgePath = (fromDegrees: number, toDegrees: number) => {
+  let sweep = toDegrees - fromDegrees;
+  if (sweep <= 0) return '';
+  // A full turn can't be drawn as one arc: stop a hair short.
+  sweep = Math.min(sweep, 359.99);
+  const start = polar(fromDegrees);
+  const end = polar(fromDegrees + sweep);
+  const largeArc = sweep > 180 ? 1 : 0;
+  return `M ${CENTER} ${CENTER} L ${start.x} ${start.y} A ${ARC_RADIUS} ${ARC_RADIUS} 0 ${largeArc} 1 ${end.x} ${end.y} Z`;
+};
+
+const clockArc = computed(() => {
+  if (!isClockArcDisplay.value) return null;
+
+  const now = currentDate.value.getTime();
+  let targetSeconds: number;
+  let endTime: number;
+  if (currentMode.value === 'timer') {
+    const elapsed = timerData.value?.timerElapsedSeconds ?? 0;
+    targetSeconds = partTargetSeconds.value;
+    endTime = now - elapsed * 1000 + targetSeconds * 1000;
+  } else {
+    targetSeconds = meetingCountdownTargetSeconds.value ?? 0;
+    endTime = now + (meetingCountdownRemainingSeconds.value ?? 0) * 1000;
+  }
+  if (targetSeconds <= 0) return null;
+
+  const nowAngle = clockHands.value.minute;
+  const remainingMs = endTime - now;
+  // One hour fills the face; longer parts show their final hour.
+  const remainingDegrees =
+    Math.min(60 * 60 * 1000, Math.max(0, remainingMs)) / 10_000;
+  const overtimeDegrees =
+    Math.min(60 * 60 * 1000, Math.max(0, -remainingMs)) / 10_000;
+
+  const remainingPath = wedgePath(nowAngle, nowAngle + remainingDegrees);
+  const overtimePath = wedgePath(nowAngle - overtimeDegrees, nowAngle);
+
+  const overtimeColor = timerData.value?.timerOvertimeTextColor || '#ff453a'; // NOSONAR: '' means not set
+  return {
+    overtimeColor,
+    overtimePath,
+    remainingColor: countdownRingColor.value,
+    remainingPath,
+    textColor: isOvertime.value ? overtimeColor : textColor.value,
   };
 });
 
 const overlayStyles = computed<CSSProperties>(() => ({
   backgroundColor: 'rgba(0, 0, 0, 0.7)',
   borderRadius: '8px',
-  color: timerData.value?.timerTextColor || '#ffffff',
+  color: timerData.value?.timerTextColor || '#ffffff', // NOSONAR: '' means not set
   fontSize: '24px',
   fontWeight: 'bold',
   left: '20px',
@@ -332,14 +510,20 @@ const overlayStyles = computed<CSSProperties>(() => ({
   top: '20px',
 }));
 
-// Format time (HH:mm:ss, 24h by default)
-const formatTime = (date: Date) =>
-  date.toLocaleTimeString('en-US', {
+// Format the time of day in the main window's language (24h by default)
+const formatTime = (date: Date) => {
+  const options: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
     hour12: timerData.value?.timerHourFormat === '12h',
     minute: '2-digit',
     second: '2-digit',
-  });
+  };
+  try {
+    return date.toLocaleTimeString(timerData.value?.locale || [], options); // NOSONAR: '' means not set
+  } catch {
+    return date.toLocaleTimeString([], options);
+  }
+};
 
 // Update current time every second
 const updateTime = () => {
@@ -380,7 +564,7 @@ const getMeetingCountdown = (
   if (!countdownMinutes || !startTime) return null;
 
   const meetingTime = parseTime(startTime, now);
-  const minutesUntil = (meetingTime.getTime() - now.getTime()) / 60000;
+  const minutesUntil = (meetingTime.getTime() - now.getTime()) / 60_000;
 
   if (minutesUntil <= 0 || minutesUntil > countdownMinutes) return null;
 
@@ -464,11 +648,26 @@ watch(timerData, (newData) => {
     paused.value = newData.paused;
     meetingCountdownRemainingSeconds.value = null;
     meetingCountdownTargetSeconds.value = null;
-    pauseClock(); // Stop the fallback local clock interval to prevent flashing
+    // The clock face with the arc keeps its hands moving; the other
+    // displays stop the local clock to prevent flashing.
+    if (isClockArcDisplay.value) {
+      currentDate.value = new Date();
+      resumeClock();
+    } else {
+      pauseClock();
+    }
   } else {
     paused.value = false;
     updateTime();
     resumeClock(); // Ensure local clock runs when no timer is active
+  }
+});
+
+// Part timer data arrives every half second; the clock hands only need the
+// local tick when the arc display is up (no countdown string to overwrite).
+watch(isClockArcDisplay, (showing) => {
+  if (showing && timerData.value?.running) {
+    resumeClock();
   }
 });
 </script>
@@ -478,6 +677,58 @@ watch(timerData, (newData) => {
   animation: gentle-blink 2s infinite;
 }
 
+.hand-alert {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  inset: 0;
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
+  z-index: 20;
+}
+
+.hand-alert__hand {
+  animation: hand-alert-pulse 1.2s ease-in-out infinite;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 50%;
+  display: flex;
+  padding: 4vh;
+}
+
+.hand-alert__icon {
+  fill: #ffd60a;
+  filter: drop-shadow(0 0 1.5vh rgba(0, 0, 0, 0.6));
+  height: min(50vh, 50vw);
+  width: min(50vh, 50vw);
+}
+
+.hand-alert__names {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 999px;
+  color: #ffd60a;
+  font-size: clamp(1rem, 4vh, 3rem);
+  font-weight: bold;
+  max-width: 90vw;
+  overflow: hidden;
+  padding: 0.3em 1em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes hand-alert-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(0.94);
+  }
+}
+
 .ahead-behind-overlay {
   z-index: 10;
 }
@@ -485,12 +736,37 @@ watch(timerData, (newData) => {
 .timer-display {
   align-items: center;
   display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 2vh, 24px);
+  justify-content: center;
+}
+
+.timer-display__main {
+  align-items: center;
+  display: flex;
   gap: clamp(24px, 5vw, 80px);
   justify-content: center;
 }
 
-.timer-display--combined {
+.timer-display--combined .timer-display__main {
   flex-wrap: wrap;
+}
+
+.timer-display__label {
+  align-items: center;
+  display: flex;
+  font-weight: 600;
+  gap: 0.4em;
+  letter-spacing: 0.04em;
+  max-width: 94vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.timer-display__label-icon {
+  font-size: 1.1em;
 }
 
 .digital-display {
@@ -506,6 +782,28 @@ watch(timerData, (newData) => {
   position: relative;
 }
 
+.timer-display--labelled .analog-clock,
+.timer-display--labelled .analog-countdown {
+  height: min(56vh, 62vw);
+}
+
+.analog-clock__arc {
+  height: 100%;
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+}
+
+.analog-clock__arc-remaining {
+  opacity: 0.55;
+  transition: fill 700ms ease;
+}
+
+.analog-clock__arc-overtime {
+  opacity: 0.6;
+}
+
 .analog-clock__center {
   background: var(--clock-color);
   border-radius: 50%;
@@ -514,6 +812,7 @@ watch(timerData, (newData) => {
   position: absolute;
   top: 48%;
   width: 4%;
+  z-index: 2;
 }
 
 .analog-clock__hand {
@@ -524,6 +823,7 @@ watch(timerData, (newData) => {
   position: absolute;
   transform-origin: 50% 100%;
   width: 2%;
+  z-index: 2;
 }
 
 .analog-clock__hand--hour {
@@ -549,6 +849,23 @@ watch(timerData, (newData) => {
   top: 3%;
   transform-origin: 50% 590%;
   width: 2%;
+  z-index: 1;
+}
+
+.analog-clock__inner-time {
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 999px;
+  bottom: 14%;
+  font-size: clamp(1rem, 3.5vw, 3.5rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: bold;
+  left: 50%;
+  line-height: 1;
+  padding: 0.25em 0.6em;
+  position: absolute;
+  transform: translateX(-50%);
+  transition: color 700ms ease;
+  z-index: 3;
 }
 
 .analog-countdown {

@@ -350,11 +350,11 @@ Idioma de los subtítulos (puede ser distinto del idioma de los archivos multime
 
 ### Administración de caché {#cache-management}
 
-#### Activar caché adicional {#enable-extra-cache}
+#### Guardar en caché los videos del cancionero {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Activa almacenamiento adicional en caché para mejorar el rendimiento.
+Guarda en caché todos los videos del cancionero con anticipación para mejorar el rendimiento. Ten en cuenta que esto aumenta el tamaño de la caché multimedia.
 
 **Predeterminado**: `false`
 
@@ -418,23 +418,43 @@ Convierte los archivos multimedia exportados al formato MP4 para mejorar la comp
 
 **Predeterminado**: `false`
 
-### Supervisión de carpetas {#settings-guide-folder-monitoring}
+### Carpeta compartida (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-#### Activar supervisión de carpetas {#enable-folder-watcher}
+Estos ajustes están en la categoría **Integraciones**.
+
+M³ puede añadir archivos multimedia a tus reuniones desde una carpeta sincronizada con una aplicación de almacenamiento en la nube, como Dropbox, OneDrive, iCloud Drive o Google Drive. Esto resulta útil cuando otros preparan archivos multimedia para sus partes y los comparten contigo, o cuando M³ se usa en más de una computadora. Una carpeta en esta computadora o en tu red también sirve.
+
+M³ crea una carpeta dentro de la carpeta compartida para cada próxima reunión, nombrada con la fecha de la reunión escrita como año-mes-día (por ejemplo, `2026-03-25`). Pon fotos, videos, archivos de audio o listas de reproducción de JW Library en la carpeta de una reunión y se añadirán automáticamente a la lista de multimedia de esa reunión. Para añadir archivos para otro día, crea una carpeta para ese día, nombrada de la misma manera. Todo lo demás en la carpeta compartida se ignorará.
+
+:::tip Consejo
+
+Crea una carpeta nueva dedicada solo a esto, como "Multimedia de las reuniones", y configúrala para que permanezca siempre en esta computadora en tu aplicación de almacenamiento en la nube (suele llamarse "disponible sin conexión"), de modo que los archivos estén listos antes de que comience la reunión.
+
+:::
+
+#### Añadir archivos multimedia desde una carpeta compartida {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Supervisa una carpeta en busca de nuevos archivos multimedia y los añade automáticamente a M³.
+Añade automáticamente los archivos que se pongan en la carpeta compartida a la reunión correspondiente.
 
 **Predeterminado**: `false`
 
-#### Carpeta que se supervisará {#folder-to-watch}
+#### Carpeta compartida {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-La ruta de la carpeta que se supervisará en busca de nuevos archivos multimedia.
+La carpeta desde la que se añadirán los archivos multimedia. El asistente de configuración se ofrece a configurarla por ti.
 
 **Predeterminado**: Vacío
+
+#### Eliminar carpetas de reuniones pasadas {#delete-past-watched-folders}
+
+<!-- **Setting**: `deletePastWatchedFolders` -->
+
+Cuando termina una semana, elimina las carpetas fechadas de esa semana, junto con los archivos que contienen, para mantener ordenada la carpeta compartida. Como la carpeta es compartida, también se eliminan para todos los demás que la usan. Desactiva esto para conservarlos.
+
+**Predeterminado**: `true`
 
 ## Cronómetro de la reunión {#meeting-timer}
 
@@ -452,11 +472,32 @@ Activa una ventana independiente del cronómetro para controlar el tiempo de las
 
 Configura si la ventana del cronómetro se abre automáticamente, si los cronómetros de los participantes cuentan de forma progresiva o regresiva de manera predeterminada, si el reloj usa el formato de 12 o 24 horas y si el valor actual del cronómetro se muestra en el botón del cronómetro de la isla de acciones.
 
+### Acceso rápido al cronómetro {#timer-quick-access}
+
+<!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
+
+Elige cómo acceder al cronómetro desde la ventana principal:
+
+- **Controles rápidos al pasar el ratón sobre el botón del cronómetro**: al pasar el ratón sobre el botón del cronómetro en la isla de acciones, se muestra la parte que se está cronometrando, con botones para Iniciar, Pausar, Detener y Siguiente parte, sin abrir la ventana emergente completa del cronómetro. Activado por defecto.
+- **Mostrar un panel del cronómetro en la ventana principal**: mantiene la lista completa de partes de la reunión y los controles del cronómetro en un panel anclado a la derecha de la ventana principal, siempre a la vista. La ventana emergente completa sigue estando disponible desde la isla de acciones para los ajustes de ventana y de pantalla.
+
+### Control remoto del cronómetro {#timer-remote}
+
+<!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
+
+Al activarse, M³ sirve una copia de solo lectura de la pantalla del cronómetro como página web en tu red local para una tableta o un teléfono en el atril: el discursante ve el tiempo restante sin que aparezca en la pantalla de la congregación ni en la transmisión de Zoom. La página sigue el cronómetro en tiempo real, incluyendo la cuenta regresiva previa a la reunión, el reloj, los colores de tiempo extra y el aviso de mano levantada, y todos los controles se quedan en M³.
+
+Las direcciones para abrir en el dispositivo se enumeran en la ventana emergente del cronómetro, con un botón para copiar. Cambia el puerto solo si otro programa ya lo está usando. Ten en cuenta que cualquiera en la misma red puede abrir la página mientras esté activada; no muestra nada más que el cronómetro.
+
+**Por defecto**: `false`, puerto `8787`
+
 ### Formatos de visualización del cronómetro {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Elige formatos de visualización analógicos o digitales para la hora y los cronómetros de cuenta regresiva. El indicador de advertencia de la cuenta regresiva puede cambiar el anillo analógico de cuenta regresiva hacia un color de advertencia durante el último minuto.
+
+El formato de cuenta regresiva **Reloj analógico con arco de tiempo** muestra el tiempo restante de una parte como un sector en la esfera de un reloj analógico, desde el minutero hasta el final previsto; así, con una sola mirada, ves tanto la hora como lo que queda. El tiempo extra se muestra como un segundo sector con el color de tiempo extra. También se aplica a la cuenta regresiva antes de la reunión y sirve en modo de conteo progresivo.
 
 ### Cuenta regresiva de la reunión y estado del programa {#meeting-countdown-and-schedule-status}
 
@@ -471,6 +512,8 @@ Muestra una cuenta regresiva antes de las reuniones programadas y, si quieres, i
 Personaliza el tamaño y los colores del texto del cronómetro, y configura indicadores de tiempo excedido, como colores alternativos, parpadeo y mostrar solo el tiempo excedido en modo de cuenta progresiva.
 
 ## Integraciones {#integrations}
+
+Esta categoría también contiene los ajustes de la [carpeta compartida](#settings-guide-folder-monitoring), para añadir archivos multimedia desde Dropbox, OneDrive, iCloud Drive o Google Drive.
 
 ### Integración con Zoom {#settings-guide-zoom-integration}
 
@@ -495,6 +538,30 @@ Atajo de teclado para activar la pantalla compartida de Zoom.
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
 Enfoca automáticamente la ventana de archivos multimedia después de iniciar la pantalla compartida de Zoom. Normalmente esto no hace falta, pero puede ayudar en algunos sistemas si la ventana de archivos multimedia pierde el foco con frecuencia después de empezar a compartir pantalla.
+
+**Predeterminado**: `false`
+
+### Zoom Meeting Manager {#zoom-meeting-manager}
+
+Zoom Meeting Manager (beta, solo Windows) maneja por ti la aplicación de escritorio de Zoom alrededor de cada reunión. Su asistente de configuración, ofrecido al activarlo, te guía por cada automatización.
+
+#### Mientras M³ controla Zoom {#zoom-meeting-manager-overlay}
+
+<!-- **Setting**: `zoomCancelAutomationShortcut` -->
+
+Zoom no ofrece una interfaz de automatización adecuada, por lo que M³ controla la aplicación de Zoom mediante su interfaz de accesibilidad, la cual funciona sin el ratón para casi todo (la lista de participantes, sus menús, la ventana de compartir). Aun así, algunas acciones pueden requerir mover el ratón o la ventana activa por un instante, por ejemplo, para recuperar la barra de herramientas autooculta de Zoom. Siempre que ocurre eso, M³ cubre su propia ventana con un aviso que dice "M³ está controlando Zoom", indicando lo que está sucediendo y con un botón **Cancelar esta automatización**. El mismo aviso se muestra durante las comprobaciones del asistente de configuración y la autoprueba. Un atajo de teclado global (por defecto `Ctrl+Alt+Escape`), activo solo mientras se ejecuta una automatización, la cancela desde cualquier lugar, incluso mientras Zoom esté en primer plano. Cancelar detiene M³ de inmediato; Zoom podría quedar a medias, así que revísalo.
+
+**Por defecto**: `Ctrl+Alt+Escape`
+
+#### Ayudante para manos levantadas {#zoom-meeting-manager-hand-alert}
+
+<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+
+Durante la reunión, M³ revisa la lista de participantes de Zoom en busca de manos levantadas. Cuando alguien levanta la mano, una notificación en M³ te permite **activar el micrófono** de ese participante con un clic y, una vez que termine de hablar, **volver a silenciarlo y bajarle la mano** con otro clic. El botón de Zoom en la isla de acciones muestra las manos levantadas con los mismos botones. Cada acción se dirige a la fila propia de ese participante en Zoom por su nombre exacto; si dos participantes comparten el mismo nombre, M³ no toca a ninguno.
+
+Si el [cronómetro de la reunión](#meeting-timer) está activado, también aparece una mano grande con el nombre del participante en la pantalla del cronómetro para el presidente, y el botón **Aviso de mano levantada** en las ventanas emergentes del cronómetro y de Zoom permite mostrarla manualmente. Esta función requiere la pantalla del cronómetro; las notificaciones y los botones funcionan sin ella.
+
+Zoom marca las manos levantadas en su propio idioma, así que M³ necesita primero aprender cómo: con la reunión abierta en Zoom, haz clic en **Aprender cómo marca Zoom las manos levantadas**. M³ levanta tu propia mano, lee cómo la marca Zoom en la lista de participantes y qué opción del menú la baja, y luego vuelve a bajarla. El asistente de configuración también ofrece este paso.
 
 **Predeterminado**: `false`
 
@@ -542,7 +609,7 @@ Configura qué escenas de OBS se usarán para distintos fines:
 
 #### Opciones avanzadas de OBS {#obs-advanced-options}
 
-- **Posponer imágenes**: Retrasa el envío de imágenes a OBS hasta que se active manualmente
+- **No compartir imágenes automáticamente**: Retrasa compartir imágenes en OBS hasta activarlas manualmente
 - **Activación rápida**: Activa un control rápido para activar o desactivar la integración con OBS
 - **Cambiar escena después de los archivos multimedia**: Vuelve automáticamente a la escena anterior después de reproducir archivos multimedia
 - **Recordar escena anterior**: Recuerda y restaura la escena anterior
@@ -733,20 +800,20 @@ Desactiva por completo las descargas automáticas de archivos multimedia. Usa es
 ### Para usuarios nuevos {#new-users}
 
 1. Empieza con el asistente de configuración para configurar las opciones básicas
-2. Activa "Presentación de archivos multimedia" para acceder a las funciones de presentación
+2. Activa "Habilitar reproducción de multimedia" para acceder a las funciones de presentación
 3. Configura correctamente tu programa de reuniones
 4. Configura la integración con OBS si tienes reuniones híbridas
 
 ### Para usuarios avanzados {#advanced-users}
 
-1. Usa la supervisión de carpetas para sincronizar archivos multimedia desde almacenamiento en la nube
+1. Usa una carpeta compartida para añadir archivos multimedia desde un almacenamiento en la nube, como Dropbox o OneDrive
 2. Activa la exportación automática de archivos multimedia para tener copias de seguridad
 3. Configura atajos de teclado para trabajar con eficiencia
 4. Configura la integración con Zoom para compartir pantalla automáticamente
 
 ### Optimización del rendimiento {#performance-optimization}
 
-1. Activa la caché adicional para mejorar el rendimiento
+1. Guarda en caché los archivos de video del cancionero para un mejor rendimiento
 2. Usa una resolución máxima adecuada para tus necesidades
 3. Configura el borrado automático de caché para administrar el espacio en disco
 4. Considera usar la opción de conexión de uso medido si tienes un ancho de banda limitado

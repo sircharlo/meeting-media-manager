@@ -567,7 +567,7 @@ const additionalMediaForDayExists = (lookupDate: string) => {
         return (
           total +
           (sectionMedia.items?.filter((media) => media.source !== 'dynamic')
-            .length || 0)
+            .length ?? 0)
         );
       },
       0,
@@ -765,7 +765,7 @@ const mediaSortCanBeReset = computed<boolean>(() => {
             child.originalSection !== section.config.uniqueId,
         );
 
-        return itemHasSectionChange || childHasSectionChange;
+        return itemHasSectionChange || childHasSectionChange; // NOSONAR: false falls back too
       }),
     ) ?? false;
 
@@ -995,15 +995,14 @@ const openJwPlaylistPicker = (
   playlistPath?: string,
 ) => {
   if (newSection) section.value = newSection;
-  jwPlaylistPath.value = playlistPath || '';
+  jwPlaylistPath.value = playlistPath ?? '';
   showJwPlaylist.value = true;
 };
 
 const canEditCustomSections = computed(() => {
   return !!(
     !selectedDayMeetingType.value &&
-    selectedDateObject.value?.mediaSections &&
-    selectedDateObject.value.mediaSections.some(
+    selectedDateObject.value?.mediaSections?.some(
       (section) => !!section.items?.length,
     )
   );
@@ -1016,7 +1015,7 @@ const handleImport = async (
   pendingImport.value = { data, type } as PendingImport;
   if (
     !section.value &&
-    (selectedDateObject.value?.mediaSections?.length || 0) > 1 &&
+    (selectedDateObject.value?.mediaSections?.length ?? 0) > 1 &&
     (!isWeMeetingDay(selectedDateObject.value?.date) ||
       isCoWeek(selectedDateObject.value?.date))
   ) {
@@ -1031,11 +1030,9 @@ const handleImport = async (
     ) {
       targetSection = 'pt';
     }
-    if (!targetSection) {
-      targetSection =
-        selectedDateObject.value?.mediaSections?.[0]?.config.uniqueId ||
-        'imported-media';
-    }
+    targetSection ??=
+      selectedDateObject.value?.mediaSections?.[0]?.config.uniqueId ??
+      'imported-media';
     await processPendingImport(targetSection);
     pendingImport.value = null;
   }
@@ -1231,8 +1228,8 @@ const importStudyBibleMedia = async (
 
   for (const mediaItem of importItem.data.items) {
     const item = mediaItem.MimeType.includes('image')
-      ? await createStudyBibleImageItem(mediaItem)
-      : await createStudyBibleVideoItem(mediaItem, targetSection);
+      ? await createStudyBibleImageItem(mediaItem) // NOSONAR: sequential - bulk import, avoid flooding network/disk
+      : await createStudyBibleVideoItem(mediaItem, targetSection); // NOSONAR: sequential - bulk import, avoid flooding network/disk
 
     if (item) mediaItemsToAdd.push(item);
   }
@@ -1259,7 +1256,7 @@ const createStudyBibleVideoItem = async (
   >['data']['items'][number],
   targetSection: MediaSectionIdentifier,
 ) => {
-  const lang = currentSettings.value?.lang || 'E';
+  const lang = currentSettings.value?.lang || 'E'; // NOSONAR: '' means not set
   const mediaLookup: PublicationFetcher = {
     booknum: mediaItem.BookNumber,
     docid: mediaItem.DocumentId || mediaItem.MepsDocumentId,
@@ -1267,7 +1264,7 @@ const createStudyBibleVideoItem = async (
     issue: mediaItem.IssueTagNumber,
     langwritten: lang,
     pub: mediaItem.KeySymbol,
-    track: mediaItem.Track || undefined,
+    track: mediaItem.Track || undefined, // NOSONAR: 0 means not set
   };
   const mediaItemFiles = await getPubMediaLinks(mediaLookup);
   const { thumbnail, title } = await getJwMediaInfo(mediaLookup);

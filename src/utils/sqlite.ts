@@ -255,48 +255,61 @@ export interface MepsLanguageByMediaItem {
   Track: null | number;
 }
 
+const MEPS_LANGUAGE_TABLES = [
+  'Multimedia',
+  'DocumentMultimedia',
+  'ExtractMultimedia',
+] as const;
+
+const getTableMepsLanguages = async (
+  source: MultimediaItemsFetcher,
+  db: string,
+  table: (typeof MEPS_LANGUAGE_TABLES)[number],
+): Promise<MepsLanguageByMediaItem[]> => {
+  try {
+    const thisTableExists = await tableExists(db, table);
+    if (!thisTableExists) return [];
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: { name: 'getMepsLanguagesByMediaItem', source, table },
+      },
+    });
+    return [];
+  }
+  const columnQueryResult = await executeQuery<{ name: string }>(
+    db,
+    `PRAGMA table_info(${table})`,
+  );
+
+  const columnMLIExists = columnQueryResult.some(
+    (column) => column.name === 'MepsLanguageIndex',
+  );
+  const columnKSExists = columnQueryResult.some(
+    (column) => column.name === 'KeySymbol',
+  );
+  if (!columnKSExists || !columnMLIExists) return [];
+
+  return executeQuery<MepsLanguageByMediaItem>(
+    db,
+    `SELECT DISTINCT IssueTagNumber, KeySymbol, MepsLanguageIndex, Track from ${table} ORDER by KeySymbol, IssueTagNumber, Track`,
+  );
+};
+
 export const getMepsLanguagesByMediaItem = async (
   source: MultimediaItemsFetcher,
 ): Promise<MepsLanguageByMediaItem[]> => {
   try {
-    if (!source.db) return [];
-    const mepsLanguagesByMediaItem: MepsLanguageByMediaItem[] = [];
-    for (const table of [
-      'Multimedia',
-      'DocumentMultimedia',
-      'ExtractMultimedia',
-    ]) {
-      try {
-        const thisTableExists = await tableExists(source.db, table);
-        if (!thisTableExists) continue;
-      } catch (error) {
-        errorCatcher(error, {
-          contexts: {
-            fn: { name: 'getMepsLanguagesByMediaItem', source, table },
-          },
-        });
-        continue;
-      }
-      const columnQueryResult = await executeQuery<{ name: string }>(
-        source.db,
-        `PRAGMA table_info(${table})`,
-      );
-
-      const columnMLIExists = columnQueryResult.some(
-        (column) => column.name === 'MepsLanguageIndex',
-      );
-      const columnKSExists = columnQueryResult.some(
-        (column) => column.name === 'KeySymbol',
-      );
-
-      if (columnKSExists && columnMLIExists)
-        mepsLanguagesByMediaItem.push(
-          ...(await executeQuery<MepsLanguageByMediaItem>(
-            source.db,
-            `SELECT DISTINCT IssueTagNumber, KeySymbol, MepsLanguageIndex, Track from ${table} ORDER by KeySymbol, IssueTagNumber, Track`,
-          )),
-        );
-    }
+    const { db } = source;
+    if (!db) return [];
+    // Read-only lookups against independent tables; results are kept in
+    // table order.
+    const mepsLanguagesByTable = await Promise.all(
+      MEPS_LANGUAGE_TABLES.map((table) =>
+        getTableMepsLanguages(source, db, table),
+      ),
+    );
+    const mepsLanguagesByMediaItem = mepsLanguagesByTable.flat();
 
     const filterSjjm = (items: typeof mepsLanguagesByMediaItem) => {
       // Build a set of sjj keys (IssueTagNumber + Track)
@@ -423,6 +436,63 @@ const getDbMetadata = async (db: string) => {
   };
 };
 
+/**
+ * The WHERE clause (and its parameters) of buildDocumentMultimediaQuery:
+ * the document, the kinds of media to keep, and the paragraph range.
+ */
+const buildDocumentMultimediaWhere = (
+  source: MultimediaItemsFetcher,
+  {
+    includePrinted,
+    mmTable,
+    ParagraphColumnsExist,
+    suppressZoomExists,
+  }: {
+    includePrinted: boolean | undefined;
+    mmTable: string | undefined;
+    ParagraphColumnsExist: boolean;
+    suppressZoomExists: boolean;
+  },
+) => {
+  const params: (number | string)[] = [];
+  let where = 'WHERE ';
+  if (source.docId || source.docId === 0) {
+    where += 'Document.DocumentId = ?';
+    params.push(source.docId);
+  } else {
+    where += 'Document.MepsDocumentId = ?';
+    params.push(source.mepsId as number);
+  }
+
+  const videoString =
+    "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')";
+  const imgString = `(Multimedia.MimeType LIKE '%image%'${
+    includePrinted
+      ? ''
+      : ' AND Multimedia.CategoryType <> 4 AND Multimedia.CategoryType <> 6'
+  } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`;
+
+  where += ` AND (${videoString} OR ${imgString})`;
+
+  if (
+    'BeginParagraphOrdinal' in source &&
+    'EndParagraphOrdinal' in source &&
+    ParagraphColumnsExist
+  ) {
+    where += ` AND ${mmTable}.BeginParagraphOrdinal >= ? AND ${mmTable}.EndParagraphOrdinal <= ?`;
+    params.push(
+      source.BeginParagraphOrdinal ?? 0,
+      source.EndParagraphOrdinal ?? 0,
+    );
+  }
+
+  if (suppressZoomExists) {
+    where += ' AND Multimedia.SuppressZoom <> 1';
+  }
+
+  return { params, where };
+};
+
 const buildDocumentMultimediaQuery = async (
   db: string,
   source: MultimediaItemsFetcher,
@@ -496,41 +566,12 @@ const buildDocumentMultimediaQuery = async (
     from += ` LEFT JOIN Question ON Question.DocumentId = ${mmTable}.DocumentId AND Question.TargetParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal`;
   }
 
-  const params: (number | string)[] = [];
-  let where = 'WHERE ';
-  if (source.docId || source.docId === 0) {
-    where += 'Document.DocumentId = ?';
-    params.push(source.docId);
-  } else {
-    where += 'Document.MepsDocumentId = ?';
-    params.push(source.mepsId as number);
-  }
-
-  const videoString =
-    "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')";
-  const imgString = `(Multimedia.MimeType LIKE '%image%'${
-    includePrinted
-      ? ''
-      : ' AND Multimedia.CategoryType <> 4 AND Multimedia.CategoryType <> 6'
-  } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`;
-
-  where += ` AND (${videoString} OR ${imgString})`;
-
-  if (
-    'BeginParagraphOrdinal' in source &&
-    'EndParagraphOrdinal' in source &&
-    ParagraphColumnsExist
-  ) {
-    where += ` AND ${mmTable}.BeginParagraphOrdinal >= ? AND ${mmTable}.EndParagraphOrdinal <= ?`;
-    params.push(
-      source.BeginParagraphOrdinal || 0,
-      source.EndParagraphOrdinal || 0,
-    );
-  }
-
-  if (suppressZoomExists) {
-    where += ' AND Multimedia.SuppressZoom <> 1';
-  }
+  const { params, where } = buildDocumentMultimediaWhere(source, {
+    includePrinted,
+    mmTable,
+    ParagraphColumnsExist,
+    suppressZoomExists,
+  });
 
   const groupAndSort = ParagraphColumnsExist
     ? 'GROUP BY Multimedia.MultimediaId ORDER BY DocumentMultimedia.BeginParagraphOrdinal'
@@ -613,11 +654,11 @@ const fixSjjmItems = async (
     const next = sjjmItems[i + 1];
     if (!current || !next) continue;
 
-    const currentOrigP = originalOrdinals.get(current.MultimediaId) || 0;
-    const nextOrigP = originalOrdinals.get(next.MultimediaId) || 0;
+    const currentOrigP = originalOrdinals.get(current.MultimediaId) ?? 0;
+    const nextOrigP = originalOrdinals.get(next.MultimediaId) ?? 0;
 
     const betweenItems = items.filter((item) => {
-      const origP = originalOrdinals.get(item.MultimediaId) || 0;
+      const origP = originalOrdinals.get(item.MultimediaId) ?? 0;
       return (
         origP > currentOrigP && origP < nextOrigP && !sjjmItems.includes(item)
       );
@@ -625,13 +666,13 @@ const fixSjjmItems = async (
 
     if (betweenItems.length > 0) {
       betweenItems.sort((a, b) => {
-        const aP = originalOrdinals.get(a.MultimediaId) || 0;
-        const bP = originalOrdinals.get(b.MultimediaId) || 0;
+        const aP = originalOrdinals.get(a.MultimediaId) ?? 0;
+        const bP = originalOrdinals.get(b.MultimediaId) ?? 0;
         return aP - bP;
       });
 
       let lastP = current.BeginParagraphOrdinal || 0;
-      let lastS = current.BeginPosition || 0;
+      let lastS = current.BeginPosition ?? 0;
 
       betweenItems.forEach((item) => {
         lastP++;
@@ -743,7 +784,7 @@ const getExtractLanguage = (
     try {
       const matches = extract.Link.match(/\/(.*)\//);
       if (matches && matches.length > 0) {
-        return (matches.pop()?.split(':')[0] || '') as JwLangCode;
+        return (matches.pop()?.split(':')[0] ?? '') as JwLangCode;
       }
     } catch (e: unknown) {
       errorCatcher(e);
@@ -763,7 +804,7 @@ const getExtractSymbol = (
   if (
     symbol === 'w' &&
     issueTagNumber &&
-    Number.parseInt(issueTagNumber.toString()) >= 20080101 &&
+    Number.parseInt(issueTagNumber.toString()) >= 20_080_101 &&
     issueTagNumber.toString().endsWith('01')
   ) {
     symbol = 'wp';
@@ -877,25 +918,26 @@ const getExtractMultimedia = async (
     }))
     .filter(
       (extractItem) =>
-        isSignLanguage ||
+        isSignLanguage || // NOSONAR: false checks the next condition
         !(symbol === 'lmd' && extractItem.MimeType.includes('video')),
     );
+
+  const extractPub: PublicationFetcher = {
+    issue: extract.IssueTagNumber,
+    langwritten: extractLang,
+    pub: symbol,
+  };
+  const getExtractVideoMarkers = (mediaId: number) =>
+    getMediaVideoMarkers({ db: extractDb }, mediaId);
 
   for (let i = 0; i < extractItems.length; i++) {
     const item = extractItems[i];
     if (!item) continue;
 
-    const videoMarkers = await getMediaVideoMarkers(
-      { db: extractDb },
-      item.MultimediaId,
-    );
+    const videoMarkers = await getExtractVideoMarkers(item.MultimediaId); // NOSONAR: sequential - avoid flooding the network drive
     if (videoMarkers) item.VideoMarkers = videoMarkers;
 
-    extractItems[i] = await addFullFilePathToMultimediaItem(item, {
-      issue: extract.IssueTagNumber,
-      langwritten: extractLang,
-      pub: symbol,
-    });
+    extractItems[i] = await addFullFilePathToMultimediaItem(item, extractPub); // NOSONAR: sequential - avoid flooding the network drive
   }
 
   return { items: extractItems, mepsLanguagesByMediaItem };
@@ -912,7 +954,7 @@ export const getDocumentExtractItems = async (
   try {
     const currentStateStore = useCurrentStateStore();
     const settings = currentStateStore.currentSettings;
-    const defaultLang = settings?.lang || 'E';
+    const defaultLang = settings?.lang || 'E'; // NOSONAR: '' means not set
 
     const extracts = await executeQuery<MultimediaExtractItem>(
       db,
@@ -934,14 +976,17 @@ export const getDocumentExtractItems = async (
     const allExtractItems: MultimediaItem[] = [];
     const allMepsLanguagesByMediaItem: MepsLanguageByMediaItem[] = [];
 
-    for (const extract of extracts) {
-      const { items, mepsLanguagesByMediaItem } = await getExtractMultimedia(
+    const getMultimedia = (extract: MultimediaExtractItem) =>
+      getExtractMultimedia(
         extract,
         meetingDate,
         defaultLang,
         settings,
         currentStateStore.currentLangObject?.isSignLanguage,
       );
+
+    for (const extract of extracts) {
+      const { items, mepsLanguagesByMediaItem } = await getMultimedia(extract); // NOSONAR: sequential - may download and unzip the same JWPUB
       allExtractItems.push(...items);
       allMepsLanguagesByMediaItem.push(...mepsLanguagesByMediaItem);
     }

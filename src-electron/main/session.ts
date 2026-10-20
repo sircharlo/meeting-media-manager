@@ -10,6 +10,7 @@ import {
   isValidUrl,
 } from 'src-electron/main/utils';
 import { attachWafToken } from 'src-electron/main/waf-challenge';
+import { stopZoomHelper } from 'src-electron/main/zoom-helper-manager';
 
 export const urlVariables: UrlVariables = {
   base: '',
@@ -210,6 +211,10 @@ export const setShouldQuit = (quit: boolean) => {
 export const initSessionListeners = () => {
   if (sessionListenersInitialized) return;
   sessionListenersInitialized = true;
+
+  app.on('before-quit', () => {
+    stopZoomHelper();
+  });
 
   app.on('ready', () => {
     const currentUserAgent = session.defaultSession.getUserAgent();

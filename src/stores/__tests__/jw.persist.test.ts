@@ -2,7 +2,7 @@ import { createPersistedPinia } from 'app/test/vitest/mocks/pinia';
 import { setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useJwStore } from '../jw';
+import { shouldUpdateList, useJwStore } from '../jw';
 
 describe('jw store persistence', () => {
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe('jw store persistence', () => {
     localStorage.clear();
   });
 
-  it('omits large refetchable caches and defers the write until the debounce settles', () => {
+  it('omits the Bible files cache and defers the write until the debounce settles', () => {
     const store = useJwStore();
 
     store.jwBibleFiles = { E: { list: [], updated: new Date() } };
@@ -39,9 +39,47 @@ describe('jw store persistence', () => {
 
     const persisted = JSON.parse(localStorage.getItem('jw-store') || '{}');
     expect(persisted).not.toHaveProperty('jwBibleFiles');
-    expect(persisted).not.toHaveProperty('jwMepsLanguages');
     expect(persisted).toHaveProperty('lookupPeriod');
     expect(persisted.jwIconsUrl).toBe('https://example.com/jw-icons.woff2');
+  });
+
+  it('persists the MEPS language list so it is not rebuilt on every launch', () => {
+    const store = useJwStore();
+    const updated = new Date();
+
+    store.jwMepsLanguages = {
+      list: [
+        {
+          LanguageId: 0,
+          PrimaryFallbackLanguageId: 0,
+          PrimaryIetfCode: 'en',
+          Symbol: 'E',
+        },
+      ],
+      updated,
+    };
+    store.$persist();
+    vi.advanceTimersByTime(500);
+
+    const persisted = JSON.parse(localStorage.getItem('jw-store') || '{}');
+    expect(persisted.jwMepsLanguages).toEqual({
+      list: [
+        {
+          LanguageId: 0,
+          PrimaryFallbackLanguageId: 0,
+          PrimaryIetfCode: 'en',
+          Symbol: 'E',
+        },
+      ],
+      updated: updated.toISOString(),
+    });
+
+    // A fresh launch hydrates it back, so the refresh check sees a recent,
+    // non-empty list.
+    setActivePinia(createPersistedPinia());
+    const hydrated = useJwStore();
+    expect(hydrated.jwMepsLanguages.list).toHaveLength(1);
+    expect(shouldUpdateList(hydrated.jwMepsLanguages, 3)).toBe(false);
   });
 
   it('hydrates previously persisted state on store creation', () => {

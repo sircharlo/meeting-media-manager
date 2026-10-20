@@ -2,10 +2,7 @@
   <q-item
     :class="['media-divider hover-reveal-group', { 'is-editing': isEditing }]"
     dense
-    :style="{
-      ...dividerStyles,
-      '--divider-bg-color': divider.bgColor || 'var(--q-secondary)',
-    }"
+    :style="dividerStyles"
   >
     <q-item-section avatar>
       <q-icon
@@ -162,7 +159,7 @@ const emit = defineEmits<{
 
 const isEditing = ref(false);
 const editTitle = ref('');
-const currentBgColor = ref(props.divider.bgColor || 'var(--q-secondary)');
+const currentBgColor = ref(props.divider.bgColor || 'var(--q-secondary)'); // NOSONAR: '' means not set
 
 const editTitleInput = ref<HTMLInputElement>();
 
@@ -171,8 +168,8 @@ const dividerStyles = computed(() => {
 
   if (!selectedDateObject?.mediaSections)
     return {
-      backgroundColor: `${props.divider.bgColor || 'var(--q-secondary)'} !important`,
-      color: props.divider.textColor || 'white',
+      backgroundColor: `${props.divider.bgColor || 'var(--q-secondary)'} !important`, // NOSONAR: '' means not set
+      color: props.divider.textColor || 'white', // NOSONAR: '' means not set
     };
 
   const section = findMediaSection(
@@ -181,13 +178,13 @@ const dividerStyles = computed(() => {
   );
   if (!section?.config)
     return {
-      backgroundColor: `${props.divider.bgColor || 'var(--q-secondary)'} !important`,
-      color: props.divider.textColor || 'white',
+      backgroundColor: `${props.divider.bgColor || 'var(--q-secondary)'} !important`, // NOSONAR: '' means not set
+      color: props.divider.textColor || 'white', // NOSONAR: '' means not set
     };
 
   return {
-    backgroundColor: `${props.divider.bgColor || getSectionBgColor(section.config)} !important`,
-    color: props.divider.textColor || 'white',
+    backgroundColor: `${props.divider.bgColor || getSectionBgColor(section.config)} !important`, // NOSONAR: '' means not set
+    color: props.divider.textColor || 'white', // NOSONAR: '' means not set
   };
 });
 
@@ -216,7 +213,7 @@ const deleteDivider = () => {
 };
 
 whenever(isEditing, () => {
-  nextTick(() => {
+  void nextTick(() => {
     editTitleInput.value?.focus();
   });
 });
@@ -232,12 +229,6 @@ whenever(isEditing, () => {
   margin: 4px 0 4px -1px;
   transition: all 0.2s ease;
   border-radius: 0px;
-
-  &.sortable-selected {
-    transform: none;
-    background-color: unset !important;
-    background-color: var(--divider-bg-color) !important;
-  }
 
   &.is-editing {
     box-shadow: 0 0 0 2px var(--q-primary);

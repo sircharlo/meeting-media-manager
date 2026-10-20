@@ -89,6 +89,7 @@ describe('cleanCache', () => {
 
     congregationSettingsStore.congregations = { congA: {} };
     currentStateStore.currentSettings = {
+      deletePastWatchedFolders: true,
       enableFolderWatcher: true,
       enableMediaAutoExport: true,
       folderToWatch: '/watch',
@@ -162,6 +163,18 @@ describe('cleanCache', () => {
     await cleanCache();
     await flush();
     expect(removeMock).toHaveBeenCalledWith(`/watch/${pastDashed}`);
+  });
+
+  it('keeps past-dated folderToWatch folders when their deletion is turned off', async () => {
+    if (currentStateStore.currentSettings) {
+      currentStateStore.currentSettings.deletePastWatchedFolders = false;
+    }
+    const { cleanCache } = await import('../cleanup');
+    await cleanCache();
+    await flush();
+    expect(removeMock).not.toHaveBeenCalledWith(`/watch/${pastDashed}`);
+    // Only the watched folder is affected.
+    expect(removeMock).toHaveBeenCalledWith(`/export/${pastDashed}`);
   });
 
   it('deletes past-dated mediaAutoExportFolder folders (YYYY-MM-DD)', async () => {

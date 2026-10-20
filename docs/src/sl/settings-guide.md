@@ -350,11 +350,11 @@ Jezik podnapisov (lahko se razlikuje od jezika multimedijske vsebine).
 
 ### Upravljanje predpomnilnika {#cache-management}
 
-#### Omogoči dodatni predpomnilnik {#enable-extra-cache}
+#### Predpomni videoposnetke pesmi {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Omogoči dodatno shranjevanje v predpomnilniku za boljšo zmogljivost.
+Vnaprej predpomni vse videe iz pesmarice za boljše delovanje. Upoštevaj, da to poveča velikost predpomnilnika multimedijske vsebine.
 
 **Privzeto**: `false`
 
@@ -418,23 +418,43 @@ Pretvori izvoženo multimedijsko vsebino v format MP4 za boljšo združljivost.
 
 **Privzeto**: `false`
 
-### Spremljanje map {#settings-guide-folder-monitoring}
+### Mapa v skupni rabi (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-#### Omogoči spremljanje mape {#enable-folder-watcher}
+Te nastavitve so v kategoriji **Povezovanje**.
+
+M³ lahko doda multimedijsko vsebino k tvojim shodom iz mape, ki jo sinhronizira aplikacija za shranjevanje v oblaku, kot je Dropbox, OneDrive, iCloud Drive ali Google Drive. To je uporabno, kadar drugi pripravijo multimedijsko vsebino za svoje točke in jo delijo s teboj, ali kadar se M³ uporablja na več kot enem računalniku. Deluje tudi mapa na tem računalniku ali v tvojem omrežju.
+
+M³ v mapi v skupni rabi ustvari mapo za vsak prihajajoči shod, poimenovano z datumom shoda, zapisanim kot leto-mesec-dan (na primer `2026-03-25`). Daj fotografije, videoposnetke, avdioposnetke ali sezname predvajanja iz JW Library v mapo posameznega shoda in samodejno bodo dodani na seznam multimedijske vsebine za ta shod. Če želiš dodati datoteke za drug dan, ustvari zanj mapo, poimenovano na enak način. Vse drugo v mapi v skupni rabi bo prezrto.
+
+:::tip Namig
+
+Ustvari novo mapo, ki se uporablja samo za to, na primer »Multimedijska vsebina za shode«, in v svoji aplikaciji za shranjevanje v oblaku nastavi, da je vedno na voljo na tem računalniku (pogosto imenovano »na voljo brez povezave«), da bodo datoteke pripravljene, preden se shod začne.
+
+:::
+
+#### Dodaj multimedijsko vsebino iz mape v skupni rabi {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Spremlja mapo glede nove multimedijske vsebine in jo samodejno doda v M³.
+Samodejno dodajaj datoteke, ki jih daš v mapo v skupni rabi, k ustreznemu shodu.
 
 **Privzeto**: `false`
 
-#### Mapa za spremljanje {#folder-to-watch}
+#### Mapa v skupni rabi {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-Pot do mape, ki jo je treba spremljati za novo multimedijsko vsebino.
+Mapa, iz katere se dodaja multimedijska vsebina. Čarovnik za nastavitev ponudi možnost, da jo nastavi namesto tebe.
 
 **Privzeto**: Prazno
+
+#### Izbriši mape preteklih shodov {#delete-past-watched-folders}
+
+<!-- **Setting**: `deletePastWatchedFolders` -->
+
+Ko je teden mimo, se izbrišejo datumske mape tega tedna skupaj z datotekami, ki so v njih, da ostane mapa v skupni rabi urejena. Ker je mapa v skupni rabi, so datoteke izbrisane tudi za vse druge, ki jo uporabljajo. Če želiš datoteke ohraniti, to možnost izklopi.
+
+**Privzeto**: `true`
 
 ## Časovnik shodov {#meeting-timer}
 
@@ -452,11 +472,32 @@ Omogoči ločeno okno časovnika za merjenje posameznih delov shoda. To je funkc
 
 Nastavi, ali se okno časovnika odpre samodejno, ali časovniki za udeležence privzeto štejejo navzgor ali navzdol, ali ura uporablja 12‑urni ali 24‑urni format ter ali je trenutna vrednost časovnika prikazana na gumbu časovnika v orodni vrstici.
 
+### Hiter dostop do časovnika {#timer-quick-access}
+
+<!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
+
+Izberi, kako dostopaš do časovnika iz glavnega okna:
+
+- **Hitre kontrole, ko se z miško ustaviš na gumbu časovnika**: ko se z miško ustaviš na gumbu časovnika v orodni vrstici, se prikaže točka, ki se trenutno meri, skupaj z gumbi Začni, Premor, Ustavi in Naslednja točka — brez odpiranja celotnega pojavnega okna časovnika. Ta možnost je privzeto vklopljena.
+- **Prikaži časovni panel v glavnem oknu**: ohrani celoten seznam točk shoda in kontrole časovnika v panelu, pripetem na desni strani glavnega okna, vedno viden. Celotno pojavno okno ostane na voljo v orodni vrstici za nastavitve okna in prikaza.
+
+### Oddaljeni časovnik {#timer-remote}
+
+<!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
+
+Ko je časovnik vklopljen, M³ ponuja kopijo prikaza časovnika kot spletno stran v vašem lokalnem omrežju za tablico ali telefon na govorniškem pultu: govornik vidi preostali čas, ne da bi bil prikazan na občinskem zaslonu ali deljen prek Zooma. Stran sledi časovniku v realnem času, vključno z odštevanjem pred shodom, uro, barvami za prekoračitev in opozorilom glede dvignjene roke, vse kontrole pa ostanejo v M³.
+
+Naslovi, ki jih odpreš na napravi, so navedeni v pojavnem oknu časovnika skupaj z gumbom za kopiranje. Omrežna vrata spremeni le, če jih že uporablja kak drug program. Upoštevaj, da lahko stran odpre vsakdo v istem omrežju, dokler je ta možnost vklopljena; prikazuje samo časovnik.
+
+**Privzeto**: `false`, port `8787`
+
 ### Prikazi časovnika {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Izberi analogni ali digitalni prikaz za prikaz trenutnega časa in odštevalne časovnike. Opozorilni indikator odštevanja lahko med zadnjo minuto postopoma obarva analogni odštevalni krog v opozorilno barvo.
+
+Prikaz odštevanja »Analogna ura z lokom trajanja« pokaže preostali čas točke kot segment na analogni uri — od minutnega kazalca do načrtovanega konca — tako da en sam pogled pokaže tako uro kot preostanek časa. Prekoračitev se prikaže kot drugi segment v barvi za prekoračitev. Prikaz velja tudi za odštevanje pred shodom in deluje v načinu štetja navzgor.
 
 ### Odštevalnik do shoda in stanje urnika {#meeting-countdown-and-schedule-status}
 
@@ -471,6 +512,8 @@ Prikaži odštevalnik pred načrtovanimi shodi in po želji prikazuj, ali progra
 Prilagodi velikost besedila časovnika in barve ter nastavi indikatorje prekoračitve časa, kot so alternativne barve, utripanje ali prikaz samo prekoračenega časa v načinu štetja navzgor.
 
 ## Povezovanje {#integrations}
+
+Ta kategorija vsebuje tudi nastavitve za [mapo v skupni rabi](#settings-guide-folder-monitoring) za dodajanje multimedijske vsebine iz Dropboxa, OneDrivea, iCloud Drivea ali Google Drivea.
 
 ### Združevanje z Zoomom {#settings-guide-zoom-integration}
 
@@ -495,6 +538,30 @@ Bližnjica na tipkovnici za sprožitev deljenja zaslona prek Zooma.
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
 Ko se začne deljenje zaslona v Zoomu, se okno z multimedijsko vsebino samodejno postavi v ospredje. To običajno ni potrebno, lahko pa pomaga na nekaterih sistemih, če se pogosto zgodi, da okno z multimedijsko vsebino po začetku deljenja zaslona ni v ospredju.
+
+**Privzeto**: `false`
+
+### Upravljalnik Zoom shodov {#zoom-meeting-manager}
+
+Upravljalnik Zoom shodov (beta, samo za Windows) upravlja namizno aplikacijo Zoom med vsakim shodom. Njegov nastavitveni pomočnik, ki se ponudi, ko ga vklopiš, te vodi skozi vsako avtomatizacijo.
+
+#### Medtem ko M³ upravlja Zoom {#zoom-meeting-manager-overlay}
+
+<!-- **Setting**: `zoomCancelAutomationShortcut` -->
+
+Zoom ne ponuja ustreznega vmesnika za avtomatizacijo, zato M³ upravlja aplikacijo Zoom prek njenega dostopnostnega vmesnika, ki za skoraj vse deluje brez miške (seznam udeležencev, njegovi meniji, okno za deljenje). Nekatera dejanja pa lahko še vedno za trenutek premaknejo miško ali aktivno okno, na primer za prikaz samodejno skrite Zoomove orodne vrstice. Kadar se to zgodi, M³ prekrije svoje okno z obvestilom »M³ upravlja Zoom«, ki pove, kaj se dogaja, in ponudi gumb »Prekliči to avtomatizacijo«. Enako obvestilo se prikaže med preverjanji nastavitvenega pomočnika in med samopreizkusom. Globalna tipkovna bližnjica (privzeto Ctrl+Alt+Escape), ki je aktivna samo med avtomatizacijo, jo prekliče od koder koli, tudi ko je Zoom v ospredju. Preklic takoj ustavi M³; Zoom lahko zato ostane v vmesnem stanju, zato ga preveri.
+
+**Privzeto**: Ctrl+Alt+Escape
+
+#### Pomočnik za dvignjene roke {#zoom-meeting-manager-hand-alert}
+
+<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+
+Med shodom M³ spremlja Zoomov seznam udeležencev in išče dvignjene roke. Ko nekdo dvigne roko, te M³ z obvestilom opozori, da lahko tega udeleženca z enim klikom povabiš, naj si vklopi mikrofon, in ko neha govoriti, ga z drugim klikom znova utišaš ter spustiš njegovo roko. Gumb za Zoom na orodni vrstici prikazuje dvignjene roke z enakimi gumbi. Vsako dejanje se izvede v vrstici tega udeleženca v Zoomu, po njegovem natančnem imenu; če imata dva udeleženca enako ime, se M³ ne dotakne nobenega.
+
+Če je [časovnik shoda](#meeting-timer) omogočen, se na prikazu časovnika za predsedujočega pojavi velika roka z imenom udeleženca, gumb »Opozorilo glede roka« v časovniku in pojavnih oknih Zooma pa jo lahko prikaže ročno. Ta del potrebuje prikaz časovnika; obvestila in gumbi delujejo tudi brez njega.
+
+Zoom označuje dvignjene roke v svojem jeziku, zato se mora M³ najprej naučiti, kako: ko je vaš shod odprt v Zoomu, klikni »Nauči se, kako Zoom označuje dvignjene roke«. M³ dvigne tvojo roko, prebere, kako jo Zoom označi na seznamu udeležencev in kateri meni jo spusti, nato pa jo spusti. Ta korak ponudi tudi nastavitveni pomočnik.
 
 **Privzeto**: `false`
 
@@ -542,7 +609,7 @@ Nastavite, kateri prizori OBS se uporabljajo za različne namene:
 
 #### Napredne možnosti OBS {#obs-advanced-options}
 
-- **Odloži slike**: Slike se delijo z OBS šele ob ročnem sproženju
+- **Slik ne deli samodejno**: Odloži deljenje slik v OBS, dokler jih ne sprožiš ročno
 - **Hitro preklapljanje**: Omogoči hiter vklop/izklop za združevanje z OBS
 - **Preklopi prizor po predvajanju multimedijske vsebine**: Samodejno se vrne na prejšnji prizor po predvajanju multimedijske vsebine
 - **Zapomni si prejšnji prizor**: Shrani in obnovi prejšnji prizor
@@ -733,20 +800,20 @@ Popolnoma onemogoči samodejni prenos multimedijske vsebine. To možnost uporabi
 ### Za nove uporabnike {#new-users}
 
 1. Da bi nastavili osnovne nastavitve, začnite z nastavitvenim čarovnikom
-2. Omogočite gumb za »Multimedijski zaslon«
+2. Vklopi »Omogoči predvajanje multimedijske vsebine«, da dostopaš do predstavitvenih funkcij
 3. Natančno nastavite urnik shodov
 4. Nastavite združevanje s programom OBS, če uporabljate hibridne shode
 
 ### Za napredne uporabnike {#advanced-users}
 
-1. Uporabite spremljanje map za sinhronizacijo multimedijske vsebine iz oblačne shrambe
+1. Uporabi mapo v skupni rabi za dodajanje multimedijske vsebine iz shrambe v oblaku, kot sta Dropbox ali OneDrive
 2. Omogočite samodejni izvoz multimedijske vsebine zaradi varnostnega kopiranja
 3. Nastavite bližnjice na tipkovnici za učinkovito upravljanje
 4. Nastavite združevanje z Zoomom za samodejno deljenje zaslona
 
 ### Optimizacija zmogljivosti {#performance-optimization}
 
-1. Omogočite dodatni predpomnilnik za boljše delovanje
+1. Predpomni video datoteke pesmarice za boljše delovanje
 2. Uporabite ustrezno največjo ločljivost glede na vaše potrebe
 3. Nastavite samodejno čiščenje predpomnilnika, da varčujete s prostorom na disku
 4. Razmislite o omejeni povezavi, če imate omejeno pasovno širino

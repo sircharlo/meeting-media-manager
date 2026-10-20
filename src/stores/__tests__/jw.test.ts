@@ -1,8 +1,10 @@
+import type * as VanillaModule from 'src/shared/vanilla';
 import type { DateInfo, MediaItem } from 'src/types';
 import type * as ApiModule from 'src/utils/api';
 
 import { createPinia, setActivePinia } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -15,6 +17,11 @@ import {
 
 vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: vi.fn(),
+}));
+
+vi.mock('src/shared/vanilla', async (importOriginal) => ({
+  ...(await importOriginal<typeof VanillaModule>()),
+  log: vi.fn(),
 }));
 
 vi.mock('src/utils/api', async (importOriginal) => {
@@ -352,6 +359,189 @@ describe('JW Store', () => {
       expect(day.mediaSections[0]?.items?.[0]?.pubMediaId).toBe(
         'pub-media-stale',
       );
+    });
+
+    describe('placing each fetched item', () => {
+      const buildSections = (
+        ...sections: [string, Partial<MediaItem>[]][]
+      ): DateInfo =>
+        ({
+          date: new Date(),
+          mediaSections: sections.map(([uniqueId, items]) => ({
+            config: { uniqueId },
+            items: items.map((item) => ({
+              source: 'dynamic',
+              type: 'media',
+              ...item,
+            })),
+          })),
+          status: 'complete',
+        }) as DateInfo;
+
+      const dynamic = (item: Partial<MediaItem>) =>
+        ({ source: 'dynamic', type: 'media', ...item }) as MediaItem;
+
+      const ids = (day: DateInfo, index: number) =>
+        day.mediaSections[index]?.items?.map((item) => item.uniqueId);
+
+      it('adds an item without a pubMediaId that is not there yet', () => {
+        const day = buildSections(['tgw', [{ uniqueId: 'a' }]]);
+
+        replaceMissingMediaByPubMediaId(day, {
+          tgw: [dynamic({ uniqueId: 'b' })],
+        });
+
+        expect(ids(day, 0)).toEqual(['a', 'b']);
+      });
+
+      it('keeps one copy of an item without a pubMediaId that is already there', () => {
+        const day = buildSections([
+          'tgw',
+          [
+            { title: 'first', uniqueId: 'a' },
+            { uniqueId: 'b' },
+            { title: 'second', uniqueId: 'a' },
+          ],
+        ]);
+
+        replaceMissingMediaByPubMediaId(day, {
+          tgw: [dynamic({ title: 'fetched', uniqueId: 'a' })],
+        });
+
+        expect(day.mediaSections[0]?.items).toEqual([
+          expect.objectContaining({ title: 'first', uniqueId: 'a' }),
+          expect.objectContaining({ uniqueId: 'b' }),
+        ]);
+      });
+
+      it('leaves a single matching item without a pubMediaId as it is', () => {
+        const day = buildSections(['tgw', [{ title: 'kept', uniqueId: 'a' }]]);
+
+        replaceMissingMediaByPubMediaId(day, {
+          tgw: [dynamic({ title: 'fetched', uniqueId: 'a' })],
+        });
+
+        expect(day.mediaSections[0]?.items).toEqual([
+          expect.objectContaining({ title: 'kept', uniqueId: 'a' }),
+        ]);
+      });
+
+      it('ignores fetched items that are not dynamic', () => {
+        const day = buildSections(['tgw', []]);
+
+        replaceMissingMediaByPubMediaId(day, {
+          tgw: [
+            { source: 'additional', type: 'media', uniqueId: 'a' } as MediaItem,
+          ],
+        });
+
+        expect(ids(day, 0)).toEqual([]);
+      });
+
+      it("files an item under its own section, or its first child's", () => {
+        const day = buildSections(['tgw', []], ['lac', []]);
+
+        replaceMissingMediaByPubMediaId(day, {
+          tgw: [
+            dynamic({ originalSection: 'lac', uniqueId: 'own' }),
+            dynamic({
+              children: [dynamic({ originalSection: 'lac', uniqueId: 'c' })],
+              originalSection: 'tgw',
+              uniqueId: 'parent',
+            }),
+            dynamic({
+              children: [dynamic({ uniqueId: 'c2' })],
+              originalSection: 'lac',
+              uniqueId: 'parent-default',
+            }),
+            dynamic({ uniqueId: 'default' }),
+          ],
+        });
+
+        expect(ids(day, 0)).toEqual(['parent-default', 'default']);
+        expect(ids(day, 1)).toEqual(['own', 'parent']);
+      });
+
+      it('skips an item whose section is not on the day', () => {
+        const day = buildSections(['tgw', []]);
+
+        replaceMissingMediaByPubMediaId(day, {
+          tgw: [dynamic({ originalSection: 'ayfm', uniqueId: 'a' })],
+        });
+
+        expect(ids(day, 0)).toEqual([]);
+        expect(log).toHaveBeenCalledWith(
+          'Target section ayfm not found in mediaSections',
+          'jw',
+          'warn',
+        );
+      });
+
+      it('adds an item with a new pubMediaId', () => {
+        const day = buildSections([
+          'tgw',
+          [{ fileUrl: 'file:///a.mp4', pubMediaId: 'pm-a', uniqueId: 'a' }],
+        ]);
+
+        replaceMissingMediaByPubMediaId(day, {
+          tgw: [
+            dynamic({
+              fileUrl: 'file:///a.mp4',
+              pubMediaId: 'pm-a',
+              uniqueId: 'a',
+            }),
+            dynamic({ pubMediaId: 'pm-b', uniqueId: 'b' }),
+          ],
+        });
+
+        expect(ids(day, 0)).toEqual(['a', 'b']);
+      });
+
+      it('does not replace a placeholder that already has children unless its content changed', () => {
+        const child = dynamic({ uniqueId: 'child' });
+        const day = buildSections([
+          'tgw',
+          [
+            {
+              children: [child],
+              fileUrl: 'pm-a',
+              pubMediaId: 'pm-a',
+              title: 'Same',
+              uniqueId: 'a',
+            },
+          ],
+        ]);
+
+        replaceMissingMediaByPubMediaId(day, {
+          tgw: [
+            dynamic({
+              fileUrl: 'file:///a.mp4',
+              pubMediaId: 'pm-a',
+              title: 'Same',
+              uniqueId: 'a-new',
+            }),
+          ],
+        });
+
+        expect(ids(day, 0)).toEqual(['a']);
+      });
+
+      it('sorts every section by its original sort order afterwards', () => {
+        const day = buildSections([
+          'tgw',
+          [
+            { sortOrderOriginal: 3, uniqueId: 'c' },
+            { uniqueId: 'none' },
+            { sortOrderOriginal: 1, uniqueId: 'a' },
+          ],
+        ]);
+
+        replaceMissingMediaByPubMediaId(day, {
+          tgw: [dynamic({ sortOrderOriginal: 2, uniqueId: 'b' })],
+        });
+
+        expect(ids(day, 0)).toEqual(['none', 'a', 'b', 'c']);
+      });
     });
   });
 

@@ -270,14 +270,14 @@
           </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
-            <q-btn flat :label="t('no')" @click="step++" />
+            <q-btn flat :label="t('no')" @click="step = 11" />
             <q-btn
               color="primary"
               :label="t('yes')"
               @click="
                 currentSettings.enableExtraCache = true;
                 downloadSongbookVideos();
-                step++;
+                step = 11;
               "
             />
           </q-stepper-navigation>
@@ -285,9 +285,116 @@
         <q-step
           v-if="regularProfile"
           :disable="!regularProfile"
-          :done="step > 10"
+          :done="step > 11"
+          icon="mmm-cloud"
+          :name="11"
+          :title="t('setupWizard.sharedFolderTitle')"
+        >
+          <p class="text-subtitle1">
+            {{ t('setupWizard.sharedFolderQuestion') }}
+          </p>
+          <p>{{ t('setupWizard.sharedFolderIntro') }}</p>
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn flat :label="t('back')" @click="step = 9" />
+            <q-btn
+              flat
+              :label="t('no')"
+              @click="
+                currentSettings.enableFolderWatcher = false;
+                step = 14;
+              "
+            />
+            <q-btn
+              color="primary"
+              :label="t('yes')"
+              @click="
+                currentSettings.enableFolderWatcher = true;
+                step = 12;
+              "
+            />
+          </q-stepper-navigation>
+        </q-step>
+        <q-step
+          v-if="regularProfile && currentSettings.enableFolderWatcher"
+          :disable="!regularProfile || !currentSettings.enableFolderWatcher"
+          :done="step > 12"
+          icon="mmm-folder-open"
+          :name="12"
+          :title="t('setupWizard.chooseSharedFolderTitle')"
+        >
+          <p>{{ t('setupWizard.chooseSharedFolder') }}</p>
+          <p>{{ t('setupWizard.chooseSharedFolderTip') }}</p>
+          <FolderInput
+            :model-value="currentSettings.folderToWatch"
+            @update:model-value="currentSettings.folderToWatch = $event ?? ''"
+          />
+          <p
+            v-if="currentSettings.folderToWatch"
+            class="q-mt-sm text-caption text-dark-grey wizard-folder-path"
+          >
+            {{ currentSettings.folderToWatch }}
+          </p>
+          <!-- UX-9 (full-audit-2026-09-04.md) -->
+          <p v-else class="q-mt-sm text-caption text-dark-grey">
+            {{ t('setupWizard.completeRequiredFields') }}
+          </p>
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn flat :label="t('back')" @click="step = 11" />
+            <q-btn
+              color="primary"
+              :disable="!currentSettings.folderToWatch"
+              :label="t('continue')"
+              @click="step = 13"
+            />
+          </q-stepper-navigation>
+        </q-step>
+        <q-step
+          v-if="regularProfile && currentSettings.enableFolderWatcher"
+          :disable="!regularProfile || !currentSettings.enableFolderWatcher"
+          :done="step > 13"
+          icon="mmm-info"
+          :name="13"
+          :title="t('setupWizard.sharedFolderHowItWorksTitle')"
+        >
+          <p>{{ t('setupWizard.sharedFolderHowItWorks') }}</p>
+          <div class="q-mb-md wizard-folder-example">
+            <div class="items-center no-wrap row">
+              <q-icon class="q-mr-sm" name="mmm-folder-open" size="sm" />
+              {{ sharedFolderName }}
+            </div>
+            <div
+              v-for="folder in exampleMeetingFolders"
+              :key="folder.name"
+              class="items-center no-wrap q-pl-lg row"
+            >
+              <q-icon class="q-mr-sm" name="mmm-folder-open" size="sm" />
+              <span class="text-weight-medium">{{ folder.name }}</span>
+              <span class="q-ml-sm text-dark-grey">{{ folder.label }}</span>
+            </div>
+          </div>
+          <p>{{ t('setupWizard.sharedFolderAddFiles') }}</p>
+          <p>{{ t('setupWizard.sharedFolderOtherDays') }}</p>
+          <p>{{ t('setupWizard.sharedFolderOfflineTip') }}</p>
+          <q-toggle
+            v-model="currentSettings.deletePastWatchedFolders"
+            checked-icon="mmm-check"
+            color="primary"
+            :label="t('deletePastWatchedFolders')"
+          />
+          <p class="text-caption text-dark-grey">
+            {{ t('deletePastWatchedFolders-explain') }}
+          </p>
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn flat :label="t('back')" @click="step = 12" />
+            <q-btn color="primary" :label="t('continue')" @click="step = 14" />
+          </q-stepper-navigation>
+        </q-step>
+        <q-step
+          v-if="regularProfile"
+          :disable="!regularProfile"
+          :done="step > 14"
           icon="mmm-almost-done"
-          :name="10"
+          :name="14"
           :title="t('almost-done')"
         >
           <p>
@@ -298,7 +405,11 @@
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn flat :label="t('back')" @click="step--" />
+            <q-btn
+              flat
+              :label="t('back')"
+              @click="step = currentSettings.enableFolderWatcher ? 13 : 11"
+            />
             <q-btn
               color="primary"
               :label="t('continue')"
@@ -350,33 +461,81 @@
           :done="step > 200"
           icon="mmm-integrations"
           :name="200"
-          :title="t('zoomEnable')"
+          :title="
+            zoomManagerAvailable ? t('zoomMeetingManager') : t('zoomEnable')
+          "
         >
           <p class="text-subtitle1">
             {{ t('would-you-like-to-integrate-zoom') }}
+            <q-badge v-if="zoomManagerAvailable" align="top" class="q-ml-xs">
+              {{ t('beta') }}
+            </q-badge>
           </p>
-          <p>
+          <template v-if="zoomManagerAvailable">
+            <p>{{ t('setup-wizard-zoom-manager-explain') }}</p>
+            <p>{{ t('zoom-setup-requirements') }}</p>
+          </template>
+          <p v-else>
             {{ t('zoom-integration-explain') }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn
               flat
               :label="t('back')"
-              @click="step = regularProfile ? 10 : 7"
+              @click="step = regularProfile ? 14 : 7"
             />
-            <q-btn flat :label="t('no')" @click="step = 103" />
+            <q-btn
+              flat
+              :label="t('no')"
+              @click="
+                setZoomChosen(false);
+                step = 103;
+              "
+            />
             <q-btn
               color="primary"
               :label="t('yes')"
               @click="
-                currentSettings.zoomEnable = true;
+                setZoomChosen(true);
                 step = 201;
               "
             />
           </q-stepper-navigation>
         </q-step>
         <q-step
-          v-if="step >= 201 && currentSettings?.zoomEnable"
+          v-if="step >= 201 && zoomManagerAvailable && zoomChosen"
+          :done="step > 201"
+          icon="mmm-integrations"
+          :name="201"
+          :title="t('zoom-setup-title')"
+        >
+          <p>{{ t('setup-wizard-zoom-manager-setup-explain') }}</p>
+          <p v-if="zoomManagerReady" class="text-positive">
+            <q-icon class="q-mr-xs" name="mmm-check" />
+            {{ t('setup-wizard-zoom-manager-ready') }}
+          </p>
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn flat :label="t('back')" @click="step = 200" />
+            <q-btn
+              class="btn-tonal"
+              color="primary"
+              flat
+              :label="t('zoom-setup-open')"
+              @click="openZoomSetupAssistant"
+            />
+            <q-btn
+              color="primary"
+              :label="
+                zoomManagerReady
+                  ? t('continue')
+                  : t('setup-wizard-zoom-manager-later')
+              "
+              @click="step = 300"
+            />
+          </q-stepper-navigation>
+        </q-step>
+        <q-step
+          v-if="step >= 201 && !zoomManagerAvailable && zoomChosen"
           :disable="!currentSettings?.zoomEnable"
           :done="step > 201"
           icon="mmm-integrations"
@@ -648,19 +807,25 @@ import type { LanguageValue } from 'src/constants/locales';
 import { watchImmediate } from '@vueuse/core';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogCongregationLookup from 'components/dialog/DialogCongregationLookup.vue';
+import FolderInput from 'components/form-inputs/FolderInput.vue';
 import SelectInput from 'components/form-inputs/SelectInput.vue';
 import ShortcutInput from 'components/form-inputs/ShortcutInput.vue';
 import TextInput from 'components/form-inputs/TextInput.vue';
 import TimeInput from 'components/form-inputs/TimeInput.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
+import { useLocale } from 'src/composables/useLocale';
 import { removeCongregationCache } from 'src/helpers/cleanup';
+import { isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getRendererPlatform } from 'src/helpers/fs';
 import { downloadSongbookVideos, fetchMedia } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
+import { addToDate, formatDate, getLocalDate } from 'src/utils/date';
 import { camelToKebabCase } from 'src/utils/general';
 import { importProfileSettingsFromFile } from 'src/utils/profile-settings';
+import { areZoomButtonsLearned } from 'src/utils/zoom';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -684,20 +849,16 @@ const { currentCongregation, currentLangObject, currentSettings, online } =
 // until a connection attempt has actually happened - a user who's typed
 // nothing yet shouldn't see an alarming red banner.
 const { obsConnectionState, obsMessage } = storeToRefs(useObsStateStore());
-const obsConnectionBannerClass = computed(() =>
-  obsConnectionState.value === 'connected'
-    ? 'bg-positive text-white'
-    : obsConnectionState.value === 'connecting'
-      ? 'bg-warning text-white'
-      : 'bg-negative text-white',
-);
-const obsConnectionBannerTextKey = computed(() =>
-  obsConnectionState.value === 'connected'
-    ? 'obs.connected'
-    : obsConnectionState.value === 'connecting'
-      ? 'obs.connecting'
-      : 'obs-studio-setup-connection-failed',
-);
+const obsConnectionBannerClass = computed(() => {
+  if (obsConnectionState.value === 'connected') return 'bg-positive text-white';
+  if (obsConnectionState.value === 'connecting') return 'bg-warning text-white';
+  return 'bg-negative text-white';
+});
+const obsConnectionBannerTextKey = computed(() => {
+  if (obsConnectionState.value === 'connected') return 'obs.connected';
+  if (obsConnectionState.value === 'connecting') return 'obs.connecting';
+  return 'obs-studio-setup-connection-failed';
+});
 
 const congregationSettings = useCongregationSettingsStore();
 const { deleteCongregation } = congregationSettings;
@@ -712,7 +873,8 @@ const jwStore = useJwStore();
 const { updateYeartext } = jwStore;
 const router = useRouter();
 
-const { getLocales } = globalThis.electronApi;
+const { basename, getLocales } = globalThis.electronApi;
+const { dateLocale } = useLocale();
 
 if (currentSettings.value) {
   currentSettings.value.autoStartMusic = true;
@@ -774,15 +936,13 @@ const loadSystemLocale = async () => {
 };
 
 onMounted(() => {
-  loadSystemLocale();
+  void loadSystemLocale();
 });
 
 const goToPage = (path: string) => {
-  try {
-    router.push({ path });
-  } catch (error) {
-    errorCatcher(error);
-  }
+  router.push({ path }).catch((error: unknown) => {
+    errorCatcher(error, { contexts: { fn: { name: 'goToPage', path } } });
+  });
 };
 
 // Shared by the explicit Cancel button and the route-leave guard below -
@@ -857,6 +1017,38 @@ onBeforeRouteLeave(async (_to, _from, next) => {
 
 const step = ref(1);
 
+// The Zoom Meeting Manager (Windows only) is offered in place of the older
+// Zoom integration, which only sends a screen-sharing keyboard shortcut.
+const zoomManagerAvailable = getRendererPlatform() === 'win32';
+
+/** Whether the user answered "yes" to Zoom (in whichever form it's offered). */
+const zoomChosen = computed(() =>
+  zoomManagerAvailable
+    ? !!currentSettings.value?.zoomMeetingManagerEnable
+    : !!currentSettings.value?.zoomEnable,
+);
+
+const setZoomChosen = (chosen: boolean) => {
+  if (!currentSettings.value) return;
+  if (zoomManagerAvailable) {
+    currentSettings.value.zoomMeetingManagerEnable = chosen;
+    // The two Zoom integrations exclude each other.
+    if (chosen) currentSettings.value.zoomEnable = false;
+  } else {
+    currentSettings.value.zoomEnable = chosen;
+  }
+};
+
+/** Whether the Zoom setup assistant has learned what it needs from Zoom. */
+const zoomManagerReady = computed(() =>
+  areZoomButtonsLearned(currentSettings.value),
+);
+
+const openZoomSetupAssistant = () => {
+  // Shown by MainLayout, over the wizard.
+  globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
+};
+
 // The wizard branches a lot (regular vs. special profile, OBS, Zoom, sign
 // language...), so there's no single "step 7 of 12" that's true for every
 // session. Rather than compute the exact reachable path (which would also
@@ -865,9 +1057,10 @@ const step = ref(1);
 // indicator - unlike a flat superset of every possible step, this only
 // counts the steps actually reachable given the answers given so far, so it
 // no longer jumps non-monotonically when a branch is skipped (e.g. a
-// special profile skipping 8-10, or Zoom being enabled and skipping OBS
+// special profile skipping 8-14, or Zoom being enabled and skipping OBS
 // entirely). Mirrors the exact branch conditions the q-step v-ifs and their
-// own navigation buttons use below: regularProfile gates 8/9/10; from step
+// own navigation buttons use below: regularProfile gates 8-14, with the
+// shared folder's 12/13 only offered when it's wanted (step 11); from step
 // 200 "yes" jumps straight to 201 then 300 (OBS is only offered if Zoom is
 // declined - see step 200's "no" button); obsUsed/obsIntegrate gate 104 and
 // 105-107. Before a branching question has actually been answered, this
@@ -885,10 +1078,12 @@ const reachableStepNames = computed(() => {
     // case, so it must be excluded here too or the bar jumps by 2 steps
     // instead of 1 when that branch is taken.
     if (!scheduleAppliedViaLookup.value) names.push(8);
-    names.push(9, 10);
+    names.push(9, 11);
+    if (currentSettings.value?.enableFolderWatcher) names.push(12, 13);
+    names.push(14);
   }
   names.push(200);
-  if (currentSettings.value?.zoomEnable) {
+  if (zoomChosen.value) {
     names.push(201);
   } else {
     names.push(103);
@@ -906,6 +1101,34 @@ const stepProgress = computed(() => {
   return index === -1 ? 0 : index / (names.length - 1);
 });
 
+const sharedFolderName = computed(() =>
+  currentSettings.value?.folderToWatch
+    ? basename(currentSettings.value.folderToWatch)
+    : '',
+);
+
+// The dated folders M³ will create for the next two meetings, so the
+// "how it works" step can show what the shared folder is going to look like.
+const exampleMeetingFolders = computed(() => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const meetingDates = Array.from({ length: 14 }, (_, day) =>
+    addToDate(today, { day }),
+  )
+    .filter((date) => isMeetingDay(date))
+    .slice(0, 2);
+  if (!meetingDates.length) meetingDates.push(today);
+
+  return meetingDates.map((date) => ({
+    label: getLocalDate(
+      date,
+      dateLocale.value,
+      currentSettings.value?.localDateFormat,
+    ),
+    name: formatDate(date, 'YYYY-MM-DD'),
+  }));
+});
+
 const showCongregationLookup = ref(false);
 
 const openCongregationLookup = () => {
@@ -913,7 +1136,7 @@ const openCongregationLookup = () => {
 };
 
 watch(step, () => {
-  nextTick(() => {
+  void nextTick(() => {
     const activeTab = document.querySelector('.q-stepper__tab--active');
     const parentStep = activeTab?.closest('.q-stepper__step');
 
@@ -990,6 +1213,20 @@ watchImmediate(
 :deep(.q-stepper__dot::before),
 :deep(.q-stepper__dot::after) {
   display: none;
+}
+
+.wizard-folder-path {
+  word-break: break-all;
+}
+
+.wizard-folder-example {
+  background: rgba(128, 128, 128, 0.08);
+  border-radius: 6px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 100%;
+  padding: 8px 12px;
 }
 
 :deep(.q-stepper__tab--active .q-stepper__title) {

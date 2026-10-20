@@ -49,7 +49,7 @@ function fixLinkedMessageSyntax(message) {
   // `@:{‘key’}` / `@:{“key”}` / `@:{„key“}` -> `@:{'key'}` - typographic
   // quotes around the linked key instead of straight ones (compiler error
   // code 2, "Invalid token in placeholder").
-  fixed = fixed.replace(
+  fixed = fixed.replaceAll(
     new RegExp(
       String.raw`@:\{\s*[${TYPOGRAPHIC_QUOTE_CLASS}]([^{}${TYPOGRAPHIC_QUOTE_CLASS}]*)[${TYPOGRAPHIC_QUOTE_CLASS}]\s*\}`,
       'g',
@@ -59,7 +59,7 @@ function fixLinkedMessageSyntax(message) {
 
   // `@:  key` -> `@:key` - stray whitespace between `@:` and a bare linked
   // key (compiler error code 10, "Invalid linked format").
-  fixed = fixed.replace(/@:[ \t]+(?=[\p{L}\p{N}_-])/gu, '@:');
+  fixed = fixed.replaceAll(/@:[ \t]+(?=[\p{L}\p{N}_-])/gu, '@:');
 
   // A stray closing quote+brace left over from a mangled `@:{'key'}`
   // (compiler error code 6, "Unbalanced closing brace"). Protect the
@@ -67,12 +67,12 @@ function fixLinkedMessageSyntax(message) {
   // collide with real text, then drop any orphaned `'}`/"}` left behind in
   // what remains before restoring the protected occurrences.
   const placeholders = [];
-  const protectedText = fixed.replace(/@:\{'[^']*'\}/g, (match) => {
+  const protectedText = fixed.replaceAll(/@:\{'[^']*'\}/g, (match) => {
     placeholders.push(match);
     return `${PLACEHOLDER_MARKER}${placeholders.length - 1}${PLACEHOLDER_MARKER}`;
   });
-  const strippedText = protectedText.replace(/['"]\}/g, '');
-  fixed = strippedText.replace(
+  const strippedText = protectedText.replaceAll(/['"]\}/g, '');
+  fixed = strippedText.replaceAll(
     new RegExp(
       String.raw`${PLACEHOLDER_MARKER}(\d+)${PLACEHOLDER_MARKER}`,
       'g',
@@ -83,44 +83,79 @@ function fixLinkedMessageSyntax(message) {
   return fixed;
 }
 
+/**
+ * Fix every parsed locale in directory order (logging per-locale counts),
+ * returning the totals and the locales that need writing back (none in
+ * --check mode).
+ */
+function fixLocales(locales) {
+  let totalFixed = 0;
+  const totalUnfixable = [];
+  const pendingWrites = [];
+
+  for (const { file, messages, path } of locales) {
+    const totals = { fixed: 0, unfixable: [] };
+    walkAndFix(messages, totals);
+
+    if (totals.fixed > 0) {
+      totalFixed += totals.fixed;
+      console.log(
+        `[i18n] ${file}: fixed ${totals.fixed} message${totals.fixed === 1 ? '' : 's'}`,
+      );
+      if (!checkOnly) pendingWrites.push({ messages, path });
+    }
+    for (const failure of totals.unfixable) {
+      totalUnfixable.push({ file, ...failure });
+    }
+  }
+
+  return { pendingWrites, totalFixed, totalUnfixable };
+}
+
+/**
+ * Repair one string message in place (`obj[key]`), counting it in `totals`
+ * as fixed or unfixable. Messages without `@:` links, or that already
+ * compile, are left alone.
+ */
+function fixMessage(obj, key, value, totals) {
+  if (!value.includes('@:') || compiles(value)) return;
+  const fixed = fixLinkedMessageSyntax(value);
+  if (fixed !== value && compiles(fixed)) {
+    obj[key] = fixed;
+    totals.fixed += 1;
+    if (verbose) {
+      console.log(
+        `  ${key}: ${JSON.stringify(value)} -> ${JSON.stringify(fixed)}`,
+      );
+    }
+  } else {
+    totals.unfixable.push({ key, value });
+  }
+}
+
 async function main() {
   try {
     const files = (await readdir(I18N_DIR)).filter((f) => f.endsWith('.json'));
-    let totalFixed = 0;
-    const totalUnfixable = [];
 
-    for (const file of files) {
-      const path = resolve(I18N_DIR, file);
-      const messages = JSON.parse(await readFile(path, 'utf-8'));
-      const totals = { fixed: 0, unfixable: [] };
-      walkAndFix(messages, totals);
+    // Locale files are independent: read them concurrently, then fix and log
+    // them in directory order so the console output stays deterministic.
+    const locales = await Promise.all(
+      files.map(async (file) => {
+        const path = resolve(I18N_DIR, file);
+        const messages = JSON.parse(await readFile(path, 'utf-8'));
+        return { file, messages, path };
+      }),
+    );
+    const { pendingWrites, totalFixed, totalUnfixable } = fixLocales(locales);
 
-      if (totals.fixed > 0) {
-        totalFixed += totals.fixed;
-        console.log(
-          `[i18n] ${file}: fixed ${totals.fixed} message${totals.fixed === 1 ? '' : 's'}`,
-        );
-        if (!checkOnly) {
-          await writeFile(
-            path,
-            `${JSON.stringify(messages, null, 2)}\n`,
-            'utf-8',
-          );
-        }
-      }
-      for (const failure of totals.unfixable) {
-        totalUnfixable.push({ file, ...failure });
-      }
-    }
+    // Each fixed locale is written to its own file, so order doesn't matter.
+    await Promise.all(
+      pendingWrites.map(({ messages, path }) =>
+        writeFile(path, `${JSON.stringify(messages, null, 2)}\n`, 'utf-8'),
+      ),
+    );
 
-    if (totalUnfixable.length > 0) {
-      console.warn(
-        `[i18n] ${totalUnfixable.length} message${totalUnfixable.length === 1 ? '' : 's'} could not be auto-repaired:`,
-      );
-      for (const { file, key, value } of totalUnfixable) {
-        console.warn(`  ${file}: ${key}: ${JSON.stringify(value)}`);
-      }
-    }
+    reportUnfixable(totalUnfixable);
 
     console.log(
       `Done. ${checkOnly ? 'Found' : 'Fixed'} ${totalFixed} message${totalFixed === 1 ? '' : 's'}.`,
@@ -135,22 +170,21 @@ async function main() {
   }
 }
 
+/** Warn about the messages that could not be auto-repaired, if any. */
+function reportUnfixable(totalUnfixable) {
+  if (totalUnfixable.length === 0) return;
+  console.warn(
+    `[i18n] ${totalUnfixable.length} message${totalUnfixable.length === 1 ? '' : 's'} could not be auto-repaired:`,
+  );
+  for (const { file, key, value } of totalUnfixable) {
+    console.warn(`  ${file}: ${key}: ${JSON.stringify(value)}`);
+  }
+}
+
 function walkAndFix(obj, totals) {
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === 'string') {
-      if (!value.includes('@:') || compiles(value)) continue;
-      const fixed = fixLinkedMessageSyntax(value);
-      if (fixed !== value && compiles(fixed)) {
-        obj[key] = fixed;
-        totals.fixed += 1;
-        if (verbose) {
-          console.log(
-            `  ${key}: ${JSON.stringify(value)} -> ${JSON.stringify(fixed)}`,
-          );
-        }
-      } else {
-        totals.unfixable.push({ key, value });
-      }
+      fixMessage(obj, key, value, totals);
     } else if (value && typeof value === 'object') {
       walkAndFix(value, totals);
     }

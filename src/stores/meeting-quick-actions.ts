@@ -5,6 +5,8 @@ import { useDemoModeStore } from 'stores/demo-mode';
 import { computed, reactive } from 'vue';
 
 interface ScopeState {
+  /** Items M³ ticked itself (e.g. the Zoom Meeting Manager's actions). */
+  automaticallyCheckedItemIds: Record<string, boolean>;
   checkedItemIds: Record<string, boolean>;
   dismissedAfterPanel: boolean;
   dismissedBeforePanel: boolean;
@@ -12,6 +14,7 @@ interface ScopeState {
 }
 
 const createScopeState = (): ScopeState => ({
+  automaticallyCheckedItemIds: {},
   checkedItemIds: {},
   dismissedAfterPanel: false,
   dismissedBeforePanel: false,
@@ -65,10 +68,28 @@ export const useMeetingQuickActionsStore = defineStore(
     const isItemChecked = (itemId: string) =>
       !!currentScope.value?.checkedItemIds[itemId];
 
+    const isItemCheckedAutomatically = (itemId: string) =>
+      isItemChecked(itemId) &&
+      !!currentScope.value?.automaticallyCheckedItemIds[itemId];
+
     const setItemChecked = (itemId: string, checked: boolean) => {
       const scope = currentScope.value;
       if (!scope || !itemId) return;
       scope.checkedItemIds[itemId] = checked;
+      // Ticked (or unticked) by the user now, whoever did it before.
+      scope.automaticallyCheckedItemIds[itemId] = false;
+    };
+
+    /**
+     * Ticks or unticks an item for something M³ did (or undid) itself.
+     * Always in today's scope, like recordLastSongEnded below, whichever
+     * date the calendar happens to show.
+     */
+    const setItemCheckedAutomatically = (itemId: string, checked: boolean) => {
+      const scope = getScope(undefined, new Date());
+      if (!scope || !itemId) return;
+      scope.checkedItemIds[itemId] = checked;
+      scope.automaticallyCheckedItemIds[itemId] = checked;
     };
 
     const toggleItemChecked = (itemId: string) => {
@@ -131,10 +152,12 @@ export const useMeetingQuickActionsStore = defineStore(
       dismissedAfterPanel,
       dismissedBeforePanel,
       isItemChecked,
+      isItemCheckedAutomatically,
       lastSongEndedAt,
       recordLastSongEnded,
       resetCurrentScope,
       setItemChecked,
+      setItemCheckedAutomatically,
       toggleItemChecked,
       undismissAfter,
       undismissBefore,

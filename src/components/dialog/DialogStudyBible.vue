@@ -148,7 +148,7 @@
               color="accent-200"
               :disable="!chapterHasMedia(0) || isProcessing"
               :label="t('introduction')"
-              text-color="black"
+              :text-color="chapterTextColor(0)"
               unelevated
               @click="selectChapter(0)"
             />
@@ -167,7 +167,7 @@
               color="accent-200"
               :disable="!chapterHasMedia(chapter) || isProcessing"
               :label="chapter"
-              text-color="black"
+              :text-color="chapterTextColor(chapter)"
               unelevated
               @click="selectChapter(chapter)"
             />
@@ -267,12 +267,14 @@ import type { MediaSectionIdentifier, MultimediaItem } from 'src/types';
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
+import { useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getStudyBibleBooks, getStudyBibleMedia } from 'src/helpers/jw-media';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+const $q = useQuasar();
 
 // Props
 const props = defineProps<{
@@ -331,9 +333,7 @@ const groupedMediaItems = computed(() => {
       ? bibleBookChapter.value + ':' + item.VerseNumber
       : t('general');
 
-    if (!groups[label]) {
-      groups[label] = [];
-    }
+    groups[label] ??= [];
     groups[label]?.push(item);
   }
 
@@ -400,8 +400,8 @@ const fetchChapterMediaAvailability = async (bookNr: number) => {
       if (item.ChapterNumber !== undefined && item.ChapterNumber !== null) {
         chaptersSet.add(item.ChapterNumber);
       } else if (item.VerseLabel) {
-        const match = item.VerseLabel.match(/>(\d+):/);
-        if (match && match[1]) {
+        const match = />(\d+):/.exec(item.VerseLabel);
+        if (match?.[1]) {
           chaptersSet.add(Number.parseInt(match[1]));
         }
       }
@@ -435,16 +435,27 @@ const fetchBibleBookMedia = async () => {
 
 const selectBook = (bookNr: number) => {
   bibleBook.value = bookNr;
-  fetchBibleBookMedia();
+  void fetchBibleBookMedia();
 };
 
 const selectChapter = (chapter: number) => {
   bibleBookChapter.value = chapter;
-  fetchBibleBookMedia();
+  void fetchBibleBookMedia();
 };
 
 const chapterHasMedia = (chapter: number) =>
   chaptersWithMedia.value.has(chapter);
+
+// A chapter with no media gets a muted gray label instead of black - the
+// "unavailable" cue - still readable on its gray button (4.5:1 or better).
+const unavailableChapterTextColor = computed(() =>
+  $q.dark.isActive ? 'grey-6' : 'grey-8',
+);
+
+const chapterTextColor = (chapter: number) => {
+  if (chapterHasMedia(chapter)) return 'black';
+  return unavailableChapterTextColor.value;
+};
 
 const fetchStudyBibleMedia = async () => {
   try {
@@ -482,7 +493,7 @@ const isSelected = (item: MultimediaItem) => {
   return selectedMediaItems.value.includes(item);
 };
 
-const addSelectedMediaItems = async () => {
+const addSelectedMediaItems = () => {
   // ✅ Emit raw MultimediaItems - parent handles image conversion and video downloads
   emit('import', { items: [...selectedMediaItems.value] });
   resetState();
@@ -508,14 +519,15 @@ body.body--dark .study-bible-item :deep(img) {
   background-color: #2a2a2a;
 }
 
-.study-bible-chapter-unavailable {
-  background-color: #e0e0e0 !important;
-  color: #757575 !important;
-  opacity: 1 !important;
+/* .q-btn outranks the button's own bg-accent-200 color class
+   (body.body--light .bg-accent-200) without needing !important. The label's
+   gray comes from the button's text-color (chapterTextColor), and its full
+   opacity from app.scss. */
+.q-btn.study-bible-chapter-unavailable {
+  background-color: #e0e0e0;
 }
 
 body.body--dark .study-bible-chapter-unavailable {
-  background-color: #343434 !important;
-  color: #9e9e9e !important;
+  background-color: #343434;
 }
 </style>

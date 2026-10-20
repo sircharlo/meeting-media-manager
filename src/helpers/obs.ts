@@ -1,4 +1,6 @@
+import { i18n } from 'boot/i18n';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { sleep } from 'src/utils/general';
 import { initObsWebSocket, obsWebSocketInfo } from 'src/utils/obs';
@@ -45,14 +47,44 @@ const OBS_NOT_READY_RETRY_MS = 2000;
 const callWhenObsReady = async <T>(request: () => Promise<T>): Promise<T> => {
   for (let attempt = 1; ; attempt++) {
     try {
-      return await request();
+      return await request(); // NOSONAR: sequential - retry loop
     } catch (error) {
       const notReadyYet =
         error instanceof Error && error.message.includes('OBS is not ready');
       if (!notReadyYet || attempt >= OBS_NOT_READY_RETRIES) throw error;
-      await sleep(OBS_NOT_READY_RETRY_MS);
+      await sleep(OBS_NOT_READY_RETRY_MS); // NOSONAR: sequential - retry loop
     }
   }
+};
+
+// obs-websocket's StartRecord and StopRecord only fail when OBS is already
+// in the state asked for - OutputRunning (500) and OutputNotRunning (501) -
+// and neither error carries a comment, so they reached Sentry as "No error
+// message" (MMM-V2-3MA).
+const OBS_OUTPUT_RUNNING = 500;
+const OBS_OUTPUT_NOT_RUNNING = 501;
+
+const getObsErrorCode = (error: unknown) =>
+  error instanceof Error && 'code' in error && typeof error.code === 'number'
+    ? error.code
+    : undefined;
+
+// StartRecord only asks OBS to start recording and answers straight away.
+// OBS then skips the recording without a word, not even a
+// RecordStateChanged event, when its recording path is invalid, its disk
+// is nearly full or its outputs are disabled (MMM-V2-3MA: M³ counted a
+// recording that never existed). So a recording only counts as started
+// once OBS reports it active.
+const RECORDING_START_CHECKS = 10;
+const RECORDING_START_CHECK_MS = 500;
+
+const waitForObsRecordingToStart = async () => {
+  for (let check = 0; check < RECORDING_START_CHECKS; check++) {
+    await sleep(RECORDING_START_CHECK_MS); // NOSONAR: sequential - polling loop
+    const status = await obsWebSocketInfo.obsWebSocket?.call('GetRecordStatus'); // NOSONAR: sequential - polling loop
+    if (status?.outputActive) return true;
+  }
+  return false;
 };
 
 const reportObsCallError = (error: unknown, name: string) => {
@@ -67,10 +99,10 @@ const getObsConnectionSettings = () => {
   const currentState = useCurrentStateStore();
   if (!currentState.currentSettings?.obsEnable) return 'disabled';
 
-  const obsPort = currentState.currentSettings?.obsPort || '';
+  const obsPort = currentState.currentSettings?.obsPort ?? '';
   if (!portNumberValidator(obsPort)) return 'invalid';
 
-  const obsPassword = currentState.currentSettings?.obsPassword || '';
+  const obsPassword = currentState.currentSettings?.obsPassword ?? '';
   if (obsPassword?.length === 0) return 'invalid';
 
   return { obsPassword, obsPort };
@@ -130,13 +162,13 @@ const runObsConnect = async (setup?: boolean) => {
       obsState.obsConnectionState !== 'connected'
     ) {
       if (
-        await performConnectionAttempt(settings.obsPort, settings.obsPassword)
+        await performConnectionAttempt(settings.obsPort, settings.obsPassword) // NOSONAR: sequential - retry loop
       )
         break;
 
       attempt++;
       if (attempt < maxAttempts) {
-        await sleep(5000);
+        await sleep(5000); // NOSONAR: sequential - retry loop
       }
     }
 
@@ -179,9 +211,22 @@ export const obsStartRecording = async (): Promise<boolean> => {
     }
 
     await obsWebSocketInfo.obsWebSocket?.call('StartRecord');
-    return true;
+    if (await waitForObsRecordingToStart()) return true;
+
+    log('OBS accepted StartRecord but did not start recording', 'obs', 'warn');
+    createTemporaryNotification({
+      caption: i18n.global.t('obs-recording-not-started'),
+      message: i18n.global.t('obs-recording-not-started-explain'),
+      timeout: 15_000,
+      type: 'negative',
+    });
+    return false;
   } catch (error) {
-    errorCatcher(error);
+    if (getObsErrorCode(error) === OBS_OUTPUT_RUNNING) {
+      log('OBS was already recording', 'obs', 'log');
+      return true;
+    }
+    reportObsCallError(error, 'obsStartRecording');
     return false;
   }
 };
@@ -196,7 +241,13 @@ export const obsStopRecording = async (): Promise<boolean> => {
     await obsWebSocketInfo.obsWebSocket?.call('StopRecord');
     return true;
   } catch (error) {
-    errorCatcher(error);
+    // Nothing to stop: count it as stopped, or M³ would show a recording in
+    // progress, and fail to stop it, until restarted.
+    if (getObsErrorCode(error) === OBS_OUTPUT_NOT_RUNNING) {
+      log('OBS was not recording', 'obs', 'warn');
+      return true;
+    }
+    reportObsCallError(error, 'obsStopRecording');
     return false;
   }
 };
@@ -211,7 +262,7 @@ export const obsGetRecordingDirectory = async (): Promise<null | string> => {
     const response = await callWhenObsReady(async () =>
       obsWebSocketInfo.obsWebSocket?.call('GetRecordDirectory'),
     );
-    return response?.recordDirectory || null;
+    return response?.recordDirectory || null; // NOSONAR: '' means not set
   } catch (error) {
     reportObsCallError(error, 'obsGetRecordingDirectory');
     return null;
@@ -228,7 +279,7 @@ export const obsGetRecordingState = async (): Promise<boolean> => {
     const response = await callWhenObsReady(async () =>
       obsWebSocketInfo.obsWebSocket?.call('GetRecordStatus'),
     );
-    return response?.outputActive || false;
+    return response?.outputActive ?? false;
   } catch (error) {
     reportObsCallError(error, 'obsGetRecordingState');
     return false;

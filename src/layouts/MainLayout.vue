@@ -6,7 +6,16 @@
     <!-- Side navigation -->
     <NavDrawer v-model="miniState" />
 
+    <!-- Meeting timer, docked at the side (a setting) -->
+    <TimerDockPanel
+      v-if="
+        currentSettings?.enableTimerDisplay && currentSettings?.timerDockedPanel
+      "
+    />
+
     <DialogCongregationSwitcher />
+    <DialogZoomSetupAssistant v-model="zoomSetupAssistantOpen" />
+    <DialogZoomAutomationOverlay />
 
     <!-- Main content -->
     <q-page-container class="app-main-scroll main-bg">
@@ -69,7 +78,7 @@
 
 <script setup lang="ts">
 import { initializeElectronApi } from 'src/helpers/electron-api-manager';
-initializeElectronApi('MainLayout');
+void initializeElectronApi('MainLayout');
 
 import type { LanguageValue } from 'src/constants/locales';
 import type {
@@ -82,6 +91,7 @@ import type {
 
 import {
   useBroadcastChannel,
+  useEventListener,
   useIntervalFn,
   watchDebounced,
   watchImmediate,
@@ -90,13 +100,16 @@ import {
 import { queues } from 'boot/globals';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogCongregationSwitcher from 'components/dialog/DialogCongregationSwitcher.vue';
+import DialogZoomAutomationOverlay from 'components/dialog/DialogZoomAutomationOverlay.vue';
+import DialogZoomSetupAssistant from 'components/dialog/DialogZoomSetupAssistant.vue';
 import HeaderBase from 'components/header/HeaderBase.vue';
 import MediaPreview from 'components/media/MediaPreview.vue';
+import TimerDockPanel from 'components/media/TimerDockPanel.vue';
 import ActionIsland from 'components/ui/ActionIsland.vue';
 import AnnouncementBanner from 'components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'components/ui/NavDrawer.vue';
 import { storeToRefs } from 'pinia';
-import { debounce, useMeta, useQuasar } from 'quasar';
+import { useMeta, useQuasar } from 'quasar';
 import { SORTER } from 'src/constants/general';
 import {
   cleanCache,
@@ -111,7 +124,7 @@ import {
   remainingTimeBeforeMeetingStart,
   updateLookupPeriod,
 } from 'src/helpers/date';
-import { errorCatcher } from 'src/helpers/error-catcher';
+import { DISK_FULL_ERROR_EVENT, errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
 import { setElementFont } from 'src/helpers/fonts';
 import { watchExternalFolder } from 'src/helpers/fs';
@@ -132,10 +145,20 @@ import {
   removeWatchedMediaSectionInfo,
 } from 'src/helpers/media-sections';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
+import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import {
   checkLowDiskSpaceAndNotify,
   createTemporaryNotification,
+  notifyDiskFull,
 } from 'src/helpers/notifications';
+import { syncTimerRemote } from 'src/helpers/timer-remote';
+import { createWatchFolderEventQueue } from 'src/helpers/watch-folder-event-queue';
+import { cancelZoomRun, stopZoomSharingAfterMedia } from 'src/helpers/zoom';
+import {
+  startHandAlertDisplaySync,
+  syncZoomHandAlertWatcher,
+} from 'src/helpers/zoom-hand-alert';
+import { scheduleZoomStartupCheck } from 'src/helpers/zoom-startup-check';
 import { localeOptions } from 'src/i18n';
 import { log, type LogPrefix } from 'src/shared/vanilla';
 import { useAppSettingsStore } from 'src/stores/app-settings';
@@ -148,6 +171,7 @@ import { useJwStore } from 'src/stores/jw';
 import { fetchYeartext } from 'src/utils/api';
 import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
+import { mmmIconMapFn } from 'src/utils/icon-map';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
@@ -167,23 +191,7 @@ useMeta({
 // Icon mapping
 const $q = useQuasar();
 
-$q.iconMapFn = (iconName) => {
-  if (iconName.startsWith('chevron_')) {
-    iconName = iconName.replace('chevron_', 'mmm-');
-  } else if (iconName.startsWith('keyboard_arrow_')) {
-    iconName = iconName.replace('keyboard_arrow_', 'mmm-');
-  } else if (iconName.startsWith('arrow_drop_')) {
-    iconName = 'mmm-dropdown-arrow';
-  } else if (iconName === 'cancel' || iconName === 'close') {
-    iconName = 'clear';
-  }
-  if (!iconName.startsWith('mmm-')) {
-    iconName = 'mmm-' + iconName;
-  }
-  return {
-    cls: iconName,
-  };
-};
+$q.iconMapFn = mmmIconMapFn;
 
 // Routes and translations
 const router = useRouter();
@@ -228,8 +236,10 @@ const {
   onGpuCrashDetected,
   onHardwareAccelerationTemporaryDisabled,
   onLog,
+  onMediaWindowRendererGone,
   onPathProbeNetworkWarning,
   onShortcut,
+  onTimerWindowClosed,
   onVideoCaptureCrashDetected,
   onWatchFolderError,
   onWatchFolderUpdate,
@@ -244,8 +254,8 @@ const {
   setPathProbeNotificationPaths,
   toggleTimerWindow,
 } = globalThis.electronApi;
-updateMemorials(online.value);
-updateJwLanguages(online.value);
+void updateMemorials(online.value);
+void updateJwLanguages(online.value);
 
 const hasActiveDownloads = () => currentState.hasActiveMediaWork;
 
@@ -330,6 +340,13 @@ const getMacosFolderPermissionTargets = () => {
 };
 
 const macosPermissionPromptOpen = ref(false);
+
+// Opened from Settings, the Zoom popup, or by turning the Zoom Meeting
+// Manager on (see the openZoomSetupAssistant settings actions).
+const zoomSetupAssistantOpen = ref(false);
+useEventListener(globalThis, 'openZoomSetupAssistant', () => {
+  zoomSetupAssistantOpen.value = true;
+});
 const macosPermissionPromptTarget = ref<MacosFolderPermissionTarget | null>(
   null,
 );
@@ -439,7 +456,7 @@ const checkMacosFolderPermission = async (
 const checkMacosProfileFolderPermissions = async () => {
   if (PLATFORM !== 'darwin') return;
   for (const target of getMacosFolderPermissionTargets()) {
-    await checkMacosFolderPermission(target);
+    await checkMacosFolderPermission(target); // NOSONAR: sequential - one OS permission prompt at a time
   }
 };
 
@@ -462,7 +479,7 @@ const delayedCacheClear = () => {
         'cacheAutoClear',
         'info',
       );
-      setTimeout(checkAndClear, 10000); // Check again in 10 seconds
+      setTimeout(checkAndClear, 10_000); // Check again in 10 seconds
       return;
     }
 
@@ -489,7 +506,7 @@ const delayedCacheClear = () => {
   };
 
   // Start checking after 30 seconds
-  setTimeout(checkAndClear, 30000);
+  setTimeout(checkAndClear, 30_000);
 };
 
 const showCongregationSwitcher = (opts?: { isBootstrap?: boolean }) => {
@@ -703,29 +720,9 @@ const updateWatchFolderRef = async ({
   }
 };
 
-const processWatchFolderEvents = debounce(
-  async (pendingEvents: Record<string, string>[]) => {
-    for (const evt of pendingEvents) {
-      await updateWatchFolderRef(evt);
-    }
-    pendingEventKeys.clear();
-    pendingEvents.length = 0;
-  },
-  100,
-);
+const watchFolderEventQueue = createWatchFolderEventQueue(updateWatchFolderRef);
 
-const pendingEvents: Record<string, string>[] = [];
-const pendingEventKeys = new Set<string>();
-
-const queueWatchFolderEvent = (event: Record<string, string>) => {
-  const eventKey = `${event.event}:${event.changedPath || ''}:${event.day || ''}`;
-  if (pendingEventKeys.has(eventKey)) return;
-  pendingEventKeys.add(eventKey);
-  pendingEvents.push(event);
-  processWatchFolderEvents(pendingEvents);
-};
-
-cleanCache();
+void cleanCache();
 cleanPersistedStores();
 
 const closeAttempts = ref(0);
@@ -749,13 +746,13 @@ bcClose.onmessage = (event) => {
         caption: t('clicking-the-close-button-again-will-close-app'),
         message: t('make-sure-that-m-is-in-not-use-before-quitting'),
         noClose: true,
-        timeout: 10000,
+        timeout: 10_000,
         type: 'negative',
       });
       closeAttempts.value += 1;
       setTimeout(() => {
         closeAttempts.value = 0;
-      }, 10000);
+      }, 10_000);
     } else {
       bcClose.postMessage({ authorizedClose: true });
     }
@@ -765,11 +762,26 @@ bcClose.onmessage = (event) => {
 const initListeners = () => {
   onLog(({ ctx, level, msg }) => {
     log(`[main] ${msg}`, ctx as unknown as LogPrefix, level, ctx);
+    if (msg.startsWith('[Zoom Helper')) {
+      currentState.addZoomHelperLog(msg);
+    }
   });
 
   onShortcut(({ shortcut }) => {
+    // The cancel shortcut for Zoom automations is only registered while one
+    // runs, and must work whatever the keyboard-shortcuts setting says.
+    if (shortcut === 'zoomCancelAutomationShortcut') {
+      void cancelZoomRun();
+      return;
+    }
     if (!currentSettings.value?.enableKeyboardShortcuts) return;
     executeShortcut(shortcut as keyof SettingsValues);
+  });
+
+  // The timer window can be closed from outside M³ (Alt+F4, the OS): the
+  // island button and the popup must not go on showing it as open.
+  onTimerWindowClosed(() => {
+    currentState.setTimerWindowVisible(false);
   });
 
   onWatchFolderError(() => {
@@ -778,7 +790,7 @@ const initListeners = () => {
       createTemporaryNotification({
         caption: t('watch-folder-error-caption'),
         message: t('watch-folder-error-message'),
-        timeout: 15000,
+        timeout: 15_000,
         type: 'negative',
       });
     }
@@ -790,14 +802,14 @@ const initListeners = () => {
       createTemporaryNotification({
         caption: t('path-probe-network-warning-caption'),
         message: t('path-probe-network-warning-message'),
-        timeout: 15000,
+        timeout: 15_000,
         type: 'negative',
       });
     }
   });
 
   onWatchFolderUpdate(({ changedPath, day, event }) => {
-    queueWatchFolderEvent({ changedPath, day, event });
+    watchFolderEventQueue.queue({ changedPath, day, event });
   });
 
   onDownloadStarted((args) => {
@@ -808,7 +820,7 @@ const initListeners = () => {
       error: existing?.error,
       filename: args.filename,
       loaded: existing?.loaded,
-      meetingDate: existing?.meetingDate || '',
+      meetingDate: existing?.meetingDate ?? '',
       progressCategory: existing?.progressCategory,
       total: args.totalBytes,
     };
@@ -830,6 +842,7 @@ const initListeners = () => {
   onDownloadError((args) => {
     const existing = downloadProgress.value[args.id];
     if (existing) existing.error = true;
+    if (args.diskFull) notifyDiskFull();
   });
 
   onDownloadProgress((args) => {
@@ -859,7 +872,7 @@ const initListeners = () => {
     createTemporaryNotification({
       caption: t('camera-access-required-explain'),
       message: t('camera-access-required'),
-      timeout: 10000,
+      timeout: 10_000,
       type: 'negative',
     });
   });
@@ -868,9 +881,66 @@ const initListeners = () => {
     createTemporaryNotification({
       caption: t('gpu-crash-detected-explain'),
       message: t('gpu-crash-detected'),
-      timeout: 10000,
+      timeout: 10_000,
       type: 'warning',
     });
+  });
+
+  // The media window's page died (see handleMediaWindowRendererGone in
+  // window-media.ts). Whatever it was playing is gone and will never send
+  // end-of-media, so stop playback here like a manual stop does - before the
+  // reloaded page asks for the current state, which would otherwise hand it
+  // the stale item to replay from the start.
+  onMediaWindowRendererGone(({ reloading }) => {
+    const wasPlaying = !!mediaPlaying.value.url;
+    if (wasPlaying) {
+      mediaPlaying.value = {
+        action: '',
+        currentPosition: 0,
+        currentPositionUpdatedAt: 0,
+        duration: 0,
+        pan: { x: 0, y: 0 },
+        playbackConfirmedToken: 0,
+        playbackRate: 1,
+        playToken: 0,
+        seekTo: 0,
+        shouldLoop: false,
+        slideshowAudioUrl: '',
+        subtitlesUrl: '',
+        uniqueId: '',
+        url: '',
+        zoom: 1,
+      };
+      triggerMediaWindowAutoHide(false);
+      stopZoomSharingAfterMedia();
+    }
+
+    if (!reloading) {
+      createTemporaryNotification({
+        actions: [
+          {
+            color: 'white',
+            handler: () => {
+              relaunchApp();
+            },
+            label: t('restart-app'),
+          },
+        ],
+        caption: t('media-window-keeps-stopping-explain'),
+        group: 'mediaWindowRendererGone',
+        message: t('media-window-keeps-stopping'),
+        timeout: 0,
+        type: 'negative',
+      });
+    } else if (wasPlaying) {
+      createTemporaryNotification({
+        caption: t('media-window-restarted-explain'),
+        group: 'mediaWindowRendererGone',
+        message: t('media-window-restarted'),
+        timeout: 15_000,
+        type: 'warning',
+      });
+    }
   });
 };
 
@@ -887,6 +957,7 @@ const removeListenersLocal = () => {
     'downloadError',
     'downloadProgress',
     'gpu-crash-detected',
+    'media-window-renderer-gone',
     'video-capture-crash-detected',
   ];
 
@@ -921,7 +992,7 @@ const { post: postOnline } = useBroadcastChannel<boolean, boolean>({
 });
 
 // Function to check if we should show the yeartext preview notification
-const checkYeartextPreview = async () => {
+const checkYeartextPreview = () => {
   try {
     // Only run if congregation is selected
     if (!currentCongregation.value) return;
@@ -968,6 +1039,69 @@ const checkYeartextPreview = async () => {
       'log',
     );
 
+    const previewNextYearYeartext = async () => {
+      let success = false;
+      try {
+        // Fetch next year's yeartext
+        const result = await fetchYeartext(
+          lang,
+          jwStore.urlVariables.base,
+          nextYear,
+        );
+        if (result.yeartext) {
+          success = true;
+          // Pause the yeartext watcher to prevent immediate override
+          yeartextWatcherPaused.value = true;
+
+          // Post the next year yeartext temporarily
+          postYeartext(result.yeartext);
+
+          // Show success notification
+          createTemporaryNotification({
+            message: t('yeartext-preview-success', { year: nextYear }),
+            timeout: 5000,
+            type: 'positive',
+          });
+
+          // Auto-dismiss after 10 seconds
+          setTimeout(() => {
+            // Restore the current yeartext
+            const currentYeartext = currentState.yeartext ?? '';
+            postYeartext(currentYeartext);
+            createTemporaryNotification({
+              message: t('yeartext-cleared', {
+                currentYear: currentYear,
+              }),
+              timeout: 5000,
+              type: 'positive',
+            });
+            // Save to prevent asking every time
+            appSettingsStore.yeartextPreviewDismissed[nextYear] = true;
+            // Resume the watcher after a brief delay to allow the current yeartext to be posted
+            setTimeout(() => {
+              yeartextWatcherPaused.value = false;
+            }, 100);
+          }, 10_000);
+        } else {
+          createTemporaryNotification({
+            message: t('yeartext-preview-failed'),
+            type: 'negative',
+          });
+        }
+      } catch (error) {
+        errorCatcher(error);
+        createTemporaryNotification({
+          message: t('yeartext-preview-failed'),
+          type: 'negative',
+        });
+      } finally {
+        // Only resume if we didn't succeed (if we succeeded, the timeout will handle it)
+        if (!success) {
+          yeartextWatcherPaused.value = false;
+        }
+      }
+    };
+
     // Show notification
     createTemporaryNotification({
       actions: [
@@ -987,67 +1121,8 @@ const checkYeartextPreview = async () => {
         },
         {
           color: 'positive',
-          handler: async () => {
-            let success = false;
-            try {
-              // Fetch next year's yeartext
-              const result = await fetchYeartext(
-                lang,
-                jwStore.urlVariables.base,
-                nextYear,
-              );
-              if (result.yeartext) {
-                success = true;
-                // Pause the yeartext watcher to prevent immediate override
-                yeartextWatcherPaused.value = true;
-
-                // Post the next year yeartext temporarily
-                postYeartext(result.yeartext);
-
-                // Show success notification
-                createTemporaryNotification({
-                  message: t('yeartext-preview-success', { year: nextYear }),
-                  timeout: 5000,
-                  type: 'positive',
-                });
-
-                // Auto-dismiss after 10 seconds
-                setTimeout(() => {
-                  // Restore the current yeartext
-                  const currentYeartext = currentState.yeartext || '';
-                  postYeartext(currentYeartext);
-                  createTemporaryNotification({
-                    message: t('yeartext-cleared', {
-                      currentYear: currentYear,
-                    }),
-                    timeout: 5000,
-                    type: 'positive',
-                  });
-                  // Save to prevent asking every time
-                  appSettingsStore.yeartextPreviewDismissed[nextYear] = true;
-                  // Resume the watcher after a brief delay to allow the current yeartext to be posted
-                  setTimeout(() => {
-                    yeartextWatcherPaused.value = false;
-                  }, 100);
-                }, 10000);
-              } else {
-                createTemporaryNotification({
-                  message: t('yeartext-preview-failed'),
-                  type: 'negative',
-                });
-              }
-            } catch (error) {
-              errorCatcher(error);
-              createTemporaryNotification({
-                message: t('yeartext-preview-failed'),
-                type: 'negative',
-              });
-            } finally {
-              // Only resume if we didn't succeed (if we succeeded, the timeout will handle it)
-              if (!success) {
-                yeartextWatcherPaused.value = false;
-              }
-            }
+          handler: () => {
+            void previewNextYearYeartext();
           },
           label: t('yes'),
         },
@@ -1159,8 +1234,8 @@ watchImmediate(
       (online && (prev.base !== base || prev.mediator !== mediator));
 
     if (shouldRun) {
-      getJwMepsInfo();
-      setElementFont('jw-icons-all');
+      void getJwMepsInfo();
+      void setElementFont('jw-icons-all');
     }
 
     // Update previous state
@@ -1203,7 +1278,7 @@ watchImmediate(
     currentSettings.value?.enableFolderWatcher,
   ],
   async ([, newFolderToWatch, newEnableFolderWatcher]) => {
-    pendingEvents.length = 0;
+    watchFolderEventQueue.clear();
     await watchExternalFolder(
       newEnableFolderWatcher ? (newFolderToWatch as string) : undefined,
     );
@@ -1290,7 +1365,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     // currentSettings resolves to undefined until a congregation is active.
     // Re-run it now that one is, and again on every later switch, so those
     // folders actually get cleaned up.
-    cleanCache();
+    void cleanCache();
 
     setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
 
@@ -1358,7 +1433,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
       createTemporaryNotification({
         deferWhileDialogOpen: true,
         message: t('beta-version-warning'),
-        timeout: 30000,
+        timeout: 30_000,
         type: 'warning',
       });
     } else if (areUpdatesDisabled) {
@@ -1367,14 +1442,14 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
           {
             color: 'white',
             handler: () => {
-              router.push('/settings/autoUpdateApp');
+              void router.push('/settings/autoUpdateApp');
             },
             label: t('go-to-settings'),
           },
         ],
         deferWhileDialogOpen: true,
         message: t('updates-disabled-warning'),
-        timeout: 10000,
+        timeout: 10_000,
         type: 'info',
       });
     }
@@ -1424,7 +1499,7 @@ watch(
         caption: t('automatic-sync-disabled-explain'),
         deferWhileDialogOpen: true,
         message: t('automatic-sync-disabled'),
-        timeout: 10000,
+        timeout: 10_000,
         type: 'warning',
       });
     } else if (!newCongregationNameModified && oldCongregationNameModified) {
@@ -1432,7 +1507,7 @@ watch(
       createTemporaryNotification({
         deferWhileDialogOpen: true,
         message: t('automatic-sync-enabled'),
-        timeout: 10000,
+        timeout: 10_000,
         type: 'positive',
       });
     }
@@ -1453,13 +1528,13 @@ watch(online, (isNowOnline) => {
         'mediaFetching',
       );
       meetingQueue?.start();
-      jwStore.updateYeartext({
+      void jwStore.updateYeartext({
         isSignLanguage: currentLangObject.value?.isSignLanguage,
         lang: currentSettings.value?.lang,
         langFallback: currentSettings.value?.langFallback,
         online: online.value,
       });
-      jwStore.updateJwLanguages(online.value);
+      void jwStore.updateJwLanguages(online.value);
     } else {
       log(
         '📴 Offline: pausing active congregation meeting queue',
@@ -1521,8 +1596,9 @@ watch(
     currentSettings.value?.mediaAutoExportFolder,
     currentSettings.value?.convertFilesToMp4,
   ],
-  ([newMediaAutoExport, newMediaAutoExportFolder]) => {
-    if (!!newMediaAutoExport && !!newMediaAutoExportFolder) exportAllDays();
+  ([, newMediaAutoExport, newMediaAutoExportFolder]) => {
+    if (!!newMediaAutoExport && !!newMediaAutoExportFolder)
+      void exportAllDays();
   },
 );
 
@@ -1692,6 +1768,56 @@ watch(
 
 watch(
   () => [
+    currentCongregation.value,
+    currentSettings.value?.zoomMeetingManagerEnable,
+  ],
+  () => {
+    currentState.syncZoomHelper().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'syncZoomHelper' } } });
+    });
+  },
+);
+
+// Watch Zoom for raised hands whenever the raised-hand alert is set up.
+watchImmediate(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.zoomMeetingManagerEnable,
+    currentSettings.value?.zoomMeetingManagerHandAlert,
+    currentSettings.value?.zoomHandRaisedPhrase,
+  ],
+  () => {
+    startHandAlertDisplaySync();
+    syncZoomHandAlertWatcher();
+  },
+);
+
+// Serve the timer remote page whenever it's turned on (and restart it on a
+// new port), stop it otherwise.
+watchImmediate(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.enableTimerDisplay,
+    currentSettings.value?.timerRemoteEnable,
+    currentSettings.value?.timerRemotePort,
+    locale.value,
+  ],
+  () => {
+    void syncTimerRemote();
+  },
+);
+
+// Once M³ has started (or a congregation is opened), check its Zoom before
+// any automation relies on it. The check itself runs only once per session.
+watchImmediate(
+  () => currentCongregation.value,
+  (congregation) => {
+    if (congregation) scheduleZoomStartupCheck();
+  },
+);
+
+watch(
+  () => [
     currentSettings.value?.enableTimerDisplay,
     currentSettings.value?.timerAutoOpen,
   ],
@@ -1741,14 +1867,14 @@ watchImmediate(
               {
                 color: 'white',
                 handler: () => {
-                  router.push('/settings/disableHardwareAcceleration');
+                  void router.push('/settings/disableHardwareAcceleration');
                 },
                 label: t('go-to-settings'),
               },
             ],
             caption: t('hardwareAccelerationDisabledExplain'),
             message: t('hardwareAccelerationDisabled'),
-            timeout: 10000,
+            timeout: 10_000,
             type: 'info',
           });
       } else {
@@ -1806,4 +1932,8 @@ useIntervalFn(
   },
   2 * 60 * 1000,
 );
+
+// Tells the user the disk is full whenever a write fails for lack of space
+// (downloads say so through onDownloadError instead).
+useEventListener(globalThis, DISK_FULL_ERROR_EVENT, notifyDiskFull);
 </script>

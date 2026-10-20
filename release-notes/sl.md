@@ -4,6 +4,28 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## PRIHAJAJOČA RAZLIČICA
+
+### ✨ Nove funkcije
+
+- ✨ \*\*Upravitelj Zoom shoda (beta, Windows): Nova funkcija, ki na shodu upravlja Zoom namesto tebe. Lahko odpre občinski Zoom shod, ko se pred shodom začne predvajati glasba v ozadju. Ko se glasba tik pred začetkom shoda ustavi, se poveže z računalniškim zvokom, vklopi mikrofon, vklopi video gostitelja in utiša vse, ne da bi jim dovolil vklop mikrofona. Ko se glasba predvaja pred shodom ali po njem, naredi obratno: odstrani povezavo z računalniškim zvokom, izklopi video gostitelja in znova dovoli vklop mikrofonov (udeležence pozove, naj to storijo). Samodejno lahko deli multimedijsko okno v Zoomu, medtem ko je prikazana multimedijska vsebina, in poskrbi, da je vedno deljeno pravo okno — nikoli nič drugega na tvojem zaslonu. Nov gumb Zoom v orodni vrstici pokaže, ali je bilo okno Zoom shoda zaznano, in ti omogoča, da te korake izvedeš ročno. Pomočnik za nastavitev, ki se ponudi, ko vklopiš to možnost (začetni čarovnik za nastavitev ga v Windows zdaj ponudi namesto zaslonskega deljenja s tipkovno bližnjico) in je vedno na voljo prek gumba Zoom ali Nastavitev, preveri tvoj Zoom, se nauči imen njegovih gumbov za mikrofon in kamero v izbranem jeziku ter skupaj s tabo preizkusi vsak korak. Ko se M³ zažene, tudi preveri, ali vse, kar v Zoomu avtomatizira, deluje. Ob dnevih shodov po potrebi odpre shod v uri in četrt pred začetkom (če so drugi že povezani na shod, samo pogleda, brez pritiskanja gumbov). Če kaj ne deluje, te M³ o tem obvesti in začasno ustavi svoje Zoom avtomatizacije, dokler se ne znova zažene ali dokler nov preizkus ne uspe, da med shodom ne bi prišlo do napak. Ta preizkus je privzeto vklopljen in ga je mogoče izklopiti v Nastavitvah. Ko je posamezen korak uspešno izveden, se ustrezni opomniki na seznamih opravil pred in po shodu v hitrih dejanjih shoda odkljukajo kot opravljeni samodejno v Zoomu. Ker tega ni mogoče uporabljati skupaj z zaslonskim deljenjem prek tipkovne bližnjice, v Nastavitvah to jasno piše pri tisti od obeh možnosti, ki je trenutno nedostopna, in je navedeno, katero je treba izklopiti. Deluje ne glede na jezik Zooma in ne zahteva nameščanje nobenih dodatnih programov, samo Zoom.
+
+- ✨ **Časovnik shodov**: Prilagojene točke je zdaj mogoče dodati tudi na dneve shodov — za poročila Vodstvenega organa, posebne programe in vse drugo, kar ni na rednem razporedu. Vsaka se meri enako kot druge točke, njeno ime in trajanje pa je mogoče spremeniti v pojavnem oknu časovnika ali na seznamu točk.
+
+- ✨ **Časovnik shodov**: Hitrejši dostop do časovnika. Ko se z miško ustaviš na gumbu časovnika v orodni vrstici, se prikaže točka, ki se trenutno meri, skupaj z gumbi Začni, Premor, Ustavi in Naslednja točka — brez odpiranja pojavnega okna (nastavitev, privzeto vklopljena). Nova nastavitev omogoča tudi, da sta celoten seznam točk in kontrole časovnika prikazana v panelu, pripetem na desni strani glavnega okna, vedno vidna.
+
+- ✨ **Časovnik shodov**: Nov prikaz odštevanja (»Analogna ura z lokom trajanja«) pokaže preostali čas točke kot segment na analogni uri — od minutnega kazalca do načrtovanega konca — tako da en sam pogled pokaže tako uro kot preostanek časa. Prekoračitev se prikaže kot rdeč segment. Prikaz deluje tudi pri odštevanju pred shodom in v načinu štetja navzgor.
+
+- ✨ **Časovnik shodov**: Odštevanje pred shodom je zdaj označeno s »Shod se začne čez«, prikaz časovnika pa pokaže ime točke, ki se meri, tako da »4:59« ne more biti več zamenjano za uro v dnevu.
+
+- ✨ **Časovnik shodov**: Zabeležene čase posameznega dne je mogoče izbrisati naenkrat — po potrditvi — iz pojavnega okna časovnika ali iz pripetega panela.
+
+- ✨ **Upravljalnik Zoom shodov (beta, Windows)**: Novi pomočnik za dvignjene roke. Med shodom M³ spremlja Zoomov seznam udeležencev in išče dvignjene roke. Ko nekdo dvigne roko, M³ operaterju pošlje obvestilo, s katerim lahko tega udeleženca z enim klikom povabi, naj si vklopi mikrofon, in ko konča, ga z drugim klikom znova utiša ter spusti njegovo roko; gumb za Zoom na orodni vrstici prikazuje dvignjene roke z enakimi gumbi. Vsako dejanje se izvede v vrstici tega udeleženca v Zoomu, po njegovem natančnem imenu, in M³ se nikogar ne dotakne, če imata dva udeleženca enako ime. Če je časovnik shoda omogočen, se na prikazu časovnika za predsedujočega pojavi velika roka z imenom udeleženca, ki jo je mogoče ročno vklopiti iz časovnika ali iz pojavnih oken Zooma. M³ se nauči, kako Zoom označuje dvignjene roke z enim samim gumbom (za trenutek dvigne in spusti tvojo roko), ki je na voljo tudi v nastavitvenem pomočniku.
+
+- ✨ **Časovnik shodov**: Nov, neobvezen oddaljeni časovnik. Ko je vklopljen, M³ streže kopijo prikaza časovnika kot spletno stran v lokalnem omrežju, tako da lahko tablica ali telefon na govorniškem pultu pokaže govorniku preostali čas, ne da bi bil prikazan na občinskem zaslonu ali deljen prek Zooma. Stran sledi časovniku v realnem času (točke, odštevanje pred shodom, ura, barve za prekoračitev, opozorilo glede dvignjene roke), vse kontrole pa ostanejo v M³. Naslovi za odpiranje so prikazani v pojavnem oknu časovnika, skupaj z gumbom za kopiranje.
+
+- ✨ **Čarovnik za nastavitev**: Čarovnik za nastavitev zdaj vpraša, ali shranjuješ datoteke za shode v aplikaciji za shranjevanje v oblaku, kot je Dropbox, OneDrive, iCloud Drive ali Google Drive. Če jih, ti pomaga izbrati mapo v skupni rabi in ti pokaže, kako deluje: M³ ustvari mapo za vsak prihajajoči shod, poimenovano z datumom shoda, in datoteke, ki jih daš vanjo, so samodejno dodane k temu shodu na vsakem računalniku, ki uporablja to mapo.
+
 ## v26.9.0
 
 ### ✨ Nove funkcije
@@ -141,7 +163,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - ✨ **Prekrivanje miškinega kazalca za TV zaslonu**: Izboljšano prekrivanje kazalca v oknu spletne strani za boljšo vidnost miškinega kazalca na TV zaslonih.
 - ✨ **Snemanje shodov**: Dodana nova funkcija snemanja shodov za nadzor zunanje aplikacije za snemanje.
 - ✨ **Iskanje po spletnem mestu**: Dodana možnost pametnega iskanja multimedijske vsebine ali publikacij na spletnem mestu.
-- ✨ **Enostaven ročni uvoz publikacij**: Dodana funkcionalnost za enostaven uvoz publikacij z jw.org, kot so revije, knjige, programi in vabila.
+- ✨ **Enostaven ročni uvoz publikacij**: Dodana je možnost za preprost uvoz publikacij z uradnega spletnega mesta, kot so revije, knjige, programi in vabila.
 - ✨ **Izboljšave za znakovni jezik**: Dodano potrjevanje pred predvajanjem celotnih datotek v znakovnem jeziku in podpora za izbiro več posnetkov, na primer kadar je treba zapored prebrati več odstavkov.
 - ✨ **Navigacija med posnetki**: Dodan prikaz trajanja pri elementih seznama posnetkov in izboljšana navigacija.
 - 🛠️ **Multimedijski zaslon**: Poskrbljeno, da se multimedijski zaslon ob začetku predvajanja prikaže, tudi če je bil prej skrit.

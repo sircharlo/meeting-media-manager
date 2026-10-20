@@ -1,12 +1,12 @@
-# Informazioni Su Meeting Media Manager (M3) {#about-meeting-media-manager-m3}
+# Informazioni su Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
 ![M³ banner](./../assets/m3-banner.png)
 
 ## Cos'è questa app? {#what-is-this-app}
 
-**Meeting Media Manager**, o **M³** in breve, è un'applicazione multi-piattaforma completa per Windows, macOS e Linux che scarica automaticamente, organizza e presenta immagini e video per le riunioni di congregazione dei Testimoni di Geova. Supporta qualsiasi lingua disponibile sul sito ufficiale dei Testimoni di Geova e fornisce potenti strumenti per la gestione dei media sia durante le riunioni ibride che di persona.
+**Meeting Media Manager**, o **M³** in breve, è un'applicazione multipiattaforma completa per Windows, macOS e Linux che scarica, organizza e presenta automaticamente immagini e video per le adunanze di congregazione dei Testimoni di Geova. Supporta qualsiasi lingua disponibile sul sito ufficiale dei Testimoni di Geova e offre potenti strumenti per gestire i media sia durante le adunanze ibride che in presenza.
 
-M³ supporta la gestione di adunanze regolari e personalizzate, congregazioni multiple e/o gruppi che utilizzano lo stesso account del computer, e avanzate capacità di presentazione che rendono la condivisione dei media semplice.
+M³ supporta la gestione dei media delle adunanze regolari e di quelli personalizzati, di più congregazioni e/o gruppi che usano lo stesso account del computer, e offre funzionalità di presentazione avanzate che rendono semplicissima la condivisione dei media.
 
 :::info Nota
 
@@ -16,7 +16,7 @@ Questa app era conosciuta come JWMMF (JW Meeting Media Fetcher), ma è stata rin
 
 ## Perché scegliere M³? {#why-choose-m3}
 
-M3 è lo strumento definitivo per gestire i media di un adunanza, offrendo un'esperienza senza interruzioni, affidabile e ricca di funzionalità su diverse piattaforme. È progettato specificamente per le esigenze delle adunanze di congregazione e fornisce tutto il necessario per una presentazione efficace dei media.
+M³ è lo strumento definitivo per gestire i media delle adunanze, con un'esperienza fluida, affidabile e ricca di funzionalità su tutte le piattaforme. È progettata specificamente per le esigenze delle adunanze di congregazione e fornisce tutto il necessario per una presentazione efficace dei media.
 
 ### Principali vantaggi {#key-benefits}
 
@@ -28,59 +28,59 @@ M3 è lo strumento definitivo per gestire i media di un adunanza, offrendo un'es
 
 - **Prestazioni ottimizzate multipiattaforma**: Goditi un'esperienza fluida e reattiva su Windows, macOS e Linux, anche su vecchi sistemi o computer con risorse limitate.
 
-- **Affidabile e stabile**: Costruito per funzionare quando ne hai più bisogno. Hai trovato un bug? Segnalalo, e sarà gestito prontamente.
+- **Affidabile e stabile**: progettato per funzionare quando ne hai più bisogno. Hai trovato un bug? Segnalalo e verrà risolto rapidamente.
 
-- **Strumenti di presentazione avanzati**: Controlli multimediali avanzati, funzionalità zoom/pan, sincronizzazione personalizzata e integrazione di Zoom e OBS Studio.
+- **Strumenti di presentazione avanzati**: controlli multimediali avanzati, funzionalità di zoom e panoramica, tempi personalizzati e integrazione perfetta con Zoom e OBS Studio.
 
 ## Cosa può fare M³? {#what-can-m3-do}
 
-M³ è una soluzione completa di gestione dei media che consente di scaricare facilmente e automaticamente e sincronizzare, condividere e presentare tutti i media dell'adunanza. Ecco ciò che rende M³ potente:
+M³ è una soluzione completa di gestione dei media che ti consente di scaricare, sincronizzare, condividere e presentare tutti i media delle adunanze in modo facile e automatico. Ecco ciò che rende M³ potente:
 
-### Gestione Media Principale {#core-media-management}
+### Gestione principale dei media {#core-media-management}
 
 - **Download automatico dei media**: Recupera e scarica automaticamente tutti i media necessari per le prossime adunanze
-- **Supporto multi-lingua**: Scarica i media in qualsiasi delle centinaia di lingue disponibili
+- **Supporto multilingue**: scarica i media in una qualsiasi delle centinaia di lingue disponibili
 - **Smart caching**: Sistema di cache intelligente che mantiene i media organizzati e aggiornati
-- **Organizzazione media**: Organizza automaticamente i media per data e sezione adunanza
+- **Organizzazione dei media**: organizza automaticamente i media per data e sezione dell'adunanza
 
-### Funzionalità di Presentazione Multimediale {#about-presentation-features}
+### Funzionalità di presentazione dei media {#about-presentation-features}
 
-Per adunanze di congregazione **ibride** o **di persona** la modalità di presentazione integrata dei media comprende:
+Per le adunanze di congregazione **ibride** o **in presenza**, la modalità di presentazione integrata dei media comprende:
 
 - **Controlli multimediali avanzati**: Miniature multimediali con capacità di zoom e panoramica
-- **Timing personalizzato**: imposta i tempi di inizio e fine personalizzati per la riproduzione multimediale
+- **Tempi personalizzati**: imposta tempi di inizio e fine personalizzati per la riproduzione dei media
 - **Controlli di riproduzione**: Pulsanti di pausa/riproduzione/stop facili da usare con tasti scorciatoia
 - **Anteprima dal vivo e controllo della velocità**: visualizza in anteprima ciò che vede il pubblico e, se vuoi, regola la velocità di riproduzione dell'audio o del video
 - **Supporto multi-monitor**: Rilevamento e gestione automatici dei monitor esterni
-- **Presentazione Pulita**: interfaccia di presentazione multimediale senza distrazioni
+- **Presentazione pulita**: interfaccia di presentazione dei media senza distrazioni
 
-### Musica di Sottofondo {#about-background-music}
+### Musica di sottofondo {#about-background-music}
 
 - **Riproduzione intelligente**: Musica di sottofondo che si ferma automaticamente prima dell'inizio delle adunanze
 - **Riavvio con un clic**: Riprendi la musica di sottofondo con un solo clic dopo le adunanze
-- **Controllo del volume**: Volume musicale di sottofondo regolabile con funzionalità di dissolvenza
+- **Controllo del volume**: volume della musica di sottofondo regolabile, con dissolvenza in chiusura
 
-### Integrazione di Zoom {#about-zoom-integration}
+### Integrazione con Zoom {#about-zoom-integration}
 
 - **Condivisione automatica dello schermo**: Avvia e ferma automaticamente la condivisione dello schermo di Zoom quando riproduci o interrompi i media
 
-### Integrazione di OBS Studio {#about-obs-integration}
+### Integrazione con OBS Studio {#about-obs-integration}
 
 - **Cambio automatico della scena**: Integrazione perfetta con OBS Studio per adunanze ibride
-- **Gestione delle scene**: Cambio automatico tra fotocamera, media e altre scene
+- **Gestione delle scene**: cambio automatico tra videocamera, media e altre scene
 - **Controlli di registrazione**: avvia e ferma le registrazioni di OBS da M³ quando abilitato
 
-### Importazione e gestione multimediale {#about-media-import}
+### Importazione e gestione dei media {#about-media-import}
 
 - **File JWPUB**: Importa e gestisci i file JWPUB con facilità
-- **File JWLPLAYLIST**: Supporto per i file JW Library playlist
+- **File JWLPLAYLIST**: supporto per i file delle playlist di JW Library
 - **Media personalizzati**: Importa video, immagini, file audio e PDF personalizzati
 - **Media biblici**: importa i media della Bibbia per lo studio, i media biblici nella lingua dei segni e le registrazioni audio della Traduzione del Nuovo Mondo
-- **Discussioni pubbliche**: Avere sempre una panoramica sui media pronta del discorso pubblico pronta all'uso con l'importatore S-34
+- **Discorsi pubblici**: tieni sempre pronta all'uso la panoramica dei media del discorso pubblico con l'importatore S-34
 
-### Funzionalità Avanzate {#about-advanced-features}
+### Funzionalità avanzate {#about-advanced-features}
 
-- **Monitoraggio delle cartelle**: Sincronizza automaticamente i supporti dalle cartelle monitorate (Dropbox, OneDrive, ecc.)
+- **Cartella condivisa**: aggiungi automaticamente i media alle adunanze da una cartella sincronizzata da Dropbox, OneDrive, iCloud Drive o Google Drive
 - **Esportazione media**: Esporta automaticamente i media in cartelle, organizzati per data
 - **Presentazione del sito**: Presenta il sito ufficiale sui monitor esterni
 - **Timer dell'adunanza**: finestra timer facoltativa per cronometrare le parti dell'adunanza
@@ -90,20 +90,20 @@ Per adunanze di congregazione **ibride** o **di persona** la modalità di presen
 
 ## M³ funziona nella mia lingua? {#does-m3-work-in-my-language}
 
-**Sì!** M³ fornisce un supporto multi-lingua completo:
+**Sì!** M³ offre un supporto multilingue completo:
 
-I media per le adunanze dei Testimoni di Geova possono essere scaricati automaticamente in una qualsiasi delle centinaia di lingue disponibili sul sito ufficiale dei Testimoni di Geova. L'elenco delle lingue disponibili è aggiornato dinamicamente; tutto quello che devi fare è selezionare quello di cui hai bisogno durante la configurazione.
+I media per le adunanze dei Testimoni di Geova possono essere scaricati automaticamente in una qualsiasi delle centinaia di lingue disponibili sul sito ufficiale dei Testimoni di Geova. L'elenco delle lingue disponibili viene aggiornato dinamicamente; devi solo selezionare quella che ti serve durante la configurazione.
 
-### Lingue dell'Interfaccia {#interface-languages}
+### Lingue dell'interfaccia {#interface-languages}
 
-M³ è stato tradotto in molte lingue da volontari. È possibile configurare la lingua che si desidera visualizzare nell'interfaccia di M³, indipendentemente dalla lingua utilizzata per il download dei media. Questo significa che è possibile utilizzare M³ nella lingua preferita mentre il download dei media in qualsiasi altra lingua supportata.
+M³ è stato tradotto in molte lingue da volontari. Puoi impostare la lingua dell'interfaccia di M³ che preferisci, indipendentemente dalla lingua usata per scaricare i media. Questo significa che puoi usare M³ nella tua lingua preferita e scaricare i media in qualsiasi altra lingua supportata.
 
 Per dettagli sulle lingue di ripiego e i sottotitoli, consulta le [FAQ](faq#language-support).
 
-## Requisiti di Sistema {#system-requirements}
+## Requisiti di sistema {#system-requirements}
 
 Per i sistemi operativi supportati e i requisiti, consulta le risposte nelle [FAQ](faq#technical-questions).
 
-**Prova oggi M³  e scopri cosa può fare! Presentare i media alle adunanze di congregazione non è mai stato facile.**
+**Prova M³ oggi stesso e scopri tu stesso cosa può fare! Presentare i media alle adunanze di congregazione non è mai stato così facile.**
 
 ![M³ preview](./../assets/m3-preview.png)

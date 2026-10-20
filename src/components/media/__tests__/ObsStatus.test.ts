@@ -1,13 +1,16 @@
 import type * as ObsHelpers from 'src/helpers/obs';
 
-import { mount } from '@vue/test-utils';
+import { mount, type VueWrapper } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
+import { obsConnect } from 'src/helpers/obs';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import ObsStatus from '../ObsStatus.vue';
 
 const { callMock, errorCatcherMock, fakeObsWebSocket, onMock } = vi.hoisted(
   () => {
@@ -44,6 +47,11 @@ installPinia();
 
 const CONGREGATION_ID = 'test-cong';
 
+// Every condition below is awaited rather than given a fixed delay, so a
+// slow machine (e.g. a full parallel test run) can't make a test check too
+// early. The waits are generous: they only matter when something is wrong.
+const WAIT_OPTIONS = { timeout: 5000 };
+
 const setupObsSettings = () => {
   const congregationSettingsStore = useCongregationSettingsStore();
   congregationSettingsStore.congregations = {
@@ -56,6 +64,17 @@ const setupObsSettings = () => {
   return useObsStateStore();
 };
 
+let wrapper: undefined | VueWrapper;
+
+/** Mounts ObsStatus and waits until it has registered its OBS listeners
+ * (initObsListeners runs asynchronously from onMounted). */
+const mountObsStatus = async () => {
+  wrapper = mount(ObsStatus, { props: { modelValue: false } });
+  await vi.waitFor(() => {
+    expect(onMock).toHaveBeenCalledWith('Identified', expect.any(Function));
+  }, WAIT_OPTIONS);
+};
+
 /** Finds and invokes the handler ObsStatus registered for `event` via the
  * mocked `obsWebSocket.on(event, handler)`. */
 const triggerObsEvent = (event: string, ...args: unknown[]) => {
@@ -64,25 +83,24 @@ const triggerObsEvent = (event: string, ...args: unknown[]) => {
   return (call[1] as (...a: unknown[]) => unknown)(...args);
 };
 
-const wait = (ms: number) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
+// The pinia and the mocked socket are shared by every test in this file:
+// unmount the previous component (so its watchers can't react to the next
+// test's state), drop queued one-off socket replies a test didn't consume,
+// and start each test from the store's initial state.
+beforeEach(() => {
+  vi.clearAllMocks();
+  callMock.mockReset();
+  useObsStateStore().$reset();
+  document.body.innerHTML = '';
+});
+
+afterEach(() => {
+  wrapper?.unmount();
+  wrapper = undefined;
+  document.body.innerHTML = '';
+});
 
 describe('ObsStatus - scene list retry', () => {
-  beforeEach(async () => {
-    vi.clearAllMocks();
-    document.body.innerHTML = '';
-    // Pre-warm the dynamic `import('obs-websocket-js')` the retry logic
-    // does on every catch, so it resolves instantly during the test instead
-    // of racing the fixed waits below.
-    await import('obs-websocket-js');
-  });
-
-  afterEach(() => {
-    document.body.innerHTML = '';
-  });
-
   it('retries instead of reporting when the socket drops mid-handshake ("Not connected")', async () => {
     const obsState = setupObsSettings();
     callMock
@@ -92,36 +110,63 @@ describe('ObsStatus - scene list retry', () => {
         scenes: [{ sceneName: 'Camera' }],
       });
 
-    const { default: ObsStatus } = await import('../ObsStatus.vue');
-    mount(ObsStatus, { props: { modelValue: false } });
-    await wait(50);
+    await mountObsStatus();
 
     await triggerObsEvent('Identified');
-    await wait(2200);
+    // The retry comes after fetchSceneList's 2 s back-off.
+    await vi.waitFor(() => {
+      expect(obsState.currentScene).toBe('Camera');
+    }, WAIT_OPTIONS);
 
     expect(callMock).toHaveBeenCalledTimes(2);
     expect(errorCatcherMock).not.toHaveBeenCalled();
-    expect(obsState.currentScene).toBe('Camera');
-  }, 10000);
+  }, 10_000);
+
+  it('gives up on an empty scene list reply instead of looping on it', async () => {
+    const obsState = setupObsSettings();
+    // An empty reply used to restart the loop without counting an attempt
+    // or waiting, spinning the renderer forever. Fail after a few calls so a
+    // regression shows up as extra calls rather than a hung test.
+    callMock.mockImplementation(async () => {
+      if (callMock.mock.calls.length > 10) throw new Error('still looping');
+      return undefined;
+    });
+
+    await mountObsStatus();
+    expect(obsState.obsSceneListError).toBe(false);
+
+    await triggerObsEvent('Identified');
+    // Looping on the empty reply would flag the error too (once the mock
+    // starts throwing), but only after many more calls than this one.
+    await vi.waitFor(() => {
+      expect(obsState.obsSceneListError).toBe(true);
+    }, WAIT_OPTIONS);
+
+    expect(callMock).toHaveBeenCalledTimes(1);
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
 
   it('still reports a genuine failure', async () => {
     setupObsSettings();
     const error = new Error('boom');
     callMock.mockRejectedValue(error);
 
-    const { default: ObsStatus } = await import('../ObsStatus.vue');
-    mount(ObsStatus, { props: { modelValue: false } });
-    await wait(50);
+    await mountObsStatus();
 
     await triggerObsEvent('Identified');
-    await wait(50);
 
-    expect(errorCatcherMock).toHaveBeenCalledWith(
-      error,
-      expect.objectContaining({
-        contexts: { fn: { name: 'fetchSceneList' } },
-      }),
-    );
+    await vi.waitFor(() => {
+      expect(errorCatcherMock).toHaveBeenCalledWith(
+        error,
+        expect.objectContaining({
+          contexts: { fn: { name: 'fetchSceneList' } },
+        }),
+      );
+    }, WAIT_OPTIONS);
+    // A genuine failure isn't retried: one request, one report (the extra
+    // iterations would have run in microtasks right after the rejection).
+    expect(callMock).toHaveBeenCalledTimes(1);
+    expect(errorCatcherMock).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -130,24 +175,13 @@ describe('ObsStatus - scene list retry', () => {
 // reconnect on its own after OBS closed/crashed/restarted while M³ was
 // running.
 describe('ObsStatus - auto-reconnect on unexpected disconnect', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    document.body.innerHTML = '';
-  });
-
-  afterEach(() => {
-    document.body.innerHTML = '';
-  });
-
   it('calls obsConnect again once the connection drops while OBS integration is still enabled', async () => {
     const obsState = setupObsSettings();
-    const { obsConnect } = await import('src/helpers/obs');
 
-    const { default: ObsStatus } = await import('../ObsStatus.vue');
-    mount(ObsStatus, { props: { modelValue: false } });
-    await wait(50);
+    await mountObsStatus();
     // Mount already triggers an initial obsConnect() via initObsListeners() -
     // clear it so only the reconnect-on-drop call below is being asserted.
+    expect(obsConnect).toHaveBeenCalled();
     vi.mocked(obsConnect).mockClear();
 
     // createTestingPinia stubs actions by default (obsCloseHandler becomes a
@@ -155,19 +189,18 @@ describe('ObsStatus - auto-reconnect on unexpected disconnect', () => {
     // under test here is ObsStatus.vue's own reaction to that state change,
     // not obsCloseHandler's own implementation.
     obsState.obsConnectionState = 'disconnected';
-    await wait(10);
 
-    expect(obsConnect).toHaveBeenCalled();
+    await vi.waitFor(() => {
+      expect(obsConnect).toHaveBeenCalled();
+    }, WAIT_OPTIONS);
   });
 
   it('does not reconnect once OBS integration has been disabled', async () => {
     const obsState = setupObsSettings();
-    const { obsConnect } = await import('src/helpers/obs');
 
-    const { default: ObsStatus } = await import('../ObsStatus.vue');
-    mount(ObsStatus, { props: { modelValue: false } });
-    await wait(50);
+    await mountObsStatus();
     vi.mocked(obsConnect).mockClear();
+    fakeObsWebSocket.removeAllListeners.mockClear();
 
     const congregationSettingsStore = useCongregationSettingsStore();
     congregationSettingsStore.congregations[CONGREGATION_ID] = {
@@ -175,7 +208,13 @@ describe('ObsStatus - auto-reconnect on unexpected disconnect', () => {
       obsEnable: false,
     };
     obsState.obsConnectionState = 'disconnected';
-    await wait(10);
+
+    // Disabling OBS removes the socket listeners from the same watcher flush
+    // that would reconnect on the drop, so once that has happened the
+    // reconnect watcher has had its chance to (wrongly) call obsConnect.
+    await vi.waitFor(() => {
+      expect(fakeObsWebSocket.removeAllListeners).toHaveBeenCalled();
+    }, WAIT_OPTIONS);
 
     expect(obsConnect).not.toHaveBeenCalled();
   });

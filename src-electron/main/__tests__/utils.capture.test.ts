@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type * as UtilsModule from '../utils';
 
+import { markUserWarnedAboutDiskSpace } from '../disk-space';
+
 vi.mock('electron', () => ({
   app: {
     getAppPath: vi.fn(() => '/mock/app'),
@@ -70,5 +72,27 @@ describe('captureElectronError', () => {
     captureElectronError(error, context);
 
     expect(captureException).toHaveBeenCalledWith(error, context);
+  });
+
+  // MMM-V2-3M8: a full disk is the user's to fix once they've been told.
+  it('reports a full disk only until the user has been warned', () => {
+    const error = Object.assign(
+      new Error('ENOSPC: no space left on device, write'),
+      { code: 'ENOSPC', syscall: 'write' },
+    );
+    const context = { contexts: { fn: { name: 'unzipFile pipeline' } } };
+
+    captureElectronError(error, context);
+    expect(captureException).toHaveBeenCalledTimes(1);
+
+    markUserWarnedAboutDiskSpace();
+    captureElectronError(error, context);
+    captureElectronError(new Error('Something else'), context);
+
+    expect(captureException).toHaveBeenCalledTimes(2);
+    expect(captureException).toHaveBeenLastCalledWith(
+      new Error('Something else'),
+      context,
+    );
   });
 });

@@ -39,6 +39,27 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
+      # The scan type-checks with the app's own tsconfig.json (which extends
+      # the generated .quasar/tsconfig.json for the path aliases and the
+      # *.vue shim), so dependencies and Quasar's generated types must exist
+      # first - otherwise every external type is `any` and the type-aware
+      # rules report the wrong things.
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24
+          cache: 'yarn'
+      # The scan only reads the dependencies' sources and types, never their
+      # build output, so their install/postinstall scripts are skipped: a
+      # compromised package then gets no chance to run code at install time.
+      # --mode=skip-build is Yarn 4's install flag for that, and
+      # YARN_ENABLE_SCRIPTS=false the config-level equivalent.
+      - name: Install dependencies
+        env:
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: yarn install --mode=skip-build
+      - name: Prepare Quasar
+        run: yarn quasar prepare
       - name: SonarQube Scan
         id: scan
         uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9
@@ -71,13 +92,13 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Setup Node
         if: ${{ !inputs.publish-release }}
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24
           cache: 'yarn'
       - name: Setup Node without cache for release publishing
         if: ${{ inputs.publish-release }}
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24
       - name: Install X11 development libraries (Linux only)
@@ -86,7 +107,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libx11-xcb-dev libxkbcommon-x11-dev libxss-dev libpng-dev libpng++-dev
       - name: Install dependencies
-        run: yarn install
+        run: yarn install # NOSONAR: gates the Build job, so it installs exactly like Build does (dependency build scripts on); CI only installs the immutable, checksum-verified yarn.lock
       - name: Prepare Quasar
         run: yarn quasar prepare
       - name: Lint files
@@ -113,13 +134,13 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Setup Node
         if: ${{ !inputs.publish-release }}
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24
           cache: 'yarn'
       - name: Setup Node without cache for release publishing
         if: ${{ inputs.publish-release }}
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24
       - name: Install X11 development libraries (Linux only)
@@ -128,7 +149,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libx11-xcb-dev libxkbcommon-x11-dev libxss-dev libpng-dev libpng++-dev
       - name: Install dependencies
-        run: yarn install
+        run: yarn install # NOSONAR: the release build keeps dependency build scripts on (robotjs/ttf2woff2 native addons, sentry-cli binary check); CI only installs the immutable, checksum-verified yarn.lock
       - name: Install Apple certificate
         if: runner.os == 'macOS' && github.actor != 'dependabot[bot]'
         env:
@@ -218,7 +239,7 @@ jobs:
           security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
       - name: Upload artifacts
         if: ${{ !inputs.publish-release }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: M³ test build for ${{ matrix.os == 'macos-latest' && 'macOS' || matrix.os == 'windows-latest' && 'Windows' || 'Linux' }}
           path: |

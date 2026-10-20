@@ -15,11 +15,15 @@ export const emptyFontsFolder: MigrationFunction = async () => {
       (value): value is string => !!value,
     );
 
-    for (const basePath of new Set(pathsToCheck)) {
+    const emptyFontsDir = async (basePath: string) => {
       const fontsPath = join(basePath, 'Fonts');
-      if (!(await pathExists(fontsPath))) continue;
+      if (!(await pathExists(fontsPath))) return;
       await emptyDir(fontsPath);
-    }
+    };
+
+    await Promise.all(
+      [...new Set(pathsToCheck)].map((basePath) => emptyFontsDir(basePath)),
+    );
 
     return true;
   } catch (error) {

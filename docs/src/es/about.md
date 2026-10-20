@@ -80,7 +80,7 @@ Para reuniones de congregación **híbridas** o **presenciales**, el modo integr
 
 ### Funciones avanzadas {#about-advanced-features}
 
-- **Supervisión de carpetas**: Sincroniza automáticamente archivos multimedia desde carpetas supervisadas (Dropbox, OneDrive, etc.)
+- **Carpeta compartida**: Añade automáticamente archivos multimedia a las reuniones desde una carpeta sincronizada con Dropbox, OneDrive, iCloud Drive o Google Drive
 - **Exportación de archivos multimedia**: Exporta automáticamente archivos multimedia a carpetas, organizados por fecha
 - **Presentación del sitio web**: Presenta el sitio web oficial en monitores externos
 - **Cronómetro de la reunión**: Ventana opcional del cronómetro para controlar el tiempo de las partes de la reunión

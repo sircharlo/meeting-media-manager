@@ -22,7 +22,7 @@ const showAutoHiddenNotification = () => {
     caption: i18n.global.t('media-window-auto-hidden-caption'),
     group: 'mediaWindowAutoHide',
     message: i18n.global.t('media-window-auto-hidden-message'),
-    timeout: 10000,
+    timeout: 10_000,
     type: 'info',
   });
 };

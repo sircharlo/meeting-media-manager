@@ -563,6 +563,61 @@ describe('macOS folder permissions', () => {
     );
   });
 
+  it('gives a caller that arrives while the stored bookmarks are still loading the stored bookmark too', async () => {
+    const { app } = await import('electron');
+    const bookmarksRead = Promise.withResolvers<string>();
+    readFileMock.mockReturnValueOnce(bookmarksRead.promise);
+
+    const { startSecurityScopedAccess } = await import('../fs');
+
+    const first = startSecurityScopedAccess('/Users/test/Stored/a.mp4');
+    const second = startSecurityScopedAccess('/Users/test/Stored/b.mp4');
+    bookmarksRead.resolve(
+      JSON.stringify({ '/Users/test/Stored': 'stored-bookmark' }),
+    );
+
+    await expect(Promise.all([first, second])).resolves.toEqual([true, true]);
+    expect(readFileMock).toHaveBeenCalledTimes(1);
+    expect(app.startAccessingSecurityScopedResource).toHaveBeenCalledTimes(1);
+    expect(app.startAccessingSecurityScopedResource).toHaveBeenCalledWith(
+      'stored-bookmark',
+    );
+  });
+
+  it('keeps the stored bookmarks when a new one is saved while they are still loading', async () => {
+    const { dialog } = await import('electron');
+    const bookmarksRead = Promise.withResolvers<string>();
+    readFileMock.mockReturnValueOnce(bookmarksRead.promise);
+    vi.mocked(dialog.showOpenDialog).mockResolvedValue({
+      bookmarks: ['new-bookmark'],
+      canceled: false,
+      filePaths: ['/Users/test/New'],
+    });
+
+    const { openFolderDialog, startSecurityScopedAccess } =
+      await import('../fs');
+
+    const access = startSecurityScopedAccess('/Users/test/Stored/a.mp4');
+    const picked = openFolderDialog();
+    // Let the folder dialog reach the bookmark store while the stored
+    // bookmarks file read is still pending.
+    await new Promise((resolve) => {
+      setImmediate(resolve);
+    });
+    bookmarksRead.resolve(
+      JSON.stringify({ '/Users/test/Stored': 'stored-bookmark' }),
+    );
+    await Promise.all([access, picked]);
+
+    expect(writeFileMock).toHaveBeenCalledTimes(1);
+    const [file, contents] = writeFileMock.mock.calls[0] as [string, string];
+    expect(file).toBe('/user-data/security-scoped-bookmarks.json');
+    expect(JSON.parse(contents)).toEqual({
+      '/Users/test/New': 'new-bookmark',
+      '/Users/test/Stored': 'stored-bookmark',
+    });
+  });
+
   it('can probe macOS folder permissions without opening the picker', async () => {
     const { dialog } = await import('electron');
     const permissionError = new Error('operation not permitted');
@@ -992,7 +1047,7 @@ describe('watchFolder', () => {
     mockWatcherRegistration();
     const { watchFolder } = await import('../fs');
 
-    await watchFolder(webDavPath);
+    watchFolder(webDavPath);
 
     expect(watchMock).toHaveBeenCalledWith(
       webDavPath,
@@ -1006,7 +1061,7 @@ describe('watchFolder', () => {
   it('ignores known network watch/stat errors instead of reporting them to Sentry', async () => {
     const handlers = mockWatcherRegistration();
     const { watchFolder } = await import('../fs');
-    await watchFolder(webDavPath);
+    watchFolder(webDavPath);
 
     handlers.get('error')?.({ code: 'EISDIR', syscall: 'watch' });
     handlers.get('error')?.({ code: 'UNKNOWN', syscall: 'stat' });
@@ -1014,10 +1069,43 @@ describe('watchFolder', () => {
     expect(captureElectronErrorMock).not.toHaveBeenCalled();
   });
 
+  it('only watches dated folders that can still show up in the media calendar', async () => {
+    mockWatcherRegistration();
+    const { watchFolder } = await import('../fs');
+    watchFolder('/tmp/media');
+
+    const { ignored } = watchMock.mock.calls[0]?.[1] as {
+      ignored: (fp: string, stats?: { isDirectory: () => boolean }) => boolean;
+    };
+    const folderStats = { isDirectory: () => true };
+    const datedFolder = (daysFromToday: number) => {
+      const date = new Date();
+      date.setDate(date.getDate() + daysFromToday);
+      const pad = (n: number) => String(n).padStart(2, '0');
+      return `/tmp/media/${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    };
+
+    expect(ignored('/tmp/media', folderStats)).toBe(false);
+    expect(ignored(datedFolder(-30), folderStats)).toBe(true);
+    expect(ignored(datedFolder(-6), folderStats)).toBe(false);
+    expect(ignored(datedFolder(7), folderStats)).toBe(false);
+    expect(ignored('/tmp/media/Not a date', folderStats)).toBe(true);
+  });
+
+  it('treats folders from before the last 7 days as long past', async () => {
+    const { isLongPastDayFolder } = await import('../fs');
+    const now = new Date(2026, 9, 12, 15, 30);
+
+    expect(isLongPastDayFolder('2026-10-04', now)).toBe(true);
+    expect(isLongPastDayFolder('2026-10-05', now)).toBe(false);
+    expect(isLongPastDayFolder('2026-10-12', now)).toBe(false);
+    expect(isLongPastDayFolder('2026-12-01', now)).toBe(false);
+  });
+
   it('still reports unexpected watch errors', async () => {
     const handlers = mockWatcherRegistration();
     const { watchFolder } = await import('../fs');
-    await watchFolder('/tmp/media');
+    watchFolder('/tmp/media');
 
     handlers.get('error')?.({ code: 'EACCES', syscall: 'watch' });
 

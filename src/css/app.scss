@@ -36,9 +36,9 @@
 .app-main-scroll {
   height: calc(100vh - 56px);
   margin-top: 56px;
-  overflow-x: hidden !important;
+  overflow-x: hidden;
   overflow-y: auto;
-  padding-top: 0 !important;
+  padding-top: 0 !important; /* NOSONAR: overrides QPageContainer's inline padding-top (the header height) - margin-top above already offsets the header */
 }
 
 .feature-carousel__scroll::-webkit-scrollbar {
@@ -77,7 +77,7 @@ body.body--dark .feature-carousel__scroll {
   font-family: 'Wt-ClearText-Bold', 'Noto Serif Variable', serif;
   align-content: center;
   text-align: center;
-  color: white !important;
+  color: white;
   font-size: 4vw;
   line-height: 2vw;
   font-weight: 400;
@@ -103,8 +103,8 @@ body.body--dark .feature-carousel__scroll {
   position: absolute;
   bottom: 13vh;
   right: 13vh;
-  color: black !important;
-  line-height: normal !important;
+  color: black;
+  line-height: normal;
   box-sizing: unset;
   background: rgba(255, 255, 255, 0.2);
   border: rgba(255, 255, 255, 0) 1.5vh solid;
@@ -141,9 +141,12 @@ span.etitle {
   font-weight: 500;
 }
 
-.sortable-selected:not(.media-children) {
-  background-color: $sorting-bg !important;
-  border-color: $sorting-border !important;
+// Only MediaItem's root q-item gets .sortable-selected. The .q-item makes
+// this outrank MediaItem's scoped .media-filter-filename-match background
+// (which loads later) without needing !important.
+.q-item.sortable-selected:not(.media-children) {
+  background-color: $sorting-bg;
+  border-color: $sorting-border;
 }
 
 .big-button {
@@ -206,7 +209,7 @@ body.body--light {
   }
 
   .list-primary .q-hoverable:hover {
-    background: $accent-100 !important;
+    background: $accent-100;
   }
 
   .media-section {
@@ -215,10 +218,6 @@ body.body--light {
     box-shadow:
       0px 2px 12px 0px rgba(35, 60, 120, 0.06),
       0px 6px 20px 0px rgba(35, 60, 120, 0.05);
-
-    & .q-item.selected-to-drag {
-      background-color: $accent-200;
-    }
 
     &
       .clip:not(.bg-accent-100):not(.bg-accent-100-transparent):not(
@@ -301,11 +300,11 @@ body.body--dark {
   }
 
   .text-secondary {
-    color: $secondary-contrast !important;
+    color: $secondary-contrast !important; /* NOSONAR: overrides Quasar's !important .text-secondary color */
   }
 
   .list-primary .q-hoverable:hover {
-    background: $accent-300-dark !important;
+    background: $accent-300-dark;
   }
 
   .media-section {
@@ -335,17 +334,13 @@ body.body--dark {
       0 3px 1px -2px $shadow;
   }
 
-  & .q-item.selected-to-drag {
-    background-color: $accent-300-dark;
-  }
-
   .media-children {
     border-color: $accent-200-dark;
   }
 
-  .sortable-selected:not(.media-children) {
-    background-color: $sorting-bg-dark !important;
-    border-color: $sorting-border-dark !important;
+  .q-item.sortable-selected:not(.media-children) {
+    background-color: $sorting-bg-dark;
+    border-color: $sorting-border-dark;
   }
 
   .q-menu,
@@ -363,7 +358,7 @@ body.body--dark {
 
 .list-primary .q-hoverable:hover {
   > .q-focus-helper {
-    opacity: 0 !important;
+    opacity: 0;
   }
 }
 
@@ -435,7 +430,7 @@ body.body--dark {
 }
 
 .jw-icon {
-  font-family: 'jw-icons-all';
+  font-family: 'jw-icons-all', sans-serif;
 
   .q-avatar__content {
     font-size: 22px;
@@ -486,10 +481,6 @@ body.body--dark {
 
 .bg-white-transparent {
   background: $whiteTransparent;
-}
-
-.bg-semi-negative {
-  background-color: $negative-semi-transparent !important;
 }
 
 .q-btn {
@@ -686,7 +677,9 @@ a {
   display: flex;
   flex-flow: column;
   overflow: hidden;
-  max-height: min(600px, max(250px, 64vh));
+  // Just under QMenu's own 65vh limit: a tall window gets a tall popup,
+  // rather than one capped at a fixed height that scrolls needlessly.
+  max-height: max(250px, 64vh);
 }
 
 .action-popup__scroll {
@@ -694,11 +687,90 @@ a {
   min-height: 0;
   overflow: auto;
   overscroll-behavior: contain;
-  scrollbar-gutter: stable;
+  // No space kept for a scrollbar that isn't there, which would stop the
+  // separators inside short of the popup's right edge.
 }
 
+.action-popup__status {
+  gap: 8px;
+  margin-bottom: 8px;
+  // Times and counts shown here (a recording's length, a countdown) tick
+  // without the text around them shifting.
+  font-variant-numeric: tabular-nums;
+}
+
+// The main action, full width, then a row of secondary ones under it.
 .action-popup__footer {
+  display: flex;
   flex: 0 0 auto;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 16px 0;
+}
+
+.action-popup__footer-row {
+  display: flex;
+  gap: 8px;
+}
+
+// Under the status line: blue for information, or orange or red to match
+// what it reports (--warning / --negative). Tints rather than the accent
+// palette, which turns a flat grey in dark mode that hides a blue link.
+.action-popup__banner {
+  align-items: center;
+  background: color-mix(in srgb, $primary 12%, transparent);
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin: 0 16px 8px;
+  padding: 8px;
+}
+
+.action-popup__banner--warning {
+  background: color-mix(in srgb, $warning 16%, transparent);
+}
+
+.action-popup__banner--negative {
+  background: color-mix(in srgb, $negative 14%, transparent);
+}
+
+// The same blue tint, for a panel in a popup's body.
+.action-popup__tint {
+  background: color-mix(in srgb, $primary 10%, transparent);
+}
+
+// Action island buttons share one status language (see useIslandButton): a
+// button turned off is faded, like a disabled one, but stays clickable; a
+// live one (recording) keeps its usual color, since a red button means an
+// error, and shows its icon red on a pulsing white dot instead - red
+// straight on the island's blue would hardly show.
+.island-btn--off {
+  opacity: 0.6;
+}
+
+.island-btn--live .island-btn__icon {
+  animation: island-btn-live 2s ease-in-out infinite;
+  background: #fff;
+  border-radius: 50%;
+  color: $negative;
+}
+
+@keyframes island-btn-live {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .island-btn--live .island-btn__icon {
+    animation: none;
+  }
 }
 
 // A soft wash of the button's own current color instead of a border, so
@@ -1028,7 +1100,7 @@ body.body--dark .media-tag--song .media-tag__value {
 }
 
 .q-drawer .disabled {
-  opacity: 1 !important;
+  opacity: 1 !important; /* NOSONAR: overrides Quasar's !important .disabled opacity */
 }
 
 .rounded-borders-lg {
@@ -1067,30 +1139,46 @@ body.body--dark .media-tag--song .media-tag__value {
 }
 
 .study-bible-item .q-badge {
-  padding: 8px !important;
+  padding: 8px;
 }
 
 .aspect-ratio-1 {
   aspect-ratio: 1;
 }
 
-.col-grid {
+// .col makes this outrank Quasar's `.row > .col { width: auto; max-width:
+// 100% }` (every .col-grid is also a .col inside a .row) without !important.
+.col.col-grid {
   height: auto;
-  width: 3em !important;
-  max-width: 3em !important;
+  width: 3em;
+  max-width: 3em;
   flex: auto;
 }
 
-.gradient-transparent-to-black {
+// Inside a q-img, Quasar gives each direct child of the content slot a flat
+// translucent background (`.q-img__content > div`), which the second
+// selector outranks without !important.
+.gradient-transparent-to-black,
+.q-img__content > .gradient-transparent-to-black {
   background: linear-gradient(
     0deg,
     rgba(0, 0, 0, 0.75) 20%,
     rgba(0, 0, 0, 0) 100%
-  ) !important;
+  );
 }
 
 .study-bible-item .gradient-transparent-to-black {
-  padding: 32px 8px 8px !important;
+  padding: 32px 8px 8px;
+}
+
+// A Study Bible chapter with no media is a disabled button, but keeps full
+// opacity: its gray label (DialogStudyBible.vue) is the "unavailable" cue,
+// and Quasar's .disabled fading would make it hard to read. Only !important
+// beats Quasar's own !important .disabled rule - and it lives here rather than
+// in the component because SonarCloud honors NOSONAR in .scss files but not
+// in .vue <style> blocks.
+.q-btn.study-bible-chapter-unavailable.disabled {
+  opacity: 1 !important; /* NOSONAR: overrides Quasar's !important .disabled opacity */
 }
 
 .sortable-media.drop-here {
@@ -1099,9 +1187,7 @@ body.body--dark .media-tag--song .media-tag__value {
 
 // Override FormKit drag and drop z-index to prevent covering headers
 // FormKit applies z-index: 9999 to dragged items, but headers have z-index: 2000
-[data-dragging='true'],
 .sortable-selected,
-[data-drag-placeholder='true'],
 .q-item {
-  z-index: 1500 !important; // Lower than headers (2000) but still above other content
+  z-index: 1500 !important; /* NOSONAR: overrides the inline z-index: 9999 FormKit sets on the dragged item; lower than headers (2000) but still above other content */
 }

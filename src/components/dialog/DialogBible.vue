@@ -243,6 +243,10 @@ import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getBibleMedia } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import {
+  getVerseSelectionState,
+  type VerseSelectionState,
+} from 'src/utils/bible-verses';
 import { decodeEntities } from 'src/utils/general';
 import { timeToSeconds } from 'src/utils/time';
 import { computed, ref, watch } from 'vue';
@@ -308,11 +312,14 @@ const bibleMediaComplete = computed(() => {
   return bibleMediaHebrew.value.concat(bibleMediaGreek.value);
 });
 
+const selectedBook = computed(() =>
+  bibleMedia.value?.find((item) => item?.booknum === selectedBibleBook.value),
+);
+
 const selectedBookMedia = computed(() => {
   if (!selectedBibleBook.value) return [];
   const allFiles: PublicationFiles[] = Object.values(
-    bibleMedia.value?.find((item) => item?.booknum === selectedBibleBook.value)
-      ?.files || {},
+    selectedBook.value?.files || {},
   );
   const langFiles: PublicationFiles = allFiles[0] ?? {};
   const mediaFiles: MediaLink[] = Object.values(langFiles || {})[0];
@@ -389,19 +396,19 @@ const fetchBibleMedia = async (force = false) => {
   }
 };
 
-const addSelectedVerses = async () => {
+const addSelectedVerses = () => {
   try {
     isProcessing.value = true;
     if (!chosenVerses.value.length) return;
     const startVerseNumber = chosenVerses.value[0];
-    const endVerseNumber = chosenVerses.value[1] || startVerseNumber;
+    const endVerseNumber = chosenVerses.value[1] ?? startVerseNumber;
 
     const min = timeToSeconds(
       selectedChapterMedia.value.map((item) =>
         item.markers.markers.find(
           (marker) => marker.verseNumber === startVerseNumber,
         ),
-      )?.[0]?.startTime || '0',
+      )?.[0]?.startTime ?? '0',
     );
 
     const endVerse = selectedChapterMedia.value.map((item) =>
@@ -414,7 +421,7 @@ const addSelectedVerses = async () => {
       : 0;
 
     const title =
-      decodeEntities(bibleMedia.value?.[selectedBibleBook.value - 1]?.pubName) +
+      decodeEntities(selectedBook.value?.pubName) +
       ' ' +
       selectedChapter.value +
       ':' +
@@ -446,31 +453,21 @@ const resetBibleBook = (closeBook = false, closeDialog = false) => {
   hoveredVerse.value = null;
 };
 
-const getVerseClass = (verse: number) => {
-  if (chosenVerses.value.includes(verse)) {
-    return 'bg-primary text-white';
-  } else if (
-    chosenVerses.value.length === 2 &&
-    verse > Math.min(...chosenVerses.value) &&
-    verse < Math.max(...chosenVerses.value)
-  ) {
-    return 'bg-primary-semi-transparent text-white';
-  } else if (
-    chosenVerses.value.length === 1 &&
-    chosenVerses.value?.[0] &&
-    verse > Math.min(chosenVerses.value[0], hoveredVerse.value || 0) &&
-    verse < Math.max(chosenVerses.value[0], hoveredVerse.value || 0)
-  ) {
-    return 'bg-primary-semi-transparent text-white';
-  } else {
-    return 'bg-primary-light';
-  }
+const VERSE_CLASSES: Record<VerseSelectionState, string> = {
+  chosen: 'bg-primary text-white',
+  'in-range': 'bg-primary-semi-transparent text-white',
+  none: 'bg-primary-light',
 };
+
+const getVerseClass = (verse: number) =>
+  VERSE_CLASSES[
+    getVerseSelectionState(verse, chosenVerses.value, hoveredVerse.value)
+  ];
 
 // Watch for dialog opening to get JW videos and reset state
 whenever(dialogValue, () => {
   resetBibleBook(true);
-  fetchBibleMedia();
+  void fetchBibleMedia();
 });
 
 watch(

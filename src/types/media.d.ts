@@ -56,7 +56,7 @@ export interface FileDownloader {
   lowPriority?: boolean;
   meetingDate?: string;
   notify?: boolean;
-  progressCategory?: DownloadProgressItem['progressCategory'];
+  progressCategory?: NonNullable<DownloadProgressItem['progressCategory']>;
   size?: number;
   url: string;
 }
@@ -119,6 +119,9 @@ export interface MediaSection {
   uniqueId: MediaSectionIdentifier;
 }
 
+// The built-in sections, plus any other id (custom sections get generated
+// ones). `Record<never, never> & string` rather than plain `string`, which
+// would swallow the literals (and their editor completions) into `string`.
 export type MediaSectionIdentifier =
   | 'ayfm'
   | 'circuit-overseer'
@@ -127,7 +130,7 @@ export type MediaSectionIdentifier =
   | 'pt'
   | 'tgw'
   | 'wt'
-  | string;
+  | (Record<never, never> & string);
 
 export type MeetingCheckStatus = 'checking' | 'complete' | 'error';
 
@@ -144,7 +147,7 @@ export interface SongItem {
 }
 export interface SortableMediaList {
   items: Ref<MediaItem[]>;
-  jwIconKeyword?: string | undefined;
+  jwIconKeyword?: string;
   label: string;
   type: MediaSectionIdentifier;
 }

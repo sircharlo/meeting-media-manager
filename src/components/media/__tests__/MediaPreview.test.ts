@@ -2,6 +2,7 @@ import { flushPromises, mount, type VueWrapper } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { getCaptureSizeBounds } from 'src/utils/media';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -9,6 +10,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 
 import MediaPreview from '../MediaPreview.vue';
+
+vi.mock('src/helpers/error-catcher', () => ({ errorCatcher: vi.fn() }));
 
 installQuasarPlugin();
 installPinia();
@@ -201,6 +204,56 @@ describe('MediaPreview drift handling', () => {
     await nextTick();
 
     expect(videoElement.currentTime).toBe(130);
+  });
+
+  it('holds the preview instead of chasing a position report the media window stopped sending', async () => {
+    const currentState = seedStores();
+    currentState.mediaPlaying = {
+      ...currentState.mediaPlaying,
+      // MMM-V2-3EY: the media window stopped reporting 3.6s before the end
+      // of a 266s song, and the preview was opened 32 minutes later.
+      currentPosition: 262.24,
+      currentPositionUpdatedAt: Date.now() - 32 * 60 * 1000,
+      duration: 265.856,
+    };
+
+    const wrapper = mountPreview();
+    await nextTick();
+
+    const videoElement = wrapper.get('video').element as HTMLVideoElement;
+    for (let i = 0; i < 12; i++) {
+      await wrapper.get('video').trigger('canplay');
+      await nextTick();
+      await nextTick();
+    }
+
+    // No seeking, no playing, and so no drift corrections piling up into
+    // the fallback and the auto-disable.
+    expect(videoElement.currentTime).toBe(0);
+    expect(videoElement.paused).toBe(true);
+    expect(currentState.currentSettings?.enableMediaPreview).toBe(true);
+  });
+
+  it('never extrapolates the expected position past the end of the media', async () => {
+    const currentState = seedStores();
+    currentState.mediaPlaying = {
+      ...currentState.mediaPlaying,
+      // A 2s-old report 0.5s before the end extrapolates 1.5s past it.
+      currentPosition: 399.5,
+      currentPositionUpdatedAt: Date.now() - 2000,
+      duration: 400,
+    };
+
+    const wrapper = mountPreview();
+    await nextTick();
+
+    // The first run seeds the paused element to the expected position.
+    await wrapper.get('video').trigger('canplay');
+    await nextTick();
+
+    expect((wrapper.get('video').element as HTMLVideoElement).currentTime).toBe(
+      400,
+    );
   });
 
   it('disables the preview entirely when drift repeats in video mode', async () => {
@@ -417,6 +470,75 @@ describe('MediaPreview capture mode (dev toggle)', () => {
     expect(wrapper.get('.media-preview-mode-toggle').text()).toBe('capture');
   });
 
+  it('reports disabled capture smoothing to Sentry only once per session', async () => {
+    vi.mocked(errorCatcher).mockClear();
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    mockCaptureSuccess();
+    seedStores();
+
+    // Drive the capture frame loop by hand: every frame callback draws once
+    // and queues the next, and every draw takes 10ms, over the 8ms budget.
+    const frameCallbacks: (() => void)[] = [];
+    const videoPrototype = HTMLVideoElement.prototype as unknown as Record<
+      string,
+      unknown
+    >;
+    const stubbed = [
+      'cancelVideoFrameCallback',
+      'requestVideoFrameCallback',
+      'videoHeight',
+      'videoWidth',
+    ];
+    Object.defineProperties(videoPrototype, {
+      cancelVideoFrameCallback: { configurable: true, value: vi.fn() },
+      requestVideoFrameCallback: {
+        configurable: true,
+        value: (callback: () => void) => frameCallbacks.push(callback),
+      },
+      videoHeight: { configurable: true, get: () => 1080 },
+      videoWidth: { configurable: true, get: () => 1920 },
+    });
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+      clearRect: vi.fn(),
+      drawImage: vi.fn(),
+    } as unknown as CanvasRenderingContext2D);
+    let now = 0;
+    vi.spyOn(performance, 'now').mockImplementation(() => (now += 10));
+
+    const runSlowDraws = async () => {
+      for (let i = 0; i < 5; i++) {
+        frameCallbacks.pop()?.();
+        await nextTick();
+      }
+    };
+
+    try {
+      const wrapper = mountPreview();
+      await nextTick();
+      await wrapper.get('.media-preview-mode-toggle').trigger('click');
+      await flushPromises();
+
+      await runSlowDraws();
+      expect(wrapper.find('canvas').exists()).toBe(false);
+      expect(errorCatcher).toHaveBeenCalledTimes(1);
+
+      // Back into capture mode: a fresh stream gives smoothing another
+      // chance, and this machine trips it again - without a second report.
+      // capture -> canvas -> video -> capture
+      for (let i = 0; i < 3; i++) {
+        await wrapper.get('.media-preview-mode-toggle').trigger('click');
+        await flushPromises();
+      }
+      expect(wrapper.find('canvas').exists()).toBe(true);
+
+      await runSlowDraws();
+      expect(wrapper.find('canvas').exists()).toBe(false);
+      expect(errorCatcher).toHaveBeenCalledTimes(1);
+    } finally {
+      for (const key of stubbed) Reflect.deleteProperty(videoPrototype, key);
+    }
+  });
+
   it('re-acquires the stream with a new size cap only after the main window changes size substantially', async () => {
     vi.useFakeTimers();
     const original = {
@@ -540,5 +662,23 @@ describe('MediaPreview canvas frame geometry', () => {
     // The pillarbox bars aren't overdrawn, so the canvas must be cleared
     // first rather than keeping whatever an earlier frame left there.
     expect(context.clearRect).toHaveBeenCalledWith(0, 0, 320, 180);
+  });
+});
+
+describe('MediaPreview fullscreen backdrop', () => {
+  it('closes the fullscreen preview from a backdrop button kept out of the tab order', async () => {
+    const currentState = seedStores();
+    currentState.mediaPlaying.url = IMAGE_URL;
+    const wrapper = mountPreview();
+    await flushPromises();
+
+    await wrapper.find('button.media-preview').trigger('click');
+    const backdrop = wrapper.find('.media-preview-backdrop');
+    expect(backdrop.element.tagName).toBe('BUTTON');
+    expect(backdrop.attributes('tabindex')).toBe('-1');
+    expect(backdrop.attributes('aria-label')).toBeTruthy();
+
+    await backdrop.trigger('click');
+    expect(wrapper.find('.media-preview-backdrop').exists()).toBe(false);
   });
 });

@@ -128,7 +128,7 @@ Funkcije glasbe v ozadju vključujejo:
 
 ### :stopwatch: Ali M³ vključuje časovnik za shode? {#faq-meeting-timer}
 
-Da. Ko je ta funkcija omogočena, lahko M³ prikaže ločeno okno časovnika za merjenje časa udeležencev. Časovnik lahko šteje navzgor ali navzdol, prikazuje lahko trenutni čas, odšteva do začetka shoda in po želji označi prekoračitev časa in to, ali program shoda prehiteva ali zaostaja.
+Da. Ko je ta funkcija omogočena, lahko M³ prikaže ločeno okno časovnika za merjenje časa udeležencev. Časovnik lahko šteje navzgor ali navzdol, prikazuje lahko trenutni čas, odšteva do začetka shoda in po želji označi prekoračitev časa in to, ali program shoda prehiteva ali zaostaja. Trajanje posameznih točk je mogoče prosto prilagajati, za posebne programe je mogoče dodati prilagojene točke, časomerilnik pa je mogoče upravljati iz orodne vrstice (tudi ko se z miško ustaviš na gumbu) ali iz panela, pripetega v glavnem oknu.
 
 Časovnik je funkcija v beta fazi in jo je treba omogočiti samo, če je lokalno odobrena.
 
@@ -158,12 +158,12 @@ M³ samodejno preklaplja prizore v OBS glede na:
 
 - Vrsto multimedijske vsebine (video, slika itd.)
 - Tvojo nastavitev prizorov
-- Nastavitve, kot je »Odloži slike« (Postpone Images)
+- Nastavitve, kot je »Slik ne deli samodejno«
 - To, ali naj se po predvajanju multimedijske vsebine vrne na prejšnji prizor
 
-### :pause_button: Kaj pomeni funkcija »Odloži slike«? {#faq-postpone-images}
+### :pause_button: Kaj naredi nastavitev »Slik ne deli samodejno«? {#faq-postpone-images}
 
-Ta funkcija odloži deljenje slik z OBS Studiem, dokler jih ročno ne sprožiš. To je uporabno za:
+Ta nastavitev odloži deljenje slik v OBS, dokler jih ne sprožiš ročno. To je uporabno za:
 
 - Prikaz slik najprej občinstvu v kraljestveni dvorani
 - Večji nadzor nad časom prikaza
@@ -178,12 +178,16 @@ M³ nima vgrajenega snemalnika, lahko pa pomaga pri nadzoru snemanja na dva nač
 
 ## Napredne funkcije {#faq-advanced-features}
 
-### :cloud: Kako deluje spremljanje map? {#faq-folder-monitoring}
+### :cloud: Kako deluje mapa v skupni rabi? {#faq-folder-monitoring}
 
-Spremljanje map ti omogoča, da:
+Če shranjuješ datoteke za shode v aplikaciji za shranjevanje v oblaku, kot je Dropbox, OneDrive, iCloud Drive ali Google Drive, lahko M³ samodejno doda datoteke k ustreznemu shodu:
 
-1. Izbereš mapo, ki jo želiš spremljati za nove datoteke
-2. Samodejno uvoziš novo multimedijsko vsebino, ki se sinhronizira prek oblačnih storitev, kot sta Dropbox ali OneDrive
+1. Izberi mapo v svoji aplikaciji za shranjevanje v oblaku, v čarovniku za nastavitev ali v **Nastavitve** > **Povezovanje** > **Mapa v skupni rabi**. Najboljša je nova mapa, ki se uporablja samo za to.
+2. M³ v njej ustvari mapo za vsak prihajajoči shod, poimenovano z datumom shoda, zapisanim kot leto-mesec-dan (na primer `2026-03-25`).
+3. Kadar koli je potrebno, daj fotografije, videoposnetke, avdioposnetke ali sezname predvajanja iz JW Library v mapo posameznega shoda. Samodejno bodo dodani na seznam multimedijske vsebine za ta shod na vsakem računalniku, ki uporablja isto mapo.
+4. Če želiš dodati datoteke za drug dan, ustvari zanj mapo, poimenovano na enak način.
+
+Ko je teden mimo, M³ izbriše datumske mape tega tedna in datoteke v njih za vse, ki uporabljajo mapo v skupni rabi. Če želiš datoteke ohraniti, izklopi možnost **Izbriši mape preteklih shodov**.
 
 ### :file_folder: Kaj pomeni samodejni izvoz multimedijske vsebine? {#faq-media-export}
 
@@ -246,7 +250,7 @@ M³ predvaja multimedijsko vsebino z zvokom na tvojem računalniku, vendar se ta
 
 Poskusi naslednje optimizacije zmogljivosti:
 
-1. **Omogoči dodatni predpomnilnik**: v nastavitvah vključi možnost za dodatno predpomnjenje
+1. **Predpomni videoposnetke pesmi**: Vnaprej predpomni vse videe iz pesmarice v nastavitvah
 2. **Zapri druge aplikacije**: zapri programe, ki jih trenutno ne potrebuješ
 3. **Preveri prostor na disku**: poskrbi, da imaš dovolj prostega prostora
 4. **Zmanjšaj ločljivost**: znižaj največjo nastavljeno ločljivost multimedijske vsebine

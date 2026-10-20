@@ -79,7 +79,7 @@ The media player provides comprehensive controls:
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
-- **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
+- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
 - **Live Preview** - When enabled, show a preview of the audience media window in the main app
 - **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
 
@@ -99,8 +99,8 @@ Set custom start and end times for media:
 
 For images and videos:
 
-- **Zoom In/Out** - Use mouse wheel or zoom controls on the thumbnail
-- **Pan** - Click and drag the thumbnail to move the image around
+- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
+- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
 - **Reset Zoom** - Click to return to original zoom
 
 #### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
@@ -144,6 +144,25 @@ Please note that custom backgrounds are temporary and are not saved after M³ qu
 When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
 
 The timer is a beta feature and should only be used when approved locally.
+
+#### Meeting Parts {#user-guide-timer-parts}
+
+The timer popup on the action island lists the parts of the selected day's meeting. For midweek meetings, choose how many Apply Yourself to the Field Ministry and Living as Christians parts there are; the section's minutes are shared out evenly, and each part can then be adjusted freely with the **+** and **−** buttons or by clicking the part. Any part can be set to any number of minutes, including 0 to skip it. A warning icon points out sections whose parts don't add up to the time allotted to them, but never changes anything on its own.
+
+**Custom parts** can be added on any day, for Governing Body updates, special programs or anything else that isn't on the regular schedule. On days without a meeting, the timer starts with one custom part per custom media section.
+
+Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
+
+#### Hand Alert {#user-guide-timer-hand-alert}
+
+A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+#### Timer on a Tablet {#user-guide-timer-remote}
+
+The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³.
+
+#### Quick Access {#user-guide-timer-quick-access}
+
+Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).
 
 ## Background Music {#user-guide-background-music}
 
@@ -190,12 +209,12 @@ M³ automatically switches OBS scenes during presentations:
 
 ### Advanced OBS Features {#advanced-obs}
 
-#### Postpone Images {#user-guide-postpone-images}
+#### Do Not Automatically Share Images {#user-guide-postpone-images}
 
 Enable this option to delay sharing images to OBS until manually triggered:
 
-1. Enable "Postpone Images" in OBS settings
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+1. Enable "Do not automatically share images" in OBS settings
+2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. This is useful for showing images to in-person audience first.
 
 #### Scene Switching Behavior {#user-guide-scene-switching}
 
@@ -261,7 +280,7 @@ Add your own media files to M³:
 
 1. **File Import** - Use the import button to add videos, images, or audio files
 2. **Drag and Drop** - Drag files directly into M³
-3. **Folder Monitoring** - Set up a watched folder for automatic imports
+3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 4. **JWPUB Files and Playlists** - Import publications and playlists
 5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
 6. **Videos from the official website** - Search for videos and add them to the selected date
@@ -288,16 +307,17 @@ Import audio recordings of Bible verses:
 
 Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
 
-## Folder Monitoring and Export {#user-guide-folder-monitoring}
+## Shared Folder and Export {#user-guide-folder-monitoring}
 
-### Setting Up Folder Monitoring {#folder-monitoring-setup}
+### Setting Up a Shared Folder {#folder-monitoring-setup}
 
-Monitor a folder for new media files:
+Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
 
-1. **Enable Folder Watcher** - Turn on folder monitoring in settings
-2. **Select Folder** - Choose the folder to monitor
-3. **Automatic Import** - New files are automatically added to M³
-4. **Organization** - Files are organized by date based on folder structure
+1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
+2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
+3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
+4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
+5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
 
 ### Media Export {#user-guide-media-export}
 
@@ -381,7 +401,7 @@ Configure custom keyboard shortcuts for efficient operation:
 
 #### Performance Issues {#user-guide-performance-issues}
 
-- Enable extra cache
+- Cache songbook video files
 - Reduce maximum resolution
 - Clear old cached files
 - Check available disk space

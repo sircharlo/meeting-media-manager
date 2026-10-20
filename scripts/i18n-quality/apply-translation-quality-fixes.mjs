@@ -2,9 +2,9 @@
 /**
  * Phase B of the translation-quality pipeline: apply user-approved
  * proposed changes to Crowdin via its API. Dry-run by default, mirroring
- * scripts/cleanup-crowdin.mjs's conventions (same crowdinRequest/listAll/
- * patchTranslations shape, --apply to commit, non-zero exit when there is
- * pending work).
+ * scripts/cleanup-crowdin.mjs's conventions (the same Crowdin client from
+ * scripts/lib/crowdin-api.mjs, same patchTranslations shape, --apply to
+ * commit, non-zero exit when there is pending work).
  *
  * This never reads a raw validated/*.json file directly - it takes a
  * *decisions* file: a copy of a validated/<lang>/<contentType>.json where
@@ -41,13 +41,10 @@
  * scripts/cleanup-crowdin.mjs).
  */
 import fsx from 'fs-extra';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+
+import { crowdinRequest, getConfig, listAll } from '../lib/crowdin-api.mjs';
 
 const { pathExists, readJson } = fsx;
-
-const API_VERSION = '/api/v2';
-const PAGE_SIZE = 500;
 
 // Same source-file -> Crowdin-source-path mapping as crowdin.yml, needed to
 // resolve a contentType back to the Crowdin file that owns its strings.
@@ -56,70 +53,92 @@ const SOURCE_PATH_BY_CONTENT_TYPE = {
   i18n: 'src/i18n/en.json',
 };
 
-async function crowdinRequest(
-  baseUrl,
-  token,
-  path,
-  { body, method = 'GET' } = {},
-) {
-  const response = await fetch(`${baseUrl}${API_VERSION}${path}`, {
-    body: body === undefined ? undefined : JSON.stringify(body),
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Bearer ${token}`,
-      ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
-    },
-    method,
-  });
-  if (!response.ok) {
-    const detail = await response.text().catch(() => '');
-    const error = new Error(
-      `Crowdin API ${method} ${path} -> ${response.status} ${response.statusText}${detail ? `: ${detail.slice(0, 400)}` : ''}`,
-    );
-    error.body = detail;
-    throw error;
-  }
-  if (response.status === 204) return null;
-  return response.json();
-}
-
-function getConfig() {
-  const token = process.env.CROWDIN_PERSONAL_TOKEN;
-  if (!token) {
-    throw new Error(
-      'Missing CROWDIN_PERSONAL_TOKEN env var (create one at https://crowdin.com/settings#api).',
-    );
-  }
-  const projectId =
-    process.env.CROWDIN_PROJECT_ID ?? parseProjectIdFromCrowdinYml();
-  if (!projectId) {
-    throw new Error(
-      'Missing CROWDIN_PROJECT_ID env var and no project_id found in crowdin.yml.',
-    );
-  }
-  return {
-    baseUrl: process.env.CROWDIN_BASE_URL ?? 'https://api.crowdin.com',
-    projectId,
-    token,
+/**
+ * Our repo's LanguageValue codes (src/i18n/<code>.json) don't always match
+ * Crowdin's own language id (e.g. our "pt" is Crowdin's "pt-BR", "es" is
+ * "es-ES") - resolve via each target language's own twoLettersCode rather
+ * than assuming the codes are identical. Returns the resolver: repo code ->
+ * Crowdin language id, or null when nothing matches.
+ */
+function createLanguageIdResolver(project, targetLanguageIds) {
+  const languageIdByTwoLetters = new Map(
+    (project.targetLanguages ?? []).map((lang) => [
+      lang.twoLettersCode,
+      lang.id,
+    ]),
+  );
+  // A few repo codes don't match Crowdin's id even by twoLettersCode -
+  // confirmed live against the project rather than guessed.
+  const LANGUAGE_ID_OVERRIDES = { 'cmn-hans': 'zh-CN' };
+  return (code) => {
+    if (targetLanguageIds.has(code)) return code;
+    if (
+      LANGUAGE_ID_OVERRIDES[code] &&
+      targetLanguageIds.has(LANGUAGE_ID_OVERRIDES[code])
+    ) {
+      return LANGUAGE_ID_OVERRIDES[code];
+    }
+    return languageIdByTwoLetters.get(code) ?? null;
   };
 }
 
-async function listAll(baseUrl, token, path) {
-  const items = [];
-  let offset = 0;
-  for (;;) {
-    const separator = path.includes('?') ? '&' : '?';
-    const page = await crowdinRequest(
-      baseUrl,
-      token,
-      `${path}${separator}limit=${PAGE_SIZE}&offset=${offset}`,
+/**
+ * The Crowdin file that owns a content type's source strings, or null (after
+ * a warning) when the content type is unknown or its file isn't in the
+ * project.
+ */
+function findContentTypeSource(contentType, decisions, normalizedFiles) {
+  const sourcePath = SOURCE_PATH_BY_CONTENT_TYPE[contentType];
+  if (!sourcePath) {
+    console.warn(
+      `[apply] unknown content type "${contentType}", skipping ${decisions.length} decision(s)`,
     );
-    const rows = page.data ?? [];
-    for (const row of rows) items.push(row.data);
-    if (rows.length < PAGE_SIZE) break;
-    offset += PAGE_SIZE;
+    return null;
   }
-  return items;
+  const file = normalizedFiles.find((f) =>
+    f.normalizedPath.endsWith(sourcePath),
+  );
+  if (!file) {
+    console.warn(
+      `[apply] could not find Crowdin file for ${sourcePath}, skipping ${decisions.length} decision(s)`,
+    );
+    return null;
+  }
+  return { file, sourcePath };
+}
+
+function groupByContentType(decisions) {
+  const byContentType = new Map();
+  for (const decision of decisions) {
+    const list = byContentType.get(decision.contentType) ?? [];
+    list.push(decision);
+    byContentType.set(decision.contentType, list);
+  }
+  return byContentType;
+}
+
+/**
+ * Group one content type's decisions by Crowdin language id. A decision
+ * whose language matches no target language is added to `unresolved`
+ * instead.
+ */
+function groupByLanguage(decisions, resolveLanguageId, unresolved) {
+  const byLanguage = new Map();
+  for (const decision of decisions) {
+    const resolvedLanguageId = resolveLanguageId(decision.language);
+    if (!resolvedLanguageId) {
+      unresolved.push({
+        decision,
+        reason: `language "${decision.language}" does not match any target language id or twoLettersCode in this Crowdin project`,
+        status: 'unresolved',
+      });
+      continue;
+    }
+    const list = byLanguage.get(resolvedLanguageId) ?? [];
+    list.push(decision);
+    byLanguage.set(resolvedLanguageId, list);
+  }
+  return byLanguage;
 }
 
 async function main() {
@@ -131,20 +150,10 @@ async function main() {
     process.exit(1);
   }
 
-  const { baseUrl, projectId, token } = getConfig();
+  const config = getConfig();
+  const { baseUrl, projectId, token } = config;
 
-  const allDecisions = [];
-  for (const filePath of decisionFiles) {
-    if (!(await pathExists(filePath))) {
-      console.error(`Decisions file not found: ${filePath}`);
-      process.exit(1);
-    }
-    const records = await readJson(filePath);
-    for (const record of records) {
-      if (record.status === 'approved') allDecisions.push(record);
-    }
-  }
-
+  const allDecisions = await readApprovedDecisions(decisionFiles);
   if (allDecisions.length === 0) {
     console.log(
       'No decisions marked "approved" in the given file(s). Nothing to do.',
@@ -163,30 +172,10 @@ async function main() {
   console.log(
     `[apply] project target languages: ${[...targetLanguageIds].join(', ')}`,
   );
-
-  // Our repo's LanguageValue codes (src/i18n/<code>.json) don't always match
-  // Crowdin's own language id (e.g. our "pt" is Crowdin's "pt-BR", "es" is
-  // "es-ES") - resolve via each target language's own twoLettersCode rather
-  // than assuming the codes are identical.
-  const languageIdByTwoLetters = new Map(
-    (project.targetLanguages ?? []).map((lang) => [
-      lang.twoLettersCode,
-      lang.id,
-    ]),
+  const resolveLanguageId = createLanguageIdResolver(
+    project,
+    targetLanguageIds,
   );
-  // A few repo codes don't match Crowdin's id even by twoLettersCode -
-  // confirmed live against the project rather than guessed.
-  const LANGUAGE_ID_OVERRIDES = { 'cmn-hans': 'zh-CN' };
-  function resolveLanguageId(code) {
-    if (targetLanguageIds.has(code)) return code;
-    if (
-      LANGUAGE_ID_OVERRIDES[code] &&
-      targetLanguageIds.has(LANGUAGE_ID_OVERRIDES[code])
-    ) {
-      return LANGUAGE_ID_OVERRIDES[code];
-    }
-    return languageIdByTwoLetters.get(code) ?? null;
-  }
 
   const files = await listAll(baseUrl, token, `/projects/${projectId}/files`);
   const normalizedFiles = files.map((file) => ({
@@ -194,114 +183,13 @@ async function main() {
     normalizedPath: normalizePath(file.path ?? file.name ?? ''),
   }));
 
-  const byContentType = new Map();
-  for (const decision of allDecisions) {
-    const list = byContentType.get(decision.contentType) ?? [];
-    list.push(decision);
-    byContentType.set(decision.contentType, list);
-  }
-
-  const resolved = [];
-  const unresolved = [];
-  const stale = [];
-
-  for (const [contentType, decisions] of byContentType) {
-    const sourcePath = SOURCE_PATH_BY_CONTENT_TYPE[contentType];
-    if (!sourcePath) {
-      console.warn(
-        `[apply] unknown content type "${contentType}", skipping ${decisions.length} decision(s)`,
-      );
-      continue;
-    }
-    const file = normalizedFiles.find((f) =>
-      f.normalizedPath.endsWith(sourcePath),
-    );
-    if (!file) {
-      console.warn(
-        `[apply] could not find Crowdin file for ${sourcePath}, skipping ${decisions.length} decision(s)`,
-      );
-      continue;
-    }
-
-    const fileStrings = await listAll(
-      baseUrl,
-      token,
-      `/projects/${projectId}/strings?fileId=${file.id}`,
-    );
-    if (fileStrings[0] && fileStrings[0].identifier === undefined) {
-      console.warn(
-        `[apply] NOTE: strings for ${sourcePath} do not expose an "identifier" field - ` +
-          'falling back to exact-text matching for all decisions in this content type.',
-      );
-    }
-
-    const byLanguage = new Map();
-    for (const decision of decisions) {
-      const resolvedLanguageId = resolveLanguageId(decision.language);
-      if (!resolvedLanguageId) {
-        unresolved.push({
-          decision,
-          reason: `language "${decision.language}" does not match any target language id or twoLettersCode in this Crowdin project`,
-          status: 'unresolved',
-        });
-        continue;
-      }
-      const list = byLanguage.get(resolvedLanguageId) ?? [];
-      list.push(decision);
-      byLanguage.set(resolvedLanguageId, list);
-    }
-
-    for (const [crowdinLanguageId, languageDecisions] of byLanguage) {
-      const translations = await listAll(
-        baseUrl,
-        token,
-        `/projects/${projectId}/languages/${encodeURIComponent(crowdinLanguageId)}/translations?fileId=${file.id}`,
-      );
-      const translationsByStringId = new Map(
-        translations.map((t) => [t.stringId, t]),
-      );
-
-      for (const decision of languageDecisions) {
-        const result = await resolveDecision(
-          { baseUrl, projectId, token },
-          decision,
-          fileStrings,
-          translationsByStringId,
-        );
-        if (result.status === 'resolved') resolved.push(result);
-        else if (result.status === 'stale') stale.push(result);
-        else unresolved.push(result);
-      }
-    }
-  }
-
-  console.log(
-    `\n[apply] resolved: ${resolved.length}, unresolved: ${unresolved.length}, stale: ${stale.length}`,
-  );
-
-  for (const { decision, reason } of unresolved) {
-    console.log(
-      `  UNRESOLVED  ${decision.language}/${decision.contentType}/${decision.key}: ${reason}`,
-    );
-  }
-  for (const { decision, liveText, reason } of stale) {
-    console.log(
-      `  STALE       ${decision.language}/${decision.contentType}/${decision.key}: ${reason}`,
-    );
-    console.log(
-      `              recorded: ${JSON.stringify(decision.currentTranslation)}`,
-    );
-    console.log(`              live now: ${JSON.stringify(liveText)}`);
-  }
-
-  console.log(`\n${apply ? 'Applying' : 'Dry run (pass --apply to commit)'}:`);
-  for (const { decision, matchedBy, translationId } of resolved) {
-    console.log(
-      `  [${matchedBy}] ${decision.language}/${decision.contentType}/${decision.key} (translationId ${translationId})`,
-    );
-    console.log(`    - ${JSON.stringify(decision.currentTranslation)}`);
-    console.log(`    + ${JSON.stringify(decision.proposedTranslation)}`);
-  }
+  const results = await resolveAllDecisions(config, allDecisions, {
+    normalizedFiles,
+    resolveLanguageId,
+  });
+  const { resolved } = results;
+  printResolutionSummary(results);
+  printPlannedChanges(apply, resolved);
 
   if (apply && resolved.length > 0) {
     const ops = resolved.map(({ decision, translationId }) => ({
@@ -339,17 +227,129 @@ function parseArgs(argv) {
   return args;
 }
 
-function parseProjectIdFromCrowdinYml() {
-  try {
-    const content = readFileSync(
-      resolve(process.cwd(), 'crowdin.yml'),
-      'utf-8',
+function printPlannedChanges(apply, resolved) {
+  console.log(`\n${apply ? 'Applying' : 'Dry run (pass --apply to commit)'}:`);
+  for (const { decision, matchedBy, translationId } of resolved) {
+    console.log(
+      `  [${matchedBy}] ${decision.language}/${decision.contentType}/${decision.key} (translationId ${translationId})`,
     );
-    const match = /^project_id:\s*['"]?(\d+)['"]?\s*$/m.exec(content);
-    return match?.[1] ?? null;
-  } catch {
-    return null;
+    console.log(`    - ${JSON.stringify(decision.currentTranslation)}`);
+    console.log(`    + ${JSON.stringify(decision.proposedTranslation)}`);
   }
+}
+
+function printResolutionSummary({ resolved, stale, unresolved }) {
+  console.log(
+    `\n[apply] resolved: ${resolved.length}, unresolved: ${unresolved.length}, stale: ${stale.length}`,
+  );
+
+  for (const { decision, reason } of unresolved) {
+    console.log(
+      `  UNRESOLVED  ${decision.language}/${decision.contentType}/${decision.key}: ${reason}`,
+    );
+  }
+  for (const { decision, liveText, reason } of stale) {
+    console.log(
+      `  STALE       ${decision.language}/${decision.contentType}/${decision.key}: ${reason}`,
+    );
+    console.log(
+      `              recorded: ${JSON.stringify(decision.currentTranslation)}`,
+    );
+    console.log(`              live now: ${JSON.stringify(liveText)}`);
+  }
+}
+
+/**
+ * Read every decisions file and keep the entries marked "approved". Local
+ * decision files are independent, so check and read them concurrently; the
+ * first missing one (in argument order) still aborts before anything is
+ * read.
+ */
+async function readApprovedDecisions(decisionFiles) {
+  const fileExists = await Promise.all(
+    decisionFiles.map((filePath) => pathExists(filePath)),
+  );
+  const missingIndex = fileExists.indexOf(false);
+  if (missingIndex !== -1) {
+    console.error(`Decisions file not found: ${decisionFiles[missingIndex]}`);
+    process.exit(1);
+  }
+  const recordsPerFile = await Promise.all(
+    decisionFiles.map((filePath) => readJson(filePath)),
+  );
+
+  const approved = [];
+  for (const records of recordsPerFile) {
+    for (const record of records) {
+      if (record.status === 'approved') approved.push(record);
+    }
+  }
+  return approved;
+}
+
+function recordResult(results, result) {
+  if (result.status === 'resolved') results.resolved.push(result);
+  else if (result.status === 'stale') results.stale.push(result);
+  else results.unresolved.push(result);
+}
+
+/**
+ * Resolve every decision against the live project - one content type
+ * (Crowdin source file), then one language, at a time - sorting each into
+ * resolved, unresolved or stale (see resolveDecision).
+ */
+async function resolveAllDecisions(
+  config,
+  decisions,
+  { normalizedFiles, resolveLanguageId },
+) {
+  const { baseUrl, projectId, token } = config;
+  const results = { resolved: [], stale: [], unresolved: [] };
+
+  for (const [contentType, typeDecisions] of groupByContentType(decisions)) {
+    const source = findContentTypeSource(
+      contentType,
+      typeDecisions,
+      normalizedFiles,
+    );
+    if (!source) continue;
+    const { file, sourcePath } = source;
+
+    const stringsPath = `/projects/${projectId}/strings?fileId=${file.id}`;
+    const fileStrings = await listAll(baseUrl, token, stringsPath); // NOSONAR: sequential - rate-limited API
+    if (fileStrings[0] && fileStrings[0].identifier === undefined) {
+      console.warn(
+        `[apply] NOTE: strings for ${sourcePath} do not expose an "identifier" field - ` +
+          'falling back to exact-text matching for all decisions in this content type.',
+      );
+    }
+
+    const byLanguage = groupByLanguage(
+      typeDecisions,
+      resolveLanguageId,
+      results.unresolved,
+    );
+    for (const [crowdinLanguageId, languageDecisions] of byLanguage) {
+      const translationsPath = `/projects/${projectId}/languages/${encodeURIComponent(crowdinLanguageId)}/translations?fileId=${file.id}`;
+      const translations = await listAll(baseUrl, token, translationsPath); // NOSONAR: sequential - rate-limited API
+      const translationsByStringId = new Map(
+        translations.map((t) => [t.stringId, t]),
+      );
+
+      for (const decision of languageDecisions) {
+        recordResult(
+          results,
+          resolveDecision(
+            config,
+            decision,
+            fileStrings,
+            translationsByStringId,
+          ),
+        );
+      }
+    }
+  }
+  return results;
 }
 
 /**
@@ -357,12 +357,7 @@ function parseProjectIdFromCrowdinYml() {
  * field first (if the live project exposes one matching the JSON key);
  * falls back to a unique exact-text match. Never guesses on ambiguity.
  */
-async function resolveDecision(
-  ctx,
-  decision,
-  fileStrings,
-  translationsByStringId,
-) {
+function resolveDecision(ctx, decision, fileStrings, translationsByStringId) {
   const byIdentifier = fileStrings.find((s) => s.identifier === decision.key);
   let stringMatch = byIdentifier;
   let matchedBy = 'identifier';
@@ -416,9 +411,16 @@ async function resolveDecision(
   };
 }
 
+// A failed request's message carries the Crowdin response body; flattening
+// its line breaks keeps that body from forging extra log lines (or GitHub
+// Actions workflow commands, `::error::...`, when run in CI).
+function toSingleLine(text) {
+  return String(text).replaceAll(/[\r\n]+/g, ' ');
+}
+
 try {
   await main();
 } catch (error) {
-  console.error(`[apply] ${error.message}`);
+  console.error(`[apply] ${toSingleLine(error.message)}`); // NOSONAR: line breaks stripped by toSingleLine
   process.exitCode = 1;
 }

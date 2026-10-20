@@ -82,7 +82,7 @@ Multimedijski predvajalnik omogoča celovito upravljanje:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Povečanje/premikanje slike** – za povečanje slike uporabi kolesce miške, za premikanje slike pa povleci z miško
+- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
 - **Predogled v živo** – Ko je to omogočeno, se v glavnem oknu aplikacije prikaže predogled občinskega multimedijskega okna
 - **Hitrost predvajanja** – Ko je v nastavitvah to omogočeno, lahko iz kontekstnega menija multimedijskega elementa prilagodiš hitrost predvajanja zvoka in videa
 
@@ -103,8 +103,8 @@ Nastavi začetni in končni čas predvajanja multimedijske vsebine:
 
 Za slike in videoposnetke:
 
-- **Povečaj/Pomanjšaj** - Uporabi kolesce miške ali gumbe za povečavo na sličici
-- **Premikanje** - Klikni in povleci sličico, da jo premakneš
+- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
+- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
 - **Ponastavi povečavo** - Klikni, da se vrneš na prvotno povečavo
 
 #### Bližnjice na tipkovnici {#user-guide-keyboard-shortcuts}
@@ -148,6 +148,26 @@ Upoštevaj, da so poljubna ozadja začasna in se po izhodu iz M³ ne shranijo.
 Ko je časovnik shoda omogočen, lahko M³ prikaže ločeno okno časovnika za merjenje časa posameznih delov. Časovnik lahko šteje navzgor ali navzdol, prikazuje trenutni čas, prikaže odštevalnik do začetka načrtovanega shoda in po želji označi prekoračitev časa ali to, ali program shoda poteka zaostaja ali prehiteva.
 
 Časovnik je funkcija v beta fazi in se sme uporabljati samo, če je lokalno odobrena.
+
+#### Točke shoda {#user-guide-timer-parts}
+
+Pojavno okno časovnika v orodni vrstici prikaže točke izbranega dne shoda. Pri shodih med tednom izberi, koliko točk Izurimo se v oznanjevanju in Krščansko življenje je na sporedu; minute posameznega dela se razdelijo enakomerno, vsako točko pa je nato mogoče prosto prilagajati z gumboma + in − ali s klikom na točko. Vsako točko je mogoče nastaviti na poljubno število minut, tudi na 0, če jo želiš preskočiti. Opozorilna ikona označi razdelke, pri katerih se trajanja točk ne ujemajo z dodeljenim časom, vendar se nič ne popravi samo od sebe.
+
+**Prilagojene točke** je mogoče dodati na kateri koli dan — za poročila Vodstvenega organa, posebne programe ali kar koli drugega, kar ni na rednem razporedu. Na dneve brez shoda časovnik začne z eno prilagojeno točko na vsak razdelek s prilagojeno multimedijsko vsebino.
+
+Število točk, spremenjene dolžine točk, prilagojene točke in zabeleženi časi se shranijo za vsak dan posebej, zato se ohranijo tudi po ponovnem zagonu M³ in se nikoli ne pomešajo z drugimi shodi. Zabeležene čase posameznega dne je mogoče izbrisati naenkrat z možnostjo »Ponastavi vse časovne meritve za ta dan«, časovno poročilo v obliki PDF pa je mogoče izvoziti kadar koli.
+
+#### Opozorilo glede dvignjene roke {#user-guide-timer-hand-alert}
+
+Gumb **Opozorilo glede dvignjene roke** v pojavnem oknu časovnika prikaže veliko roko na prikazu časovnika, da opozori predsedujočega, na primer ko nekdo v Zoomu dvigne roko. S [pomočnikom za dvignjene roke v Upravljalniku Zoom shodov](/settings-guide#zoom-meeting-manager-hand-alert) M³ to prikaže samodejno, kadar nekdo dvigne roko v Zoomu, skupaj z njegovim imenom, in ti omogoči, da ga z enim klikom povabiš, naj si vklopi mikrofon, nato pa ga z drugim klikom znova utišaš in spustiš njegovo roko.
+
+#### Časovnik na tablici {#user-guide-timer-remote}
+
+Neobvezni [oddaljeni časovnik](/settings-guide#timer-remote) streže kopijo prikaza časovnika kot spletno stran v vašem lokalnem omrežju. Odpri naslov, prikazan v pojavnem oknu časovnika, v brskalniku tablice ali telefona na govorniškem pultu, in govornik bo preostali čas videl zasebno, medtem ko vse kontrole ostanejo v M³.
+
+#### Hiter dostop {#user-guide-timer-quick-access}
+
+Ko se z miško ustaviš na gumbu časovnika v orodni vrstici, se prikaže točka, ki se trenutno meri, skupaj z gumbi Začni, Premor, Ustavi in Naslednja točka. Nastavitev lahko tudi pripne časovni panel na desno stran glavnega okna, kjer sta celoten seznam točk in kontrole časovnika vedno vidne. Glej [Vodnik po nastavitvah](/settings-guide#timer-quick-access).
 
 ## Glasba v ozadju {#user-guide-background-music}
 
@@ -194,12 +214,12 @@ M³ med predstavitvami samodejno preklaplja med prizori v programu OBS:
 
 ### Napredne funkcije OBS {#advanced-obs}
 
-#### Odložitev prikazovanja slik {#user-guide-postpone-images}
+#### Ne deli samodejno slik {#user-guide-postpone-images}
 
 Omogoči to možnost, če želiš, da se deljenje slik v OBS odloži, dokler ga ne sprožiš ročno:
 
-1. V nastavitvah programa OBS omogoči možnost »Postpone Images«
-2. Slike bodo deljene šele, ko klikneš na gumb za njihovo prikazovanje z uporabo programa OBS Studio. To je koristno, če želiš sle slike naprej pokazati tistim, ki so prisotni v živo.
+1. Omogoči »Slik ne deli samodejno« v nastavitvah OBS
+2. Slike bodo deljene samo, ko klikneš gumb **Prikaži sliko za udeležence Zooma** na sliki, ki je prikazana. To je koristno, če želiš sle slike naprej pokazati tistim, ki so prisotni v živo.
 
 #### Način preklapljanja med prizori {#user-guide-scene-switching}
 
@@ -265,7 +285,7 @@ Dodaj svoje datoteke v M³:
 
 1. **Uvoz datotek** - uporabi gumb za uvoz videov, slik ali zvočnih datotek
 2. **Povleci in spusti** - datoteke preprosto povleci v M³
-3. **Nadzor map** - nastavi nadzorovano mapo za samodejni uvoz
+3. **Mapa v skupni rabi** – Samodejno dodajaj multimedijsko vsebino iz mape, ki je sinhronizirana z Dropbox, OneDrive, iCloud Drive ali Google Drive
 4. **Datoteke JWPUB in seznami predvajanja** - uvozi publikacije in sezname predvajanja
 5. **Seznam multimedijskih vsebin za javne govore (S-34 / S-34mp)** - Uvozi Seznam multimedijskih vsebin za javne govore z datotekami JWPUB S‑34 ali S‑34mp
 6. **Videoposnetkii z uradnega spletnega mesta** – Poišči videoposnetke in jih dodaj k izbranemu datumu
@@ -292,16 +312,18 @@ Uvozi zvočne posnetke svetopisemskih vrstic:
 
 Nastavitve posameznega profila lahko iz nastavitev izvoziš v datoteko JSON. Uvoz datoteke z nastavitvami profila zamenja trenutne nastavitve profila, kar je uporabno pri prenosu konfiguracije na drug računalnik ali pri obnovitvi znane, preverjene konfiguracije.
 
-## Nadzor map in izvoz {#user-guide-folder-monitoring}
+## Mapa v skupni rabi in izvoz {#user-guide-folder-monitoring}
 
-### Nastavitev nadzora map {#folder-monitoring-setup}
+### Nastavitev mape v skupni rabi {#folder-monitoring-setup}
 
-Nadzoruj mapo za nove datoteke multimedijske vsebine:
+Dodajaj multimedijsko vsebino iz mape, ki je sinhronizirana z aplikacijo za shranjevanje v oblaku, kot je Dropbox, OneDrive, iCloud Drive ali Google Drive:
 
-1. **Omogoči nadzor map** - v nastavitvah vklopi možnost nadzora map
-2. **Izberi mapo** - določi mapo, ki jo želiš nadzorovati
-3. **Samodejni uvoz** - nove datoteke se samodejno dodajo v M³
-4. **Organizacija** - datoteke se organizirajo po datumu glede na strukturo mape
+1. **Vklopi možnost** – Odgovori »Da«, ko te čarovnik za nastavitev vpraša o aplikacijah za shranjevanje v oblaku, ali pa pojdi v **Nastavitve** > **Povezovanje** > **Mapa v skupni rabi** in vklopi možnost **Dodajanje multimedijske vsebine iz mape v skupni rabi**.
+2. **Izberi mapo** – Izberi mapo znotraj svoje aplikacije za shranjevanje v oblaku, najbolje novo, ki se uporablja samo za to.
+3. **Datumske mape** – M³ v njej ustvari mapo za vsak prihajajoči shod, poimenovano z datumom shoda, zapisanim kot leto-mesec-dan (na primer `2026-03-25`)
+4. **Dodaj datoteke** – Daj fotografije, videoposnetke, avdiodatoteke ali sezname predvajanja iz JW Library v mapo posameznega shoda in samodejno bodo dodani na seznam multimedijske vsebine za ta shod. Za kak drug dan ustvari mapo, poimenovano na enak način.
+5. **Pretekle mape** – Ko je teden mimo, M³ izbriše mape tega tedna in datoteke v njih za vse, ki uporabljajo mapo v skupni rabi.
+   Če želiš datoteke ohraniti, izklopi možnost **Izbriši mape preteklih shodov**.
 
 ### Izvoz multimedijske vsebine {#user-guide-media-export}
 
@@ -385,7 +407,7 @@ Nastavi lastne bližnjice na tipkovnici za učinkovitejše upravljanje:
 
 #### Težave z zmogljivostjo {#user-guide-performance-issues}
 
-- Omogoči dodatni predpomnilnik
+- Predpomni videoposnetke pesmi
 - Zmanjšaj največjo ločljivost
 - Počisti stare predpomnjene datoteke
 - Preveri razpoložljiv prostor na disku

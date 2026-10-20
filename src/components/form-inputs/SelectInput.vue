@@ -54,6 +54,7 @@ import { SORTER } from 'src/constants/general';
 import { RESOLUTIONS } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { localeOptions } from 'src/i18n';
+import { getObsSceneField } from 'src/utils/obs-scene';
 import { getRules } from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -112,6 +113,10 @@ const buildTimerDisplayFormats = () => [
   { label: t('analog'), value: 'analog' },
   { label: t('analog-digital'), value: 'analog-digital' },
 ];
+const buildTimerCountdownDisplayFormats = () => [
+  ...buildTimerDisplayFormats(),
+  { label: t('analog-clock'), value: 'analog-clock' },
+];
 const buildTimerHourFormats = () => [
   { label: t('24-hour'), value: '24h' },
   { label: t('12-hour'), value: '12h' },
@@ -125,12 +130,15 @@ const filteredDarkModes = ref(buildDarkModes());
 const filteredObsScenes = ref<JsonObject[]>([...scenes.value]);
 const filteredTimerModes = ref(buildTimerModes());
 const filteredTimerDisplayFormats = ref(buildTimerDisplayFormats());
+const filteredTimerCountdownDisplayFormats = ref(
+  buildTimerCountdownDisplayFormats(),
+);
 const filteredTimerHourFormats = ref(buildTimerHourFormats());
 
 const customDisabled = computed(() => {
   return (
     (props.settingId?.startsWith('obs') &&
-      obsConnectionState.value !== 'connected') ||
+      obsConnectionState.value !== 'connected') || // NOSONAR: false would render disabled="false"
     undefined
   );
 });
@@ -146,6 +154,8 @@ const filterFn = (val: string, update: (fn: () => void) => void) => {
       filteredObsScenes.value = scenes.value ?? [];
       filteredTimerModes.value = buildTimerModes();
       filteredTimerDisplayFormats.value = buildTimerDisplayFormats();
+      filteredTimerCountdownDisplayFormats.value =
+        buildTimerCountdownDisplayFormats();
       filteredTimerHourFormats.value = buildTimerHourFormats();
     });
   };
@@ -181,7 +191,9 @@ const filterFn = (val: string, update: (fn: () => void) => void) => {
 
         filteredObsScenes.value =
           scenes.value?.filter((scene) =>
-            scene.sceneName?.toString().toLowerCase().includes(needle),
+            getObsSceneField(scene, 'sceneName')
+              ?.toLowerCase()
+              .includes(needle),
           ) ?? [];
         filteredTimerModes.value = buildTimerModes().filter((mode) =>
           mode.label.toLowerCase().includes(needle),
@@ -190,6 +202,11 @@ const filterFn = (val: string, update: (fn: () => void) => void) => {
         filteredTimerDisplayFormats.value = buildTimerDisplayFormats().filter(
           (mode) => mode.label.toLowerCase().includes(needle),
         );
+
+        filteredTimerCountdownDisplayFormats.value =
+          buildTimerCountdownDisplayFormats().filter((mode) =>
+            mode.label.toLowerCase().includes(needle),
+          );
 
         filteredTimerHourFormats.value = buildTimerHourFormats().filter(
           (mode) => mode.label.toLowerCase().includes(needle),
@@ -233,13 +250,18 @@ const listOptions = computed(
       } else if (props.list === 'days') {
         return filteredDays.value;
       } else if (props.list?.startsWith('obs')) {
-        return filteredObsScenes.value.map((scene) => ({
-          label: scene.sceneName?.toString() || 'Unknown scene',
-          value:
-            configuredScenesAreAllUUIDs.value && scene.sceneUuid
-              ? scene.sceneUuid.toString()
-              : scene.sceneName?.toString() || 'Unknown scene',
-        }));
+        return filteredObsScenes.value.map((scene) => {
+          const sceneName =
+            getObsSceneField(scene, 'sceneName') || 'Unknown scene'; // NOSONAR: '' means not set
+          const sceneUuid = getObsSceneField(scene, 'sceneUuid');
+          return {
+            label: sceneName,
+            value:
+              configuredScenesAreAllUUIDs.value && sceneUuid
+                ? sceneUuid
+                : sceneName,
+          };
+        });
       } else if (props.list === 'fontSizes') {
         return [
           { label: t('small'), value: '5vw' },
@@ -252,6 +274,8 @@ const listOptions = computed(
         return filteredTimerModes.value;
       } else if (props.list === 'timerDisplayFormats') {
         return filteredTimerDisplayFormats.value;
+      } else if (props.list === 'timerCountdownDisplayFormats') {
+        return filteredTimerCountdownDisplayFormats.value;
       } else if (props.list === 'timerHourFormats') {
         return filteredTimerHourFormats.value;
       } else {

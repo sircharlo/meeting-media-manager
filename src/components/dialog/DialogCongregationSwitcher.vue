@@ -39,11 +39,18 @@
               active: currentCongregation === id,
               'congregation--switching': isSwitchingCongregation,
             }"
-            role="button"
-            tabindex="0"
-            @click="chooseCongregation(id)"
-            @keydown.enter.space.prevent="chooseCongregation(id)"
           >
+            <!-- Chooses the profile: a transparent native button stretched
+                 over the whole row (the row itself can't be one, as it holds
+                 its own menu button; clicks on the rest of the row pass through
+                 to this button - see .congregation-choose). -->
+            <button
+              :aria-current="currentCongregation === id ? 'true' : undefined"
+              :aria-label="prefs.congregationName || t('noName')"
+              class="congregation-choose"
+              type="button"
+              @click="chooseCongregation(id)"
+            />
             <q-item class="items-center">
               <div
                 class="congregation-avatar q-mr-md"
@@ -104,7 +111,7 @@
                      instead of a hover-revealed action. Also reachable via
                      right-click anywhere on the row - same dual-trigger
                      idiom as MediaItem.vue's own context menu: the q-menu
-                     below (a direct child of q-item, not nested in the
+                     below (a direct child of the row, not nested in the
                      button) defaults its anchor to the whole row via
                      `context-menu` + no explicit target, while this button's
                      click handler temporarily points `menuTarget` at itself
@@ -142,84 +149,82 @@
               >
                 <q-icon name="mmm-check" size="xs" />
               </div>
-              <q-menu
-                context-menu
-                data-congregation-switcher-menu
-                :model-value="contextMenuCongId === id"
-                :target="contextMenuCongId === id ? menuTarget : true"
-                touch-position
-                @update:model-value="
-                  (val) => {
-                    if (val) contextMenuCongId = id;
-                    else if (contextMenuCongId === id)
-                      contextMenuCongId = undefined;
-                  }
-                "
-              >
-                <q-list role="menu" style="min-width: 150px">
-                  <q-item
-                    v-if="currentCongregation !== id"
-                    v-close-popup
-                    clickable
-                    @click="
-                      contextMenuCongId = undefined;
-                      chooseCongregation(id);
-                    "
-                  >
-                    <q-item-section avatar>
-                      <q-icon name="mmm-check" />
-                    </q-item-section>
-                    <q-item-section>
-                      {{ t('select-this-profile') }}
-                    </q-item-section>
-                  </q-item>
-                  <q-item
-                    v-close-popup
-                    clickable
-                    @click="
-                      contextMenuCongId = undefined;
-                      exportCongregationSettings(prefs);
-                    "
-                  >
-                    <q-item-section avatar>
-                      <q-icon name="mmm-export" />
-                    </q-item-section>
-                    <q-item-section>
-                      {{ t('export-profile-settings') }}
-                    </q-item-section>
-                  </q-item>
-                  <q-item
-                    v-close-popup
-                    clickable
-                    @click="
-                      contextMenuCongId = undefined;
-                      congToDelete = id;
-                    "
-                  >
-                    <q-item-section avatar>
-                      <q-icon color="negative" name="mmm-delete" />
-                    </q-item-section>
-                    <q-item-section class="text-negative">
-                      {{ t('delete') }}
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
             </q-item>
+            <q-menu
+              context-menu
+              data-congregation-switcher-menu
+              :model-value="contextMenuCongId === id"
+              :target="contextMenuCongId === id ? menuTarget : true"
+              touch-position
+              @update:model-value="
+                (val) => {
+                  if (val) contextMenuCongId = id;
+                  else if (contextMenuCongId === id)
+                    contextMenuCongId = undefined;
+                }
+              "
+            >
+              <q-list role="menu" style="min-width: 150px">
+                <q-item
+                  v-if="currentCongregation !== id"
+                  v-close-popup
+                  clickable
+                  @click="
+                    contextMenuCongId = undefined;
+                    chooseCongregation(id);
+                  "
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mmm-check" />
+                  </q-item-section>
+                  <q-item-section>
+                    {{ t('select-this-profile') }}
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  v-close-popup
+                  clickable
+                  @click="
+                    contextMenuCongId = undefined;
+                    exportCongregationSettings(prefs);
+                  "
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mmm-export" />
+                  </q-item-section>
+                  <q-item-section>
+                    {{ t('export-profile-settings') }}
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  v-close-popup
+                  clickable
+                  @click="
+                    contextMenuCongId = undefined;
+                    congToDelete = id;
+                  "
+                >
+                  <q-item-section avatar>
+                    <q-icon color="negative" name="mmm-delete" />
+                  </q-item-section>
+                  <q-item-section class="text-negative">
+                    {{ t('delete') }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </div>
         </q-list>
 
-        <div
-          v-ripple
+        <button
+          v-ripple="NATIVE_BUTTON_RIPPLE"
           class="congregation-new cursor-pointer"
-          role="button"
-          tabindex="0"
+          type="button"
           @click="createNewCongregation"
-          @keydown.enter.space.prevent="createNewCongregation"
         >
           <q-icon class="q-mr-sm" name="mmm-plus" />
           {{ t('new-profile') }}
-        </div>
+        </button>
       </q-card-section>
     </q-card>
   </BaseDialog>
@@ -251,6 +256,7 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { NATIVE_BUTTON_RIPPLE } from 'src/constants/general';
 import { removeCongregationCache } from 'src/helpers/cleanup';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadSongbookVideos } from 'src/helpers/jw-media';
@@ -370,6 +376,9 @@ function avatarColor(id: number | string) {
 // frame or two before the modal closes, a visible flicker.
 const congregationIdPendingNavigation = ref<string | undefined>();
 
+const getSortName = (prefs: SettingsValues) =>
+  prefs.congregationName || t('noName'); // NOSONAR: '' means not set
+
 const sortedCongregations = computed(() =>
   Object.entries(congregations.value)
     .flatMap(([id, prefs]): { id: string; prefs: SettingsValues }[] =>
@@ -378,11 +387,9 @@ const sortedCongregations = computed(() =>
         : [],
     )
     .sort((a, b) =>
-      (a.prefs.congregationName || t('noName')).localeCompare(
-        b.prefs.congregationName || t('noName'),
-        undefined,
-        { sensitivity: 'base' },
-      ),
+      getSortName(a.prefs).localeCompare(getSortName(b.prefs), undefined, {
+        sensitivity: 'base',
+      }),
     ),
 );
 
@@ -407,7 +414,7 @@ async function chooseCongregation(
     if (congregation) {
       void checkLowDiskSpaceAndNotify();
 
-      updateYeartext({
+      void updateYeartext({
         isSignLanguage: currentLangObject.value?.isSignLanguage,
         lang: currentSettings.value?.lang,
         langFallback: currentSettings.value?.langFallback,
@@ -433,7 +440,7 @@ async function chooseCongregation(
     errorCatcher(error);
     congregationSwitcherOpen.value = false;
     congregationIdPendingNavigation.value = undefined;
-    router.push('/media-calendar');
+    void router.push('/media-calendar');
   } finally {
     isSwitchingCongregation.value = false;
   }
@@ -442,7 +449,7 @@ async function chooseCongregation(
 function createNewCongregation() {
   const id = createCongregation();
   congregationIdPendingNavigation.value = id;
-  chooseCongregation(id, true);
+  void chooseCongregation(id, true);
 }
 
 const autoSelectCongregation = () => {
@@ -453,7 +460,7 @@ const autoSelectCongregation = () => {
     congregationSwitcherBootstrap.value
   ) {
     const id = Object.keys(congregations.value)[0];
-    if (id) chooseCongregation(id);
+    if (id) void chooseCongregation(id);
   }
   // Every other case (manual reopen with >=1 congregation) requires a real
   // user choice - handled by requiresUserChoice below revealing the dialog,
@@ -509,7 +516,7 @@ watchImmediate(congregationSwitcherOpen, async (open) => {
       caption: t('successfully-migrated-from-the-previous-version'),
       deferWhileDialogOpen: true,
       message: t('welcome-to-mmm'),
-      timeout: 15000,
+      timeout: 15_000,
       type: 'positive',
     });
   }
@@ -567,8 +574,12 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
 // visible on screen *before* this dialog opens: it would otherwise stay
 // stacked on top for as long as both are showing. Force this dialog itself
 // above that, so opening it always covers whatever's already live.
-:global([data-congregation-switcher]) {
-  z-index: $congregation-switcher-z-dialog !important;
+//
+// Here and below, the Quasar class in each selector (.q-dialog, .q-menu,
+// .q-tooltip) makes it outrank Quasar's own single-class z-index rule for
+// that element (.fullscreen, .q-menu, .q-tooltip) without !important.
+:global(.q-dialog[data-congregation-switcher]) {
+  z-index: $congregation-switcher-z-dialog;
 }
 
 // The 3-dot overflow q-menu teleports to its own portal, a sibling of the
@@ -577,16 +588,16 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
 // z-index it would otherwise win on DOM order alone since it opens after the
 // dialog). Without this, the menu still opens (confirmed structurally) but
 // renders invisibly behind the dialog's own now-higher-stacked content.
-:global([data-congregation-switcher-menu]) {
-  z-index: $congregation-switcher-z-portal !important;
+:global(.q-menu[data-congregation-switcher-menu]) {
+  z-index: $congregation-switcher-z-portal;
 }
 
 // Same root cause once more: the dots button's own q-tooltip (added so its
 // otherwise-icon-only action is screen-reader- and glance-discoverable) is a
 // third independently-teleported portal, defaulting to Quasar's tooltip
 // z-index which also sits below this dialog's forced 9600.
-:global([data-congregation-switcher-tooltip]) {
-  z-index: $congregation-switcher-z-portal !important;
+:global(.q-tooltip[data-congregation-switcher-tooltip]) {
+  z-index: $congregation-switcher-z-portal;
 }
 
 // Same root cause again, one level deeper: the delete-confirmation
@@ -595,8 +606,8 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
 // boost it stays at Quasar's default dialog z-index (6000) and renders
 // invisibly *behind* this dialog's own forced 9600, even though it's
 // meant to sit on top of it as the next step in the flow.
-:global([data-congregation-switcher-confirm]) {
-  z-index: $congregation-switcher-z-confirm !important;
+:global(.q-dialog[data-congregation-switcher-confirm]) {
+  z-index: $congregation-switcher-z-confirm;
 }
 
 // Same root cause a third time, in the other direction: a notification
@@ -613,7 +624,7 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
 // dismissed and removed from the DOM, `:has()` stops matching and the list
 // falls back to Quasar's default 9500 automatically.
 :global(.q-notifications__list:has(.congregation-switcher-notify)) {
-  z-index: $congregation-switcher-z-notify !important;
+  z-index: $congregation-switcher-z-notify;
 }
 
 .congregation-switcher {
@@ -662,9 +673,36 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
 // keeps it reachable without a mouse. Fade-out on mouse-leave/blur stays
 // instant (no delay), only the appearing direction is delayed - same idiom
 // as the tag-chip pencil hint badge in app.scss.
+// Covers the whole row (.media-section is position: relative) so a click
+// anywhere on it chooses the profile, with its focus ring around the row.
+.congregation-choose {
+  appearance: none;
+  background: none;
+  border: 0;
+  border-radius: inherit;
+  cursor: pointer;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+}
+
+// The row's content is only layout, drawn above .congregation-choose (every
+// .q-item gets z-index: 1500, see app.scss), so clicks pass through it to
+// that button - except on the menu button, which opens its menu instead.
+.media-section.congregation > .q-item {
+  pointer-events: none;
+}
+
 .congregation-dots-btn {
   opacity: 0.5;
+  pointer-events: auto;
   transition: opacity 0.15s ease;
+}
+
+// ...but not while a switch is in progress (see .congregation--switching).
+.media-section.congregation.congregation--switching .congregation-dots-btn {
+  pointer-events: none;
 }
 
 .media-section.congregation:focus-within .congregation-dots-btn,
@@ -673,8 +711,14 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
   transition-delay: 400ms;
 }
 
+// A native <button> (Enter/Space activation and the button role for free),
+// so the UA's button chrome is reset here - Quasar's normalize already
+// inherits the font - to keep it looking like the full-width dashed tile.
+// position: relative keeps v-ripple's absolutely positioned layer inside it.
 .congregation-new {
   align-items: center;
+  appearance: none;
+  background: none;
   border: 1.5px dashed var(--q-primary);
   border-radius: 0.75em;
   color: var(--q-primary);
@@ -683,5 +727,8 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
   justify-content: center;
   margin-top: 0.5em;
   padding: 0.75em;
+  position: relative;
+  text-align: inherit;
+  width: 100%;
 }
 </style>

@@ -10,10 +10,11 @@ import { i18n } from 'boot/i18n';
 import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { setupFFmpeg } from 'src/helpers/fs';
+import { getRendererPlatform, setupFFmpeg } from 'src/helpers/fs';
 import { withLockRetry } from 'src/helpers/fs-retry';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { sanitizeFilename } from 'src/shared/vanilla';
+import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
+import { log, sanitizeFilename } from 'src/shared/vanilla';
 import { datesAreSame, formatDate, getSpecificWeekday } from 'src/utils/date';
 import { getTempPath, trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
@@ -59,7 +60,7 @@ export const addDayToExportQueue = async (targetDate?: Date) => {
 
   const queue = await getQueue();
 
-  queue.add(async () => {
+  void queue.add(async () => {
     try {
       // Run the export
       await exportDayToFolder(targetDate);
@@ -67,7 +68,7 @@ export const addDayToExportQueue = async (targetDate?: Date) => {
       // If the day was marked as dirty while running, run it again until it's clean
       while (dirtyDays.has(dateStr)) {
         dirtyDays.delete(dateStr);
-        await exportDayToFolder(targetDate);
+        await exportDayToFolder(targetDate); // NOSONAR: sequential - re-runs until no new changes
       }
     } catch (error) {
       errorCatcher(error);
@@ -208,7 +209,7 @@ const processAllSections = async (
     const sanitizedSectionName = sanitizeFilename(sectionName);
     const sectionPrefix = pad(sectionIndex++);
 
-    await processSectionItems(
+    const sectionExport = processSectionItems(
       visibleItems,
       destFolder,
       sectionPrefix,
@@ -216,6 +217,7 @@ const processAllSections = async (
       expectedFiles,
       conversionFailures,
     );
+    await sectionExport; // NOSONAR: sequential - avoid flooding the network drive
   }
 
   return { conversionFailures, expectedFiles };
@@ -299,7 +301,7 @@ const processSectionItems = async (
       const mediaItem = visibleItems[i];
       if (!mediaItem) continue;
 
-      await processMediaItem({
+      const mediaItemExport = {
         conversionFailures,
         destFolder,
         expectedFiles,
@@ -308,9 +310,36 @@ const processSectionItems = async (
         sanitizedSectionName,
         sectionPrefix,
         totalItems: visibleItems.length,
-      });
+      };
+      await processMediaItem(mediaItemExport); // NOSONAR: sequential - avoid flooding the network drive
     } catch (error) {
-      errorCatcher(error);
+      // A cloud-synced export folder (Nextcloud, OneDrive, ...) can
+      // transiently fail a stat/copy while its sync client holds or swaps the
+      // file (MMM-V2-3KX). The next export run retries it; not an app bug.
+      if (
+        isExpectedNetworkPathAccessError(
+          error,
+          destFolder,
+          getRendererPlatform(),
+        )
+      ) {
+        log(
+          `Could not export to cloud/network folder ${destFolder}`,
+          'filesystem',
+          'warn',
+          error,
+        );
+        continue;
+      }
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            destFolder,
+            fileUrl: visibleItems[i]?.fileUrl,
+            name: 'processSectionItems',
+          },
+        },
+      });
     }
   }
 };
@@ -337,7 +366,7 @@ const processMediaItem = async ({
   const sourceFilePath = fileUrlToPath(mediaItem.fileUrl);
   if (!sourceFilePath || !(await pathExists(sourceFilePath))) return;
 
-  const destFilePath = await buildDestinationPath({
+  const destFilePath = buildDestinationPath({
     destFolder,
     index,
     mediaItem,
@@ -364,7 +393,7 @@ const processMediaItem = async ({
   await copy(finalSourcePath, destFilePath);
 };
 
-const buildDestinationPath = async ({
+const buildDestinationPath = ({
   destFolder,
   index,
   mediaItem,
@@ -380,7 +409,7 @@ const buildDestinationPath = async ({
   sectionPrefix: string;
   sourceFilePath: string;
   totalItems: number;
-}): Promise<string> => {
+}): string => {
   const currentStateStore = useCurrentStateStore();
 
   const shouldConvert =

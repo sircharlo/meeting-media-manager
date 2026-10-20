@@ -4,8 +4,11 @@ import {
   getCloudStorageProvider,
   getFilesystemErrorCode,
   isCloudStoragePath,
+  isDiskFullError,
   isExpectedNetworkPathAccessError,
+  isPhoneStoragePath,
   isPossiblyNetworkFolderPath,
+  PHONE_STORAGE_PROVIDER,
   shouldIgnoreWatchFolderError,
 } from './filesystem-errors';
 
@@ -60,6 +63,14 @@ describe('filesystem error helpers', () => {
     expect(isCloudStoragePath('C:/Users/test/cache')).toBe(false);
   });
 
+  it('recognizes a phone shown in File Explorer by Windows Cross Device as network-like storage', () => {
+    const phoneFolder = String.raw`C:\Users\PC\CrossDevice\Redmi 12\storage\Download`;
+    expect(getCloudStorageProvider(phoneFolder)).toBe(PHONE_STORAGE_PROVIDER);
+    expect(isPhoneStoragePath(phoneFolder)).toBe(true);
+    expect(isPossiblyNetworkFolderPath(phoneFolder, 'win32')).toBe(true);
+    expect(isPhoneStoragePath('C:/Users/test/OneDrive/Media')).toBe(false);
+  });
+
   it('recognizes a Google Drive desktop "Mirror files" account folder by its "(email)" suffix, regardless of locale', () => {
     expect(
       getCloudStorageProvider(
@@ -106,7 +117,7 @@ describe('filesystem error helpers', () => {
         new Error("ENOENT: no such file or directory, open 'C:/x'"),
       ),
     ).toBe('ENOENT');
-    expect(getFilesystemErrorCode(new Error('Something else'))).toBe(undefined);
+    expect(getFilesystemErrorCode(new Error('Something else'))).toBeUndefined();
     expect(
       isExpectedNetworkPathAccessError(
         new Error("UNKNOWN: unknown error, copyfile 'a' -> 'b'"),
@@ -265,5 +276,33 @@ describe('filesystem error helpers', () => {
         'win32',
       ),
     ).toBe(false);
+  });
+});
+
+describe('isDiskFullError', () => {
+  it('recognizes a full disk or a used-up quota by its code', () => {
+    const diskFull = Object.assign(new Error('no space'), { code: 'ENOSPC' });
+    const quotaFull = Object.assign(new Error('quota'), { code: 'EDQUOT' });
+
+    expect(isDiskFullError(diskFull)).toBe(true);
+    expect(isDiskFullError(quotaFull)).toBe(true);
+  });
+
+  // MMM-V2-3M9: IPC keeps only the message, with the code no longer first.
+  it('recognizes one wrapped by an IPC invoke', () => {
+    const wrapped = new Error(
+      "Error invoking remote method 'unzip': Error: ENOSPC: no space left on device, write",
+    );
+
+    expect(isDiskFullError(wrapped)).toBe(true);
+  });
+
+  it('leaves other errors alone', () => {
+    const notFound = Object.assign(new Error('missing'), { code: 'ENOENT' });
+
+    expect(isDiskFullError(notFound)).toBe(false);
+    expect(isDiskFullError(new Error('ffmpeg exited with code 1'))).toBe(false);
+    expect(isDiskFullError('ENOSPC')).toBe(false);
+    expect(isDiskFullError(null)).toBe(false);
   });
 });

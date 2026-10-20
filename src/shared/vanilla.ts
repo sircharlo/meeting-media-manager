@@ -1,21 +1,14 @@
 import type { FontName } from 'src/types';
 
 /**
- * Generates a UUID.
+ * Generates a random (version 4) UUID, from the platform's CSPRNG - the
+ * renderer (a secure context), preload and main process all provide
+ * `crypto.randomUUID`.
  * @returns The generated UUID.
  * @example
  * uuid() // '8e8679e3-02b1-410b-9399-2c1e5606a971'
  */
-export const uuid = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replaceAll(
-    /[xy]/g,
-    function (c) {
-      const r = Math.trunc(Math.random() * 16),
-        v = c == 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    },
-  );
-};
+export const uuid = (): string => globalThis.crypto.randomUUID();
 
 /**
  * Throttles a function to run at regular intervals AND at the end
@@ -88,6 +81,11 @@ export const debounce = <T extends unknown[]>(
   };
 };
 
+export const delay = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
 // Matches the OS home-directory segment of a filesystem path or file:// URL
 // (Windows `C:\Users\<name>` or `C:/Users/<name>`, macOS `/Users/<name>`,
 // Linux `/home/<name>`) so the username can be redacted while the rest of
@@ -134,7 +132,9 @@ const REDACTED_VALUE = '<redacted>';
  */
 export const scrubUserPathsDeep = <T>(value: T): T => {
   if (typeof value === 'string') return scrubUserPaths(value) as T;
-  if (Array.isArray(value)) return value.map(scrubUserPathsDeep) as T;
+  if (Array.isArray(value)) {
+    return value.map((item: unknown) => scrubUserPathsDeep(item)) as T;
+  }
   if (value && typeof value === 'object') {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>).map(([key, val]) => [

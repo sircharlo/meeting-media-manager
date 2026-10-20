@@ -70,11 +70,13 @@ export function createMainWindow() {
           quitStatus.isAppQuitting ||
           closeAttempts > 2)
       ) {
-        cancelAllDownloads().catch((error: unknown) => {
+        try {
+          cancelAllDownloads();
+        } catch (error) {
           captureElectronError(error, {
             contexts: { fn: { name: 'mainWindow close cancelAllDownloads' } },
           });
-        });
+        }
         closeOtherWindows(mainWindowInfo.mainWindow);
       } else {
         setShouldQuit(false);
@@ -83,7 +85,7 @@ export function createMainWindow() {
         closeAttempts++;
         setTimeout(() => {
           closeAttempts = 0;
-        }, 10000);
+        }, 10_000);
       }
     });
 

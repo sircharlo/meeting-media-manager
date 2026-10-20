@@ -232,7 +232,7 @@ export const syncMeetingScheduleManually = async (): Promise<void> => {
         ? 'meeting-schedule-already-up-to-date'
         : 'meeting-schedule-sync-unavailable',
     ),
-    timeout: outcome === 'unchanged' ? 6000 : 10000,
+    timeout: outcome === 'unchanged' ? 6000 : 10_000,
     type: outcome === 'unchanged' ? 'info' : 'warning',
   });
 };
@@ -330,7 +330,7 @@ const notifyScheduleSyncChanges = (changes: {
     createTemporaryNotification({
       deferWhileDialogOpen: true,
       message: i18n.global.t('meeting-current-schedule-updated'),
-      timeout: 10000,
+      timeout: 10_000,
       type: 'info',
     });
   }
@@ -339,7 +339,7 @@ const notifyScheduleSyncChanges = (changes: {
     createTemporaryNotification({
       deferWhileDialogOpen: true,
       message: i18n.global.t('meeting-future-schedule-updated'),
-      timeout: 10000,
+      timeout: 10_000,
       type: 'info',
     });
   }
@@ -370,7 +370,7 @@ export const fetchMeetingLocations = async (
   );
 
   return {
-    hasResultsOutsideViewport: details?.hasResultsOutsideViewport || false,
+    hasResultsOutsideViewport: details?.hasResultsOutsideViewport ?? false,
     items: details?.items || [],
   };
 };

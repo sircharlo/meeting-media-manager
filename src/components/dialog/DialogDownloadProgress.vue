@@ -70,7 +70,7 @@ import { useI18n } from 'vue-i18n';
 const props = defineProps<{
   label?: string;
   loading?: boolean;
-  progressCategory?: DownloadProgressItem['progressCategory'];
+  progressCategory?: NonNullable<DownloadProgressItem['progressCategory']>;
 }>();
 
 const { t } = useI18n();
@@ -118,7 +118,7 @@ const aggregatePercent = computed(() => {
 
 const showing = computed(() => props.loading || visibleItems.value.length > 0);
 
-const label = computed(() => props.label || t('loading'));
+const label = computed(() => props.label || t('loading')); // NOSONAR: '' means not set
 
 const progressSummary = computed(() => {
   if (!hasKnownTotal.value) return t('please-wait');

@@ -13,6 +13,7 @@ import {
   ZIP_EXTENSIONS,
 } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 
 const {
   fileUrlToPath,
@@ -390,18 +391,87 @@ export const getVisibleMeetingItems = (
 };
 
 /**
- * Whether a metadata-parse failure signals a partial/truncated media file
- * rather than a real bug. music-metadata (via strtok3) throws an
- * "End-Of-Stream" error when it runs out of bytes mid-parse - the normal
- * outcome when a file that is still downloading (or was copied incompletely)
- * is read before it finished, so it should not be reported to Sentry. The
- * same message string is produced by every strtok3 tokenizer, so matching
- * the message (which survives the contextBridge crossing) is more reliable
- * than matching the class instance.
+ * Error messages music-metadata throws when a file ends before its own
+ * headers say it should - the normal outcome when a file that is still
+ * downloading (or was copied incompletely) is read before it finished:
+ * - strtok3 (every tokenizer) throws "End-Of-Stream" when it runs out of
+ *   bytes mid-read.
+ * - Since music-metadata 11.16.0, parsers check declared sizes against the
+ *   file size up front, so a cut-short MP4/M4A fails with "Atom size exceeds
+ *   remaining bytes: N > M" and a cut-short MP3 with "ID3v2 tag size N
+ *   exceeds remaining file size M" instead.
  */
-const isEndOfStreamError = (error: unknown) =>
-  (error as null | undefined | { message?: string })?.message ===
-  'End-Of-Stream';
+const TRUNCATED_MEDIA_ERROR_PATTERNS = [
+  /^End-Of-Stream$/,
+  /^Atom size exceeds remaining bytes: \d+ > \d+$/,
+  /exceeds remaining file size/,
+];
+
+/**
+ * Whether a metadata-parse failure signals a partial/truncated media file
+ * rather than a real bug, so it should not be reported to Sentry. Matches on
+ * the message (which survives the contextBridge crossing) rather than the
+ * error class, which doesn't.
+ */
+const isTruncatedMediaError = (error: unknown) => {
+  const message = (error as null | undefined | { message?: unknown })?.message;
+  return (
+    typeof message === 'string' &&
+    TRUNCATED_MEDIA_ERROR_PATTERNS.some((pattern) => pattern.test(message))
+  );
+};
+
+/**
+ * How long a hidden media element may take to read what's needed from a
+ * file (its duration, or a frame for its thumbnail) before that's given up
+ * on. A file that never loads and never errors - a cloud placeholder that
+ * never finishes downloading, a stalled network share - would otherwise be
+ * waited on forever, along with anything queued behind it (such as the
+ * watched-folder queue). Generous for a cloud file still being downloaded on
+ * access, and short enough that a duration lookup and a thumbnail together
+ * stay within the watched-folder queue's 2-minute watchdog.
+ */
+export const MEDIA_ELEMENT_TIMEOUT_MS = 45_000;
+
+export class MediaElementTimeoutError extends Error {
+  constructor(mediaPath: string) {
+    super(`Gave up loading ${mediaPath} after ${MEDIA_ELEMENT_TIMEOUT_MS} ms`);
+    this.name = 'MediaElementTimeoutError';
+  }
+}
+
+/**
+ * Waits for `loading` - work that settles once `element` has read enough of
+ * `mediaPath` - for up to MEDIA_ELEMENT_TIMEOUT_MS. Past that, `element`
+ * stops reading the file (releasing it) and a MediaElementTimeoutError is
+ * thrown. The element's handlers are detached first, so emptying it can't
+ * run them.
+ * @param loading Settles when the element has loaded what's needed.
+ * @param element The media element reading the file.
+ * @param mediaPath The file being read, for the error message.
+ * @returns What `loading` resolves to.
+ */
+export const withMediaElementTimeout = async <T>(
+  loading: Promise<T>,
+  element: HTMLMediaElement,
+  mediaPath: string,
+): Promise<T> => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      element.onerror = null;
+      element.onloadedmetadata = null;
+      element.removeAttribute('src');
+      element.load();
+      reject(new MediaElementTimeoutError(mediaPath));
+    }, MEDIA_ELEMENT_TIMEOUT_MS);
+  });
+  try {
+    return await Promise.race([loading, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+};
 
 /**
  * Gets the metadata of a media file.
@@ -444,8 +514,8 @@ export const getMetadataFromMediaPath = async (
     }
 
     if (!metadata.format.duration) {
-      await new Promise<void>((resolve, reject) => {
-        const video = document.createElement('video');
+      const video = document.createElement('video');
+      const loading = new Promise<void>((resolve, reject) => {
         video.src = pathToFileURL(mediaPath);
         video.onloadedmetadata = () => {
           metadata = {
@@ -473,10 +543,16 @@ export const getMetadataFromMediaPath = async (
         };
         video.load();
       });
+      await withMediaElementTimeout(loading, video, mediaPath);
     }
     return metadata;
   } catch (error) {
-    if (error instanceof Event || isEndOfStreamError(error)) {
+    if (error instanceof Event || isTruncatedMediaError(error)) {
+      return defaultMetadata;
+    }
+    // Environmental (a file that never loads), not a bug: no report.
+    if (error instanceof MediaElementTimeoutError) {
+      log(error.message, 'mediaProcessing', 'warn');
       return defaultMetadata;
     }
     errorCatcher(error, {

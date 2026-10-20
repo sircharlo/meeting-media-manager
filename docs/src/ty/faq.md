@@ -128,7 +128,7 @@ Teie te mau rāve’a nō te hīmene aratō:
 
 ### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³? {#faq-meeting-timer}
 
-E. Ia ha’amā-hia, e nehenehe te M³ e fa’a’ite i te ho’ē ha’amaramarama taime taa ’ē nō te faito i te taime o te feiā e paraparau ra. E nehenehe te reira e taio i ni’a aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te taime fa’ataime nō te putuputura’a, e mai te peu e hina’aro ’oe, e fa’a’ite i te taime hau aore rā mai te peu e te mua ra te putuputura’a aore rā te muri ra i ni’a i te porotarama.
+E. Ia ha’amā-hia, e nehenehe te M³ e fa’a’ite i te ho’ē ha’amaramarama taime taa ’ē nō te faito i te taime o te feiā e paraparau ra. E nehenehe te reira e taio i ni’a aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te taime fa’ataime nō te putuputura’a, e mai te peu e hina’aro ’oe, e fa’a’ite i te taime hau aore rā mai te peu e te mua ra te putuputura’a aore rā te muri ra i ni’a i te porotarama. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
 E hoho’a-taata beta teie ha’amaramarama taime, eiaha e fa’a’ohipa i te reira ma te ’ore e fāriihia e te mau ti’a o te amuira’a.
 
@@ -158,12 +158,12 @@ E taui noa te fa’anahora’a M³ i te mau ’āfata OBS ia au i te:
 
 - Huru pāpāho (teata, hōho’a, tōpāto)
 - Tō ’oe fa’anahora’a tiri
-- Te mau fa’anahora’a mai te "Fa’atōrorea i te mau hōho’a"
+- Settings like "Do not automatically share images"
 - Ē ho’i ā rānei i ni’a i te tiri nā mua atu i muri a’e i te pāpāho
 
-### :pause_button: E aha te huru fa’anahora’a "Fa’atōrorea i te mau hōho’a"? {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
 
-Tē fa’atōrorea nei teie fa’anahora’a i te tū’oha’ara’a hōho’a i ni’a ia OBS ē tae noa atu ’ia fa’atupu rima ’oe i te reira. E mea faufa’a teie nō:
+This setting delays sharing images to OBS until you manually trigger them. E mea faufa’a teie nō:
 
 - Te fa’ahōho’ara’a nā mua i te mau hōho’a i mua i te feiā e fāri’i-tinana-hia ra
 - Te fā’fa’ahiahia o te rāve’a nō te fa’atere pāpū i te taime
@@ -178,12 +178,16 @@ Aita te M³ e fa’a’ohipa ra i te ho’ē matini haruharu-reo o roto, tera r�
 
 ## Mau tātara’a hōhonu {#faq-advanced-features}
 
-### :cloud: E aha te huru fa’atereha’avara’a o te hi’opo’ara’a puta? {#faq-folder-monitoring}
+### :cloud: How does the shared folder work? {#faq-folder-monitoring}
 
-Tē fa’ati’a nei te hi’opo’ara’a puta ia ’oe ’ia:
+If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
 
-1. A mā’iti i te hō’ē puta nō te hi’opo’a i te mau puta ’āpī
-2. Tefa’atōro’a-ti’amā-ra’a i te mau puta pāpāho ’āpī tei tū’atihia i ni’a i te pu’era’a rorouira ata mai ia Dropbox ’aore rā OneDrive
+1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
+2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
+3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
+4. To add files for another day, create a folder for it, named the same way.
+
+When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
 
 ### :file_folder: E aha te huru nō te fa’atahe-ti’amā-ra’a pāpāho? {#faq-media-export}
 
@@ -246,7 +250,7 @@ Nō te aha e mea faufa’a ai teie rāve’a?
 
 ’A tāmata i teie mau rāve’a nō te ha’amaita’i i te terera’a:
 
-1. Ha’amana i te Ha’aputura’a Pāpāho Hau: ’A tāmau i te fa’anahora’a ha’aputura’a parau pāpāho hau i roto i te mau fa’anahora’a
+1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
 2. ’A piri i te tahi atu mau rorouira ’ohipa: ’A piri i te mau rorouira ’ohipa faufa’a ’ore
 3. Hi’opo’a i te vāhi vata o te ha’aputura’a parau: ’A ha’apāpū ē tē vai ra te vāhi vata nahu i ni’a i tā ’outou rorouira
 4. Fa’ahā’ha’i i te hōho’a: ’A fa’aha’ama’i i te fa’anahora’a teitei roa a’e o te hōho’a

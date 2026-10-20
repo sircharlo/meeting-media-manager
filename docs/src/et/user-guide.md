@@ -82,7 +82,7 @@ Meediamängija pakub põhjalikke juhtnuppe:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Suurenda/Liiguta** – Kasuta hiirerulli suurendamiseks, lohista pildi liigutamiseks
+- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
 - **Reaalajas eelvaade** – Kui see on sisse lülitatud, kuvatakse peaaknas vaatajaskonna meediaakna eelvaade
 - **Taasesituskiirus** – Kui see on seadetes sisse lülitatud, saad meediaelemendi kontekstimenüüst reguleerida heli ja video taasesituskiirust
 
@@ -103,8 +103,8 @@ Määra meediale kohandatud algus- ja lõpuajad:
 
 Piltide ja videote puhul:
 
-- **Suum sisse/välja** – Kasuta hiirerulli või pisipildi suumikontrolle
-- **Nihutamine** – Klõpsa ja lohista, et pilti ümber paigutada
+- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
+- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
 - **Suurenduse lähtestamine** – Ühe klõpsuga algvaatele
 
 #### Kiirklahvid {#user-guide-keyboard-shortcuts}
@@ -148,6 +148,26 @@ Pane tähele, et kohandatud taustapildid on ajutised ja neid ei salvestata pära
 Kui koosoleku taimer on sisse lülitatud, võib M³ kuvada eraldi taimeri akent osalejate kommentaaride ajastamiseks. See suudab aega üles- või allapoole loendada, näidata praegust kellaaega, kuvada koosoleku alguseni jäänud aega ning vajaduse korral näidata, kas koosolek kestab üle aja või on ajakavast ees.
 
 Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
+
+#### Meeting Parts {#user-guide-timer-parts}
+
+The timer popup on the action island lists the parts of the selected day's meeting. For midweek meetings, choose how many Apply Yourself to the Field Ministry and Living as Christians parts there are; the section's minutes are shared out evenly, and each part can then be adjusted freely with the **+** and **−** buttons or by clicking the part. Any part can be set to any number of minutes, including 0 to skip it. A warning icon points out sections whose parts don't add up to the time allotted to them, but never changes anything on its own.
+
+**Custom parts** can be added on any day, for Governing Body updates, special programs or anything else that isn't on the regular schedule. On days without a meeting, the timer starts with one custom part per custom media section.
+
+Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
+
+#### Hand Alert {#user-guide-timer-hand-alert}
+
+A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+
+#### Timer on a Tablet {#user-guide-timer-remote}
+
+The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³.
+
+#### Quick Access {#user-guide-timer-quick-access}
+
+Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).
 
 ## Taustamuusika {#user-guide-background-music}
 
@@ -194,12 +214,12 @@ M³ vahetab ettekannete ajal OBS-i stseene automaatselt:
 
 ### OBS täiendavad võimalused {#advanced-obs}
 
-#### Piltide jagamise viivitus {#user-guide-postpone-images}
+#### Do Not Automatically Share Images {#user-guide-postpone-images}
 
 Selle lubamisel jagatakse pilte OBS-i alles käsitsi käivitamisel:
 
-1. Aktiveeri „Postpone Images” OBS sätetes
-2. Pilte jagatakse alles siis, kui vajutad OBS Studios nuppu nende näitamiseks. See on kasulik, kui soovid pilte esmalt näidata kohalolijatele.
+1. Enable "Do not automatically share images" in OBS settings
+2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. See on kasulik, kui soovid pilte esmalt näidata kohalolijatele.
 
 #### Stseenivahetuse seaded {#user-guide-scene-switching}
 
@@ -264,7 +284,7 @@ Lisa oma meediafailid M³-sse:
 
 1. **Faili import** - Kasuta importnuppu videote, piltide või helifailide lisamiseks
 2. **Lohista ja kukuta** - Lohista failid M³ aknasse
-3. **Kausta jälgimine** - Sea jälgitav kaust automaatseks impordiks
+3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 4. **JWPUB failid ja esitusloendid** - Impordi väljaanded ja esitusloendid
 5. **Avaliku kõne meedia (S-34 / S-34mp)** – Impordi avaliku kõne meedia S‑34 või S‑34mp JWPUB-failidega
 6. **Videod ametlikult veebilehelt** – Otsi videoid ja lisa need valitud kuupäevale
@@ -291,16 +311,17 @@ Impordi Piibli salmide helisalvestised:
 
 Iga profiili seaded saab menüüst „Seaded” eksportida JSON-failina. Profiili seadete faili importimine asendab praeguse profiili seaded, mis on kasulik seadistuse teisele arvutile üleviimisel või teadaoleva konfiguratsiooni taastamisel.
 
-## Kausta jälgimine ja eksport {#user-guide-folder-monitoring}
+## Shared Folder and Export {#user-guide-folder-monitoring}
 
-### Kaustajälgimise seadistamine {#folder-monitoring-setup}
+### Setting Up a Shared Folder {#folder-monitoring-setup}
 
-Jälgi kausta uute meediafailide suhtes:
+Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
 
-1. **Kaustaseire** - Lülita seadetes kaustajälgimine sisse
-2. **Vali kaust** - Määra jälgitav kaust
-3. **Automaatne import** - Uued failid lisatakse M³-e automaatselt
-4. \*\*Organiseerimine \*\* - Kaustapuu kuupäevad määravad paigutuse
+1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
+2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
+3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
+4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
+5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
 
 ### Meedia eksport {#user-guide-media-export}
 
@@ -384,7 +405,7 @@ Loo endale sobivad kiirklahvid sujuvaks kasutuseks:
 
 #### Jõudlusprobleemid {#user-guide-performance-issues}
 
-- Kasuta suuremat vahemälu
+- Cache songbook video files
 - Vähenda maksimaalset eraldusvõimet
 - Puhasta vanad vahemälufailid
 - Veendu kettaruumi olemasolus

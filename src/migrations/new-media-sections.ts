@@ -6,7 +6,7 @@ import { useJwStore } from 'stores/jw';
 
 import type { MigrationFunction } from './types';
 
-export const newMediaSections: MigrationFunction = async () => {
+export const newMediaSections: MigrationFunction = () => {
   try {
     const jwStore = useJwStore();
 

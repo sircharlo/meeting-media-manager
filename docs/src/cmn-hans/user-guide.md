@@ -82,7 +82,7 @@ M³ 会按聚会类型和节目部分自动整理媒体：
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **缩放/平移** —— 对图片使用鼠标滚轮缩放，并通过拖动来平移
+- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
 - **实时预览** —— 启用后，可以在主应用程序中预览观众看到的媒体窗口
 - **播放速度** —— 在设置中启用后，可以从媒体项目菜单调整音频和视频的播放速度
 
@@ -103,8 +103,8 @@ M³ 会按聚会类型和节目部分自动整理媒体：
 
 适用于图片和视频：
 
-- **缩放** —— 使用鼠标滚轮或缩略图上的缩放控制
-- **平移** —— 在缩略图上按住并拖动
+- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
+- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
 - **重置** —— 一键恢复原始缩放比例
 
 #### 键盘快捷键 {#user-guide-keyboard-shortcuts}
@@ -148,6 +148,26 @@ M³ 会按聚会类型和节目部分自动整理媒体：
 启用聚会计时器后，M³ 可以显示一个单独的计时器窗口，为聚会节目参与者计时。计时器可以正计时或倒计时，也可以显示当前时间、聚会开始前的倒计时，并根据设置显示超时情况，或者显示聚会整体是提前还是超时。
 
 计时器目前属于测试功能，只有得到当地批准后才应使用。
+
+#### Meeting Parts {#user-guide-timer-parts}
+
+The timer popup on the action island lists the parts of the selected day's meeting. For midweek meetings, choose how many Apply Yourself to the Field Ministry and Living as Christians parts there are; the section's minutes are shared out evenly, and each part can then be adjusted freely with the **+** and **−** buttons or by clicking the part. Any part can be set to any number of minutes, including 0 to skip it. A warning icon points out sections whose parts don't add up to the time allotted to them, but never changes anything on its own.
+
+**Custom parts** can be added on any day, for Governing Body updates, special programs or anything else that isn't on the regular schedule. On days without a meeting, the timer starts with one custom part per custom media section.
+
+Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
+
+#### Hand Alert {#user-guide-timer-hand-alert}
+
+A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+
+#### Timer on a Tablet {#user-guide-timer-remote}
+
+The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³.
+
+#### Quick Access {#user-guide-timer-quick-access}
+
+Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).
 
 ## 背景音乐 {#user-guide-background-music}
 
@@ -194,12 +214,12 @@ M³ 可以与 Zoom 集成，以便自动触发屏幕共享：
 
 ### 高级功能 {#advanced-obs}
 
-#### 延迟图片 {#user-guide-postpone-images}
+#### Do Not Automatically Share Images {#user-guide-postpone-images}
 
 启用此选项以延迟共享图像到 OBS 直到手动触发：
 
-1. 在设置中启用“延迟图片”
-2. 只有点击“在 OBS Studio 中显示”按钮后，图片才会显示给 Zoom 参与者这有助于首先将图像展示给亲自观看者。
+1. Enable "Do not automatically share images" in OBS settings
+2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. 这有助于首先将图像展示给亲自观看者。
 
 #### 场景切换行为 {#user-guide-scene-switching}
 
@@ -264,7 +284,7 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 
 1. **添加媒体** —— 使用添加媒体功能加入视频、图片或音频
 2. **拖放导入** —— 直接将文件拖入 M³
-3. **文件夹监视** —— 设置监视文件夹，自动导入新文件
+3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 4. **JWPUB/播放列表** —— 导入出版物和 JW Library 播放列表
 5. **公众演讲媒体（S-34 / S-34mp）** —— 通过 S-34 或 S-34mp JWPUB 文件导入
 6. **官方网站视频** —— 搜索视频，并将其添加到所选日期
@@ -291,16 +311,17 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 
 可以从“设置”中将每个配置的设置导出为 JSON 文件。导入配置设置文件会替换当前配置的设置，适合把现有设置转移到另一台计算机，或恢复之前保存的配置。
 
-## 设置文件夹监视 {#user-guide-folder-monitoring}
+## Shared Folder and Export {#user-guide-folder-monitoring}
 
-### 文件夹监视与导出 {#folder-monitoring-setup}
+### Setting Up a Shared Folder {#folder-monitoring-setup}
 
-监视指定文件夹，自动导入新媒体：
+Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
 
-1. **启用文件夹监视** —— 在设置中开启
-2. **选择文件夹** —— 指定要监视的路径
-3. **自动导入** —— 新文件会自动加入 M³
-4. **自动整理** —— 可以按照日期文件夹结构整理
+1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
+2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
+3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
+4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
+5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
 
 ### 媒体导出 {#user-guide-media-export}
 
@@ -384,7 +405,7 @@ M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 
 #### 性能问题 {#user-guide-performance-issues}
 
-- 启用额外缓存
+- Cache songbook video files
 - 降低最高视频分辨率
 - 清理旧缓存文件
 - 检查可用磁盘空间

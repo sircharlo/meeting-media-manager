@@ -1,4 +1,4 @@
-# Guida Impostazioni {#settings-guide}
+# Guida alle impostazioni {#settings-guide}
 
 Questa guida completa spiega tutte le impostazioni disponibili in M³, organizzate per categoria. Capire queste impostazioni ti aiuterà a configurare M³ in modo che funzioni perfettamente per le esigenze della tua congregazione.
 
@@ -136,7 +136,7 @@ La settimana della prossima visita del sorvegliante di circoscrizione.
 
 **Predefinito**: Nessuna
 
-### Data Commemorazione {#memorial-date}
+### Data della Commemorazione {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
@@ -163,13 +163,13 @@ Queste impostazioni ti permettono di configurare modifiche temporanee al program
 
 Quando abilitato, M³ controlla periodicamente sul sito ufficiale dei Testimoni di Geova le modifiche del giorno e dell'orario delle adunanze e aggiorna automaticamente il profilo corrente.
 
-Funziona solo per i profili aggiunti con la ricerca della congregazione e il cui nome della congregazione non è stato modificato manualmente. Se la sincronizzazione è stata disabilitata perché il nome della congregazione è cambiato, usa **Abilita sincronizzazione programma** per ricollegare il profilo.
+Funziona solo per i profili aggiunti con la ricerca della congregazione e il cui nome della congregazione non è stato modificato manualmente. Se la sincronizzazione è stata disabilitata perché il nome della congregazione è cambiato, usa **Abilita sincronizzazione degli orari** per ricollegare il profilo.
 
-#### Abilita Schedule Sync {#relink-congregation}
+#### Abilita sincronizzazione degli orari {#relink-congregation}
 
 <!-- **Setting**: `relinkCongregationButton` -->
 
-Ri-collega il profilo corrente alla ricerca della congregazione, così gli aggiornamenti automatici del giorno e dell'ora della riunione possono riprendere. Viene mostrato solo una volta che il nome della congregazione è stato cambiato manualmente, poiché questo è ciò che rompe il link in primo luogo.
+Ricollega il profilo corrente alla ricerca della congregazione, in modo che gli aggiornamenti automatici del giorno e dell'orario delle adunanze possano riprendere. Viene mostrato solo dopo che il nome della congregazione è stato modificato manualmente, perché è proprio questo a interrompere il collegamento.
 
 #### Aggiorna il programma delle adunanze {#refresh-meeting-schedule}
 
@@ -177,7 +177,7 @@ Ri-collega il profilo corrente alla ricerca della congregazione, così gli aggio
 
 Sincronizza manualmente il programma delle adunanze attuale e futuro con le informazioni del sito ufficiale.
 
-## Media & Riproduzione {#media-retrieval-and-playback}
+## Media e riproduzione {#media-retrieval-and-playback}
 
 ### Connessione a consumo {#metered-connection}
 
@@ -211,7 +211,7 @@ Avvia i video in stato di pausa quando inizia la riproduzione.
 
 **Predefinito**: `false`
 
-### Musica di Sottofondo {#settings-guide-background-music}
+### Musica di sottofondo {#settings-guide-background-music}
 
 #### Abilita la musica {#enable-music-button}
 
@@ -312,13 +312,13 @@ Escludi i video aggiuntivi a cui si fa riferimento nei paragrafi dello Studio To
 
 **Predefinito**: `false`
 
-#### Escludi Video Di Studio Biblico Della Congregazione {#exclude-cbs-pubs}
+#### Escludi i video dello Studio biblico di congregazione {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-Scegli le pubblicazioni i cui video di riferimento non devono essere mostrati durante lo studio biblico della Congregazione. Cerca per titolo o simbolo di pubblicazione.
+Scegli le pubblicazioni i cui video citati non devono essere mostrati durante lo Studio biblico di congregazione. Cerca per titolo o simbolo della pubblicazione.
 
-**Predefinito**: Cammina Coraggiosamente Con Dio (`wcg`)
+**Predefinito**: Cammina coraggiosamente con Dio (`wcg`)
 
 #### Escludi i media dell'opuscolo Insegna {#exclude-theocratic-ministry-school}
 
@@ -350,11 +350,11 @@ Lingua dei sottotitoli (può essere diversa dalla lingua dei media).
 
 ### Gestione della cache {#cache-management}
 
-#### Abilita la cache extra {#enable-extra-cache}
+#### Memorizza nella cache i video del libro dei cantici {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Abilita la memorizzazione aggiuntiva nella cache per prestazioni migliori.
+Memorizza in anticipo nella cache tutti i video del libro dei cantici per prestazioni migliori. Nota che questo aumenta le dimensioni della cache dei media.
 
 **Predefinito**: `false`
 
@@ -374,25 +374,25 @@ Cancella automaticamente i vecchi file nella cache per risparmiare spazio su dis
 
 **Predefinito**: `true`
 
-### Titoli Canzoni Pinyin {#pinyin-song-titles}
+### Titoli dei cantici in pinyin {#pinyin-song-titles}
 
-#### Preferisci Canzoni Pinyin {#enable-pinyin-songs}
+#### Preferisci i cantici in pinyin {#enable-pinyin-songs}
 
 <!-- **Setting**: `enablePinyinSongs` -->
 
-Quando una versione pinyin di un cantico dell'adunanza si trova nella cartella dei brani pinyin, verrà usata al posto del cantico standard.
+Quando nella cartella dei cantici in pinyin viene trovata una versione pinyin di un cantico dell'adunanza, viene usata al posto del cantico standard.
 
 **Predefinito**: `false`
 
-#### Cartella Canzone Pinyin {#pinyin-song-folder}
+#### Cartella dei cantici in pinyin {#pinyin-song-folder}
 
 <!-- **Setting**: `pinyinSongFolder` -->
 
-Cartella contenente canzoni video pinyin (ad es. `sjjm_s-Pi_CHS_066_r720P.mp4`). Quando viene trovato un file pinyin che corrisponde al numero della canzone della riunione, verrà riprodotto al posto della canzone standard.
+Cartella contenente i video dei cantici in pinyin (ad es. `sjjm_s-Pi_CHS_066_r720P.mp4`). Quando viene trovato un file pinyin corrispondente al numero del cantico dell'adunanza, verrà riprodotto al posto del cantico standard.
 
 **Predefinito**: vuoto
 
-### Esportazione Media {#settings-guide-media-export}
+### Esportazione dei media {#settings-guide-media-export}
 
 #### Abilita l'esportazione automatica dei media {#enable-media-auto-export}
 
@@ -418,23 +418,43 @@ Converte i file multimediali esportati in formato MP4 per una migliore compatibi
 
 **Predefinito**: `false`
 
-### Monitoraggio Cartelle {#settings-guide-folder-monitoring}
+### Cartella condivisa (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-#### Abilita il monitoraggio delle cartelle {#enable-folder-watcher}
+Queste impostazioni si trovano nella categoria **Integrazioni**.
+
+M³ può aggiungere media alle tue adunanze da una cartella mantenuta sincronizzata da un'app di archiviazione cloud, come Dropbox, OneDrive, iCloud Drive o Google Drive. È utile quando altri preparano i media per le loro parti e li condividono con te, oppure quando M³ viene usato su più di un computer. Funziona anche con una cartella su questo computer o sulla tua rete.
+
+M³ crea una cartella all'interno della cartella condivisa per ogni adunanza in programma, con il nome della data dell'adunanza scritta nel formato anno-mese-giorno (ad esempio, `2026-03-25`). Metti foto, video, file audio o playlist di JW Library nella cartella di un'adunanza e verranno aggiunti automaticamente all'elenco dei media di quell'adunanza. Per aggiungere file per un altro giorno, crea una cartella anche per quel giorno, con un nome nello stesso formato. Tutto il resto presente nella cartella condivisa viene ignorato.
+
+:::tip Suggerimento
+
+Crea una nuova cartella usata solo per questo scopo, ad esempio "Media adunanze", e nella tua app di archiviazione cloud impostala in modo che rimanga sempre su questo computer (spesso questa opzione si chiama "disponibile offline"), così i file saranno pronti prima che inizi l'adunanza.
+
+:::
+
+#### Aggiungi media da una cartella condivisa {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Monitora una cartella per nuovi file multimediali e aggiungili automaticamente a M³.
+Aggiunge automaticamente all'adunanza giusta i file inseriti nella cartella condivisa.
 
 **Predefinito**: `false`
 
-#### Cartella da monitorare {#folder-to-watch}
+#### Cartella condivisa {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-Il percorso della cartella da monitorare per i nuovi file multimediali.
+La cartella da cui aggiungere i media. La configurazione guidata si offre di impostarla per te.
 
 **Predefinito**: vuoto
+
+#### Elimina le cartelle delle adunanze passate {#delete-past-watched-folders}
+
+<!-- **Setting**: `deletePastWatchedFolders` -->
+
+Quando una settimana è finita, elimina le cartelle datate di quella settimana, insieme ai file che contengono, per mantenere ordinata la cartella condivisa. Dato che la cartella è condivisa, vengono eliminate anche per tutti gli altri che la usano. Disattiva questa opzione per conservarle.
+
+**Predefinito**: `true`
 
 ## Timer dell'adunanza {#meeting-timer}
 
@@ -450,13 +470,34 @@ Abilita una finestra timer separata per cronometrare le parti dell'adunanza. Que
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configura se la finestra del timer si apre automaticamente, se i timer dei partecipanti contano in avanti o alla rovescia per impostazione predefinita, se l'orologio usa il formato a 12 o 24 ore, e se il valore corrente del timer è mostrato sul pulsante del timer nell'isola delle azioni.
+Configura se la finestra del timer si apre automaticamente, se i timer dei partecipanti contano in avanti o alla rovescia per impostazione predefinita, se l'orologio usa il formato a 12 o 24 ore e se il valore corrente del timer viene mostrato sul pulsante del timer nell'isola di azione.
+
+### Accesso rapido al timer {#timer-quick-access}
+
+<!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
+
+Scegli come accedere al timer dalla finestra principale:
+
+- **Controlli rapidi al passaggio sul pulsante del timer**: passando il mouse sul pulsante del timer nell'isola di azione viene mostrata la parte cronometrata, con i pulsanti Inizia, Pausa, Ferma e Prossima parte, senza aprire il popup completo del timer. Attivo per impostazione predefinita.
+- **Mostra un pannello timer nella finestra principale**: mantiene l'intero elenco delle parti dell'adunanza e i comandi del timer in un pannello agganciato sul lato destro della finestra principale, sempre visibile. Il popup completo resta disponibile dall'isola di azione per le impostazioni della finestra e della visualizzazione.
+
+### Timer remoto {#timer-remote}
+
+<!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
+
+Quando è attivato, M³ rende disponibile una copia di sola lettura del display del timer come pagina web sulla rete locale, per un tablet o un telefono sul leggio: l'oratore vede il tempo rimanente senza che compaia sullo schermo della congregazione o nella condivisione Zoom. La pagina segue il timer in tempo reale, compresi il conto alla rovescia prima dell'adunanza, l'orologio, i colori del tempo superato e l'avviso della mano, e tutti i comandi restano in M³.
+
+Gli indirizzi da aprire sul dispositivo sono elencati nel popup del timer, con un pulsante per copiarli. Cambia la porta solo se un altro programma la usa già. Nota che chiunque sia connesso alla stessa rete può aprire la pagina mentre questa opzione è attiva; la pagina mostra solo il timer.
+
+**Predefinito**: `false`, porta `8787`
 
 ### Formati di visualizzazione del timer {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Scegli formati di visualizzazione analogici o digitali per l'ora del giorno e i timer del conto alla rovescia. L'indicatore di avviso del conto alla rovescia può spostare l'anello analogico del conto alla rovescia verso un colore di avviso durante l'ultimo minuto.
+
+Il formato di conto alla rovescia **Orologio analogico con arco temporale** mostra il tempo rimasto per una parte come uno spicchio sul quadrante di un orologio analogico, dalla lancetta dei minuti alla fine prevista, così con un solo sguardo vedi sia l'ora sia il tempo rimasto. Il tempo superato viene mostrato come un secondo spicchio nel colore del tempo superato. Si applica anche al conto alla rovescia prima dell'adunanza e funziona in modalità conto in avanti.
 
 ### Conto alla rovescia dell'adunanza e stato del programma {#meeting-countdown-and-schedule-status}
 
@@ -472,13 +513,15 @@ Personalizza la dimensione e i colori del testo del timer e configura gli indica
 
 ## Integrazioni {#integrations}
 
-### Integrazione di Zoom {#settings-guide-zoom-integration}
+Questa categoria contiene anche le impostazioni della [cartella condivisa](#settings-guide-folder-monitoring), per aggiungere media da Dropbox, OneDrive, iCloud Drive o Google Drive.
+
+### Integrazione con Zoom {#settings-guide-zoom-integration}
 
 #### Abilita Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Abilita le funzioni di integrazione con le riunioni Zoom.
+Attiva le funzioni di integrazione con le adunanze Zoom.
 
 **Predefinito**: `false`
 
@@ -490,15 +533,39 @@ Scorciatoia da tastiera per attivare la condivisione dello schermo di Zoom.
 
 **Predefinito**: Nessuna
 
-#### Finestra Media Auto-Focus {#zoom-auto-focus-media-window}
+#### Primo piano automatico della finestra multimediale {#zoom-auto-focus-media-window}
 
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
-Metti in primo piano automaticamente la finestra multimediale dopo l'avvio della condivisione dello schermo Zoom. Questo di solito non è necessario, ma potrebbe essere utile su alcuni sistemi se la finestra multimediale regolarmente perde il primo piano dopo l'avvio della condivisione dello schermo di zoom.
+Metti automaticamente in primo piano la finestra multimediale dopo l'avvio della condivisione dello schermo di Zoom. Di solito non è necessario, ma su alcuni sistemi può essere utile se la finestra multimediale perde spesso il primo piano dopo l'avvio della condivisione dello schermo di Zoom.
 
 **Predefinito**: `false`
 
-### Integrazione di OBS Studio {#settings-guide-obs-integration}
+### Zoom Meeting Manager {#zoom-meeting-manager}
+
+Zoom Meeting Manager (beta, solo Windows) gestisce l'app desktop di Zoom al posto tuo per ogni adunanza. Il suo assistente di configurazione, proposto quando lo attivi, ti guida passo passo in ciascuna automazione.
+
+#### Mentre M³ gestisce Zoom {#zoom-meeting-manager-overlay}
+
+<!-- **Setting**: `zoomCancelAutomationShortcut` -->
+
+Zoom non offre un'interfaccia di automazione adeguata, quindi M³ controlla l'app Zoom tramite la sua interfaccia di accessibilità, che funziona senza mouse per quasi tutto (l'elenco dei partecipanti, i suoi menu, la finestra Condividi). Alcune azioni potrebbero comunque dover spostare per un momento il mouse o la finestra attiva, ad esempio per far ricomparire la barra degli strumenti di Zoom, che si nasconde automaticamente. Ogni volta che ciò accade, M³ copre la propria finestra con un avviso "M³ sta gestendo Zoom" che indica cosa sta succedendo, con un pulsante **Annulla questa automazione**. Lo stesso avviso viene mostrato durante i controlli dell'assistente di configurazione e durante l'autotest. Una scorciatoia da tastiera globale (predefinita `Ctrl+Alt+Escape`), attiva solo mentre un'automazione è in esecuzione, la annulla da qualsiasi punto, anche quando Zoom è in primo piano. L'annullamento ferma M³ immediatamente; Zoom potrebbe quindi restare a metà operazione, perciò controllalo.
+
+**Predefinito**: `Ctrl+Alt+Escape`
+
+#### Assistente mani alzate {#zoom-meeting-manager-hand-alert}
+
+<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+
+Durante un'adunanza, M³ controlla l'elenco dei partecipanti di Zoom per individuare le mani alzate. Quando qualcuno alza la mano, una notifica in M³ ti permette di **riattivare l'audio** di quel partecipante con un clic e, quando ha finito di parlare, di **disattivargli di nuovo l'audio e abbassargli la mano** con un altro clic. Il pulsante Zoom nell'isola di azione elenca le mani alzate con gli stessi pulsanti. Ogni azione viene eseguita sulla riga di quel partecipante in Zoom, in base al suo nome esatto; se due partecipanti hanno lo stesso nome, M³ non interviene su nessuno dei due.
+
+Se il [timer dell'adunanza](#meeting-timer) è abilitato, sulla visualizzazione del timer per il presidente appare anche una grande mano con il nome del partecipante, e un pulsante **Avviso mano** nei popup del timer e di Zoom permette di mostrarla manualmente. Questa parte ha bisogno della visualizzazione del timer; le notifiche e i pulsanti funzionano senza di essa.
+
+Zoom indica le mani alzate nella propria lingua, quindi M³ deve prima impararlo: con la tua adunanza aperta in Zoom, fai clic su **Scopri come Zoom indica le mani alzate**. M³ alza la tua mano, rileva come Zoom la indica nell'elenco dei partecipanti e quale voce di menu la abbassa, poi la abbassa di nuovo. L'assistente di configurazione offre anche questo passaggio.
+
+**Predefinito**: `false`
+
+### Integrazione con OBS Studio {#settings-guide-obs-integration}
 
 #### Abilita OBS {#enable-obs}
 
@@ -542,7 +609,7 @@ Configura quali scene di OBS usare per scopi diversi:
 
 #### Opzioni avanzate OBS {#obs-advanced-options}
 
-- **Posticipa le immagini**: ritarda la condivisione delle immagini a OBS finché non vengono attivate manualmente
+- **Non condividere automaticamente le immagini**: ritarda la condivisione delle immagini su OBS finché non viene avviata manualmente
 - **Attivazione rapida**: abilita l'attivazione/disattivazione rapida dell'integrazione con OBS
 - **Cambia scena dopo il media**: torna automaticamente alla scena precedente dopo il media
 - **Ricorda la scena precedente**: ricorda e ripristina la scena precedente
@@ -619,9 +686,9 @@ Questa opzione è nascosta quando i controlli di registrazione OBS sono abilitat
 
 Configura la scorciatoia da tastiera che avvia la registrazione, la scorciatoia facoltativa che la ferma e la cartella in cui l'app esterna salva le registrazioni. Se non viene fornita una scorciatoia di arresto, M³ riutilizza la scorciatoia di avvio. Quando è configurata una cartella, M³ mostra un pulsante per aprirla.
 
-## Interfaccia E Scorciatoie {#interface-shortcuts}
+## Interfaccia e scorciatoie {#interface-shortcuts}
 
-### Scorciatoie da Tastiera {#settings-guide-keyboard-shortcuts}
+### Scorciatoie da tastiera {#settings-guide-keyboard-shortcuts}
 
 #### Abilita le scorciatoie da tastiera {#enable-keyboard-shortcuts}
 
@@ -642,45 +709,45 @@ Configura le scorciatoie per la riproduzione dei media:
 - **Ferma il media**: ferma la riproduzione dei media
 - **Attiva/disattiva musica**: attiva o disattiva la musica di sottofondo
 
-### Aggiungi Più Pulsante Media {#add-more-media-button}
+### Pulsante Aggiungi altri media {#add-more-media-button}
 
-#### Sezioni con un pulsante Aggiungi file multimediali {#add-media-button-sections}
+#### Sezioni con un pulsante Aggiungi media {#add-media-button-sections}
 
 <!-- **Setting**: `addMediaButtonSections` -->
 
-Scegli quali sezioni dell'adunanza visualizzare un pulsante per aggiungere i tuoi contenuti multimediali, oltre al pulsante "Aggiungi contenuti multimediali" nella barra degli strumenti in alto, che funziona sempre per tutte le sezioni.
+Scegli in quali sezioni dell'adunanza mostrare un pulsante dedicato per aggiungere i tuoi media, oltre al pulsante "Aggiungi media" nella barra degli strumenti in alto, che funziona sempre per tutte le sezioni.
 
-**Default**: Discorso Pubblico, Vita Cristiana, Visita del Sorvegliante, e Sezioni Personalizzate
+**Predefinito**: Discorso pubblico, Vita cristiana, Visita del sorvegliante di circoscrizione e sezioni personalizzate
 
-#### Pulsante compatto Aggiungi Media {#compact-add-media-button}
+#### Pulsante Aggiungi media compatto {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
-Mostra solo un'icona per il pulsante "Aggiungi più media"/"Aggiungi una canzone" nelle intestazioni di sezione. Quando disabilitato, il pulsante mostra anche il testo accanto all'icona quando c'è abbastanza spazio.
+Mostra solo un'icona per il pulsante "Aggiungi altri media"/"Aggiungi un cantico" nelle intestazioni delle sezioni. Quando è disattivato, il pulsante mostra anche un testo accanto all'icona se c'è abbastanza spazio.
 
 **Predefinito**: `true`
 
-### Maniglia Di Trascinamento Media {#media-drag-handle}
+### Maniglia di trascinamento dei media {#media-drag-handle}
 
-#### Mostra Maniglia Di Trascinamento {#show-media-drag-handle}
+#### Mostra la maniglia di trascinamento {#show-media-drag-handle}
 
 <!-- **Setting**: `showMediaDragHandle` -->
 
-Mostra una piccola maniglia su ogni elemento multimediale per trascinarlo per riordinarlo. Gli elementi multimediali possono sempre essere riordinati trascinandoli ovunque su di essi; questo influenza solo se l'icona della maniglia stessa è mostrata.
+Mostra una piccola maniglia su ogni elemento multimediale per trascinarlo e riordinarlo. Gli elementi multimediali possono sempre essere riordinati trascinandoli da qualsiasi punto; questa opzione determina solo se mostrare l'icona della maniglia.
 
 **Predefinito**: `true`
 
-### Prima/Dopo Riunione Azioni Rapide {#before-after-meeting-quick-actions}
+### Azioni rapide prima/dopo l'adunanza {#before-after-meeting-quick-actions}
 
-#### Mostra Riunione Azioni Rapide {#enable-meeting-quick-actions}
+#### Mostra le azioni rapide per l'adunanza {#enable-meeting-quick-actions}
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
-Mostra un pannello di pre-riunione e un pannello post-riunione con controlli utili e liste di controllo personalizzabili.
+Mostra un pannello prima dell'adunanza e un pannello dopo l'adunanza con comandi utili (musica di sottofondo, registrazione) e una lista di controllo personalizzabile per ciascuno.
 
 **Predefinito**: `true`
 
-Le categorie e le attività della lista di controllo sia per le riunioni preliminari che per quelle successive sono gestite dalla stessa sezione impostazioni: aggiungere, rinomina, riordina o elimina categorie e attività come necessario per la tua congregazione.
+Le categorie e le attività delle liste di controllo per i pannelli prima e dopo l'adunanza si gestiscono da questa stessa sezione delle impostazioni: aggiungi, rinomina, riordina o elimina categorie e attività secondo le esigenze della tua congregazione.
 
 ## Impostazioni avanzate {#advanced-settings}
 
@@ -708,7 +775,7 @@ Dominio di base usato per scaricare pubblicazioni e media.
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Disabilita l'accelerazione hardware dopo aver riavviato M³. Può aiutare con problemi grafici o arresti anomali su alcuni sistemi, ma non è altrimenti consigliato.
+Disabilita l'accelerazione hardware dopo aver riavviato M³. Può aiutare a risolvere problemi grafici o arresti anomali su alcuni sistemi, ma per il resto è sconsigliato.
 
 **Predefinito**: `false`
 
@@ -732,26 +799,26 @@ Disabilita completamente i download automatici dei media. Usa questa opzione sol
 
 ### Per i nuovi utenti {#new-users}
 
-1. Inizia con la configurazione guidata per impostare le impostazioni di base
-2. Abilita «Pulsante di visualizzazione dei media» per accedere alle funzioni di presentazione
+1. Inizia con la configurazione guidata per definire le impostazioni di base
+2. Attiva "Abilita riproduzione multimediale" per accedere alle funzionalità di presentazione
 3. Configura con precisione il programma delle adunanze
 4. Configura l'integrazione con OBS se fai adunanze ibride
 
 ### Per gli utenti esperti {#advanced-users}
 
-1. Usa il monitoraggio delle cartelle per sincronizzare i media da un archivio cloud
+1. Usa una cartella condivisa per aggiungere media da un servizio di archiviazione cloud, come Dropbox o OneDrive
 2. Abilita l'esportazione automatica dei media a scopo di backup
 3. Configura le scorciatoie da tastiera per un uso efficiente
 4. Configura l'integrazione con Zoom per la condivisione automatica dello schermo
 
 ### Ottimizzazione delle prestazioni {#performance-optimization}
 
-1. Abilita la cache extra per prestazioni migliori
+1. Memorizza nella cache i video del libro dei cantici per prestazioni migliori
 2. Usa una risoluzione massima adeguata alle tue esigenze
 3. Configura la cancellazione automatica della cache per gestire lo spazio su disco
 4. Valuta l'impostazione della connessione a consumo se hai una banda limitata
 
-### Risoluzione Problemi {#settings-guide-troubleshooting}
+### Risoluzione dei problemi {#settings-guide-troubleshooting}
 
 - Se i media non si scaricano, controlla le impostazioni del programma delle adunanze
 - Se l'integrazione con OBS non funziona, verifica le impostazioni della porta e della password

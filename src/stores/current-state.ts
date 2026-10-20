@@ -12,13 +12,18 @@ import type {
   SettingsItems,
   SettingsValues,
 } from 'src/types';
+import type { JsonObject } from 'type-fest';
 
 import { defineStore } from 'pinia';
+import { i18n } from 'src/boot/i18n';
 import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
+import { getZoomHelperErrorMessageKey } from 'src/constants/zoom';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getRendererPlatform } from 'src/helpers/fs';
 import { dismissAllTemporaryNotifications } from 'src/helpers/notifications';
+import { log } from 'src/shared/vanilla';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import {
   getAdditionalMediaPath,
@@ -27,6 +32,7 @@ import {
   registerCachePathProvider,
 } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
+import { getObsSceneField } from 'src/utils/obs-scene';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
@@ -126,8 +132,11 @@ interface Store {
   pendingSectionImports: MediaSectionIdentifier[];
   pinyinActive: boolean;
   selectedDate: string;
+  /** Where the timer remote page can be opened, while it's served. */
+  timerRemoteUrls: string[];
   timerWindowVisible: boolean;
   websiteSelection: JwSite;
+  zoomHelperLogs: string[];
 }
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
@@ -135,8 +144,26 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
   SettingsItem,
 ][];
 
+let zoomHelperSyncInProgress = false;
+
+/** Local time with milliseconds, e.g. 14:03:12.345. */
+const formatLogTime = (date: Date) =>
+  date.toLocaleTimeString('en-GB', {
+    fractionalSecondDigits: 3,
+    hour: '2-digit',
+    hour12: false,
+    minute: '2-digit',
+    second: '2-digit',
+  });
+
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
+    addZoomHelperLog(log: string) {
+      this.zoomHelperLogs.push(`${formatLogTime(new Date())} ${log}`);
+      if (this.zoomHelperLogs.length > 100) {
+        this.zoomHelperLogs.shift();
+      }
+    },
     areDependenciesSatisfied(
       settingsDefinition: SettingsItem,
       congregation: string,
@@ -162,7 +189,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         // resolves against process.cwd() - the app's own install directory
         // in a packaged build. Default to today instead of ever returning
         // an unusable empty directory.
-        if (!destDate) destDate = this.selectedDate || undefined;
+        if (!destDate) destDate = this.selectedDate || undefined; // NOSONAR: '' means not set
         const additionalMediaPath = await getAdditionalMediaPath();
         const dateString = formatDate(
           destDate ? new Date(destDate) : new Date(),
@@ -184,7 +211,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       congregation?: number | string,
     ): (keyof SettingsValues)[] {
       try {
-        if (!congregation) congregation = this.currentCongregation;
+        if (!congregation) congregation = this.currentCongregation; // NOSONAR: '' means not set
         if (!congregation) return [];
         const invalidSettings = new Set<keyof SettingsValues>();
 
@@ -239,7 +266,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       }
     },
     invalidSettings(congregation?: number | string) {
-      if (!congregation) congregation = this.currentCongregation;
+      if (!congregation) congregation = this.currentCongregation; // NOSONAR: '' means not set
       if (!congregation) return false;
       return this.getInvalidSettings(congregation).length > 0;
     },
@@ -344,10 +371,49 @@ export const useCurrentStateStore = defineStore('current-state', {
       const newCongregation = value.toString();
       this.currentCongregation = newCongregation;
       await getCachedUserDataPath();
+
+      await this.syncZoomHelper();
+
       return this.getInvalidSettings(newCongregation).length > 0;
+    },
+    setTimerRemoteUrls(urls: string[]) {
+      this.timerRemoteUrls = urls;
     },
     setTimerWindowVisible(visible: boolean) {
       this.timerWindowVisible = visible;
+    },
+    async syncZoomHelper() {
+      // Resolved here rather than at module load: src/helpers/fs imports
+      // this store, so a top-level call could run before it's initialized.
+      if (getRendererPlatform() !== 'win32' || zoomHelperSyncInProgress) {
+        return;
+      }
+
+      const { startZoomHelper, stopZoomHelper } = globalThis.electronApi;
+
+      if (!this.currentSettings?.zoomMeetingManagerEnable) {
+        stopZoomHelper();
+        return;
+      }
+
+      zoomHelperSyncInProgress = true;
+      try {
+        const result = await startZoomHelper();
+        if (!result.ok) {
+          log('Zoom helper did not start', 'zoom', 'error', result);
+          const { createTemporaryNotification } =
+            await import('src/helpers/notifications');
+          const t = i18n.global.t as (key: string) => string;
+          createTemporaryNotification({
+            caption: t(getZoomHelperErrorMessageKey(result.error)),
+            message: t('zoom-helper-start-failed'),
+            timeout: 0,
+            type: 'negative',
+          });
+        }
+      } finally {
+        zoomHelperSyncInProgress = false;
+      }
     },
   },
   getters: {
@@ -362,21 +428,14 @@ export const useCurrentStateStore = defineStore('current-state', {
       const scenesAreUUIDS = configuredScenes.every((element) =>
         isUUID(element),
       );
+      const getSceneId = (scene: JsonObject): string => {
+        const sceneUuid = getObsSceneField(scene, 'sceneUuid');
+        if (scenesAreUUIDS && sceneUuid) return sceneUuid;
+        return getObsSceneField(scene, 'sceneName') ?? '';
+      };
       return scenes
-        .filter(
-          (scene) =>
-            !configuredScenes.includes(
-              (scenesAreUUIDS && scene.sceneUuid
-                ? scene.sceneUuid.toString()
-                : scene.sceneName?.toString()) || '',
-            ),
-        )
-        .map(
-          (scene): string =>
-            (scenesAreUUIDS && scene.sceneUuid
-              ? scene.sceneUuid.toString()
-              : scene.sceneName?.toString()) || '',
-        )
+        .map((scene) => getSceneId(scene))
+        .filter((sceneId) => !configuredScenes.includes(sceneId))
         .filter(Boolean);
     },
     configuredScenesAreAllUUIDs(): boolean {
@@ -398,7 +457,7 @@ export const useCurrentStateStore = defineStore('current-state', {
 
       Object.values(this.selectedDateObject.mediaSections).forEach(
         (sectionMedia) => {
-          count += sectionMedia.items?.length || 0;
+          count += sectionMedia.items?.length ?? 0;
         },
       );
 
@@ -585,7 +644,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         (sectionMedia) =>
           sectionMedia.items?.some(
             (item: MediaItem) =>
-              item.hidden ||
+              item.hidden || // NOSONAR: false checks the next condition
               item.children?.some((child: MediaItem) => child.hidden),
           ),
       );
@@ -602,7 +661,7 @@ export const useCurrentStateStore = defineStore('current-state', {
 
       const { lang, langFallback } = this.currentSettings;
 
-      return textsForYear[lang] || (langFallback && textsForYear[langFallback]);
+      return textsForYear[lang] || (langFallback && textsForYear[langFallback]); // NOSONAR: empty yeartext uses the fallback language
     },
   },
   persist: {
@@ -647,8 +706,10 @@ export const useCurrentStateStore = defineStore('current-state', {
       pendingSectionImports: [],
       pinyinActive: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
+      timerRemoteUrls: [],
       timerWindowVisible: false,
       websiteSelection: undefined,
+      zoomHelperLogs: [],
     };
   },
 });

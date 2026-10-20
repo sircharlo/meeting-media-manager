@@ -28,4 +28,10 @@ updates:
         applies-to: version-updates
         patterns:
           - '@sentry/*-plugin'
+    ignore:
+      # TypeScript 7.0 ships no JS API, which typescript-eslint and vue-tsc
+      # both load TypeScript through (typescript-eslint will never support
+      # 7.0). Revisit once 7.1 is out and both tools support it.
+      - dependency-name: 'typescript'
+        versions: ['7.0.x']
     open-pull-requests-limit: 15

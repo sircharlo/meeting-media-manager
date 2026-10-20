@@ -1,5 +1,6 @@
 import { config } from '@vue/test-utils';
 import { http, HttpResponse } from 'msw';
+import PQueue from 'p-queue';
 import appMessages from 'src/i18n';
 import { vi } from 'vitest';
 import { createI18n } from 'vue-i18n';
@@ -13,7 +14,7 @@ vi.mock('src/helpers/error-catcher', async (importOriginal) => {
   const mod = await importOriginal<object>();
   return {
     ...mod,
-    errorCatcher: vi.fn(async (error: unknown) => {
+    errorCatcher: vi.fn((error: unknown) => {
       if (
         error instanceof Error &&
         error.message === 'Function not implemented.'
@@ -38,6 +39,16 @@ if (!window.screen.orientation) {
     }),
   });
 }
+
+// Since p-queue 10, PQueue extends the global EventTarget (happy-dom's here)
+// and, whenever `process` exists, passes each queue to Node's
+// events.setMaxListeners(), which throws for anything but Node's own
+// EventTargets - so every `new PQueue()` failed. The Electron renderer has no
+// `process`, so this only happens under test. Node recognises its
+// EventTargets by this registry symbol on their class.
+Object.defineProperty(PQueue, Symbol.for('nodejs.event_target'), {
+  value: true,
+});
 
 const i18n = createI18n({
   allowComposition: true,

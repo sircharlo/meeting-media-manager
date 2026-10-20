@@ -2,23 +2,12 @@
   <q-btn
     v-if="currentSettings?.enableMusicButton"
     class="super-rounded"
-    :color="
-      musicPopup
-        ? 'white'
-        : !(musicPlaying && musicState === 'music.stopping')
-          ? 'white-transparent'
-          : 'negative'
-    "
+    :class="classes"
+    :color="color"
     data-wizard-target="music-button"
     no-caps
     rounded
-    :text-color="
-      musicPopup
-        ? !(musicPlaying && musicState === 'music.stopping')
-          ? 'primary'
-          : 'negative'
-        : ''
-    "
+    :text-color="textColor"
     unelevated
     @click="musicPopup = !musicPopup"
   >
@@ -27,7 +16,8 @@
       :style="clipWidth === null ? {} : { width: `${clipWidth}px` }"
     >
       <div ref="measureEl" class="music-button__inner">
-        <q-icon name="mmm-music-note" />
+        <q-spinner v-if="busy" size="sm" />
+        <q-icon v-else name="mmm-music-note" />
         <div
           v-if="musicPlaying || musicState === 'music.starting'"
           class="music-button__status q-ml-sm"
@@ -38,16 +28,23 @@
     </div>
 
     <q-tooltip v-if="!musicPopup" :delay="1000" :offset="[14, 22]">
-      {{ t('setupWizard.backgroundMusic') }}
+      <div class="text-weight-medium">
+        {{ t('setupWizard.backgroundMusic') }}
+      </div>
+      <div v-if="status === 'error'">{{ t('background-music-error') }}</div>
     </q-tooltip>
   </q-btn>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
+import {
+  type IslandButtonStatus,
+  useIslandButton,
+} from 'src/composables/useIslandButton';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useMusicStore } from 'stores/music';
-import { onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -58,6 +55,17 @@ const music = useMusicStore();
 const { displayStatusText, musicPlaying, musicState } = storeToRefs(music);
 
 const musicPopup = defineModel<boolean>({ required: true });
+
+const status = computed<IslandButtonStatus>(() => {
+  if (musicState.value === 'music.error') return 'error';
+  if (musicState.value === 'music.starting') return 'busy';
+  if (musicPlaying.value && musicState.value === 'music.stopping') {
+    return 'busy';
+  }
+  return 'normal';
+});
+
+const { busy, classes, color, textColor } = useIslandButton(status, musicPopup);
 
 // The button's content (icon-only vs icon+status text of varying length)
 // changes width whenever playback state changes - starting/playing/

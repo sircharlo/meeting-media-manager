@@ -1,4 +1,4 @@
-import robot from '@jitsi/robotjs';
+import robot from 'robotjs';
 
 // SEC-12 (full-audit-2026-09-05.md): sendKeyTap is a direct preload->native
 // call (not routed through an ipcMain handler), so unlike the rest of this

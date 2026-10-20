@@ -350,11 +350,11 @@ whether the media window feature is enabled at all). -->
 
 ### 缓存管理 {#cache-management}
 
-#### 缓存诗歌视频文件 {#enable-extra-cache}
+#### Cache Songbook Video Files {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-缓存额外媒体，以改善加载和播放性能。
+Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
 
 **Default**: `false`
 
@@ -418,23 +418,43 @@ whether the media window feature is enabled at all). -->
 
 **Default**: `false`
 
-### 启用文件夹监视 {#settings-guide-folder-monitoring}
+### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-#### 监视文件夹 {#enable-folder-watcher}
+These settings are in the **Integrations** category.
+
+M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+
+M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. To add files for another day, create a folder for it, named the same way. Anything else in the shared folder is ignored.
+
+:::tip 小贴士
+
+Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+
+:::
+
+#### Add Media From a Shared Folder {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-监视指定文件夹。如果有新的媒体文件加入，会自动将它们添加到媒体列表。
+Add the files put in the shared folder to the right meeting automatically.
 
 **Default**: `false`
 
-#### 要监视的文件夹 {#folder-to-watch}
+#### Shared Folder {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-设置要监视新媒体文件的文件夹路径。
+The folder to add media from. The setup wizard offers to set it up for you.
 
 **默认**：空
+
+#### Delete Past Meeting Folders {#delete-past-watched-folders}
+
+<!-- **Setting**: `deletePastWatchedFolders` -->
+
+When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+
+**默认**：`true`
 
 ## 启用聚会计时器 {#meeting-timer}
 
@@ -452,11 +472,32 @@ whether the media window feature is enabled at all). -->
 
 可以设置计时器窗口是否自动打开、节目参与者计时默认使用正计时还是倒计时、时钟使用 12 小时制还是 24 小时制，以及是否在操作图标中的计时器按钮上显示当前计时数值。
 
+### Quick Access to the Timer {#timer-quick-access}
+
+<!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
+
+Choose how the timer is reached from the main window:
+
+- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
+- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+
+### Timer Remote {#timer-remote}
+
+<!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
+
+When turned on, M³ serves a read-only copy of the timer display as a web page on your local network, for a tablet or phone at the lectern: the speaker sees the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time, including the pre-meeting countdown, the clock, overtime colors and the hand alert, and all the controls stay in M³.
+
+The addresses to open on the device are listed in the timer popup, with a copy button. Change the port only if another program already uses it. Note that anyone on the same network can open the page while this is on; it shows nothing but the timer.
+
+**Default**: `false`, port `8787`
+
 ### 计时器显示格式 {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 可以为当前时间和倒计时选择模拟或数字显示方式。倒计时警告指示器可以在最后一分钟内使模拟倒计时圆环逐渐变为警告颜色。
+
+The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
 
 ### 聚会倒计时和时间安排状态 {#meeting-countdown-and-schedule-status}
 
@@ -471,6 +512,8 @@ whether the media window feature is enabled at all). -->
 可以自定义计时器的文字大小和颜色，并设置超时提示，例如不同的背景和文字颜色、闪烁效果，以及在正计时模式下只显示超出的时间。
 
 ## 集成 {#integrations}
+
+This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
 
 ### 启用 Zoom {#settings-guide-zoom-integration}
 
@@ -495,6 +538,30 @@ whether the media window feature is enabled at all). -->
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
 Zoom 开始屏幕共享后自动聚焦媒体窗口。通常不需要启用，但如果某些系统在开始共享后媒体窗口经常失去焦点，可以尝试启用此项。通常不需要启用此选项，但在某些系统上，如果开始屏幕共享后媒体窗口经常失去焦点，启用此选项可能会有所帮助。
+
+**默认**：`false`
+
+### Zoom Meeting Manager {#zoom-meeting-manager}
+
+The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+
+#### While M³ Operates Zoom {#zoom-meeting-manager-overlay}
+
+<!-- **Setting**: `zoomCancelAutomationShortcut` -->
+
+Zoom offers no proper automation interface, so M³ drives the Zoom app through its accessibility interface, which works without the mouse for nearly everything (the participants list, its menus, the Share window). A few actions can still have to move the mouse or the focused window for a moment, for example to bring Zoom's auto-hidden toolbar back. Whenever that happens, M³ covers its own window with a "M³ is operating Zoom" notice naming what is going on, with a **Cancel this automation** button. The same notice shows during the setup assistant's checks and the self-test. A global keyboard shortcut (default `Ctrl+Alt+Escape`), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Cancelling stops M³ at once; Zoom may then be left part-way, so check it.
+
+**Default**: `Ctrl+Alt+Escape`
+
+#### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
+
+<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+
+During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
+
+If the [meeting timer](#meeting-timer) is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and a **Hand alert** button in the timer and Zoom popups shows it by hand. This part needs the timer display; the notifications and buttons work without it.
+
+Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list and which menu entry lowers it, then lowers it again. The setup assistant offers this step too.
 
 **默认**：`false`
 
@@ -542,7 +609,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 #### OBS 高级选项 {#obs-advanced-options}
 
-- **不要自动共享图片**：在手动触发前，不向 Zoom 参与者显示图片
+- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
 - **快速场景切换器**：在界面中快速打开场景切换器
 - **媒体播放结束后再切换场景**：等当前媒体播放完毕后再切换场景
 - **恢复之前使用的场景**：媒体播放结束后恢复媒体播放前所使用的场景
@@ -733,20 +800,20 @@ OBS Studio WebSocket 连接所使用的密码。
 ### 新用户 {#new-users}
 
 1. 使用初始设置完成基本配置
-2. 启用“媒体显示”，以便在外部屏幕上显示媒体
+2. Turn on "Enable media playback" to access presentation features
 3. 正确设置聚会日期和时间
 4. 如果使用混合聚会，可以根据实际需要配置 Zoom 或 OBS Studio 集成
 
 ### 高级用户 {#advanced-users}
 
-1. 使用文件夹监控从云存储同步媒体
+1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
 2. 使用媒体自动导出功能将媒体保存到指定位置
 3. 配置键盘快捷键，提高媒体操作效率
 4. 配置 Zoom 集成，以便在媒体开始和停止播放时触发屏幕共享
 
 ### 性能优化 {#performance-optimization}
 
-1. 缓存所有诗歌视频，以提高性能。请注意，这会增加媒体缓存占用的空间。
+1. Cache songbook video files for better performance
 2. 根据需要选择合适的视频最高分辨率
 3. 启用缓存自动清理，控制磁盘空间占用
 4. 如果网络流量有限，可以启用按流量计费的网络连接设置

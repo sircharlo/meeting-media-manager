@@ -1,4 +1,4 @@
-import type { ElectronApi } from 'src/types/electron';
+import type { ElectronApi, ElectronIpcInvokeKey } from 'src/types/electron';
 
 import { contextBridge, webUtils } from 'electron/renderer';
 import { IS_DEMO_MODE, IS_DEV, PLATFORM } from 'src-electron/constants';
@@ -21,6 +21,7 @@ import {
   send,
   sendSync,
 } from 'src-electron/preload/ipc';
+import { capturePreloadError } from 'src-electron/preload/log';
 import { sendKeyTap } from 'src-electron/preload/robot';
 import { initScreenListeners } from 'src-electron/preload/screen';
 import {
@@ -30,6 +31,7 @@ import {
   openWebsiteWindow,
   zoomWebsiteWindow,
 } from 'src-electron/preload/website';
+import { launchZoomMeeting } from 'src-electron/preload/zoom';
 import {
   basename,
   changeExt,
@@ -55,6 +57,24 @@ const getPathFromFileObject = (fo?: File | string) => {
   return webUtils.getPathForFile(fo);
 };
 
+/**
+ * Invokes a main-process handler whose result the renderer does not wait for
+ * (the matching ElectronApi method returns void), reporting a rejected
+ * invoke instead of leaving it unhandled in the renderer.
+ * @param name The ElectronApi method name, used to group the error report
+ * @param channel The IPC channel to invoke
+ * @param args The arguments to pass to the handler
+ */
+const invokeWithoutResult = (
+  name: string,
+  channel: ElectronIpcInvokeKey,
+  ...args: unknown[]
+) => {
+  invoke(channel, ...args).catch((error: unknown) => {
+    capturePreloadError(error, { contexts: { fn: { channel, name } } });
+  });
+};
+
 const electronApi: ElectronApi = {
   askForMediaAccess: () => send('askForMediaAccess'),
   basename,
@@ -76,6 +96,7 @@ const electronApi: ElectronApi = {
     invoke('ensureMacosFolderPermission', folderPath, prompt),
   executeQuery: (db, query, params) =>
     invoke('executeQuery', db, query, params),
+  exportHtmlToPdf: (html, name) => invoke('exportHtmlToPdf', html, name),
   extname,
   extractNestedZipEntry: (i, e, o, op) =>
     invoke('extractNestedZipEntry', i, e, o, op),
@@ -106,8 +127,11 @@ const electronApi: ElectronApi = {
   isOnline: () => invoke('isOnline'),
   isSecretEncryptionAvailableSync: () =>
     sendSync('isSecretEncryptionAvailableSync'),
+  isSqliteDbCorrupt: (dbPath: string) => invoke('isSqliteDbCorrupt', dbPath),
   isUsablePath: (p) => invoke('isUsablePath', p),
   join,
+  launchZoomMeeting,
+  markUserWarnedAboutDiskSpace: () => send('markUserWarnedAboutDiskSpace'),
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   moveTimerWindow: (t, w) => send('moveTimerWindow', t, w),
   navigateWebsiteWindow,
@@ -122,8 +146,10 @@ const electronApi: ElectronApi = {
   onHardwareAccelerationTemporaryDisabled: (cb) =>
     listen('hardware-acceleration-temporary-disabled', cb),
   onLog: (cb) => listen('log', cb),
+  onMediaWindowRendererGone: (cb) => listen('media-window-renderer-gone', cb),
   onPathProbeNetworkWarning: (cb) => listen('pathProbeNetworkWarning', cb),
   onShortcut: (cb) => listen('shortcut', cb),
+  onTimerWindowClosed: (cb) => listen('timerWindowClosed', cb),
   onUpdateAvailable: (cb) => listen('update-available', cb),
   onUpdateDownloaded: (cb) => listen('update-downloaded', cb),
   onUpdateDownloadProgress: (cb) => listen('update-download-progress', cb),
@@ -147,10 +173,12 @@ const electronApi: ElectronApi = {
   PLATFORM,
   quitAndInstall: () => send('quitAndInstall'),
   readdir: readDirectory,
-  registerShortcut: (n, s) => invoke('registerShortcut', n, s),
+  registerShortcut: (n, s) =>
+    invokeWithoutResult('registerShortcut', 'registerShortcut', n, s),
   relaunchApp: () => send('relaunchApp'),
   removeListeners: (c) => removeAllIpcListeners(c),
   resolve,
+  restartZoomHelper: () => invoke('restartZoomHelper'),
   resumeAllDownloads: () => send('resumeAllDownloads'),
   saveFileDialog: (d, f) => invoke('saveFileDialog', d, f),
   sendDevMenuState: (state) => send('dev-menu-state', state),
@@ -158,10 +186,22 @@ const electronApi: ElectronApi = {
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
   setExecutable: (p) => invoke('setExecutable', p),
-  setHardwareAcceleration: (v) => invoke('set-hardware-acceleration', v),
+  setHardwareAcceleration: (v) =>
+    invokeWithoutResult(
+      'setHardwareAcceleration',
+      'set-hardware-acceleration',
+      v,
+    ),
   setPathProbeNotificationPaths: (paths) =>
     send('setPathProbeNotificationPaths', paths),
   showFileOnWindows,
+  startTimerRemote: (port) => invoke('startTimerRemote', port),
+  startZoomHelper: () => invoke('startZoomHelper'),
+  stopTimerRemote: () => send('stopTimerRemote'),
+  stopZoomHelper: () => send('stopZoomHelper'),
+  timerRemoteText: (t) => send('timerRemoteText', t),
+  timerRemoteUpdate: (d) => send('timerRemoteUpdate', d),
+  toggleAuthorizedClose: (v) => send('authorizedClose', v),
   toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),
   toggleTimerWindow: (s) => send('toggleTimerWindow', s),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
@@ -169,6 +209,8 @@ const electronApi: ElectronApi = {
   unwatchFolders: () => invoke('unwatchFolders'),
   unzip: (i, o, op) => invoke('unzip', i, o, op),
   watchFolder: (p) => invoke('watchFolder', p),
+  zoomCommand: (c) => invoke('zoomCommand', c),
+  zoomTestParticipants: (r) => invoke('zoomTestParticipants', r),
   zoomWebsiteWindow,
 };
 

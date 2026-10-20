@@ -70,7 +70,7 @@ const getUpdatesEnabled = async () => {
 
 const loadLatestVersion = async () => {
   if (latestVersion.value) return;
-  latestVersion.value = (await fetchLatestVersion()) || '';
+  latestVersion.value = (await fetchLatestVersion()) ?? '';
 };
 const dismissed = ref<Set<string>>(new Set());
 
@@ -235,7 +235,7 @@ const catchUpUpdaterState = async () => {
     // now-stale catch-up snapshot here would redundantly replay
     // handleUpdateAvailable() and reset the notification it just built.
     if (updateEventReceived) return;
-    if (!state || !state.phase) return;
+    if (!state?.phase) return;
 
     // Build the base notification first (it may not exist yet if the
     // update-available event was also missed), then apply the current step.
@@ -288,7 +288,7 @@ onMounted(() => {
       createTemporaryNotification({
         caption: t('update-failed'),
         message: t('update-error-read-only-volume'),
-        timeout: 10000,
+        timeout: 10_000,
         type: 'negative',
       });
     });
@@ -312,7 +312,7 @@ if (import.meta.env.DEV) {
     const interval = setInterval(() => {
       transferred = Math.min(
         total,
-        transferred + total * (0.05 + Math.random() * 0.1),
+        transferred + total * (0.05 + Math.random() * 0.1), // NOSONAR: DEV-only fake update-progress step
       );
       handleUpdateDownloadProgress({
         bytesPerSecond: total * 0.08,
@@ -470,9 +470,15 @@ watch(
   () => currentStateStore.online,
   (online) => {
     if (!online) return;
-    loadLatestVersion();
-    loadAnnouncements();
-    getUpdatesEnabled();
+    loadLatestVersion().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'loadLatestVersion' } } });
+    });
+    loadAnnouncements().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'loadAnnouncements' } } });
+    });
+    getUpdatesEnabled().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'getUpdatesEnabled' } } });
+    });
   },
   { immediate: true },
 );

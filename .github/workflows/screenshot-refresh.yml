@@ -15,7 +15,7 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Setup Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24
           cache: 'yarn'
@@ -23,10 +23,21 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libx11-xcb-dev libxkbcommon-x11-dev libxss-dev libpng-dev libpng++-dev xvfb
+      # Nothing here needs a dependency build script: robotjs loads its
+      # prebuilt N-API binary, the icon font falls back to ttf2woff2's WASM
+      # build, and Electron fetches its binary on first require (the verify
+      # step below). So they're skipped, and a compromised package gets no
+      # chance to run code at install time while this job holds a write
+      # token. --mode=skip-build is Yarn 4's install flag for that, and
+      # YARN_ENABLE_SCRIPTS=false the config-level equivalent.
       - name: Install dependencies
-        run: yarn install
+        env:
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: yarn install --mode=skip-build
+      # The lockfile-pinned playwright devDependency, never an on-demand
+      # download like npx could fall back to.
       - name: Install Chromium runtime dependencies (Linux only)
-        run: npx playwright install-deps
+        run: yarn playwright install-deps
       - name: Verify Electron binary is installed
         run: node -e "console.log(require('electron'))"
       - name: Prepare Quasar
@@ -43,7 +54,7 @@ jobs:
         run: xvfb-run -a --server-args="-screen 0 2560x1440x24" yarn screenshot:refresh
       - name: Upload debug output on failure
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: screenshot-debug-output
           path: test/playwright/debug-output/

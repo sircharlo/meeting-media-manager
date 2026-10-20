@@ -128,7 +128,7 @@ Las funciones de música de fondo incluyen:
 
 ### :stopwatch: ¿M³ incluye un cronómetro para la reunión? {#faq-meeting-timer}
 
-Sí. Cuando está activado, M³ puede mostrar una ventana independiente del cronómetro para controlar el tiempo de los participantes. Puede contar de forma progresiva o regresiva, mostrar la hora actual, mostrar una cuenta regresiva antes de la reunión y, si quieres, indicar el tiempo excedido o si la reunión va adelantada o atrasada con respecto al programa.
+Sí. Cuando está activado, M³ puede mostrar una ventana independiente del cronómetro para controlar el tiempo de los participantes. Puede contar de forma progresiva o regresiva, mostrar la hora actual, mostrar una cuenta regresiva antes de la reunión y, si quieres, indicar el tiempo excedido o si la reunión va adelantada o atrasada con respecto al programa. La duración de las partes se puede ajustar libremente, se pueden añadir partes personalizadas para programas especiales y el cronómetro se puede controlar desde la isla de acciones (incluso al pasar el ratón) o desde un panel anclado en la ventana principal.
 
 El cronómetro es una función beta y solo debería activarse si se ha aprobado localmente.
 
@@ -158,12 +158,12 @@ M³ cambia automáticamente las escenas de OBS según:
 
 - El tipo de archivo multimedia (video, imagen, etc.)
 - Tu configuración de escenas
-- Opciones como "Posponer imágenes"
+- Ajustes como "No compartir imágenes automáticamente"
 - Si debe volver a la escena anterior después de reproducir archivos multimedia
 
-### :pause_button: ¿Qué es la función "Posponer imágenes"? {#faq-postpone-images}
+### :pause_button: ¿Qué hace el ajuste "No compartir imágenes automáticamente"? {#faq-postpone-images}
 
-Esta función retrasa el envío de imágenes a OBS hasta que lo actives manualmente. Esto es útil para:
+Este ajuste retrasa la acción de compartir imágenes en OBS hasta que las actives manualmente. Esto es útil para:
 
 - Mostrar primero las imágenes al auditorio presencial
 - Tener más control sobre el momento de mostrarlas
@@ -178,12 +178,16 @@ M³ no incluye un grabador integrado, pero puede ayudar a controlar la grabació
 
 ## Funciones avanzadas {#faq-advanced-features}
 
-### :cloud: ¿Cómo funciona la supervisión de carpetas? {#faq-folder-monitoring}
+### :cloud: ¿Cómo funciona la carpeta compartida? {#faq-folder-monitoring}
 
-La supervisión de carpetas te permite:
+Si guardas archivos para las reuniones en una aplicación de almacenamiento en la nube como Dropbox, OneDrive, iCloud Drive o Google Drive, M³ puede añadirlos a la reunión correspondiente automáticamente:
 
-1. Seleccionar una carpeta que se supervisará en busca de archivos nuevos
-2. Importar automáticamente nuevos archivos multimedia sincronizados con servicios de almacenamiento en la nube como Dropbox o OneDrive
+1. Elige una carpeta en tu aplicación de almacenamiento en la nube, en el asistente de configuración o en **Configuración** > **Integraciones** > **Carpeta compartida**. Lo mejor es usar una carpeta nueva dedicada solo a esto.
+2. M³ crea una carpeta dentro para cada próxima reunión, nombrada con la fecha de la reunión escrita como año-mes-día (por ejemplo, `2026-03-25`).
+3. Pon fotos, videos, archivos de audio o listas de reproducción de JW Library en la carpeta de una reunión cada vez que lo necesites. Se añadirán a la lista de multimedia de esa reunión, en cada computadora que use la misma carpeta.
+4. Para añadir archivos para otro día, crea una carpeta para ese día, nombrada de la misma manera.
+
+Cuando termina una semana, M³ elimina las carpetas fechadas de esa semana y los archivos que contienen para todos los que usan la carpeta compartida. Para conservarlos, desactiva **Eliminar carpetas de reuniones pasadas**.
 
 ### :file_folder: ¿Qué es la exportación automática de archivos multimedia? {#faq-media-export}
 
@@ -246,7 +250,7 @@ M³ reproduce archivos multimedia con sonido en tu computadora, pero este audio 
 
 Prueba estas optimizaciones de rendimiento:
 
-1. **Activar caché adicional**: Activa el almacenamiento adicional en caché en la configuración
+1. **Guardar en caché los videos del cancionero**: Guarda en caché todos los videos del cancionero con anticipación en la configuración
 2. **Cerrar otras aplicaciones**: Cierra las aplicaciones que no necesites
 3. **Comprobar espacio en disco**: Asegúrate de tener suficiente espacio libre en disco
 4. **Reducir resolución**: Baja la configuración de resolución máxima

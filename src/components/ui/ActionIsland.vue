@@ -17,12 +17,14 @@
         <TimerButton v-model="timerPopup" />
         <q-separator class="bg-semi-white-24" vertical />
         <MediaDisplayButton v-model="displayPopup" />
+        <ZoomMeetingManagerButton v-model="zoomMeetingManagerPopup" />
       </div>
       <DialogDownloadsPopup v-model="downloadPopup" />
       <DialogBackgroundMusicPopup v-model="musicPopup" />
       <DialogObsPopup v-model="obsPopup" />
       <DialogRecordingPopup v-model="recordingPopup" />
       <DialogDisplayPopup v-model="displayPopup" dialog-id="display-popup" />
+      <DialogZoomMeetingManagerPopup v-model="zoomMeetingManagerPopup" />
       <DialogTimerPopup v-model="timerPopup" dialog-id="timer-popup" />
     </q-chip>
   </div>
@@ -37,6 +39,7 @@ import ObsStatus from 'components/media/ObsStatus.vue';
 import RecordingStatus from 'components/media/RecordingStatus.vue';
 import SubtitlesButton from 'components/media/SubtitlesButton.vue';
 import TimerButton from 'components/media/TimerButton.vue';
+import ZoomMeetingManagerButton from 'components/media/ZoomMeetingManagerButton.vue';
 import { ref } from 'vue';
 
 import DialogBackgroundMusicPopup from '../dialog/DialogBackgroundMusicPopup.vue';
@@ -45,6 +48,7 @@ import DialogDownloadsPopup from '../dialog/DialogDownloadsPopup.vue';
 import DialogObsPopup from '../dialog/DialogObsPopup.vue';
 import DialogRecordingPopup from '../dialog/DialogRecordingPopup.vue';
 import DialogTimerPopup from '../dialog/DialogTimerPopup.vue';
+import DialogZoomMeetingManagerPopup from '../dialog/DialogZoomMeetingManagerPopup.vue';
 
 // Popups
 const downloadPopup = ref(false);
@@ -52,6 +56,7 @@ const musicPopup = ref(false);
 const obsPopup = ref(false);
 const recordingPopup = ref(false);
 const displayPopup = ref(false);
+const zoomMeetingManagerPopup = ref(false);
 const timerPopup = ref(false);
 
 const popups = {
@@ -61,6 +66,7 @@ const popups = {
   obsPopup,
   recordingPopup,
   timerPopup,
+  zoomMeetingManagerPopup,
 } as const;
 
 // Define a type for the keys of the `popups` object

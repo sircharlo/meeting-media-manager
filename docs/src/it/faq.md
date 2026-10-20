@@ -1,24 +1,24 @@
-# Domande Frequenti {#frequently-asked-questions}
+# Domande frequenti {#frequently-asked-questions}
 
 ## Domande generali {#general-questions}
 
-### Questa app dipende da siti esterni, fonti o "curatori" per scaricare pubblicazioni e media per l'adunanza? {#external-dependencies}
+### :earth_americas: Questa app dipende da siti esterni, fonti o "curatori" per scaricare pubblicazioni, media per le adunanze o altri contenuti? {#external-dependencies}
 
-\*\*No. L'app si comporta in modo simile a JW Library. Scarica pubblicazioni, media e altri contenuti direttamente dal sito ufficiale dei Testimoni di Geova e dalla sua rete di distribuzione di contenuti. L'applicazione determina automaticamente ciò che deve essere scaricato e quando il contenuto precedentemente scaricato non è più aggiornato e dovrebbe essere nuovamente scaricato.
+**No.** L'app si comporta in modo simile a JW Library. Scarica pubblicazioni, media e altri contenuti direttamente dal sito ufficiale dei Testimoni di Geova e dalla sua rete di distribuzione di contenuti. L'applicazione determina automaticamente ciò che deve essere scaricato e quando il contenuto precedentemente scaricato non è più aggiornato e dovrebbe essere nuovamente scaricato.
 
 :::info Nota
 
-Il codice sorgente per questa app è aperto e disponibile per tutti per esaminare e verificare cosa succede sotto il cofano.
+Il codice sorgente di questa app è disponibile a tutti, così chiunque può esaminare e verificare cosa succede dietro le quinte.
 
 :::
 
 ### :thinking: Questa app viola le Condizioni d'uso del sito ufficiale dei Testimoni di Geova? {#terms-of-use}
 
-**No.** I [Termini d'uso](https://www.jw.org/finder?docid=1011511&prefer=content) del sito ufficiale dei Testimoni di Geova consentono esplicitamente il tipo di utilizzo che stiamo facendo. Ecco il relativo estratto da quei termini (sottolineatura aggiunta):
+**No.** Le [Condizioni d'uso](https://www.jw.org/finder?docid=1011511&prefer=content) del sito ufficiale dei Testimoni di Geova consentono esplicitamente il tipo di utilizzo che ne facciamo. Ecco l'estratto pertinente di tali condizioni (enfasi aggiunta):
 
 > Non puoi:
 >
-> Creare per scopi di distribuzione, applicazioni software, strumenti o tecniche specificamente realizzati per raccogliere, copiare, scaricare, estrarre, raccogliere o scrape dati, HTML, immagini o testo da questo sito. (Questo **non** vieta la distribuzione gratuita di applicazioni non commerciali progettate per scaricare file elettronici come EPUB, File PDF, MP3 e MP4 dalle aree pubbliche di questo sito.)
+> Creare, a scopo di distribuzione, applicazioni software, strumenti o tecniche specificamente realizzati per raccogliere, copiare, scaricare, estrarre, acquisire o estrapolare dati, codice HTML, immagini o testo da questo sito. (Ciò **non** vieta la distribuzione di applicazioni gratuite e non commerciali progettate per scaricare file elettronici come EPUB, PDF, MP3 e MP4 dalle aree pubbliche di questo sito.)
 
 ### :question: Quali sistemi operativi supporta M³? {#operating-systems}
 
@@ -26,11 +26,11 @@ M³ supporta Windows, macOS e Linux:
 
 - **Windows**: Windows 10 e versioni successive (64-bit e 32-bit disponibili)
 - **macOS**: macOS 10.15 (Catalina) e successivi (build Universal)
-- **Linux**: La maggior parte delle distribuzioni Linux moderne (formato Appimage)
+- **Linux**: la maggior parte delle distribuzioni Linux moderne (formato AppImage)
 
 ### :globe_with_meridians: M³ funziona nella mia lingua? {#language-support}
 
-**Sì!** M³ fornisce un supporto multi-lingua completo:
+**Sì!** M³ offre un supporto multilingue completo:
 
 - **Media**: scarica i media in una qualsiasi delle centinaia di lingue disponibili sul sito ufficiale dei Testimoni di Geova
 - **Interfaccia dell'app**: usa l'interfaccia di M³ in molte lingue diverse
@@ -56,7 +56,7 @@ M³ include una configurazione guidata che ti accompagna nella configurazione es
 
 ## Gestione dei media {#faq-media-management}
 
-### :desktop_computer: Come scarica i media M³? {#media-download}
+### :desktop_computer: Come fa M³ a scaricare i media? {#media-download}
 
 M³ scarica automaticamente i media per le adunanze imminenti tramite:
 
@@ -73,7 +73,7 @@ Sì! M³ ti permette di:
 - Scaricare automaticamente i media per le adunanze imminenti
 - Importare media personalizzati per qualsiasi data
 
-### :file_folder: What is media auto-export? {#faq-media-export} :file_folder: What is media auto-export? {#import-media}
+### :open_file_folder: Come posso importare i miei file multimediali? {#faq-media-export} :file_folder: What is media auto-export? {#import-media}
 
 Puoi importare media personalizzati in diversi modi:
 
@@ -103,7 +103,7 @@ Per presentare i media:
 2. Fai clic sul pulsante di riproduzione dell'elemento multimediale che vuoi presentare o usa le scorciatoie da tastiera
 3. Usa i controlli del lettore multimediale per mettere in pausa, navigare o fermare la riproduzione
 4. Usa le funzioni di zoom/panoramica per le immagini
-5. Imposta una durata personalizzata se necessario
+5. Imposta tempi personalizzati, se necessario
 
 ### :keyboard: Quali scorciatoie da tastiera sono disponibili? {#faq-keyboard-shortcuts}
 
@@ -128,13 +128,13 @@ Le funzioni della musica di sottofondo includono:
 
 ### :stopwatch: M³ include un timer per l'adunanza? {#faq-meeting-timer}
 
-Sì. Quando abilitato, M³ può mostrare una finestra timer separata per cronometrare i partecipanti. Può contare in avanti o alla rovescia, mostrare l'ora corrente, mostrare un conto alla rovescia prima dell'adunanza e, se vuoi, indicare il tempo superato o se l'adunanza è in anticipo o in ritardo sul programma.
+Sì. Quando abilitato, M³ può mostrare una finestra timer separata per cronometrare i partecipanti. Può contare in avanti o alla rovescia, mostrare l'ora corrente, mostrare un conto alla rovescia prima dell'adunanza e, se vuoi, indicare il tempo superato o se l'adunanza è in anticipo o in ritardo sul programma. Le durate delle parti possono essere regolate liberamente, è possibile aggiungere parti personalizzate per programmi speciali e il timer può essere controllato dall'isola di azione (anche al passaggio del mouse) o da un pannello agganciato alla finestra principale.
 
 Il timer è una funzione beta e dovrebbe essere abilitato solo se approvato localmente.
 
 ### :video_camera: Come configuro l'integrazione con Zoom? {#zoom-setup}
 
-Per integrare con Zoom:
+Per l'integrazione con Zoom:
 
 1. Abilita l'integrazione con Zoom nelle impostazioni di M³
 2. Configura la scorciatoia per la condivisione dello schermo impostata in Zoom. Assicurati che quella scorciatoia sia «globale» nelle impostazioni di Zoom.
@@ -144,7 +144,7 @@ Per integrare con Zoom:
 
 ### :video_camera: Come configuro l'integrazione con OBS Studio? {#faq-obs-setup}
 
-Per integrare con OBS Studio:
+Per l'integrazione con OBS Studio:
 
 1. Installa OBS Studio e il plugin WebSocket
 2. Abilita l'integrazione con OBS nelle impostazioni di M³
@@ -158,12 +158,12 @@ M³ cambia automaticamente le scene di OBS in base a:
 
 - Il tipo di media (video, immagine, ecc.)
 - La tua configurazione delle scene
-- Impostazioni come «Posticipa le immagini»
+- Impostazioni come "Non condividere automaticamente le immagini"
 - Se tornare alla scena precedente dopo il media
 
-### :pause_button: Cos'è la funzione «Posticipa le immagini»? {#faq-postpone-images}
+### :pause_button: Cosa fa l'impostazione "Non condividere automaticamente le immagini"? {#faq-postpone-images}
 
-Questa funzione ritarda la condivisione delle immagini a OBS finché non le attivi manualmente. È utile per:
+Questa impostazione ritarda la condivisione delle immagini su OBS finché non le attivi manualmente. È utile per:
 
 - Mostrare prima le immagini al pubblico presente
 - Avere più controllo sui tempi
@@ -178,14 +178,18 @@ M³ non include un registratore integrato, ma può aiutare a controllare la regi
 
 ## Funzioni avanzate {#faq-advanced-features}
 
-### :cloud: Come funziona il monitoraggio delle cartelle? {#faq-folder-monitoring}
+### :cloud: Come funziona la cartella condivisa? {#faq-folder-monitoring}
 
-Il monitoraggio delle cartelle ti permette di:
+Se conservi i file per le adunanze in un'app di archiviazione cloud come Dropbox, OneDrive, iCloud Drive o Google Drive, M³ può aggiungerli automaticamente all'adunanza giusta:
 
-1. Selezionare una cartella da monitorare per i nuovi file
-2. Importare automaticamente i nuovi file multimediali sincronizzati con archivi cloud come Dropbox o OneDrive
+1. Scegli una cartella nella tua app di archiviazione cloud, nella configurazione guidata oppure in **Impostazioni** > **Integrazioni** > **Cartella condivisa**. È preferibile una nuova cartella usata solo per questo scopo.
+2. M³ crea al suo interno una cartella per ogni adunanza in programma, con il nome della data dell'adunanza scritta come anno-mese-giorno (ad esempio, `2026-03-25`).
+3. Inserisci foto, video, file audio o playlist di JW Library nella cartella di un'adunanza ogni volta che serve. Vengono aggiunti all'elenco dei media di quell'adunanza, su ogni computer che usa la stessa cartella.
+4. Per aggiungere file per un altro giorno, crea una cartella anche per quel giorno, con un nome nello stesso formato.
 
-### :open_file_folder: How do I import my own media files? {#faq-media-export}
+Quando una settimana è finita, M³ elimina le cartelle datate di quella settimana e i file che contengono, per tutti coloro che usano la cartella condivisa. Per conservarle, disattiva **Elimina le cartelle delle adunanze passate**.
+
+### :file_folder: Cos'è l'esportazione automatica dei media? {#faq-media-export}
 
 L'esportazione automatica dei media:
 
@@ -233,7 +237,7 @@ Controlla questi problemi relativi a OBS:
 
 **Note importanti:**
 
-- Devi abilitare l'Audio originale **ogni volta** prima di iniziare una riunione Zoom
+- Devi attivare l'Audio originale **ogni volta** prima di avviare un'adunanza Zoom
 - Questa impostazione non riguarda M³: avresti lo stesso problema audio usando qualsiasi altro lettore multimediale e non usando le funzioni di condivisione dello schermo e dell'audio di Zoom
 - L'impostazione Audio originale ha tre sotto-opzioni: di solito le prime due dovrebbero essere abilitate e la terza disabilitata per una qualità audio ottimale
 - Se hai ancora problemi audio, potrebbe essere necessario usare invece l'opzione «Condividi audio del computer» di Zoom
@@ -246,7 +250,7 @@ M³ riproduce i media con l'audio sul tuo computer, ma questo audio non viene tr
 
 Prova queste ottimizzazioni delle prestazioni:
 
-1. **Abilita la cache extra**: attiva la memorizzazione aggiuntiva nella cache nelle impostazioni
+1. **Memorizza nella cache i video del libro dei cantici**: memorizza in anticipo nella cache tutti i video del libro dei cantici dalle impostazioni
 2. **Chiudi le altre app**: chiudi le applicazioni non necessarie
 3. **Controlla lo spazio su disco**: assicurati di avere spazio libero su disco sufficiente
 4. **Riduci la risoluzione**: abbassa l'impostazione della risoluzione massima
@@ -294,7 +298,7 @@ M³ usa Crowdin per la gestione delle traduzioni. Puoi contribuire con le traduz
 
 ### :x: Posso fare una donazione al progetto? {#can-i-make-a-donation-to-the-project}
 
-Grazie per il tuo interesse a sostenere il progetto! Tuttavia, nello spirito di Matteo 10:8, le donazioni **non** sono accettate e non lo saranno mai. Questa app è stata realizzata con amore e un po' di tempo libero. Buon divertimento! :tada:
+Grazie per il tuo interesse a sostenere il progetto! Tuttavia, nello spirito di Matteo 10:8, le donazioni **non** sono accettate e non lo saranno mai. Questa app è stata realizzata con amore e un po' di tempo libero. Speriamo che ti piaccia! :tada:
 
 :::tip :book: Matteo 10:8
 
@@ -310,7 +314,7 @@ M³ è progettato per funzionare su un'ampia gamma di sistemi operativi:
 
 - **Windows**: Windows 10 e versioni successive (64-bit e 32-bit disponibili)
 - **macOS**: macOS 10.15 (Catalina) e successivi (build Universal)
-- **Linux**: La maggior parte delle distribuzioni Linux moderne (formato Appimage)
+- **Linux**: la maggior parte delle distribuzioni Linux moderne (formato AppImage)
 
 M³ ha i seguenti requisiti hardware:
 

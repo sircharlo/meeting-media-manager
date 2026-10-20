@@ -239,7 +239,7 @@ const getWorker = () => {
 // On old hardware during startup (many downloads and extractions at once)
 // a single millisecond-scale query was still unanswered after 8s, and the
 // stall threw away every queued query as an empty result (MMM-V2-3KT).
-export const SQLITE_TIMEOUT_MS = 30000;
+export const SQLITE_TIMEOUT_MS = 30_000;
 
 export class SqliteWorkerStallError extends Error {
   constructor(
@@ -320,17 +320,106 @@ const postToWorkerWithTimeout = (
 // defense-in-depth backstop against, say, a crafted ATTACH DATABASE
 // statement reaching a file this dbPath check never sees. All real query
 // shapes in use were confirmed to start with SELECT or PRAGMA before adding
-// this.
-const ALLOWED_QUERY_PREFIX = /^\s*\(?\s*(pragma|select)\b/i;
+// this. The optional "(" carries its own trailing whitespace so the two
+// whitespace runs can't overlap and backtrack on a long blank prefix.
+const ALLOWED_QUERY_PREFIX = /^\s*(?:\(\s*)?(?:pragma|select)\b/i;
+
+/**
+ * Whether a query is shaped like the read-only SELECT/PRAGMA queries every
+ * real call site sends (see ALLOWED_QUERY_PREFIX).
+ * @param query The SQL query to check
+ */
+export const isAllowedQuery = (query: string) =>
+  ALLOWED_QUERY_PREFIX.test(query);
 
 // SQLite's primary result code for an OS-level read/write failure (the
 // extended codes, e.g. 266 SQLITE_IOERR_READ, share it in their low byte).
 const SQLITE_IOERR = 10;
 const reportedIoErrorPaths = new Set<string>();
 
+// SQLite's primary result codes for a damaged file: SQLITE_CORRUPT ("database
+// disk image is malformed") and SQLITE_NOTADB ("file is not a database").
+// An extracted publication .db ends up like this when a crash or power loss
+// interrupts its write - a zero-filled file of the right size is NOTADB, a
+// truncated one CORRUPT - and no retry can read it: the file has to be
+// replaced (MMM-V2-3JJ).
+const SQLITE_CORRUPT = 11;
+const SQLITE_NOTADB = 26;
+const reportedCorruptDbPaths = new Set<string>();
+
+// Databases a query found damaged since their connection was last closed.
+// isDbCorrupt() answers `true` for these without probing, so damage the
+// cheap probe can't see (deep inside a table) still gets the file replaced
+// on its next load. Closing a connection clears its mark: callers close it
+// right before deleting or replacing the file.
+const corruptDbPaths = new Set<string>();
+
 const getSqliteErrcode = (error: unknown) => {
   const errcode = (error as undefined | { errcode?: unknown })?.errcode;
   return typeof errcode === 'number' ? errcode : undefined;
+};
+
+const isCorruptionErrcode = (errcode: number | undefined) => {
+  if (errcode === undefined) return false;
+  // Extended result codes share the primary code in their low byte.
+  const primaryErrcode = errcode & 0xff;
+  return primaryErrcode === SQLITE_CORRUPT || primaryErrcode === SQLITE_NOTADB;
+};
+
+/**
+ * Reports a failed query to Sentry, unless it's environmental or a repeat
+ * of a failure already reported for the same database (then it's logged).
+ */
+const handleQueryError = (e: unknown, dbPath: string, query: string) => {
+  const errcode = getSqliteErrcode(e);
+  const cloudProvider = getCloudStorageProvider(dbPath);
+  const isIoError = errcode !== undefined && (errcode & 0xff) === SQLITE_IOERR;
+
+  // A cloud-sync client (OneDrive, ...) locking or hydrating the file
+  // makes opening/reading it fail with SQLITE_IOERR - environmental, not
+  // a bug (MMM-V2-3JJ). Elsewhere, report an I/O error once per db per
+  // session instead of once per query in the same burst.
+  if (isIoError && (cloudProvider || reportedIoErrorPaths.has(dbPath))) {
+    log('SQLite I/O error', 'sqlite', 'warn', {
+      cloudProvider,
+      errcode,
+      path: dbPath,
+    });
+    return;
+  }
+  if (isIoError) reportedIoErrorPaths.add(dbPath);
+
+  // A damaged file fails every query against it the same way: mark it so
+  // the next isDbCorrupt() check gets it replaced, and report it once per
+  // db per session instead of once per query in the same burst.
+  if (isCorruptionErrcode(errcode)) {
+    corruptDbPaths.add(dbPath);
+    if (reportedCorruptDbPaths.has(dbPath)) {
+      log('SQLite database is corrupt', 'sqlite', 'warn', {
+        errcode,
+        path: dbPath,
+      });
+      return;
+    }
+    reportedCorruptDbPaths.add(dbPath);
+  }
+
+  captureElectronError(e, {
+    contexts: {
+      fn: {
+        cloudProvider,
+        errcode,
+        errstr: (e as { errstr?: unknown }).errstr,
+        name: 'executeQuery',
+        outstandingRequests:
+          e instanceof SqliteWorkerStallError
+            ? e.outstandingRequests
+            : undefined,
+        path: dbPath,
+        query,
+      },
+    },
+  });
 };
 
 export const executeQuery = async <T extends object = QueryResponseItem>(
@@ -338,7 +427,7 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
   query: string,
   params: QueryParams = [],
 ): Promise<T[]> => {
-  if (!ALLOWED_QUERY_PREFIX.test(query)) {
+  if (!isAllowedQuery(query)) {
     captureElectronError(new Error('Rejected non-SELECT/PRAGMA query'), {
       contexts: { fn: { name: 'executeQuery', path: dbPath, query } },
     });
@@ -373,42 +462,58 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
   } catch (e) {
     // The worker dropped the connection it used when a query fails, so a
     // later query reopens it fresh.
-    const errcode = getSqliteErrcode(e);
-    const cloudProvider = getCloudStorageProvider(dbPath);
-    const isIoError =
-      errcode !== undefined && (errcode & 0xff) === SQLITE_IOERR;
+    handleQueryError(e, dbPath, query);
+    return [];
+  }
+};
 
-    // A cloud-sync client (OneDrive, ...) locking or hydrating the file
-    // makes opening/reading it fail with SQLITE_IOERR - environmental, not
-    // a bug (MMM-V2-3JJ). Elsewhere, report an I/O error once per db per
-    // session instead of once per query in the same burst.
-    if (isIoError && (cloudProvider || reportedIoErrorPaths.has(dbPath))) {
-      log('SQLite I/O error', 'sqlite', 'warn', {
-        cloudProvider,
+// Reads only the header page and the schema table: enough to catch the
+// damage an interrupted write leaves behind (a zero-filled or truncated file)
+// in a few milliseconds. PRAGMA quick_check would also catch damage deep
+// inside a table, but it reads the whole file - seconds for the larger
+// publications on a slow disk, once per database per session - so that case
+// relies on corruptDbPaths instead. The worker caches the successful result
+// until the connection is closed, so repeat checks are free.
+const CORRUPTION_PROBE_QUERY =
+  'SELECT count(*) AS tableCount FROM sqlite_master';
+
+/**
+ * Whether the database file at `dbPath` is damaged beyond reading: a cheap
+ * probe fails with SQLITE_CORRUPT/SQLITE_NOTADB, or an earlier query on it
+ * already did. Any other failure (a locked or missing file, a stalled worker)
+ * isn't corruption and returns `false`, so callers never delete a file that
+ * is only unavailable right now.
+ * @param dbPath The database file to check
+ * @returns Whether the file has to be replaced
+ */
+export const isDbCorrupt = async (dbPath: string): Promise<boolean> => {
+  if (corruptDbPaths.has(dbPath)) return true;
+
+  try {
+    await postToWorkerWithTimeout({
+      dbPath,
+      params: [],
+      query: CORRUPTION_PROBE_QUERY,
+      type: 'query',
+    });
+    return false;
+  } catch (e) {
+    const errcode = getSqliteErrcode(e);
+    if (!isCorruptionErrcode(errcode)) {
+      log('SQLite corruption probe failed', 'sqlite', 'warn', {
         errcode,
+        message: e instanceof Error ? e.message : String(e),
         path: dbPath,
       });
-      return [];
+      return false;
     }
-    if (isIoError) reportedIoErrorPaths.add(dbPath);
 
-    captureElectronError(e, {
-      contexts: {
-        fn: {
-          cloudProvider,
-          errcode,
-          errstr: (e as { errstr?: unknown }).errstr,
-          name: 'executeQuery',
-          outstandingRequests:
-            e instanceof SqliteWorkerStallError
-              ? e.outstandingRequests
-              : undefined,
-          path: dbPath,
-          query,
-        },
-      },
+    log('SQLite database is corrupt', 'sqlite', 'warn', {
+      errcode,
+      path: dbPath,
     });
-    return [];
+    corruptDbPaths.add(dbPath);
+    return true;
   }
 };
 
@@ -440,6 +545,7 @@ const closeViaWorker = async (request: Omit<SqliteWorkerRequest, 'id'>) => {
  * would otherwise be served after the file is replaced with new content.
  */
 export const closeAllConnections = async () => {
+  corruptDbPaths.clear();
   if (!worker) return;
   await closeViaWorker({ type: 'closeAll' });
 };
@@ -454,6 +560,7 @@ export const closeAllConnections = async () => {
  * are actively reusing, which is what {@link closeAllConnections} is for.
  */
 export const closeConnection = async (dbPath: string) => {
+  corruptDbPaths.delete(dbPath);
   if (!worker) return;
   await closeViaWorker({ dbPath, type: 'closeOne' });
 };

@@ -8,6 +8,7 @@ import type {
   MeetingChecklistCategory,
   MeetingChecklistItem,
 } from './meeting-quick-actions';
+import type { TimerCountdownDisplay, TimerTimeOfDayDisplay } from './timer';
 
 export type MaxRes = (typeof RESOLUTIONS)[number];
 
@@ -115,6 +116,7 @@ export interface SettingsGroup {
   icon: string;
   name: keyof MessageSchema;
   order?: number;
+  platforms?: string[];
 }
 
 export type SettingsGroupKey =
@@ -131,7 +133,10 @@ export type SettingsGroups = Record<SettingsGroupKey, SettingsGroup>;
 export interface SettingsItem {
   actions?: SettingsItemAction[];
   beta?: boolean;
+  /** i18n key of an action button's label (otherwise its value is shown). */
+  buttonLabel?: keyof MessageSchema;
   depends?: (keyof SettingsValues)[] | keyof SettingsValues;
+  disableWhen?: (keyof SettingsValues)[] | keyof SettingsValues;
   group: SettingsGroupKey;
   hidden?: boolean;
   icon?: string;
@@ -140,6 +145,7 @@ export interface SettingsItem {
   min?: number;
   options?: SettingsItemOption[];
   order?: number;
+  platforms?: string[];
   rules?: SettingsItemRule[];
   step?: number;
   subgroup: SettingsItemSubgroup;
@@ -150,8 +156,16 @@ export interface SettingsItem {
 export type SettingsItemAction =
   | 'obsConnect'
   | 'openCongregationLookup'
+  | 'openZoomSetupAssistant'
+  | 'openZoomSetupAssistantIfNeeded'
   | 'setBackgroundMusicVolume'
-  | 'syncMeetingSchedule';
+  | 'syncMeetingSchedule'
+  | 'zoomCaptureMicOffTitle'
+  | 'zoomCaptureMicOnTitle'
+  | 'zoomCaptureShareButtonTitle'
+  | 'zoomCaptureVideoOffTitle'
+  | 'zoomCaptureVideoOnTitle'
+  | 'zoomLearnHandRaised';
 
 export type SettingsItemListKey =
   | 'appLanguages'
@@ -162,6 +176,7 @@ export type SettingsItemListKey =
   | 'obsAllScenes'
   | 'obsScenes'
   | 'resolutions'
+  | 'timerCountdownDisplayFormats'
   | 'timerDisplayFormats'
   | 'timerHourFormats'
   | 'timerModes';
@@ -178,9 +193,9 @@ export type SettingsItemSubgroup =
   | 'congregationIdentity'
   | 'customEvents'
   | 'dangerZone'
-  | 'display'
   | 'dragAndDrop'
   | 'folderWatcher'
+  | 'interfaceDisplay'
   | 'keyboardShortcuts'
   | 'language'
   | 'media-display'
@@ -200,7 +215,8 @@ export type SettingsItemSubgroup =
   | 'timerColors'
   | 'timerCountdown'
   | 'timerDisplay'
-  | 'zoomIntegration';
+  | 'zoomIntegration'
+  | 'zoomMeetingManager';
 
 export type SettingsItemType =
   | 'button'
@@ -233,6 +249,7 @@ export interface SettingsValues {
   customEventMediaPlayShortcut: null | string;
   customEventMediaStopShortcut: null | string;
   darkMode: 'auto' | boolean;
+  deletePastWatchedFolders: boolean;
   disableHardwareAcceleration: boolean;
   disableMediaFetching: boolean;
   enableAutomaticMeetingScheduleUpdates: boolean;
@@ -311,11 +328,13 @@ export interface SettingsValues {
   suppressHardwareAccelerationReminder: boolean;
   timerAutoOpen: boolean;
   timerBackgroundColor: string;
-  timerCountdownDisplay: 'analog' | 'analog-digital' | 'digital';
+  timerCountdownDisplay: TimerCountdownDisplay;
   timerCountdownWarningIndicator: boolean;
+  timerDockedPanel: boolean;
   timerEnableMeetingAheadBehind: boolean;
   timerEnableMeetingCountdown: boolean;
   timerHourFormat: '12h' | '24h';
+  timerIslandHoverControls: boolean;
   timerMeetingCountdownMinutes: number;
   timerMode: 'countdown' | 'countup';
   timerOvertimeAnimation: boolean;
@@ -323,13 +342,34 @@ export interface SettingsValues {
   timerOvertimeIndicator: boolean;
   timerOvertimeShowAmountOnly: boolean;
   timerOvertimeTextColor: string;
+  timerRemoteEnable: boolean;
+  timerRemotePort: null | string;
   timerShowOnActionIsland: boolean;
   timerTextColor: string;
   timerTextSize: string;
-  timerTimeOfDayDisplay: 'analog' | 'analog-digital' | 'digital';
+  timerTimeOfDayDisplay: TimerTimeOfDayDisplay;
   weDay: `${number}` | null;
   weStartTime: `${number}:${number}` | null;
+  zoomAskToUnmuteTitle: null | string;
   zoomAutoFocusMediaWindow: boolean;
+  zoomCancelAutomationShortcut: null | string;
   zoomEnable: boolean;
+  zoomHandRaisedPhrase: null | string;
+  zoomLowerHandTitle: null | string;
+  zoomMeetingManagerAutoLaunchMeeting: boolean;
+  zoomMeetingManagerAutomateMediaSharing: boolean;
+  zoomMeetingManagerAutomateMeetingAudioSettings: boolean;
+  zoomMeetingManagerAutomatePostMeetingAudioSettings: boolean;
+  zoomMeetingManagerEnable: boolean;
+  zoomMeetingManagerHandAlert: boolean;
+  zoomMeetingManagerMeetingId: null | string;
+  /** No value: the setting is the button opening the setup assistant. */
+  zoomMeetingManagerSetupAssistant: null;
+  zoomMeetingManagerStartupCheck: boolean;
+  zoomMicOffTitle: null | string;
+  zoomMicOnTitle: null | string;
   zoomScreenShareShortcut: null | string;
+  zoomShareButtonTitle: null | string;
+  zoomVideoOffTitle: null | string;
+  zoomVideoOnTitle: null | string;
 }

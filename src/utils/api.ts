@@ -121,6 +121,29 @@ const isWafChallengeResponse = (response: Response) =>
   response.headers.get('x-amzn-waf-action') === 'challenge';
 
 /**
+ * A copy of the cached response for `cacheKey` while it's younger than the
+ * cache TTL; an older one is dropped from the cache instead.
+ * @param cacheKey The fetch cache key.
+ * @param logDetails What fetchRaw logs for a cache hit.
+ * @returns The cached response, or undefined when there's no fresh one.
+ */
+function getFreshCachedResponse(
+  cacheKey: string,
+  logDetails: { cache: boolean; init?: RequestInit; url: string },
+) {
+  const cachedResponse = fetchCache.get(cacheKey);
+  if (!cachedResponse) return undefined;
+  if (Date.now() - cachedResponse.cachedAt < FETCH_CACHE_TTL_MS) {
+    if (!import.meta.env.VITEST) {
+      log('fetchRaw (cached)', 'api', 'debug', logDetails);
+    }
+    return buildCachedResponse(cachedResponse);
+  }
+  fetchCache.delete(cacheKey);
+  return undefined;
+}
+
+/**
  * Fetches data from the given url.
  * @param url The url to fetch data from.
  * @param init Initialization options for the fetch.
@@ -141,21 +164,17 @@ export const fetchRaw = async (
     throw new TypeError('fetch failed', { cause: { code: 'ENOTFOUND' } });
   }
 
-  const method = init?.method?.toUpperCase() || 'GET';
+  const method = init?.method?.toUpperCase() ?? 'GET';
   const isCacheable = cache && (method === 'GET' || method === 'HEAD');
   const cacheKey = `${method}:${url}:${JSON.stringify(init?.headers || {})}`;
 
   if (isCacheable) {
-    const cachedResponse = fetchCache.get(cacheKey);
-    if (cachedResponse) {
-      if (Date.now() - cachedResponse.cachedAt < FETCH_CACHE_TTL_MS) {
-        if (!import.meta.env.VITEST) {
-          log('fetchRaw (cached)', 'api', 'debug', { cache, init, url });
-        }
-        return buildCachedResponse(cachedResponse);
-      }
-      fetchCache.delete(cacheKey);
-    }
+    const cachedResponse = getFreshCachedResponse(cacheKey, {
+      cache,
+      init,
+      url,
+    });
+    if (cachedResponse) return cachedResponse;
   }
 
   if (!import.meta.env.VITEST)
@@ -295,7 +314,7 @@ function shouldReportStatus(
 // request doesn't hang fetchJson indefinitely - ties into withFetchRetry
 // below for free, since a timeout abort is already classified as a
 // network error by isFetchNetworkError.
-const FETCH_JSON_TIMEOUT_MS = 15000;
+const FETCH_JSON_TIMEOUT_MS = 15_000;
 
 export const fetchJson = async <T>(
   url: string,
@@ -367,7 +386,7 @@ export const fetchYeartext = async (
   const result = await fetchJson<YeartextResult>(
     url,
     new URLSearchParams({
-      docid: `110${year || new Date().getFullYear()}800`,
+      docid: `110${year ?? new Date().getFullYear()}800`,
       format: 'json',
       snip: 'yes',
       wtlocale,
@@ -508,7 +527,7 @@ export const fetchPubMediaLinks = async (
 ): Promise<null | Publication> => {
   try {
     const videoExtensions: (keyof PublicationFiles)[] = ['MP4', 'M4V'];
-    const docid = publication.docid?.toString() || '';
+    const docid = publication.docid?.toString() ?? '';
     const hasPub = !!publication.pub;
 
     // docid is normally preferred over pub/issue/track when available, but
@@ -526,12 +545,12 @@ export const fetchPubMediaLinks = async (
         publication.fileformat &&
         videoExtensions.includes(publication.fileformat)
           ? videoExtensions.join(',')
-          : publication.fileformat || '',
-      issue: publication.issue?.toString() || '',
+          : (publication.fileformat ?? ''),
+      issue: publication.issue?.toString() ?? '',
       langwritten: publication.langwritten || '',
       output: 'json',
-      pub: useDocId ? '' : publication.pub || '',
-      track: publication.track?.toString() || '',
+      pub: useDocId ? '' : (publication.pub ?? ''),
+      track: publication.track?.toString() ?? '',
       txtCMSLang: 'E',
     });
 
@@ -611,21 +630,20 @@ export const fetchMediaItems = async (
         .filter((v, i) => v != null && (v.toString() !== '0' || i === 2))
         .join('_');
 
-    let response = await fetchJson<MediaItemsMediator>(
-      `${url}/${getId(publication.track)}`,
-      undefined,
-      online,
-    );
+    const fetchTrackMediaItems = (track?: null | number | string) =>
+      fetchJson<MediaItemsMediator>(
+        `${url}/${getId(track)}`,
+        undefined,
+        online,
+      );
+
+    let response = await fetchTrackMediaItems(publication.track);
 
     if (!response?.media?.length && !publication.track) {
       for (const track of ['x', 0, 1]) {
         if (track.toString() === publication.track?.toString()) continue;
 
-        const fallbackResponse = await fetchJson<MediaItemsMediator>(
-          `${url}/${getId(track)}`,
-          undefined,
-          online,
-        );
+        const fallbackResponse = await fetchTrackMediaItems(track); // NOSONAR: sequential - stops at first match
         if (fallbackResponse?.media?.length) {
           response = fallbackResponse;
           break;

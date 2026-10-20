@@ -75,6 +75,47 @@ export const getUpdaterState = (): UpdaterState => ({
   versionInfo: lastUpdateVersionInfo,
 });
 
+/** Compares two prerelease tags, dot-segment by dot-segment. */
+function comparePrereleases(aPre: string, bPre: string): number {
+  const aPreParts = aPre.split('.');
+  const bPreParts = bPre.split('.');
+  for (let i = 0; i < Math.max(aPreParts.length, bPreParts.length); i++) {
+    const aSeg = aPreParts[i];
+    const bSeg = bPreParts[i];
+    if (aSeg === undefined) return -1;
+    if (bSeg === undefined) return 1;
+    const diff = comparePrereleaseSegments(aSeg, bSeg);
+    if (diff !== 0) return diff;
+  }
+  return 0;
+}
+
+/**
+ * Compares one dot-segment of two prerelease tags: numerically when both are
+ * numbers, lexicographically otherwise.
+ */
+function comparePrereleaseSegments(aSeg: string, bSeg: string): number {
+  const aNum = Number(aSeg);
+  const bNum = Number(bSeg);
+  if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
+    if (aNum === bNum) return 0;
+    return aNum - bNum;
+  }
+  if (aSeg === bSeg) return 0;
+  return aSeg < bSeg ? -1 : 1;
+}
+
+/** Compares two `X.Y.Z` release versions, a missing part counting as 0. */
+function compareReleases(aRelease: string, bRelease: string): number {
+  const aParts = aRelease.split('.').map(Number);
+  const bParts = bRelease.split('.').map(Number);
+  for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+    const diff = (aParts[i] ?? 0) - (bParts[i] ?? 0);
+    if (diff !== 0) return diff;
+  }
+  return 0;
+}
+
 /**
  * Compares two version strings using semver precedence (release outranks a
  * prerelease of the same X.Y.Z; prerelease identifiers compared
@@ -88,12 +129,8 @@ function compareVersions(a: string, b: string): number {
   const [aRelease, aPre] = a.split('-', 2);
   const [bRelease, bPre] = b.split('-', 2);
 
-  const aParts = (aRelease || '').split('.').map(Number);
-  const bParts = (bRelease || '').split('.').map(Number);
-  for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
-    const diff = (aParts[i] ?? 0) - (bParts[i] ?? 0);
-    if (diff !== 0) return diff;
-  }
+  const releaseDiff = compareReleases(aRelease ?? '', bRelease ?? '');
+  if (releaseDiff !== 0) return releaseDiff;
 
   // Same release version - a release (no prerelease tag) outranks any
   // prerelease of that same version.
@@ -101,22 +138,7 @@ function compareVersions(a: string, b: string): number {
   if (!aPre) return 1;
   if (!bPre) return -1;
 
-  const aPreParts = aPre.split('.');
-  const bPreParts = bPre.split('.');
-  for (let i = 0; i < Math.max(aPreParts.length, bPreParts.length); i++) {
-    const aSeg = aPreParts[i];
-    const bSeg = bPreParts[i];
-    if (aSeg === undefined) return -1;
-    if (bSeg === undefined) return 1;
-    const aNum = Number(aSeg);
-    const bNum = Number(bSeg);
-    if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
-      if (aNum !== bNum) return aNum - bNum;
-    } else if (aSeg !== bSeg) {
-      return aSeg < bSeg ? -1 : 1;
-    }
-  }
-  return 0;
+  return comparePrereleases(aPre, bPre);
 }
 
 const buildUpdateVersionInfo = (version: string): UpdateVersionInfo => ({
@@ -164,6 +186,35 @@ export const getBetaUpdatesPath = async () =>
 
 const isPortable = () => !!process.env.PORTABLE_EXECUTABLE_DIR;
 
+/**
+ * Surfaces an autoUpdater error to the user (read-only volume) and Sentry,
+ * unless downloads are currently expected to fail (e.g. offline) or the
+ * error is a known, ignorable one.
+ * @param error The error the autoUpdater emitted
+ * @param message The message the autoUpdater emitted alongside it
+ */
+const reportUpdaterError = async (error: Error, message?: string) => {
+  if (await isDownloadErrorExpected()) return;
+
+  if (
+    message?.includes('read-only volume') ||
+    error?.message?.includes('read-only volume')
+  ) {
+    sendToWindow(mainWindowInfo.mainWindow, 'update-error');
+  }
+
+  if (
+    !isIgnoredUpdateError(error, message) &&
+    !isUpdaterFullDownloadFallbackError(error)
+  ) {
+    captureElectronError(error, {
+      contexts: {
+        fn: { errorMessage: error.message, message, name: 'initUpdater' },
+      },
+    });
+  }
+};
+
 export async function initUpdater() {
   if (await pathExists(await getUpdatesDisabledPath())) return; // Skip updater if updates are disabled by user
   if (isPortable()) return; // Skip updater for portable version
@@ -182,7 +233,7 @@ export async function initUpdater() {
   autoUpdater.autoInstallOnAppQuit = !IS_TEST;
   autoUpdater.logger = updaterLogger;
 
-  autoUpdater.on('error', async (error, message) => {
+  autoUpdater.on('error', (error, message) => {
     // Whatever was in progress is no longer verifiably progressing - reset
     // regardless of whether this specific error gets reported/ignored below,
     // so a stale 'downloading' phase doesn't stick around forever and
@@ -195,25 +246,11 @@ export async function initUpdater() {
 
     if (IS_TEST) return;
 
-    if (await isDownloadErrorExpected()) return;
-
-    if (
-      message?.includes('read-only volume') ||
-      error?.message?.includes('read-only volume')
-    ) {
-      sendToWindow(mainWindowInfo.mainWindow, 'update-error');
-    }
-
-    if (
-      !isIgnoredUpdateError(error, message) &&
-      !isUpdaterFullDownloadFallbackError(error)
-    ) {
-      captureElectronError(error, {
-        contexts: {
-          fn: { errorMessage: error.message, message, name: 'initUpdater' },
-        },
+    reportUpdaterError(error, message).catch((reportError: unknown) => {
+      captureElectronError(reportError, {
+        contexts: { fn: { name: 'reportUpdaterError' } },
       });
-    }
+    });
   });
 
   autoUpdater.on('update-available', (info) => {
@@ -257,7 +294,7 @@ export async function initUpdater() {
     );
   });
 
-  triggerUpdateCheck();
+  void triggerUpdateCheck();
 }
 
 export const triggerUpdateCheck = async (attempt = 1) => {
@@ -275,7 +312,15 @@ export const triggerUpdateCheck = async (attempt = 1) => {
     if (online) {
       await autoUpdater.checkForUpdatesAndNotify();
     } else if (attempt < 5) {
-      setTimeout(() => triggerUpdateCheck(attempt + 1), 5000);
+      setTimeout(() => {
+        triggerUpdateCheck(attempt + 1).catch((retryError: unknown) => {
+          captureElectronError(retryError, {
+            contexts: {
+              fn: { attempt: attempt + 1, name: 'triggerUpdateCheck' },
+            },
+          });
+        });
+      }, 5000);
     }
   } catch (error) {
     if (!isIgnoredUpdateError(error as Error | string)) {

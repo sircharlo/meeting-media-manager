@@ -128,7 +128,7 @@ Taustamuusika funktsioon hõlmab:
 
 ### :stopwatch: Kas M³-s on koosolekute taimer? {#faq-meeting-timer}
 
-Jah. Kui see funktsioon on sisse lülitatud, võib M³ kuvada osalejate aja mõõtmiseks eraldi taimeri akna. See suudab aega üles- või allapoole loendada, näidata praegust kellaaega, kuvada koosoleku alguseni jäänud aega ning vajaduse korral näidata, kas koosolek kestab üle aja või on ajakavast ees.
+Jah. Kui see funktsioon on sisse lülitatud, võib M³ kuvada osalejate aja mõõtmiseks eraldi taimeri akna. See suudab aega üles- või allapoole loendada, näidata praegust kellaaega, kuvada koosoleku alguseni jäänud aega ning vajaduse korral näidata, kas koosolek kestab üle aja või on ajakavast ees. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
 Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
 
@@ -158,12 +158,12 @@ M³ lülitab OBS Studio-stseene automaatselt ümber järgmiste kriteeriumide alu
 
 - Meedia tüüp (video, pilt jne)
 - Sinu stseeni seadistus
-- Säte nagu "Lükka pildi esitamine edasi"
+- Settings like "Do not automatically share images"
 - Kas pärast meedia esitamist naasta eelmisele stseenile või mitte
 
-### :pause_button: Mida tähendab "Lükka pildi esitamine edasi" funktsioon? {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
 
-See funktsioon lükkab piltide jagamise OBS Studio-iga edasi, kuni sa need käsitsi käivitad. See on kasulik kui:
+This setting delays sharing images to OBS until you manually trigger them. See on kasulik kui:
 
 - Pilte näidatakse esmalt kohapeal viibivale kuulajaskonnale
 - On vaja suuremat kontrolli ajastuse üle
@@ -178,12 +178,16 @@ M³-l pole sisseehitatud salvestusseadet, kuid see aitab salvestamist juhtida ka
 
 ## Lisasätted {#faq-advanced-features}
 
-### :cloud: Kuidas töötab kausta jälgimine? {#faq-folder-monitoring}
+### :cloud: How does the shared folder work? {#faq-folder-monitoring}
 
-Kausta jälgimine lubab sul:
+If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
 
-1. Valida kaust, kus soovid uusi faile jälgida
-2. Importida automaatselt uued meediafailid, mis on sünkroniseeritud pilvesalvestusega, nagu Dropbox või OneDrive
+1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
+2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
+3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
+4. To add files for another day, create a folder for it, named the same way.
+
+When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
 
 ### :file_folder: Mis on meedia automaatne eksport? {#faq-media-export}
 
@@ -246,7 +250,7 @@ M³ mängib sinu arvutis heli sisaldavat meediat, kuid OBS Studio kasutamisel ei
 
 Proovi järgmisi jõudluse optimeerimisi:
 
-1. **Luba lisamälu**: lülita sisse täiendav vahemälu seadetes
+1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
 2. **Sulge muud rakendused**: Sulge mittevajalikud rakendused
 3. **Kontrolli kettaruumi**: veendu, et sul on piisavalt vaba kettaruumi
 4. **Vähenda resolutsiooni**: vähenda maksimaalset resolutsiooni seadet

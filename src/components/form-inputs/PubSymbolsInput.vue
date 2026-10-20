@@ -91,7 +91,7 @@ async function fetchPubList(category: string) {
   const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
     url,
     new URLSearchParams({
-      contentLanguageFilter: currentLangObject.value?.symbol || 'en',
+      contentLanguageFilter: currentLangObject.value?.symbol ?? 'en',
       pubFilter: '',
       sortBy: '1',
     }),

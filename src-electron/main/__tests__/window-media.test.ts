@@ -23,6 +23,9 @@ vi.mock('src-electron/main/screen', () => ({
   getWindowScreen: vi.fn(),
 }));
 
+const quitStatus = { isAppQuitting: false };
+vi.mock('src-electron/main/session', () => ({ quitStatus }));
+
 vi.mock('src-electron/main/utils', () => ({
   captureElectronError: vi.fn(),
   getIconPath: vi.fn(() => '/tmp/icon.png'),
@@ -438,5 +441,108 @@ describe('window-media placement helpers', () => {
 
     expect(getDisplayMatching).not.toHaveBeenCalled();
     expect(result).toBe(-1);
+  });
+});
+
+describe('media window renderer recovery', () => {
+  const makeMediaWindow = () =>
+    ({
+      isDestroyed: () => false,
+      webContents: { reload: vi.fn() },
+    }) as unknown as Electron.BrowserWindow & {
+      webContents: { reload: ReturnType<typeof vi.fn> };
+    };
+
+  const loadModule = async () => {
+    // The reload counter is module state: start every test from zero.
+    vi.resetModules();
+    const { __testables } = await import('../window/window-media');
+    const { sendToWindow } =
+      await import('src-electron/main/window/window-base');
+    const { captureElectronError } = await import('src-electron/main/utils');
+    return { __testables, captureElectronError, sendToWindow };
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    quitStatus.isAppQuitting = false;
+  });
+
+  it('stops playback in the main window, then reloads a media window whose renderer died, and reports why', async () => {
+    const { __testables, captureElectronError, sendToWindow } =
+      await loadModule();
+    const mediaWindow = makeMediaWindow();
+
+    __testables.handleMediaWindowRendererGone(mediaWindow, {
+      exitCode: 1,
+      reason: 'oom',
+    });
+
+    expect(sendToWindow).toHaveBeenCalledWith(
+      expect.anything(),
+      'media-window-renderer-gone',
+      { reloading: true },
+    );
+    expect(mediaWindow.webContents.reload).toHaveBeenCalledTimes(1);
+    // Main window first, so the reloaded page isn't handed the dead item.
+    expect(vi.mocked(sendToWindow).mock.invocationCallOrder[0]).toBeLessThan(
+      mediaWindow.webContents.reload.mock.invocationCallOrder[0] ?? 0,
+    );
+    expect(captureElectronError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Media window renderer process gone: oom',
+      }),
+      expect.anything(),
+    );
+  });
+
+  it('leaves reporting a plain crash to the app-wide handler, but still recovers', async () => {
+    const { __testables, captureElectronError } = await loadModule();
+    const mediaWindow = makeMediaWindow();
+
+    __testables.handleMediaWindowRendererGone(mediaWindow, {
+      exitCode: 1,
+      reason: 'crashed',
+    });
+
+    expect(captureElectronError).not.toHaveBeenCalled();
+    expect(mediaWindow.webContents.reload).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores a clean exit and anything that happens while quitting', async () => {
+    const { __testables, sendToWindow } = await loadModule();
+    const mediaWindow = makeMediaWindow();
+
+    __testables.handleMediaWindowRendererGone(mediaWindow, {
+      exitCode: 0,
+      reason: 'clean-exit',
+    });
+    quitStatus.isAppQuitting = true;
+    __testables.handleMediaWindowRendererGone(mediaWindow, {
+      exitCode: 1,
+      reason: 'killed',
+    });
+
+    expect(sendToWindow).not.toHaveBeenCalled();
+    expect(mediaWindow.webContents.reload).not.toHaveBeenCalled();
+  });
+
+  it('stops reloading a renderer that keeps dying, and says so', async () => {
+    const { __testables, sendToWindow } = await loadModule();
+    const mediaWindow = makeMediaWindow();
+
+    for (let i = 0; i < 4; i++) {
+      __testables.handleMediaWindowRendererGone(mediaWindow, {
+        exitCode: 1,
+        reason: 'abnormal-exit',
+      });
+    }
+
+    expect(mediaWindow.webContents.reload).toHaveBeenCalledTimes(3);
+    expect(sendToWindow).toHaveBeenLastCalledWith(
+      expect.anything(),
+      'media-window-renderer-gone',
+      { reloading: false },
+    );
   });
 });

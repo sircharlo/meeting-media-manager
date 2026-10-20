@@ -338,7 +338,7 @@ const migrateCongregationMedia = (
   }
 };
 
-export const moveAdditionalMediaMaps: MigrationFunction = async () => {
+export const moveAdditionalMediaMaps: MigrationFunction = () => {
   try {
     const jwStore = useJwStore();
 

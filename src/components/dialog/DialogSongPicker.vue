@@ -203,7 +203,7 @@ const addSong = async (songTrack: number) => {
     if (songTrack) {
       const songTrackItem: PublicationFetcher = {
         fileformat: 'MP4',
-        langwritten: currentSettings.value?.lang || 'E',
+        langwritten: currentSettings.value?.lang || 'E', // NOSONAR: '' means not set
         pub: currentSongbook.value?.pub,
         track: songTrack,
       };
@@ -213,7 +213,7 @@ const addSong = async (songTrack: number) => {
       ]);
 
       let files =
-        songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.['MP4'] ||
+        songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.['MP4'] || // NOSONAR: '' means not set
         [];
       let resolvedTitle = title;
 
@@ -274,7 +274,7 @@ const startSongUpdate = async () => {
 watchOnce(
   () => online.value && currentSettings.value && currentSongbook.value,
   () => {
-    startSongUpdate();
+    void startSongUpdate();
   },
   { immediate: true },
 );

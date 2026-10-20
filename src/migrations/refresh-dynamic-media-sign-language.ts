@@ -5,7 +5,7 @@ import { useJwStore } from 'stores/jw';
 
 import type { MigrationFunction } from './types';
 
-export const refreshDynamicMediaSignLanguage: MigrationFunction = async () => {
+export const refreshDynamicMediaSignLanguage: MigrationFunction = () => {
   try {
     // Refresh dynamic media for sign language congregations only, since
     // reference video filepaths were being saved incorrectly for them

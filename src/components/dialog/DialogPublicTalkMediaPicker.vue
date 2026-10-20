@@ -178,7 +178,7 @@ const populatePublicTalks = async () => {
 
 const browse = async () => {
   const s34FileSelection = await openFileDialog(true, 'jwpub');
-  if (!s34FileSelection || !s34FileSelection.filePaths.length) return;
+  if (!s34FileSelection?.filePaths.length) return;
   s34File.value = s34FileSelection.filePaths[0];
   if (!s34Dir.value) {
     await setS34Info();
@@ -189,7 +189,7 @@ const browse = async () => {
       const stagedS34File = await stageUserJwpubForRead(s34File.value);
       if (!stagedS34File) return;
       await unzipJwpub(stagedS34File, s34Dir.value, true);
-      populatePublicTalks();
+      void populatePublicTalks();
     } catch (error) {
       errorCatcher(error, {
         contexts: {
@@ -210,7 +210,7 @@ const dismissPopup = () => {
   emit('cancel');
 };
 
-const addPublicTalkMedia = async (publicTalkDocId: DocumentItem) => {
+const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
   if (!s34Db.value || !publicTalkDocId) return;
 
   // ✅ Always emit - parent handles section assignment
@@ -264,7 +264,13 @@ watch(
   (isOpen) => {
     if (isOpen) {
       // Initialize when dialog opens
-      initialize();
+      initialize().catch((error: unknown) => {
+        errorCatcher(error, {
+          contexts: {
+            fn: { name: 'DialogPublicTalkMediaPicker initialize' },
+          },
+        });
+      });
     } else {
       // Reset state when dialog closes
       resetDialogState();

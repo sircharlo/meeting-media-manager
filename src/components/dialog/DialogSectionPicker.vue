@@ -139,7 +139,7 @@ const getSectionLabel = (section: MediaSectionWithConfig) => {
     return t('imported-media');
   }
 
-  return config.label || t(config.uniqueId || '');
+  return config.label || t(config.uniqueId || ''); // NOSONAR: '' means not set
 };
 
 const selectSection = (section: MediaSectionIdentifier) => {

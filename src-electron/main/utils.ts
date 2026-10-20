@@ -1,3 +1,5 @@
+import type { PreloadErrorContext, SerializedPreloadError } from 'src/types';
+
 import { addBreadcrumb, captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
@@ -10,9 +12,13 @@ import {
   PRODUCT_NAME,
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
+import { wasUserWarnedAboutDiskSpace } from 'src-electron/main/disk-space';
 import { isUsablePath } from 'src-electron/main/fs';
 import { urlVariables } from 'src-electron/main/session';
-import { getNodeFsErrorFingerprint } from 'src/shared/filesystem-errors';
+import {
+  getNodeFsErrorFingerprint,
+  isDiskFullError,
+} from 'src/shared/filesystem-errors';
 import {
   isFetchNetworkError,
   NETWORK_ERROR_CODES,
@@ -115,7 +121,7 @@ export async function getSharedDataPath(): Promise<null | string> {
 
   if (PLATFORM === 'win32') {
     sharedPath = join(
-      process.env.ProgramData || String.raw`C:\ProgramData`,
+      process.env.ProgramData || String.raw`C:\ProgramData`, // NOSONAR: '' means not set
       PRODUCT_NAME || 'Meeting Media Manager',
     );
   } else if (PLATFORM === 'darwin') {
@@ -361,7 +367,7 @@ export function isIgnoredUpdateError(
 
     return ignoreErrorArray.every(
       (ignoreStr) =>
-        message?.includes(ignoreStr) ||
+        message?.includes(ignoreStr) || // NOSONAR: false checks the next condition
         errorMsg?.includes(ignoreStr) ||
         errorName?.includes(ignoreStr) ||
         (typeof errorCode === 'string' && errorCode.includes(ignoreStr)),
@@ -388,8 +394,8 @@ export function isUpdaterFullDownloadFallbackError(error: unknown) {
 
   return UPDATER_PARTIAL_DOWNLOAD_NETWORK_ERRORS.some(
     (errorText) =>
-      code?.includes(errorText) ||
-      message?.includes(errorText) ||
+      code?.includes(errorText) || // NOSONAR: false checks the next condition
+      message?.includes(errorText) || // NOSONAR: false checks the next condition
       name?.includes(errorText),
   );
 }
@@ -513,7 +519,7 @@ export const fetchJsonFromMainProcess = async <T>(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => {
     controller.abort();
-  }, options.timeout ?? 30000);
+  }, options.timeout ?? 30_000);
 
   try {
     const response = await fetch(
@@ -556,6 +562,12 @@ export const fetchJsonFromMainProcess = async <T>(
  * @param context The context to log with the error
  */
 export function captureElectronError(error: unknown, context?: CaptureCtx) {
+  // MMM-V2-3M8: a full disk is the user's to fix once they've been told.
+  if (isDiskFullError(error) && wasUserWarnedAboutDiskSpace()) {
+    log('Disk full (user already warned)', 'electron', 'warn', error);
+    return;
+  }
+
   if (IS_DEV) {
     log(error, 'electron', 'error');
     log('context', 'electron', 'warn', context);
@@ -571,6 +583,64 @@ export function captureElectronError(error: unknown, context?: CaptureCtx) {
         : context,
     );
   }
+}
+
+const optionalString = (value: unknown) =>
+  typeof value === 'string' ? value : undefined;
+
+const isPlainRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/**
+ * Rebuilds an Error from a preload report so Sentry parses the preload's
+ * own stack frames, not this function's.
+ * @param serialized The error as the preload serialized it
+ * @returns An Error carrying the original name, message, stack, code and syscall
+ */
+const rebuildPreloadError = (serialized: SerializedPreloadError) => {
+  const error = new Error(serialized.message);
+  error.name = serialized.name;
+  error.stack = serialized.stack ?? `${serialized.name}: ${serialized.message}`;
+  if (serialized.code) Object.assign(error, { code: serialized.code });
+  if (serialized.syscall) Object.assign(error, { syscall: serialized.syscall });
+  return error;
+};
+
+/**
+ * Reports an error the preload forwarded over the `capturePreloadError`
+ * channel. The preload's isolated world has no Sentry client of its own (see
+ * capturePreloadError in src-electron/preload/log.ts), so its errors are
+ * reported from here, with the same grouping and path scrubbing as any other
+ * main-process error.
+ * @param report The forwarded report (validated here, as IPC input)
+ */
+export function capturePreloadErrorReport(report: unknown) {
+  const error = isPlainRecord(report) ? report.error : undefined;
+  if (!isPlainRecord(error) || typeof error.message !== 'string') {
+    log('Ignored a malformed preload error report', 'electron', 'warn');
+    return;
+  }
+
+  const contexts =
+    isPlainRecord(report) && isPlainRecord(report.context)
+      ? report.context.contexts
+      : undefined;
+  const rebuilt = rebuildPreloadError({
+    code: optionalString(error.code),
+    message: error.message,
+    name: optionalString(error.name) || 'Error', // NOSONAR: '' means not set
+    stack: optionalString(error.stack),
+    syscall: optionalString(error.syscall),
+  });
+
+  captureElectronError(rebuilt, {
+    ...(isPlainRecord(contexts) && {
+      contexts: contexts as PreloadErrorContext['contexts'],
+    }),
+    // Overrides the SDK's 'browser' default so preload errors stay
+    // distinguishable from main-process ones in Sentry.
+    tags: { 'event.process': 'preload' },
+  });
 }
 
 /**

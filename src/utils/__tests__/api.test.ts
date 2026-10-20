@@ -263,6 +263,29 @@ describe('fetchRaw caching', () => {
       vi.useRealTimers();
     }
   });
+
+  it('caches the refetched response in place of an expired entry', async () => {
+    vi.useFakeTimers();
+    try {
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockImplementation(() =>
+          Promise.resolve(
+            new Response(JSON.stringify(jwLangs), { status: 200 }),
+          ),
+        );
+
+      await fetchRaw(handledUrl, { method: 'GET' }, true);
+      await vi.advanceTimersByTimeAsync(15 * 60 * 1000 + 1);
+      await fetchRaw(handledUrl, { method: 'GET' }, true);
+      const cached = await fetchRaw(handledUrl, { method: 'GET' }, true);
+
+      expect(fetchSpy).toHaveBeenCalledTimes(2);
+      await expect(cached.json()).resolves.toEqual(jwLangs);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
 
 describe('fetchRaw demo mode', () => {

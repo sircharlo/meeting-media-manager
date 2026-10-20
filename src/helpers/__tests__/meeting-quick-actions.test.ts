@@ -1,15 +1,24 @@
 import type { DateInfo } from 'src/types';
-import type { MediaPlayingState } from 'stores/current-state';
 
+import { createPinia, setActivePinia } from 'pinia';
+import { defaultSettings } from 'src/constants/settings';
 import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { describe, expect, it, vi } from 'vitest';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
+import {
+  type MediaPlayingState,
+  useCurrentStateStore,
+} from 'stores/current-state';
+import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type * as DateHelpers from '../date';
 
 import {
+  getTodaysChecklistMode,
   getTodaysScheduledMeetingEndDateTime,
   predictLastSongEndDateTime,
+  updateChecklistFromZoom,
 } from '../meeting-quick-actions';
 
 vi.mock('src/helpers/date', async (importOriginal) => {
@@ -100,6 +109,134 @@ describe('predictLastSongEndDateTime', () => {
   });
 });
 
+describe('predictLastSongEndDateTime with several visible items', () => {
+  const NOW = 1_000_000;
+
+  const item = (
+    uniqueId: string,
+    duration: number | undefined,
+    extra: Record<string, unknown> = {},
+  ) => ({ duration, type: 'media', uniqueId, ...extra });
+  const song = (uniqueId: string, duration?: number) =>
+    item(uniqueId, duration, { tag: { type: 'song' } });
+
+  const day = (...sections: Record<string, unknown>[][]): DateInfo =>
+    ({
+      date: new Date(),
+      mediaSections: sections.map((items) => ({ items })),
+      status: null,
+    }) as unknown as DateInfo;
+
+  const predict = (
+    dateInfo: DateInfo | null | undefined,
+    overrides: Partial<MediaPlayingState> = {},
+  ) =>
+    predictLastSongEndDateTime(
+      createPlayingState({
+        currentPosition: 10,
+        currentPositionUpdatedAt: NOW,
+        uniqueId: 'video',
+        ...overrides,
+      }),
+      dateInfo,
+      NOW,
+    )?.getTime();
+
+  // Opening song, a video, the last song, then a trailing image.
+  const meeting = () =>
+    day(
+      [song('opening', 180), item('video', 60)],
+      [item('talk', 120), song('last', 200), item('image', 0)],
+    );
+
+  it('returns null without a day or without visible items', () => {
+    expect(predict(undefined)).toBeUndefined();
+    expect(predict(day([item('video', 60, { hidden: true })]))).toBeUndefined();
+  });
+
+  it('returns null when no visible item is a song', () => {
+    expect(
+      predict(
+        day([item('video', 60), { ...song('hidden', 30), hidden: true }]),
+      ),
+    ).toBeUndefined();
+  });
+
+  it('adds up what is left of the current item and everything up to the end of the last song', () => {
+    // 50s left of the video, then the 120s talk and the 200s last song.
+    expect(predict(meeting())).toBe(NOW + (50 + 120 + 200) * 1000);
+  });
+
+  it('ignores items after the last song', () => {
+    expect(predict(meeting(), { uniqueId: 'last' })).toBe(
+      NOW + (200 - 10) * 1000,
+    );
+  });
+
+  it('returns null once playback has moved past the last song', () => {
+    expect(predict(meeting(), { uniqueId: 'image' })).toBeUndefined();
+  });
+
+  it('returns null when nothing has played yet or the item is not on the list', () => {
+    expect(predict(meeting(), { action: '' })).toBeUndefined();
+    expect(predict(meeting(), { uniqueId: '' })).toBeUndefined();
+    expect(predict(meeting(), { uniqueId: 'elsewhere' })).toBeUndefined();
+  });
+
+  it('returns null when the current item or one before the last song has no known duration', () => {
+    const unknownCurrent = day([item('video', 0), song('last', 200)]);
+    const unknownBetween = day([
+      item('video', 60),
+      item('talk', undefined),
+      song('last', 200),
+    ]);
+
+    expect(predict(unknownCurrent)).toBeUndefined();
+    expect(predict(unknownBetween)).toBeUndefined();
+  });
+
+  it('extrapolates a playing item at its playback rate, but not a paused one', () => {
+    const playing = predict(meeting(), {
+      currentPositionUpdatedAt: NOW - 4000,
+      playbackRate: 2,
+    });
+    const paused = predict(meeting(), {
+      action: 'pause',
+      currentPositionUpdatedAt: NOW - 4000,
+      playbackRate: 2,
+    });
+
+    // 4s of playing at 2x moved 8s further into the video.
+    expect(playing).toBe(NOW + (50 - 8 + 120 + 200) * 1000);
+    expect(paused).toBe(NOW + (50 + 120 + 200) * 1000);
+  });
+
+  it('treats a missing playback rate as 1x and a missing position as the start', () => {
+    expect(
+      predict(meeting(), {
+        currentPosition: undefined,
+        currentPositionUpdatedAt: NOW - 4000,
+        playbackRate: undefined,
+      } as unknown as Partial<MediaPlayingState>),
+    ).toBe(NOW + (60 - 4 + 120 + 200) * 1000);
+  });
+
+  it('does not extrapolate without a position report time, nor backwards from one in the future', () => {
+    expect(predict(meeting(), { currentPositionUpdatedAt: 0 })).toBe(
+      NOW + (50 + 120 + 200) * 1000,
+    );
+    expect(predict(meeting(), { currentPositionUpdatedAt: NOW + 5000 })).toBe(
+      NOW + (50 + 120 + 200) * 1000,
+    );
+  });
+
+  it('never counts a negative remainder for the current item', () => {
+    expect(predict(meeting(), { currentPosition: 90 })).toBe(
+      NOW + (120 + 200) * 1000,
+    );
+  });
+});
+
 describe('getTodaysScheduledMeetingEndDateTime', () => {
   it.each(['midweek', 'weekend'])(
     'adds 105 minutes for a %s meeting',
@@ -134,5 +271,164 @@ describe('getTodaysScheduledMeetingEndDateTime', () => {
         }),
       }),
     );
+  });
+});
+
+describe('the meeting checklist and the Zoom Meeting Manager', () => {
+  const meetingStart = new Date('2026-10-09T19:00:00');
+  const at = (time: string) => {
+    vi.setSystemTime(new Date(`2026-10-09T${time}`));
+  };
+
+  const BEFORE_ITEMS = [
+    'quick-actions-checklist-mute-zoom-participants',
+    'quick-actions-checklist-disallow-unmute-zoom-participants',
+    'quick-actions-checklist-unmute-kh-audio',
+    'quick-actions-checklist-activate-kh-video-zoom',
+  ];
+  const AFTER_ITEMS = [
+    'quick-actions-checklist-disconnect-zoom-audio',
+    'quick-actions-checklist-unmute-zoom-participants',
+    'quick-actions-checklist-allow-unmute-zoom-participants',
+    'quick-actions-checklist-mute-kh-audio',
+    'quick-actions-checklist-deactivate-kh-video',
+  ];
+
+  // What the in-meeting and before/after-meeting settings report, in order.
+  const applyMeetingSettings = () => {
+    updateChecklistFromZoom({ audioJoined: true });
+    updateChecklistFromZoom({ hostMicOn: true });
+    updateChecklistFromZoom({ hostVideoOn: true });
+    updateChecklistFromZoom({
+      participantsCanUnmute: false,
+      participantsMuted: true,
+    });
+  };
+  const applyPostMeetingSettings = () => {
+    updateChecklistFromZoom({ audioJoined: false, hostMicOn: false });
+    updateChecklistFromZoom({ hostVideoOn: false });
+    updateChecklistFromZoom({
+      participantsCanUnmute: true,
+      participantsMuted: true,
+    });
+    updateChecklistFromZoom({ participantsMuted: false });
+  };
+
+  const checked = (ids: string[]) => {
+    const quickActions = useMeetingQuickActionsStore();
+    return ids.filter((id) => quickActions.isItemChecked(id));
+  };
+
+  const getSettings = () => {
+    const settings = useCurrentStateStore().currentSettings;
+    if (!settings) throw new Error('No congregation settings');
+    return settings;
+  };
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    at('18:00:00');
+    setActivePinia(createPinia());
+    useCongregationSettingsStore().congregations['test-cong'] =
+      structuredClone(defaultSettings);
+    useCurrentStateStore().currentCongregation = 'test-cong';
+    vi.mocked(getTodaysMeetingStartDateTime).mockReturnValue(meetingStart);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.mocked(getTodaysMeetingStartDateTime).mockReset();
+  });
+
+  it('counts actions for the before-meeting checklist until 5 minutes into the meeting', () => {
+    expect(getTodaysChecklistMode(new Date('2026-10-09T19:04:59'))).toBe(
+      'before',
+    );
+    expect(getTodaysChecklistMode(new Date('2026-10-09T19:05:00'))).toBe(
+      'after',
+    );
+
+    vi.mocked(getTodaysMeetingStartDateTime).mockReturnValue(null);
+    expect(getTodaysChecklistMode(new Date('2026-10-09T19:00:00'))).toBeNull();
+  });
+
+  it('ticks the before-meeting items as the in-meeting settings are applied', () => {
+    at('18:59:00');
+    applyMeetingSettings();
+
+    expect(checked(BEFORE_ITEMS)).toEqual(BEFORE_ITEMS);
+    expect(checked(AFTER_ITEMS)).toEqual([]);
+    const quickActions = useMeetingQuickActionsStore();
+    expect(
+      BEFORE_ITEMS.every((id) => quickActions.isItemCheckedAutomatically(id)),
+    ).toBe(true);
+  });
+
+  it("doesn't count joining computer audio as the Kingdom Hall audio being on", () => {
+    at('18:59:00');
+    updateChecklistFromZoom({ audioJoined: true });
+    expect(checked(['quick-actions-checklist-unmute-kh-audio'])).toEqual([]);
+
+    updateChecklistFromZoom({ hostMicOn: true });
+    expect(checked(['quick-actions-checklist-unmute-kh-audio'])).toEqual([
+      'quick-actions-checklist-unmute-kh-audio',
+    ]);
+  });
+
+  it('unticks before-meeting items that a later action undid', () => {
+    applyMeetingSettings();
+    // Background music started again before the meeting.
+    applyPostMeetingSettings();
+
+    expect(checked(BEFORE_ITEMS)).toEqual([]);
+    expect(checked(AFTER_ITEMS)).toEqual([]);
+  });
+
+  it('ticks the after-meeting items only for what happens after the meeting', () => {
+    // Background music starting before the meeting...
+    at('17:50:00');
+    applyPostMeetingSettings();
+    at('18:59:00');
+    applyMeetingSettings();
+    expect(checked(AFTER_ITEMS)).toEqual([]);
+
+    // ...and again after it.
+    at('20:45:00');
+    applyPostMeetingSettings();
+
+    expect(checked(AFTER_ITEMS)).toEqual(AFTER_ITEMS);
+    // The before-meeting checklist still shows what was done before.
+    expect(checked(BEFORE_ITEMS)).toEqual(BEFORE_ITEMS);
+  });
+
+  it('leaves custom and hidden items alone', () => {
+    const settings = getSettings();
+    const videoItem = settings.meetingQuickActionsChecklistBefore.find(
+      (item) => item.id === 'quick-actions-checklist-activate-kh-video-zoom',
+    );
+    if (!videoItem) throw new Error('No video item');
+    videoItem.enabled = false;
+    settings.meetingQuickActionsChecklistBefore.push({
+      categoryId: 'quick-actions-category-kh-av',
+      enabled: true,
+      id: 'custom-item',
+      isDefault: false,
+      label: 'Turn on the stage lights',
+    });
+
+    applyMeetingSettings();
+
+    expect(checked([videoItem.id, 'custom-item'])).toEqual([]);
+  });
+
+  it('does nothing without a meeting today or with the quick actions off', () => {
+    vi.mocked(getTodaysMeetingStartDateTime).mockReturnValue(null);
+    applyMeetingSettings();
+    expect(checked(BEFORE_ITEMS)).toEqual([]);
+
+    vi.mocked(getTodaysMeetingStartDateTime).mockReturnValue(meetingStart);
+    getSettings().enableMeetingQuickActions = false;
+    applyMeetingSettings();
+    expect(checked(BEFORE_ITEMS)).toEqual([]);
   });
 });

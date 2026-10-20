@@ -43,12 +43,26 @@ const VALID_CATEGORIES = new Set(['phrasing', 'terminology']);
 // trailing sentence punctuation, unlike cleanup-crowdin.mjs's same-purpose
 // regex.
 const LINK_TARGET_RE = /@:\{?'?([^'}\s,.;:!?)]+)'?\}?/g;
-const PARAM_NAME_RE = /\{([\w]+)\}/g;
+const PARAM_NAME_RE = /\{(\w+)\}/g;
+
+// Plain UTF-16 code-unit order - the same order a bare .sort() gives -
+// spelled out so it reads as intended rather than as a forgotten comparator
+// (token lists are only compared as multisets, so this just keeps them in a
+// deterministic order; localeCompare would reorder them for no benefit).
+function compareCodeUnits(a, b) {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}
 
 function extractTokens(text) {
   return {
-    links: [...text.matchAll(LINK_TARGET_RE)].map((m) => m[1]).sort(),
-    params: [...text.matchAll(PARAM_NAME_RE)].map((m) => m[1]).sort(),
+    links: [...text.matchAll(LINK_TARGET_RE)]
+      .map((m) => m[1])
+      .sort(compareCodeUnits),
+    params: [...text.matchAll(PARAM_NAME_RE)]
+      .map((m) => m[1])
+      .sort(compareCodeUnits),
   };
 }
 
@@ -96,31 +110,27 @@ async function main() {
   ];
   const warnings = [];
 
-  for (const file of contentTypeFiles) {
-    const contentType = file.replace(/\.json$/, '');
-    const proposed = await readJson(resolve(proposedDir, file));
-    const corpus = await readJson(resolve(corpusDir, file));
-    const corpusIndex = new Map(corpus.map((r) => [r.key, r]));
+  // Content types read and write their own files, so they are validated
+  // concurrently; the summary and console output are still built in
+  // directory order.
+  const results = await Promise.all(
+    contentTypeFiles.map((file) =>
+      validateContentTypeFile(file, {
+        corpusDir,
+        proposedDir,
+        rejectedDir,
+        validatedDir,
+      }),
+    ),
+  );
 
-    const validated = [];
-    const rejected = [];
-    for (const record of proposed) {
-      const result = await validateOne(record, corpusIndex);
-      if (result.status === 'validated') validated.push(result);
-      else rejected.push(result);
-    }
-
-    await writeFile(
-      resolve(validatedDir, file),
-      `${JSON.stringify(validated, null, 2)}\n`,
-      'utf-8',
-    );
-    await writeFile(
-      resolve(rejectedDir, file),
-      `${JSON.stringify(rejected, null, 2)}\n`,
-      'utf-8',
-    );
-
+  for (const {
+    contentType,
+    corpus,
+    proposed,
+    rejected,
+    validated,
+  } of results) {
     const flagRate = corpus.length > 0 ? proposed.length / corpus.length : 0;
     summaryLines.push(
       `| ${contentType} | ${corpus.length} | ${proposed.length} | ${validated.length} | ${rejected.length} | ${(flagRate * 100).toFixed(1)}% |`,
@@ -227,6 +237,41 @@ function toMultiset(items) {
   const counts = new Map();
   for (const item of items) counts.set(item, (counts.get(item) ?? 0) + 1);
   return counts;
+}
+
+async function validateContentTypeFile(
+  file,
+  { corpusDir, proposedDir, rejectedDir, validatedDir },
+) {
+  const contentType = file.replace(/\.json$/, '');
+  const [proposed, corpus] = await Promise.all([
+    readJson(resolve(proposedDir, file)),
+    readJson(resolve(corpusDir, file)),
+  ]);
+  const corpusIndex = new Map(corpus.map((r) => [r.key, r]));
+
+  const validated = [];
+  const rejected = [];
+  for (const record of proposed) {
+    const result = await validateOne(record, corpusIndex); // NOSONAR: sequential - each record re-reads its locale file, avoid flooding the disk
+    if (result.status === 'validated') validated.push(result);
+    else rejected.push(result);
+  }
+
+  await Promise.all([
+    writeFile(
+      resolve(validatedDir, file),
+      `${JSON.stringify(validated, null, 2)}\n`,
+      'utf-8',
+    ),
+    writeFile(
+      resolve(rejectedDir, file),
+      `${JSON.stringify(rejected, null, 2)}\n`,
+      'utf-8',
+    ),
+  ]);
+
+  return { contentType, corpus, proposed, rejected, validated };
 }
 
 async function validateOne(record, corpusIndex) {

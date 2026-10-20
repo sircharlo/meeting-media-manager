@@ -23,14 +23,16 @@ const { obsConnectionState } = storeToRefs(obsState);
 // Define props
 const props = defineProps<{
   actions: SettingsItemAction[] | undefined;
+  disable?: boolean;
   settingId?: keyof SettingsValues;
 }>();
 
 const customDisabled = computed(() => {
   return (
+    props.disable ||
     (props.settingId !== 'obsEnable' &&
       props.settingId?.startsWith('obs') &&
-      obsConnectionState.value !== 'connected') ||
+      obsConnectionState.value !== 'connected') || // NOSONAR: false would render disabled="false"
     undefined
   );
 });

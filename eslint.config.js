@@ -215,6 +215,11 @@ export default defineConfigWithVueTs([
               message:
                 'Preload scripts should not import from main process. Preload runs in a separate context with limited Node.js access.',
             },
+            {
+              group: ['@sentry/*'],
+              message:
+                "The preload's isolated world has no Sentry client, so Sentry calls here are silently dropped. Use capturePreloadError from src-electron/preload/log, which forwards errors to the main process.",
+            },
           ],
         },
       ],
@@ -274,8 +279,7 @@ export default defineConfigWithVueTs([
                 },
                 VariableDeclarator(node) {
                   if (
-                    node.init &&
-                    node.init.type === 'CallExpression' &&
+                    node.init?.type === 'CallExpression' &&
                     node.init.callee.type === 'Identifier' &&
                     node.init.callee.name === 'createPinia' &&
                     node.id.type === 'Identifier'

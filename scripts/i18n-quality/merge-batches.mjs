@@ -30,28 +30,42 @@ async function main() {
   await fsx.ensureDir(proposedDir);
 
   const batchPrefix = `${contentType}-batch-`;
+  // Batch files are named without zero padding (batch-1 ... batch-10), so
+  // sort numerically to keep batch-10 after batch-9.
   const files = (await readdir(proposedDir))
     .filter((f) => f.startsWith(batchPrefix) && f.endsWith('.json'))
-    .sort();
-
-  let merged = [];
-  for (const file of files) {
-    const batch = await readJson(resolve(proposedDir, file));
-    merged = merged.concat(batch);
-    console.log(`  + ${file} (${batch.length} records)`);
-  }
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
   const outPath = resolve(proposedDir, `${contentType}.json`);
+  if (files.length === 0) {
+    // Never overwrite an existing merged file with an empty list.
+    if (await pathExists(outPath)) {
+      console.log(
+        `No batch files found matching ${batchPrefix}*.json; keeping existing ${outPath} as is`,
+      );
+    } else {
+      console.warn(
+        `No batch files found matching ${batchPrefix}*.json in ${proposedDir}`,
+      );
+    }
+    return;
+  }
+
+  // Batch files are independent local reads; merging and logging still
+  // happen in sorted file order.
+  const batches = await Promise.all(
+    files.map((file) => readJson(resolve(proposedDir, file))),
+  );
+  let merged = [];
+  batches.forEach((batch, index) => {
+    merged = merged.concat(batch);
+    console.log(`  + ${files[index]} (${batch.length} records)`);
+  });
+
   await writeFile(outPath, `${JSON.stringify(merged, null, 2)}\n`, 'utf-8');
   console.log(
     `\nMerged ${files.length} batch file(s), ${merged.length} total records -> ${outPath}`,
   );
-
-  if (files.length === 0 && !(await pathExists(outPath))) {
-    console.warn(
-      `No batch files found matching ${batchPrefix}*.json in ${proposedDir}`,
-    );
-  }
 }
 
 function parseArgs(argv) {

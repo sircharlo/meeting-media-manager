@@ -10,6 +10,7 @@ import {
 } from '@vueuse/core';
 import { i18n } from 'boot/i18n';
 import { defineStore, storeToRefs } from 'pinia';
+import { AUTO_START_WINDOW_HOURS } from 'src/constants/date';
 import { MEDIA_STOP_FADE_DURATION_SECONDS } from 'src/constants/media';
 import {
   enrichSongsWithMetadata,
@@ -25,6 +26,11 @@ import {
 import { getDemoSongLibrary } from 'src/helpers/demo-mode';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
+import {
+  autoLaunchZoomMeetingIfNeeded,
+  automateZoomMeetingSettings,
+  automateZoomPostMeetingSettings,
+} from 'src/helpers/zoom';
 import { log } from 'src/shared/vanilla';
 import { sleep } from 'src/utils/general';
 import { formatTime } from 'src/utils/time';
@@ -60,12 +66,21 @@ export const isIgnorablePlaybackError = (message?: null | string) =>
   !!message &&
   IGNORABLE_PLAYBACK_ERROR_MESSAGES.some((msg) => message.includes(msg));
 
-// How far ahead of the meeting start background music is allowed to
-// auto-start. Exported so the before-meeting quick-actions panel can show
-// itself over the same window - independent of whether autoStartMusic
-// itself is enabled, since the panel's usefulness (recording/checklist/
-// manual music controls) doesn't depend on that one setting.
-export const AUTO_START_WINDOW_HOURS = 1.25;
+// Kept in src/constants so the Zoom helpers, which this store imports, can
+// use it too; re-exported for the existing importers.
+export { AUTO_START_WINDOW_HOURS } from 'src/constants/date';
+
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : '';
+
+const getDebugTimestamp = () => new Date().toISOString();
+
+const getElapsedMilliseconds = (startedAt: number) => {
+  return Math.round(performance.now() - startedAt);
+};
+
+const formatClockTime = (date: Date) =>
+  date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
 export const useMusicStore = defineStore('music', () => {
   // The store can be instantiated outside component setup (e.g. the dev-menu
@@ -115,7 +130,13 @@ export const useMusicStore = defineStore('music', () => {
       musicPlayer.value = document.createElement('audio');
       musicPlayer.value.style.display = 'none';
       document.body.appendChild(musicPlayer.value);
-      musicPlayer.value.addEventListener('ended', handleMusicEnded);
+      musicPlayer.value.addEventListener('ended', () => {
+        handleMusicEnded().catch((error: unknown) => {
+          errorCatcher(error, {
+            contexts: { fn: { name: 'handleMusicEnded' } },
+          });
+        });
+      });
       musicPlayer.value.addEventListener('error', handleMusicPlayerError);
     }
     return musicPlayer.value;
@@ -163,12 +184,6 @@ export const useMusicStore = defineStore('music', () => {
   }>(null);
 
   // ─── Diagnostic logging ────────────────────────────────────────────────────
-  const getDebugTimestamp = () => new Date().toISOString();
-
-  const getElapsedMilliseconds = (startedAt: number) => {
-    return Math.round(performance.now() - startedAt);
-  };
-
   const logMusicStartTiming = (
     message: string,
     type: 'debug' | 'info' | 'warn' = 'debug',
@@ -293,9 +308,6 @@ export const useMusicStore = defineStore('music', () => {
 
   // ─── Clock-time computeds ──────────────────────────────────────────────────
 
-  const formatClockTime = (date: Date) =>
-    date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
   const meetingStartDateTime = computed(() =>
     isMeetingToday.value ? getTodaysMeetingStartDateTime(getClockDate()) : null,
   );
@@ -362,9 +374,56 @@ export const useMusicStore = defineStore('music', () => {
       autoStartRetryTimer = undefined;
       if (shouldAutoStart.value && musicState.value === 'music.error') {
         log('Retrying auto-start after cooldown', 'backgroundMusic', 'info');
-        playMusic('auto');
+        void playMusic('auto');
       }
     }, AUTO_START_ERROR_COOLDOWN_MS);
+  };
+
+  /**
+   * Puts a failed playMusic() start in the error state, reports it and
+   * schedules a retry - unless a newer start or a stop has replaced it.
+   */
+  const handleMusicStartFailure = (
+    error: unknown,
+    reason: string,
+    isStale: () => boolean,
+  ) => {
+    if (isStale()) return;
+    musicState.value = 'music.error';
+    logMusicStartTiming('start failed', 'warn');
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          lang: currentSettings.value?.lang,
+          name: 'playMusic',
+          pub: currentState.currentSongbook?.pub,
+          reason,
+        },
+      },
+    });
+    scheduleAutoStartRetry();
+  };
+
+  /**
+   * Seeks the first song to the offset that lines it up with the meeting
+   * time (0 outside a meeting day's queue).
+   * @returns The offset, in seconds.
+   */
+  const applyInitialStartOffset = () => {
+    const startTime = initialStartOffset.value;
+    if (startTime > 0) {
+      log(
+        `Starting ${startTime.toFixed(1)}s into first song to align with meeting time`,
+        'backgroundMusic',
+        'info',
+      );
+    }
+    const seekStartedAt = performance.now();
+    currentTime.value = startTime;
+    logMusicStartStep('initial currentTime applied', seekStartedAt, {
+      startTime,
+    });
+    return startTime;
   };
 
   async function playMusic(reason = 'manual') {
@@ -433,7 +492,7 @@ export const useMusicStore = defineStore('music', () => {
         });
 
         const enrichMetadataStartedAt = performance.now();
-        const enrichedSongs = await enrichSongsWithMetadata(rawSongLibrary);
+        const enrichedSongs = enrichSongsWithMetadata(rawSongLibrary);
         logMusicStartStep('song metadata enriched', enrichMetadataStartedAt, {
           songs: enrichedSongs.length,
         });
@@ -451,12 +510,14 @@ export const useMusicStore = defineStore('music', () => {
             selectedDateObject.value?.mediaSections ?? {},
           ).flatMap((section) => (section.items ?? []) as MediaItem[]);
 
-          const { queue, startOffsetSeconds } =
-            await prepareMeetingDaySongQueue(enrichedSongs, {
+          const { queue, startOffsetSeconds } = prepareMeetingDaySongQueue(
+            enrichedSongs,
+            {
               currentSettings: currentSettings.value,
               selectedDayMedia,
               timeBeforeMeetingStart,
-            });
+            },
+          );
 
           songList.value = queue;
           initialStartOffset.value = startOffsetSeconds;
@@ -503,9 +564,9 @@ export const useMusicStore = defineStore('music', () => {
           'song library empty, waiting for songs to appear',
           'debug',
         );
-        await sleep(SONG_LIBRARY_RETRY_INTERVAL_MS);
+        await sleep(SONG_LIBRARY_RETRY_INTERVAL_MS); // NOSONAR: sequential - polls until ready
         if (isStale()) return;
-        nextSongUrl = await buildQueueAndGetNextSongUrl();
+        nextSongUrl = await buildQueueAndGetNextSongUrl(); // NOSONAR: sequential - polls until ready
       }
 
       if (isStale()) return;
@@ -519,19 +580,7 @@ export const useMusicStore = defineStore('music', () => {
       musicPlayer.value?.load();
       logMusicStartStep('audio load call returned', loadStartedAt);
 
-      const startTime = initialStartOffset.value;
-      if (startTime > 0) {
-        log(
-          `Starting ${startTime.toFixed(1)}s into first song to align with meeting time`,
-          'backgroundMusic',
-          'info',
-        );
-      }
-      const seekStartedAt = performance.now();
-      currentTime.value = startTime;
-      logMusicStartStep('initial currentTime applied', seekStartedAt, {
-        startTime,
-      });
+      const startTime = applyInitialStartOffset();
 
       const playStartedAt = performance.now();
       logMusicStartTiming('audio play requested');
@@ -542,9 +591,7 @@ export const useMusicStore = defineStore('music', () => {
           return;
         }
       } catch (error) {
-        if (
-          isIgnorablePlaybackError(error instanceof Error ? error.message : '')
-        ) {
+        if (isIgnorablePlaybackError(getErrorMessage(error))) {
           logMusicStartTiming('audio play interrupted (ignorable)', 'debug');
           return;
         }
@@ -565,7 +612,7 @@ export const useMusicStore = defineStore('music', () => {
           'backgroundMusic',
           'info',
         );
-        stopMusic();
+        stopMusic(false, 5, true);
         return;
       }
 
@@ -574,24 +621,15 @@ export const useMusicStore = defineStore('music', () => {
       logMusicStartTiming('fade in starting', 'debug', { targetVolume });
       fadeToVolumeLevel(targetVolume, 1);
     } catch (error) {
-      if (isStale()) return;
-      musicState.value = 'music.error';
-      logMusicStartTiming('start failed', 'warn');
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            lang: currentSettings.value?.lang,
-            name: 'playMusic',
-            pub: currentState.currentSongbook?.pub,
-            reason,
-          },
-        },
-      });
-      scheduleAutoStartRetry();
+      handleMusicStartFailure(error, reason, isStale);
     }
   }
 
-  function stopMusic(manualStop = false, fadeSeconds = 5) {
+  function stopMusic(
+    manualStop = false,
+    fadeSeconds = 5,
+    automateMeetingSettings = false,
+  ) {
     musicStartId.value += 1;
     activeFadeId += 1;
     clearTimeout(autoStartRetryTimer);
@@ -606,6 +644,9 @@ export const useMusicStore = defineStore('music', () => {
       }
 
       musicState.value = 'music.stopping';
+      if (automateMeetingSettings) {
+        void automateZoomMeetingSettings();
+      }
       fadeToVolumeLevel(0, fadeSeconds);
     } catch (error) {
       errorCatcher(error);
@@ -726,7 +767,7 @@ export const useMusicStore = defineStore('music', () => {
         stopMusic();
       } else {
         log('Music started manually', 'backgroundMusic', 'info');
-        playMusic('manual-shortcut');
+        void playMusic('manual-shortcut');
       }
     } catch (error) {
       errorCatcher(error);
@@ -756,7 +797,7 @@ export const useMusicStore = defineStore('music', () => {
       if (action?.action === 'stop') {
         stopMusic(true, action.fadeSeconds ?? MEDIA_STOP_FADE_DURATION_SECONDS);
       } else if (action?.action === 'start') {
-        playMusic(action.reason ?? 'external');
+        void playMusic(action.reason ?? 'external');
       }
     },
   );
@@ -787,6 +828,8 @@ export const useMusicStore = defineStore('music', () => {
     () => musicPlaying.value && duration.value > 0,
     () => {
       musicState.value = 'music.playing';
+      void autoLaunchZoomMeetingIfNeeded(timeUntilMeeting.value);
+      void automateZoomPostMeetingSettings();
     },
   );
 
@@ -837,7 +880,7 @@ export const useMusicStore = defineStore('music', () => {
         state !== 'music.error'
       ) {
         log('Auto-starting background music', 'backgroundMusic', 'info');
-        playMusic('auto');
+        void playMusic('auto');
       }
     },
   );
@@ -850,7 +893,7 @@ export const useMusicStore = defineStore('music', () => {
         'backgroundMusic',
         'info',
       );
-      stopMusic();
+      stopMusic(false, 5, true);
     }
   });
 

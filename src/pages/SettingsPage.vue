@@ -4,7 +4,7 @@
     class="settings-filter-dialog"
     position="top"
     seamless
-    style="z-index: 1500 !important"
+    style="z-index: 1500"
     @show="focusSettingsFilter"
   >
     <q-card class="settings-filter-overlay">
@@ -346,6 +346,18 @@
                         <q-icon name="mmm-warning" size="xs" />
                         {{ t('obs-password-not-encrypted-warning') }}
                       </q-item-label>
+                      <q-item-label
+                        v-if="isSettingDisabled(settingId)"
+                        caption
+                        class="text-primary"
+                      >
+                        <q-icon name="mmm-info" size="xs" />
+                        {{
+                          t('setting-unavailable-while-enabled', {
+                            setting: getBlockingSettingNames(settingId),
+                          })
+                        }}
+                      </q-item-label>
                     </q-item-section>
                     <q-item-section
                       side
@@ -356,6 +368,7 @@
                     >
                       <BaseInput
                         v-model="currentSettings[settingId]"
+                        :disable="isSettingDisabled(settingId)"
                         :item="item"
                         :setting-id="settingId"
                         :style="
@@ -418,6 +431,7 @@ import {
   settingsGroups,
 } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getRendererPlatform } from 'src/helpers/fs';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import {
@@ -426,10 +440,12 @@ import {
   toggleBetaUpdates,
   updatesDisabled,
 } from 'src/utils/fs';
+import { getObsSceneField } from 'src/utils/obs-scene';
 import {
   exportProfileSettingsToFile,
   importProfileSettingsFromFile,
 } from 'src/utils/profile-settings';
+import { getBlockingSettings } from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
@@ -587,10 +603,11 @@ const { scenes } = storeToRefs(obsState);
 const settingsFormDynamic = useTemplateRef<QForm>('settingsFormDynamic');
 const settingsValid = ref(true);
 
-const settingsGroupsEntries = Object.entries(settingsGroups) as [
-  SettingsGroupKey,
-  SettingsGroup,
-][];
+const PLATFORM = getRendererPlatform();
+
+const settingsGroupsEntries = Object.entries(settingsGroups).filter(
+  ([, group]) => !group.platforms || group.platforms.includes(PLATFORM),
+) as [SettingsGroupKey, SettingsGroup][];
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
   keyof SettingsItems,
@@ -661,7 +678,7 @@ const visibleGroupKeys = computed(() =>
 // remembered per congregation profile (session-only, see current-state.ts).
 const activeGroup = ref<SettingsGroupKey>(
   (currentCongregation.value &&
-    activeSettingsGroup.value[currentCongregation.value]) ||
+    activeSettingsGroup.value[currentCongregation.value]) || // NOSONAR: '' means no congregation
     (settingsGroupsEntries[0]?.[0] as SettingsGroupKey),
 );
 
@@ -708,7 +725,9 @@ const getGroupRuns = (groupId: SettingsGroupKey): SettingRun[] => {
   for (const entry of filteredSettingsByGroup.value[groupId] || []) {
     const subgroup = entry[1].subgroup;
     const lastRun = runs.at(-1);
-    if (lastRun && lastRun.subgroup === subgroup) {
+    // Entries always carry a subgroup (getSettingSubgroups falls back to ''),
+    // so with no run yet this never matches undefined === undefined.
+    if (lastRun?.subgroup === subgroup) {
       lastRun.items.push(entry);
     } else {
       runs.push({ items: [entry], subgroup });
@@ -727,7 +746,7 @@ const selectGroup = (groupId: SettingsGroupKey) => {
 };
 
 const escapeRegExp = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+  value.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 
 const highlightSearchParts = (
   value: string,
@@ -799,12 +818,16 @@ const listOptionLabels = (item: SettingsItem): string[] => {
 
   if (item.list?.startsWith('obs')) {
     return (scenes.value ?? []).flatMap((scene) => [
-      scene.sceneName?.toString() ?? '',
-      scene.sceneUuid?.toString() ?? '',
+      getObsSceneField(scene, 'sceneName') ?? '',
+      getObsSceneField(scene, 'sceneUuid') ?? '',
     ]);
   }
 
   if (item.list === 'resolutions') return [...RESOLUTIONS];
+
+  if (item.list === 'timerCountdownDisplayFormats') {
+    return [t('digital'), t('analog'), t('analog-digital'), t('analog-clock')];
+  }
 
   if (item.list === 'timerDisplayFormats') {
     return [t('digital'), t('analog'), t('analog-digital')];
@@ -903,21 +926,17 @@ const importCurrentProfileSettings = async () => {
 };
 
 // Validation function
+// QForm.validate() never throws synchronously (it turns a throwing rule into
+// a failed validation), so the .catch below sees every failure.
 const validateSettingsLocal = () => {
-  try {
-    if (settingsFormDynamic.value) {
-      settingsFormDynamic.value
-        .validate()
-        .then((success: boolean) => {
-          settingsValid.value = success;
-        })
-        .catch(() => {
-          settingsValid.value = false;
-        });
-    }
-  } catch (error) {
-    errorCatcher(error);
-  }
+  settingsFormDynamic.value
+    ?.validate()
+    .then((success: boolean) => {
+      settingsValid.value = success;
+    })
+    .catch(() => {
+      settingsValid.value = false;
+    });
 };
 
 const shouldShowSetting = (
@@ -925,6 +944,7 @@ const shouldShowSetting = (
   settingId: keyof SettingsValues,
 ): boolean => {
   if (item.hidden) return false;
+  if (item.platforms && !item.platforms.includes(PLATFORM)) return false;
 
   // Pinyin settings are only available when congregation language is CHS
   if (
@@ -974,6 +994,14 @@ const shouldShowSetting = (
   }
 };
 
+const isSettingDisabled = (settingId: keyof SettingsValues): boolean =>
+  getBlockingSettings(currentSettings.value, settingId).length > 0;
+
+const getBlockingSettingNames = (settingId: keyof SettingsValues): string =>
+  getBlockingSettings(currentSettings.value, settingId)
+    .map((blocker) => t(blocker))
+    .join(', ');
+
 const settingParam = useRouteParams<keyof SettingsValues | undefined>(
   'setting',
 );
@@ -992,7 +1020,7 @@ const invalidSettingsLength = computed(() => invalidSettings.value?.length > 0);
 
 // Lifecycle hooks
 onMounted(() => {
-  updateJwLanguages(online.value);
+  void updateJwLanguages(online.value);
   validateSettingsLocal();
 
   const onlyInvalidId = invalidSettings.value[0];
@@ -1056,7 +1084,7 @@ watch(autoUpdateEnabled, (enabled) => {
   } else {
     dismissUpdatesDisabledWarning = createTemporaryNotification({
       message: t('updates-disabled-warning'),
-      timeout: 10000,
+      timeout: 10_000,
       type: 'info',
     });
   }
@@ -1073,7 +1101,7 @@ watch(betaUpdatesEnabled, (enabled) => {
     dismissBetaUpdatesWarning = createTemporaryNotification({
       caption: t('receive-beta-updates-explain'),
       message: t('beta-updates-are-dangerous'),
-      timeout: 10000,
+      timeout: 10_000,
       type: 'warning',
     });
   } else {

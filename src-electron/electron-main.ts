@@ -140,9 +140,19 @@ if (SENTRY_DSN) {
       });
       return scrubbedEvent;
     },
+    // @sentry/electron v8 replaced sendDefaultPii with dataCollection, whose
+    // defaults now have Sentry record the user's IP address on events,
+    // sessions and native crash reports. Keep the v7 behavior of not
+    // collecting it.
+    dataCollection: { userInfo: false },
     dsn: SENTRY_DSN,
     environment: SENTRY_ENVIRONMENT,
     release: sentryRelease,
+    // v8 streams spans by default, which turns every main-process request
+    // (each media download, update check, etc.) into its own root span sent
+    // to Sentry. Keep the v7 transaction-based model, where requests only
+    // produce spans inside an active transaction.
+    traceLifecycle: 'static',
     tracesSampleRate: 1,
   });
 } else {
@@ -261,25 +271,27 @@ function createApplicationMenu() {
       submenu: [
         {
           click: () => {
-            shell.openExternal(repository.url.replace('.git', ''));
+            openExternalAndCaptureErrors(repository.url.replace('.git', ''));
           },
           label: 'Learn More',
         },
         {
           click: () => {
-            shell.openExternal(homepage);
+            openExternalAndCaptureErrors(homepage);
           },
           label: 'Documentation',
         },
         {
           click: () => {
-            shell.openExternal(repository.url.replace('.git', '/discussions'));
+            openExternalAndCaptureErrors(
+              repository.url.replace('.git', '/discussions'),
+            );
           },
           label: 'Community Discussions',
         },
         {
           click: () => {
-            shell.openExternal(bugs);
+            openExternalAndCaptureErrors(bugs);
           },
           label: 'Search Issues',
         },
@@ -464,7 +476,7 @@ if (gotTheLock) {
     app.commandLine.appendSwitch('gtk-version', '3'); // Force GTK 3 on Linux (Workaround for https://github.com/electron/electron/issues/46538)
   }
 
-  if (!IS_DEMO_MODE) initUpdater();
+  if (!IS_DEMO_MODE) void initUpdater();
 
   initScreenListeners();
   createApplicationMenu();
@@ -482,7 +494,7 @@ if (gotTheLock) {
   // progress" staleness signal this app doesn't track today, deliberately
   // left as a separate, more speculative piece of work.
   powerMonitor.on('resume', () => {
-    void resumeAllDownloads('power-resume');
+    resumeAllDownloads('power-resume');
   });
 
   let videoCaptureCrashCount = 0;
@@ -518,59 +530,73 @@ if (gotTheLock) {
       }
     }
 
-    if (isGpuCrash) {
-      gpuCrashCount++;
-      log(`GPU crash count this session: ${gpuCrashCount}`, 'electron', 'log');
-
-      // Once Chromium exhausts its own GPU fallback modes it kills the whole
-      // browser process (IntentionallyCrashBrowserForUnusableGpuProcess), with
-      // no JS event and no chance for the user to see the disabled-hw-accel
-      // flag above take effect. Relaunch proactively on a second crash in the
-      // same session so the flag is picked up before Chromium can do that.
-      if (gpuCrashCount >= 2 && !hasRelaunchedForGpuCrash) {
-        hasRelaunchedForGpuCrash = true;
-        log(
-          'Repeated GPU crashes this session. Relaunching with hardware acceleration disabled.',
-          'electron',
-          'warn',
-        );
-        app.relaunch();
-        app.exit(0);
-        return;
-      }
-    }
+    if (isGpuCrash && countGpuCrash()) return;
 
     if (type === 'Video Capture' && details.reason === 'crashed') {
-      videoCaptureCrashCount++;
+      countVideoCaptureCrash(details);
+    }
+  }
+
+  /**
+   * Counts a GPU crash, relaunching the app on the second one this session.
+   * @returns Whether the app is relaunching
+   */
+  function countGpuCrash() {
+    gpuCrashCount++;
+    log(`GPU crash count this session: ${gpuCrashCount}`, 'electron', 'log');
+
+    // Once Chromium exhausts its own GPU fallback modes it kills the whole
+    // browser process (IntentionallyCrashBrowserForUnusableGpuProcess), with
+    // no JS event and no chance for the user to see the disabled-hw-accel
+    // flag above take effect. Relaunch proactively on a second crash in the
+    // same session so the flag is picked up before Chromium can do that.
+    if (gpuCrashCount >= 2 && !hasRelaunchedForGpuCrash) {
+      hasRelaunchedForGpuCrash = true;
       log(
-        `Video Capture crash count: ${videoCaptureCrashCount}`,
+        'Repeated GPU crashes this session. Relaunching with hardware acceleration disabled.',
         'electron',
-        'log',
+        'warn',
       );
+      app.relaunch();
+      app.exit(0);
+      return true;
+    }
+    return false;
+  }
 
-      if (videoCaptureCrashCount >= 2) {
-        captureElectronError(
-          new Error('Video Capture process crashed multiple times.'),
-          {
-            contexts: {
-              fn: {
-                crashCount: videoCaptureCrashCount,
-                details,
-                name: 'handleProcessCrash',
-              },
-            },
+  /**
+   * Counts a Video Capture crash, reporting it and telling the main window
+   * from the second one this session on.
+   */
+  function countVideoCaptureCrash(
+    details: Electron.Details | Electron.RenderProcessGoneDetails,
+  ) {
+    videoCaptureCrashCount++;
+    log(
+      `Video Capture crash count: ${videoCaptureCrashCount}`,
+      'electron',
+      'log',
+    );
+
+    if (videoCaptureCrashCount < 2) return;
+
+    captureElectronError(
+      new Error('Video Capture process crashed multiple times.'),
+      {
+        contexts: {
+          fn: {
+            crashCount: videoCaptureCrashCount,
+            details,
+            name: 'handleProcessCrash',
           },
-        );
+        },
+      },
+    );
 
-        if (
-          mainWindowInfo.mainWindow &&
-          !mainWindowInfo.mainWindow.isDestroyed()
-        ) {
-          mainWindowInfo.mainWindow.webContents.send(
-            'video-capture-crash-detected',
-          );
-        }
-      }
+    if (mainWindowInfo.mainWindow && !mainWindowInfo.mainWindow.isDestroyed()) {
+      mainWindowInfo.mainWindow.webContents.send(
+        'video-capture-crash-detected',
+      );
     }
   }
 
@@ -591,11 +617,11 @@ if (gotTheLock) {
   });
 
   // macOS default behavior is to keep the app running even after all windows are closed
-  app.on('window-all-closed', async () => {
+  app.on('window-all-closed', () => {
     // Set app quitting state
     setAppQuitting(true);
     try {
-      await cancelAllDownloads();
+      cancelAllDownloads();
     } catch (error) {
       captureElectronError(error, {
         contexts: { fn: { name: 'app.on(window-all-closed)' } },
@@ -684,6 +710,14 @@ function isHwAccelDisabled() {
     log('Failed to read hw accel setting:', 'electron', 'warn', error);
   }
   return false;
+}
+
+function openExternalAndCaptureErrors(url: string) {
+  shell.openExternal(url).catch((error: unknown) =>
+    captureElectronError(error, {
+      contexts: { fn: { name: 'openExternal', url } },
+    }),
+  );
 }
 
 function setHwAccelDisabled(disabled: boolean, temporary = false) {

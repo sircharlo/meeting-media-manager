@@ -22,14 +22,14 @@ export const getPubId = (
   if (
     pub === 'w' &&
     issue &&
-    Number.parseInt(issue.toString()) >= 20080101 &&
+    Number.parseInt(issue.toString()) >= 20_080_101 &&
     issue.toString().endsWith('01')
   ) {
     pub = 'wp';
   }
 
   return [
-    ...(full ? [docid, pub] : [pub || docid]),
+    ...(full ? [docid, pub] : [pub || docid]), // NOSONAR: '' means not set
     langwritten,
     issue,
     ...(full ? [track, fileformat] : []),
@@ -84,7 +84,7 @@ export function findBestResolution(
 
     let bestItem = mediaLinks[0];
     const parsedMaxRes = Number.parseInt(
-      maxRes?.replaceAll(/\D/g, '') || '720',
+      maxRes?.replaceAll(/\D/g, '') || '720', // NOSONAR: no digits uses the 720 default
     );
     mediaLinks.forEach((m) => {
       if (parsedMaxRes && getMediaResolution(m) <= parsedMaxRes) {

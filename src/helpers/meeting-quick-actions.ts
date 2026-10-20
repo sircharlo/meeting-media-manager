@@ -1,10 +1,20 @@
-import type { DateInfo, SettingsValues } from 'src/types';
-import type { MediaPlayingState } from 'stores/current-state';
+import type { DateInfo, MediaItem, SettingsValues } from 'src/types';
 
 import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { MEETING_SCHEDULED_DURATION_MINUTES } from 'src/helpers/meeting-parts';
 import { getVisibleMeetingItems } from 'src/utils/media';
+import {
+  type MediaPlayingState,
+  useCurrentStateStore,
+} from 'stores/current-state';
+import { useDemoModeStore } from 'stores/demo-mode';
+import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
+
+// How long the before-panel stays visible past the meeting's start time
+// before auto-dismissing, giving the operator a few minutes where unchecked
+// items still act as a visual reminder even after the meeting has begun.
+export const BEFORE_PANEL_GRACE_MS = 5 * 60 * 1000;
 
 /**
  * Returns the ids of the checklist items that are actually visible to the
@@ -36,6 +46,44 @@ export const getVisibleChecklistItemIds = (
 };
 
 /**
+ * Extrapolates the current playback position from its last report (same
+ * pattern as MediaPreview's getExpectedPosition).
+ */
+const getExtrapolatedPosition = (
+  playingState: MediaPlayingState,
+  now: number,
+) => {
+  let extrapolatedPosition = playingState.currentPosition || 0;
+  if (playingState.action === 'play' && playingState.currentPositionUpdatedAt) {
+    const elapsedSeconds = Math.max(
+      0,
+      (now - playingState.currentPositionUpdatedAt) / 1000,
+    );
+    extrapolatedPosition += elapsedSeconds * (playingState.playbackRate || 1);
+  }
+  return extrapolatedPosition;
+};
+
+/**
+ * Adds the durations of `items[from]` to `items[to]` (inclusive) to
+ * `seconds`, or returns null as soon as one of them has no known duration.
+ */
+const addDurationsUpTo = (
+  seconds: number,
+  items: MediaItem[],
+  from: number,
+  to: number,
+): null | number => {
+  let total = seconds;
+  for (let i = from; i <= to; i++) {
+    const itemDuration = items[i]?.duration;
+    if (!itemDuration) return null;
+    total += itemDuration;
+  }
+  return total;
+};
+
+/**
  * Predicts when the last visible meeting song will end, based on the current
  * media playback state and the visible items on the selected date. Returns:
  *
@@ -52,13 +100,9 @@ export const predictLastSongEndDateTime = (
   if (!visibleItems.length) return null;
 
   // Find the index of the last visible song
-  let lastSongIndex = -1;
-  for (let i = visibleItems.length - 1; i >= 0; i--) {
-    if (visibleItems[i]?.tag?.type === 'song') {
-      lastSongIndex = i;
-      break;
-    }
-  }
+  const lastSongIndex = visibleItems.findLastIndex(
+    (item) => item.tag?.type === 'song',
+  );
   if (lastSongIndex === -1) return null;
 
   // Duration unknown - can't predict an end time at all (an unset/zero
@@ -78,16 +122,7 @@ export const predictLastSongEndDateTime = (
   // Song already passed (current item is after the last song)
   if (currentIndex > lastSongIndex) return null;
 
-  // Extrapolate current position (same pattern as MediaPreview's
-  // getExpectedPosition)
-  let extrapolatedPosition = playingState.currentPosition || 0;
-  if (playingState.action === 'play' && playingState.currentPositionUpdatedAt) {
-    const elapsedSeconds = Math.max(
-      0,
-      (now - playingState.currentPositionUpdatedAt) / 1000,
-    );
-    extrapolatedPosition += elapsedSeconds * (playingState.playbackRate || 1);
-  }
+  const extrapolatedPosition = getExtrapolatedPosition(playingState, now);
 
   // Every item's duration between the current position and the last song
   // (inclusive) must be known - silently treating an unset duration as 0
@@ -97,15 +132,13 @@ export const predictLastSongEndDateTime = (
   const currentDuration = visibleItems[currentIndex]?.duration;
   if (!currentDuration) return null;
 
-  let remainingSeconds = Math.max(0, currentDuration - extrapolatedPosition);
-
-  if (currentIndex !== lastSongIndex) {
-    for (let i = currentIndex + 1; i <= lastSongIndex; i++) {
-      const itemDuration = visibleItems[i]?.duration;
-      if (!itemDuration) return null;
-      remainingSeconds += itemDuration;
-    }
-  }
+  const remainingSeconds = addDurationsUpTo(
+    Math.max(0, currentDuration - extrapolatedPosition),
+    visibleItems,
+    currentIndex + 1,
+    lastSongIndex,
+  );
+  if (remainingSeconds === null) return null;
 
   // Note: 0 is a valid, meaningful result here ("ending right now") now that
   // the duration-unknown case is ruled out above - it must NOT be treated as
@@ -137,5 +170,93 @@ export const getTodaysScheduledMeetingEndDateTime = (
       contexts: { fn: { name: 'getTodaysScheduledMeetingEndDateTime' } },
     });
     return null;
+  }
+};
+
+/**
+ * Which of today's checklists something done at `now` counts for: the
+ * before-meeting one until the before-panel's grace period after the start
+ * time is over, the after-meeting one from then on, or neither when today
+ * isn't a meeting day.
+ */
+export const getTodaysChecklistMode = (
+  now: Date,
+): 'after' | 'before' | null => {
+  const start = getTodaysMeetingStartDateTime(now);
+  if (!start) return null;
+  return now.getTime() < start.getTime() + BEFORE_PANEL_GRACE_MS
+    ? 'before'
+    : 'after';
+};
+
+/** What a Zoom Meeting Manager action has just left Zoom in. */
+export interface ZoomChecklistState {
+  audioJoined?: boolean;
+  /** Whether the Kingdom Hall's audio reaches Zoom (computer audio, unmuted). */
+  hostMicOn?: boolean;
+  hostVideoOn?: boolean;
+  participantsCanUnmute?: boolean;
+  /** Zoom only lets a host ask participants to unmute, which counts as false. */
+  participantsMuted?: boolean;
+}
+
+// The default checklist items the Zoom Meeting Manager does itself, each with
+// the Zoom state that means it's done.
+const ZOOM_CHECKLIST_ITEMS = new Map<
+  string,
+  [keyof ZoomChecklistState, boolean]
+>([
+  ['quick-actions-checklist-activate-kh-video-zoom', ['hostVideoOn', true]],
+  [
+    'quick-actions-checklist-allow-unmute-zoom-participants',
+    ['participantsCanUnmute', true],
+  ],
+  ['quick-actions-checklist-deactivate-kh-video', ['hostVideoOn', false]],
+  [
+    'quick-actions-checklist-disallow-unmute-zoom-participants',
+    ['participantsCanUnmute', false],
+  ],
+  ['quick-actions-checklist-disconnect-zoom-audio', ['audioJoined', false]],
+  ['quick-actions-checklist-mute-kh-audio', ['hostMicOn', false]],
+  [
+    'quick-actions-checklist-mute-zoom-participants',
+    ['participantsMuted', true],
+  ],
+  ['quick-actions-checklist-unmute-kh-audio', ['hostMicOn', true]],
+  [
+    'quick-actions-checklist-unmute-zoom-participants',
+    ['participantsMuted', false],
+  ],
+]);
+
+/**
+ * Ticks the checklist items a Zoom action just did, and unticks the ones it
+ * undid, on today's checklist for the part of the meeting it happened in -
+ * so the before-meeting checklist only ever reflects what M³ did in the
+ * run-up to the meeting, and the after-meeting one what it did afterwards.
+ */
+export const updateChecklistFromZoom = (state: ZoomChecklistState) => {
+  try {
+    const settings = useCurrentStateStore().currentSettings;
+    if (!settings?.enableMeetingQuickActions) return;
+
+    const demoMode = useDemoModeStore();
+    const now = new Date(demoMode.enabled ? demoMode.now : Date.now());
+    const mode = getTodaysChecklistMode(now);
+    if (!mode) return;
+
+    const quickActions = useMeetingQuickActionsStore();
+    for (const itemId of getVisibleChecklistItemIds(settings, mode)) {
+      const doneWhen = ZOOM_CHECKLIST_ITEMS.get(itemId);
+      if (!doneWhen) continue;
+      const [key, doneValue] = doneWhen;
+      const value = state[key];
+      if (value === undefined) continue;
+      quickActions.setItemCheckedAutomatically(itemId, value === doneValue);
+    }
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'updateChecklistFromZoom' } },
+    });
   }
 };

@@ -1,8 +1,14 @@
 <template>
+  <!-- Clicking the dimmed backdrop closes the fullscreen preview. It's a
+       button, but out of the tab order: any key closes the preview already
+       (see the keydown listener below). -->
   <transition name="media-preview-backdrop">
-    <div
+    <button
       v-if="modalOpen"
+      :aria-label="t('close')"
       class="media-preview-backdrop"
+      tabindex="-1"
+      type="button"
       @click="modalOpen = false"
     />
   </transition>
@@ -115,7 +121,7 @@
         {{ previewMode }}
       </button>
       <template v-if="!modalOpen">
-        <span
+        <!-- //NOSONAR: pointer-drag resize grips - @click.stop only keeps a grip click from toggling the preview, so there is no action to mirror for the keyboard --><span
           v-for="handle in resizeHandles"
           :key="handle"
           class="media-preview-resize-handle"
@@ -456,6 +462,12 @@ const CAPTURE_SLOW_DRAWS_BEFORE_DISABLE = 5;
 const CAPTURE_SLOW_DRAW_WINDOW_SECONDS = 10;
 const recentSlowCaptureDraws = ref<number[]>([]);
 const captureCanvasDisabled = ref(false);
+// Smoothing gets a fresh chance on every new capture stream, so a machine
+// that's too slow for it trips this again and again in one session. It's a
+// harmless downgrade (the preview keeps working), so one report per session
+// is plenty to see how many machines hit it (MMM-V2-3HZ). MediaPreview is
+// mounted once, in MainLayout, for the app's lifetime.
+let slowCaptureDrawsReported = false;
 
 const registerSlowCaptureDraw = () => {
   const now = Date.now();
@@ -478,6 +490,8 @@ const registerSlowCaptureDraw = () => {
       'mediaPreview',
       'warn',
     );
+    if (slowCaptureDrawsReported) return;
+    slowCaptureDrawsReported = true;
     errorCatcher(
       new Error(
         'Capture-mode canvas smoothing disabled after repeated slow draws',
@@ -550,8 +564,7 @@ const getFrameFit = (element: HTMLVideoElement, canvas: HTMLCanvasElement) => {
   const { height: canvasHeight, width: canvasWidth } = canvas;
 
   if (
-    lastFrameFit &&
-    lastFrameFit.sourceWidth === sourceWidth &&
+    lastFrameFit?.sourceWidth === sourceWidth &&
     lastFrameFit.sourceHeight === sourceHeight &&
     lastFrameFit.canvasWidth === canvasWidth &&
     lastFrameFit.canvasHeight === canvasHeight
@@ -628,22 +641,34 @@ onUnmounted(() => {
   stopCaptureStream();
 });
 
+const getPositionReportAgeSeconds = () => {
+  const updatedAt = mediaPlaying.value.currentPositionUpdatedAt;
+  return updatedAt ? Math.max(0, (Date.now() - updatedAt) / 1000) : 0;
+};
+
+// While media plays, the media window reports its position about every
+// 300ms. A report this old means it has stopped reporting (MMM-V2-3EY: a
+// 32-minute-old one after the media window's capture stream ended), so
+// there's no telling where real playback is.
+const POSITION_REPORT_STALE_SECONDS = 5;
+
 // mediaPlaying.currentPosition is only as fresh as the last throttled
 // current-time report from the media window. Extrapolate forward by however
 // long has elapsed since that report so the preview targets where real
 // playback actually is *now*, not where it was ~0.3s (report interval) plus
 // IPC round-trip ago - that gap is exactly what showed up as small,
 // consistent "exceeded acceptable drift" corrections right after starting.
+// Never past the end, though: a seek beyond the duration parks the video at
+// its end, the next play() restarts it from 0, and the following check
+// seeks past the end again, each pass counting as a drift correction.
 const getExpectedPosition = () => {
   const base = mediaPlaying.value.currentPosition || 0;
   if (mediaAction.value !== 'play') return base;
 
-  const updatedAt = mediaPlaying.value.currentPositionUpdatedAt;
-  if (!updatedAt) return base;
-
-  const elapsedSeconds = Math.max(0, (Date.now() - updatedAt) / 1000);
   const playbackRate = mediaPlaying.value.playbackRate || 1;
-  return base + elapsedSeconds * playbackRate;
+  const expected = base + getPositionReportAgeSeconds() * playbackRate;
+  const duration = mediaPlaying.value.duration;
+  return duration > 0 ? Math.min(expected, duration) : expected;
 };
 
 // The expected position is extrapolated from the last current-time report
@@ -658,11 +683,7 @@ const getExpectedPosition = () => {
 // 0.2s allowance scaled by rate.
 const getAcceptableDrift = () => {
   const playbackRate = mediaPlaying.value.playbackRate || 1;
-  const updatedAt = mediaPlaying.value.currentPositionUpdatedAt;
-  const reportAgeSeconds = updatedAt
-    ? Math.max(0, (Date.now() - updatedAt) / 1000)
-    : 0;
-  return 0.2 * playbackRate + reportAgeSeconds * playbackRate;
+  return 0.2 * playbackRate + getPositionReportAgeSeconds() * playbackRate;
 };
 
 const syncVideoTime = (element: HTMLVideoElement, acceptableDrift: number) => {
@@ -718,7 +739,7 @@ const fallBackPreviewToVideoMode = () => {
     caption: t('media-preview-fallback-explain'),
     group: 'media-preview-fallback',
     message: t('media-preview-fallback'),
-    timeout: 15000,
+    timeout: 15_000,
     type: 'warning',
   });
 };
@@ -754,7 +775,7 @@ const disablePreviewForPerformance = () => {
     caption: t('media-preview-auto-disabled-explain'),
     group: 'media-preview-auto-disabled',
     message: t('media-preview-auto-disabled'),
-    timeout: 15000,
+    timeout: 15_000,
     type: 'warning',
   });
 
@@ -791,6 +812,40 @@ const registerDriftCorrection = () => {
   }
 };
 
+// The media window isn't playing: pause the preview and show the same frame.
+const syncPausedPreview = (element: HTMLVideoElement) => {
+  if (!element.paused) {
+    // Only pause if the video preview is playing. If it is already paused,
+    // do nothing. This prevents the video from being paused unnecessarily.
+    log('Pausing video preview', 'mediaPreview');
+    element.pause();
+  }
+
+  // Sync the video time to the media window position. Uses the same
+  // rate- and report-age-aware tolerance as live playback: the media
+  // window reports a frame-quantized position, and at high playback
+  // speeds the preview's own seek rounding alone would otherwise
+  // re-trigger a visible jump on every report even when the scrub
+  // position hasn't meaningfully moved. (The return value is ignored
+  // here, so this never feeds the drift auto-disable counter.)
+  syncVideoTime(element, getAcceptableDrift());
+  if (isCanvasMode.value) drawCurrentFrame();
+};
+
+// Keeps the playing preview muted and at the media window's speed.
+const matchPreviewPlaybackSettings = (element: HTMLVideoElement) => {
+  if (!element.muted) {
+    log('Muting video preview', 'mediaPreview');
+    element.muted = true;
+  }
+
+  const playbackRate = mediaPlaying.value.playbackRate || 1;
+  if (element.playbackRate !== playbackRate) {
+    log('Syncing video preview playback speed', 'mediaPreview');
+    element.playbackRate = playbackRate;
+  }
+};
+
 const syncVideos = async () => {
   try {
     if (isCaptureMode.value) return;
@@ -809,34 +864,23 @@ const syncVideos = async () => {
     }
 
     if (mediaAction.value !== 'play') {
-      if (!element.paused) {
-        // Only pause if the video preview is playing. If it is already paused,
-        // do nothing. This prevents the video from being paused unnecessarily.
-        log('Pausing video preview', 'mediaPreview');
-        element.pause();
-      }
-
-      // Sync the video time to the media window position. Uses the same
-      // rate- and report-age-aware tolerance as live playback: the media
-      // window reports a frame-quantized position, and at high playback
-      // speeds the preview's own seek rounding alone would otherwise
-      // re-trigger a visible jump on every report even when the scrub
-      // position hasn't meaningfully moved. (The return value is ignored
-      // here, so this never feeds the drift auto-disable counter.)
-      syncVideoTime(element, getAcceptableDrift());
-      if (isCanvasMode.value) drawCurrentFrame();
+      syncPausedPreview(element);
       return;
     }
 
-    if (!element.muted) {
-      log('Muting video preview', 'mediaPreview');
-      element.muted = true;
-    }
+    matchPreviewPlaybackSettings(element);
 
-    const playbackRate = mediaPlaying.value.playbackRate || 1;
-    if (element.playbackRate !== playbackRate) {
-      log('Syncing video preview playback speed', 'mediaPreview');
-      element.playbackRate = playbackRate;
+    if (getPositionReportAgeSeconds() > POSITION_REPORT_STALE_SECONDS) {
+      // Chasing a position extrapolated from a long-dead report seeks to
+      // somewhere real playback isn't, so every check reads as drift and
+      // the preview turned itself off within milliseconds (MMM-V2-3EY).
+      // Hold still until the media window reports again.
+      log(
+        'Holding video preview until the media window reports its position again',
+        'mediaPreview',
+      );
+      if (!element.paused) element.pause();
+      return;
     }
 
     if (element.paused && !realPlaybackConfirmed.value) {
@@ -904,7 +948,7 @@ const toggleModal = () => {
   }
 
   modalOpen.value = !modalOpen.value;
-  syncVideos();
+  void syncVideos();
 };
 
 const previewPositionStyle = computed(() => {
@@ -1230,13 +1274,13 @@ useEventListener(globalThis, 'pointerup', () => {
 // the current one keeps running until its replacement is in hand, so nothing
 // goes black in between.
 const CAPTURE_REACQUIRE_RATIO = 1.25;
+const ratio = (a: number, b: number) => Math.max(a, b) / Math.min(a, b);
 const reacquireCaptureForViewport = () => {
   if (!activeCaptureStream || !activeCaptureBounds || !isCaptureMode.value) {
     return;
   }
 
   const next = getViewportCaptureSizeBounds();
-  const ratio = (a: number, b: number) => Math.max(a, b) / Math.min(a, b);
   if (
     ratio(next.maxWidth, activeCaptureBounds.maxWidth) <
       CAPTURE_REACQUIRE_RATIO &&
@@ -1254,8 +1298,8 @@ const debouncedReacquireCaptureForViewport = useDebounceFn(
 );
 
 useEventListener(globalThis, 'resize', () => {
-  debouncedNormalizeCollapsedPreviewAfterResize();
-  debouncedReacquireCaptureForViewport();
+  void debouncedNormalizeCollapsedPreviewAfterResize();
+  void debouncedReacquireCaptureForViewport();
 });
 
 useEventListener(
@@ -1305,7 +1349,7 @@ watch(
   (visible) => {
     closeModalWhenHidden();
     if (visible) {
-      syncVideos();
+      void syncVideos();
     }
   },
   { immediate: true },
@@ -1319,7 +1363,7 @@ watch(
     realPlaybackConfirmed.value,
   ],
   () => {
-    syncVideos();
+    void syncVideos();
   },
 );
 
@@ -1333,9 +1377,9 @@ watch(
     // case anyway - see the mediaAction.value !== 'play' branch above - so
     // calling it directly here doesn't affect the auto-disable count either.)
     if (mediaAction.value !== 'play') {
-      syncVideos();
+      void syncVideos();
     } else {
-      throttledSyncVideos();
+      void throttledSyncVideos();
     }
   },
 );
@@ -1472,6 +1516,10 @@ onMounted(() => {
   height: 100dvh;
   z-index: 10000;
   cursor: zoom-out;
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
 }

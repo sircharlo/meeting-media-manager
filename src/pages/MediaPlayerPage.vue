@@ -191,6 +191,8 @@ import {
 } from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
+import { sleep } from 'src/utils/general';
+import { mmmIconMapFn } from 'src/utils/icon-map';
 import {
   isAudio,
   isExpectedMediaAccessError,
@@ -218,23 +220,7 @@ const { getScreenAccessStatus, PLATFORM } = globalThis.electronApi;
 
 const $q = useQuasar();
 
-$q.iconMapFn = (iconName) => {
-  if (iconName.startsWith('chevron_')) {
-    iconName = iconName.replace('chevron_', 'mmm-');
-  } else if (iconName.startsWith('keyboard_arrow_')) {
-    iconName = iconName.replace('keyboard_arrow_', 'mmm-');
-  } else if (iconName.startsWith('arrow_drop_')) {
-    iconName = 'mmm-dropdown-arrow';
-  } else if (iconName === 'cancel' || iconName === 'close') {
-    iconName = 'clear';
-  }
-  if (!iconName.startsWith('mmm-')) {
-    iconName = 'mmm-' + iconName;
-  }
-  return {
-    cls: iconName,
-  };
-};
+$q.iconMapFn = mmmIconMapFn;
 
 // UX-11 (full-audit-2026-09-05.md): clearing an element's src as part of
 // deliberate teardown below can fire a spurious `error` event on some
@@ -449,9 +435,9 @@ const applyZoomPanState = (zoomPanState: Record<string, number>) => {
 
     if (width > 0 && height > 0) {
       // Apply zoom and pan using CSS transforms for smooth animation
-      const scale = zoomPanState.scale || 1;
-      const x = (zoomPanState.x || 0) * width;
-      const y = (zoomPanState.y || 0) * height;
+      const scale = zoomPanState.scale ?? 1;
+      const x = (zoomPanState.x || 0) * width; // NOSONAR: NaN falls back to 0
+      const y = (zoomPanState.y || 0) * height; // NOSONAR: NaN falls back to 0
 
       if (skipZoomPanAnimation.value) {
         // Apply instantly without animation
@@ -502,11 +488,11 @@ const { post: postLastEndTimestamp } = useBroadcastChannel<number, number>({
 });
 
 const customMin = computed(() => {
-  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.min || 0;
+  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.min || 0; // NOSONAR: '' is not valid JSON
 });
 
 const customMax = computed(() => {
-  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max;
+  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max; // NOSONAR: '' is not valid JSON
 });
 
 type DisplayLayerRef = typeof displayLayer1;
@@ -757,7 +743,8 @@ const handleMediaError = (layer: 1 | 2) => {
   // it must not be treated as end-of-media either.
   if (!layerRef.value.url) return;
 
-  errorCatcher(new Error(element.error?.message || 'Media playback error'), {
+  const errorMessage = element.error?.message || 'Media playback error'; // NOSONAR: '' means no message
+  errorCatcher(new Error(errorMessage), {
     contexts: {
       fn: {
         code: element.error?.code,
@@ -779,7 +766,7 @@ const handleMediaError = (layer: 1 | 2) => {
 const handleVideoPause = () => {
   log('⏸️ [handleVideoPause] Video paused', 'mediaPlayer', 'log');
   try {
-    postCurrentTime(currentMediaElement.value?.currentTime || 0);
+    postCurrentTime(currentMediaElement.value?.currentTime ?? 0);
   } catch (e) {
     errorCatcher(e);
   }
@@ -856,7 +843,7 @@ const playMedia = () => {
         return;
       }
 
-      const currentTime = currentMediaElement.value?.currentTime || 0;
+      const currentTime = currentMediaElement.value?.currentTime ?? 0;
 
       if (Date.now() - lastUpdate > updateInterval) {
         // Throttle time updates
@@ -983,7 +970,7 @@ const crossfadeToNewMedia = (newUrl: string) => {
     // Wait for the new image to actually be decoded before starting the
     // crossfade, so the outgoing layer never fades out ahead of the
     // incoming one having pixels to show.
-    waitForImageDecode(newUrl).then(() => {
+    void waitForImageDecode(newUrl).then(() => {
       setTimeout(startFadeIn, 50);
     });
   } else {
@@ -1119,9 +1106,7 @@ const ensureElementReady = async (
 ): Promise<boolean> => {
   let timeouts = 0;
   while (!getter()) {
-    await new Promise((resolve) => {
-      setTimeout(resolve, 100);
-    });
+    await sleep(100); // NOSONAR: sequential - polls until ready
     if (++timeouts > maxRetries) {
       return false;
     }
@@ -1142,17 +1127,44 @@ const notifyAccessDenied = (isCamera: boolean) => {
     ),
     message: t(isCamera ? 'camera-access-required' : 'screen-access-required'),
     noClose: true,
-    timeout: 10000,
+    timeout: 10_000,
     type: 'negative',
   });
 };
 
-const requestStream = async (isCamera: boolean, deviceId?: string) => {
-  const checkAccess = async () => {
-    const status = await getScreenAccessStatus();
-    return status === 'granted';
-  };
+const checkAccess = async () => {
+  const status = await getScreenAccessStatus();
+  return status === 'granted';
+};
 
+// Logs an expected failure of requestStream's permission-prompt probe and
+// reports any other.
+const reportMediaAccessProbeError = (error: unknown, isCamera: boolean) => {
+  if (isExpectedMediaAccessError(error)) {
+    log('Media access probe failed', 'mediaPlayer', 'warn', error);
+    return;
+  }
+  errorCatcher(error, {
+    contexts: {
+      fn: {
+        name: isCamera ? 'requestCameraAccess' : 'requestDisplayAccess',
+      },
+    },
+  });
+};
+
+// Reports a failure to get requestStream's stream, except a busy/denied
+// camera.
+const reportStreamError = (error: unknown, isCamera: boolean) => {
+  if (isCamera && isExpectedMediaAccessError(error)) return;
+  errorCatcher(error, {
+    contexts: {
+      fn: { name: isCamera ? 'streamCamera' : 'streamDisplay' },
+    },
+  });
+};
+
+const requestStream = async (isCamera: boolean, deviceId?: string) => {
   const getMedia = () => {
     if (isCamera) {
       return navigator.mediaDevices.getUserMedia({
@@ -1176,17 +1188,7 @@ const requestStream = async (isCamera: boolean, deviceId?: string) => {
         // it failing with a denied/unavailable source is an expected
         // outcome, and the checkAccess() below tells the user
         // (MMM-V2-3J5).
-        if (isExpectedMediaAccessError(e)) {
-          log('Media access probe failed', 'mediaPlayer', 'warn', e);
-        } else {
-          errorCatcher(e, {
-            contexts: {
-              fn: {
-                name: isCamera ? 'requestCameraAccess' : 'requestDisplayAccess',
-              },
-            },
-          });
-        }
+        reportMediaAccessProbeError(e, isCamera);
       }
 
       if (!(await checkAccess())) {
@@ -1199,13 +1201,7 @@ const requestStream = async (isCamera: boolean, deviceId?: string) => {
   } catch (e) {
     // The camera path tells the user below; a busy/denied camera is
     // environmental, not a bug.
-    if (!(isCamera && isExpectedMediaAccessError(e))) {
-      errorCatcher(e, {
-        contexts: {
-          fn: { name: isCamera ? 'streamCamera' : 'streamDisplay' },
-        },
-      });
-    }
+    reportStreamError(e, isCamera);
     if (isCamera) notifyAccessDenied(isCamera);
     return null;
   }
@@ -1518,9 +1514,7 @@ watchImmediate(
     // Wait for the camera element to be available in the DOM (v-if)
     let retries = 0;
     while (!cameraElement.value && retries < 60) {
-      await new Promise((resolve) => {
-        setTimeout(resolve, 50);
-      });
+      await sleep(50); // NOSONAR: sequential - polls until ready
       retries++;
     }
 
@@ -1610,7 +1604,7 @@ watchImmediate(
         newValues,
       );
       postGetCurrentState(Date.now().toString());
-      loadFonts();
+      void loadFonts();
     }
   },
 );
@@ -1664,11 +1658,6 @@ onBeforeUnmount(() => {
   z-index: 2;
 }
 
-.display-layer.is-audio {
-  background-color: green;
-  opacity: 0 !important;
-}
-
 .display-layer {
   position: absolute;
   top: 0;
@@ -1684,5 +1673,12 @@ onBeforeUnmount(() => {
 .display-layer.is-live {
   opacity: 1;
   z-index: 3;
+}
+
+/* Kept after .is-live (same specificity) so an audio layer stays invisible
+   even while it's the live one. */
+.display-layer.is-audio {
+  background-color: green;
+  opacity: 0;
 }
 </style>

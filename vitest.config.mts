@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
-import pkg from './package.json';
+import pkg from './package.json' with { type: 'json' };
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -53,6 +53,17 @@ export default defineConfig({
         ],
         test: {
           environment: 'happy-dom',
+          // msw 3 intercepts below `fetch` (at the socket level), so requests
+          // now go through happy-dom's own fetch first, which sends a CORS
+          // preflight (OPTIONS) for every cross-origin URL - msw has no
+          // handler for it, so the mocked GET handlers would never answer.
+          // The Electron app relaxes CORS for its trusted domains anyway
+          // (see src-electron/main/session.ts).
+          environmentOptions: {
+            happyDOM: {
+              settings: { fetch: { disableSameOriginPolicy: true } },
+            },
+          },
           include: ['src/**/*.test.ts'],
           name: 'quasar',
           server: { deps: { inline: ['fs-extra', 'graceful-fs'] } },
@@ -82,6 +93,6 @@ export default defineConfig({
         },
       },
     ],
-    testTimeout: 15000,
+    testTimeout: 15_000,
   },
 });

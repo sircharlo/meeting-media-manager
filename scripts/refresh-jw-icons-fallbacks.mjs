@@ -15,7 +15,11 @@ import {
 // no congregation-specific one applies.
 const BASE_URL = 'jw.org';
 
-const SOURCE_URL_COMMENT_PATTERN = /\/\/ Source font: (\S+).*\n/;
+// The URL, then optionally a (non-line-terminator) whitespace and the rest of
+// the line: starting the tail with whitespace keeps it from overlapping the
+// URL run, which made the old `(\S+).*\n` backtrack on a line with no `\n`.
+const SOURCE_URL_COMMENT_PATTERN =
+  /\/\/ Source font: (\S+)(?:[^\S\n\r\u2028\u2029].*)?\n/; // NOSONAR: not duplicates - in JS, \s includes U+2028/U+2029, so \S excludes them and they must be listed to keep them out of the tail
 
 // This mirrors the CSS-scraping half of useJwStore().updateJwIconsUrl() in
 // src/stores/jw.ts, which the app calls when its cached jw-icons font URL
@@ -34,9 +38,9 @@ const discoverJwIconsFontUrl = async () => {
 
   for (const cssUrl of cssUrls) {
     try {
-      const cssResponse = await fetch(cssUrl);
+      const cssResponse = await fetch(cssUrl); // NOSONAR: sequential - stops at first match
       if (!cssResponse.ok) continue;
-      const fontUrl = findIconUrlInCss(await cssResponse.text(), cssUrl);
+      const fontUrl = findIconUrlInCss(await cssResponse.text(), cssUrl); // NOSONAR: sequential - stops at first match
       if (fontUrl) return fontUrl;
     } catch {
       // Try the next stylesheet.

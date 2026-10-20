@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const keyTapMock = vi.fn();
 
-vi.mock('@jitsi/robotjs', () => ({
+vi.mock('robotjs', () => ({
   default: {
     keyTap: (...args: unknown[]) => keyTapMock(...args),
   },

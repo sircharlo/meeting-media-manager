@@ -10,6 +10,13 @@ import type {
 } from 'src/types/electron';
 import type { UpdaterState, UpdateVersionInfo } from 'src/types/general';
 import type {
+  ZoomCommand,
+  ZoomCommandResult,
+  ZoomHelperStartResult,
+  ZoomTestParticipantsRequest,
+  ZoomTestParticipantsResponse,
+} from 'src/types/zoom';
+import type {
   basename,
   changeExt,
   dirname,
@@ -19,6 +26,8 @@ import type {
   parse,
   resolve,
 } from 'upath';
+
+import type { TimerData } from './timer';
 
 export interface ConversionOptions {
   /**
@@ -127,6 +136,14 @@ export interface ElectronApi {
     query: string,
     params?: (null | number | string)[],
   ) => Promise<T[]>;
+  /**
+   * Renders HTML to a PDF (through Chromium, so every script and writing
+   * direction comes out right) and lets the user choose where to save it.
+   */
+  exportHtmlToPdf: (
+    html: string,
+    defaultFileName: string,
+  ) => Promise<ExportPdfResult>;
   extname: typeof extname;
   extractNestedZipEntry: (
     input: string,
@@ -201,8 +218,21 @@ export interface ElectronApi {
    * user rather than silently accepting that.
    */
   isSecretEncryptionAvailableSync: () => boolean;
+  /**
+   * Whether the SQLite file at `dbPath` is damaged beyond reading ("file is
+   * not a database" / "database disk image is malformed"), so it has to be
+   * replaced. A locked, missing or otherwise unavailable file is not
+   * corruption and resolves `false`.
+   */
+  isSqliteDbCorrupt: (dbPath: string) => Promise<boolean>;
   isUsablePath: (path: string) => Promise<boolean>;
   join: typeof join;
+  launchZoomMeeting: (meetingId: string) => void;
+  /**
+   * Tells the main process the user has seen a disk space warning, so it
+   * stops reporting disk-full errors.
+   */
+  markUserWarnedAboutDiskSpace: () => void;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
@@ -222,7 +252,9 @@ export interface ElectronApi {
   onDownloadCompleted: (
     callback: (args: { filePath: string; id: string }) => void,
   ) => void;
-  onDownloadError: (callback: (args: { id: string }) => void) => void;
+  onDownloadError: (
+    callback: (args: { diskFull: boolean; id: string }) => void,
+  ) => void;
   onDownloadProgress: (
     callback: (args: {
       bytesReceived: number;
@@ -246,10 +278,14 @@ export interface ElectronApi {
       msg: string;
     }) => void,
   ) => void;
+  onMediaWindowRendererGone: (
+    callback: (args: { reloading: boolean }) => void,
+  ) => void;
   onPathProbeNetworkWarning: (callback: () => void) => void;
   onShortcut: (
     callback: (args: { shortcut: keyof SettingsValues }) => void,
   ) => void;
+  onTimerWindowClosed: (callback: () => void) => () => void;
   onUpdateAvailable: (callback: (args: UpdateVersionInfo) => void) => void;
   onUpdateDownloaded: (callback: (args: UpdateVersionInfo) => void) => void;
   onUpdateDownloadProgress: (
@@ -326,6 +362,7 @@ export interface ElectronApi {
   relaunchApp: () => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   resolve: typeof resolve;
+  restartZoomHelper: () => Promise<ZoomHelperStartResult>;
   resumeAllDownloads: () => void;
   saveFileDialog: (
     defaultPath: string,
@@ -356,6 +393,16 @@ export interface ElectronApi {
   setHardwareAcceleration: (disabled: boolean) => void;
   setPathProbeNotificationPaths: (paths: string[]) => void;
   showFileOnWindows: (filePath: string) => Promise<void>;
+  /** Serves the read-only timer page on the local network. */
+  startTimerRemote: (port: number) => Promise<TimerRemoteStatus>;
+  startZoomHelper: () => Promise<ZoomHelperStartResult>;
+  stopTimerRemote: () => void;
+  stopZoomHelper: () => void;
+  /** The timer page's few words, in M3's language. */
+  timerRemoteText: (text: Record<string, string>) => void;
+  /** The latest timer state, pushed to every open timer page. */
+  timerRemoteUpdate: (data: TimerData) => void;
+  toggleAuthorizedClose: (authorized: boolean) => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
   toggleTimerWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
@@ -367,6 +414,15 @@ export interface ElectronApi {
     opts?: UnzipOptions,
   ) => Promise<UnzipResult[]>;
   watchFolder: (path: string) => Promise<void>;
+  /** Runs one complete Zoom action through the Zoom helper. */
+  zoomCommand: (command: ZoomCommand) => Promise<ZoomCommandResult>;
+  /**
+   * Development builds only: test participants joining the Zoom test
+   * meeting from .env.zoom-test (see scripts/zoom-live/participants.mjs).
+   */
+  zoomTestParticipants: (
+    request: ZoomTestParticipantsRequest,
+  ) => Promise<ZoomTestParticipantsResponse>;
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
 
@@ -398,16 +454,11 @@ export type ElectronFsApi = Pick<
   readFile: {
     (
       path: string,
-      options?:
-        | null
-        | undefined
-        | { encoding?: null | undefined; flag?: string | undefined },
+      options?: null | undefined | { encoding?: null; flag?: string },
     ): Promise<Buffer>;
     (
       path: string,
-      options:
-        | BufferEncoding
-        | { encoding: BufferEncoding; flag?: string | undefined },
+      options: BufferEncoding | { encoding: BufferEncoding; flag?: string },
     ): Promise<string>;
     (
       path: string,
@@ -416,8 +467,8 @@ export type ElectronFsApi = Pick<
         | string
         | undefined
         | {
-            encoding?: BufferEncoding | null | undefined;
-            flag?: string | undefined;
+            encoding?: BufferEncoding | null;
+            flag?: string;
           },
     ): Promise<Buffer | string>;
   };
@@ -428,9 +479,9 @@ export type ElectronFsApi = Pick<
       | string
       | undefined
       | {
-          encoding?: string | undefined;
-          flag?: string | undefined;
-          throws?: boolean | undefined;
+          encoding?: string;
+          flag?: string;
+          throws?: boolean;
         },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<any>;
@@ -452,6 +503,7 @@ export type ElectronIpcInvokeKey =
   | 'downloadFile'
   | 'ensureMacosFolderPermission'
   | 'executeQuery'
+  | 'exportHtmlToPdf'
   | 'extractNestedZipEntry'
   | 'getAllScreens'
   | 'getAppDataPath'
@@ -468,19 +520,25 @@ export type ElectronIpcInvokeKey =
   | 'isDownloadComplete'
   | 'isDownloadErrorExpected'
   | 'isOnline'
+  | 'isSqliteDbCorrupt'
   | 'isUsablePath'
   | 'openFileDialog'
   | 'openFolder'
   | 'openFolderDialog'
   | 'passWafChallenge'
   | 'registerShortcut'
+  | 'restartZoomHelper'
   | 'saveFileDialog'
   | 'set-hardware-acceleration'
   | 'setExecutable'
   | 'startSecurityScopedAccess'
+  | 'startTimerRemote'
+  | 'startZoomHelper'
   | 'unwatchFolders'
   | 'unzip'
-  | 'watchFolder';
+  | 'watchFolder'
+  | 'zoomCommand'
+  | 'zoomTestParticipants';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels
 export type ElectronIpcListenKey =
@@ -494,10 +552,14 @@ export type ElectronIpcListenKey =
   | 'gpu-crash-detected'
   | 'hardware-acceleration-temporary-disabled'
   | 'log'
+  | 'media-window-renderer-gone'
   | 'pathProbeNetworkWarning'
   | 'screenChange'
   | 'screenPrefsChange'
+  | 'setShouldQuit'
   | 'shortcut'
+  | 'syncMeetingSchedule'
+  | 'timerWindowClosed'
   | 'update-available'
   | 'update-download-progress'
   | 'update-downloaded'
@@ -512,9 +574,12 @@ export type ElectronIpcSendKey =
   | 'askForMediaAccess'
   | 'authorizedClose'
   | 'cancelAllDownloads'
+  | 'capturePreloadError'
   | 'checkForUpdates'
   | 'dev-menu-state'
   | 'focusMediaWindow'
+  | 'launchZoomMeeting'
+  | 'markUserWarnedAboutDiskSpace'
   | 'moveMediaWindow'
   | 'moveTimerWindow'
   | 'navigateWebsiteWindow'
@@ -526,6 +591,10 @@ export type ElectronIpcSendKey =
   | 'resumeAllDownloads'
   | 'setElectronUrlVariables'
   | 'setPathProbeNotificationPaths'
+  | 'stopTimerRemote'
+  | 'stopZoomHelper'
+  | 'timerRemoteText'
+  | 'timerRemoteUpdate'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
   | 'toggleTimerWindow'
@@ -538,6 +607,13 @@ export type ElectronIpcSendKey =
 // ipcMain.on with event.returnValue / ipcRenderer.sendSync channels
 export type ElectronIpcSendSyncKey =
   'decryptSecretSync' | 'encryptSecretSync' | 'isSecretEncryptionAvailableSync';
+
+export interface ExportPdfResult {
+  /** The user closed the save dialog without choosing a file. */
+  canceled: boolean;
+  error?: string;
+  filePath?: string;
+}
 
 export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
 
@@ -562,6 +638,38 @@ export type MediaAccessStatus =
   'denied' | 'granted' | 'not-determined' | 'restricted' | 'unknown';
 
 export type NavigateWebsiteAction = 'back' | 'forward' | 'refresh';
+
+/** Sentry capture context a preload error can carry to the main process. */
+export interface PreloadErrorContext {
+  contexts?: Record<string, Record<string, unknown>>;
+}
+
+/**
+ * A preload error forwarded to the main process over the
+ * `capturePreloadError` channel. The preload's isolated world has no Sentry
+ * client, so the main process reports it. Plain data only: a raw Error
+ * loses `code`/`syscall` (used for Sentry grouping) to structured clone.
+ */
+export interface PreloadErrorReport {
+  context?: PreloadErrorContext;
+  error: SerializedPreloadError;
+}
+
+export interface SerializedPreloadError {
+  code?: string;
+  message: string;
+  name: string;
+  stack?: string;
+  syscall?: string;
+}
+
+export interface TimerRemoteStatus {
+  /** `invalid-port`, `port-in-use` or `start-failed`. */
+  error?: string;
+  running: boolean;
+  /** Where the page can be opened from other devices on the network. */
+  urls: string[];
+}
 
 export interface UnzipOptions {
   includes?: string[];

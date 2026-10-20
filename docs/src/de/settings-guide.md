@@ -350,11 +350,11 @@ Sprache für Untertitel (kann von der Mediensprache abweichen).
 
 ### Cache-Verwaltung {#cache-management}
 
-#### Extra-Cache aktivieren {#enable-extra-cache}
+#### Cache Songbook Video Files {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Aktivieren Sie zusätzliches Caching für eine bessere Leistung.
+Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
 
 **Standard**: `false`
 
@@ -418,23 +418,43 @@ Konvertieren Sie exportierte Mediendateien in das MP4-Format für eine bessere K
 
 **Standard**: `false`
 
-### Ordnerüberwachung {#settings-guide-folder-monitoring}
+### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-#### Ordnerüberwachung aktivieren {#enable-folder-watcher}
+These settings are in the **Integrations** category.
+
+M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+
+M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. To add files for another day, create a folder for it, named the same way. Anything else in the shared folder is ignored.
+
+:::tip Tipp
+
+Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+
+:::
+
+#### Add Media From a Shared Folder {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Überwachen Sie einen Ordner auf neue Mediendateien und fügen Sie sie automatisch zu M³ hinzu.
+Add the files put in the shared folder to the right meeting automatically.
 
 **Standard**: `false`
 
-#### Zu überwachender Ordner {#folder-to-watch}
+#### Shared Folder {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-Der Ordnerpfad, der auf neue Mediendateien überwacht werden soll.
+The folder to add media from. The setup wizard offers to set it up for you.
 
 **Standard**: Leer
+
+#### Delete Past Meeting Folders {#delete-past-watched-folders}
+
+<!-- **Setting**: `deletePastWatchedFolders` -->
+
+When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+
+**Standard**: `true`
 
 ## Meeting Timer {#meeting-timer}
 
@@ -452,11 +472,32 @@ Enable a separate timer window for timing meeting parts. This is a beta feature 
 
 Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
 
+### Quick Access to the Timer {#timer-quick-access}
+
+<!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
+
+Choose how the timer is reached from the main window:
+
+- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
+- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+
+### Timer Remote {#timer-remote}
+
+<!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
+
+When turned on, M³ serves a read-only copy of the timer display as a web page on your local network, for a tablet or phone at the lectern: the speaker sees the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time, including the pre-meeting countdown, the clock, overtime colors and the hand alert, and all the controls stay in M³.
+
+The addresses to open on the device are listed in the timer popup, with a copy button. Change the port only if another program already uses it. Note that anyone on the same network can open the page while this is on; it shows nothing but the timer.
+
+**Default**: `false`, port `8787`
+
 ### Timer Display Formats {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+
+The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
 
 ### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
 
@@ -471,6 +512,8 @@ Show a countdown before scheduled meetings and optionally display whether the me
 Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
 
 ## Integrationen {#integrations}
+
+This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
 
 ### Zoom-Integration {#settings-guide-zoom-integration}
 
@@ -495,6 +538,30 @@ Tastenkürzel zum Auslösen der Zoom-Bildschirmfreigabe.
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
 Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+
+**Standard**: `false`
+
+### Zoom Meeting Manager {#zoom-meeting-manager}
+
+The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+
+#### While M³ Operates Zoom {#zoom-meeting-manager-overlay}
+
+<!-- **Setting**: `zoomCancelAutomationShortcut` -->
+
+Zoom offers no proper automation interface, so M³ drives the Zoom app through its accessibility interface, which works without the mouse for nearly everything (the participants list, its menus, the Share window). A few actions can still have to move the mouse or the focused window for a moment, for example to bring Zoom's auto-hidden toolbar back. Whenever that happens, M³ covers its own window with a "M³ is operating Zoom" notice naming what is going on, with a **Cancel this automation** button. The same notice shows during the setup assistant's checks and the self-test. A global keyboard shortcut (default `Ctrl+Alt+Escape`), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Cancelling stops M³ at once; Zoom may then be left part-way, so check it.
+
+**Default**: `Ctrl+Alt+Escape`
+
+#### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
+
+<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+
+During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
+
+If the [meeting timer](#meeting-timer) is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and a **Hand alert** button in the timer and Zoom popups shows it by hand. This part needs the timer display; the notifications and buttons work without it.
+
+Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list and which menu entry lowers it, then lowers it again. The setup assistant offers this step too.
 
 **Standard**: `false`
 
@@ -542,7 +609,7 @@ Konfigurieren Sie, welche OBS-Szenen für verschiedene Zwecke verwendet werden s
 
 #### Erweiterte OBS-Optionen {#obs-advanced-options}
 
-- **Bilder aufschieben**: Verzögern Sie das Teilen von Bildern mit OBS, bis es manuell ausgelöst wird
+- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
 - **Schnellumschalter**: Aktivieren Sie den schnellen Ein-/Ausschalter für die OBS-Integration
 - **Szene nach Medien wechseln**: Kehren Sie nach Medien automatisch zur vorherigen Szene zurück
 - **Vorherige Szene merken**: Merken Sie sich die vorherige Szene und stellen Sie sie wieder her
@@ -733,20 +800,20 @@ Deaktivieren Sie automatische Medien-Downloads vollständig. Verwenden Sie dies 
 ### Für neue Benutzer {#new-users}
 
 1. Beginnen Sie mit dem Einrichtungsassistenten, um grundlegende Einstellungen zu konfigurieren
-2. Aktivieren Sie die "Medienanzeige-Taste", um auf Präsentationsfunktionen zuzugreifen
+2. Turn on "Enable media playback" to access presentation features
 3. Konfigurieren Sie Ihren Zusammenkunftsplan genau
 4. Richten Sie die OBS-Integration ein, wenn Sie hybride Zusammenkünfte nutzen
 
 ### Für fortgeschrittene Benutzer {#advanced-users}
 
-1. Verwenden Sie die Ordnerüberwachung, um Medien aus dem Cloud-Speicher zu synchronisieren
+1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
 2. Aktivieren Sie den automatischen Medienexport für Sicherungszwecke
 3. Konfigurieren Sie Tastenkürzel für einen effizienten Betrieb
 4. Konfigurieren Sie die Zoom-Integration für automatische Bildschirmfreigabe
 
 ### Leistungsoptimierung {#performance-optimization}
 
-1. Aktivieren Sie Extra-Cache für eine bessere Leistung
+1. Cache songbook video files for better performance
 2. Verwenden Sie die für Ihre Bedürfnisse geeignete maximale Auflösung
 3. Konfigurieren Sie das automatische Löschen des Caches, um Speicherplatz zu verwalten
 4. Ziehen Sie die Einstellung für getaktete Verbindungen in Betracht, wenn die Bandbreite begrenzt ist

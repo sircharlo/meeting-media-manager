@@ -23,6 +23,7 @@ import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import {
   getFilesystemErrorCode,
   getFilesystemErrorSyscall,
+  isDiskFullError,
   isExpectedNetworkPathAccessError,
 } from 'src/shared/filesystem-errors';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
@@ -49,7 +50,7 @@ const ENSURE_DIR_RETRY_MAX_DELAY_MS = 1500;
 const getEnsureDirRetryDelay = (attempt: number) => {
   const exponentialDelay = ENSURE_DIR_RETRY_BASE_DELAY_MS * 2 ** attempt;
   const cappedDelay = Math.min(exponentialDelay, ENSURE_DIR_RETRY_MAX_DELAY_MS);
-  return Math.random() * cappedDelay;
+  return Math.random() * cappedDelay; // NOSONAR: retry-backoff jitter, not a security value
 };
 
 // BE-9 (full-audit-2026-09-04.md): a failed download is retried
@@ -68,7 +69,7 @@ const getDownloadErrorRetryDelay = (attempt: number) => {
     exponentialDelay,
     DOWNLOAD_ERROR_RETRY_MAX_DELAY_MS,
   );
-  return Math.random() * cappedDelay;
+  return Math.random() * cappedDelay; // NOSONAR: retry-backoff jitter, not a security value
 };
 
 interface EnsureDirAttemptDiagnostics {
@@ -331,7 +332,7 @@ async function createDirWithRetry(dir: string): Promise<string> {
   const diagnostics: EnsureDirAttemptDiagnostics[] = [];
 
   for (let attempt = 0; attempt <= ENSURE_DIR_RETRY_COUNT; attempt += 1) {
-    const result = await tryCreateDir(dir);
+    const result = await tryCreateDir(dir); // NOSONAR: sequential - retry loop
     if (!result) {
       if (attempt > 0) {
         addElectronBreadcrumb({
@@ -346,16 +347,12 @@ async function createDirWithRetry(dir: string): Promise<string> {
 
     const { error } = result;
     lastError = error;
-    const attemptDiagnostics = await getDirectoryFailureDiagnostics(
-      dir,
-      attempt,
-      error,
-    );
-    diagnostics.push(attemptDiagnostics);
+    const diagnosis = await getDirectoryFailureDiagnostics(dir, attempt, error); // NOSONAR: sequential - retry loop
+    diagnostics.push(diagnosis);
 
     addElectronBreadcrumb({
       category: 'downloads.filesystem',
-      data: attemptDiagnostics,
+      data: diagnosis,
       level: 'warning',
       message: 'download-directory-create-failed',
     });
@@ -365,7 +362,7 @@ async function createDirWithRetry(dir: string): Promise<string> {
       ENSURE_DIR_RETRYABLE_CODES.has(code ?? '') &&
       attempt < ENSURE_DIR_RETRY_COUNT;
     if (!shouldRetry) break;
-    await delay(getEnsureDirRetryDelay(attempt));
+    await delay(getEnsureDirRetryDelay(attempt)); // NOSONAR: sequential - retry loop
   }
 
   const fallbackDir = getDownloadFallbackDir(dir);
@@ -498,16 +495,16 @@ function hasHighPriorityActive(
   return Array.from(activeDownloads.values()).some((d) => !d.lowPriority);
 }
 
-function logDownloadQueueDebugState(reason: string): void {
-  const describe = ([key, download]: [string, OngoingDownload]) => ({
-    failedAttempts: download.failedAttempts,
-    isTransferring: !!download.controller,
-    key,
-    lowPriority: download.lowPriority,
-    state: download.state,
-    url: download.item.url,
-  });
+const describe = ([key, download]: [string, OngoingDownload]) => ({
+  failedAttempts: download.failedAttempts,
+  isTransferring: !!download.controller,
+  key,
+  lowPriority: download.lowPriority,
+  state: download.state,
+  url: download.item.url,
+});
 
+function logDownloadQueueDebugState(reason: string): void {
   log(
     `Download queue debug snapshot (${reason})`,
     'electronDownloads',
@@ -646,6 +643,56 @@ const getPercentCompleted = (receivedBytes: number, totalBytes: number) => {
   return Math.min(Number(((receivedBytes / totalBytes) * 100).toFixed(2)), 100);
 };
 
+/**
+ * Applies a new request for a download that has already started: one asked
+ * for at normal priority stops being low priority, and resumes right away if
+ * it's paused.
+ */
+const promoteOngoingDownload = (
+  existing: OngoingDownload,
+  lowPriority: boolean,
+) => {
+  // If active and we want normal priority but it's low, promote it
+  if (!lowPriority && existing.lowPriority) {
+    existing.lowPriority = false;
+  }
+
+  // If paused and we want normal priority, promote it and trigger resume
+  if (existing.state === DownloadState.PAUSED && !lowPriority) {
+    existing.lowPriority = false;
+    // Stop other low priority downloads to free up slots
+    stopLowPriorityDownloads();
+    processQueue();
+    addQueueBreadcrumb('priority-promoted-paused-download', {
+      force: true,
+    });
+  }
+};
+
+/** Whether, and where, a download is queued but not started yet. */
+const findQueuedDownload = (key: string) => {
+  const isSameKey = (item: DownloadQueueItem) =>
+    item.url + item.saveDir === key;
+  const lowPriorityIndex = lowPriorityQueue.findIndex((item) =>
+    isSameKey(item),
+  );
+  const isQueued =
+    downloadQueue.some((item) => isSameKey(item)) || lowPriorityIndex !== -1;
+  return { isQueued, lowPriorityIndex };
+};
+
+/** Moves a still-queued low-priority download to the normal-priority queue. */
+const promoteQueuedDownload = (lowPriorityIndex: number) => {
+  const [promoted] = lowPriorityQueue.splice(lowPriorityIndex, 1);
+  if (!promoted) return;
+  stopLowPriorityDownloads();
+  downloadQueue.push(promoted);
+  processQueue();
+  addQueueBreadcrumb('priority-promoted-queued-download', {
+    force: true,
+  });
+};
+
 export interface DownloadFileResult {
   /** The queue/progress-tracking key: the url concatenated with the resolved saveDir. */
   key: string;
@@ -660,7 +707,7 @@ export interface DownloadFileResult {
 /**
  * Cancels all downloads.
  */
-export async function cancelAllDownloads() {
+export function cancelAllDownloads() {
   cancelAll = true;
   downloadQueue.length = 0;
   lowPriorityQueue.length = 0;
@@ -706,7 +753,7 @@ export async function downloadFile(
     // reachable today (gated by isSelf(), and every current renderer call
     // site only ever passes a plain filename), but a defense-in-depth
     // backstop against a future caller passing something untrusted through.
-    destFilename = basename(destFilename || url);
+    destFilename = basename(destFilename || url); // NOSONAR: '' means not set
 
     const fileToDownload = { destFilename, saveDir: resolvedSaveDir, url };
     const key = url + resolvedSaveDir;
@@ -714,22 +761,7 @@ export async function downloadFile(
     // Check if already in progress
     const existing = ongoingDownloads.get(key);
     if (existing) {
-      // If active and we want normal priority but it's low, promote it
-      if (!lowPriority && existing.lowPriority) {
-        existing.lowPriority = false;
-      }
-
-      // If paused and we want normal priority, promote it and trigger resume
-      if (existing.state === DownloadState.PAUSED && !lowPriority) {
-        existing.lowPriority = false;
-        // Stop other low priority downloads to free up slots
-        stopLowPriorityDownloads();
-        processQueue();
-        addQueueBreadcrumb('priority-promoted-paused-download', {
-          force: true,
-        });
-      }
-
+      promoteOngoingDownload(existing, lowPriority);
       return { key, saveDir: resolvedSaveDir };
     }
 
@@ -739,25 +771,13 @@ export async function downloadFile(
     // URL/directory while the queue is saturated could both miss each other
     // here and enqueue the same download twice, racing to write the same
     // destination file once both are eventually dequeued.
-    const isSameKey = (item: DownloadQueueItem) =>
-      item.url + item.saveDir === key;
-    const queuedLowPriorityIndex = lowPriorityQueue.findIndex(isSameKey);
-    const alreadyQueued =
-      downloadQueue.some(isSameKey) || queuedLowPriorityIndex !== -1;
+    const queued = findQueuedDownload(key);
 
-    if (alreadyQueued) {
+    if (queued.isQueued) {
       // Promote a still-queued low-priority item the same way an
       // already-ongoing one is promoted above.
-      if (!lowPriority && queuedLowPriorityIndex !== -1) {
-        const [promoted] = lowPriorityQueue.splice(queuedLowPriorityIndex, 1);
-        if (promoted) {
-          stopLowPriorityDownloads();
-          downloadQueue.push(promoted);
-          processQueue();
-          addQueueBreadcrumb('priority-promoted-queued-download', {
-            force: true,
-          });
-        }
+      if (!lowPriority && queued.lowPriorityIndex !== -1) {
+        promoteQueuedDownload(queued.lowPriorityIndex);
       }
       return { key, saveDir: resolvedSaveDir };
     }
@@ -802,7 +822,7 @@ export async function downloadFile(
   }
 }
 
-export async function isDownloadComplete(downloadId: string) {
+export function isDownloadComplete(downloadId: string) {
   if (!getDownloadWindow()) return null;
 
   // Started but not finished yet (running, paused, or waiting to retry)
@@ -821,7 +841,7 @@ export async function isDownloadComplete(downloadId: string) {
  * Pauses every running download, and holds the queue - nothing starts or
  * resumes - until resumeAllDownloads() is called.
  */
-export async function pauseAllDownloads(reason = 'manual') {
+export function pauseAllDownloads(reason = 'manual') {
   downloadsHeld = true;
   pauseActiveDownloads(reason);
 }
@@ -830,7 +850,7 @@ export async function pauseAllDownloads(reason = 'manual') {
  * Releases a pauseAllDownloads() hold and lets paused downloads resume, as
  * many as there are free slots for, by priority.
  */
-export async function resumeAllDownloads(reason = 'manual') {
+export function resumeAllDownloads(reason = 'manual') {
   downloadsHeld = false;
   log(
     `Resuming ${getPausedDownloads().size} paused downloads as slots allow (${reason})`,
@@ -917,19 +937,19 @@ export async function isDownloadErrorExpected(): Promise<boolean> {
 
       // 1. Retrieve general geo info
       const payload = await fetchJsonFromMainProcess<GeoInfo>(
-        'http://ip-api.com/json/',
+        'http://ip-api.com/json/', // NOSONAR: ip-api.com's keyless endpoint is HTTP-only; it sends nothing and only returns a country-code hint for classifying download errors
         undefined,
         {
           silent: true,
         },
       ).catch(() => null);
 
-      let marker = payload?.countryCode || '';
+      let marker = payload?.countryCode ?? '';
 
       if (!marker) {
         const tz = new Intl.DateTimeFormat().resolvedOptions().timeZone;
         const hint = getCountriesForTimezone(tz);
-        if (hint.length === 1) marker = hint[0]?.id || '';
+        if (hint.length === 1) marker = hint[0]?.id ?? '';
       }
 
       if (!marker) {
@@ -1060,7 +1080,7 @@ async function drainQueue() {
   try {
     while (queueRerunRequested) {
       queueRerunRequested = false;
-      await fillFreeSlots();
+      await fillFreeSlots(); // NOSONAR: sequential - queue drain loop, reruns until no new request
     }
   } catch (error) {
     // Every call site fires processQueue() and forgets it, so report here
@@ -1079,7 +1099,8 @@ async function drainQueue() {
 
 async function fillFreeSlots() {
   while (canStartDownloads() && pickNextQueueItemType() !== null) {
-    if (await isDiskSpaceCriticallyLow()) {
+    const diskSpaceCriticallyLow = await isDiskSpaceCriticallyLow(); // NOSONAR: sequential - download queue fills one slot at a time
+    if (diskSpaceCriticallyLow) {
       log(
         'Pausing downloads: disk space is critically low.',
         'electronDownloads',
@@ -1285,7 +1306,11 @@ function failDownload(
   });
   reportUnexpectedDownloadFailure(download, failure);
 
-  sendToWindow(getDownloadWindow(), 'downloadError', { id: key });
+  // A full disk is shown to the user, since it's theirs to fix.
+  sendToWindow(getDownloadWindow(), 'downloadError', {
+    diskFull: isDiskFullError(failure.error),
+    id: key,
+  });
   releaseDownload(key, download);
   discardPartialDownload(getPartialPath(download)).catch(() => undefined);
   addQueueBreadcrumb('download-error', { force: true });
@@ -1369,8 +1394,6 @@ async function handleFailedTransfer(
   startTransfer(key, download);
 }
 
-const EXPECTED_FILESYSTEM_FAILURE_CODES = new Set(['EDQUOT', 'ENOSPC']);
-
 /**
  * Network and HTTP failures (stalls included) are connectivity or upstream
  * problems - expected for many users, and not something M³ can fix - so
@@ -1398,14 +1421,14 @@ function reportUnexpectedDownloadFailure(
   }
   if (failure.reason !== 'filesystem') return;
 
-  const code = getFilesystemErrorCode(error);
   if (
-    EXPECTED_FILESYSTEM_FAILURE_CODES.has(code ?? '') ||
+    isDiskFullError(error) ||
     isExpectedNetworkPathAccessError(error, download.saveDir, process.platform)
   ) {
     return;
   }
 
+  const code = getFilesystemErrorCode(error);
   const syscall = getFilesystemErrorSyscall(error);
   captureElectronError(error, {
     contexts: {

@@ -169,6 +169,14 @@ export default defineConfig((ctx) => {
             NSScreenCaptureUsageDescription:
               'Screen recording access is required in order to use the website mirroring feature. Please note that this app will never record your screen content.',
           },
+          // robotjs ships Node-API prebuilds for darwin-x64 and darwin-arm64
+          // that node-gyp-build picks at runtime. @electron/rebuild only
+          // recognises the arm64 one under an "armv8.node" name, so it
+          // compiles robotjs for arm64 but not for x64, and the resulting
+          // build/Release/robotjs.node in one half only makes
+          // @electron/universal refuse to merge the two. Leave the compiled
+          // binary out; node-gyp-build then falls back to prebuilds/.
+          files: ['!**/node_modules/robotjs/build/**'],
           hardenedRuntime: true,
           icon: getIconPath('icns'),
           minimumSystemVersion: '13.0',
@@ -176,7 +184,13 @@ export default defineConfig((ctx) => {
             arch: ['universal'],
             target: 'default',
           },
-          x64ArchFiles: '**/@napi-rs/**',
+          // Prebuilt native bindings that are identical in the x64 and arm64
+          // halves of the universal build and so can't be lipo'd: @napi-rs
+          // and @oxc-parser (via @sentry/electron v8: @sentry/node ->
+          // @sentry/bundler-plugins) are installed for the build machine's
+          // arch only, and robotjs ships both darwin prebuilds in every
+          // install, with node-gyp-build picking the right one at runtime.
+          x64ArchFiles: '**/{@napi-rs,@oxc-parser,robotjs}/**',
         },
         nsis: {
           deleteAppDataOnUninstall: true,
@@ -192,6 +206,19 @@ export default defineConfig((ctx) => {
         productName: PRODUCT_NAME,
         publish: ['github'],
         win: {
+          // The Zoom Meeting Manager's UI Automation helper, compiled at
+          // runtime by Windows PowerShell. An absolute path: a relative one
+          // would resolve against src-electron (see getIconPath), and a
+          // missing folder is skipped without any error.
+          extraResources: [
+            {
+              filter: ['*.cs', '*.ps1'],
+              from: fileURLToPath(
+                new URL('./src-electron/zoom-helper', import.meta.url),
+              ),
+              to: 'zoom-helper',
+            },
+          ],
           icon: getIconPath('ico'),
           target: [{ arch: 'x64', target: 'nsis' }, 'portable'],
         },
@@ -218,7 +245,7 @@ export default defineConfig((ctx) => {
       extendElectronPreloadConf: (rolldownConf) => {
         // Unlike the main process config, the preload config doesn't
         // externalize node_modules by default (dev or prod), so native
-        // modules like @jitsi/robotjs would get inlined and lose the
+        // modules like robotjs would get inlined and lose the
         // ability to resolve their compiled .node binary at runtime.
         rolldownConf.external = [
           ...(Array.isArray(rolldownConf.external)

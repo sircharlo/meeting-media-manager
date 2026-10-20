@@ -117,14 +117,21 @@ export function createWindow(
       page = buildWebsitePage(websiteParams, urlVariables?.base);
       break;
   }
+  const captureLoadError = (error: unknown) => {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'createWindow', window: name } },
+    });
+  };
   if (page.startsWith('https://') || page === 'about:blank') {
-    win.loadURL(page);
+    win.loadURL(page).catch(captureLoadError);
   } else if (import.meta.env.QUASAR_DEV) {
-    win.loadURL(import.meta.env.QUASAR_APP_URL + `?page=${page}`);
+    win
+      .loadURL(import.meta.env.QUASAR_APP_URL + `?page=${page}`)
+      .catch(captureLoadError);
   } else {
     // Use absolute path for index.html in production builds
     const indexPath = resolve(app.getAppPath(), 'index.html');
-    win.loadFile(indexPath, { hash: `?page=${page}` });
+    win.loadFile(indexPath, { hash: `?page=${page}` }).catch(captureLoadError);
   }
 
   // Devtools
@@ -208,7 +215,7 @@ function buildWebsitePage(
   websiteParams: JwSiteParams | undefined,
   base: string | undefined,
 ) {
-  const langSymbol = encodeURIComponent(websiteParams?.langSymbol || '');
+  const langSymbol = encodeURIComponent(websiteParams?.langSymbol ?? '');
   if (websiteParams?.site) {
     // JW Stream and the conventions site are jw.org's own: never opened for
     // a different Website.

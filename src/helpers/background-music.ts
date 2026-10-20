@@ -37,7 +37,7 @@ function weightedShuffle(songs: SongItem[]): SongItem[] {
     .map((song) => {
       const normalizedTrack = (song.track ?? 0) / maxTrack;
       const weight = 1 + normalizedTrack * TRACK_WEIGHT_BIAS;
-      return { key: Math.random() ** (1 / weight), song };
+      return { key: Math.random() ** (1 / weight), song }; // NOSONAR: shuffles the background-music play order
     })
     .sort((a, b) => b.key - a.key)
     .map(({ song }) => song);
@@ -176,9 +176,7 @@ export function calculateOptimalSongQueue(
 /**
  * Enriches song items with metadata (duration, title)
  */
-export async function enrichSongsWithMetadata(
-  songs: SongItem[],
-): Promise<SongItem[]> {
+export function enrichSongsWithMetadata(songs: SongItem[]): SongItem[] {
   const startedAt = performance.now();
   logBackgroundMusicTiming('normalize API song metadata started', undefined, {
     songs: songs.length,
@@ -189,7 +187,7 @@ export async function enrichSongsWithMetadata(
   for (const [index, song] of enrichedSongs.entries()) {
     const songStartedAt = performance.now();
     song.duration = song.duration ?? 0;
-    song.title = song.title || basename(song.path);
+    song.title = song.title || basename(song.path); // NOSONAR: empty title uses the file name
     logBackgroundMusicTiming('API song metadata normalized', songStartedAt, {
       duration: song.duration,
       index: index + 1,
@@ -326,7 +324,7 @@ export async function getNextSongFromQueue(
       songQueue.push(nextSong);
     }
 
-    currentSongTitle(nextSong.title || basename(nextSong.path));
+    currentSongTitle(nextSong.title || basename(nextSong.path)); // NOSONAR: empty title uses the file name
     const playbackUrlStartedAt = performance.now();
     const nextSongUrl = await resolveBackgroundMusicPlaybackUrl(nextSong);
     logBackgroundMusicTiming(
@@ -361,10 +359,10 @@ export async function getNextSongFromQueue(
 /**
  * Prepares the complete song queue for a meeting day
  */
-export async function prepareMeetingDaySongQueue(
+export function prepareMeetingDaySongQueue(
   songLibrary: SongItem[],
   options: SongQueueOptions,
-): Promise<{ queue: SongItem[]; startOffsetSeconds: number }> {
+): { queue: SongItem[]; startOffsetSeconds: number } {
   const startedAt = performance.now();
   try {
     logBackgroundMusicTiming(

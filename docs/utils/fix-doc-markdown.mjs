@@ -3,6 +3,11 @@ import fsx from 'fs-extra';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import {
+  getTrailingHeadingAnchors,
+  replaceHeadingAnchor,
+} from './heading-anchors.mjs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const { pathExists, readdir, readFile, writeFile } = fsx;
@@ -256,46 +261,26 @@ async function getLocaleDirs() {
 
 async function getMarkdownFiles(dir, prefix = '') {
   const entries = await readdir(dir, { withFileTypes: true });
-  const files = [];
 
-  for (const entry of entries) {
-    const relativePath = prefix ? `${prefix}/${entry.name}` : entry.name;
-    const fullPath = resolve(dir, entry.name);
+  // Subdirectories are walked concurrently; the final sort makes the result
+  // order independent of which walk finishes first.
+  const filesPerEntry = await Promise.all(
+    entries.map((entry) => {
+      const relativePath = prefix ? `${prefix}/${entry.name}` : entry.name;
 
-    if (entry.isDirectory()) {
-      files.push(...(await getMarkdownFiles(fullPath, relativePath)));
-      continue;
-    }
+      if (entry.isDirectory()) {
+        return getMarkdownFiles(resolve(dir, entry.name), relativePath);
+      }
 
-    if (entry.isFile() && entry.name.endsWith('.md')) {
-      files.push(relativePath);
-    }
-  }
+      return entry.isFile() && entry.name.endsWith('.md') ? [relativePath] : [];
+    }),
+  );
 
-  return files.sort();
+  return filesPerEntry.flat().sort();
 }
 
 function getRelativePath(path) {
   return relative(resolve(__dirname, '../..'), path).replaceAll('\\', '/');
-}
-
-function getTrailingHeadingAnchors(line) {
-  const anchors = [];
-  let cursor = trimEndIndex(line);
-
-  while (cursor > 0 && line[cursor - 1] === '}') {
-    const openIndex = line.lastIndexOf('{#', cursor - 1);
-    if (openIndex === -1) break;
-
-    const anchor = line.slice(openIndex + 2, cursor - 1);
-    if (!isValidAnchor(anchor)) break;
-
-    anchors.unshift(anchor);
-    cursor = trimEndIndex(line, openIndex);
-  }
-
-  const start = anchors.length > 0 ? cursor : line.length;
-  return { anchors, start };
 }
 
 /**
@@ -308,12 +293,6 @@ function isCorruptLinkValue(value) {
   if (/^https?:\/\//i.test(trimmed)) return false;
   if (!trimmed.startsWith('/')) return true;
   return /["']/.test(trimmed);
-}
-
-function isValidAnchor(anchor) {
-  if (!anchor) return false;
-
-  return [...anchor].every((char) => char !== '}' && char.trim() !== '');
 }
 
 function logAnchorReplacement(
@@ -351,12 +330,12 @@ async function main() {
     };
 
     for (const locale of localeDirs) {
-      await fixIndexLinks(locale, totals);
+      await fixIndexLinks(locale, totals); // NOSONAR: sequential - ordered console output
 
       if (locale === EN_LOCALE) continue;
 
       for (const markdownFile of englishMarkdownFiles) {
-        await fixMarkdownAnchors(locale, markdownFile, totals);
+        await fixMarkdownAnchors(locale, markdownFile, totals); // NOSONAR: sequential - ordered console output
       }
     }
 
@@ -417,11 +396,6 @@ function parseHeadings(content) {
   return headings;
 }
 
-function replaceHeadingAnchor(line, anchor) {
-  const withoutAnchors = line.slice(0, getTrailingHeadingAnchors(line).start);
-  return `${withoutAnchors} {#${anchor}}`;
-}
-
 function reportHeadingCountMismatch(
   localePath,
   localeHeadings,
@@ -432,14 +406,6 @@ function reportHeadingCountMismatch(
   console.warn(
     `[anchor] ${getRelativePath(localePath)}: heading count differs from English (${localeHeadings.length} vs ${enHeadings.length})`,
   );
-}
-
-function trimEndIndex(value, end = value.length) {
-  let cursor = end;
-  while (cursor > 0 && value[cursor - 1].trim() === '') {
-    cursor -= 1;
-  }
-  return cursor;
 }
 
 await main();

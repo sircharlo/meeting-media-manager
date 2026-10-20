@@ -8,18 +8,17 @@
       )
     "
     class="super-rounded"
-    :color="
-      recordingPopup ? 'white' : isRecording ? 'negative' : 'white-transparent'
-    "
+    :class="classes"
+    :color="color"
     :disable="!currentSettings?.recordingStartShortcut"
     no-caps
     rounded
     :style="isRecording ? 'min-width: 110px;' : ''"
-    :text-color="recordingPopup ? (isRecording ? 'negative' : 'primary') : ''"
+    :text-color="textColor"
     unelevated
     @click="onClick"
   >
-    <q-icon name="mmm-record" />
+    <q-icon class="island-btn__icon" name="mmm-record" />
     <div v-if="isRecording" class="recording-status__duration q-ml-sm">
       {{ formattedDuration }}
     </div>
@@ -32,8 +31,13 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
+import {
+  type IslandButtonStatus,
+  useIslandButton,
+} from 'src/composables/useIslandButton';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useRecordingStore } from 'stores/recording-state';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
@@ -43,6 +47,11 @@ const recording = useRecordingStore();
 const { formattedDuration, isRecording } = storeToRefs(recording);
 
 const recordingPopup = defineModel<boolean>({ default: false });
+
+const { classes, color, textColor } = useIslandButton(
+  computed<IslandButtonStatus>(() => (isRecording.value ? 'live' : 'normal')),
+  recordingPopup,
+);
 
 const { t } = useI18n();
 

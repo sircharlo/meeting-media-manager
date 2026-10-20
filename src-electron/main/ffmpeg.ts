@@ -26,6 +26,29 @@ interface RunnableFfmpegCommand {
 // the process fluent-ffmpeg spawns internally.
 const activeFfmpegCommands = new Map<string, RunnableFfmpegCommand>();
 
+// ffmpeg exits with AVERROR(ENOSPC), -28, when it runs out of disk space:
+// 4294967268 as Windows reports the exit code, 228 elsewhere (its low 8
+// bits). fluent-ffmpeg only says "ffmpeg exited with code 4294967268"
+// (MMM-V2-3M7).
+const FFMPEG_DISK_FULL_EXIT_CODES = new Set([228, 4294967268]);
+const FFMPEG_EXIT_CODE_PATTERN = /^ffmpeg exited with code (\d+)/;
+
+/**
+ * Turns ffmpeg running out of disk space into the ENOSPC error it is, so it's
+ * recognized as a full disk on both sides of IPC.
+ * @param error The error fluent-ffmpeg reported
+ * @returns An ENOSPC error, or the original one
+ */
+const toDiskFullErrorIfNeeded = (error: Error) => {
+  const exitCode = FFMPEG_EXIT_CODE_PATTERN.exec(error.message)?.[1];
+  if (!FFMPEG_DISK_FULL_EXIT_CODES.has(Number(exitCode))) return error;
+
+  return Object.assign(
+    new Error(`ENOSPC: no space left on device, ${error.message}`),
+    { code: 'ENOSPC' },
+  );
+};
+
 /**
  * Runs an already-configured fluent-ffmpeg command to completion, tracking
  * it (see activeFfmpegCommands) and, on failure, deleting whatever partial
@@ -54,7 +77,13 @@ const runFfmpegCommand = (
           // Best-effort: if this also fails, the original ffmpeg error is
           // still what matters and is reported below.
         })
-        .finally(() => reject(err));
+        .finally(() => {
+          reject(
+            toDiskFullErrorIfNeeded(
+              err instanceof Error ? err : new Error(String(err)),
+            ),
+          );
+        });
     });
     command.save(convertedFilePath);
   });

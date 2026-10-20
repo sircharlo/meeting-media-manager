@@ -4,6 +4,28 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## UPCOMING VERSION
+
+### ✨ Neue Funktionen
+
+- ✨ **Zoom Meeting Manager (beta, Windows)**: A new integration that operates Zoom for you around each meeting. It can launch your congregation's Zoom meeting when background music starts before the meeting. When the music stops just before the meeting starts, it joins computer audio, unmutes the microphone, turns on the host video, and mutes everyone without letting them unmute. When music plays before or after a meeting, it does the reverse: it leaves computer audio, turns off the host video, and lets everyone unmute again (asking them to do so). It can also share the media window in Zoom automatically while media is being shown, making sure the media window is what gets shared and never anything else on your screen. A new Zoom button in the action island shows whether a Zoom meeting window was found and lets you run these steps manually. A setup assistant, offered when you turn the option on (the initial setup wizard now offers it on Windows instead of the keyboard-shortcut screen sharing) and available anytime from the Zoom button or Settings, checks your Zoom, learns the names of its microphone and camera buttons in your language, and tries every step with you. When M³ starts, it also checks that everything it automates in Zoom works, opening the meeting if needed on meeting days in the hour and a quarter before it starts (only looking, without pressing anything, if others are already in the meeting); if something doesn't, it tells you and pauses its Zoom automations until it's restarted or a new check passes, so nothing goes wrong during the meeting. This check is on by default and can be turned off in Settings. As each of these steps succeeds, the matching reminders in the before- and after-meeting checklists of the meeting quick actions are ticked off for you, marked as done automatically in Zoom. Since it can't be used together with the keyboard-shortcut screen sharing, Settings says so under whichever of the two is unavailable, naming the one to turn off. It works whatever language Zoom is in, and needs nothing installed beyond Zoom itself.
+
+- ✨ **Meeting Timer**: Custom parts can now be added on meeting days too, for Governing Body updates, special programs and anything else that isn't on the regular schedule. Each is timed like any other part, and its name and length can be changed from the timer popup or from the parts list.
+
+- ✨ **Meeting Timer**: Quicker access to the timer. Hovering the timer button on the action island now shows the part being timed with Start, Pause, Stop and Next part buttons, without opening the popup (a setting, on by default). A new setting also keeps the whole parts list and the timer controls in a panel docked on the right side of the main window, always in view.
+
+- ✨ **Meeting Timer**: A new "Analog clock with time arc" countdown display shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a red wedge. It also works for the pre-meeting countdown and in count-up mode.
+
+- ✨ **Meeting Timer**: The pre-meeting countdown is now labelled "Meeting starts in", and the timer display shows the name of the part being timed, so "4:59" can no longer be mistaken for the time of day.
+
+- ✨ **Meeting Timer**: Each day's recorded timings can be cleared in one go, after a confirmation, from the timer popup or the docked panel.
+
+- ✨ **Zoom Meeting Manager (beta, Windows)**: A new raised-hand helper. During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets the operator unmute that participant with one click, and, once they're done speaking, mute them again and lower their hand with another; the Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name, and M³ touches no one when two participants share a name. If the meeting timer is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and can be switched on by hand from the timer or Zoom popups. M³ learns how Zoom marks raised hands in your language with a single button (it raises and lowers your own hand), offered in the setup assistant as well.
+
+- ✨ **Meeting Timer**: A new, optional timer remote. When turned on, M³ serves a read-only copy of the timer display as a web page on the local network, so a tablet or phone at the lectern can show the speaker the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time (parts, pre-meeting countdown, clock, overtime colors, hand alert) and all the controls stay in M³. The addresses to open are shown in the timer popup, with a copy button.
+
+- ✨ **Setup Wizard**: The setup wizard now asks whether you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive. If you do, it helps you choose a shared folder there and shows how it works: M³ creates a folder for each upcoming meeting, named with the meeting's date, and the files put in it are added to that meeting automatically, on every computer that uses the folder.
+
 ## v26.9.0
 
 ### ✨ Neue Funktionen
@@ -140,7 +162,7 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 - ✨ **Cursor-Overlay für TV-Anzeige**: Verbessertes Cursor-Overlay im Website-Fenster für bessere Sichtbarkeit des Mauszeigers auf TV-Bildschirmen.
 - ✨ **Zusammenkunftsaufnahme**: Neue Funktion zur Aufnahme von Zusammenkünften hinzugefügt, um eine externe Aufnahme-App zu steuern.
 - ✨ **Website-Suche**: Möglichkeit hinzugefügt, mithilfe der intelligenten Suche auf der Website nach Medien oder Publikationen zu suchen.
-- ✨ **Einfacher manueller Publikationsimport**: Funktion hinzugefügt, um Publikationen wie Zeitschriften, Bücher, Programme und Einladungen einfach von JW.org zu importieren.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
 - ✨ **Verbesserungen für Gebärdensprache**: Bestätigung vor dem Abspielen ganzer Dateien für Gebärdensprachen und Unterstützung für die Auswahl mehrerer Clips hinzugefügt, z. B.
 - ✨ **Clip-Navigation**: Daueranzeige zu Clip-Listenelementen hinzugefügt und Clip-Navigation verbessert.
 - 🛠️ **Medienanzeige**: Sichergestellt, dass die Medienanzeige sichtbar wird, wenn die Wiedergabe beginnt, auch wenn sie zuvor ausgeblendet war.

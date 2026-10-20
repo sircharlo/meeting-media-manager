@@ -236,6 +236,7 @@ const { addDivider, deleteDivider, updateDividerColors, updateDividerTitle } =
 // Use the drag and drop composable - pass the reactive sectionData items directly
 const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
   sectionData.value?.items || [],
+  { getSelectedIds: () => props.selectedMediaItems },
 );
 
 /**
@@ -250,7 +251,7 @@ function handleWatchedMediaPersistence() {
     );
     if (!hasWatchedMedia) return;
 
-    saveWatchedMediaLayout(selectedDateObject.value.mediaSections);
+    void saveWatchedMediaLayout(selectedDateObject.value.mediaSections);
   } catch (error) {
     // Fail gracefully - if we can't save the order file, it's not a big deal
     errorCatcher(error, {
@@ -293,7 +294,7 @@ function queueWatchedMediaPersistence() {
   if (watchedMediaPersistenceQueued) return;
 
   watchedMediaPersistenceQueued = true;
-  nextTick(() => {
+  void nextTick(() => {
     watchedMediaPersistenceQueued = false;
     handleWatchedMediaPersistence();
   });
@@ -323,7 +324,7 @@ useEventListener(globalThis, 'reset-sort-order', () => {
 
 // Computed styles
 const sectionStyles = computed(() => ({
-  '--bg-color': props.mediaList.config?.bgColor || 'rgb(148, 94, 181)',
+  '--bg-color': props.mediaList.config?.bgColor || 'rgb(148, 94, 181)', // NOSONAR: '' means not set
   '--text-color': getTextColor(props.mediaList),
 }));
 
@@ -412,12 +413,7 @@ watch(
 .media-section {
   &.custom {
     .custom-text-color {
-      color: var(--bg-color) !important;
-    }
-
-    .custom-bg-color {
-      background-color: var(--bg-color) !important;
-      color: var(--text-color) !important;
+      color: var(--bg-color);
     }
 
     &:before {
@@ -428,23 +424,5 @@ watch(
 
 .sortable-media {
   transition: background-color 0.2s ease;
-}
-
-[data-dragging='true'] {
-  opacity: 0.5;
-  transform: rotate(2deg);
-}
-
-[data-drag-placeholder='true'] {
-  background-color: rgba(0, 0, 0, 0.1);
-  border: 2px dashed #ccc;
-  border-radius: 4px;
-  height: 60px;
-  margin: 4px 0;
-
-  body.body--dark & {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: #666;
-  }
 }
 </style>

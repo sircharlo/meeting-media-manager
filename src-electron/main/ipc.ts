@@ -14,6 +14,7 @@ import type {
   SettingsValues,
   UnzipOptions,
   UrlVariables,
+  ZoomTestParticipantsRequest,
 } from 'src/types';
 
 import { homepage, repository } from 'app/package.json';
@@ -25,10 +26,12 @@ import {
   shell,
   systemPreferences,
 } from 'electron';
-import { stat } from 'node:fs/promises';
 import { PLATFORM } from 'src-electron/constants';
 import { updateDevMenuState } from 'src-electron/main/dev-menu';
-import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
+import {
+  getLowDiskSpaceStatus,
+  markUserWarnedAboutDiskSpace,
+} from 'src-electron/main/disk-space';
 import {
   cancelAllDownloads,
   downloadFile,
@@ -55,6 +58,8 @@ import {
   watchFolder,
 } from 'src-electron/main/fs';
 import { convertHeic } from 'src-electron/main/heic';
+import { openFolder } from 'src-electron/main/open-folder';
+import { exportHtmlToPdf } from 'src-electron/main/pdf';
 import { getAllScreens } from 'src-electron/main/screen';
 import {
   decryptSecret,
@@ -75,7 +80,14 @@ import {
   closeAllConnections,
   closeConnection,
   executeQuery,
+  isDbCorrupt,
 } from 'src-electron/main/sqlite';
+import {
+  setTimerRemoteText,
+  startTimerRemote,
+  stopTimerRemote,
+  updateTimerRemote,
+} from 'src-electron/main/timer-remote';
 import {
   getBetaUpdatesPath,
   getUpdaterState,
@@ -85,6 +97,7 @@ import {
 } from 'src-electron/main/updater';
 import {
   captureElectronError,
+  capturePreloadErrorReport,
   getSharedDataPath,
   isSelf,
 } from 'src-electron/main/utils';
@@ -115,15 +128,24 @@ import {
   websiteWindowInfo,
   zoomWebsiteWindow,
 } from 'src-electron/main/window/window-website';
+import {
+  restartZoomHelper,
+  runZoomHelperCommand,
+  startZoomHelper,
+  stopZoomHelper,
+} from 'src-electron/main/zoom-helper-manager';
+import { isZoomCommand } from 'src-electron/main/zoom-helper-process';
+import { handleZoomTestParticipants } from 'src-electron/main/zoom-test-participants';
 
-const { openExternal, openPath } = shell;
+const { openExternal } = shell;
 
 // IPC send/on
 
 function handleIpcSend(
   channel: ElectronIpcSendKey,
+  // An async listener is fine: its rejection is caught and reported below.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  listener: (event: IpcMainEvent, ...args: any[]) => void,
+  listener: (event: IpcMainEvent, ...args: any[]) => Promise<void> | void,
 ) {
   ipcMain.on(channel, (e, ...args) => {
     if (isSelf(e.senderFrame?.url)) {
@@ -248,7 +270,17 @@ handleIpcSend('pauseAllDownloads', () => {
   pauseAllDownloads('renderer-manual');
 });
 
+handleIpcSend('markUserWarnedAboutDiskSpace', () => {
+  markUserWarnedAboutDiskSpace();
+});
+
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
+
+// The preload's isolated world has no Sentry client, so it forwards its
+// errors here to be reported (see capturePreloadError in preload/log.ts).
+handleIpcSend('capturePreloadError', (_e, report: unknown) => {
+  capturePreloadErrorReport(report);
+});
 
 // Renderer → main state sync for the dev-only Demo menu (checkboxes and
 // enabled/disabled states). updateDevMenuState() no-ops unless the dev menu
@@ -300,6 +332,17 @@ handleIpcSend('zoomWebsiteWindow', (_e, direction: 'in' | 'out') => {
   zoomWebsiteWindow(direction);
 });
 
+handleIpcSend('launchZoomMeeting', (_e, meetingId: string) => {
+  if (!meetingId) return;
+  openExternal(
+    `zoommtg://zoom.us/join?confno=${encodeURIComponent(meetingId)}`,
+  ).catch((error: unknown) => {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'launchZoomMeeting' } },
+    });
+  });
+});
+
 handleIpcSend('navigateWebsiteWindow', (_e, action: NavigateWebsiteAction) => {
   navigateWebsiteWindow(action);
 });
@@ -323,6 +366,22 @@ handleIpcSend('moveTimerWindow', async (_e, displayNr, fullscreen) => {
   await moveTimerWindow(displayNr, fullscreen);
 });
 
+handleIpcInvoke('startTimerRemote', async (_e, port: unknown) =>
+  startTimerRemote(port),
+);
+
+handleIpcSend('stopTimerRemote', () => {
+  stopTimerRemote();
+});
+
+handleIpcSend('timerRemoteText', (_e, text: unknown) => {
+  setTimerRemoteText(text);
+});
+
+handleIpcSend('timerRemoteUpdate', (_e, data: unknown) => {
+  updateTimerRemote(data);
+});
+
 handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
   let url: string | undefined;
 
@@ -338,7 +397,12 @@ handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
       break;
   }
 
-  if (url) openExternal(url);
+  if (!url) return;
+  openExternal(url).catch((error: unknown) => {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'openExternal', website } },
+    });
+  });
 });
 
 handleIpcSend(
@@ -360,7 +424,11 @@ handleIpcSend(
     }).toString();
     openExternal(
       `${repository.url.replace('.git', '/discussions/new')}?${search}`,
-    );
+    ).catch((error: unknown) => {
+      captureElectronError(error, {
+        contexts: { fn: { category, name: 'openDiscussion' } },
+      });
+    });
   },
 );
 
@@ -372,7 +440,7 @@ function handleIpcInvoke<T = unknown>(
     event: IpcMainInvokeEvent,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...args: any[]
-  ) => Promise<T>,
+  ) => Promise<T> | T,
 ) {
   ipcMain.handle(channel, (e, ...args) => {
     if (isSelf(e.senderFrame?.url)) {
@@ -399,26 +467,27 @@ handleIpcInvoke('getAppDataPath', async () => getAppDataPath());
 handleIpcInvoke('getBetaUpdatesPath', async () => getBetaUpdatesPath());
 handleIpcInvoke('getLowDiskSpaceStatus', async () => getLowDiskSpaceStatus());
 handleIpcInvoke('getUpdatesDisabledPath', async () => getUpdatesDisabledPath());
-handleIpcInvoke('getUpdaterState', async () => getUpdaterState());
+handleIpcInvoke('getUpdaterState', () => getUpdaterState());
 handleIpcInvoke('getSharedDataPath', async () => getSharedDataPath());
-handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
-handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());
+handleIpcInvoke('getUserDataPath', () => app.getPath('userData'));
+handleIpcInvoke('getLocales', () => app.getPreferredSystemLanguages());
 handleIpcInvoke('isUsablePath', async (_e, p: string) => isUsablePath(p));
+handleIpcInvoke('startZoomHelper', async () => startZoomHelper());
+handleIpcSend('stopZoomHelper', () => stopZoomHelper());
+handleIpcInvoke('restartZoomHelper', async () => restartZoomHelper());
 
 handleIpcInvoke('isOnline', async () => {
   const { default: isOnline } = await import('is-online');
   return isOnline();
 });
 
-handleIpcInvoke(
-  'getScreenAccessStatus',
-  async (): Promise<MediaAccessStatus> =>
-    PLATFORM === 'linux'
-      ? 'granted'
-      : systemPreferences.getMediaAccessStatus('screen'),
+handleIpcInvoke('getScreenAccessStatus', (): MediaAccessStatus =>
+  PLATFORM === 'linux'
+    ? 'granted'
+    : systemPreferences.getMediaAccessStatus('screen'),
 );
 
-handleIpcInvoke('getAllScreens', async () => getAllScreens());
+handleIpcInvoke('getAllScreens', () => getAllScreens());
 
 // Media-preview capture mode: lets MediaPreview.vue mirror the media
 // window's actual composited pixels via getUserMedia({chromeMediaSource})
@@ -427,7 +496,7 @@ handleIpcInvoke('getAllScreens', async () => getAllScreens());
 // registered once per session, and since all windows share the default
 // session, a second registration here would silently replace the existing
 // website-mirror handler and break OBS/Zoom screen-share.
-handleIpcInvoke('getMediaWindowCaptureSourceId', async (e) => {
+handleIpcInvoke('getMediaWindowCaptureSourceId', (e) => {
   const media = mediaWindowInfo.mediaWindow;
   if (!media || media.isDestroyed()) return null;
   return media.webContents.getMediaSourceId(e.sender);
@@ -436,6 +505,9 @@ handleIpcInvoke('closeSqliteConnection', async (_e, dbPath: string) =>
   closeConnection(dbPath),
 );
 handleIpcInvoke('closeSqliteConnections', async () => closeAllConnections());
+handleIpcInvoke('isSqliteDbCorrupt', async (_e, dbPath: string) =>
+  isDbCorrupt(dbPath),
+);
 handleIpcInvoke(
   'executeQuery',
   async (
@@ -445,7 +517,7 @@ handleIpcInvoke(
     params?: (null | number | string)[],
   ) => executeQuery(dbPath, query, params),
 );
-handleIpcInvoke('isDownloadComplete', async (_e, downloadId: string) =>
+handleIpcInvoke('isDownloadComplete', (_e, downloadId: string) =>
   isDownloadComplete(downloadId),
 );
 handleIpcInvoke('isDownloadErrorExpected', async () =>
@@ -459,7 +531,7 @@ handleIpcInvoke('passWafChallenge', async (_e, url: string) => {
 
 handleIpcInvoke(
   'registerShortcut',
-  async (_e, name: keyof SettingsValues, keySequence: string) =>
+  (_e, name: keyof SettingsValues, keySequence: string) =>
     registerShortcut(name, keySequence),
 );
 
@@ -512,22 +584,13 @@ handleIpcInvoke(
     saveFileDialog(defaultPath, filter),
 );
 
-handleIpcInvoke('openFolder', async (_e, path: string) => {
-  // shell.openPath executes files (not just directories), so refuse to
-  // open anything that isn't an actual directory rather than trusting the
-  // caller's assumption that `path` points at a folder.
-  try {
-    const stats = await stat(path);
-    if (!stats.isDirectory()) return 'Path is not a directory';
-  } catch (error) {
-    captureElectronError(error, {
-      contexts: { fn: { name: 'openFolder', path } },
-    });
-    return 'Path does not exist';
-  }
+handleIpcInvoke(
+  'exportHtmlToPdf',
+  async (_e, html: unknown, defaultFileName: unknown) =>
+    exportHtmlToPdf(html, defaultFileName),
+);
 
-  return openPath(path);
-});
+handleIpcInvoke('openFolder', async (_e, path: unknown) => openFolder(path));
 
 handleIpcInvoke(
   'unzip',
@@ -536,8 +599,21 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('unwatchFolders', async () => unwatchFolders());
-handleIpcInvoke('watchFolder', async (_e, folderPath: string) =>
+handleIpcInvoke('watchFolder', (_e, folderPath: string) =>
   watchFolder(folderPath),
+);
+
+handleIpcInvoke('zoomCommand', async (_e, command: unknown) => {
+  if (!isZoomCommand(command)) {
+    return { error: 'invalid-command', ok: false };
+  }
+  return runZoomHelperCommand(command);
+});
+
+handleIpcInvoke(
+  'zoomTestParticipants',
+  async (_e, request: ZoomTestParticipantsRequest) =>
+    handleZoomTestParticipants(request),
 );
 
 handleIpcInvoke('getZipEntries', async (_e, zipPath: string) =>

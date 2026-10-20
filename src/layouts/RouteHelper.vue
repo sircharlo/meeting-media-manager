@@ -9,7 +9,7 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 
-initializeElectronApi('RouteHelper');
+void initializeElectronApi('RouteHelper');
 
 const router = useRouter() as ReturnType<typeof useRouter> | undefined;
 const currentState = useCurrentStateStore();
@@ -17,7 +17,7 @@ const currentState = useCurrentStateStore();
 function getParam(key: string) {
   try {
     return (
-      new URLSearchParams(location.search).get(key) ||
+      new URLSearchParams(location.search).get(key) || // NOSONAR: '' means not set
       new URLSearchParams(
         location.hash.substring(location.hash.indexOf('?')),
       ).get(key)
@@ -39,7 +39,7 @@ onBeforeMount(() => {
     if (param === 'initial-congregation-selector') {
       currentState.openCongregationSwitcher({ isBootstrap: true });
       if (router) {
-        router.push({ path: '/media-calendar' });
+        void router.push({ path: '/media-calendar' });
       } else {
         location.hash = '/media-calendar';
       }
@@ -48,7 +48,7 @@ onBeforeMount(() => {
 
     const path = `/${param}`;
     if (router) {
-      router.push({ path });
+      void router.push({ path });
     } else {
       location.hash = path;
     }

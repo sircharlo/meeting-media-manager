@@ -8,6 +8,7 @@ import {
 } from 'src-electron/constants';
 import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
 import { getDisplayMatchingSafe } from 'src-electron/main/screen-utils';
+import { quitStatus } from 'src-electron/main/session';
 import { captureElectronError, getIconPath } from 'src-electron/main/utils';
 import {
   createWindow,
@@ -16,6 +17,7 @@ import {
 } from 'src-electron/main/window/window-base';
 import { normalizeWindowBounds } from 'src-electron/main/window/window-bounds';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
+import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
 
 export const mediaWindowInfo = {
@@ -276,8 +278,8 @@ async function getPreferredScreenFromPrefs(
   const preferredScreen = getDisplayMatchingSafe({
     height: mediaWindowPrefs.height,
     width: mediaWindowPrefs.width,
-    x: mediaWindowPrefs.x || 0,
-    y: mediaWindowPrefs.y || 0,
+    x: mediaWindowPrefs.x ?? 0,
+    y: mediaWindowPrefs.y ?? 0,
   });
 
   const preferredIndex = screens.findIndex((s) => s.id === preferredScreen?.id);
@@ -482,21 +484,6 @@ function validateAndAdjustTarget(
   return target;
 }
 
-export const __testables = {
-  calculateAutoTarget,
-  findAlternativeScreen,
-  getMediaWindowState,
-  getPreferredScreenFromPrefs,
-  getTargetWhenOnMainScreen,
-  isFullscreenOrMaximized,
-  isWindowEffectivelyFullscreen,
-  normalizeWindowBounds,
-  shouldKeepWindowedWithoutExplicitTarget,
-  shouldMoveWindowedToFullscreen,
-  shouldSkipSingleScreenReposition,
-  validateAndAdjustTarget,
-};
-
 // =============================================================================
 // MAIN FUNCTION
 // =============================================================================
@@ -663,14 +650,98 @@ export const moveMediaWindow = async (
   }
 };
 
-export const moveMediaWindowThrottled = throttleWithTrailing(
-  () => moveMediaWindow(),
-  WINDOW_MOVE_THROTTLE_MS,
-);
+export const moveMediaWindowThrottled = throttleWithTrailing(() => {
+  // Never rejects: moveMediaWindow catches and reports its own errors.
+  void moveMediaWindow();
+}, WINDOW_MOVE_THROTTLE_MS);
 
 // =============================================================================
 // WINDOW CREATION & ANIMATION
 // =============================================================================
+
+// A media window renderer that dies (crash, out of memory, killed) leaves a
+// dead page behind: nothing plays, and no end-of-media ever reaches the main
+// window, which keeps showing the item as playing (MMM-V2-3EY). The main
+// window is told first, so it stops playback before the reloaded page asks
+// it for the current state; otherwise it would hand the stale item back and
+// the page would replay it from the start. Reloads are capped so a page that
+// dies on every load doesn't reload forever.
+const MEDIA_WINDOW_RELOADS_BEFORE_GIVING_UP = 3;
+const MEDIA_WINDOW_RELOAD_WINDOW_MS = 60_000;
+let recentMediaWindowReloads: number[] = [];
+
+const handleMediaWindowRendererGone = (
+  mediaWindow: BrowserWindow,
+  details: Electron.RenderProcessGoneDetails,
+) => {
+  if (details.reason === 'clean-exit' || quitStatus.isAppQuitting) return;
+  if (mediaWindow.isDestroyed()) return;
+
+  log(
+    `[mediaWindow event] render-process-gone (${details.reason})`,
+    'electronWindow',
+    'warn',
+    details,
+  );
+
+  // 'crashed' is already reported, with GPU diagnostics, by the app-wide
+  // render-process-gone handler in electron-main.ts.
+  if (details.reason !== 'crashed') {
+    captureElectronError(
+      new Error(`Media window renderer process gone: ${details.reason}`),
+      {
+        contexts: {
+          fn: {
+            exitCode: details.exitCode,
+            name: 'handleMediaWindowRendererGone',
+            reason: details.reason,
+          },
+        },
+      },
+    );
+  }
+
+  const now = Date.now();
+  recentMediaWindowReloads = [
+    ...recentMediaWindowReloads.filter(
+      (reloadedAt) => now - reloadedAt < MEDIA_WINDOW_RELOAD_WINDOW_MS,
+    ),
+    now,
+  ];
+  const reloading =
+    recentMediaWindowReloads.length <= MEDIA_WINDOW_RELOADS_BEFORE_GIVING_UP;
+
+  sendToWindow(mainWindowInfo.mainWindow, 'media-window-renderer-gone', {
+    reloading,
+  });
+
+  if (!reloading) {
+    log(
+      `[mediaWindow event] Renderer died ${recentMediaWindowReloads.length} times within ${MEDIA_WINDOW_RELOAD_WINDOW_MS / 1000}s, no longer reloading it`,
+      'electronWindow',
+      'error',
+    );
+    return;
+  }
+
+  mediaWindow.webContents.reload();
+};
+
+export const __testables = {
+  calculateAutoTarget,
+  findAlternativeScreen,
+  getMediaWindowState,
+  getPreferredScreenFromPrefs,
+  getTargetWhenOnMainScreen,
+  handleMediaWindowRendererGone,
+  isFullscreenOrMaximized,
+  isWindowEffectivelyFullscreen,
+  normalizeWindowBounds,
+  shouldKeepWindowedWithoutExplicitTarget,
+  shouldMoveWindowedToFullscreen,
+  shouldSkipSingleScreenReposition,
+  validateAndAdjustTarget,
+};
 
 /**
  * Creates the media window
@@ -698,12 +769,17 @@ export function createMediaWindow() {
     opacity: 1,
     roundedCorners: PLATFORM === 'darwin',
     thickFrame: false,
-    title: 'Media Player - M³',
+    title: MEDIA_WINDOW_TITLE,
     width: HD_RESOLUTION[0],
   });
 
   // Force aspect ratio
   mediaWindowInfo.mediaWindow.setAspectRatio(16 / 9);
+
+  const mediaWindow = mediaWindowInfo.mediaWindow;
+  mediaWindow.webContents.on('render-process-gone', (_event, details) => {
+    handleMediaWindowRendererGone(mediaWindow, details);
+  });
 
   mediaWindowInfo.mediaWindow.on('enter-full-screen', () => {
     log('[mediaWindow event] enter-full-screen', 'electronWindow', 'debug', {

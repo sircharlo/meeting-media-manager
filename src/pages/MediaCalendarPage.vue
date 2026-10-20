@@ -4,7 +4,7 @@
     class="media-filter-dialog"
     position="top"
     seamless
-    style="z-index: 1500 !important"
+    style="z-index: 1500"
     @show="focusMediaFilter"
   >
     <q-card class="media-filter-overlay">
@@ -291,7 +291,7 @@ import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { withPendingSectionImport } from 'src/helpers/pending-section-imports';
 import { updateLastUsedDate } from 'src/helpers/usage';
-import { triggerZoomScreenShare } from 'src/helpers/zoom';
+import { stopZoomSharingAfterMedia } from 'src/helpers/zoom';
 import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log, uuid } from 'src/shared/vanilla';
 import { convertImageIfNeeded, convertPdfToImages } from 'src/utils/converters';
@@ -308,6 +308,7 @@ import {
   getTempPath,
   isFileUrl,
 } from 'src/utils/fs';
+import { sleep } from 'src/utils/general';
 import {
   getMetadataFromMediaPath,
   getVisibleMeetingItems,
@@ -819,9 +820,8 @@ const addMemorialSongsIfNeeded = async (
   const songsToAdd = [18, 25];
   let successfulSongs = 0;
   for (const songTrack of songsToAdd) {
-    if (await downloadMemorialSong(songTrack)) {
-      successfulSongs++;
-    }
+    const downloaded = await downloadMemorialSong(songTrack); // NOSONAR: sequential - ordered section inserts
+    if (downloaded) successfulSongs++;
   }
   const allSongsDownloaded = successfulSongs === songsToAdd.length;
 
@@ -882,7 +882,7 @@ const applyFetchedMemorialMedia = async (
 const downloadMemorialSong = async (songTrack: number) => {
   const songTrackItem: PublicationFetcher = {
     fileformat: 'MP4',
-    langwritten: currentSettings.value?.lang || 'E',
+    langwritten: currentSettings.value?.lang || 'E', // NOSONAR: '' means not set
     pub: currentSongbook.value?.pub,
     track: songTrack,
   };
@@ -894,7 +894,7 @@ const downloadMemorialSong = async (songTrack: number) => {
     ]);
 
     const files =
-      songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.MP4 || [];
+      songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.MP4 || []; // NOSONAR: '' means not set
     if (!files.length) return true;
 
     const downloadId = (await downloadAdditionalRemoteVideo({
@@ -957,7 +957,7 @@ const downloadMemorialStreamSources = async (sections: {
   if (!datedAdditionalMediaDir) return;
 
   for (const mediaItem of memorialMediaWithStreamSource) {
-    await downloadMemorialStreamSource(mediaItem, datedAdditionalMediaDir);
+    await downloadMemorialStreamSource(mediaItem, datedAdditionalMediaDir); // NOSONAR: sequential - one download at a time
   }
 };
 
@@ -1048,10 +1048,8 @@ const waitForDownloadComplete = async (downloadId?: string) => {
   let downloadCompleted: boolean | null = null;
   while (downloadCompleted !== true) {
     downloadCompleted =
-      await globalThis.electronApi?.isDownloadComplete(downloadId);
-    await new Promise((resolve) => {
-      setTimeout(resolve, 300);
-    });
+      await globalThis.electronApi?.isDownloadComplete(downloadId); // NOSONAR: sequential - polls until ready
+    await sleep(300); // NOSONAR: sequential - polls until ready
   }
 };
 
@@ -1069,7 +1067,7 @@ const goToNextDayWithMedia = (ignoreTodaysDate = false) => {
               (section) => !!section.items?.length,
             );
             return (
-              getMeetingType(day.date) || isMemorialDay(day.date) || hasMedia
+              (getMeetingType(day.date) ?? isMemorialDay(day.date)) || hasMedia
             );
           })
           .map((day) => day.date)
@@ -1079,7 +1077,7 @@ const goToNextDayWithMedia = (ignoreTodaysDate = false) => {
               !isInPast(dateFromString(mediaDate), ignoreTodaysDate),
           )
           .map((mediaDate) => formatDate(mediaDate, 'YYYY/MM/DD'))
-          .sort()?.[0] || '';
+          .sort()?.[0] ?? '';
     }
   } catch (e) {
     errorCatcher(e);
@@ -1123,7 +1121,7 @@ const checkCoDate = () => {
         {
           color: 'white',
           handler: () => {
-            router.push('/settings/coWeek');
+            void router.push('/settings/coWeek');
           },
           label: t('go-to-settings'),
         },
@@ -1132,7 +1130,7 @@ const checkCoDate = () => {
       deferWhileDialogOpen: true,
       icon: 'mmm-error',
       message: t('no-circuit-overseer-date-set'),
-      timeout: 30000,
+      timeout: 30_000,
       type: 'primary',
     });
   }
@@ -1180,7 +1178,7 @@ const sectionToAddTo = ref<MediaSectionIdentifier | undefined>();
 useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   globalThis,
   'openFileImportDialog',
-  async (e) => {
+  (e) => {
     sectionToAddTo.value = e.detail.section;
     // Reset progress tracking when opening the dialog
     totalFiles.value = 0;
@@ -1208,7 +1206,7 @@ useEventListener<
     currentFile.value = 0;
 
     const needsSectionChoice =
-      (selectedDateObject.value?.mediaSections?.length || 0) > 1 &&
+      (selectedDateObject.value?.mediaSections?.length ?? 0) > 1 &&
       !event.detail?.section;
 
     if (needsSectionChoice) {
@@ -1299,7 +1297,7 @@ useEventListener<
       !sectionToAddTo.value &&
       e.detail?.dbPath &&
       e.detail?.document &&
-      (selectedDateObject.value?.mediaSections?.length || 0) > 1
+      (selectedDateObject.value?.mediaSections?.length ?? 0) > 1
     ) {
       pendingJwpubMediaPicker.value = {
         dbPath: e.detail.dbPath,
@@ -1420,15 +1418,22 @@ const restoreAdditionalSongsForPinyin = async (
 ) => {
   const songsBySection: Record<string, MediaItem[]> = {};
 
-  for (const song of savedSongs) {
-    const section = song.section || 'imported-media';
-    const item =
+  // Each song resolves independently (a local pinyin file, or the cached
+  // copy that's downloaded through the app's download queue if missing), so
+  // they're created concurrently; Promise.all keeps the saved order, and
+  // the section map below is still filled in that order.
+  const items = await Promise.all(
+    savedSongs.map((song) =>
       newPinyinActive && pinyinFolder
-        ? await createPinyinSongMediaItem(song, pinyinFolder)
-        : await createCachedSongMediaItem(song);
+        ? createPinyinSongMediaItem(song, pinyinFolder)
+        : createCachedSongMediaItem(song),
+    ),
+  );
 
-    addSongToSectionMap(songsBySection, section, item);
-  }
+  savedSongs.forEach((song, index) => {
+    const section = song.section || 'imported-media';
+    addSongToSectionMap(songsBySection, section, items[index]);
+  });
 
   for (const sec in songsBySection) {
     if (!songsBySection[sec]) continue;
@@ -1583,8 +1588,8 @@ const addMediaFileToMediaItems = async (
   if (matchingMissingItem) {
     const metadata = await getMetadataFromMediaPath(destPath);
     matchingMissingItem.fileUrl = pathToFileURL(destPath);
-    matchingMissingItem.duration = metadata.format.duration || 0;
-    matchingMissingItem.title = metadata.common.title || basename(destPath);
+    matchingMissingItem.duration = metadata.format.duration || 0; // NOSONAR: NaN duration falls back to 0
+    matchingMissingItem.title = metadata.common.title || basename(destPath); // NOSONAR: empty title uses the file name
     matchingMissingItem.isVideo = isVideo(filepath);
     matchingMissingItem.isAudio = isAudio(filepath);
     return;
@@ -1816,7 +1821,7 @@ const processImportFile = async (
 const finishImportedMediaItems = (mediaItemsToAdd: MediaItem[]) => {
   if (!mediaItemsToAdd.length) return;
 
-  const targetSection = sectionToAddTo.value || 'imported-media';
+  const targetSection = sectionToAddTo.value || 'imported-media'; // NOSONAR: '' means no section
   jwStore.addToAdditionMediaMap(
     mediaItemsToAdd,
     targetSection,
@@ -1838,7 +1843,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
   setDefaultSectionForImport();
   selectedFiles = pickPreferredSingleImportFile(selectedFiles);
   const mediaItemsToAdd: MediaItem[] = [];
-  const targetSection = sectionToAddTo.value || 'imported-media';
+  const targetSection = sectionToAddTo.value || 'imported-media'; // NOSONAR: '' means no section
 
   // All of mediaItemsToAdd lands in the store in one shot via
   // finishImportedMediaItems below, so the skeleton count is fixed up front
@@ -1853,12 +1858,9 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const file = selectedFiles[i];
         if (!file) continue;
         try {
-          const convertedImages = await processImportFile(
-            file,
-            mediaItemsToAdd,
-          );
-          if (convertedImages?.length) {
-            selectedFiles.splice(i + 1, 0, ...convertedImages);
+          const converted = await processImportFile(file, mediaItemsToAdd); // NOSONAR: sequential - ordered import, inserts converted files
+          if (converted?.length) {
+            selectedFiles.splice(i + 1, 0, ...converted);
             totalFiles.value = selectedFiles.length;
           }
         } catch (error) {
@@ -1956,7 +1958,7 @@ const onMediaPickerDismiss = () => {
 
 const dropActive = (event: DragEvent) => {
   sectionToAddTo.value = undefined;
-  if (['all', 'copyLink'].includes(event?.dataTransfer?.effectAllowed || '')) {
+  if (['all', 'copyLink'].includes(event?.dataTransfer?.effectAllowed ?? '')) {
     event.preventDefault();
 
     // Only show file import dialog for non-WE meetings
@@ -2000,7 +2002,7 @@ const handleDrop = (event: DragEvent) => {
 
       // Show section picker if...
       if (
-        (selectedDateObject.value?.mediaSections?.length || 0) > 1 && // ... more than one section exists AND
+        (selectedDateObject.value?.mediaSections?.length ?? 0) > 1 && // ... more than one section exists AND
         (!isWeMeetingDay(selectedDateObject.value?.date) || // ... EITHER this is not a WE meeting
           isCoWeek(selectedDateObject.value?.date)) // ... OR this is a CO week
       ) {
@@ -2159,11 +2161,11 @@ useEventListener(
 
     const currentId = selectedMediaItems.value[0];
 
-    const lastItem = sortedMediaIds[sortedMediaIds.length - 1];
+    const lastItem = sortedMediaIds.at(-1);
 
     // If no current selection, return last item if possible, otherwise first
     if (!currentId) {
-      selectedMediaItems.value = [lastItem || sortedMediaIds[0]];
+      selectedMediaItems.value = [lastItem ?? sortedMediaIds[0]];
       return;
     }
 
@@ -2171,7 +2173,7 @@ useEventListener(
 
     // If current item not found, reset to last item if possible, otherwise first
     if (currentIndex === -1) {
-      selectedMediaItems.value = [lastItem || sortedMediaIds[0]];
+      selectedMediaItems.value = [lastItem ?? sortedMediaIds[0]];
       return;
     }
 
@@ -2285,7 +2287,7 @@ function findNextSelectableMedia(mediaList: MediaItem[], startIndex: number) {
   }
 
   // If no selectable item found, wrap to beginning
-  return mediaList[0]?.uniqueId || null;
+  return mediaList[0]?.uniqueId ?? null;
 }
 
 function findPreviousSelectableMedia(
@@ -2301,7 +2303,7 @@ function findPreviousSelectableMedia(
   }
 
   // If no selectable item found, wrap to end
-  return mediaList[mediaList.length - 1]?.uniqueId || null;
+  return mediaList.at(-1)?.uniqueId ?? null;
 }
 
 function isMediaSelectable(mediaItem: MediaItem) {
@@ -2401,15 +2403,15 @@ const showEmptyState = computed(() => {
 
   // Count total media items across all sections
   const totalMediaCount = (selectedDateObject.value.mediaSections ?? []).reduce(
-    (total, section) => total + (section.items?.length || 0),
+    (total, section) => total + (section.items?.length ?? 0),
     0,
   );
 
   return (
-    (currentSettings.value?.disableMediaFetching && noMediaSections) ||
+    (currentSettings.value?.disableMediaFetching && noMediaSections) || // NOSONAR: boolean OR, false falls through
     (!currentSettings.value?.disableMediaFetching &&
       ((selectedDayMeetingType.value &&
-        (!selectedDateObject.value.status || totalMediaCount === 0)) ||
+        (!selectedDateObject.value.status || totalMediaCount === 0)) || // NOSONAR: boolean OR, false falls through
         (!selectedDayMeetingType.value && noMediaSections)))
   );
 });
@@ -2417,8 +2419,8 @@ const showEmptyState = computed(() => {
 // Banner column management for transitions
 const shouldShowBannerColumn = computed(
   () =>
-    showObsBanner.value ||
-    showObsSceneListErrorBanner.value ||
+    showObsBanner.value || // NOSONAR: boolean OR, false falls through
+    showObsSceneListErrorBanner.value || // NOSONAR: boolean OR, false falls through
     someItemsHiddenForSelectedDate.value ||
     duplicateSongsForWeMeeting.value ||
     showEmptyState.value,
@@ -2537,8 +2539,7 @@ const handleMediaItemClick = (payload: {
       .flatMap((section) => (section.items || []).map((item) => item.uniqueId))
       .filter(Boolean) as string[];
 
-    const lastSelectedId =
-      selectedMediaItems.value[selectedMediaItems.value.length - 1];
+    const lastSelectedId = selectedMediaItems.value.at(-1);
     if (!lastSelectedId) return;
 
     const startIndex = allMediaItems.indexOf(lastSelectedId);
@@ -2856,8 +2857,8 @@ const maybeSendLastSongShortcut = (
   );
 
   const allSongs = getVisibleMeetingSongs();
-  const lastSong = allSongs[allSongs.length - 1];
-  const lastSongUrl = lastSong?.fileUrl || lastSong?.streamUrl;
+  const lastSong = allSongs.at(-1);
+  const lastSongUrl = lastSong?.fileUrl || lastSong?.streamUrl; // NOSONAR: '' means no local file
   const stoppedWasLastSong =
     allSongs.length > 0 && lastSongUrl === oldMediaPlayingUrl;
 
@@ -3051,7 +3052,7 @@ watch(
 
 watchImmediate(
   () => selectedDate.value,
-  async (newVal) => {
+  (newVal) => {
     stopSlideshowPlayback();
     selectedMediaItems.value = [];
     lastExtendDirection.value = null;
@@ -3077,7 +3078,7 @@ watch(
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
-  async ([newJwpubImportDb, newJwpubImportDocuments]) => {
+  ([newJwpubImportDb, newJwpubImportDocuments]) => {
     if (newJwpubImportDocuments?.length) {
       showFileImport.value = true;
     } else if (!newJwpubImportDb) {
@@ -3253,14 +3254,16 @@ watch(
       if (repeatHandled) return;
 
       triggerMediaWindowAutoHide(false);
-      triggerZoomScreenShare(false);
+      // Whichever Zoom integration is sharing the media window: a video that
+      // ends on its own must stop the share like a manual stop does.
+      stopZoomSharingAfterMedia();
 
       mediaPlaying.value = atRest;
 
       // Clear custom duration when media ends
       postCustomDuration(undefined);
 
-      nextTick(() => {
+      void nextTick(() => {
         globalThis.dispatchEvent(
           new CustomEvent<{ scrollToSelectedMedia: boolean }>(
             'shortcutMediaNext',
@@ -3279,7 +3282,7 @@ watch(
 watch(
   () => currentTimeData.value,
   (newCurrentTime) => {
-    nextTick(() => {
+    void nextTick(() => {
       mediaPlaying.value.currentPosition = newCurrentTime;
       mediaPlaying.value.currentPositionUpdatedAt = Date.now();
     });
@@ -3338,7 +3341,7 @@ function notifyBackgroundMusicStillPlaying() {
     caption: t('background-music-still-playing-explain'),
     group: 'background-music-still-playing',
     message: t('background-music-still-playing'),
-    timeout: 15000,
+    timeout: 15_000,
     type: 'warning',
   });
 }
@@ -3434,7 +3437,7 @@ watch(
         ),
         group: 'meetingMediaDownloadError',
         message: t('errorDownloadingMeetingMedia'),
-        timeout: 15000,
+        timeout: 15_000,
         type: 'negative',
       });
       seenErrors.add(currentCongregation.value + errorVal);
@@ -3461,7 +3464,7 @@ watch(
         group: 'missingMeetingMedia',
         icon: 'mmm-file-missing',
         message: t('some-media-items-are-missing'),
-        timeout: 15000,
+        timeout: 15_000,
         type: 'warning',
       });
       seenErrors.add(currentCongregation.value + missingFileUrl);
@@ -3472,7 +3475,9 @@ watch(
 watch(
   () => selectedDateObject.value,
   async (newDateObject) => {
-    checkMemorialDate();
+    checkMemorialDate().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'checkMemorialDate' } } });
+    });
 
     if (!newDateObject?.date || !newDateObject?.mediaSections) return;
     const meetingDate = formatDate(newDateObject.date, 'YYYY-MM-DD');
@@ -3496,7 +3501,7 @@ watch(
     });
 
     for (const folder of foldersToTouch) {
-      await updateLastUsedDate(folder, meetingDate);
+      await updateLastUsedDate(folder, meetingDate); // NOSONAR: sequential - avoid flooding the network drive
     }
   },
   { immediate: true },
@@ -3504,7 +3509,9 @@ watch(
 
 onMounted(() => {
   goToNextDayWithMedia();
-  checkMemorialDate();
+  checkMemorialDate().catch((error: unknown) => {
+    errorCatcher(error, { contexts: { fn: { name: 'checkMemorialDate' } } });
+  });
 
   // If no date with media is found, go to today's date
   if (!selectedDate.value) {
@@ -3549,12 +3556,16 @@ onMounted(() => {
   if (urlVariables.value.base && urlVariables.value.mediator) {
     if (pinyinChanged) {
       // Full pinyin change handling (includes fetchMedia + additional song re-add)
-      handlePinyinChange(currentState.pinyinActive);
+      handlePinyinChange(currentState.pinyinActive).catch((error: unknown) => {
+        errorCatcher(error, {
+          contexts: { fn: { name: 'handlePinyinChange' } },
+        });
+      });
     } else {
-      fetchMedia();
+      void fetchMedia();
     }
   } else {
-    router.push('/settings');
+    void router.push('/settings');
   }
   checkCoDate();
   maybeShowQuickStartGuide();
@@ -3562,7 +3573,7 @@ onMounted(() => {
   watch(
     () => urlVariables.value.mediator,
     () => {
-      fetchMedia();
+      void fetchMedia();
     },
   );
 
@@ -3621,7 +3632,9 @@ watch(
     // selected date visibly bleed through in the meantime.
     selectedDate.value = '';
     goToNextDayWithMedia();
-    checkMemorialDate();
+    checkMemorialDate().catch((error: unknown) => {
+      errorCatcher(error, { contexts: { fn: { name: 'checkMemorialDate' } } });
+    });
     if (!selectedDate.value) {
       selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
     }
@@ -3632,7 +3645,7 @@ watch(
     // so without this the newly selected congregation's errored/incomplete
     // days just sit there unretried until something else happens to
     // trigger a refetch.
-    fetchMedia();
+    void fetchMedia();
   },
 );
 
@@ -3682,11 +3695,13 @@ watch(
       selectedDateObject.value?.date &&
       !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
     ) {
-      try {
-        addDayToExportQueue(selectedDateObject.value.date);
-      } catch (e) {
-        errorCatcher(e);
-      }
+      addDayToExportQueue(selectedDateObject.value.date).catch(
+        (error: unknown) => {
+          errorCatcher(error, {
+            contexts: { fn: { name: 'addDayToExportQueue' } },
+          });
+        },
+      );
     }
   },
 );
@@ -3695,11 +3710,13 @@ watch(
   () => filesDownloaded.value,
   () => {
     if (selectedDateObject.value?.date) {
-      try {
-        addDayToExportQueue(selectedDateObject.value.date);
-      } catch (e) {
-        errorCatcher(e);
-      }
+      addDayToExportQueue(selectedDateObject.value.date).catch(
+        (error: unknown) => {
+          errorCatcher(error, {
+            contexts: { fn: { name: 'addDayToExportQueue' } },
+          });
+        },
+      );
     }
   },
 );

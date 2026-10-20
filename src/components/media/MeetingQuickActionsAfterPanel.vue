@@ -58,6 +58,7 @@
         :disable="!canStopRecording"
         icon="mmm-stop"
         :label="t('quick-actions-stop-recording')"
+        :loading="togglePending"
         unelevated
         @click="stopRecording"
       />
@@ -140,7 +141,7 @@ const { mediaIsActivelyPlaying, musicPlaying, musicState } = storeToRefs(music);
 const { formatClockTime, playMusic, stopMusic } = music;
 
 const recording = useRecordingStore();
-const { canStopRecording, isRecording } = storeToRefs(recording);
+const { canStopRecording, isRecording, togglePending } = storeToRefs(recording);
 const { stopRecording } = recording;
 
 const scheduledEnd = computed(() =>
@@ -183,7 +184,7 @@ const shouldConfirmStartMusic = computed(() => {
 const startMusicConfirmPending = ref(false);
 const confirmStartMusic = () => {
   startMusicConfirmPending.value = false;
-  playMusic('quick-action');
+  void playMusic('quick-action');
 };
 const onMusicClick = () => {
   if (musicPlaying.value) {
@@ -194,7 +195,7 @@ const onMusicClick = () => {
     startMusicConfirmPending.value = true;
     return;
   }
-  playMusic('quick-action');
+  void playMusic('quick-action');
 };
 const phase = computed<'ended' | 'last-song' | 'scheduled'>(() => {
   if (lastSongEndedAt.value !== null) return 'ended';

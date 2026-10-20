@@ -12,7 +12,7 @@ import { useMeta } from 'quasar';
 import { initializeElectronApi } from 'src/helpers/electron-api-manager';
 import { onMounted, onUnmounted } from 'vue';
 
-initializeElectronApi('TimerLayout');
+void initializeElectronApi('TimerLayout');
 
 useMeta({
   title: 'Timer',

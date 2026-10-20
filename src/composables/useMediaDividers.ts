@@ -10,16 +10,16 @@ import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed } from 'vue';
 
+// Helper function to get sort order
+const getSortOrder = (item: MediaDivider | MediaItem): number => {
+  return typeof item.sortOrderOriginal === 'number'
+    ? item.sortOrderOriginal
+    : 0;
+};
+
 export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
   const currentState = useCurrentStateStore();
   const { selectedDateObject } = storeToRefs(currentState);
-
-  // Helper function to get sort order
-  const getSortOrder = (item: MediaDivider | MediaItem): number => {
-    return typeof item.sortOrderOriginal === 'number'
-      ? item.sortOrderOriginal
-      : 0;
-  };
 
   // Get dividers for this section
   const sectionDividers = computed(() => {
@@ -84,7 +84,7 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
       source: 'additional',
       title: title ?? '',
       type: 'divider',
-      uniqueId: `divider_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`,
+      uniqueId: `divider_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`, // NOSONAR: local list-item id (with a timestamp), not a secret
     };
 
     // Add divider to the section

@@ -368,6 +368,8 @@ export const getPublicationDirectoryContents = async (
   }
 };
 
+const getSize = (str: string) => Buffer.byteLength(str, 'utf8');
+
 /**
  * Trims a filepath to comply with the maximum path length (UTF-8 bytes).
  * @param filepath The filepath to trim.
@@ -378,12 +380,10 @@ export const trimFilepathAsNeeded = (filepath: string, maxBytes = 230) => {
   const fileDir = dirname(filepath);
   const ext = extname(filepath);
 
-  const getSize = (str: string) => Buffer.byteLength(str, 'utf8');
-
   let size = getSize(filepath);
 
   while (size > maxBytes) {
-    const uniqueId = '_' + Math.random().toString(16).slice(2, 6);
+    const uniqueId = '_' + Math.random().toString(16).slice(2, 6); // NOSONAR: suffix that keeps trimmed file names apart, not a secret
 
     const baseName = basename(filepath, ext);
 

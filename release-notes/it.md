@@ -2,46 +2,68 @@
 
 # Novità
 
-Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGELOG.md su GitHub.
+Per l'elenco completo delle modifiche tra le versioni, consulta il file CHANGELOG.md su GitHub.
+
+## PROSSIMA VERSIONE
+
+### ✨ Nuove funzionalità
+
+- ✨ **Zoom Meeting Manager (beta, Windows)**: una nuova integrazione che gestisce Zoom al posto tuo per ogni adunanza. Può avviare l'adunanza Zoom della tua congregazione quando la musica di sottofondo parte prima dell'adunanza. Quando la musica si ferma poco prima dell'inizio dell'adunanza, si collega all'audio del computer, riattiva il microfono, accende il video dell'host e disattiva l'audio a tutti senza consentire loro di riattivarlo. Quando la musica viene riprodotta prima o dopo un'adunanza, fa il contrario: si disconnette dall'audio del computer, spegne il video dell'host e consente a tutti di riattivare l'audio (invitandoli a farlo). Può anche condividere la finestra multimediale in Zoom automaticamente durante la visualizzazione dei media, assicurandosi che la finestra multimediale sia ciò che viene condiviso e mai nient'altro sullo schermo. Un nuovo pulsante Zoom nell'isola di azione mostra se è stata trovata una finestra dell'adunanza Zoom e consente di eseguire manualmente questi passaggi. Un assistente di configurazione, proposto quando attivi l'opzione (la configurazione guidata iniziale ora lo propone su Windows al posto della condivisione dello schermo tramite scorciatoia da tastiera) e disponibile in qualsiasi momento dal pulsante Zoom o dalle Impostazioni, controlla Zoom, impara i nomi dei pulsanti del microfono e della videocamera nella tua lingua e prova ogni passaggio insieme a te. All'avvio, M³ controlla anche che tutto ciò che automatizza in Zoom funzioni, aprendo se necessario l'adunanza nei giorni di adunanza, nell'ora e un quarto che precede l'inizio (limitandosi a guardare, senza premere nulla, se altri sono già nell'adunanza); se qualcosa non funziona, te lo segnala e sospende le sue automazioni di Zoom finché non viene riavviato o un nuovo controllo non ha esito positivo, così nulla va storto durante l'adunanza. Questo controllo è attivo per impostazione predefinita e può essere disattivato nelle Impostazioni. Man mano che ciascuno di questi passaggi va a buon fine, i promemoria corrispondenti nelle liste di controllo prima e dopo l'adunanza delle azioni rapide vengono spuntati per te, contrassegnati come eseguiti automaticamente in Zoom. Poiché non può essere usato insieme alla condivisione dello schermo tramite scorciatoia da tastiera, le Impostazioni lo segnalano sotto quella delle due opzioni che non è disponibile, indicando quale disattivare. Funziona con Zoom in qualsiasi lingua e non richiede di installare nient'altro oltre a Zoom.
+
+- ✨ **Timer dell'adunanza**: ora è possibile aggiungere parti personalizzate anche nei giorni di adunanza, per gli aggiornamenti del Corpo Direttivo, programmi speciali e qualsiasi altra cosa che non faccia parte del programma regolare. Ognuna è cronometrata come qualsiasi altra parte, e il nome e la durata possono essere modificati dal popup del timer o dall'elenco delle parti.
+
+- ✨ **Timer dell'adunanza**: accesso più rapido al timer. Passando il mouse sul pulsante del timer nell'isola di azione ora viene mostrata la parte cronometrata con i pulsanti Inizia, Pausa, Ferma e Prossima parte, senza aprire il popup (un'impostazione, attiva per impostazione predefinita). Una nuova impostazione consente inoltre di mantenere l'intero elenco delle parti e i comandi del timer in un pannello agganciato sul lato destro della finestra principale, sempre visibile.
+
+- ✨ **Timer dell'adunanza**: una nuova visualizzazione del conto alla rovescia, "Orologio analogico con arco temporale", mostra il tempo rimasto per una parte come uno spicchio sul quadrante di un orologio analogico, dalla lancetta dei minuti alla fine prevista, così con un solo sguardo vedi sia l'ora sia il tempo rimasto. Il tempo superato viene mostrato come uno spicchio rosso. Funziona anche per il conto alla rovescia prima dell'adunanza e in modalità conto in avanti.
+
+- ✨ **Timer dell'adunanza**: il conto alla rovescia prima dell'adunanza ora è etichettato "L'adunanza inizia tra" e il display del timer mostra il nome della parte cronometrata, così "4:59" non può più essere scambiato per l'ora del giorno.
+
+- ✨ **Timer dell'adunanza**: i tempi registrati di ciascun giorno possono essere cancellati in un'unica operazione, previa conferma, dal popup del timer o dal pannello agganciato.
+
+- ✨ **Zoom Meeting Manager (beta, Windows)**: un nuovo assistente per le mani alzate. Durante un'adunanza, M³ controlla l'elenco dei partecipanti di Zoom per individuare le mani alzate. Quando qualcuno alza la mano, una notifica in M³ consente all'operatore di riattivare l'audio di quel partecipante con un clic e, quando ha finito di parlare, di disattivargli di nuovo l'audio e abbassargli la mano con un altro clic; il pulsante Zoom nell'isola di azione elenca le mani alzate con gli stessi pulsanti. Ogni azione viene eseguita sulla riga di quel partecipante in Zoom, in base al suo nome esatto, e M³ non interviene su nessuno quando due partecipanti hanno lo stesso nome. Se il timer dell'adunanza è attivo, sul display del timer per il presidente compare anche una grande mano con il nome del partecipante, che può essere attivata manualmente dai popup del timer o di Zoom. M³ impara come Zoom indica le mani alzate nella tua lingua tramite un solo pulsante (che alza e abbassa la tua mano), proposto anche nell'assistente di configurazione.
+
+- ✨ **Timer dell'adunanza**: un nuovo timer remoto, opzionale. Quando è attivato, M³ rende disponibile una copia di sola lettura del display del timer come pagina web sulla rete locale, così un tablet o un telefono sul leggio può mostrare all'oratore il tempo rimanente senza che compaia sullo schermo della congregazione o nella condivisione Zoom. La pagina segue il timer in tempo reale (parti, conto alla rovescia prima dell'adunanza, orologio, colori del tempo superato, avviso della mano) e tutti i comandi restano in M³. Gli indirizzi da aprire sono mostrati nel popup del timer, con un pulsante per copiarli.
+
+- ✨ **Configurazione guidata**: la configurazione guidata ora chiede se conservi i file per le adunanze in un'app di archiviazione cloud come Dropbox, OneDrive, iCloud Drive o Google Drive. In tal caso, ti aiuta a scegliere lì una cartella condivisa e mostra come funziona: M³ crea una cartella per ogni adunanza in programma, con il nome della data dell'adunanza, e i file inseriti vengono aggiunti automaticamente a quell'adunanza, su ogni computer che usa la cartella.
 
 ## v26.9.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- ✨ **Before/After Meeting Quick Actions**: Un nuovo pannello grande pulsante assiste con la preparazione e immediatamente dopo ogni riunione — un conto alla rovescia dal vivo, avvio/arresto di musica di sottofondo con un solo tocco, registrazione start/stop e una checklist per congregazione raggruppata in categorie e modificabile dalle Impostazioni. Il pannello di pre-riunione elimina automaticamente una volta che la riunione inizia e la lista di controllo è completa (o dopo un breve periodo di grazia) e può sempre essere respinta manualmente.
+- ✨ **Azioni rapide prima/dopo l'adunanza**: un nuovo pannello con pulsanti grandi aiuta nei momenti che precedono e seguono immediatamente ogni adunanza: conto alla rovescia in tempo reale, avvio/arresto della musica di sottofondo con un tocco, avvio/arresto della registrazione e una lista di controllo per congregazione, suddivisa in categorie e modificabile dalle Impostazioni. Il pannello prima dell'adunanza si chiude automaticamente quando l'adunanza inizia e la lista di controllo è completata (o dopo un breve periodo di tolleranza), e può sempre essere chiuso manualmente.
 
 ## v26.8.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- ✨ **App-Wide Redesign**: un ampio aggiornamento visivo e di interazione attraverso le finestre di dialogo, la lista dei supporti/intestazione, le impostazioni e la procedura guidata di configurazione. La procedura guidata di configurazione è ora un flusso di una domanda per schermo con una barra di avanzamento. Tutti i prompt sono stati sostituiti con una finestra di dialogo marchiata coerente, e la selezione dell'intervallo di pagine PDF (per le importazioni di pubblicazione e trascinamento) ora utilizza un selettore di griglie-miniature invece di un prompt di testo libero. Aggiunto un nuovo tour della Guida di Avvio Rapido dopo il completamento dell'Installazione Guidata. Include anche lo styling ricaricato della carta/intestazione con ombre oscure e diverse correzioni di contrasto della modalità scura (etichette di campo focalizzate, percentuali di scarico-avanzamento).
-- ✨ **Pagina delle impostazioni**: Rielaborato in un layout a due pannelli, con una nuova sezione globale di Preferenze per l'aggiornamento automatico/aggiornamento beta-commuta fuori dalla finestra di dialogo Informazioni (che ora è puramente informativa).
-- ✨ **Aggiungi più tasto multimediale**: Aggiunta un'impostazione per scegliere esattamente quali sezioni delle adunanze mostrano il pulsante scorciatoia "aggiungi più media", insieme a una impostazione per una modalità compatta (solo icone).
-- ✨ **Media List**: Gli elementi mostrano ora gli scheletri di caricamento mentre vengono aggiunti invece di apparire vuoti, i gruppi multimediali mostrano un conteggio di elementi nascosti nel loro distintivo (es. "9 elementi (2 nascosti)"), i bambini all'interno di un gruppo possono essere riordinati tramite drag-and-drop, e a larghezze della finestra molto strette gli oggetti crollano in chip compatti, porta-punta degli strumenti invece di affollare la fila.
+- ✨ **Nuovo design dell'intera app**: un ampio rinnovamento grafico e dell'interazione che riguarda le finestre di dialogo, l'elenco e l'intestazione dei media, le Impostazioni e la configurazione guidata. La configurazione guidata ora presenta una domanda per schermata, con una barra di avanzamento. Tutte le richieste sono state sostituite da una finestra di dialogo uniforme con lo stile dell'app, e la selezione dell'intervallo di pagine dei PDF (per le importazioni da pubblicazioni e tramite trascinamento) ora usa un selettore a griglia di miniature invece di un campo di testo libero. Aggiunto un nuovo tour della Guida rapida al termine della configurazione guidata. Include anche uno stile rinnovato per schede e intestazioni, con ombre adatte alla modalità scura, e diverse correzioni del contrasto in modalità scura (etichette dei campi attivi, percentuali di avanzamento dei download).
+- ✨ **Pagina Impostazioni**: riorganizzata in un layout a due pannelli, con una nuova sezione globale Preferenze in cui sono stati spostati gli interruttori degli aggiornamenti automatici e beta, prima presenti nella finestra Informazioni (che ora è puramente informativa).
+- ✨ **Pulsante Aggiungi altri media**: aggiunta un'impostazione per scegliere esattamente in quali sezioni dell'adunanza mostrare il pulsante di scelta rapida "aggiungi altri media", insieme a un'impostazione per una modalità compatta (solo icona).
+- ✨ **Elenco dei media**: durante l'aggiunta, gli elementi ora mostrano dei segnaposto di caricamento invece di apparire vuoti, i gruppi di media indicano nel badge il numero di elementi nascosti (es. "9 elementi (2 nascosti)"), gli elementi all'interno di un gruppo possono essere riordinati trascinandoli e, con finestre molto strette, gli elementi si riducono a chip compatti con descrizione comando invece di affollare la riga.
 
 ## v26.7.7
 
 ### ✨ Nuove funzionalità
 
-- ✨ **Media Preview Quality**: Ora l'anteprima dei media rende i fotogrammi video tramite tela con downscaling di alta qualità, fissando anteprime jagged/blurry (soprattutto su contenuti testo-pesanti come le canzoni). L'anteprima si disattiva automaticamente anche se deve correggere ripetutamente la deriva di riproduzione su un singolo video, con un clic per riaccenderlo.
+- ✨ **Qualità dell'anteprima dei media**: l'anteprima dei media ora disegna i fotogrammi video tramite canvas con un ridimensionamento di alta qualità, eliminando le anteprime seghettate o sfocate (soprattutto con contenuti ricchi di testo, come i cantici). L'anteprima si disattiva anche automaticamente se deve correggere ripetutamente lo sfasamento della riproduzione di uno stesso video, e puoi riattivarla con un clic.
 
 ## v26.7.6
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- ✨ **Esclusione Video CBS**: Aggiunta un'impostazione per escludere i video di Studio Biblico di Congregazione da pubblicazioni specifiche (default per il **Camminare coraggiosamente con Dio** libro), con un selettore di pubblicazione ricercabile.
-- ✨ **Numeri di pagina del documento**: Pubblicazione Media e JWPUB importati ora mostra il numero di pagina di ogni documento (o i numeri quando ci sono più pagine) dopo il suo titolo. Questo può aiutare a trovare rapidamente i media specifici quando si conosce il numero di pagina su cui è trovato.
+- ✨ **Esclusione dei video dello Studio biblico di congregazione**: aggiunta un'impostazione per escludere i video dello Studio biblico di congregazione provenienti da pubblicazioni specifiche (per impostazione predefinita il libro **Cammina coraggiosamente con Dio**), con un selettore di pubblicazioni in cui è possibile cercare.
+- ✨ **Numeri di pagina dei documenti**: gli elenchi dei media delle pubblicazioni e dell'importazione JWPUB ora mostrano dopo il titolo il numero di pagina di ogni documento (o i numeri, se le pagine sono più di una). Questo può aiutarti a trovare rapidamente un media specifico quando conosci il numero della pagina in cui si trova.
 
 ## v26.7.4
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Recupero dei media mancanti**: gli elementi multimediali il cui file locale è andato perso (ad es. eliminato dalla cancellazione automatica della cache, o rimosso manualmente) mostrano ora un pulsante di riproduzione disabilitato, una didascalia «mancante» che indica il file da cercare e una nuova azione «Individua file» per ricollegare l'elemento a un file sul disco.
 - ✨ **Avviso di compatibilità**: aggiunto un banner ignorabile che avvisa gli utenti con combinazioni di sistema operativo/architettura presto non più supportate (macOS 12 Monterey e Windows a 32 bit) di aggiornare prima che i futuri aggiornamenti dell'app richiedano un sistema più recente.
 
 ## v26.7.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Riproduzione audio collegata**: aggiunto il supporto per riprodurre l'audio di un file insieme al video di un altro file. Può essere utile per riprodurre presentazioni video con musica di accompagnamento.
 - ✨ **Layout dei media monitorati**: aggiunta la persistenza degli elementi multimediali monitorati e dell'ordine delle sezioni tra le cartelle monitorate. Questo garantisce che l'elenco dei media venga mostrato allo stesso modo anche quando la cartella monitorata è sincronizzata tra più dispositivi.
@@ -57,10 +79,10 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.6.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Timer**: aggiunte modalità di visualizzazione analogica e lo stato del resoconto dei tempi.
-- ✨ **Profili**: aggiunte l'importazione e l'esportazione delle impostazioni del profilo nelle impostazioni Avanzate e nella Configurazione guidata.
+- ✨ **Profili**: aggiunte l'importazione e l'esportazione delle impostazioni del profilo nelle impostazioni avanzate e nella configurazione guidata.
 - ✨ **Finestra multimediale**: aggiunto il supporto per nascondere automaticamente la finestra multimediale dopo la riproduzione quando era inizialmente nascosta. Questo è pratico quando, ad esempio, un oratore in collegamento vuole mostrare delle immagini.
 
 ## v26.5.0
@@ -73,37 +95,37 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ### ✨ Nuove funzionalità
 
-- ✨ **JW Stream**: Aggiunto JW Stream alla lista dei siti web che possono essere mirrored.
+- ✨ **JW Stream**: aggiunto JW Stream all'elenco dei siti web di cui è possibile eseguire il mirroring.
 
 ## v26.4.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- ✨ **Timer di riunione**: È stata aggiunta una nuova funzione di timer di riunione. È facoltativo e può essere abilitato nelle impostazioni avanzate, se lo si desidera. Il timer può essere utilizzato per consentire all'operatore multimediale di tenere traccia del tempo dedicato alle parti di riunione, o per visualizzare il tempo trascorso sulla parte di riunione corrente su uno schermo dedicato visibile solo all'altoparlante.
+- ✨ **Timer dell'adunanza**: è stata aggiunta una nuova funzione di timer per l'adunanza. È facoltativo e può essere abilitato nelle impostazioni avanzate, se lo si desidera. Il timer consente all'operatore multimediale di tenere traccia del tempo impiegato per le parti dell'adunanza, oppure di mostrare il tempo trascorso sulla parte in corso su uno schermo dedicato visibile solo all'oratore.
 
 ## v26.3.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- ✨ **Memorial Media**: Il recupero automatico dei media commemorativi è ora fuori dalla beta! L'app scaricherà automaticamente il Memorial Welcome Video e l'immagine da visualizzare durante il Memoriale, quando disponibile nella lingua configurata.
-- ✨ **Velocità di riproduzione**: Aggiunto controllo della velocità di riproduzione con indicatore visivo, e ripristino manuale. Questa funzione è visibile solo se abilitata nelle impostazioni avanzate.
-- ✨ **Pinyin Songs**: Aggiunta una toggle per la sostituzione della canzone pinyin per le riunioni tenute in cinese.
+- ✨ **Media della Commemorazione**: il recupero automatico dei media della Commemorazione non è più in beta! L'app scaricherà automaticamente il video di benvenuto e l'immagine da mostrare durante la Commemorazione, quando disponibili nella lingua configurata.
+- ✨ **Velocità di riproduzione**: aggiunto il controllo della velocità di riproduzione con indicatore visivo e ripristino manuale. Questa funzione è visibile solo se abilitata nelle impostazioni avanzate.
+- ✨ **Cantici in pinyin**: aggiunta un'opzione per sostituire i cantici con la versione in pinyin per le adunanze tenute in cinese.
 
 ## v26.2.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- ✨ **Controllo spazio su disco**: Aggiunta funzionalità per monitorare e notificare quando lo spazio su disco è basso.
+- ✨ **Controllo dello spazio su disco**: aggiunta una funzione che monitora lo spazio su disco e avvisa quando sta per esaurirsi.
 
 ## v26.1.5
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- ✨ **Media Commemorazione**: Recupera automaticamente banner Commemorazione e video introduttivo nelle lingue supportate quando la data della Commemorazione è selezionata.
+- ✨ **Media della Commemorazione**: recupera automaticamente il banner e il video introduttivo della Commemorazione nelle lingue supportate quando viene selezionata la data della Commemorazione.
 
 ## v26.1.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Sincronizzazione automatica del programma delle adunanze**: aggiunta la possibilità di sincronizzare automaticamente date e orari delle adunanze con il sito ufficiale. Questa funzione è abilitata per impostazione predefinita e può essere attivata manualmente o disabilitata nelle impostazioni avanzate.
 - ✨ **Modifiche future del programma**: l'app include ora le modifiche future del programma quando si crea una congregazione usando la ricerca sul sito web, se disponibili.
@@ -111,13 +133,13 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.12.2
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- ✨ **Zoom/Pan pulsanti**: Aggiunta la possibilità di premere e tenere premuto i pulsanti zoom e pan per una regolazione continua.
+- ✨ **Pulsanti zoom/panoramica**: aggiunta la possibilità di tenere premuti i pulsanti di zoom e panoramica per una regolazione continua.
 
 ## v25.12.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Menu contestuale multi-selezione**: aggiunto il supporto per le azioni del menu tasto destro quando sono selezionati più elementi multimediali.
 - ✨ **Scorciatoie da tastiera**: aggiunte `Ctrl/Cmd+A` per selezionare tutti i media, `H` per nascondere i media selezionati e `Shift+Up/Down` per la navigazione della selezione da tastiera.
@@ -133,7 +155,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.11.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Selezione dei media JWPUB**: aggiunto un modo per selezionare singoli media dai file JWPUB.
 - ✨ **Focus automatico della finestra multimediale**: aggiunta un'impostazione facoltativa per mettere automaticamente a fuoco la finestra multimediale dopo la condivisione dello schermo su Zoom.
@@ -155,32 +177,32 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.10.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Avvia la riproduzione in pausa**: aggiunta una nuova impostazione per consentire alla riproduzione di iniziare in pausa, utile agli operatori audio/video per preparare la loro configurazione (come avviare la condivisione su Zoom) prima che il media inizi a essere riprodotto nella finestra multimediale.
 - ✨ **Notifiche di aggiornamento**: gli utenti verranno ora avvisati degli aggiornamenti tramite un banner nell'app, che permetterà anche di installare gli aggiornamenti immediatamente, invece di aspettare il successivo riavvio dell'app.
-- ✨ **Eventi personalizzati**: aggiunti hook di eventi facoltativi che possono attivare scorciatoie da tastiera quando vengono rilevati determinati eventi. Può essere utile agli operatori audio/video per eseguire automaticamente azioni al di fuori dell'app. Ad esempio, le luci smart potrebbero essere accese e spente prima e dopo la riproduzione dei media nelle sale dove si usano i proiettori; oppure si può richiamare uno script dopo che è stato riprodotto l'ultimo cantico di un'adunanza per automatizzare varie azioni in una riunione Zoom.
+- ✨ **Eventi personalizzati**: aggiunti hook di eventi facoltativi che possono attivare scorciatoie da tastiera quando vengono rilevati determinati eventi. Può essere utile agli operatori audio/video per eseguire automaticamente azioni al di fuori dell'app. Ad esempio, le luci smart potrebbero essere accese e spente prima e dopo la riproduzione dei media negli auditorium in cui si usano proiettori; oppure si può richiamare uno script dopo la riproduzione dell'ultimo cantico di un'adunanza per automatizzare varie azioni in un'adunanza Zoom.
 
 ## v25.9.1
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Finestra multimediale sempre in primo piano e comportamento a schermo intero**: corretto e migliorato il comportamento sempre-in-primo-piano della finestra multimediale, adattandolo dinamicamente in base allo stato a schermo intero.
 - ✨ **Impostazione del formato di visualizzazione della data**: aggiunta un'impostazione utente per configurare un formato di visualizzazione della data.
 - ✨ **Dissolvenza incrociata dei media**: implementate transizioni in dissolvenza incrociata per la visualizzazione dei media, al posto della più brusca transizione con dissolvenza al nero presente in precedenza.
-- ✨ **Music Auto-Stop**: Ottimizzato il comportamento della musica di sottofondo auto-stop per comportarsi allo stesso modo se la musica è stata avviata automaticamente o meno
+- ✨ **Arresto automatico della musica**: ottimizzato l'arresto automatico della musica di sottofondo, che ora si comporta allo stesso modo sia che la musica sia stata avviata automaticamente sia che non lo sia
 - ✨ **Click-through su finestre inattive in macOS**: abilitato il passaggio dei clic del mouse sulla finestra principale in macOS, il che dovrebbe rendere più facile controllare l'app anche quando non è in primo piano.
 
 ## v25.9.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- ✨ **Miglioramenti del Popup di Download**: Aggiunto il pulsante di aggiornamento e download raggruppati per data nel popup di download.
+- ✨ **Miglioramenti del popup di download**: aggiunti il pulsante di aggiornamento e il raggruppamento dei download per data nel popup di download.
 - ✨ **Memoria dell'ordine dei media monitorati**: aggiunta la memoria dell'ordine delle sezioni per gli elementi multimediali monitorati.
 
 ## v25.8.3
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Transizioni in dissolvenza della finestra multimediale**: aggiunta una nuova impostazione avanzata per far comparire e scomparire in dissolvenza la finestra multimediale, offrendo transizioni visive più morbide.
 - ✨ **Controllo della durata delle immagini e monitoraggio dell'avanzamento**: aggiunte le funzioni di controllo della durata delle immagini e di monitoraggio dell'avanzamento per le sezioni ripetute.
@@ -189,27 +211,27 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ### ✨ Nuove funzionalità
 
-- ✨ **Sezioni Media personalizzate**: Sistema completo per creare, modificare e gestire sezioni multimediali personalizzate con personalizzazione del colore e riordinamento trascina-e-rilascia.
+- ✨ **Sezioni multimediali personalizzate**: sistema completo per creare, modificare e gestire sezioni multimediali personalizzate, con personalizzazione del colore e riordinamento tramite trascinamento.
 - ✨ **Separatori dei media**: aggiunge separatori con titolo negli elenchi dei media per una migliore organizzazione, con opzioni di posizionamento in alto/in basso.
 - ✨ **Modalità ripetizione sezione**: abilita la riproduzione continua all'interno di sezioni specifiche per loop dei media senza interruzioni.
-- ✨ **Integrazione zoom**: Coordinamento per lo start/stop di condivisione automatica dello schermo durante la riproduzione multimediale.
+- ✨ **Integrazione con Zoom**: avvio e arresto automatici della condivisione dello schermo coordinati con la riproduzione dei media.
 
 ## v25.7.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - Nessuna nuova funzionalità per questa versione!
 
 ## 25.6.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- ✨ **Impostazione di connessione a consumo**: Aggiunta una nuova impostazione per ridurre l'utilizzo della banda di download sulle connessioni a consumo.
-- ✨ **Migliorata la gestione dei media in streaming**: Migliore supporto per i media in streaming, riducendo i problemi legati alla latenza.
+- ✨ **Impostazione per connessioni a consumo**: aggiunta una nuova impostazione per ridurre l'uso della banda di download sulle connessioni a consumo.
+- ✨ **Gestione migliorata dei media in streaming**: supporto migliore per i media in streaming, con meno problemi legati alla latenza.
 
 ## 25.5.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - 🖼️ **Opzione di ritardo OBS per le immagini**: aggiunge un'impostazione di OBS Studio per ritardare i cambi di scena quando si mostrano le immagini, migliorando le transizioni.
 - 🔊 **Supporto per il formato audio `.m4a`**: aggiunge la compatibilità con i file audio `.m4a` per ampliare i tipi di media supportati.
@@ -238,50 +260,50 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.2.1
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- 🔄 **Consenti tentativi di ricostruzione OBS**: Introdurre la possibilità di forzare manualmente OBS a riconnettersi quando necessario.
-- 🗑️ **Auto Cleanup Old Export Date Folders**: Rimuovere automaticamente le cartelle di data di esportazione obsolete per mantenere lo storage organizzato.
+- 🔄 **Consenti tentativi di riconnessione a OBS**: introdotta la possibilità di forzare manualmente la riconnessione di OBS quando necessario.
+- 🗑 **Pulizia automatica delle vecchie cartelle di esportazione per data**: rimuove automaticamente le cartelle di esportazione per data obsolete per mantenere organizzato lo spazio di archiviazione.
 
 ## 25.2.0
 
 ### ✨ Nuove funzionalità
 
-- 🌍 **Use System Locale by Default**: Rilevare e utilizzare automaticamente il locale del sistema per un'esperienza più personalizzata.
-- 🏷️ **Tag Support for Exported Media**: Aggiungi tag di metadati ai file multimediali esportati per una migliore organizzazione.
-- 🔄 **Automatic Beta to Stable Downgrade**: Consenti il downgrade automatico dalle versioni beta alle versioni stabili quando necessario.
-- 🌐 **Estrai gli ultimi indici di lingua MEPS**: Recupera gli indici di lingua MEPS più recenti direttamente dal sito ufficiale, garantendo un supporto linguistico aggiornato.
+- 🌍 **Usa la lingua di sistema per impostazione predefinita**: rileva e usa automaticamente le impostazioni locali del sistema per un'esperienza più personalizzata.
+- 🏷 **Supporto dei tag per i media esportati**: aggiunge tag di metadati ai file multimediali esportati per una migliore organizzazione.
+- 🔄 **Downgrade automatico da beta a stabile**: consente il downgrade automatico dalle versioni beta alle versioni stabili quando necessario.
+- 🌐 **Estrai gli indici di lingua MEPS più recenti**: recupera gli indici di lingua MEPS più recenti direttamente dal sito ufficiale, garantendo un supporto linguistico aggiornato.
 
 ## 25.1.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- 📅 **Apri date precedenti**: Consenti l'apertura delle date precedenti della settimana corrente, che è utile quando il giorno della riunione viene spostato più tardi nella settimana.
-- 🛑 **Banner di errore per OBS Studio**: Aggiungi un banner di errore quando OBS Studio non è connesso in un giorno di riunione, assicurando che gli utenti siano avvisati.
-- 📚 **Raggruppa i media per pubblicazione**: Raggruppa i media della stessa pubblicazione per una panoramica più pulita e più organizzata.
-- 🎵 **Duplicate Song Warning**: Mostra un avviso se i brani sono elencati più di una volta nella lista dei media per le riunioni del weekend.
-- 🔄 **Pianificazione pianificata futura**: Abilita la pianificazione delle future modifiche al calendario delle riunioni, che è utile per cambiamenti di orario annuale o per la visita del supervisore di circuito a una congregazione vicina.
+- 📅 **Apri date precedenti**: consente di aprire le date precedenti della settimana corrente, utile quando il giorno dell'adunanza viene spostato più avanti nella settimana.
+- 🛑 **Banner di errore per OBS Studio**: aggiunto un banner di errore quando OBS Studio non è connesso in un giorno di adunanza, così che gli utenti vengano avvisati.
+- 📚 **Raggruppa i media per pubblicazione**: raggruppa i media della stessa pubblicazione di riferimento per una panoramica più pulita e ordinata.
+- 🎵 **Avviso cantici duplicati**: mostra un avviso se dei cantici compaiono più di una volta nell'elenco dei media per le adunanze del fine settimana.
+- 🔄 **Pianificazione dei programmi futuri**: consente di pianificare le future modifiche al programma delle adunanze, utile per i cambi di orario annuali o per la visita del sorvegliante di circoscrizione a una congregazione vicina.
 
 ## 24.11.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - 🖥️ **Presentazione del sito web su macOS**: La presentazione del sito web è ora supportata su macOS 🚀
-- ⌨️ **funzione**: Introduce le scorciatoie da tastiera per arrestare, mettere in pausa e riprendere la riproduzione multimediale 🚀
-- 🌐 **funzione**: Aggiunto il supporto per impostare l'indirizzo web da cui i media dovrebbero essere scaricati 🚀
-- 🎬 **caratteristica**: Aggiunta la scena-selettore istantaneo di OBS Studio e la funzionalità di selezione della scena revisionata nelle impostazioni
-- 📖 **funzione**: sito web di documentazione esteso per supportare più lingue
+- ⌨️ **Scorciatoie da tastiera per la riproduzione**: introdotte scorciatoie da tastiera per fermare, mettere in pausa e riprendere la riproduzione dei media 🚀
+- 🌐 **Indirizzo personalizzato per il download dei media**: aggiunta la possibilità di impostare l'indirizzo web da cui scaricare i media 🚀
+- 🎬 **Selettore istantaneo delle scene OBS**: aggiunto il selettore istantaneo delle scene di OBS Studio e rinnovata la funzione di selezione delle scene nelle impostazioni
+- 📖 **Più lingue per la documentazione**: il sito web della documentazione ora supporta più lingue
 
 ## 24.10.10
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- ⌨️ **nuovo**: Aggiunte scorciatoie da tastiera per navigare all'elemento multimediale successivo/precedente
-- 🖱️ **nuovo**: Aggiunto un menu con il tasto destro del mouse agli elementi multimediali per nascondere gli elementi multimediali e rinominarli
-- ✂️ **nuovo**: I tempi video tagliati sono ora rispettati nelle playlist JWL importate
+- ⌨️ **Scorciatoie per spostarsi tra i media**: aggiunte scorciatoie da tastiera per passare all'elemento multimediale successivo/precedente
+- 🖱️ **Menu contestuale degli elementi multimediali**: aggiunto un menu, accessibile con il tasto destro del mouse, per nascondere e rinominare gli elementi multimediali
+- ✂️ **Importazione di playlist JWL con tagli**: i tagli dei video ora vengono rispettati nelle playlist JWL importate
 
 ## 24.10.9
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
-- 🗑️ **funzione**: Aggiunta un'opzione per eliminare tutti i file multimediali aggiuntivi per il giorno attualmente selezionato
+- 🗑️ **Eliminazione dei media aggiuntivi di un giorno**: aggiunta un'opzione per eliminare tutti i file multimediali aggiuntivi del giorno attualmente selezionato

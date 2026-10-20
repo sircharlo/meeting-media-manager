@@ -52,13 +52,13 @@ async function moveStandardFolders(
     const src = join(userDataPath, folder);
     const dest = join(sharedPath, folder);
 
-    const srcExists = await pathExists(src);
+    const srcExists = await pathExists(src); // NOSONAR: sequential - ordered file moves
     if (!srcExists) continue;
 
-    const destExists = await pathExists(dest);
+    const destExists = await pathExists(dest); // NOSONAR: sequential - ordered file moves
     if (destExists) continue;
 
-    await move(src, dest);
+    await move(src, dest); // NOSONAR: sequential - ordered file moves
   }
 }
 

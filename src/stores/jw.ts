@@ -120,7 +120,9 @@ export const shouldUpdateList = (
 };
 
 interface Store {
-  jwBibleFiles: Partial<Record<JwLangCode, CacheList<Partial<Publication>>>>;
+  // Keyed by the languages the list was built from, joined with '+' (e.g.
+  // 'E' or 'E+F'). Not persisted, so the key format needs no migration.
+  jwBibleFiles: Partial<Record<string, CacheList<Partial<Publication>>>>;
   jwIconsUrl: string;
   jwLanguages: CacheList<JwLanguage>;
   jwMepsLanguages: CacheList<JwMepsLanguage>;
@@ -221,8 +223,8 @@ export function replaceMissingMediaByPubMediaId(
       // Determine the correct target section based on the item's originalSection property
       // If children, use the first child's originalSection
       const targetSectionId = item.children?.length
-        ? item.children[0]?.originalSection || 'tgw'
-        : item.originalSection || 'tgw'; // Default to 'tgw' if no section assigned
+        ? (item.children[0]?.originalSection ?? 'tgw')
+        : (item.originalSection ?? 'tgw'); // Default to 'tgw' if no section assigned
       const targetSection = findMediaSection(
         targetDay.mediaSections,
         targetSectionId,
@@ -239,21 +241,7 @@ export function replaceMissingMediaByPubMediaId(
 
       // Handle items without pubMediaId (use uniqueId matching)
       if (!item.pubMediaId) {
-        const fileUrlIndex = targetSection.items.findIndex(
-          (t) => t.uniqueId === item.uniqueId,
-        );
-        if (fileUrlIndex === -1) {
-          // Add to the correct section if no match found
-          targetSection.items.push(item);
-        } else {
-          // check for duplicates
-          const lastIndex = targetSection.items.findLastIndex(
-            (t) => t.uniqueId === item.uniqueId,
-          );
-          if (lastIndex > fileUrlIndex) {
-            targetSection.items.splice(lastIndex, 1);
-          }
-        }
+        addOrDeduplicateByUniqueId(targetSection.items, item);
         return;
       }
 
@@ -273,26 +261,7 @@ export function replaceMissingMediaByPubMediaId(
         // Add new item to the correct section if no match found
         targetSection.items.push(item);
       } else {
-        const existing = targetSection.items[index];
-        if (!existing) return;
-
-        // Replace unconditionally if it's still a placeholder (fileUrl is the
-        // same as pubMediaId) and has no children.
-        if (
-          existing.fileUrl === existing.pubMediaId &&
-          !existing.children?.length
-        ) {
-          targetSection.items[index] = item;
-        } else if (hasDynamicMediaContentChanged(existing, item)) {
-          // Already resolved (e.g. downloaded), but JW.org's own data for
-          // this pubMediaId has genuinely changed - adopt the new content
-          // while keeping the user's hidden/sort-order state.
-          targetSection.items[index] = {
-            ...item,
-            hidden: existing.hidden,
-            sortOrderOriginal: existing.sortOrderOriginal,
-          };
-        }
+        updateMatchedDynamicItem(targetSection.items, index, item);
       }
     });
   }
@@ -344,6 +313,26 @@ export function replaceMissingMediaByPubMediaId(
 }
 
 /**
+ * Adds a fetched item without a pubMediaId to `items` when no item has its
+ * uniqueId yet; otherwise drops the last duplicate of it, if any.
+ * @param items The target section's items
+ * @param item The fetched item
+ */
+function addOrDeduplicateByUniqueId(items: MediaItem[], item: MediaItem) {
+  const fileUrlIndex = items.findIndex((t) => t.uniqueId === item.uniqueId);
+  if (fileUrlIndex === -1) {
+    // Add to the correct section if no match found
+    items.push(item);
+  } else {
+    // check for duplicates
+    const lastIndex = items.findLastIndex((t) => t.uniqueId === item.uniqueId);
+    if (lastIndex > fileUrlIndex) {
+      items.splice(lastIndex, 1);
+    }
+  }
+}
+
+/**
  * Feeds the stylesheets of the configured site's pages to `onCss` until one
  * page yields a match. WOL's own page comes first; the main site's home page
  * declares the same @font-face rules and is tried next, because WOL can
@@ -371,35 +360,25 @@ async function discoverFromSiteCss(
     `https://www.${base}/en/`,
   ];
   let unreportedError: unknown;
+  const scanOptions = {
+    ...options,
+    online,
+    onUnreportedError: (e: unknown) => {
+      unreportedError = e;
+    },
+  };
 
   for (const pageUrl of pageUrls) {
-    let found = false;
     try {
-      const response = await fetchRaw(pageUrl, undefined, options.cache);
+      const response = await fetchRaw(pageUrl, undefined, options.cache); // NOSONAR: sequential - stops at first match
       if (!response.ok) continue;
-      const cssUrls = extractCssUrls(await response.text(), pageUrl);
+      const cssUrls = extractCssUrls(await response.text(), pageUrl); // NOSONAR: sequential - stops at first match
 
-      for (const cssUrl of cssUrls) {
-        try {
-          const cssResponse = await fetchRaw(cssUrl, undefined, options.cache);
-          if (!cssResponse.ok) continue;
-          if (onCss(await cssResponse.text(), cssUrl)) {
-            found = true;
-            if (options.firstMatchOnly) return;
-          }
-        } catch (e) {
-          // A flaky connection to the site is not a bug (MMM-V2-3H4).
-          if (!(await shouldReportCaughtError(e, online))) {
-            unreportedError = e;
-            continue;
-          }
-          errorCatcher(e, {
-            contexts: { fn: { args: { cssUrl }, name: `${fnName} - cssUrl` } },
-          });
-        }
-      }
+      const found = await scanStylesheets(cssUrls, fnName, onCss, scanOptions); // NOSONAR: sequential - stops at first match
+      if (found) return;
     } catch (e) {
-      if (!(await shouldReportCaughtError(e, online))) {
+      const shouldReport = await shouldReportCaughtError(e, online); // NOSONAR: sequential - stops at first match
+      if (!shouldReport) {
         unreportedError = e;
         continue;
       }
@@ -408,7 +387,6 @@ async function discoverFromSiteCss(
       });
       return;
     }
-    if (found) return;
   }
   return unreportedError;
 }
@@ -433,6 +411,86 @@ function hasDynamicMediaContentChanged(
   return (
     existing.duration !== incoming.duration || existing.title !== incoming.title
   );
+}
+
+/**
+ * Feeds one page's stylesheets to `onCss`, in order (see
+ * discoverFromSiteCss).
+ * @param cssUrls The page's stylesheets
+ * @param fnName The calling action's name, for error contexts
+ * @param onCss Called with each stylesheet; returns whether it found a match
+ * @param options.cache Whether to reuse cached responses
+ * @param options.firstMatchOnly Stop at the first matching stylesheet
+ * @param options.online Whether the app is online, for error reporting
+ * @param options.onUnreportedError Called with each network error that
+ * isn't worth reporting
+ * @returns Whether any stylesheet matched
+ */
+async function scanStylesheets(
+  cssUrls: string[],
+  fnName: string,
+  onCss: (cssText: string, cssUrl: string) => boolean,
+  options: {
+    cache: boolean;
+    firstMatchOnly: boolean;
+    online: boolean;
+    onUnreportedError: (error: unknown) => void;
+  },
+): Promise<boolean> {
+  let found = false;
+  for (const cssUrl of cssUrls) {
+    try {
+      const cssResponse = await fetchRaw(cssUrl, undefined, options.cache); // NOSONAR: sequential - stops at first match
+      if (!cssResponse.ok) continue;
+      const cssText = await cssResponse.text(); // NOSONAR: sequential - stops at first match
+      if (onCss(cssText, cssUrl)) {
+        found = true;
+        if (options.firstMatchOnly) return true;
+      }
+    } catch (e) {
+      // A flaky connection to the site is not a bug (MMM-V2-3H4).
+      const shouldReport = await shouldReportCaughtError(e, options.online); // NOSONAR: sequential - stops at first match
+      if (!shouldReport) {
+        options.onUnreportedError(e);
+        continue;
+      }
+      errorCatcher(e, {
+        contexts: { fn: { args: { cssUrl }, name: `${fnName} - cssUrl` } },
+      });
+    }
+  }
+  return found;
+}
+
+/**
+ * Updates the item at `index` with the fetched item that matched it by
+ * pubMediaId, when it's still a placeholder or its content has changed.
+ * @param items The target section's items
+ * @param index The index of the matching existing item
+ * @param item The fetched item
+ */
+function updateMatchedDynamicItem(
+  items: MediaItem[],
+  index: number,
+  item: MediaItem,
+) {
+  const existing = items[index];
+  if (!existing) return;
+
+  // Replace unconditionally if it's still a placeholder (fileUrl is the
+  // same as pubMediaId) and has no children.
+  if (existing.fileUrl === existing.pubMediaId && !existing.children?.length) {
+    items[index] = item;
+  } else if (hasDynamicMediaContentChanged(existing, item)) {
+    // Already resolved (e.g. downloaded), but JW.org's own data for
+    // this pubMediaId has genuinely changed - adopt the new content
+    // while keeping the user's hidden/sort-order state.
+    items[index] = {
+      ...item,
+      hidden: existing.hidden,
+      sortOrderOriginal: existing.sortOrderOriginal,
+    };
+  }
 }
 
 export const useJwStore = defineStore('jw-store', {
@@ -479,7 +537,7 @@ export const useJwStore = defineStore('jw-store', {
         let targetSection: MediaSectionIdentifier = 'imported-media';
         if (coWeek) {
           targetSection =
-            section ||
+            section || // NOSONAR: '' means not set
             (isMeetingDay(selectedDateObject.date)
               ? 'circuit-overseer'
               : 'imported-media');
@@ -706,6 +764,18 @@ export const useJwStore = defineStore('jw-store', {
           return;
         }
         const formats: (keyof PublicationFiles)[] = ['MP4', 'MP3'];
+        const fetchSongbookLinks = (fileformat: keyof PublicationFiles) => {
+          const songbook: PublicationFetcher = {
+            fileformat,
+            langwritten: lang,
+            pub: currentSongbook.pub,
+          };
+          return fetchPubMediaLinks(
+            songbook,
+            this.urlVariables.pubMedia,
+            online,
+          );
+        };
         for (const fileformat of formats) {
           try {
             this.jwSongs[lang] ??= { list: [], updated: oldDate };
@@ -720,16 +790,7 @@ export const useJwStore = defineStore('jw-store', {
 
             // Fetch media links only if the song list hasn't been updated in over a month or if force is true
             if (monthsSinceUpdated > 1 || force) {
-              const songbook: PublicationFetcher = {
-                fileformat,
-                langwritten: lang,
-                pub: currentSongbook.pub,
-              };
-              const pubMediaLinks = await fetchPubMediaLinks(
-                songbook,
-                this.urlVariables.pubMedia,
-                online,
-              );
+              const pubMediaLinks = await fetchSongbookLinks(fileformat); // NOSONAR: sequential - stops at first match
               if (!pubMediaLinks?.files) {
                 continue;
               }
@@ -943,8 +1004,8 @@ export const useJwStore = defineStore('jw-store', {
         // periodically, so a baked-in URL inevitably goes stale. Discovered
         // dynamically via updateYeartextFontUrls(), same as the other
         // WT/Manna yeartext fonts below.
-        'Wt-BaeumMyungjo': state.yeartextFontUrls['Wt-BaeumMyungjo'] || '',
-        'Wt-ClearText-Bold': state.yeartextFontUrls['Wt-ClearText-Bold'] || '',
+        'Wt-BaeumMyungjo': state.yeartextFontUrls['Wt-BaeumMyungjo'] ?? '',
+        'Wt-ClearText-Bold': state.yeartextFontUrls['Wt-ClearText-Bold'] ?? '',
         ...state.yeartextFontUrls,
       } as Record<FontName, string>;
     },
@@ -972,7 +1033,10 @@ export const useJwStore = defineStore('jw-store', {
         });
       });
     },
-    omit: ['jwBibleFiles', 'jwMepsLanguages'],
+    // jwMepsLanguages stays persisted despite being refetchable: refetching
+    // it means downloading and extracting JW Library (see getJwMepsInfo),
+    // which would otherwise run on every launch instead of every few months.
+    omit: ['jwBibleFiles'],
     storage: jwStoreStorage,
   },
   state: (): Store => {

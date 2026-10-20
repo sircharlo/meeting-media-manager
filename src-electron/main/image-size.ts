@@ -50,7 +50,7 @@ const withTimeout = <T>(promise: Promise<T>, filePath: string): Promise<T> =>
       },
       (error: unknown) => {
         clearTimeout(timeout);
-        reject(error);
+        reject(error instanceof Error ? error : new Error(String(error)));
       },
     );
   });

@@ -147,7 +147,7 @@ export const deleteSection = (uniqueId: string) => {
 export const getRandomColor = () => {
   const min = 80; // Minimum brightness for each RGB channel
   const max = 230; // Maximum brightness for each RGB channel
-  const randomChannel = () => Math.floor(Math.random() * (max - min + 1)) + min;
+  const randomChannel = () => Math.floor(Math.random() * (max - min + 1)) + min; // NOSONAR: picks a section's display color
 
   const r = randomChannel();
   const g = randomChannel();
@@ -222,7 +222,7 @@ export const createMeetingSections = (day: DateInfo) => {
 export const getSectionBgColor = (section: MediaSection | undefined) => {
   if (!section || isStandardSection(section.uniqueId))
     return 'var(--q-primary)';
-  return section.bgColor || 'var(--q-primary)';
+  return section.bgColor || 'var(--q-primary)'; // NOSONAR: '' means not set
 };
 
 // Parses a "#rgb"/"#rrggbb" or "rgb(a)(...)" color string into channels.
@@ -252,6 +252,12 @@ const parseColorToRgb = (color: string): [number, number, number] | null => {
     : [r, g, b];
 };
 
+// Relative luminance of one 0-255 color channel
+const luminance = (val: number) => {
+  val /= 255;
+  return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
+};
+
 // Gamma-corrected relative-luminance black/white contrast pick, usable for
 // any bgColor string (hex or rgb()) - not just a MediaSection's own color.
 // getTextColor() below wraps this for the section-shaped call sites; other
@@ -274,12 +280,6 @@ export const getTextColorForBgColor = (bgColor?: string) => {
     return '#ffffff'; // Default to white if invalid input
   }
   const [r, g, b] = rgb;
-
-  // Calculate relative luminance
-  const luminance = (val: number) => {
-    val /= 255;
-    return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
-  };
 
   const lum =
     0.2126 * luminance(r) + 0.7152 * luminance(g) + 0.0722 * luminance(b);
@@ -313,7 +313,7 @@ export const getSectionAccentColor = (
   const section = sectionId
     ? findMediaSection(mediaSections ?? [], sectionId)
     : undefined;
-  return section?.config.bgColor || defaultAdditionalSection.config.bgColor;
+  return section?.config.bgColor || defaultAdditionalSection.config.bgColor; // NOSONAR: '' means not set
 };
 
 export const withAlpha = (color: string, alpha: number): string => {
@@ -396,8 +396,10 @@ const EXPORTABLE_SECTION_IDS: MediaSectionIdentifier[] = [
 // "<section#> <section name> - <item#> <title>.<ext>". Used as a fallback
 // ordering signal for watched items with no .section-order.json entry, e.g.
 // files brought into the watch folder from another device's export, or
-// copied in manually following the same numbering convention.
-const EXPORTED_FILENAME_PATTERN = /^(\d{1,3})\s+(.+?)\s-\s(\d{1,3})\s/;
+// copied in manually following the same numbering convention. The section
+// name starts at its first non-space character, so the spaces before it
+// belong to `\s+` alone (no backtracking between the two).
+const EXPORTED_FILENAME_PATTERN = /^(\d{1,3})\s+(\S.*?)\s-\s(\d{1,3})\s/;
 
 const getSectionIdFromExportedName = (
   sectionName: string,
@@ -576,7 +578,7 @@ export const saveWatchedMediaLayout = async (
       );
       sectionOrderFilePath = currentSectionOrderFilePath;
 
-      await withSectionOrderLock(currentSectionOrderFilePath, async () => {
+      const mergeLayoutData = async () => {
         const existingData = await readWatchedMediaSectionOrder(
           currentSectionOrderFilePath,
         );
@@ -585,7 +587,8 @@ export const saveWatchedMediaLayout = async (
           ...existingData,
           ...layoutData,
         });
-      });
+      };
+      await withSectionOrderLock(currentSectionOrderFilePath, mergeLayoutData); // NOSONAR: sequential - avoid flooding the network drive
     }
   } catch (error) {
     errorCatcher(error, {

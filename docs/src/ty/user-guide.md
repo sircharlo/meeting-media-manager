@@ -82,7 +82,7 @@ E hōro’a te ta’o’o rorouira i te mau taviri fa’atere ato’a:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- Fa’a’ahi / Fa’a’ati — ’A fa’a’ohipa i te huira o te ’iri nō te fa’a’ahi, ’a tu’u nō te fa’a’ati (nō te mau hoho’a)
+- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
 - Fa’a’ite-ātea i te ha’amata-ra’a - Ia fa’a’ohipahia, a fa’a’ite i te hō’ē fa’a’ite-ātea o te ha’amāramarama o te rāve’a ha’ata’i nō te feiā mata’ita’i i roto i te tauihaa matamua
 - Tere o te fa’ata’i-ra’a - Ia fa’a’ohipahia i roto i te mau fa’anahora’a, a fa’atano i te tere o te haruharu ’e te hōho’a mai roto mai i te tāpura fa’anahora’a o te rāve’a ha’ata’i
 
@@ -103,8 +103,8 @@ E hōro’a te ta’o’o rorouira i te mau taviri fa’atere ato’a:
 
 Nō te mau hoho’a e te mau video:
 
-- Fa’arahi/Fa’aiti - ’Ia fa’a’ohipa i te huira o te ’imo’i aore rā te mau rāve’a fa’arahi/fa’aiti i ni’a i te hōho’a iti
-- Fa’anu’u - ’Ia tu’i i te hōho’a iti e ’ia tu’i-turi ’ei fa’anu’u i te hōho’a
+- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
+- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
 - Fa’aho’i i te rahira’a tumu - ’Ia tu’i i te reira nō te fa’aho’i i te rahira’a hōho’a i tō na huru mātāmua
 
 #### Mau rāve’a poto nō te tāpapa-matini {#user-guide-keyboard-shortcuts}
@@ -148,6 +148,26 @@ A ha’amana’o e, e taupoto noa te mau tapo’i muri i fa’anahohia, ’e e �
 Ia fa’a’ohipahia te hora nō te amuira’a, e nehenehe te M³ e fa’a’ite i te hō’ē ha’amāramarama hora ta’a’ē nō te faito i te taime o te mau tuha’a a te feiā e paraparau ra. E nehenehe te hora e tai’o i ni’a ’aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te tatau-hora i mua i te mau amuira’a i fa’anahohia, ’e e fa’a’ite ’oia i te taime hau, ’aore rā e fa’a’ite mai te mea e te tere ra te amuira’a i mua ’aore rā i muri i te hora.
 
 E tuha’a fa’anahora’a fa’a’ite-ātea ā teie, ’e ’ia fa’a’ohipahia nōa ’ia fa’atia-hia mai e te mau ti’a nō te vāhi.
+
+#### Meeting Parts {#user-guide-timer-parts}
+
+The timer popup on the action island lists the parts of the selected day's meeting. For midweek meetings, choose how many Apply Yourself to the Field Ministry and Living as Christians parts there are; the section's minutes are shared out evenly, and each part can then be adjusted freely with the **+** and **−** buttons or by clicking the part. Any part can be set to any number of minutes, including 0 to skip it. A warning icon points out sections whose parts don't add up to the time allotted to them, but never changes anything on its own.
+
+**Custom parts** can be added on any day, for Governing Body updates, special programs or anything else that isn't on the regular schedule. On days without a meeting, the timer starts with one custom part per custom media section.
+
+Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
+
+#### Hand Alert {#user-guide-timer-hand-alert}
+
+A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+
+#### Timer on a Tablet {#user-guide-timer-remote}
+
+The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³.
+
+#### Quick Access {#user-guide-timer-quick-access}
+
+Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).
 
 ## Hīmene i muri i te hōho’a {#user-guide-background-music}
 
@@ -194,12 +214,12 @@ E taui noa te M³ i te mau teata nō te OBS i te roara’a o te mau fa’a’ite
 
 ### Te mau rave’a pa’ari nō te OBS {#advanced-obs}
 
-#### Fa’ata’ara’a i te mau hōho’a {#user-guide-postpone-images}
+#### Do Not Automatically Share Images {#user-guide-postpone-images}
 
 Ha’amā’iti i teie maitira’a nō te fa’ata’a i te tu’ura’a atu i te mau hōho’a i ni’a i te OBS ’ia tae i te taime e fa’a’ohipahia ai e ’outou iho:
 
-1. Ha’amā’iti i te "Fa’ata’ara’a i te mau hōho’a" i roto i te mau fa’atanora’a nō te OBS
-2. E tu’u-noa-hia te mau hōho’a ’ia pa’i ’outou i te pitopito nō te fa’a’ite i te reira nā roto i te OBS Studio. E mea faufa’a teie nō te fa’a’ite mātāmua i te mau hōho’a i te feiā e fa’aro’o tūtū atu i mua.
+1. Enable "Do not automatically share images" in OBS settings
+2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. E mea faufa’a teie nō te fa’a’ite mātāmua i te mau hōho’a i te feiā e fa’aro’o tūtū atu i mua.
 
 #### Te huru o te tauira’a i te mau teata {#user-guide-scene-switching}
 
@@ -265,7 +285,7 @@ Te mau raveraa maita’i a’e:
 
 1. Te tapera’a mai i te mau parau - ’A fa’a’ohipa i te tāpa’o "import" nō te tāmā’iti i te mau video, te mau hoho’a, ’aore rā te mau parau ta’o
 2. Te tu’u-tāmata-ra’a - ’A tu’u hō’ē noa i te mau parau na ni’a i te M³
-3. Te hi’opo’ara’a i te mau fātura - ’A ha’amau i te hō’ē fātura hi’opo’ahia nō te tāpe’a-’ōhie-ra’a i te mau parau
+3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
 4. Te mau parau JWPUB ’e te mau tāpura pehe - ’A tapea mai i te mau parau nene’i ’e te mau tāpura pehe
 5. Te mau rāve’a ha’amāramaramara’a nō te ’ōrerora’a parau (S-34 / S-34mp) - ’A tapea mai i te mau rāve’a nō te ’ōrerora’a parau nā roto i te mau parau JWPUB S-34 ’aore rā S-34mp
 6. Te mau Video mai te reni matamua - A imi i te mau video e a tu’u atu i ni’a i te mahana i mā’itihia
@@ -292,16 +312,17 @@ Te tapea-mai-ra’a i te mau rīti’o o te mau tuha’a Bibilia:
 
 E nehenehe te mau fa’anahora’a o te mau ’ite-mata tāta’itahi e tono-hia atu i roto i te ho’ē pu’e parau JSON mai roto mai i te Fa’anahora’a. Te ’imi-ra’a mai i te ho’ē pu’e parau nō te mau fa’anahora’a, e mono ïa i te mau fa’anahora’a o te ’ite-mata e fa’a’ohipa-hia ra i teie taime, e mea faufa’a roa râ teie nō te fa’atere-ra’a i te ho’ē fa’anahora’a i ni’a i te tahi atu roro uira aore rā nō te fa’aho’i-ra’a i te ho’ē fa’anahora’a i te huru maita’i i matauhia.
 
-## Te hi’opo’a-ra’a i te pu’e parau ’e te fa’anahora’a i te reira {#user-guide-folder-monitoring}
+## Shared Folder and Export {#user-guide-folder-monitoring}
 
-### Te ha’amau-ra’a i te hi’opo’a-ra’a i te pu’e parau {#folder-monitoring-setup}
+### Setting Up a Shared Folder {#folder-monitoring-setup}
 
-’A hi’opo’a i te hō’ē pu’e parau nō te mau rīti’o peu ’āpī:
+Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
 
-1. Te ha’amara’a i te hi’opo’a-ra’a i te pu’e parau - ’A ha’amara i te hi’opo’a-ra’a i te pu’e parau i roto i te mau fa’anahora’a
-2. Te mā’itira’a i te pu’e parau - ’A mā’iti i te pu’e parau ’ia hi’opo’ahia
-3. Te tapea-mai-ra’a ’a’ano - E tu’uhia te mau rīti’o ’āpī i roto i te M³ ma te hō’ē noa ta’i-ta’i-ra’a
-4. Te fa’anahora’a - E fa’anahohia te mau rīti’o ia au i te mahana, ia au i te huru o te pu’e parau
+1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
+2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
+3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
+4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
+5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
 
 ### Te fa’anahora’a i te mau rāve’a ha’amāramaramara’a {#user-guide-media-export}
 
@@ -385,7 +406,7 @@ Te fa’anahora’a i te mau rāve’a pāpa’i-’āpee ta’a ’ē nō te �
 
 #### Te mau fifi nō te fa’aotira’a {#user-guide-performance-issues}
 
-- ’A fa’ati’a i te cache ta’a ’ē
+- Cache songbook video files
 - ’A fa’aiti i te faito teitei o te hōho’a
 - ’A tāmā i te mau cache tahito
 - ’A hi’o i te vāhi tei toe i roto i te disk

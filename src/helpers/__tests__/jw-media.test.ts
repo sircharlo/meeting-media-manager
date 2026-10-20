@@ -1,7 +1,7 @@
 import type { MultimediaItem } from 'src/types';
 
 import { fetchRaw } from 'src/utils/api';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const errorCatcherMock = vi.fn();
 const createTemporaryNotificationMock = vi.fn();
@@ -11,6 +11,9 @@ const extractNestedZipEntryMock = vi.fn();
 const getZipEntriesMock = vi.fn();
 const closeSqliteConnectionMock = vi.fn(async () => undefined);
 const closeSqliteConnectionsMock = vi.fn(async () => undefined);
+const isSqliteDbCorruptMock = vi.fn<(dbPath: string) => Promise<boolean>>(
+  async () => false,
+);
 const unzipMock = vi.fn();
 const statMock = vi.fn();
 const removeMock = vi.fn();
@@ -25,6 +28,7 @@ const ensureDirMock = vi.fn();
 const formatDateMock = vi.fn();
 const getTempPathMock = vi.fn(async () => '/tmp');
 const isUsablePathMock = vi.fn(async () => true);
+const invalidateCustomCachePathMock = vi.fn();
 const currentStateStore = {
   currentCongregation: '',
   currentLangObject: undefined as undefined | { isSignLanguage?: boolean },
@@ -32,8 +36,16 @@ const currentStateStore = {
   extractedFiles: {} as Record<string, string | undefined>,
   getMeetingType: vi.fn(),
 };
+interface MepsLanguageMock {
+  LanguageId: number;
+  PrimaryIetfCode?: string;
+  Symbol: string;
+}
 const jwStore = {
-  jwMepsLanguages: { list: [] as { LanguageId: number; Symbol: string }[] },
+  jwMepsLanguages: { list: [] } as {
+    list: MepsLanguageMock[];
+    updated?: Date;
+  },
   lookupPeriod: {},
   urlVariables: {},
 };
@@ -94,6 +106,7 @@ vi.mock('src/helpers/notifications', () => ({
 }));
 
 vi.mock('src/helpers/usage', () => ({
+  LAST_USED_FILENAME: '.last-used',
   updateLastUsedDate: vi.fn(),
 }));
 
@@ -128,6 +141,7 @@ vi.mock('src/utils/fs', () => ({
   findFile: vi.fn(),
   getPublicationDirectory: vi.fn(),
   getTempPath: getTempPathMock,
+  invalidateCustomCachePath: invalidateCustomCachePathMock,
   trimFilepathAsNeeded: vi.fn(),
 }));
 
@@ -183,33 +197,6 @@ vi.mock('../media-sections', () => ({
 }));
 
 describe('jw-media helpers', () => {
-  describe('paragraph number detection', () => {
-    it('uses only a reference-shaped caption fragment', async () => {
-      const { getParagraphNumbers } = await import('../jw-media');
-
-      expect(
-        getParagraphNumbers(
-          '',
-          'Picture A: Part of an ancient Egyptian list of slaves that features more than 40 Semitic names, indicating the presence of Israelite slaves in Egypt',
-        ),
-      ).toBe('');
-      expect(getParagraphNumbers(1, 'See paragraph 2')).toBe(2);
-      expect(getParagraphNumbers(11, 'See paragraphs 11-12')).toBe('11-12');
-      expect(getParagraphNumbers('', '¶ 7')).toBe(7);
-    });
-
-    it('retains the paragraph label for captions without a reference', async () => {
-      const { getParagraphNumbers } = await import('../jw-media');
-
-      expect(getParagraphNumbers(4, '')).toBe(4);
-      expect(getParagraphNumbers(4, 'A list containing 40 names')).toBe('');
-      expect(getParagraphNumbers(4, 'John 4:6-9')).toBe('');
-      expect(
-        getParagraphNumbers(4, 'Choose what is valuable (Compare page 46.)'),
-      ).toBe('');
-    });
-  });
-
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
@@ -251,12 +238,40 @@ describe('jw-media helpers', () => {
         stat: statMock,
       },
       getZipEntries: getZipEntriesMock,
+      isSqliteDbCorrupt: isSqliteDbCorruptMock,
       isUsablePath: isUsablePathMock,
       join: joinMock,
       pathToFileURL: vi.fn(),
       readdir: readdirMock,
       setElectronUrlVariables: vi.fn(),
       unzip: unzipMock,
+    });
+  });
+
+  describe('paragraph number detection', () => {
+    it('uses only a reference-shaped caption fragment', async () => {
+      const { getParagraphNumbers } = await import('../jw-media');
+
+      expect(
+        getParagraphNumbers(
+          '',
+          'Picture A: Part of an ancient Egyptian list of slaves that features more than 40 Semitic names, indicating the presence of Israelite slaves in Egypt',
+        ),
+      ).toBe('');
+      expect(getParagraphNumbers(1, 'See paragraph 2')).toBe(2);
+      expect(getParagraphNumbers(11, 'See paragraphs 11-12')).toBe('11-12');
+      expect(getParagraphNumbers('', '¶ 7')).toBe(7);
+    });
+
+    it('retains the paragraph label for captions without a reference', async () => {
+      const { getParagraphNumbers } = await import('../jw-media');
+
+      expect(getParagraphNumbers(4, '')).toBe(4);
+      expect(getParagraphNumbers(4, 'A list containing 40 names')).toBe('');
+      expect(getParagraphNumbers(4, 'John 4:6-9')).toBe('');
+      expect(
+        getParagraphNumbers(4, 'Choose what is valuable (Compare page 46.)'),
+      ).toBe('');
     });
   });
 
@@ -313,6 +328,447 @@ describe('jw-media helpers', () => {
         }),
       }),
     );
+  });
+
+  // What each failure while extracting a jwpub leaves behind: a corrupt
+  // jwpub (or its contents) is deleted so it's downloaded again, while a
+  // file that's merely unreachable right now (a cloud placeholder, a
+  // permission problem) is kept.
+  describe('jwpub extraction failures', () => {
+    const jwpubPath = '/tmp/publication.jwpub';
+    const contentsPath = '/tmp/out/contents';
+    const dbPath = '/tmp/out/pub.db';
+    const permissionError = () =>
+      Object.assign(new Error('operation not permitted'), { code: 'EPERM' });
+    const cloudError = () =>
+      Object.assign(new Error('connection timed out'), { code: 'ETIMEDOUT' });
+
+    // A jwpub whose contents entry is 100 bytes and holds a 50-byte pub.db.
+    const mockJwpub = ({
+      contentsSize,
+      dbEntries = { 'pub.db': 50 },
+      dbSize,
+    }: {
+      contentsSize?: number;
+      dbEntries?: Record<string, number>;
+      dbSize?: number;
+    } = {}) => {
+      getZipEntriesMock.mockImplementation(async (path: string) =>
+        path === jwpubPath ? { contents: 100 } : dbEntries,
+      );
+      statMock.mockImplementation(async (path: string) => {
+        if (path === contentsPath && contentsSize !== undefined) {
+          return { size: contentsSize };
+        }
+        if (path === dbPath && dbSize !== undefined) return { size: dbSize };
+        throw Object.assign(new Error('missing'), { code: 'ENOENT' });
+      });
+    };
+
+    const mockDbFound = async (...results: (string | undefined)[]) => {
+      const { findDb } = await import('src/utils/sqlite');
+      const mocked = vi.mocked(findDb);
+      results.forEach((result) => mocked.mockResolvedValueOnce(result));
+    };
+
+    const unzipJwpub = async () => {
+      const jwMedia = await import('../jw-media');
+      return jwMedia.unzipJwpub(jwpubPath, '/tmp/out');
+    };
+
+    const errorCatcherNames = () =>
+      errorCatcherMock.mock.calls.map(
+        ([, options]) =>
+          (options as undefined | { contexts?: { fn?: { name?: string } } })
+            ?.contexts?.fn?.name,
+      );
+
+    describe('reading the jwpub', () => {
+      it('deletes a jwpub whose entries cannot be read', async () => {
+        const error = new Error('invalid zip');
+        getZipEntriesMock.mockRejectedValue(error);
+
+        await expect(unzipJwpub()).rejects.toBe(error);
+
+        expect(logMock).toHaveBeenCalledWith(
+          `[jwpubExtractor] Error reading JWPUB entries for ${jwpubPath}:`,
+          'mediaPlayback',
+          'error',
+          error,
+        );
+        expect(removeMock).toHaveBeenCalledWith(jwpubPath);
+        expect(invalidateCustomCachePathMock).not.toHaveBeenCalled();
+      });
+
+      it('keeps a jwpub it is not allowed to read, and stops using the custom cache folder', async () => {
+        const error = permissionError();
+        getZipEntriesMock.mockRejectedValue(error);
+
+        await expect(unzipJwpub()).rejects.toBe(error);
+
+        expect(invalidateCustomCachePathMock).toHaveBeenCalledWith(error);
+        expect(removeMock).not.toHaveBeenCalledWith(jwpubPath);
+      });
+
+      it('keeps a jwpub cloud storage could not deliver, and tells the user', async () => {
+        const cloudJwpub = '/Users/me/OneDrive/publication.jwpub';
+        getZipEntriesMock.mockRejectedValue(cloudError());
+        const { unzipJwpub: unzip } = await import('../jw-media');
+
+        await expect(unzip(cloudJwpub, '/tmp/out')).rejects.toThrow(
+          'connection timed out',
+        );
+
+        expect(removeMock).not.toHaveBeenCalledWith(cloudJwpub);
+        expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
+          expect.objectContaining({ group: 'cloudJwpubUnavailable' }),
+        );
+      });
+    });
+
+    describe('extracting the contents entry', () => {
+      it('re-extracts contents of the wrong size', async () => {
+        mockJwpub({ contentsSize: 60, dbSize: 50 });
+        await mockDbFound(dbPath);
+
+        await expect(unzipJwpub()).resolves.toBe('/tmp/out');
+
+        expect(logMock).toHaveBeenCalledWith(
+          `[jwpubExtractor] contents size mismatch: path ${contentsPath}, expected 100, got 60. Re-extracting contents from ${jwpubPath}.`,
+          'mediaPlayback',
+          'warn',
+        );
+        expect(unzipMock).toHaveBeenCalledWith(jwpubPath, '/tmp/out', {
+          includes: ['contents'],
+        });
+        expect(unzipMock).toHaveBeenCalledTimes(1);
+      });
+
+      it('extracts missing contents without warning about a size mismatch', async () => {
+        mockJwpub({ dbSize: 50 });
+        await mockDbFound(dbPath);
+
+        await expect(unzipJwpub()).resolves.toBe('/tmp/out');
+
+        expect(unzipMock).toHaveBeenCalledWith(jwpubPath, '/tmp/out', {
+          includes: ['contents'],
+        });
+        expect(logMock).not.toHaveBeenCalledWith(
+          expect.stringContaining('contents size mismatch'),
+          'mediaPlayback',
+          'warn',
+        );
+      });
+
+      it('deletes a jwpub its contents cannot be extracted from', async () => {
+        mockJwpub({ dbSize: 50 });
+        const error = new Error('bad zip');
+        unzipMock.mockRejectedValueOnce(error);
+
+        await expect(unzipJwpub()).rejects.toBe(error);
+
+        expect(removeMock).toHaveBeenCalledWith(jwpubPath);
+        expect(invalidateCustomCachePathMock).not.toHaveBeenCalled();
+      });
+
+      it('reports a failure to delete that jwpub, and still fails with the extraction error', async () => {
+        mockJwpub({ dbSize: 50 });
+        const error = new Error('bad zip');
+        const removeError = new Error('busy');
+        unzipMock.mockRejectedValueOnce(error);
+        removeMock.mockImplementation(async (path: string) => {
+          if (path === jwpubPath) throw removeError;
+        });
+
+        await expect(unzipJwpub()).rejects.toBe(error);
+
+        expect(errorCatcherMock).toHaveBeenCalledWith(removeError, {
+          contexts: {
+            fn: {
+              args: { jwpubPath, outputPath: '/tmp/out' },
+              name: 'jwpubExtractor remove corrupt jwpub',
+            },
+          },
+        });
+      });
+
+      it('keeps the jwpub when extracting fails for lack of permission', async () => {
+        mockJwpub({ dbSize: 50 });
+        const error = permissionError();
+        unzipMock.mockRejectedValueOnce(error);
+
+        await expect(unzipJwpub()).rejects.toBe(error);
+
+        expect(removeMock).not.toHaveBeenCalledWith(jwpubPath);
+        // Once here, once more by jwpubExtractor itself.
+        expect(invalidateCustomCachePathMock).toHaveBeenCalledTimes(2);
+        expect(invalidateCustomCachePathMock).toHaveBeenCalledWith(error);
+      });
+
+      it('keeps a cloud jwpub its contents could not be extracted from yet, and tells the user', async () => {
+        const cloudJwpub = '/Users/me/OneDrive/publication.jwpub';
+        getZipEntriesMock.mockResolvedValue({ contents: 100 });
+        unzipMock.mockRejectedValueOnce(cloudError());
+        const { unzipJwpub: unzip } = await import('../jw-media');
+
+        await expect(unzip(cloudJwpub, '/tmp/out')).rejects.toThrow(
+          'connection timed out',
+        );
+
+        expect(removeMock).not.toHaveBeenCalledWith(cloudJwpub);
+        expect(invalidateCustomCachePathMock).not.toHaveBeenCalled();
+        expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
+          expect.objectContaining({ group: 'cloudJwpubUnavailable' }),
+        );
+      });
+    });
+
+    describe('extracting the database', () => {
+      it('leaves an extracted database of the right size alone', async () => {
+        mockJwpub({ contentsSize: 100, dbSize: 50 });
+        await mockDbFound(dbPath);
+
+        await expect(unzipJwpub()).resolves.toBe('/tmp/out');
+
+        expect(unzipMock).not.toHaveBeenCalled();
+      });
+
+      it("compares against the contents' first database", async () => {
+        mockJwpub({
+          contentsSize: 100,
+          dbEntries: { 'a.txt': 1, 'first.db': 50, 'second.db': 70 },
+          dbSize: 50,
+        });
+        await mockDbFound(dbPath);
+
+        await expect(unzipJwpub()).resolves.toBe('/tmp/out');
+
+        expect(unzipMock).not.toHaveBeenCalled();
+      });
+
+      it('re-extracts a database of the wrong size', async () => {
+        mockJwpub({ contentsSize: 100, dbSize: 10 });
+        await mockDbFound(dbPath, dbPath);
+
+        await expect(unzipJwpub()).resolves.toBe('/tmp/out');
+
+        expect(logMock).toHaveBeenCalledWith(
+          `[jwpubExtractor] DB size mismatch: path ${dbPath}, expected 50 (pub.db), got 10. Re-extracting the contents from ${contentsPath}.`,
+          'mediaPlayback',
+          'warn',
+        );
+        expect(closeSqliteConnectionsMock).toHaveBeenCalled();
+        expect(unzipMock).toHaveBeenCalledWith(contentsPath, '/tmp/out');
+      });
+
+      it('extracts a missing database, even from contents without one', async () => {
+        mockJwpub({ contentsSize: 100, dbEntries: {} });
+        await mockDbFound(undefined, dbPath);
+
+        await expect(unzipJwpub()).resolves.toBe('/tmp/out');
+
+        expect(unzipMock).toHaveBeenCalledWith(contentsPath, '/tmp/out');
+        expect(logMock).not.toHaveBeenCalledWith(
+          expect.stringContaining('DB size mismatch'),
+          'mediaPlayback',
+          'warn',
+        );
+      });
+
+      it('deletes the contents and the jwpub when no database comes out', async () => {
+        mockJwpub({ contentsSize: 100 });
+        await mockDbFound(undefined, undefined);
+
+        await expect(unzipJwpub()).rejects.toThrow(
+          'DB still not found after unzip',
+        );
+
+        expect(removeMock).toHaveBeenCalledWith(contentsPath);
+        expect(removeMock).toHaveBeenCalledWith(jwpubPath);
+      });
+
+      it('deletes the contents and the jwpub when the contents cannot be extracted', async () => {
+        mockJwpub({ contentsSize: 100 });
+        const error = new Error('bad contents');
+        unzipMock.mockRejectedValueOnce(error);
+
+        await expect(unzipJwpub()).rejects.toBe(error);
+
+        expect(removeMock).toHaveBeenCalledWith(contentsPath);
+        expect(removeMock).toHaveBeenCalledWith(jwpubPath);
+        expect(invalidateCustomCachePathMock).not.toHaveBeenCalled();
+      });
+
+      it('reports a failure to delete the contents, and still deletes the jwpub', async () => {
+        mockJwpub({ contentsSize: 100 });
+        const error = new Error('bad contents');
+        const removeError = new Error('busy');
+        unzipMock.mockRejectedValueOnce(error);
+        removeMock.mockImplementation(async (path: string) => {
+          if (path === contentsPath) throw removeError;
+        });
+
+        await expect(unzipJwpub()).rejects.toBe(error);
+
+        expect(errorCatcherMock).toHaveBeenCalledWith(removeError, {
+          contexts: {
+            fn: {
+              args: { jwpubPath, outputPath: '/tmp/out' },
+              name: 'jwpubExtractor remove contents',
+            },
+          },
+        });
+        expect(removeMock).toHaveBeenCalledWith(jwpubPath);
+      });
+
+      it('keeps the contents and the jwpub when extracting fails for lack of permission', async () => {
+        mockJwpub({ contentsSize: 100 });
+        const error = permissionError();
+        unzipMock.mockRejectedValueOnce(error);
+
+        await expect(unzipJwpub()).rejects.toBe(error);
+
+        expect(removeMock).not.toHaveBeenCalledWith(contentsPath);
+        expect(removeMock).not.toHaveBeenCalledWith(jwpubPath);
+        // Once here, once more by jwpubExtractor itself.
+        expect(invalidateCustomCachePathMock).toHaveBeenCalledTimes(2);
+        expect(errorCatcherNames()).not.toContain(
+          'jwpubExtractor remove contents',
+        );
+      });
+
+      it('keeps the contents and the jwpub when cloud storage could not deliver them', async () => {
+        mockJwpub({ contentsSize: 100 });
+        unzipMock.mockRejectedValueOnce(cloudError());
+
+        await expect(unzipJwpub()).rejects.toThrow('connection timed out');
+
+        expect(removeMock).not.toHaveBeenCalledWith(contentsPath);
+        expect(removeMock).not.toHaveBeenCalledWith(jwpubPath);
+        expect(invalidateCustomCachePathMock).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  // MMM-V2-3JJ: a .db left unreadable by an interrupted write was reused on
+  // every launch, since extraction only ran when it was missing.
+  describe('getReadableDb', () => {
+    const jwpubPath = '/tmp/out/publication.jwpub';
+    const dbPath = '/tmp/out/pub.db';
+
+    // What jwpubExtractor needs to re-extract only the .db: the jwpub's
+    // contents entry is already extracted at the right size.
+    const mockContentsAlreadyExtracted = () => {
+      getZipEntriesMock.mockImplementation(async (path: string) =>
+        path === jwpubPath ? { contents: 100 } : { 'pub.db': 50 },
+      );
+      statMock.mockImplementation(async (path: string) => {
+        if (path === '/tmp/out/contents') return { size: 100 };
+        throw Object.assign(new Error('missing'), { code: 'ENOENT' });
+      });
+    };
+
+    it('returns a readable db without touching it', async () => {
+      const { findDb } = await import('src/utils/sqlite');
+      vi.mocked(findDb).mockResolvedValueOnce(dbPath);
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(getReadableDb(jwpubPath, '/tmp/out')).resolves.toBe(dbPath);
+
+      expect(isSqliteDbCorruptMock).toHaveBeenCalledWith(dbPath);
+      expect(removeMock).not.toHaveBeenCalled();
+      expect(unzipMock).not.toHaveBeenCalled();
+    });
+
+    it('returns undefined without probing when there is no db', async () => {
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(getReadableDb(jwpubPath, '/tmp/out')).resolves.toBe(
+        undefined,
+      );
+
+      expect(isSqliteDbCorruptMock).not.toHaveBeenCalled();
+    });
+
+    it('re-extracts a corrupt db from the jwpub', async () => {
+      const { findDb } = await import('src/utils/sqlite');
+      vi.mocked(findDb)
+        .mockResolvedValueOnce(dbPath) // the corrupt copy
+        .mockResolvedValueOnce(undefined) // deleted, so extract it again
+        .mockResolvedValueOnce(dbPath) // extracted
+        .mockResolvedValueOnce(dbPath); // the fresh copy
+      isSqliteDbCorruptMock
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(false);
+      mockContentsAlreadyExtracted();
+      // Already extracted earlier this session, which would make unzipJwpub
+      // skip the directory.
+      currentStateStore.extractedFiles['/tmp/out'] = '/tmp/out';
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(getReadableDb(jwpubPath, '/tmp/out')).resolves.toBe(dbPath);
+
+      expect(closeSqliteConnectionMock).toHaveBeenCalledWith(dbPath);
+      expect(removeMock).toHaveBeenCalledWith(dbPath);
+      expect(
+        closeSqliteConnectionMock.mock.invocationCallOrder[0] ?? 0,
+      ).toBeLessThan(removeMock.mock.invocationCallOrder[0] ?? 0);
+      expect(unzipMock).toHaveBeenCalledWith('/tmp/out/contents', '/tmp/out');
+      // The jwpub itself is fine and must be kept.
+      expect(removeMock).not.toHaveBeenCalledWith(jwpubPath);
+      expect(logMock).toHaveBeenCalledWith(
+        expect.stringContaining('is corrupt, re-extracting it'),
+        'mediaFetching',
+        'warn',
+      );
+    });
+
+    it('shares one re-extraction between concurrent lookups', async () => {
+      const { findDb } = await import('src/utils/sqlite');
+      vi.mocked(findDb)
+        .mockResolvedValueOnce(dbPath)
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(dbPath)
+        .mockResolvedValueOnce(dbPath);
+      isSqliteDbCorruptMock
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(false);
+      mockContentsAlreadyExtracted();
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(
+        Promise.all([
+          getReadableDb(jwpubPath, '/tmp/out'),
+          getReadableDb(jwpubPath, '/tmp/out'),
+        ]),
+      ).resolves.toEqual([dbPath, dbPath]);
+
+      expect(removeMock).toHaveBeenCalledTimes(1);
+      expect(unzipMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('removes the jwpub and its extraction when the fresh copy is still corrupt', async () => {
+      const { findDb } = await import('src/utils/sqlite');
+      vi.mocked(findDb)
+        .mockResolvedValueOnce(dbPath)
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(dbPath)
+        .mockResolvedValueOnce(dbPath);
+      isSqliteDbCorruptMock
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(true);
+      mockContentsAlreadyExtracted();
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(getReadableDb(jwpubPath, '/tmp/out')).rejects.toThrow(
+        'Publication database still corrupt after re-extraction',
+      );
+
+      expect(removeMock).toHaveBeenCalledWith(jwpubPath);
+      expect(removeMock).toHaveBeenCalledWith('/tmp/out/contents');
+      expect(removeMock).toHaveBeenCalledWith(dbPath);
+      expect(currentStateStore.extractedFiles['/tmp/out']).toBeUndefined();
+    });
   });
 
   it('closes the identification db connection before removing its temp dir', async () => {
@@ -410,6 +866,32 @@ describe('jw-media helpers', () => {
 
     expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
       expect.objectContaining({
+        group: 'jwpubFileUnavailable',
+        type: 'warning',
+      }),
+    );
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('warns with phone-specific advice when a jwpub on a phone shown by Windows Cross Device cannot be copied', async () => {
+    const phoneJwpub = String.raw`C:\Users\PC\CrossDevice\Redmi 12\storage\Download\S-34_T_029.jwpub`;
+    // fs.copy crosses Electron's contextBridge, which strips `code` - only
+    // the message survives (MMM-V2-3M1).
+    copyMock.mockRejectedValue(
+      new Error(
+        `UNKNOWN: unknown error, copyfile '${phoneJwpub}' -> 'C:\\temp\\S-34_T_029.jwpub'`,
+      ),
+    );
+    vi.mocked(globalThis.electronApi.dirname).mockImplementation((path) =>
+      path.slice(0, path.lastIndexOf('\\')),
+    );
+    const { stageUserJwpubForRead } = await import('../jw-media');
+
+    await expect(stageUserJwpubForRead(phoneJwpub)).resolves.toBeUndefined();
+
+    expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        caption: 'jwpub-file-unavailable-caption-phone',
         group: 'jwpubFileUnavailable',
         type: 'warning',
       }),
@@ -870,6 +1352,204 @@ describe('jw-media helpers', () => {
 
       expect(getLoggedLanguageResolution()).toMatchObject({
         langsWritten: ['LSQ', 'F'],
+      });
+    });
+  });
+
+  describe('JW Library language database', () => {
+    const dir = '/pubs/jwlb_E';
+    const zipPath = `${dir}/jwlb_E.zip`;
+    const bundle = 'JWLibrary_15.9.54.0_x64_arm64.msixbundle';
+    const msix = 'JWLibrary_15.9.54.0_x64.msix';
+    // Trimmed-down listings of the real archives: each holds far more than
+    // the one entry needed from it.
+    const zipEntries: Record<string, Record<string, number>> = {
+      [`${dir}/${bundle}`]: {
+        'AppxBlockMap.xml': 1,
+        'JWLibrary_15.9.54.0_ARM64.msix': 1,
+        'JWLibrary_15.9.54.0_scale-100.msix': 1,
+        [msix]: 1,
+      },
+      [`${dir}/${msix}`]: {
+        'Assets/Logo.png': 1,
+        'Data/mepsunit.db': 1,
+        'JWLibrary.dll': 1,
+        'JWLibrary.exe': 1,
+        'JWLibrary.exe.config': 1,
+      },
+      [zipPath]: {
+        'Add-AppDevPackage.ps1': 1,
+        [bundle]: 1,
+        'Dependencies/x64/Microsoft.UI.Xaml.2.8.appx': 1,
+        'JWLibrary_15.9.54.0_x64_arm64.cer': 1,
+      },
+    };
+    const folderItem = (name: string, isDirectory = false) => ({
+      isDirectory,
+      isFile: !isDirectory,
+      name,
+      parentPath: dir,
+    });
+    const executeQueryMock = vi.fn();
+
+    beforeEach(() => {
+      getZipEntriesMock.mockImplementation(
+        async (path: string) => zipEntries[path] ?? {},
+      );
+      unzipMock.mockImplementation(
+        async (
+          _input: string,
+          _output: string,
+          opts?: { includes?: string[] },
+        ) => (opts?.includes ?? []).map((path) => ({ path })),
+      );
+      executeQueryMock.mockResolvedValue([
+        { LanguageId: 0, PrimaryIetfCode: 'EN', Symbol: 'E' },
+      ]);
+      Object.assign(globalThis.electronApi, {
+        dirname: (path: string) => path.slice(0, path.lastIndexOf('/')),
+        executeQuery: executeQueryMock,
+        extname: (path: string) => path.slice(path.lastIndexOf('.')),
+      });
+    });
+
+    it('extracts only the one entry needed from each archive level', async () => {
+      const { extractMepsUnitDb } = await import('../jw-media');
+
+      await expect(extractMepsUnitDb(zipPath)).resolves.toBe(
+        `${dir}/Data/mepsunit.db`,
+      );
+
+      expect(unzipMock.mock.calls).toEqual([
+        [zipPath, dir, { includes: [bundle] }],
+        [`${dir}/${bundle}`, dir, { includes: [msix] }],
+        [`${dir}/${msix}`, dir, { includes: ['Data/mepsunit.db'] }],
+      ]);
+    });
+
+    it('stops without extracting anything when an archive lacks the expected entry', async () => {
+      getZipEntriesMock.mockResolvedValue({ 'Install.ps1': 1 });
+      const { extractMepsUnitDb } = await import('../jw-media');
+
+      await expect(extractMepsUnitDb(zipPath)).resolves.toBeUndefined();
+      expect(unzipMock).not.toHaveBeenCalled();
+    });
+
+    describe('getJwMepsInfo', () => {
+      beforeEach(async () => {
+        Object.assign(currentStateStore, {
+          currentSongbook: { pub: 'sjjm', signLanguage: false },
+          downloadProgress: {},
+        });
+        Object.assign(jwStore, { jwLanguages: { list: [] } });
+        const { getPublicationDirectory } = await import('src/utils/fs');
+        vi.mocked(getPublicationDirectory).mockResolvedValue(dir);
+        const { shouldUpdateList } = await import('stores/jw');
+        vi.mocked(shouldUpdateList).mockReturnValue(true);
+        pathExistsMock.mockResolvedValue(true);
+        // The folder as earlier releases left it: an older JW Library's
+        // bundle and a full extraction of its msix next to the download.
+        readdirMock.mockResolvedValue([
+          folderItem('.last-used'),
+          folderItem('Assets', true),
+          folderItem('Data', true),
+          folderItem('JWLibrary.exe.config'),
+          folderItem('JWLibrary_15.8.59.0_x64_arm64.msixbundle'),
+          folderItem('jwlb_E.zip'),
+        ]);
+      });
+
+      afterEach(() => {
+        Reflect.deleteProperty(currentStateStore, 'currentSongbook');
+        Reflect.deleteProperty(currentStateStore, 'downloadProgress');
+        Reflect.deleteProperty(jwStore, 'jwLanguages');
+      });
+
+      it('stores the language list and removes everything but the download and the database', async () => {
+        const { getJwMepsInfo } = await import('../jw-media');
+
+        await getJwMepsInfo();
+
+        expect(executeQueryMock).toHaveBeenCalledWith(
+          `${dir}/Data/mepsunit.db`,
+          expect.stringContaining('FROM Language'),
+        );
+        expect(jwStore.jwMepsLanguages).toEqual({
+          list: [{ LanguageId: 0, PrimaryIetfCode: 'en', Symbol: 'E' }],
+          updated: expect.any(Date),
+        });
+        expect(removeMock.mock.calls.map(([path]) => path).sort()).toEqual([
+          `${dir}/Assets`,
+          `${dir}/JWLibrary.exe.config`,
+          `${dir}/JWLibrary_15.8.59.0_x64_arm64.msixbundle`,
+        ]);
+        expect(errorCatcherMock).not.toHaveBeenCalled();
+      });
+
+      it('keeps a longer stored list but still records the check', async () => {
+        const storedList = [
+          { LanguageId: 0, PrimaryIetfCode: 'en', Symbol: 'E' },
+          { LanguageId: 1, PrimaryIetfCode: 'es', Symbol: 'S' },
+        ];
+        jwStore.jwMepsLanguages = { list: storedList, updated: new Date(0) };
+        const { getJwMepsInfo } = await import('../jw-media');
+
+        await getJwMepsInfo();
+
+        expect(jwStore.jwMepsLanguages.list).toBe(storedList);
+        expect(jwStore.jwMepsLanguages.updated?.getTime()).toBeGreaterThan(0);
+      });
+
+      it('still removes the leftovers when extraction fails', async () => {
+        const lockError = Object.assign(new Error('EPERM'), { code: 'EPERM' });
+        unzipMock.mockRejectedValueOnce(lockError);
+        const { getJwMepsInfo } = await import('../jw-media');
+
+        await getJwMepsInfo();
+
+        expect(errorCatcherMock).toHaveBeenCalledWith(
+          expect.objectContaining({ cause: lockError }),
+          expect.anything(),
+        );
+        expect(executeQueryMock).not.toHaveBeenCalled();
+        expect(removeMock).toHaveBeenCalledWith(`${dir}/JWLibrary.exe.config`);
+      });
+
+      it('says which archive could not be read, and its size on disk', async () => {
+        // MMM-V2-3F9: all the main process's error says is that some zip
+        // had no end-of-central-directory record.
+        const notAZip = new Error(
+          "Error invoking remote method 'unzip': Error: End of central directory record signature not found. Either not a zip file, or file is truncated.",
+        );
+        unzipMock.mockRejectedValueOnce(notAZip);
+        statMock.mockResolvedValue({ size: 321896744 });
+        const { getJwMepsInfo } = await import('../jw-media');
+
+        await getJwMepsInfo();
+
+        expect(errorCatcherMock).toHaveBeenCalledWith(
+          expect.objectContaining({ cause: notAZip }),
+          {
+            contexts: {
+              fn: {
+                archiveOnDisk: { exists: true, size: 321896744 },
+                archivePath: zipPath,
+                jwlbZipPath: zipPath,
+                name: 'getJwMepsInfo',
+              },
+            },
+          },
+        );
+      });
+
+      it("never empties a folder that isn't JW Library's own", async () => {
+        const { getPublicationDirectory } = await import('src/utils/fs');
+        vi.mocked(getPublicationDirectory).mockResolvedValue('/pubs/Temp');
+        const { getJwMepsInfo } = await import('../jw-media');
+
+        await getJwMepsInfo();
+
+        expect(removeMock).not.toHaveBeenCalled();
       });
     });
   });

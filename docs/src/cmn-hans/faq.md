@@ -128,7 +128,7 @@ M³ 支持自定义以下快捷键：
 
 ### :stopwatch: M³ 有聚会计时器吗？ {#faq-meeting-timer}
 
-是！**有。** 启用后，M³ 可以显示一个单独的计时器窗口，为聚会节目参与者计时。计时器可以正计时或倒计时，也可以显示当前时间、聚会开始前的倒计时，并根据设置显示超时情况，或显示聚会整体是提前还是超时。它可以向上或向下计算，显示当前时间，显示会前倒计时。 并可选择说明加班或会议是否提前或晚于时间表。
+是！**有。** 启用后，M³ 可以显示一个单独的计时器窗口，为聚会节目参与者计时。计时器可以正计时或倒计时，也可以显示当前时间、聚会开始前的倒计时，并根据设置显示超时情况，或显示聚会整体是提前还是超时。它可以向上或向下计算，显示当前时间，显示会前倒计时。 并可选择说明加班或会议是否提前或晚于时间表。 Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
 计时器目前属于测试功能，只有在得到当地批准后才应启用。
 
@@ -158,12 +158,12 @@ M³ 会根据以下因素自动切换 OBS Studio 场景：
 
 - 媒体类型，例如视频或图片
 - 已配置的场景
-- “延迟图片（Postpone Images）”等设置
+- Settings like "Do not automatically share images"
 - 媒体播放结束后是否恢复之前使用的场景
 
-### :pause_button: 什么是“延迟图片（Postpone Images）”功能？ {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
 
-该功能会在您手动触发前，延迟把图片共享到 OBS。这对于以下情况很有用：好处:
+This setting delays sharing images to OBS until you manually trigger them. 好处:
 
 - 先向现场观众显示图片
 - 更灵活地控制演示时机
@@ -178,12 +178,16 @@ M³ 本身没有内置录制功能，但可以通过两种方式帮助控制录�
 
 ## 高级功能 {#faq-advanced-features}
 
-### :cloud: 文件夹监视如何工作？ {#faq-folder-monitoring}
+### :cloud: How does the shared folder work? {#faq-folder-monitoring}
 
-文件夹监视功能可以：
+If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
 
-1. 选择要监视的文件夹
-2. 自动导入该文件夹中新出现的媒体文件，包括通过 Dropbox、OneDrive 等同步过来的文件
+1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
+2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
+3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
+4. To add files for another day, create a folder for it, named the same way.
+
+When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
 
 ### :file_folder: 什么是媒体自动导出？ {#faq-media-export}
 
@@ -246,7 +250,7 @@ M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时�
 
 尝试以下性能优化：
 
-1. **启用额外缓存**：在设置中开启额外缓存
+1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
 2. **关闭不需要的程序**：释放计算机资源
 3. **检查磁盘空间**：确保有足够的可用磁盘空间
 4. **降低分辨率**：降低视频最高分辨率设置

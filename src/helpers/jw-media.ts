@@ -50,11 +50,13 @@ import {
   registerMediaProviders,
 } from 'src/helpers/fs';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { updateLastUsedDate } from 'src/helpers/usage';
+import { LAST_USED_FILENAME, updateLastUsedDate } from 'src/helpers/usage';
 import {
+  getCloudStorageProvider,
   getFilesystemErrorCode,
   isCloudStoragePath,
   isExpectedNetworkPathAccessError,
+  isPhoneStoragePath,
   isPossiblyNetworkFolderPath,
 } from 'src/shared/filesystem-errors';
 import { NETWORK_ERROR_CODES } from 'src/shared/network-errors';
@@ -76,7 +78,6 @@ import {
   subtractFromDate,
 } from 'src/utils/date';
 import {
-  findFile,
   getPublicationDirectory,
   getTempPath,
   invalidateCustomCachePath,
@@ -84,6 +85,7 @@ import {
 } from 'src/utils/fs';
 import { sanitizeId } from 'src/utils/general';
 import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
+import { getJwPlaylistItemTrim } from 'src/utils/jw-playlist';
 import {
   getMetadataFromMediaPath,
   isAudio,
@@ -137,6 +139,7 @@ const {
   fileUrlToPath,
   fs,
   getZipEntries,
+  isSqliteDbCorrupt,
   isUsablePath: isUsablePathRaw,
   join,
   pathToFileURL,
@@ -152,7 +155,7 @@ const publicationMediaLinksCache = new Map<string, Promise<MediaLink[]>>();
 const mediaItemIsDynamic = (item?: MediaItem): boolean => {
   if (!item) return false;
   if (item.source === 'dynamic') return true;
-  return item.children?.some(mediaItemIsDynamic) ?? false;
+  return item.children?.some((child) => mediaItemIsDynamic(child)) ?? false;
 };
 
 export const ensureWatchedMeetingDayFolders = async () => {
@@ -189,13 +192,13 @@ export const ensureWatchedMeetingDayFolders = async () => {
         }
 
         return Object.values(day.mediaSections ?? {}).some((section) =>
-          section.items?.some(mediaItemIsDynamic),
+          section.items?.some((item) => mediaItemIsDynamic(item)),
         );
       })
       .map((day) => formatDate(day.date, 'YYYY-MM-DD'));
 
     for (const folderName of new Set(meetingDayFolders)) {
-      await ensureDir(join(watchFolder, folderName));
+      await ensureDir(join(watchFolder, folderName)); // NOSONAR: sequential - avoid flooding the network drive
     }
   } catch (error) {
     if (
@@ -313,10 +316,8 @@ const getPublicationMediaLinks = async (
   return publicationMediaLinksCache.get(cacheKey) ?? [];
 };
 
-const getExpectedDownloadPath = async (
-  dir: string,
-  url: string,
-): Promise<string> => join(dir, sanitizeFilename(basename(url)));
+const getExpectedDownloadPath = (dir: string, url: string): string =>
+  join(dir, sanitizeFilename(basename(url)));
 
 const getValidLocalSongPath = async (song: SongItem): Promise<string> => {
   try {
@@ -376,7 +377,7 @@ const trackInvalidJwpubRedownload = async (
 const getMemorialMediaCacheKey = (
   langwritten: JwLangCode,
   memorialDate?: null | string,
-) => `${langwritten}:${memorialDate || 'none'}`;
+) => `${langwritten}:${memorialDate || 'none'}`; // NOSONAR: '' means not set
 
 const memorialMediaCache = new Map<
   string,
@@ -426,7 +427,7 @@ export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
     (l) => l.LanguageId === mepsId,
   );
   if (match) return match.Symbol;
-  return mepslangs[mepsId] || null;
+  return mepslangs[mepsId] ?? null;
 };
 
 const getJwLangId = (symbol?: JwLangCode): number | undefined => {
@@ -440,7 +441,7 @@ const getJwLangId = (symbol?: JwLangCode): number | undefined => {
 
 const ongoingUnzips = new Map<string, Promise<string | undefined>>();
 const ZIP_ENTRY_DIAGNOSTIC_LIMIT = 50;
-const MAX_IDENTIFY_IN_MEMORY_CONTENTS_SIZE = 150000000; // 150 MB
+const MAX_IDENTIFY_IN_MEMORY_CONTENTS_SIZE = 150_000_000; // 150 MB
 
 const isCloudStorageReadError = (error: unknown) => {
   const errorCode = (error as { code?: string })?.code;
@@ -457,6 +458,14 @@ const PERMISSION_ERROR_CODES = new Set(['EACCES', 'EPERM']);
 const isPermissionError = (error: unknown) => {
   const errorCode = (error as { code?: string })?.code;
   return !!errorCode && PERMISSION_ERROR_CODES.has(errorCode);
+};
+
+/**
+ * Stops using the custom cache folder for the rest of the session when a
+ * real read/write against it just failed with a permission error.
+ */
+const invalidateCacheOnPermissionError = (error: unknown) => {
+  if (isPermissionError(error)) invalidateCustomCachePath(error);
 };
 
 interface DirectoryDiagnostic {
@@ -497,7 +506,10 @@ const getPathDiagnostic = async (path: string): Promise<PathDiagnostic> => {
 };
 
 const isJwpubFileUnavailableError = (error: unknown, jwpubPath: string) => {
-  const errorCode = getErrorCode(error);
+  // Not getErrorCode: fs.copy (used to stage the file) is exposed straight
+  // through Electron's contextBridge, which strips `code` from the error, so
+  // it has to be parsed back out of the message (MMM-V2-3M1).
+  const errorCode = getFilesystemErrorCode(error);
   if (errorCode === 'ENOENT') return true;
   if (isCloudStorageReadError(error)) return true;
   return (
@@ -506,16 +518,35 @@ const isJwpubFileUnavailableError = (error: unknown, jwpubPath: string) => {
   );
 };
 
+// Suggest the fix that matches where the file lives, instead of one
+// catch-all hint covering every kind of storage at once.
+const getJwpubUnavailableCaption = (jwpubPath: string) => {
+  const t = i18n.global.t;
+
+  if (isPhoneStoragePath(jwpubPath)) {
+    return t('jwpub-file-unavailable-caption-phone');
+  }
+
+  const provider = getCloudStorageProvider(jwpubPath);
+  if (provider) return t('jwpub-file-unavailable-caption-cloud', { provider });
+
+  if (isPossiblyNetworkFolderPath(dirname(jwpubPath), getRendererPlatform())) {
+    return t('jwpub-file-unavailable-caption-drive');
+  }
+
+  return t('jwpub-file-unavailable-caption-local');
+};
+
 const warnJwpubUnavailable = (jwpubPath: string, error: unknown) => {
   if (!isJwpubFileUnavailableError(error, jwpubPath)) return false;
 
   const t = i18n.global.t;
 
   createTemporaryNotification({
-    caption: t('jwpub-file-unavailable-caption'),
+    caption: getJwpubUnavailableCaption(jwpubPath),
     group: 'jwpubFileUnavailable',
     message: t('jwpub-file-unavailable-message'),
-    timeout: 15000,
+    timeout: 15_000,
     type: 'warning',
   });
 
@@ -616,7 +647,7 @@ const reportContentsExtractionError = async (
     diagnostics,
   );
 
-  await errorCatcher(error, {
+  errorCatcher(error, {
     contexts: {
       fn: {
         args: {
@@ -652,7 +683,7 @@ const getMediaFromJwPlaylist = async (
         playlistName = playlistNameQuery[0].Name + ' - ';
       }
     } catch (error) {
-      await errorCatcher(error, {
+      errorCatcher(error, {
         contexts: {
           fn: {
             args: {
@@ -734,7 +765,7 @@ const getMediaFromJwPlaylist = async (
             ) {
               item.ThumbnailFilePath += '.jpg';
             } else {
-              await errorCatcher(error, {
+              errorCatcher(error, {
                 contexts: {
                   fn: {
                     args: {
@@ -748,19 +779,7 @@ const getMediaFromJwPlaylist = async (
             }
           }
         }
-        const durationTicks =
-          item?.BaseDurationTicks || item?.DurationTicks || 0;
-        const EndTime =
-          durationTicks &&
-          item?.EndTrimOffsetTicks &&
-          durationTicks >= item.EndTrimOffsetTicks
-            ? (durationTicks - item.EndTrimOffsetTicks) / 10000 / 1000
-            : null;
-
-        const StartTime =
-          item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
-            ? item.StartTrimOffsetTicks / 10000 / 1000
-            : null;
+        const { EndTime, StartTime } = getJwPlaylistItemTrim(item);
 
         const VerseNumbers = (
           await globalThis.electronApi.executeQuery<{
@@ -827,7 +846,7 @@ const getMediaFromJwPlaylist = async (
     );
     return mappedPlaylistMediaItems;
   } catch (error) {
-    await errorCatcher(error, {
+    errorCatcher(error, {
       contexts: {
         fn: {
           args: {
@@ -862,7 +881,7 @@ const warnCloudJwpubUnavailable = (jwpubPath: string, error: unknown) => {
     caption: t('cloud-file-unavailable-caption'),
     group: 'cloudJwpubUnavailable',
     message: t('cloud-file-unavailable-message'),
-    timeout: 15000,
+    timeout: 15_000,
     type: 'warning',
   });
 };
@@ -988,7 +1007,7 @@ const extractContentsFromJwpub = async (
       error,
     );
     warnCloudJwpubUnavailable(jwpubPath, error);
-    if (isPermissionError(error)) invalidateCustomCachePath(error);
+    invalidateCacheOnPermissionError(error);
     // If we can't read the entries to even start extraction, the file might be locked, damaged, or still downloading from cloud storage.
     // Cloud-managed placeholders should not be deleted because the provider may hydrate them after this attempt,
     // and permission errors mean the folder is inaccessible right now, not that the file itself is corrupt.
@@ -1029,7 +1048,7 @@ const extractContentsFromJwpub = async (
       });
     } catch (error) {
       warnCloudJwpubUnavailable(jwpubPath, error);
-      if (isPermissionError(error)) invalidateCustomCachePath(error);
+      invalidateCacheOnPermissionError(error);
       // If unzipping the JWPUB fails, it's likely corrupted.
       // Remove it to force a re-download on next attempt unless cloud storage may still
       // be hydrating the file, or the folder is just temporarily inaccessible.
@@ -1054,6 +1073,19 @@ const extractContentsFromJwpub = async (
   }
 };
 
+/**
+ * The name and size of the first .db entry in a jwpub's contents (an empty
+ * name and size 0 without one).
+ */
+const findDbEntry = (contentsEntries: Record<string, number>) => {
+  for (const [name, size] of Object.entries(contentsEntries)) {
+    if (name.endsWith('.db')) {
+      return { expectedDbName: name, expectedDbSize: size };
+    }
+  }
+  return { expectedDbName: '', expectedDbSize: 0 };
+};
+
 const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
   // Then, extract 'contents' into the output directory if needed
   // We check if the database exists and has the correct size to determine if we need to unzip
@@ -1073,16 +1105,7 @@ const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
     );
     throw error;
   }
-  let expectedDbSize = 0;
-  let expectedDbName = '';
-
-  for (const [name, size] of Object.entries(contentsEntries)) {
-    if (name.endsWith('.db')) {
-      expectedDbSize = size;
-      expectedDbName = name;
-      break;
-    }
-  }
+  const { expectedDbName, expectedDbSize } = findDbEntry(contentsEntries);
 
   const dbStats = dbFile
     ? await stat(dbFile).catch(() => undefined)
@@ -1116,7 +1139,7 @@ const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
       const dbFileAfterUnzip = await findDb(outputPath);
       if (!dbFileAfterUnzip) throw new Error('DB still not found after unzip');
     } catch (error) {
-      if (isPermissionError(error)) invalidateCustomCachePath(error);
+      invalidateCacheOnPermissionError(error);
       // Cloud-managed placeholders and permission errors mean the files are
       // temporarily inaccessible, not that they're corrupt — don't delete them.
       if (isCloudStorageReadError(error) || isPermissionError(error))
@@ -1164,7 +1187,7 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
       await closeSqliteConnections();
       await remove(outputPath);
     } catch (removeError) {
-      await errorCatcher(removeError, {
+      errorCatcher(removeError, {
         contexts: {
           fn: {
             args: {
@@ -1185,7 +1208,7 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
         error,
       );
     } else {
-      await errorCatcher(error, {
+      errorCatcher(error, {
         contexts: {
           fn: {
             args: {
@@ -1211,9 +1234,7 @@ export const unzipJwpub = async (
   try {
     const currentState = useCurrentStateStore();
     if (!isJwpub(jwpubPath)) return jwpubPath;
-    if (!outputPath) {
-      outputPath = join(await getTempPath(), basename(jwpubPath));
-    }
+    outputPath ||= join(await getTempPath(), basename(jwpubPath)); // NOSONAR: '' means not set
 
     const cacheKey = `${jwpubPath}->${outputPath}`;
 
@@ -1225,7 +1246,7 @@ export const unzipJwpub = async (
       try {
         await remove(outputPath);
       } catch (e) {
-        await errorCatcher(e, {
+        errorCatcher(e, {
           contexts: {
             fn: {
               args: {
@@ -1262,7 +1283,7 @@ export const unzipJwpub = async (
     }
   } catch (error) {
     if (!warnJwpubUnavailable(jwpubPath, error)) {
-      await errorCatcher(error, {
+      errorCatcher(error, {
         contexts: {
           fn: {
             args: {
@@ -1393,10 +1414,10 @@ export const createMediaItemFromPath = async (
         ? await getMetadataFromMediaPath(additionalFilePath)
         : undefined;
 
-    const duration = additionalInfo?.duration || metadata?.format.duration || 0;
+    const duration = additionalInfo?.duration || metadata?.format.duration || 0; // NOSONAR: 0 falls back too
     const title =
-      additionalInfo?.title ||
-      metadata?.common.title ||
+      additionalInfo?.title || // NOSONAR: empty title uses the file name
+      metadata?.common.title || // NOSONAR: empty title uses the file name
       basename(additionalFilePath).replace(extname(additionalFilePath), '');
 
     if (!uniqueId) {
@@ -1540,18 +1561,13 @@ export const addJwpubDocumentMediaToFiles = async (
           selectedMultimediaIds.includes(item.MultimediaId),
         )
       : multimediaItems;
-    for (let i = 0; i < filteredMultimediaItems.length; i++) {
-      const item = filteredMultimediaItems[i];
-      if (item) {
-        filteredMultimediaItems[i] = await addFullFilePathToMultimediaItem(
-          item,
-          pubFolder ?? publication,
-        );
-      }
-    }
+    await addFullPathsToMultimediaItems(
+      filteredMultimediaItems,
+      pubFolder ?? publication,
+    );
     await processMissingMediaInfo({
       allMedia: filteredMultimediaItems,
-      meetingDate: meetingDate || currentStateStore.selectedDate,
+      meetingDate: meetingDate || currentStateStore.selectedDate, // NOSONAR: '' means not set
     });
     const mediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
@@ -1584,7 +1600,7 @@ interface DownloadProgress {
 // slow-but-working connections (this app explicitly serves congregations
 // with poor connectivity), so this only fires on genuinely zero forward
 // progress, never on a connection that's just slow.
-const DOWNLOAD_STALL_TIMEOUT_MS = 45000;
+const DOWNLOAD_STALL_TIMEOUT_MS = 45_000;
 
 const pollUntilDownloaded = (
   downloadId: string,
@@ -1621,6 +1637,11 @@ const pollUntilDownloaded = (
     }, 500);
   });
 
+const waitBeforeNextDownloadedFileCheck = () =>
+  new Promise<void>((settle) => {
+    setTimeout(settle, 200);
+  });
+
 const resolveDownloadedFile = async (
   destinationPath: string,
   remoteSize: number,
@@ -1629,8 +1650,9 @@ const resolveDownloadedFile = async (
   const maxAttempts = 10;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
-      if (await pathExists(destinationPath)) {
-        const statistics = await stat(destinationPath);
+      const fileExists = await pathExists(destinationPath); // NOSONAR: sequential - polls until ready
+      if (fileExists) {
+        const statistics = await stat(destinationPath); // NOSONAR: sequential - polls until ready
         const hasExpectedSize =
           remoteSize <= 0 || statistics.size === remoteSize;
         if (statistics.size > 0 && hasExpectedSize) {
@@ -1644,9 +1666,7 @@ const resolveDownloadedFile = async (
       // unhandled rejections from this race). Treat it as not-ready-yet
       // and let the retry loop below re-check.
     }
-    await new Promise((settle) => {
-      setTimeout(settle, 200);
-    });
+    await waitBeforeNextDownloadedFileCheck(); // NOSONAR: sequential - polls until ready
   }
   resolve({ error: true, path: destinationPath });
 };
@@ -1673,14 +1693,14 @@ export const downloadFileIfNeeded = async ({
     const currentStateStore = useCurrentStateStore();
     const dirIsUsable = await isUsablePath(dir);
     if (!dirIsUsable) throw new Error('Unusable path');
-    if (!filename) filename = basename(url);
+    if (!filename) filename = basename(url); // NOSONAR: '' means not set
     filename = sanitizeFilename(filename);
     destinationPath = join(dir, filename);
     const remoteSize: number =
-      size ||
+      size || // NOSONAR: 0 falls back too
       (await fetchRaw(url, { method: 'HEAD' }, true)
         .then((response) => {
-          return +(response?.headers?.get('content-length') || 0);
+          return +(response?.headers?.get('content-length') ?? 0);
         })
         .catch(() => 0));
     if (await pathExists(destinationPath)) {
@@ -2171,12 +2191,16 @@ export const fetchMedia = async () => {
         currentStateStore.meetingCheckStatus[dateKey] = 'error';
       }
     }
+    // No queue.clear() afterwards: this run's days are all done once the
+    // queue is idle, so anything queued since belongs to an overlapping
+    // fetchMedia() run sharing this congregation's queue. p-queue 10's
+    // clear() rejects those tasks with an AbortError, which their .catch()
+    // above would report and turn into an error status for their days.
     await queue?.onIdle();
     await ensureWatchedMeetingDayFolders();
     downloadBackgroundMusic();
     log('✅ All media processing completed', 'mediaFetching', 'info');
-    queue?.clear();
-    exportAllDays();
+    void exportAllDays();
   } catch (error) {
     log('❌ Error in fetchMedia:', 'mediaFetching', 'error');
     errorCatcher(error);
@@ -2188,6 +2212,83 @@ export const fetchMedia = async () => {
       }
     });
   }
+};
+
+// Database checks in flight, keyed by publication directory, so concurrent
+// lookups of one publication share a single probe - and, if the file turns
+// out to be damaged, a single re-extraction instead of deleting each other's
+// freshly extracted copy.
+const ongoingDbChecks = new Map<string, Promise<string | undefined>>();
+
+/**
+ * Re-extracts a publication's damaged .db from its JWPUB. If even the fresh
+ * copy is unreadable, the JWPUB itself is suspect, so everything extracted
+ * from it is removed and the next lookup downloads and extracts it anew.
+ * @param dbFile The damaged database file
+ * @param jwpubPath The JWPUB it was extracted from
+ * @param publicationDirectory The directory both live in
+ * @returns The path of the readable, re-extracted database
+ */
+const reextractCorruptDb = async (
+  dbFile: string,
+  jwpubPath: string,
+  publicationDirectory: string,
+) => {
+  const currentState = useCurrentStateStore();
+  log(
+    `[getDbFromJWPUB] ${dbFile} is corrupt, re-extracting it from ${jwpubPath}`,
+    'mediaFetching',
+    'warn',
+  );
+
+  // Releases the worker's handle on the file (and its corrupt mark) first,
+  // so the delete doesn't fail with EBUSY/EPERM on Windows.
+  await closeSqliteConnection(dbFile);
+  await remove(dbFile);
+  // unzipJwpub skips a directory it already extracted this session.
+  currentState.extractedFiles[publicationDirectory] = undefined;
+  await unzipJwpub(jwpubPath, publicationDirectory);
+
+  const reextractedDb = await findDb(publicationDirectory);
+  if (reextractedDb && !(await isSqliteDbCorrupt(reextractedDb))) {
+    return reextractedDb;
+  }
+
+  if (reextractedDb) await closeSqliteConnection(reextractedDb);
+  await Promise.all(
+    [reextractedDb, join(publicationDirectory, 'contents'), jwpubPath]
+      .filter((path): path is string => !!path)
+      .map((path) => remove(path).catch(() => undefined)),
+  );
+  currentState.extractedFiles[publicationDirectory] = undefined;
+  throw new Error('Publication database still corrupt after re-extraction');
+};
+
+/**
+ * Returns the publication's extracted .db once it is readable, re-extracting
+ * it if the existing copy is damaged. A crash or power loss mid-extraction
+ * can leave a .db SQLite can't read ("file is not a database", "database
+ * disk image is malformed"), and since extraction only runs when the .db is
+ * missing or the JWPUB is new, that copy used to be reused on every launch,
+ * silently emptying every query against it (MMM-V2-3JJ).
+ * @param jwpubPath The JWPUB the database is extracted from
+ * @param publicationDirectory The directory it is extracted to
+ * @returns The readable database's path, or `undefined` if there is none
+ */
+export const getReadableDb = (
+  jwpubPath: string,
+  publicationDirectory: string,
+) => {
+  let check = ongoingDbChecks.get(publicationDirectory);
+  if (!check) {
+    check = (async () => {
+      const dbFile = await findDb(publicationDirectory);
+      if (!dbFile || !(await isSqliteDbCorrupt(dbFile))) return dbFile;
+      return reextractCorruptDb(dbFile, jwpubPath, publicationDirectory);
+    })().finally(() => ongoingDbChecks.delete(publicationDirectory));
+    ongoingDbChecks.set(publicationDirectory, check);
+  }
+  return check;
 };
 
 /**
@@ -2204,6 +2305,8 @@ const loadDbFromJWPUB = async (
   db: null | string;
   failure?: 'download' | 'error' | 'missing';
 }> => {
+  let jwpubPath: string | undefined;
+  let publicationDirectory: string | undefined;
   try {
     const jwpub = await downloadJwpub(
       publication,
@@ -2211,17 +2314,18 @@ const loadDbFromJWPUB = async (
       progressCategory,
     );
     if (jwpub.error) return { db: null, failure: 'download' };
-    const publicationDirectory = await getPublicationDirectory(publication);
+    jwpubPath = jwpub.path;
+    publicationDirectory = await getPublicationDirectory(publication);
     if (jwpub.new || !(await findDb(publicationDirectory))) {
       await unzipJwpub(jwpub.path, publicationDirectory);
     }
-    const dbFile = await findDb(publicationDirectory);
+    const dbFile = await getReadableDb(jwpub.path, publicationDirectory);
     return dbFile ? { db: dbFile } : { db: null, failure: 'missing' };
   } catch (error) {
     errorCatcher(error, {
       contexts: {
         fn: {
-          args: { meetingDate, publication },
+          args: { jwpubPath, meetingDate, publication, publicationDirectory },
           name: 'getDbFromJWPUB',
         },
       },
@@ -2328,7 +2432,7 @@ const getEmptyStudyBibleResult = (): StudyBibleResult => ({
 const getStudyBibleCacheKey = (
   cacheFolder: null | string | undefined,
   languages: JwLangCode[],
-) => [cacheFolder || 'default', languages.join(':') || 'none'].join(':');
+) => [cacheFolder || 'default', languages.join(':') || 'none'].join(':'); // NOSONAR: '' means not set
 
 const getStudyBibleLanguages = () => {
   const currentStateStore = useCurrentStateStore();
@@ -2358,6 +2462,9 @@ const getStudyBibleMediaCacheKey = (
     chapterNumber ?? 'all-chapters',
   ].join(':');
 
+const getStudyBibleDb = (publication: PublicationFetcher) =>
+  getDbFromJWPUB(publication, undefined, 'study-bible');
+
 const getStudyBible = async () => {
   const languages = getStudyBibleLanguages();
   const cacheKey = getStudyBibleCacheKey(
@@ -2369,10 +2476,8 @@ const getStudyBible = async () => {
     studyBibleCache.set(
       cacheKey,
       (async (): Promise<StudyBibleResult> => {
-        const nwtStyDb_E_Promise = getDbFromJWPUB(
+        const nwtStyDb_E_Promise = getStudyBibleDb(
           studyBibleNwtStyPublication_E,
-          undefined,
-          'study-bible',
         );
 
         const nwtStyPromise = (async () => {
@@ -2381,7 +2486,7 @@ const getStudyBible = async () => {
 
           for (const langwritten of languages) {
             if (langwritten === 'E') {
-              nwtStyDb = await nwtStyDb_E_Promise;
+              nwtStyDb = await nwtStyDb_E_Promise; // NOSONAR: sequential - stops at first match
               nwtStyPublication = studyBibleNwtStyPublication_E;
               break;
             }
@@ -2391,11 +2496,7 @@ const getStudyBible = async () => {
               langwritten,
               pub: 'nwtsty',
             };
-            nwtStyDb = await getDbFromJWPUB(
-              nwtStyPublication,
-              undefined,
-              'study-bible',
-            );
+            nwtStyDb = await getStudyBibleDb(nwtStyPublication); // NOSONAR: sequential - stops at first match
             if (nwtStyDb) break;
           }
 
@@ -2422,11 +2523,7 @@ const getStudyBible = async () => {
               langwritten,
               pub: 'nwt',
             };
-            const nwtDb = await getDbFromJWPUB(
-              nwtPublication,
-              undefined,
-              'study-bible',
-            );
+            const nwtDb = await getStudyBibleDb(nwtPublication); // NOSONAR: sequential - stops at first match
             if (nwtDb) return nwtDb;
           }
 
@@ -2889,7 +2986,7 @@ const prepareStudyBibleMediaItem = async (
     : itemWithPath;
   updatedItem.VerseNumber = item.VerseLabel
     ? Number.parseInt(
-        new RegExp(/>(\d+)</).exec(item.VerseLabel)?.[1] || '',
+        new RegExp(/>(\d+)</).exec(item.VerseLabel)?.[1] ?? '',
         10,
       )
     : null;
@@ -2907,8 +3004,15 @@ export const getBibleMedia = async (
     const lang = langwritten ?? currentStateStore.currentSettings?.lang;
     if (!lang) return;
 
+    const languages = getBibleMediaLanguages(langwritten);
+    // Each book comes from the first of these languages that has it, so the
+    // list is cached per language combination: a main-language-only list
+    // (meeting media) must never be served where one that falls back to the
+    // secondary language (Bible dialog) is expected, and vice versa.
+    const cacheKey = languages.join('+');
+
     if (!force) {
-      const bibleFilesList = jwStore.jwBibleFiles?.[lang];
+      const bibleFilesList = jwStore.jwBibleFiles?.[cacheKey];
       if (bibleFilesList && !shouldUpdateList(bibleFilesList, 3)) {
         return bibleFilesList.list;
       }
@@ -2923,14 +3027,13 @@ export const getBibleMedia = async (
       langwritten: '',
       pub: 'nwt',
     };
-    const languages = getBibleMediaLanguages(langwritten);
     const { backupNameNeeded, returnedItems } = await fetchBibleBookMedia(
       publication,
       languages,
     );
     await applyBibleBookBackupNames(returnedItems, backupNameNeeded);
 
-    jwStore.jwBibleFiles[lang] = {
+    jwStore.jwBibleFiles[cacheKey] = {
       list: returnedItems,
       updated: new Date(),
     };
@@ -2951,16 +3054,14 @@ const applyBibleBookBackupNames = async (
   if (!(nwtStyDb || nwtDb)) return;
 
   const bibleBookLocalNames = await getLocalBibleBookNames(
-    nwtStyDb || nwtDb || '',
+    nwtStyDb ?? nwtDb ?? '',
   );
   for (const booknum of backupNameNeeded) {
-    const pubName = bibleBookLocalNames.find(
+    const placeholder = returnedItems.find((item) => item.booknum === booknum);
+    if (!placeholder) continue;
+    placeholder.pubName = bibleBookLocalNames.find(
       (item) => item.ChapterNumber === booknum,
     )?.Title;
-    returnedItems[booknum - 1] = {
-      booknum,
-      pubName,
-    };
   }
 };
 
@@ -2970,41 +3071,38 @@ const fetchBibleBookMedia = async (
 ) => {
   const returnedItems: Partial<Publication>[] = [];
   const backupNameNeeded: number[] = [];
+  const fetchBook = (booknum: number) =>
+    fetchBibleBookMediaForLanguages(publication, booknum, languages);
 
   for (const booknum of Array.from({ length: 66 }, (_, i) => i + 1)) {
-    const { items, needsBackupName } = await fetchBibleBookMediaForLanguages(
-      publication,
-      booknum,
-      languages,
-    );
-    returnedItems.push(...items);
-
-    if (needsBackupName) {
-      backupNameNeeded.push(booknum);
-      returnedItems.push({ booknum });
+    const bookMedia = await fetchBook(booknum); // NOSONAR: sequential - one JW.org lookup at a time
+    if (bookMedia) {
+      returnedItems.push(bookMedia);
+      continue;
     }
+
+    backupNameNeeded.push(booknum);
+    returnedItems.push({ booknum });
   }
 
   return { backupNameNeeded, returnedItems };
 };
 
+// The book's media in the first of the languages that has it, or null when
+// none of them does.
 const fetchBibleBookMediaForLanguages = async (
   publication: PublicationFetcher,
   booknum: number,
   languages: JwLangCode[],
 ) => {
-  const items: Publication[] = [];
-
   for (const lang of languages) {
     publication.booknum = booknum;
     publication.langwritten = lang;
-    const bibleMediaItems = await getPubMediaLinks(publication);
-    if (!bibleMediaItems) return { items, needsBackupName: true };
-
-    items.push(bibleMediaItems);
+    const bibleMediaItems = await getPubMediaLinks(publication); // NOSONAR: sequential - stops at first match
+    if (bibleMediaItems) return bibleMediaItems;
   }
 
-  return { items, needsBackupName: false };
+  return null;
 };
 
 const getBibleMediaLanguages = (langwritten?: JwLangCode) => {
@@ -3111,13 +3209,12 @@ export const getMemorialMedia = async (
           }
 
           if (videoItems.length) {
-            for (const item of videoItems) {
-              const parsedItem = await addFullFilePathToMultimediaItem(
-                item,
-                pub,
-              );
-              results.introVideos.push(parsedItem);
-            }
+            const parsedItems = await Promise.all(
+              videoItems.map((item) =>
+                addFullFilePathToMultimediaItem(item, pub),
+              ),
+            );
+            results.introVideos.push(...parsedItems);
 
             await processMissingMediaInfo({
               allMedia: results.introVideos,
@@ -3136,7 +3233,7 @@ export const getMemorialMedia = async (
       })();
 
       memorialMediaInFlight.set(cacheKey, fetchPromise);
-      const result = await fetchPromise;
+      const result = await fetchPromise; // NOSONAR: sequential - stops at first match
       if (result) return result;
     }
   } catch (e) {
@@ -3241,8 +3338,12 @@ const getWtIssue = async (
   }
 };
 
-const CAPTION_NUMBER_PATTERN =
-  /\d+(?:(?:\s*[-–—,;]\s*|\s+\p{L}{1,20}\s+)\d+)?/gu;
+const CAPTION_NUMBER_PATTERN = /\d+/gu;
+// What can join a second number onto a caption number to make one range or
+// list ("11-12", "4, 5", "4 y 5"): a separator, or a short word between
+// spaces. Anchored: it's matched against the text right after a number.
+const CAPTION_NUMBER_CONTINUATION_PATTERN =
+  /^(?:\s*[-–—,;]\s*|\s+\p{L}{1,20}\s+)\d+/u;
 const REFERENCE_SYMBOL_PATTERN = /(?:[^\p{L}\p{N}\s]|\p{L}\.)\s*$/u;
 const TRAILING_PUNCTUATION_PATTERN = /^[\s.!?,;:，。！？；：)\]}»”'’…]*$/u;
 
@@ -3252,12 +3353,23 @@ interface CaptionNumberCandidate {
   text: string;
 }
 
-const getCaptionNumberCandidates = (caption: string) =>
-  Array.from(caption.matchAll(CAPTION_NUMBER_PATTERN), (match) => ({
-    end: (match.index ?? 0) + match[0].length,
-    start: match.index ?? 0,
-    text: match[0].trim(),
-  }));
+const getCaptionNumberCandidates = (caption: string) => {
+  const candidates: CaptionNumberCandidate[] = [];
+  let consumedUntil = 0;
+  for (const match of caption.matchAll(CAPTION_NUMBER_PATTERN)) {
+    const start = match.index ?? 0;
+    // Already part of the previous candidate's range or list.
+    if (start < consumedUntil) continue;
+    const numberEnd = start + match[0].length;
+    const continuation = CAPTION_NUMBER_CONTINUATION_PATTERN.exec(
+      caption.slice(numberEnd),
+    );
+    const end = numberEnd + (continuation?.[0].length ?? 0);
+    candidates.push({ end, start, text: caption.slice(start, end).trim() });
+    consumedUntil = end;
+  }
+  return candidates;
+};
 
 const getCandidateNumbers = (candidate: CaptionNumberCandidate) =>
   Array.from(candidate.text.matchAll(/\d+/g), (match) =>
@@ -3289,7 +3401,7 @@ const isCandidateCompatibleWithParagraphLabel = (
 
 const getTrailingParenthetical = (caption: string) => {
   const match = /\([^()]*\)\s*[.!?,;:，。！？；：]*$/u.exec(caption);
-  if (!match || match.index === undefined) return undefined;
+  if (match?.index === undefined) return undefined;
 
   return {
     content: match[0].slice(1, match[0].lastIndexOf(')')),
@@ -3405,13 +3517,13 @@ export const dynamicMediaMapper = async (
     const isMeetingWe = isWeMeetingDay(lookupDate);
     const isAdditional = calculatedSource === 'additional';
 
-    const lastParagraph = allMedia.at(-1)?.BeginParagraphOrdinal || 0;
+    const lastParagraph = allMedia.at(-1)?.BeginParagraphOrdinal ?? 0;
 
     // --- Determine middle song paragraph ----------------------------------
     const songs = allMedia.filter((element) => isSong(element));
     const middleSongParagraph =
       !isAdditional && isMeetingMw && songs.length >= 2
-        ? songs[1]?.BeginParagraphOrdinal || 0
+        ? (songs[1]?.BeginParagraphOrdinal ?? 0)
         : 0;
 
     // --- Helper: resolve duration -----------------------------------------
@@ -3431,7 +3543,7 @@ export const dynamicMediaMapper = async (
 
       if (!m.KeySymbol) return 0;
 
-      const lang = currentSettings?.lang || currentSettings?.langFallback;
+      const lang = currentSettings?.lang || currentSettings?.langFallback; // NOSONAR: '' means not set
       if (!lang) return 0;
 
       const mediaInfo = await getJwMediaInfo({
@@ -3457,7 +3569,7 @@ export const dynamicMediaMapper = async (
       const base =
         m.KeySymbol || m.IssueTagNumber
           ? [m.KeySymbol, m.IssueTagNumber]
-          : [m.MepsDocumentId || m.MultimediaId];
+          : [m.MepsDocumentId || m.MultimediaId]; // NOSONAR: 0 falls back too
 
       const extra = [
         m.MepsLanguageIndex === undefined
@@ -3492,7 +3604,7 @@ export const dynamicMediaMapper = async (
     );
     const filteredMedia = excludeCbsPubs.length
       ? allMedia.filter((m) => {
-          const symbol = m.ExtractSymbol || m.KeySymbol;
+          const symbol = m.ExtractSymbol || m.KeySymbol; // NOSONAR: '' means not set
           if (!symbol) return true;
           if (!isCbsParagraph(m, { isAdditional, isMeetingMw, lastParagraph }))
             return true;
@@ -3709,9 +3821,9 @@ const mapDynamicMediaItem = async (
       : '';
   const uniqueId = sanitizeId(`${datePart}-${durationPart}${fileUrl}`);
   const thumbnailUrl =
-    media.ThumbnailUrl ||
-    pathToFileURL(media.LinkedPreviewFilePath || '') ||
-    (await getThumbnailUrl(media.ThumbnailFilePath || media.FilePath));
+    media.ThumbnailUrl || // NOSONAR: '' means not set
+    pathToFileURL(media.LinkedPreviewFilePath ?? '') ||
+    (await getThumbnailUrl(media.ThumbnailFilePath || media.FilePath)); // NOSONAR: '' means not set
 
   return {
     cbs: isCbsParagraph(media, context),
@@ -3771,8 +3883,8 @@ export const watchedItemMapper: (
         ? await getMetadataFromMediaPath(watchedItemPath)
         : undefined;
 
-    const duration = metadata?.format.duration || 0;
-    const title = metadata?.common.title || basename(watchedItemPath);
+    const duration = metadata?.format.duration || 0; // NOSONAR: NaN falls back too
+    const title = metadata?.common.title || basename(watchedItemPath); // NOSONAR: empty title uses the file name
 
     const uniqueId = sanitizeId(
       formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl,
@@ -3853,8 +3965,8 @@ const getWatchedMediaPlacement = async ({
   return {
     order: filenamePlacement?.order,
     section:
-      filenamePlacement?.section ||
-      getLegacyWatchedSection(filename) ||
+      filenamePlacement?.section ??
+      getLegacyWatchedSection(filename) ??
       getDefaultWatchedSection(parentDate),
   };
 };
@@ -3914,12 +4026,12 @@ const addFullPathsToMultimediaItems = async (
   items: MultimediaItem[],
   publication: PublicationFetcher,
 ) => {
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (item) {
-      items[i] = await addFullFilePathToMultimediaItem(item, publication);
-    }
-  }
+  const itemsWithPaths = await Promise.all(
+    items.map((item) => addFullFilePathToMultimediaItem(item, publication)),
+  );
+  itemsWithPaths.forEach((item, i) => {
+    items[i] = item;
+  });
 };
 
 const applyMepsLanguageOverrides = async (
@@ -3944,13 +4056,18 @@ const applyMepsLanguageOverrides = async (
 
   for (const media of allMedia) {
     applyMepsLanguageOverride(media, mepsLanguagesByMediaItem);
-    if (options.includeVideoMarkers) {
-      const videoMarkers = await getMediaVideoMarkers(
-        options,
-        media.MultimediaId,
-      );
-      if (videoMarkers) media.VideoMarkers = videoMarkers;
-    }
+  }
+
+  if (options.includeVideoMarkers) {
+    await Promise.all(
+      allMedia.map(async (media) => {
+        const videoMarkers = await getMediaVideoMarkers(
+          options,
+          media.MultimediaId,
+        );
+        if (videoMarkers) media.VideoMarkers = videoMarkers;
+      }),
+    );
   }
 
   return mepsLanguagesByMediaItem;
@@ -3981,7 +4098,7 @@ const applyMepsLanguageOverrides = async (
 const groupMediaByOriginalSection = (mediaForDay: MediaItem[]) => {
   const groupedMedia: Record<string, MediaItem[]> = {};
   mediaForDay.forEach((mediaItem) => {
-    const section = mediaItem.originalSection || 'tgw';
+    const section = mediaItem.originalSection || 'tgw'; // NOSONAR: '' means not set
     groupedMedia[section] ??= [];
     groupedMedia[section].push(mediaItem);
   });
@@ -4023,14 +4140,11 @@ const getWeekendIssueForLanguage = async (
 ) => {
   if (!langwritten) return getEmptyWeekendIssue();
 
+  const getIssueWeeksBack = (weeks: number) =>
+    getWtIssue(monday, weeks, langwritten, lookupDate, lastChance);
+
   for (const weeks of weeksToTry) {
-    const result = await getWtIssue(
-      monday,
-      weeks,
-      langwritten,
-      lookupDate,
-      lastChance,
-    );
+    const result = await getIssueWeeksBack(weeks); // NOSONAR: sequential - stops at first match
     if (result.db?.length > 0) {
       return result;
     }
@@ -4154,7 +4268,7 @@ const processWeekendMedia = (
   );
 
   // Sort those with BeginPosition
-  withBegin.sort((a, b) => (a.BeginPosition || 0) - (b.BeginPosition || 0));
+  withBegin.sort((a, b) => (a.BeginPosition ?? 0) - (b.BeginPosition ?? 0));
 
   // Final result: Insert all withoutBegin *before* the last item with BeginPosition
   let final: MultimediaItem[] = [];
@@ -4234,7 +4348,7 @@ const mergeWeekendSongs = (
   } catch (e: unknown) {
     errorCatcher(e);
     songMepsLanguageCodes = songs.map(
-      () => currentStateStore.currentSettings?.lang || 'E',
+      () => currentStateStore.currentSettings?.lang || 'E', // NOSONAR: '' means not set
     );
   }
 
@@ -4597,7 +4711,7 @@ const normalizeWatchtowerMagazineSymbol = (media: MultimediaItem) => {
   if (
     media.KeySymbol === 'w' &&
     media.IssueTagNumber &&
-    Number.parseInt(media.IssueTagNumber.toString()) >= 20080101 &&
+    Number.parseInt(media.IssueTagNumber.toString()) >= 20_080_101 &&
     media.IssueTagNumber.toString().endsWith('01')
   ) {
     media.KeySymbol = 'wp';
@@ -4698,7 +4812,7 @@ const getBibleVerseDuration = (
   min = timeToSeconds(
     chapterMedia.map((item) =>
       item.markers.markers.find((marker) => marker.verseNumber === verses[0]),
-    )?.[0]?.startTime || '0',
+    )?.[0]?.startTime ?? '0',
   );
 
   const endVerse = chapterMedia.map((item) =>
@@ -4730,7 +4844,7 @@ const downloadBibleMissingMedia = async (
   return downloadAdditionalRemoteVideo({
     customDuration: getBibleVerseDuration(media, chapterMedia),
     mediaItemLinks: chapterMedia,
-    meetingDate: meetingDate || undefined,
+    meetingDate: meetingDate || undefined, // NOSONAR: '' means not set
     section: undefined,
     song: false,
     thumbnailUrl: media.ThumbnailFilePath,
@@ -4757,14 +4871,14 @@ const downloadStandardMissingMedia = async ({
     const { FilePath, Label, StreamDuration, StreamThumbnailUrl, StreamUrl } =
       await downloadMissingMedia(
         publicationFetcher,
-        meetingDate || currentStateStore.selectedDate,
+        meetingDate || currentStateStore.selectedDate, // NOSONAR: '' means not set
         isDynamicMedia,
         true,
       );
     media.FilePath = FilePath ?? media.FilePath;
     media.Label = keepMediaLabels
-      ? media.Label || Label || ''
-      : Label || media.Label;
+      ? media.Label || Label || '' // NOSONAR: '' means not set
+      : Label || media.Label; // NOSONAR: '' means not set
     media.StreamUrl = StreamUrl ?? media.StreamUrl;
     media.Duration = StreamDuration ?? media.Duration;
     media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
@@ -4816,10 +4930,10 @@ export async function processMissingMediaInfo({
     const currentStateStore = useCurrentStateStore();
     const errors = [];
 
-    allMedia.forEach(normalizeWatchtowerMagazineSymbol);
+    allMedia.forEach((media) => normalizeWatchtowerMagazineSymbol(media));
 
     const mediaChecksResults = await Promise.all(
-      allMedia.map(checkMediaFileExistence),
+      allMedia.map((media) => checkMediaFileExistence(media)),
     );
 
     const mediaToProcess = mediaChecksResults.filter(
@@ -4881,24 +4995,24 @@ export async function processMissingMediaInfo({
         );
 
         if (media.KeySymbol === 'nwt') {
-          mediaWasDownloaded =
-            !!(await downloadBibleMissingMedia(
-              media,
-              langwritten,
-              meetingDate,
-            )) || mediaWasDownloaded;
+          const bibleDownload = downloadBibleMissingMedia(
+            media,
+            langwritten,
+            meetingDate,
+          );
+          mediaWasDownloaded = !!(await bibleDownload) || mediaWasDownloaded; // NOSONAR: sequential - each step needs the previous result
           continue;
         }
 
         try {
-          mediaWasDownloaded =
-            (await downloadStandardMissingMedia({
-              isDynamicMedia,
-              keepMediaLabels,
-              media,
-              meetingDate,
-              publicationFetcher,
-            })) || mediaWasDownloaded;
+          const standardDownload = downloadStandardMissingMedia({
+            isDynamicMedia,
+            keepMediaLabels,
+            media,
+            meetingDate,
+            publicationFetcher,
+          });
+          mediaWasDownloaded = (await standardDownload) || mediaWasDownloaded; // NOSONAR: sequential - each step needs the previous result
         } catch (e) {
           errorCatcher(e);
         }
@@ -4957,6 +5071,119 @@ export const getPubMediaLinks = async (
   }
 };
 
+// The error a failed unzip or getZipEntries brings back from the main process
+// doesn't say which file it was reading, and the JW Library refresh opens three
+// nested archives. This names the one that failed, with its size on disk taken
+// right away, before the leftover cleanup deletes the inner ones (MMM-V2-3F9).
+class ArchiveReadError extends Error {
+  constructor(
+    readonly archivePath: string,
+    readonly archiveOnDisk: PathDiagnostic,
+    cause: unknown,
+  ) {
+    super(`Could not read ${archivePath}`, { cause });
+    this.name = 'ArchiveReadError';
+  }
+}
+
+const extractMatchingZipEntry = async (
+  zipPath: string,
+  outputDir: string,
+  matches: (entryName: string) => boolean,
+) => {
+  try {
+    const entryName = Object.keys(await getZipEntries(zipPath)).find((name) =>
+      matches(name),
+    );
+    if (!entryName) return undefined;
+    const [extracted] = await unzip(zipPath, outputDir, {
+      includes: [entryName],
+    });
+    return extracted ? join(outputDir, extracted.path) : undefined;
+  } catch (error) {
+    throw new ArchiveReadError(
+      zipPath,
+      await getPathDiagnostic(zipPath),
+      error,
+    );
+  }
+};
+
+/**
+ * Extracts JW Library's language database from its downloaded zip.
+ *
+ * The zip holds an msixbundle, which holds one msix per CPU architecture, and
+ * the database is the one file needed from the x64 msix. Each of those archives
+ * holds far more than that (installer scripts, every architecture's build, the
+ * app's executables and its 120 MB+ dll), so each level is listed first and
+ * only the one entry needed from it is extracted. Extracting everything wrote
+ * about 1 GB per run, and antivirus software locking the freshly written
+ * executables made it fail (MMM-V2-3KZ). Listing the archive just extracted,
+ * rather than searching the folder, also keeps an msixbundle left over from an
+ * older JW Library version from being picked instead of the current one.
+ *
+ * @param jwlbZipPath The downloaded JW Library zip.
+ * @returns The extracted database, if every level had the expected entry.
+ */
+export const extractMepsUnitDb = async (jwlbZipPath: string) => {
+  const dir = dirname(jwlbZipPath);
+  const msixbundle = await extractMatchingZipEntry(jwlbZipPath, dir, (name) =>
+    name.endsWith('.msixbundle'),
+  );
+  if (!msixbundle) return undefined;
+  const msix = await extractMatchingZipEntry(msixbundle, dir, (name) =>
+    name.endsWith('_x64.msix'),
+  );
+  if (!msix) return undefined;
+  return extractMatchingZipEntry(
+    msix,
+    dir,
+    (name) => name.startsWith('Data/') && name.endsWith('.db'),
+  );
+};
+
+/**
+ * Deletes everything in the JW Library folder except the downloaded zip (kept
+ * so the next refresh can skip downloading an unchanged JW Library), the
+ * extracted database and the last-used marker. The rest is this run's
+ * intermediate archives plus whatever older JW Library versions and the full
+ * extractions of earlier releases left behind - about 1 GB on some installs.
+ *
+ * @param jwlbZipPath The downloaded JW Library zip.
+ */
+const removeMepsUnitLeftovers = async (jwlbZipPath: string) => {
+  const dir = dirname(jwlbZipPath);
+  // The download always lands in JW Library's own folder (Publications/jwlb_E,
+  // or the download fallback folder of the same name); never empty any other.
+  if (!basename(dir).startsWith('jwlb')) return;
+  const keep = new Set([basename(jwlbZipPath), 'Data', LAST_USED_FILENAME]);
+
+  try {
+    const leftovers = (await readdir(dir)).filter(
+      (item) => !keep.has(item.name),
+    );
+    await Promise.all(
+      leftovers.map(async (item) => {
+        try {
+          await remove(join(dir, item.name));
+        } catch (error) {
+          // Most likely antivirus software still scanning a file this run
+          // just wrote; the next refresh tries again.
+          log(
+            'Could not remove a JW Library leftover',
+            'jw',
+            'warn',
+            item.name,
+            error,
+          );
+        }
+      }),
+    );
+  } catch (error) {
+    log('Could not list the JW Library folder', 'jw', 'warn', dir, error);
+  }
+};
+
 // Guards against overlapping runs: the download + 3-level unzip below takes long
 // enough that the urlVariables watcher in MainLayout.vue can re-trigger a second
 // call before the first finishes, racing two extractions into the same directory.
@@ -4967,6 +5194,7 @@ export const getJwMepsInfo = (): Promise<void> => {
   if (isDemoModeActive()) return Promise.resolve();
 
   jwMepsInfoPromise = (async () => {
+    let jwlbZipPath: string | undefined;
     try {
       const jwStore = useJwStore();
 
@@ -4980,34 +5208,43 @@ export const getJwMepsInfo = (): Promise<void> => {
         pub: 'jwlb',
       });
       if (!file.FilePath) return;
-      const dir = dirname(file.FilePath);
-      await unzip(file.FilePath, dir);
-      const msixbundle = await findFile(dir, '.msixbundle');
-      if (!msixbundle) return;
-      await unzip(msixbundle, dir);
-      const msix = await findFile(dir, '_x64.msix');
-      if (!msix) return;
-      await unzip(msix, dir);
-      const mepsunit = await findFile(join(dir, 'Data'), '.db');
-      if (!mepsunit) return;
-      const dynamicMepsLangs = (
-        await globalThis.electronApi.executeQuery<JwMepsLanguage>(
-          mepsunit,
-          'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',
-        )
-      ).map((l) => ({
-        ...l,
-        PrimaryIetfCode: l.PrimaryIetfCode.toLowerCase() as JwLangSymbol,
-      }));
-      if (dynamicMepsLangs.length < jwStore.jwMepsLanguages.list.length) {
-        return;
+      jwlbZipPath = file.FilePath;
+      try {
+        const mepsunit = await extractMepsUnitDb(file.FilePath);
+        if (!mepsunit) return;
+        const dynamicMepsLangs = (
+          await globalThis.electronApi.executeQuery<JwMepsLanguage>(
+            mepsunit,
+            'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',
+          )
+        ).map((l) => ({
+          ...l,
+          PrimaryIetfCode: l.PrimaryIetfCode.toLowerCase() as JwLangSymbol,
+        }));
+        // A shorter list than the stored one is more likely a partial read
+        // than languages being dropped, so the stored list is kept - but the
+        // check is still recorded, since the list is persisted and an old
+        // date would rerun all of this on every launch.
+        const list =
+          dynamicMepsLangs.length < jwStore.jwMepsLanguages.list.length
+            ? jwStore.jwMepsLanguages.list
+            : dynamicMepsLangs;
+        jwStore.jwMepsLanguages = { list, updated: new Date() };
+      } finally {
+        await removeMepsUnitLeftovers(file.FilePath);
       }
-      jwStore.jwMepsLanguages = {
-        list: dynamicMepsLangs,
-        updated: new Date(),
-      };
     } catch (e) {
-      errorCatcher(e);
+      const archiveError = e instanceof ArchiveReadError ? e : undefined;
+      errorCatcher(e, {
+        contexts: {
+          fn: {
+            archiveOnDisk: archiveError?.archiveOnDisk,
+            archivePath: archiveError?.archivePath,
+            jwlbZipPath,
+            name: 'getJwMepsInfo',
+          },
+        },
+      });
     } finally {
       jwMepsInfoPromise = null;
     }
@@ -5125,25 +5362,30 @@ const downloadRelatedMediaAssets = async ({
     jwMediaInfo.thumbnail,
   ].filter((url): url is string => !!url);
 
-  for (const itemUrl of relatedUrls) {
-    const itemFilename = changeExt(
-      basename(bestItem.file.url),
-      extname(itemUrl),
-    );
+  await Promise.all(
+    relatedUrls.map(async (itemUrl) => {
+      const itemFilename = changeExt(
+        basename(bestItem.file.url),
+        extname(itemUrl),
+      );
 
-    if (
-      bestItem.file?.url &&
-      (downloadedFile?.new || !(await pathExists(join(pubDir, itemFilename))))
-    ) {
-      await downloadFileIfNeeded({
-        dir: pubDir,
-        filename: itemFilename,
-        lowPriority: shouldDownloadLowPriority(isMemorialMeeting, meetingDate),
-        meetingDate,
-        url: itemUrl,
-      });
-    }
-  }
+      if (
+        bestItem.file?.url &&
+        (downloadedFile?.new || !(await pathExists(join(pubDir, itemFilename))))
+      ) {
+        await downloadFileIfNeeded({
+          dir: pubDir,
+          filename: itemFilename,
+          lowPriority: shouldDownloadLowPriority(
+            isMemorialMeeting,
+            meetingDate,
+          ),
+          meetingDate,
+          url: itemUrl,
+        });
+      }
+    }),
+  );
 };
 
 interface MissingMediaDownloadResult {
@@ -5171,7 +5413,7 @@ const downloadMissingMedia = async (
     const pubDir = await getPublicationDirectory(publication);
     await updateLastUsedDate(
       pubDir,
-      meetingDate || currentStateStore.selectedDate,
+      meetingDate || currentStateStore.selectedDate, // NOSONAR: '' means not set
     );
     const responseObject = await getPubMediaLinks(
       publication,
@@ -5313,7 +5555,7 @@ const queueAdditionalMediaDownload = ({
   meetingDate?: string;
   progressCategory: FileDownloader['progressCategory'];
 }) => {
-  downloadFileIfNeeded({
+  void downloadFileIfNeeded({
     dir: datedAdditionalMediaDir,
     lowPriority: false,
     meetingDate,
@@ -5345,7 +5587,7 @@ const resolveRemoteThumbnailUrl = async (
 ): Promise<{ localUrl: string | undefined; remoteUrl: string | undefined }> => {
   try {
     const resolvedUrl =
-      thumbnailUrl ||
+      thumbnailUrl || // NOSONAR: '' means not set
       (thumbnailLookup
         ? (await getJwMediaInfo(thumbnailLookup)).thumbnail || undefined
         : undefined);
@@ -5374,7 +5616,7 @@ export interface DownloadAdditionalRemoteVideoOptions {
   mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[];
   meetingDate?: string;
   onlyCreateItem?: boolean;
-  progressCategory?: FileDownloader['progressCategory'];
+  progressCategory?: NonNullable<FileDownloader['progressCategory']>;
   section?: MediaSectionIdentifier;
   song?: false | number | string;
   thumbnailLookup?: PublicationFetcher;
@@ -5426,7 +5668,7 @@ export const downloadAdditionalRemoteVideo = async (
 
     await updateLastUsedDate(
       datedAdditionalMediaDir,
-      meetingDate || currentStateStore.selectedDate,
+      meetingDate || currentStateStore.selectedDate, // NOSONAR: '' means not set
     );
 
     const { localUrl: thumbnailUrl, remoteUrl: thumbnailStreamUrl } =
@@ -5599,7 +5841,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
     const dir = await getPublicationDirectory(publication);
     await updateLastUsedDate(dir, new Date());
     for (const mediaLink of filteredMediaItemLinks) {
-      downloadFileIfNeeded({
+      void downloadFileIfNeeded({
         dir,
         // Background music should not be a high priority download
         lowPriority: true,
@@ -5633,16 +5875,14 @@ export const fetchBackgroundMusicSongLibrary = async (
         const dir = await getPublicationDirectory(publication);
         await updateLastUsedDate(dir, new Date());
 
-        const songs = await Promise.all(
-          mediaLinks.map(async (mediaLink) => ({
-            duration: mediaLink.duration,
-            filesize: mediaLink.filesize,
-            path: await getExpectedDownloadPath(dir, mediaLink.file.url),
-            remoteUrl: mediaLink.file.url,
-            title: mediaLink.title,
-            track: mediaLink.track,
-          })),
-        );
+        const songs = mediaLinks.map((mediaLink) => ({
+          duration: mediaLink.duration,
+          filesize: mediaLink.filesize,
+          path: getExpectedDownloadPath(dir, mediaLink.file.url),
+          remoteUrl: mediaLink.file.url,
+          title: mediaLink.title,
+          track: mediaLink.track,
+        }));
 
         log(
           `[${new Date().toISOString()}] +${Math.round(
@@ -5691,7 +5931,7 @@ export const resolveBackgroundMusicPlaybackUrl = async (
 
   if (song.remoteUrl) {
     const dir = dirname(song.path);
-    downloadFileIfNeeded({
+    void downloadFileIfNeeded({
       dir,
       lowPriority: true,
       size: song.filesize,
@@ -5745,7 +5985,7 @@ export const downloadBackgroundMusic = () => {
         pub: currentStateStore.currentSongbook?.pub,
       },
     );
-    downloadPubMediaFiles({
+    void downloadPubMediaFiles({
       fileformat: currentStateStore.currentSongbook?.fileformat,
       langwritten: currentStateStore.currentSettings?.lang,
       maxTrack: MAX_SONGS,
@@ -5765,7 +6005,7 @@ export const downloadSongbookVideos = () => {
       !currentStateStore.currentSettings?.enableExtraCache
     )
       return;
-    downloadPubMediaFiles({
+    void downloadPubMediaFiles({
       fileformat: 'MP4',
       issue: 0,
       langwritten: currentStateStore.currentSettings?.lang,
@@ -5819,7 +6059,8 @@ const downloadJwpub = async (
           if (!filename.toLowerCase().endsWith('.jwpub')) continue;
 
           const jwpubPath = join(dir, filename);
-          if (await isValidJwpubArchive(jwpubPath)) {
+          const isValidJwpub = await isValidJwpubArchive(jwpubPath); // NOSONAR: sequential - stops at first match
+          if (isValidJwpub) {
             return {
               new: false,
               path: jwpubPath,
@@ -5865,7 +6106,7 @@ const downloadJwpub = async (
       return handleDownloadError();
     }
 
-    await updateLastUsedDate(publicationDir, meetingDate || new Date());
+    await updateLastUsedDate(publicationDir, meetingDate || new Date()); // NOSONAR: '' means not set
     let lowPriority = false;
 
     if (!isMemorialMeeting && meetingDate) {
@@ -5918,6 +6159,26 @@ const downloadJwpub = async (
 
 const requestControllers: AbortController[] = [];
 
+const isHttpsUrl = (value?: string) => {
+  if (!value) return false;
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
+const isValidUrlBasePart = (basePart?: string) => {
+  if (!basePart) return false;
+  const basePartWithoutPath = basePart.split('/')[0];
+  if (!basePartWithoutPath) return false;
+  const domainSegments = basePartWithoutPath.split('.');
+  const eachSegmentIsAtLeastTwoChars = domainSegments.every(
+    (segment) => segment.length >= 2,
+  );
+  return eachSegmentIsAtLeastTwoChars;
+};
+
 export const setUrlVariables = async (baseUrl: string | undefined) => {
   const jwStore = useJwStore();
 
@@ -5925,26 +6186,6 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     if (base) jwStore.urlVariables.base = '';
     jwStore.urlVariables.mediator = '';
     jwStore.urlVariables.pubMedia = '';
-  };
-
-  const isHttpsUrl = (value?: string) => {
-    if (!value) return false;
-    try {
-      return new URL(value).protocol === 'https:';
-    } catch {
-      return false;
-    }
-  };
-
-  const isValidUrlBasePart = (basePart?: string) => {
-    if (!basePart) return false;
-    const basePartWithoutPath = basePart.split('/')[0];
-    if (!basePartWithoutPath) return false;
-    const domainSegments = basePartWithoutPath.split('.');
-    const eachSegmentIsAtLeastTwoChars = domainSegments.every(
-      (segment) => segment.length >= 2,
-    );
-    return eachSegmentIsAtLeastTwoChars;
   };
 
   if (!baseUrl || !isValidUrlBasePart(baseUrl)) {

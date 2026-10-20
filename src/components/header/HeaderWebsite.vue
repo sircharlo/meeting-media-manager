@@ -132,7 +132,7 @@ const stopStreaming = () => {
     }
   }
   if (autoReturnFromWebsite.value) {
-    router.push({ name: 'media-calendar' });
+    void router.push({ name: 'media-calendar' });
   }
 };
 

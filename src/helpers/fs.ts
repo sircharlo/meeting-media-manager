@@ -17,7 +17,13 @@ import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 import { fetchJson } from 'src/utils/api';
 import { getCachedUserDataPath, getPublicationDirectory } from 'src/utils/fs';
-import { isAudio, isImage, isVideo } from 'src/utils/media';
+import {
+  isAudio,
+  isImage,
+  isVideo,
+  MediaElementTimeoutError,
+  withMediaElementTimeout,
+} from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
@@ -102,7 +108,7 @@ const writeThumbnailFile = async (thumbnailPath: string, imageData: Buffer) => {
 
   for (let attempt = 0; attempt <= THUMBNAIL_WRITE_RETRY_COUNT; attempt++) {
     try {
-      await writeFile(thumbnailPath, imageData);
+      await writeFile(thumbnailPath, imageData); // NOSONAR: sequential - retry loop
       return;
     } catch (error) {
       lastError = error;
@@ -113,7 +119,7 @@ const writeThumbnailFile = async (thumbnailPath: string, imageData: Buffer) => {
       ) {
         throw error;
       }
-      await delay(THUMBNAIL_WRITE_RETRY_DELAY_MS * (attempt + 1));
+      await delay(THUMBNAIL_WRITE_RETRY_DELAY_MS * (attempt + 1)); // NOSONAR: sequential - retry loop
     }
   }
 
@@ -139,14 +145,14 @@ const getThumbnailFromMetadata = async (
     if (!mediaPath || !(await pathExists(mediaPath))) return '';
     const metadata = await parseMediaFile(mediaPath);
     const thumbnailData = metadata?.common?.picture?.[0]?.data || null;
-    const thumbnailFormat = metadata?.common?.picture?.[0]?.format || null;
+    const thumbnailFormat = metadata?.common?.picture?.[0]?.format ?? null;
     if (thumbnailData?.length && thumbnailFormat) {
       try {
         const parentDir = dirname(mediaPath);
 
         const currentState = useCurrentStateStore();
         const watcherEnabled =
-          currentState.currentSettings?.enableFolderWatcher || false;
+          currentState.currentSettings?.enableFolderWatcher ?? false;
         const watchDir = currentState.currentSettings?.folderToWatch
           ? resolve(currentState.currentSettings?.folderToWatch)
           : null;
@@ -188,9 +194,19 @@ const waitOnce = (emitter: HTMLVideoElement, event: string): Promise<void> => {
   });
 };
 
-const captureVideoFrame = async (
+// Loads the video and seeks to the frame used as its thumbnail.
+const seekToThumbnailFrame = async (
   videoRef: HTMLVideoElement,
-): Promise<{ blobUrl: string; imageData: Buffer }> => {
+  errorPromise: Promise<never>,
+) => {
+  await Promise.race([waitOnce(videoRef, 'loadeddata'), errorPromise]);
+  videoRef.currentTime = 5; // Seek to 5 seconds to get the thumbnail
+  await Promise.race([waitOnce(videoRef, 'seeked'), errorPromise]);
+};
+
+const captureVideoFrame = (
+  videoRef: HTMLVideoElement,
+): { blobUrl: string; imageData: Buffer } => {
   const canvas = document.createElement('canvas');
   canvas.width = FULL_HD.width;
   canvas.height = FULL_HD.height;
@@ -222,7 +238,7 @@ const getThumbnailFromVideoPath = async (
 
   const currentState = useCurrentStateStore();
   const watcherEnabled =
-    currentState.currentSettings?.enableFolderWatcher || false;
+    currentState.currentSettings?.enableFolderWatcher ?? false;
   const watchDir = currentState.currentSettings?.folderToWatch
     ? resolve(currentState.currentSettings?.folderToWatch)
     : null;
@@ -262,15 +278,13 @@ const getThumbnailFromVideoPath = async (
       );
     });
 
-    const loadedPromise = waitOnce(videoRef, 'loadeddata');
+    await withMediaElementTimeout(
+      seekToThumbnailFrame(videoRef, errorPromise),
+      videoRef,
+      videoPath,
+    );
 
-    await Promise.race([loadedPromise, errorPromise]);
-
-    videoRef.currentTime = 5; // Seek to 5 seconds to get the thumbnail
-
-    await Promise.race([waitOnce(videoRef, 'seeked'), errorPromise]);
-
-    const { blobUrl, imageData } = await captureVideoFrame(videoRef);
+    const { blobUrl, imageData } = captureVideoFrame(videoRef);
 
     if (
       !watcherEnabled ||
@@ -314,6 +328,11 @@ export const getThumbnailUrl = async (
     return withCacheBust(thumbnailUrl, forceRefresh);
   } catch (error) {
     if (error instanceof Event) return '';
+    // Environmental (a video that never loads), not a bug: no report.
+    if (error instanceof MediaElementTimeoutError) {
+      log(error.message, 'mediaProcessing', 'warn');
+      return '';
+    }
     errorCatcher(error, {
       contexts: {
         fn: {
