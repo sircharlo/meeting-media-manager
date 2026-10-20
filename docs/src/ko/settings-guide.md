@@ -1,828 +1,828 @@
-# Settings Guide {#settings-guide}
+# 설정 가이드 {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+이 종합 가이드에서는 M³에서 사용할 수 있는 모든 설정을 카테고리별로 설명합니다. 이 설정을 이해하면 회중의 필요에 꼭 맞게 M³를 구성할 수 있습니다.
 
-## General {#application-configuration}
+## 일반 {#application-configuration}
 
-### Display Language {#display-language}
+### 표시 언어 {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+M³ 인터페이스에 사용할 언어를 선택합니다. 이 설정은 미디어를 다운로드할 때 사용하는 언어와는 별개입니다.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**옵션**: 사용 가능한 모든 인터페이스 언어(영어, 스페인어, 프랑스어 등)
 
-**Default**: English
+**기본값**: 영어
 
-### Dark Mode {#dark-mode}
+### 다크 모드 {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+M³의 화면 테마를 설정합니다.
 
-**Options**:
+**옵션**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- 시스템 설정에 따라 자동으로 전환
+- 항상 다크 모드 사용
+- 항상 라이트 모드 사용
 
-**Default**: Auto
+**기본값**: 자동
 
-### First Day of Week {#first-day-of-week}
+### 일주일의 시작 요일 {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+달력 보기에서 한 주의 첫째 날로 사용할 요일을 설정합니다.
 
-**Options**: Sunday through Saturday
+**옵션**: 일요일~토요일
 
-**Default**: Sunday
+**기본값**: 일요일
 
-### Date Format {#date-format}
+### 날짜 형식 {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+앱에서 날짜를 표시할 때 사용하는 형식입니다.
 
-**Example**: D MMMM YYYY
+**예**: D MMMM YYYY
 
-**Default**: D MMMM YYYY
+**기본값**: D MMMM YYYY
 
-### Auto-Start at Login {#auto-start-at-login}
+### 로그인 시 자동 실행 {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+컴퓨터가 시작될 때 M³를 자동으로 실행합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-## Congregation Meetings {#congregation-meetings}
+## 회중 집회 {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### 회중 이름 {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+회중의 이름입니다. 프로필을 정리하고 화면에 표시하는 데 사용됩니다.
 
-**Default**: Empty (must be set during setup)
+**기본값**: 비어 있음(초기 설정 시 지정해야 함)
 
-### Meeting Language {#meeting-language}
+### 집회 언어 {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+미디어를 다운로드할 때 사용하는 기본 언어입니다. 회중의 집회에서 사용하는 언어와 같아야 합니다.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**옵션**: 여호와의 증인 공식 웹사이트에서 제공하는 모든 언어
 
-**Default**: English (E)
+**기본값**: 영어(E)
 
-### Fallback Language {#fallback-language}
+### 대체 언어 {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+기본 언어로 미디어가 제공되지 않을 때 사용할 보조 언어입니다.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**옵션**: 여호와의 증인 공식 웹사이트에서 제공하는 모든 언어
 
-**Default**: None
+**기본값**: 없음
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### 평일 집회 요일 {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+평일 집회가 열리는 요일입니다.
 
-**Options**: Sunday through Saturday
+**옵션**: 일요일~토요일
 
-**Default**: None (must be set during setup)
+**기본값**: 없음(초기 설정 시 지정해야 함)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### 평일 집회 시간 {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+평일 집회의 시작 시간입니다.
 
-**Format**: HH:MM (24-hour format)
+**형식**: HH:MM(24시간 형식)
 
-**Default**: None (must be set during setup)
+**기본값**: 없음(초기 설정 시 지정해야 함)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### 공개 집회 요일 {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+공개 집회가 열리는 요일입니다.
 
-**Options**: Sunday through Saturday
+**옵션**: 일요일~토요일
 
-**Default**: None (must be set during setup)
+**기본값**: 없음(초기 설정 시 지정해야 함)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### 공개 집회 시간 {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+공개 집회의 시작 시간입니다.
 
-**Format**: HH:MM (24-hour format)
+**형식**: HH:MM(24시간 형식)
 
-**Default**: None (must be set during setup)
+**기본값**: 없음(초기 설정 시 지정해야 함)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### 순회 감독자 방문 주 {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+다음 순회 감독자 방문 주간입니다.
 
-**Format**: MM/DD/YYYY
+**형식**: MM/DD/YYYY
 
-**Default**: None
+**기본값**: 없음
 
-### Memorial Date {#memorial-date}
+### 기념식 날짜 {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration.
+다음 기념식 날짜입니다.
 
-**Format**: MM/DD/YYYY
+**형식**: MM/DD/YYYY
 
-**Default**: Automatically retrieved periodically
+**기본값**: 주기적으로 자동으로 가져옴
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### 집회 일정 변경 {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+이 설정을 사용하여 집회 일정의 일시적인 변경 사항을 구성할 수 있습니다.
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **집회 일정 변경일**: 변경 사항이 적용되는 날짜
+- **일주일만 일정 변경**: 영구적인 변경인지 일시적인 변경인지 여부
+- **변경되는 평일 집회 요일**: 평일 집회의 새 요일
+- **변경되는 평일 집회 시간**: 평일 집회의 새 시간
+- **변경되는 공개 집회 요일**: 공개 집회의 새 요일
+- **변경되는 공개 집회 시간**: 공개 집회의 새 시간
 
-### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
+### 집회 일정 자동 업데이트 {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
+활성화하면 M³가 여호와의 증인 공식 웹사이트에서 집회 요일과 시간이 변경되었는지 주기적으로 확인하고 현재 프로필을 자동으로 업데이트합니다.
 
-This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
+이 기능은 회중 검색으로 추가했으며 회중 이름을 직접 변경하지 않은 프로필에서만 작동합니다. 회중 이름이 변경되어 동기화가 비활성화된 경우 **일정 동기화 활성화**를 사용하여 프로필을 다시 연결하십시오.
 
-#### Enable Schedule Sync {#relink-congregation}
+#### 일정 동기화 활성화 {#relink-congregation}
 
 <!-- **Setting**: `relinkCongregationButton` -->
 
-Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+현재 프로필을 회중 검색에 다시 연결하여 집회 요일과 시간의 자동 업데이트가 재개되도록 합니다. 회중 이름을 직접 변경하면 연결이 끊어지므로, 이 버튼은 회중 이름을 직접 변경한 경우에만 표시됩니다.
 
-#### Refresh Meeting Schedule {#refresh-meeting-schedule}
+#### 집회 일정 새로 고침 {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Manually synchronize the current and future meeting schedule with the information from the official website.
+현재 및 향후 집회 일정을 공식 웹사이트의 정보와 직접 동기화합니다.
 
-## Media & Playback {#media-retrieval-and-playback}
+## 미디어 및 재생 {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### 데이터 사용 제한 {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+데이터 사용량이 제한된 연결을 사용하는 경우 이 설정을 활성화하여 대역폭 사용량을 줄이십시오.
 
-**Default**: `false`
+**기본값**: `false`
 
-### Media Display {#media-display-button}
+### 미디어 표시 {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+미디어 표시 기능을 활성화합니다. 두 번째 모니터에 미디어를 표시하려면 이 기능이 필요합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Enable Media Preview {#enable-media-preview}
+#### 미디어 미리 보기 활성화 {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Show a live preview of the media window while an image or video is being displayed.
+이미지나 동영상이 표시되는 동안 미디어 창의 실시간 미리 보기를 표시합니다.
 
-**Default**: `true`
+**기본값**: `true`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### 일시 정지 상태로 재생 시작 {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+재생을 시작할 때 동영상을 일시 정지된 상태로 시작합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-### Background Music {#settings-guide-background-music}
+### 배경 음악 {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### 음악 활성화 {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+배경 음악 기능을 활성화합니다.
 
-**Default**: `true`
+**기본값**: `true`
 
-#### Auto-Start Music {#auto-start-music}
+#### 음악 자동 시작 {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+적절한 경우 M³를 실행할 때 배경 음악을 자동으로 시작합니다.
 
-**Default**: `true`
+**기본값**: `true`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### 집회 전 음악 중지 시간 {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+집회 시작 몇 초 전에 배경 음악을 중지할지 설정합니다.
 
-**Range**: 0-300 seconds
+**범위**: 0~300초
 
-**Default**: 60 seconds
+**기본값**: 60초
 
-#### Music Volume {#music-volume}
+#### 음악 볼륨 {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+배경 음악의 볼륨입니다(1~100%).
 
-**Default**: 100%
+**기본값**: 100%
 
-### Playback and Download Options {#media-display}
+### 재생 및 다운로드 옵션 {#media-display}
 
 <!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
 these control the media window's playback behavior and which downloaded media is
 filtered out, as distinct from the "Media Display" section above (which is about
 whether the media window feature is enabled at all). -->
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### 미디어 창 페이드 전환 활성화 {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+미디어 창을 표시하거나 숨길 때 페이드 인/아웃 전환을 활성화합니다.
 
-**Default**: `true`
+**기본값**: `true`
 
-#### Enable Playback Speed Control {#enable-playback-speed-control}
+#### 재생 속도 변경 활성화 {#enable-playback-speed-control}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
-Allow audio and video playback speed to be adjusted from the media item's context menu.
+미디어 항목의 컨텍스트 메뉴에서 오디오 및 동영상의 재생 속도를 조정할 수 있게 합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Hide Media Logo {#hide-media-logo}
+#### 미디어 로고 숨기기 {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+미디어 창에서 로고를 숨깁니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Maximum Resolution {#maximum-resolution}
+#### 최대 해상도 {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+다운로드하는 미디어 파일의 최대 해상도입니다.
 
-**Options**: 240p, 360p, 480p, 720p, 1080p
+**옵션**: 240p, 360p, 480p, 720p, 1080p
 
-**Default**: 720p
+**기본값**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### 인쇄판 미디어 포함 {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+인쇄판 출판물의 미디어도 함께 다운로드합니다.
 
-**Default**: `true`
+**기본값**: `true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### 각주 제외 {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+가능한 경우 각주에 있는 이미지를 미디어 다운로드에서 제외합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+#### 「파수대」 연구 추가 동영상 제외 {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
-Exclude additional videos that are referenced in Watchtower Study paragraphs.
+「파수대」 연구의 각 항에서 참조하는 추가 동영상을 제외합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+#### 회중 성서 연구 동영상 제외 {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+회중 성서 연구 중에 참조 동영상을 표시하지 않을 출판물을 선택합니다. 출판물 제목이나 기호로 검색할 수 있습니다.
 
-**Default**: Walk Courageously With God (`wcg`)
+**기본값**: Walk Courageously With God (`wcg`)
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### 가르치는 기술 팜플렛의 미디어 제외 {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+가르치는 기술(th) 팜플렛의 미디어를 미디어 다운로드에서 제외합니다.
 
-**Default**: `true`
+**기본값**: `true`
 
-### Subtitles {#subtitles}
+### 자막 {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### 자막 활성화 {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+미디어 재생 시 자막 지원을 활성화합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Subtitle Language {#subtitle-language}
+#### 자막 언어 {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+자막에 사용할 언어입니다(미디어 언어와 다르게 설정할 수 있음).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**옵션**: 여호와의 증인 공식 웹사이트에서 제공하는 모든 언어
 
-**Default**: None
+**기본값**: 없음
 
-### Cache Management {#cache-management}
+### 캐시 관리 {#cache-management}
 
-#### Cache Songbook Video Files {#enable-extra-cache}
+#### 노래책 동영상 미리 저장 {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
+성능을 높이기 위해 노래책의 모든 동영상을 미리 저장합니다. 이 경우 미디어 캐시의 크기가 늘어난다는 점에 유의하십시오.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Cache Folder {#cache-folder}
+#### 캐시 폴더 {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+캐시된 미디어 파일을 저장할 위치를 직접 지정합니다.
 
-**Default**: System default location
+**기본값**: 시스템 기본 위치
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### 자동 캐시 정리 사용 {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+디스크 공간을 절약하기 위해 오래된 캐시 파일을 자동으로 삭제합니다.
 
-**Default**: `true`
+**기본값**: `true`
 
-### Pinyin Song Titles {#pinyin-song-titles}
+### 병음 노래 제목 {#pinyin-song-titles}
 
-#### Prefer Pinyin Songs {#enable-pinyin-songs}
+#### 병음 노래 우선 사용 {#enable-pinyin-songs}
 
 <!-- **Setting**: `enablePinyinSongs` -->
 
-When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+병음 노래 폴더에서 집회 노래의 병음 버전을 찾으면 일반 노래 대신 사용합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Pinyin Song Folder {#pinyin-song-folder}
+#### 병음 노래 폴더 {#pinyin-song-folder}
 
 <!-- **Setting**: `pinyinSongFolder` -->
 
-Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+병음 동영상 노래가 들어 있는 폴더입니다(예: `sjjm_s-Pi_CHS_066_r720P.mp4`). 집회 노래 번호와 일치하는 병음 파일을 찾으면 일반 노래 대신 재생합니다.
 
-**Default**: Empty
+**기본값**: 비어 있음
 
-### Media Export {#settings-guide-media-export}
+### 미디어 내보내기 {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### 미디어 자동 내보내기 활성화 {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+미디어 파일을 지정한 폴더로 자동으로 내보냅니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Media Export Folder {#media-export-folder}
+#### 미디어 내보내기 폴더 {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+미디어 파일을 자동으로 내보낼 폴더 경로입니다.
 
-**Default**: Empty
+**기본값**: 비어 있음
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### MP4로 파일 변환 {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**설정**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+호환성을 높이기 위해 내보낸 미디어 파일을 MP4 형식으로 변환합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
+### 공유 폴더(Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-These settings are in the **Integrations** category.
+이 설정은 **연동 기능** 카테고리에 있습니다.
 
-M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+M³는 Dropbox, OneDrive, iCloud Drive, Google Drive와 같은 클라우드 저장소 앱으로 동기화되는 폴더에서 집회에 미디어를 추가할 수 있습니다. 다른 사람들이 자신이 맡은 파트에 사용할 미디어를 준비해서 공유해 줄 때나 여러 대의 컴퓨터에서 M³를 사용할 때 유용합니다. 이 컴퓨터나 네트워크에 있는 폴더도 사용할 수 있습니다.
 
-M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. 다른 날짜에 파일을 추가하려면 같은 방식으로 이름을 붙인 폴더를 만드십시오. Anything else in the shared folder is ignored.
+M³는 공유 폴더 안에 예정된 집회마다 폴더를 만들고, 집회 날짜를 연-월-일 형식으로 적어 이름을 붙입니다(예: `2026-03-25`). 사진, 동영상, 오디오 파일 또는 JW 라이브러리 재생 목록을 집회 폴더에 넣으면 해당 집회의 미디어 목록에 자동으로 추가됩니다. 다른 날짜에 파일을 추가하려면 같은 방식으로 이름을 붙인 폴더를 만드십시오. 공유 폴더에 있는 그 밖의 항목은 무시됩니다.
 
-:::tip Tip
+:::tip 참고
 
-Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+‘집회 미디어’처럼 이 용도로만 사용할 새 폴더를 만들고, 집회가 시작되기 전에 파일이 준비되어 있도록 클라우드 저장소 앱에서 이 폴더를 항상 이 컴퓨터에 유지하도록 설정하십시오(보통 ‘오프라인 사용 가능’이라고 합니다).
 
 :::
 
-#### Add Media From a Shared Folder {#enable-folder-watcher}
+#### 공유 폴더에서 미디어 추가 {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Add the files put in the shared folder to the right meeting automatically.
+공유 폴더에 넣은 파일을 해당 집회에 자동으로 추가합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Shared Folder {#folder-to-watch}
+#### 공유 폴더 {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder to add media from. The setup wizard offers to set it up for you.
+미디어를 추가할 폴더입니다. 초기 설정 마법사에서도 이 폴더를 설정할 수 있습니다.
 
-**Default**: Empty
+**기본값**: 비어 있음
 
-#### Delete Past Meeting Folders {#delete-past-watched-folders}
+#### 지난 집회 폴더 삭제 {#delete-past-watched-folders}
 
 <!-- **Setting**: `deletePastWatchedFolders` -->
 
-When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+한 주가 지나면 공유 폴더를 깔끔하게 유지하기 위해 그 주의 날짜별 폴더와 그 안의 파일을 삭제합니다. 공유된 폴더이므로 이 폴더를 사용하는 다른 모든 사람에게서도 삭제됩니다. 폴더를 보관하려면 이 설정을 끄십시오.
 
-**Default**: `true`
+**기본값**: `true`
 
-## Meeting Timer {#meeting-timer}
+## 집회 타이머 {#meeting-timer}
 
-### Enable Meeting Timer {#enable-meeting-timer}
+### 집회 타이머 활성화 {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+집회 파트의 시간을 측정하는 별도의 타이머 창을 활성화합니다. 베타 기능이므로 현지에서 사용 승인을 받은 경우에만 활성화해야 합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-### Timer Window Behavior {#timer-window-behavior}
+### 타이머 창 동작 {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+타이머 창을 자동으로 열지, 참여자 타이머를 기본적으로 카운트업할지 카운트다운할지, 시계에 12시간제와 24시간제 중 무엇을 사용할지, 작업 아일랜드의 타이머 버튼에 현재 타이머 값을 표시할지를 설정합니다.
 
-### Quick Access to the Timer {#timer-quick-access}
+### 타이머 빠른 접근 {#timer-quick-access}
 
 <!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
 
-Choose how the timer is reached from the main window:
+메인 창에서 타이머에 접근하는 방법을 선택합니다.
 
-- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
-- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+- **타이머 버튼에 마우스를 올리면 빠른 제어 표시**: 작업 아일랜드의 타이머 버튼에 마우스를 올리면 전체 타이머 팝업을 열지 않아도 시간을 측정 중인 파트와 함께 ‘시작’, ‘일시 정지’, ‘중지’, ‘다음 파트’ 버튼이 표시됩니다. 기본적으로 켜져 있습니다.
+- **메인 창에 타이머 패널 표시**: 전체 집회 파트 목록과 타이머 제어를 메인 창 오른쪽에 고정된 패널에 항상 보이도록 표시합니다. 창 및 디스플레이 설정에 필요한 전체 팝업은 작업 아일랜드에서 계속 사용할 수 있습니다.
 
-### Timer Remote {#timer-remote}
+### 원격 타이머 {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
 
-When turned on, M³ serves a read-only copy of the timer display as a web page on your local network, for a tablet or phone at the lectern: the speaker sees the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time, including the pre-meeting countdown, the clock, overtime colors and the hand alert, and all the controls stay in M³.
+이 기능을 켜면 M³가 연단에 있는 태블릿이나 휴대폰에서 볼 수 있도록 타이머 화면을 읽기 전용 웹 페이지로 로컬 네트워크에 제공합니다. 연사는 남은 시간을 볼 수 있지만, 이 시간은 회중이 보는 화면이나 Zoom 공유 화면에는 표시되지 않습니다. 이 페이지는 집회 시작 전 카운트다운, 시계, 시간 초과 색상, 손 들기 알림을 포함하여 타이머를 실시간으로 따라가며, 모든 제어는 그대로 M³에서 합니다.
 
-The addresses to open on the device are listed in the timer popup, with a copy button. Change the port only if another program already uses it. Note that anyone on the same network can open the page while this is on; it shows nothing but the timer.
+기기에서 열 주소는 복사 버튼과 함께 타이머 팝업에 표시됩니다. 다른 프로그램이 이미 포트를 사용하고 있는 경우에만 포트를 변경하십시오. 이 기능이 켜져 있는 동안에는 같은 네트워크에 있는 누구나 이 페이지를 열 수 있지만, 페이지에는 타이머만 표시됩니다.
 
-**Default**: `false`, port `8787`
+**기본값**: `false`, 포트 `8787`
 
-### Timer Display Formats {#timer-display-formats}
+### 타이머 표시 형식 {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+현재 시간과 카운트다운 타이머의 표시 형식을 아날로그와 디지털 중에서 선택합니다. 카운트다운 경고 표시를 사용하면 마지막 1분 동안 아날로그 카운트다운 링이 점차 경고 색상으로 바뀝니다.
 
-The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
+**시간 원호가 표시되는 아날로그 시계** 카운트다운 형식은 파트의 남은 시간을 아날로그 시계 문자판 위에 분침부터 예정 종료 시점까지 부채꼴로 표시하므로, 현재 시각과 남은 시간을 한눈에 확인할 수 있습니다. 초과 시간은 시간 초과 색상의 두 번째 부채꼴로 표시됩니다. 이 형식은 집회 시작 전 카운트다운에도 적용되며 카운트업 모드에서도 작동합니다.
 
-### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+### 집회 시작 카운트다운 및 진행 상태 {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+예정된 집회 전에 카운트다운을 표시하고, 필요에 따라 집회가 예정보다 빠르게 또는 늦게 진행되고 있는지 표시합니다. 집회 시작 카운트다운은 타이머 화면에만 표시되며 기본 미디어 화면에는 표시되지 않습니다.
 
-### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+### 타이머 모양 및 시간 초과 {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
-Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
+타이머의 글자 크기와 색상을 사용자 지정하고, 다른 색상, 깜박임, 카운트업 모드에서 초과 시간만 표시하기 등 시간 초과 표시 방식을 설정합니다.
 
-## Integrations {#integrations}
+## 연동 기능 {#integrations}
 
-This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
+이 카테고리에는 Dropbox, OneDrive, iCloud Drive 또는 Google Drive에서 미디어를 추가하는 [공유 폴더](#settings-guide-folder-monitoring) 설정도 있습니다.
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Zoom 연동 {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Zoom 활성화 {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Zoom 회의 연동 기능을 활성화합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### 화면 공유 단축키 {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+Zoom 화면 공유를 실행하는 키보드 단축키입니다.
 
-**Default**: None
+**기본값**: 없음
 
-#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+#### 미디어 창 자동 포커스 {#zoom-auto-focus-media-window}
 
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
-Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+Zoom 화면 공유가 시작된 후 미디어 창에 자동으로 포커스를 맞춥니다. 보통은 필요하지 않지만, 화면 공유가 시작된 후 미디어 창의 포커스가 자주 사라지는 일부 시스템에서는 도움이 될 수 있습니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-### Zoom Meeting Manager {#zoom-meeting-manager}
+### Zoom 회의 관리자 {#zoom-meeting-manager}
 
-The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+Zoom 회의 관리자(베타, Windows 전용)는 매 집회 전후에 Zoom 데스크톱 앱을 대신 조작합니다. 이 기능을 켤 때 제공되는 설정 도우미가 각 자동화 기능을 단계별로 안내합니다.
 
-#### While M³ Operates Zoom {#zoom-meeting-manager-overlay}
+#### M³가 Zoom을 조작하는 동안 {#zoom-meeting-manager-overlay}
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom offers no proper automation interface, so M³ drives the Zoom app through its accessibility interface, which works without the mouse for nearly everything (the participants list, its menus, the Share window). A few actions can still have to move the mouse or the focused window for a moment, for example to bring Zoom's auto-hidden toolbar back. Whenever that happens, M³ covers its own window with a "M³ is operating Zoom" notice naming what is going on, with a **Cancel this automation** button. The same notice shows during the setup assistant's checks and the self-test. A global keyboard shortcut (default `Ctrl+Alt+Escape`), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Cancelling stops M³ at once; Zoom may then be left part-way, so check it.
+Zoom에는 제대로 된 자동화 인터페이스가 없으므로 M³는 Zoom의 접근성 인터페이스를 통해 Zoom 앱을 조작합니다. 이 방식은 거의 모든 작업(참여자 목록, 해당 메뉴, 공유 창)에서 마우스 없이 작동합니다. 그래도 일부 작업에서는 잠시 마우스를 움직이거나 포커스가 있는 창을 바꿔야 할 수 있습니다. 예를 들어 자동으로 숨겨진 Zoom 도구 모음을 다시 표시할 때가 그렇습니다. 이런 경우 M³는 진행 중인 작업을 알려 주는 ‘M³이 Zoom을 실행 중입니다’ 알림으로 자체 창을 덮고, **이 자동화 취소** 버튼을 함께 표시합니다. 설정 도우미의 확인 과정과 자체 테스트 중에도 같은 알림이 표시됩니다. 자동화가 실행되는 동안에만 활성화되는 전역 키보드 단축키(기본값 `Ctrl+Alt+Escape`)를 사용하면 Zoom에 포커스가 있을 때도 어디서든 자동화를 취소할 수 있습니다. 취소하면 M³가 즉시 중지되며, Zoom이 작업 도중의 상태로 남을 수 있으므로 Zoom을 확인하십시오.
 
-**Default**: `Ctrl+Alt+Escape`
+**기본값**: `Ctrl+Alt+Escape`
 
-#### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
+#### 손 들기 도우미 {#zoom-meeting-manager-hand-alert}
 
 <!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
 
-During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
+집회 중에 M³가 Zoom의 참여자 목록에서 손을 든 참여자가 있는지 확인합니다. 누군가 손을 들면 M³에 알림이 표시되어 클릭 한 번으로 해당 참여자의 **음소거를 해제**할 수 있고, 말을 마치면 다시 클릭 한 번으로 **다시 음소거하고 손을 내릴** 수 있습니다. 작업 아일랜드의 Zoom 버튼에도 손을 든 참여자가 같은 버튼과 함께 표시됩니다. 모든 작업은 정확한 이름을 기준으로 Zoom에서 해당 참여자의 행에만 적용되며, 같은 이름을 가진 참여자가 두 명이면 M³는 두 사람 모두 건드리지 않습니다.
 
-If the [meeting timer](#meeting-timer) is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and a **Hand alert** button in the timer and Zoom popups shows it by hand. This part needs the timer display; the notifications and buttons work without it.
+[집회 타이머](#meeting-timer)가 활성화되어 있으면 사회자를 위해 타이머 화면에도 참여자의 이름과 함께 큰 손 모양이 표시되며, 타이머 팝업과 Zoom 팝업의 **손 들기 알림** 버튼으로 직접 표시할 수도 있습니다. 이 기능에는 타이머 화면이 필요하지만, 알림과 버튼은 타이머 화면 없이도 작동합니다.
 
-Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list and which menu entry lowers it, then lowers it again. The setup assistant offers this step too.
+Zoom은 사용하는 언어로 손 든 참여자를 표시하므로 M³가 먼저 그 표시 방식을 학습해야 합니다. Zoom에서 회의를 연 상태로 **Zoom의 손 들기 표시 방식 학습**을 클릭하십시오. M³가 사용자의 손을 들고, Zoom이 참여자 목록에서 이를 어떻게 표시하는지와 어떤 메뉴 항목으로 손을 내리는지 읽은 다음, 다시 손을 내립니다. 설정 도우미에서도 이 단계를 진행할 수 있습니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### OBS Studio 연동 {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### OBS 활성화 {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+자동 장면 전환을 위해 OBS Studio 연동 기능을 활성화합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-:::warning Important Note
+:::warning 중요한 참고 사항
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**오디오 설정 필요**: OBS Studio 연동 기능은 화면 공유만 처리합니다. OBS Studio를 사용할 때 M³ 미디어의 오디오는 Zoom 참여자에게 **자동으로 전송되지 않습니다**. 집회 참석자가 미디어 소리를 들을 수 있도록 Zoom의 원본 오디오 설정을 구성하거나 ‘컴퓨터 소리 공유’를 사용해야 합니다. 자세한 오디오 설정 방법은 [사용자 가이드](/user-guide#audio-configuration)를 참조하십시오.
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**참고**: Zoom 연동 기능은 Zoom의 기본 화면 공유를 사용하므로 OBS Studio 연동 기능보다 오디오를 더 매끄럽게 처리합니다.
 
 :::
 
-#### OBS Port {#obs-port}
+#### OBS 포트 {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+OBS Studio WebSocket에 연결할 포트 번호입니다.
 
-**Default**: None
+**기본값**: 없음
 
-#### OBS Password {#obs-password}
+#### OBS 비밀번호 {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+OBS Studio WebSocket 연결 비밀번호입니다.
 
-**Default**: None
+**기본값**: 없음
 
-#### OBS Scenes {#obs-scenes}
+#### OBS 장면 {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+용도별로 사용할 OBS 장면을 설정합니다.
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **카메라 장면**: 카메라/연단을 보여 주는 장면
+- **미디어 장면**: 미디어를 표시하는 장면
+- **이미지 장면**: 이미지를 표시하는 장면(예: 미디어와 연사를 함께 보여 주는 PIP 장면)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### 고급 OBS 옵션 {#obs-advanced-options}
 
-- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
-- **Recording Controls**: Show controls that start and stop OBS recording from M³
+- **이미지를 자동으로 공유하지 않음**: 직접 공유할 때까지 OBS로 이미지를 공유하지 않습니다.
+- **빠른 전환**: OBS 연동을 빠르게 켜고 끌 수 있는 토글을 활성화합니다.
+- **미디어 재생 후 장면 전환**: 미디어 재생이 끝나면 이전 장면으로 자동으로 돌아갑니다.
+- **이전 장면 기억**: 이전 장면을 기억했다가 다시 전환합니다.
+- **아이콘 숨기기**: 인터페이스에서 OBS 관련 아이콘을 숨깁니다.
+- **녹화 제어**: M³에서 OBS 녹화를 시작하고 중지하는 컨트롤을 표시합니다.
 
-:::warning Important Note
+:::warning 중요한 참고 사항
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**오디오 설정 필요**: OBS Studio 연동 기능은 동영상/장면 전환만 처리합니다. M³ 미디어 오디오는 Zoom 또는 OBS로 **자동 전송되지 않습니다**. 비디오 스트림은 웹캠처럼 소리 없는 가상 카메라로 동작합니다. 집회 참석자가 미디어 소리를 들을 수 있도록 Zoom의 원본 오디오 설정을 구성하거나 ‘컴퓨터 소리 공유’를 사용해야 합니다. 자세한 오디오 설정 방법은 [사용자 가이드](/user-guide#audio-configuration)를 참조하십시오.
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**대안**: 대신 Zoom 연동 기능을 사용하는 것을 고려해 보십시오. Zoom 연동 기능은 Zoom의 기본 화면 공유를 사용하므로 오디오를 더 매끄럽게 처리합니다.
 
 :::
 
-### Custom Events {#custom-events}
+### 사용자 지정 이벤트 {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### 사용자 지정 이벤트 활성화 {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+특정 이벤트(예: 미디어 재생, 일시 정지, 중지)가 감지되면 실행되는 사용자 지정 단축키를 활성화합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### 사용자 지정 이벤트 단축키 {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### 미디어 재생 단축키 {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+미디어가 재생될 때 실행되는 단축키입니다.
 
-**Default**: None
+**기본값**: 없음
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### 미디어 일시 정지 단축키 {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+미디어가 일시 정지될 때 실행되는 단축키입니다.
 
-**Default**: None
+**기본값**: 없음
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### 미디어 중지 단축키 {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+미디어가 중지될 때 실행되는 단축키입니다.
 
-**Default**: None
+**기본값**: 없음
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### 마지막 노래 단축키 {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+집회 중 마지막 노래가 재생될 때 실행되는 단축키입니다.
 
-**Default**: None
+**기본값**: 없음
 
-### Meeting Recordings {#meeting-recordings}
+### 집회 녹화 {#meeting-recordings}
 
-#### Enable External Recording App Integration {#enable-external-recording-app-integration}
+#### 외부 녹화 앱 연동 활성화 {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
+M³가 키보드 단축키로 별도의 녹화 애플리케이션을 제어하도록 합니다. M³ 자체에서 녹화하는 것이 아니라, 집회 녹화 팝업에서 **녹화 시작** 또는 **녹화 중지**를 누르면 설정한 단축키를 보냅니다.
 
-This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
+OBS 녹화 컨트롤이 활성화되어 있으면 이 옵션은 표시되지 않습니다. OBS Studio를 사용한다면 대신 OBS 연동 기능의 OBS 녹화 컨트롤을 사용하십시오.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
+#### 녹화 단축키 및 폴더 {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
+녹화를 시작하는 키보드 단축키, 녹화를 중지하는 단축키(선택 사항), 외부 앱에서 녹화 파일을 저장하는 폴더를 설정합니다. 중지 단축키를 지정하지 않으면 M³가 시작 단축키를 다시 사용합니다. 폴더를 지정하면 M³에 해당 폴더를 여는 버튼이 표시됩니다.
 
-## Interface & Shortcuts {#interface-shortcuts}
+## 인터페이스 및 단축키 {#interface-shortcuts}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### 키보드 단축키 {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### 키보드 단축키 활성화 {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+미디어 제어용 사용자 지정 키보드 단축키를 활성화합니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### 미디어 제어 단축키 {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+미디어 재생에 사용할 단축키를 설정합니다.
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **미디어 창**: 미디어 창을 열거나 닫습니다.
+- **이전 미디어**: 이전 미디어 항목으로 이동합니다.
+- **다음 미디어**: 다음 미디어 항목으로 이동합니다.
+- **일시 정지/재개**: 미디어 재생을 일시 정지하거나 다시 시작합니다.
+- **미디어 중지**: 미디어 재생을 중지합니다.
+- **음악 켜기/끄기**: 배경 음악을 켜거나 끕니다.
 
-### Add More Media Button {#add-more-media-button}
+### 미디어 더 추가 버튼 {#add-more-media-button}
 
-#### Sections with an Add Media Button {#add-media-button-sections}
+#### ‘미디어 더 추가’ 버튼을 표시할 섹션 {#add-media-button-sections}
 
 <!-- **Setting**: `addMediaButtonSections` -->
 
-Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
+항상 모든 섹션에서 사용할 수 있는 상단 도구 모음의 ‘미디어 추가’ 버튼 외에, 직접 미디어를 추가하는 버튼을 따로 표시할 집회 섹션을 선택합니다.
 
-**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
+**기본값**: 공개 강연, 그리스도인 생활, 순회 감독자 방문 및 사용자 지정 섹션
 
-#### Compact Add Media Button {#compact-add-media-button}
+#### 미디어 추가 버튼 간소화 모드 {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
-Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
+섹션 헤더의 ‘미디어 더 추가’/‘노래 추가’ 버튼을 아이콘으로만 표시합니다. 비활성화하면 공간이 충분할 때 아이콘과 함께 텍스트도 표시됩니다.
 
-**Default**: `true`
+**기본값**: `true`
 
-### Media Drag Handle {#media-drag-handle}
+### 미디어 드래그 핸들 {#media-drag-handle}
 
-#### Show Drag Handle {#show-media-drag-handle}
+#### 드래그 핸들 표시 {#show-media-drag-handle}
 
 <!-- **Setting**: `showMediaDragHandle` -->
 
-Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
+각 미디어 항목에 순서를 바꿀 때 끌어서 사용하는 작은 핸들을 표시합니다. 미디어 항목은 어느 곳을 드래그해도 항상 순서를 바꿀 수 있으며, 이 설정은 핸들 아이콘의 표시 여부에만 영향을 줍니다.
 
-**Default**: `true`
+**기본값**: `true`
 
-### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
+### 집회 전후 빠른 작업 {#before-after-meeting-quick-actions}
 
-#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
+#### 집회 빠른 작업 표시 {#enable-meeting-quick-actions}
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
-Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
+유용한 제어 기능(배경 음악, 녹화)과 사용자 지정할 수 있는 체크리스트가 각각 포함된 집회 전 패널과 집회 후 패널을 표시합니다.
 
-**Default**: `true`
+**기본값**: `true`
 
-The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
+집회 전 패널과 집회 후 패널의 체크리스트 카테고리와 작업은 모두 이 설정 섹션에서 관리합니다. 회중에 필요한 대로 카테고리와 작업을 추가하거나, 이름을 바꾸거나, 순서를 변경하거나, 삭제할 수 있습니다.
 
-## Advanced {#advanced-settings}
+## 고급 {#advanced-settings}
 
-### Profile Settings Transfer {#profile-settings-transfer}
+### 프로필 설정 옮기기 {#profile-settings-transfer}
 
-Export the current profile's settings to a JSON file or import a previously exported profile settings file. 프로필을 가져오면 현재 프로필의 설정이 가져온 설정으로 대체됩니다.
+현재 프로필의 설정을 JSON 파일로 내보내거나, 이전에 내보낸 프로필 설정 파일을 가져옵니다. 프로필을 가져오면 현재 프로필의 설정이 가져온 설정으로 대체됩니다.
 
-### Danger Zone {#danger-zone}
+### 조작 주의 {#danger-zone}
 
-:::warning Warning
+:::warning 경고
 
-These settings should only be changed if you understand their implications.
+이 설정은 변경했을 때의 영향을 이해하는 경우에만 변경해야 합니다.
 
 :::
 
-#### Base URL {#base-url}
+#### 기본 URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+출판물과 미디어를 다운로드할 때 사용하는 기본 도메인입니다.
 
-**Default**: `jw.org`
+**기본값**: `jw.org`
 
-#### Disable Hardware Acceleration {#disable-hardware-acceleration}
+#### 하드웨어 가속 비활성화 {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
+M³를 다시 시작한 후 하드웨어 가속을 비활성화합니다. 일부 시스템에서 발생하는 그래픽 문제나 강제 종료를 해결하는 데 도움이 될 수 있지만, 그 외의 경우에는 권장되지 않습니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
+#### 하드웨어 가속 알림 표시 안 함 {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
+하드웨어 가속을 직접 비활성화한 후 다시 활성화하라는 알림을 표시하지 않습니다.
 
-**Default**: `false`
+**기본값**: `false`
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### 미디어 가져오기 비활성화 {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+미디어 자동 다운로드를 완전히 비활성화합니다. 특별 행사나 기타 사용자 지정 구성에 사용할 프로필에만 이 설정을 사용하십시오.
 
-**Default**: `false`
+**기본값**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## 최적의 구성을 위한 팁 {#configuration-tips}
 
-### For New Users {#new-users}
+### 신규 사용자 {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Turn on "Enable media playback" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. 초기 설정 마법사로 기본 설정을 구성하는 것부터 시작합니다.
+2. 미디어 표시 기능을 사용하려면 ‘미디어 재생 활성화’를 켭니다.
+3. 집회 일정을 정확하게 설정합니다.
+4. 혼합형 집회를 진행한다면 OBS 연동을 설정합니다.
 
-### For Advanced Users {#advanced-users}
+### 고급 사용자 {#advanced-users}
 
-1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. 공유 폴더를 사용하여 Dropbox나 OneDrive 같은 클라우드 저장소에서 미디어를 추가합니다.
+2. 백업을 위해 미디어 자동 내보내기를 활성화합니다.
+3. 효율적으로 작업할 수 있도록 키보드 단축키를 설정합니다.
+4. 자동 화면 공유를 위해 Zoom 연동을 설정합니다.
 
-### Performance Optimization {#performance-optimization}
+### 성능 최적화 {#performance-optimization}
 
-1. Cache songbook video files for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. 성능을 높이기 위해 노래책 동영상을 미리 저장합니다.
+2. 필요에 맞는 적절한 최대 해상도를 사용합니다.
+3. 디스크 공간을 관리하기 위해 자동 캐시 정리를 설정합니다.
+4. 대역폭이 제한된 경우 데이터 사용 제한 설정을 고려합니다.
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### 문제 해결 {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- 미디어가 다운로드되지 않으면 집회 일정 설정을 확인합니다.
+- OBS 연동이 작동하지 않으면 포트 및 비밀번호 설정을 확인합니다.
+- 성능이 느리면 추가 캐시를 활성화하거나 해상도를 낮춰 봅니다.
+- 언어 관련 문제가 있으면 인터페이스 언어와 미디어 언어 설정을 모두 확인합니다.
+- Zoom 참여자가 미디어 소리를 들을 수 없으면 Zoom의 원본 오디오 설정을 구성하거나 ‘컴퓨터 소리 공유’를 사용합니다.
+- **참고**: 오디오를 더 간단하게 처리하려면 OBS Studio 대신 Zoom 연동 기능을 사용하는 것을 고려해 보십시오.
