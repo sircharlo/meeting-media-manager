@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "@:obsStudio stseen, mida kasutatakse vaikimisi lava vaatena. Vastavalt viimasele juhendile peaks see olema üldvaade.",
   "obsEnable": "Kasuta M³-e @:{'obsStudio'}-ga",
   "obsEnable-explain": "Ühenda M³ @:obsStudio et võimaldada automaatset stseeni vahetamist meedia ja kaamera vahel.",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "Ära kuva ikoone stseenivahetajas",
   "obsHideIcons-explain": "Kui see on lubatud, on ikoonid stseeni vahetajas peidetud. See võib suurendada stseenide nimede loetavust.",
   "obsImageScene": "Stseen piltide kuvamiseks @:{'obsStudio'}-s (valikuline)",
