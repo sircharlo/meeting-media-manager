@@ -1,12 +1,12 @@
 # Perguntas Frequentes {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## Perguntas gerais {#general-questions}
 
 ### :earth_americas: Este aplicativo depende de sites, fontes ou "curadores" externos para baixar publicações, mídias de reuniões ou outros conteúdos? {#external-dependencies}
 
 **Não.** O aplicativo se comporta de maneira semelhante ao JW Library. Ele baixa publicações, mídias e outros conteúdos diretamente do site oficial das Testemunhas de Jeová e sua rede de entrega de conteúdo. O aplicativo determina automaticamente o que precisa ser baixado e se uma publicação ou mídia foi atualizada e precisa ser baixada novamente.
 
-:::info Note
+:::info Nota
 
 O código fonte para este aplicativo está disponível para todos examinarem e verificarem o que realmente ele faz.
 
@@ -20,25 +20,25 @@ O código fonte para este aplicativo está disponível para todos examinarem e v
 >
 > Criar, com o objetivo de distribuir, qualquer software, aplicativo, ferramenta ou técnica que sirva especificamente para colecionar, copiar, baixar, extrair ou rastrear dados, HTML, imagens ou textos deste site. (Isso **não** proíbe a distribuição gratuita, sem fins comerciais, de aplicativos projetados para baixar arquivos eletrônicos como EPUB, PDF, MP3 e arquivos MP4 das áreas públicas deste site.)
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: Quais sistemas operacionais o M³ suporta? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+O M³ funciona no Windows, macOS e Linux:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 ou posterior (64 bits). A última versão para Windows de 32 bits é a v26.10.1, disponível na [página de downloads](download).
+- **macOS**: macOS 13 (Ventura) ou posterior (versão Universal). A última versão para o macOS 12 (Monterey) é a v26.10.1, disponível na [página de downloads](download).
+- **Linux**: A maioria das distribuições Linux modernas (formato AppImage)
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians: O M³ funciona no meu idioma? {#language-support}
 
 **Sim!** O M³ oferece suporte abrangente em vários idiomas:
 
 - **Mídias**: Baixe mídias em qualquer uma das centenas de idiomas disponíveis no site oficial das Testemunhas de Jeová
 - **Interface do aplicativo**: Use a interface do M³ em vários idiomas diferentes
-- **Independent Settings**: You can use the interface in one language while downloading media in another
+- **Configurações independentes**: Você pode usar a interface em um idioma e baixar as mídias em outro
 - **Idiomas alternativos**: Configure idiomas alternativos para quando a mídia não estiver disponível no idioma principal
 - **Suporte a legendas**: Baixe e exiba legendas em vários idiomas
 
-## Installation and Setup {#installation-setup}
+## Instalação e configuração {#installation-setup}
 
 ### :computer: Como faço para baixar e instalar o M³? {#installation}
 
@@ -73,7 +73,7 @@ Sim! O M³ permite que você:
 - Baixe mídias para as próximas reuniões automaticamente
 - Importe mídias personalizadas para qualquer data
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: Como importar meus próprios arquivos de mídia? {#import-media}
 
 Você pode importar mídias personalizadas de várias maneiras:
 
@@ -81,8 +81,8 @@ Você pode importar mídias personalizadas de várias maneiras:
 - **Arrastar e soltar**: Arraste os arquivos diretamente para o M³
 - **Monitoramento de pasta**: Configure uma pasta monitorada para importações automáticas
 - **Arquivos e listas de reprodução JWPUB**: Importe publicações e listas de reprodução
-- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
-- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
+- **Mídias de discursos públicos**: Importe arquivos JWPUB S-34 ou S-34mp para obter as mídias dos discursos públicos
+- **Ferramentas da Bíblia e da Bíblia de estudo**: Adicione gravações em áudio da Bíblia, mídias da Bíblia de estudo ou mídias da Bíblia em língua de sinais
 
 ### :speaker: Posso importar gravações de áudio da Bíblia? {#audio-bible}
 
@@ -126,11 +126,11 @@ Os recursos de música de fundo incluem:
 - Controle de volume independente
 - Tempo de parada configurável
 
-### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+### :stopwatch: O M³ tem um temporizador da reunião? {#faq-meeting-timer}
 
-Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
+Sim. Quando ativado, o M³ pode mostrar uma janela de temporizador separada para controlar o tempo dos oradores. Ele pode fazer contagem progressiva ou regressiva, mostrar a hora atual e uma contagem regressiva antes da reunião e, se você quiser, indicar o tempo excedido ou se a reunião está adiantada ou atrasada em relação ao programa. A duração das partes pode ser ajustada livremente, partes personalizadas podem ser adicionadas para programas especiais, e o temporizador pode ser controlado pela barra de ações (inclusive ao passar o mouse) ou por um painel fixo na janela principal.
 
-The timer is a beta feature and should only be enabled if approved locally.
+O temporizador é um recurso beta e só deve ser habilitado se aprovado localmente.
 
 ### :video_camera: Como faço para configurar a integração com o Zoom? {#zoom-setup}
 
@@ -158,38 +158,38 @@ O M³ muda automaticamente as cenas do OBS com base em:
 
 - Tipo de mídia (vídeo, imagem, etc.)
 - Sua configuração de cenas
-- Settings like "Do not automatically share images"
+- Configurações como "Não compartilhar imagens automaticamente"
 - Se deve retornar à cena anterior após a mídia
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: O que faz a configuração "Não compartilhar imagens automaticamente"? {#faq-postpone-images}
 
-This setting delays sharing images to OBS until you manually trigger them. Isso é útil para:
+Essa configuração adia o compartilhamento de imagens no OBS até que você as mostre manualmente. Isso é útil para:
 
 - Mostrar as imagens primeiro para o público presencial
 - Ter mais controle sobre o tempo
 - Evitar mudanças prematuras de cena
 
-### :record_button: Can M³ record meetings? {#faq-recordings}
+### :record_button: O M³ pode gravar as reuniões? {#faq-recordings}
 
-M³ does not include a built-in recorder, but it can help control recording in two ways:
+O M³ não tem um gravador próprio, mas pode ajudar a controlar a gravação de duas maneiras:
 
-- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
-- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+- Se você usa o OBS Studio, ative os controles de gravação do OBS e inicie ou pare a gravação pela janela pop-up do OBS
+- Se você usa outro aplicativo de gravação, configure atalhos de teclado para que o M³ possa enviar os comandos de iniciar e parar pela janela pop-up de gravações de reuniões
 
 ## Recursos avançados {#faq-advanced-features}
 
-### :cloud: How does the shared folder work? {#faq-folder-monitoring}
+### :cloud: Como funciona a pasta compartilhada? {#faq-folder-monitoring}
 
-If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
+Se você guarda arquivos para as reuniões em um aplicativo de armazenamento em nuvem, como Dropbox, OneDrive, iCloud Drive ou Google Drive, o M³ pode adicioná-los automaticamente à reunião certa:
 
-1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
-2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
-3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
-4. To add files for another day, create a folder for it, named the same way.
+1. Escolha uma pasta no seu aplicativo de armazenamento em nuvem, no assistente de configuração ou em **Configurações** > **Integrações** > **Pasta compartilhada**. O melhor é usar uma pasta nova, só para isso.
+2. O M³ cria dentro dela uma pasta para cada reunião futura, com a data da reunião no formato ano-mês-dia (por exemplo, `2026-03-25`).
+3. Coloque fotos, vídeos, arquivos de áudio ou listas de reprodução do JW Library na pasta de uma reunião sempre que precisar. Eles são adicionados à lista de mídias dessa reunião em todos os computadores que usam a mesma pasta.
+4. Para adicionar arquivos para outro dia, crie uma pasta para ele, com o nome no mesmo formato.
 
-When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
+Quando uma semana termina, o M³ exclui as pastas com as datas dessa semana e os arquivos que estão nelas, para todos que usam a pasta compartilhada. Para mantê-los, desative **Excluir pastas de reuniões passadas**.
 
-### :file_folder: What is media auto-export? {#faq-media-export}
+### :file_folder: O que é a exportação automática de mídia? {#faq-media-export}
 
 A exportação automática de mídias automaticamente:
 
@@ -207,7 +207,7 @@ Sim! O M³ suporta múltiplos perfis para:
 - Grupos diferentes
 - Configurações e mídias separadas para cada
 
-Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
+Perfis também podem ser exportados para um arquivo JSON e importados em outro computador ou em outro perfil. A importação substitui as configurações do perfil atual.
 
 ## Solução de problemas {#faq-troubleshooting}
 
@@ -250,7 +250,7 @@ O M³ reproduz mídias com som no seu computador, mas esse áudio não é transm
 
 Tente estas otimizações de desempenho:
 
-1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
+1. **Armazenamento local para cânticos em vídeo**: Armazene com antecedência todos os vídeos de cânticos, nas configurações
 2. **Fechar outros aplicativos**: Feche aplicativos desnecessários
 3. **Verificar espaço em disco**: Certifique-se de ter espaço livre suficiente em disco
 4. **Reduzir resolução**: Diminua a configuração de resolução máxima
@@ -312,9 +312,9 @@ Obrigado pelo seu interesse em apoiar o projeto! No entanto, no espírito de Mat
 
 O M³ foi projetado para funcionar em uma ampla variedade de sistemas operacionais:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 ou posterior (64 bits). A última versão para Windows de 32 bits é a v26.10.1, disponível na [página de downloads](download).
+- **macOS**: macOS 13 (Ventura) ou posterior (versão Universal). A última versão para o macOS 12 (Monterey) é a v26.10.1, disponível na [página de downloads](download).
+- **Linux**: A maioria das distribuições Linux modernas (formato AppImage)
 
 O M³ tem os seguintes requisitos de hardware:
 
@@ -327,30 +327,30 @@ Dependendo dos recursos que você usa, o M³ também requer o seguinte software 
 - **Zoom**: Necessário apenas se usar recursos de integração com o Zoom
 - **OBS Studio**: Necessário apenas se usar recursos de integração com o OBS
 
-### :floppy_disk: How much disk space does M³ use? {#disk-space}
+### :floppy_disk: Quanto espaço em disco é usado pelo M³? {#disk-space}
 
-Disk space usage depends on:
+O uso do espaço em disco depende de:
 
-- **Media Resolution**: Higher resolutions use more space
-- **Cached Content**: Media files are cached locally
-- **Extra Cache**: Additional caching can increase usage
-- **Exported Media**: Auto-export features use additional space
+- **Resolução de mídia**: Resoluções mais altas usam mais espaço
+- **Conteúdo em cache**: Os arquivos de mídia ficam armazenados em cache localmente
+- **Cache extra**: O cache adicional pode aumentar o uso
+- **Mídia exportada**: A exportação automática usa espaço adicional
 
-Typical usage ranges from 2-10GB depending on settings and usage.
+O uso típico varia de 2-10GB, dependendo das configurações e do uso.
 
-### :shield: Is M³ secure and private? {#security-privacy}
+### :shield: O M³ é seguro e privado? {#security-privacy}
 
-Sim! M³ is designed with security and privacy in mind:
+Sim! O M³ foi projetado com foco em segurança e privacidade:
 
-- **Local Storage**: All meeting data is stored locally on your computer
-- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
-- **Open Source**: The code is open for review and verification
-- **Bug Reports**: Limited data may be collected for bug reporting purposes
+- **Armazenamento local**: Todos os dados da reunião são armazenados localmente no seu computador
+- **Downloads diretos**: A mídia é baixada diretamente do site oficial das Testemunhas de Jeová
+- **Código aberto**: O código está aberto para revisão e verificação
+- **Relatórios de erros**: Alguns dados limitados podem ser coletados para relatar erros
 
-### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
+### :arrows_clockwise: Com que frequência o M³ verifica se há atualizações? {#update-frequency}
 
-M³ checks for updates:
+O M³ verifica se há atualizações:
 
-- **Application Updates**: Automatically checks for new versions every time the app is opened
-- **Media Updates**: Automatically checks for new meeting media every time the app is opened
-- **Language Updates**: Dynamic detection of new languages as needed
+- **Atualizações do aplicativo**: Verifica automaticamente se há novas versões sempre que o aplicativo é aberto
+- **Atualizações de mídia**: Verifica automaticamente se há novas mídias de reunião sempre que o aplicativo é aberto
+- **Atualizações de idioma**: Detecção dinâmica de novos idiomas, conforme necessário
