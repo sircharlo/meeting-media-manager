@@ -2,108 +2,108 @@
 
 ![M³ banner](./../assets/m3-banner.png)
 
-## What is this app? {#what-is-this-app}
+## Mi ez az alkalmazás? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+A **Meeting Media Manager**, vagy röviden **M³**, egy átfogó, több platformon futó alkalmazás Windows, macOS és Linux rendszerekhez, amely automatikusan letölti, rendszerezi és megjeleníti a képeket és videókat Jehova Tanúi gyülekezeti összejöveteleihez. Támogatja a Jehova Tanúi hivatalos weboldalán elérhető összes nyelvet, és hatékony eszközöket biztosít a média kezeléséhez mind hibrid, mind személyes összejöveteleken.
 
-M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
+Az M³ támogatja a szokásos és az egyéni összejöveteli média kezelését, több gyülekezet és/vagy csoport kezelését ugyanazon a számítógépes fiókon, valamint fejlett bemutatási funkciókat kínál, amelyek megkönnyítik a média megosztását.
 
 :::info Megjegyzés
 
-This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
+Ez az alkalmazás korábban JWMMF (JW Meeting Media Fetcher) néven volt ismert, de 2022 májusában átnevezték Meeting Media Managerre.
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Miért válassza az M³ programot? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+Az M³ a tökéletes eszköz az összejöveteli média kezeléséhez, amely zökkenőmentes, megbízható és funkciógazdag élményt nyújt minden platformon. Kifejezetten a gyülekezeti összejövetelek igényeire tervezték, és minden szükséges eszközt biztosít a hatékony médiabemutatáshoz.
 
 ### Legfontosabb előnyök {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **Könnyed médiabemutatás**: A médiabemutatás a legjobb formájában – csak nyissa meg az M³-at, és minden működik. Nincs szükség bonyolult beállításra vagy további lépésekre.
 
 - **Több gyülekezet támogatása**: Kezelje több gyülekezet vagy csoport beállításait egyetlen alkalmazáson belül.
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Speciális funkciók**: Könnyedén hozzáadhat további médiát, importálhat egyedi tartalmakat, és automatikusan megoszthatja a Zoom résztvevőivel a Királyságteremben zajló eseményeket.
 
 - **Optimalizált keresztplatformos teljesítmény**: Élvezze a zökkenőmentes és gyors reagálást Windows, macOS és Linux rendszereken, még régebbi rendszereken vagy korlátozott erőforrásokkal rendelkező számítógépeken is.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Megbízható és stabil**: Úgy tervezték, hogy akkor is megállja a helyét, amikor a legnagyobb szükség van rá. Találkozott egy hibával? Jelentse, és azonnal foglalkozunk vele.
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- **Fejlett prezentációs eszközök**: Fejlett médiavezérlők, nagyítás/eltolás funkciók, egyéni időzítés, valamint zökkenőmentes Zoom és OBS Studio integráció.
 
-## What can M³ do? {#what-can-m3-do}
+## Mit tud az M³? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+Az M³ egy átfogó médiakezelő megoldás, amely lehetővé teszi az összes összejövetelhez kapcsolódó média egyszerű és automatikus letöltését, szinkronizálását, megosztását és bemutatását. Az M³ erejét az alábbiak adják:
 
-### Core Media Management {#core-media-management}
+### Alapvető médiakezelés {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **Automatikus médialetöltés**: Automatikusan letölti a következő összejövetelekhez szükséges összes médiát
+- **Többnyelvű támogatás**: Több száz nyelven letölthető médiafájlok
+- **Intelligens gyorsítótár**: Intelligens gyorsítótár-rendszer, amely a médiát rendezett és naprakész állapotban tartja
+- **Médiarendezés**: A médiát automatikusan dátum és összejöveteli programrész szerint rendezi
 
-### Media Presentation Features {#about-presentation-features}
+### Médiaprezentációs funkciók {#about-presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+**Hibrid** vagy **személyes jelenléttel tartott** gyülekezeti összejövetelekhez a beépített médiabemutató mód a következőket kínálja:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Live preview and speed control**: Preview the audience display and optionally adjust audio or video playback speed
-- **Multi-monitor support**: Automatic external monitor detection and management
-- **Clean presentation**: Distraction-free media presentation interface
+- **Fejlett médiavezérlés**: Médiaminiatűrök nagyítási és mozgatási lehetőséggel
+- **Egyéni időzítés**: Állítsa be a média lejátszásának egyéni kezdési és befejezési idejét
+- **Lejátszásvezérlők**: Könnyen használható szünet/lejátszás/leállítás gombok billentyűparancsokkal
+- **Élő előnézet és sebességszabályozás**: A közönség számára látható kép előnézete, valamint – opcionálisan – a hang- vagy videolejátszás sebességének beállítása
+- **Több monitor támogatása**: A külső monitorok automatikus felismerése és kezelése
+- **Tiszta megjelenítés**: Figyelemelterelő tényezőktől mentes média-megjelenítő felület
 
-### Background Music {#about-background-music}
+### Háttérzene {#about-background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- **Intelligens lejátszás**: A háttérzene automatikusan leáll az összejövetelek kezdete előtt
+- **Egygombos újraindítás**: Egyetlen kattintással folytathatja a háttérzenét az összejövetelek vége után
+- **Hangerőszabályozás**: A háttérzene hangereje állítható, fokozatos lehalkítással
 
-### Zoom Integration {#about-zoom-integration}
+### Zoom-integráció {#about-zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- **Automatikus képernyőmegosztás**: A Zoom képernyőmegosztásának automatikus elindítása és leállítása média lejátszásakor vagy leállításakor
 
-### OBS Studio Integration {#about-obs-integration}
+### OBS Studio-integráció {#about-obs-integration}
 
-- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
-- **Scene management**: Automatic switching between camera, media, and other scenes
-- **Recording controls**: Start and stop OBS recordings from M³ when enabled
+- **Automatikus jelenetváltás**: Zökkenőmentes integráció az OBS Studio programmal hibrid összejövetelekhez
+- **Jelenetkezelés**: Automatikus váltás kamera, média és egyéb jelenetek között
+- **Felvételi vezérlők**: Az OBS-felvételek elindítása és leállítása az M³-ból, ha az opció engedélyezve van
 
-### Media Import and Management {#about-media-import}
+### Média importálása és kezelése {#about-media-import}
 
-- **JWPUB files**: Import and manage JWPUB files with ease
-- **JWLPLAYLIST files**: Support for JW Library playlist files
-- **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Bible media**: Import Study Bible media, sign-language Bible media, and audio recordings of the New World Translation
-- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
+- **JWPUB-fájlok**: JWPUB-fájlok egyszerű importálása és kezelése
+- **JWLPLAYLIST-fájlok**: A JW Library lejátszásilista-fájljainak támogatása
+- **Egyéni média**: Egyéni videók, képek, hangfájlok és PDF-fájlok importálása
+- **Bibliai médiaanyagok**: A Magyarázatos Biblia médiaanyagainak, jelnyelvű bibliai médiaanyagoknak és az Új világ fordítás hangfelvételeinek importálása
+- **Nyilvános előadások**: Az S-34 importálóval mindig kéznél lehet a nyilvános előadások médiájának áttekintése
 
-### Advanced Features {#about-advanced-features}
+### Fejlett funkciók {#about-advanced-features}
 
-- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
-- **Media export**: Automatically export media to folders, organized by date
-- **Website presentation**: Present the official website on external monitors
-- **Meeting timer**: Optional timer window for timing meeting parts
-- **Meeting recording helpers**: Control OBS recording or an external recording application
-- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles, including profile settings import and export
+- **Megosztott mappa**: Automatikusan hozzáadhat médiát az összejövetelekhez egy olyan mappából, amelyet a Dropbox, a OneDrive, az iCloud Drive vagy a Google Drive szinkronizál
+- **Médiaexportálás**: A média automatikus exportálása mappákba, dátum szerint rendezve
+- **Weboldal bemutatása**: A hivatalos weboldal bemutatása külső monitorokon
+- **Összejöveteli időzítő**: Opcionális időzítőablak az összejövetel programrészeinek időméréséhez
+- **Összejövetelek felvételének támogatása**: Az OBS-felvétel vagy egy külső felvevő alkalmazás vezérlése
+- **Billentyűparancsok**: Számos funkcióhoz testreszabható billentyűparancsok
+- **Több profil**: Különböző gyülekezetek vagy csoportok kezelése külön profilokkal, beleértve a profilbeállítások importálását és exportálását is
 
-## Does M³ work in my language? {#does-m3-work-in-my-language}
+## Működik az M³ az én nyelvemen? {#does-m3-work-in-my-language}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Igen!** Az M³ átfogó többnyelvű támogatást nyújt:
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+Jehova Tanúi összejöveteleinek médiatartalmai automatikusan letölthetők a Jehova Tanúi hivatalos honlapján elérhető több száz nyelv bármelyikén. A rendelkezésre álló nyelvek listája dinamikusan frissül; csak annyit kell tennie, hogy a beállítás során kiválasztja a kívánt nyelvet.
 
-### Interface Languages {#interface-languages}
+### A felület nyelvei {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+Az M³ programot már több nyelvre is lefordították önkéntesek. Beállíthatja, hogy milyen nyelven szeretné megjeleníteni az M³ felületét, függetlenül a média letöltéséhez használt nyelvtől. Ez azt jelenti, hogy az M³-at a kívánt nyelven használhatja, miközben bármely más támogatott nyelven tölt le médiát.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+A tartaléknyelvekkel és feliratokkal kapcsolatos részleteket itt találja: [GYIK](faq#language-support).
 
-## System Requirements {#system-requirements}
+## Rendszerkövetelmények {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+A támogatott operációs rendszerek és követelmények tekintetében olvassa el a [GYIK-ban](faq#technical-questions) található válaszokat.
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Adjon egy esélyt az M³-nak még ma, és győződjön meg róla, hogy mire képes! A média bemutatása a gyülekezeti összejöveteleken még soha nem volt ilyen egyszerű.**
 
 ![M³ preview](./../assets/m3-preview.png)

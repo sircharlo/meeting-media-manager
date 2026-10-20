@@ -911,7 +911,7 @@
   "timer-remote-start-failed": "远程计时器无法启动。",
   "timer-report-duration": "时长",
   "timer-report-end-time": "结束时间",
-  "timer-report-file-not-writable": "The meeting timing report could not be saved. If a file with the same name is open in another program, close it and try again, or save the report in another folder.",
+  "timer-report-file-not-writable": "无法保存聚会计时报告。如果其他程序中打开了同名文件，请关闭该文件后重试，或将报告保存到其他文件夹。",
   "timer-report-not-saved": "无法保存聚会计时报告。",
   "timer-report-planned-duration": "预定时长",
   "timer-report-saved": "聚会计时报告已保存。",

@@ -80,7 +80,7 @@ M³, terviklik meediahalduslahendus, võimaldab teil lihtsalt ja automaatselt al
 
 ### Lisasätted {#about-advanced-features}
 
-- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
+- **Jagatud kaust**: lisa koosolekutele automaatselt meediat kaustast, mida hoiab sünkroonis Dropbox, OneDrive, iCloud Drive või Google Drive
 - **Meedia eksport**: ekspordi meedia automaatselt kaustadesse, korraldatuna kuupäeva järgi
 - **Veebisaidi esitlus**: Esita ametlikku veebisaiti välistel monitoridel
 - **Koosoleku taimer**: valikuline taimeri aken koosoleku osade kestuse mõõtmiseks

@@ -424,7 +424,7 @@ These settings are in the **Integrations** category.
 
 M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
 
-M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. To add files for another day, create a folder for it, named the same way. Anything else in the shared folder is ignored.
+M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. Ha egy másik napra szeretne fájlokat hozzáadni, hozzon létre neki egy ugyanígy elnevezett mappát. Anything else in the shared folder is ignored.
 
 :::tip Tipp
 
@@ -753,7 +753,7 @@ The checklist categories and tasks for both the before-meeting and after-meeting
 
 ### Profile Settings Transfer {#profile-settings-transfer}
 
-Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
+Export the current profile's settings to a JSON file or import a previously exported profile settings file. Az importálás felülírja az aktuális profil beállításait.
 
 ### Danger Zone {#danger-zone}
 
