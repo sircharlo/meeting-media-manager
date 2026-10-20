@@ -980,6 +980,13 @@ export const settingsDefinitions: SettingsItems = {
   },
 
   // Advanced
+  resetFeatureSuggestions: {
+    actions: ['resetFeatureNudges'],
+    buttonLabel: 'reset',
+    group: 'advanced',
+    subgroup: 'featureSuggestions',
+    type: 'button',
+  },
   baseUrl: {
     rules: ['notEmpty'],
     group: 'advanced',
@@ -1182,6 +1189,7 @@ export const defaultSettings: SettingsValues = {
   recordingStartShortcut: null,
   recordingStopShortcut: null,
   relinkCongregationButton: false,
+  resetFeatureSuggestions: null,
   reSyncMeetingScheduleButton: false,
   shortcutMediaNext: null,
   shortcutMediaPauseResume: null,

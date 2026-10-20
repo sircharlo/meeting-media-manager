@@ -6,6 +6,10 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ## UPCOMING VERSION
 
+### ✨ New Features
+
+- ✨ **Feature Suggestions**: Now and then, M³ suggests a feature a profile isn't using yet, in a short "Did you know?" window that explains what it does. It shows at most one suggestion each time a profile is opened, never from 15 minutes before a meeting until it ends, and remembers each answer: "Remind me later" moves a suggestion to the back of the line, "No thanks" hides it for good, and "Stop suggesting features" turns them all off for the profile. A "No" in the setup wizard counts too, and the answers can be reset in Settings, under Advanced.
+
 ### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Platform Support**: M³ now requires a 64-bit version of Windows 10 or later, or macOS 13 (Ventura) or later. v26.10.1 is the last version that runs on 32-bit Windows and macOS 12 (Monterey), and it stays available from the download page.

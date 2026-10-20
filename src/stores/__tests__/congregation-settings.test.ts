@@ -60,6 +60,7 @@ describe('transformObsPasswords', () => {
         abc: { ...defaultSettings, obsPassword: 'hunter2' },
         def: { ...defaultSettings, obsPassword: null },
       },
+      featureNudges: {},
       quickStartTourSeen: {},
     };
 
@@ -73,6 +74,7 @@ describe('transformObsPasswords', () => {
     const state = {
       announcements: {},
       congregations: { abc: { ...defaultSettings, obsPassword: 'hunter2' } },
+      featureNudges: {},
       quickStartTourSeen: {},
     };
 
@@ -99,6 +101,7 @@ describe('serializeCongregationSettings / deserializeCongregationSettings', () =
     const state = {
       announcements: {},
       congregations: { abc: { ...defaultSettings, obsPassword: 'hunter2' } },
+      featureNudges: {},
       quickStartTourSeen: {},
     };
 
@@ -122,6 +125,7 @@ describe('serializeCongregationSettings / deserializeCongregationSettings', () =
     const state = {
       announcements: {},
       congregations: { abc: { ...defaultSettings, obsPassword: '' } },
+      featureNudges: {},
       quickStartTourSeen: {},
     };
 
@@ -138,6 +142,7 @@ describe('obsPassword encryption caching', () => {
   const makeStore = (obsPassword: string) => ({
     announcements: {},
     congregations: { abc: { ...defaultSettings, obsPassword } },
+    featureNudges: {},
     quickStartTourSeen: {},
   });
 
@@ -230,6 +235,7 @@ describe('obsPassword encryption caching', () => {
       congregations: {
         abc: { ...defaultSettings, obsPassword: 'enc:hunter2' },
       },
+      featureNudges: {},
       quickStartTourSeen: {},
     });
 
@@ -292,5 +298,60 @@ describe('deleteCongregation sibling-record cleanup', () => {
     expect(store.announcements['def']).toEqual(['announcement-2']);
     expect(store.quickStartTourSeen['def']).toBe(true);
     expect(jwStore.lookupPeriod['def']).toEqual([]);
+  });
+});
+
+describe('feature suggestion answers', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-20T10:00:00'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('records each answer per profile, with when it was given', () => {
+    const store = useCongregationSettingsStore();
+
+    store.recordFeatureNudgeResponse('abc', 'obs', 'snoozed');
+    store.recordFeatureNudgeResponse('abc', 'zoom', 'declined');
+    store.recordFeatureNudgeResponse('abc', 'obs', 'accepted');
+
+    expect(store.featureNudges['abc']).toEqual({
+      responses: {
+        obs: { at: Date.now(), response: 'accepted' },
+        zoom: { at: Date.now(), response: 'declined' },
+      },
+    });
+    expect(store.featureNudges['def']).toBeUndefined();
+  });
+
+  it('stops and resets suggestions for one profile only', () => {
+    const store = useCongregationSettingsStore();
+    store.recordFeatureNudgeResponse('abc', 'obs', 'declined');
+    store.stopFeatureNudges('abc');
+    store.stopFeatureNudges('def');
+
+    expect(store.featureNudges['abc']?.stopped).toBe(true);
+
+    store.resetFeatureNudges('abc');
+
+    expect(store.featureNudges['abc']).toBeUndefined();
+    expect(store.featureNudges['def']).toEqual({
+      responses: {},
+      stopped: true,
+    });
+  });
+
+  it("forgets a deleted profile's answers", () => {
+    const store = useCongregationSettingsStore();
+    store.congregations['abc'] = { ...defaultSettings };
+    store.recordFeatureNudgeResponse('abc', 'obs', 'declined');
+
+    store.deleteCongregation('abc');
+
+    expect(store.featureNudges['abc']).toBeUndefined();
   });
 });

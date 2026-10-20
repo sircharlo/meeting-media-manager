@@ -16,6 +16,7 @@
     <DialogCongregationSwitcher />
     <DialogZoomSetupAssistant v-model="zoomSetupAssistantOpen" />
     <DialogZoomAutomationOverlay />
+    <DialogFeatureNudge />
 
     <!-- Main content -->
     <q-page-container class="app-main-scroll main-bg">
@@ -100,6 +101,7 @@ import {
 import { queues } from 'boot/globals';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogCongregationSwitcher from 'components/dialog/DialogCongregationSwitcher.vue';
+import DialogFeatureNudge from 'components/dialog/DialogFeatureNudge.vue';
 import DialogZoomAutomationOverlay from 'components/dialog/DialogZoomAutomationOverlay.vue';
 import DialogZoomSetupAssistant from 'components/dialog/DialogZoomSetupAssistant.vue';
 import HeaderBase from 'components/header/HeaderBase.vue';

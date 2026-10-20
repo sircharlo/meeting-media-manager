@@ -3,6 +3,7 @@ import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plug
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { Platform } from 'quasar';
 import { defaultSettings } from 'src/constants/settings';
+import { wasSetUpThisSession } from 'src/helpers/feature-nudges';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -243,5 +244,20 @@ describe('SetupWizard, shared folder', () => {
 
     await click('Back');
     expect(text()).toContain('How the shared folder works');
+  });
+});
+
+describe('SetupWizard, feature suggestions', () => {
+  it('counts a "No" to Zoom or OBS Studio as declining their suggestion', async () => {
+    await mountWizard();
+    expect(wasSetUpThisSession(CONGREGATION_ID)).toBe(true);
+
+    await click('No'); // Zoom
+    await click('No'); // OBS Studio
+
+    const responses =
+      useCongregationSettingsStore().featureNudges[CONGREGATION_ID]?.responses;
+    expect(responses?.zoom?.response).toBe('declined');
+    expect(responses?.obs?.response).toBe('declined');
   });
 });

@@ -270,7 +270,14 @@
           </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
-            <q-btn flat :label="t('no')" @click="step = 11" />
+            <q-btn
+              flat
+              :label="t('no')"
+              @click="
+                declineSuggestion('songbook-videos');
+                step = 11;
+              "
+            />
             <q-btn
               color="primary"
               :label="t('yes')"
@@ -301,6 +308,7 @@
               :label="t('no')"
               @click="
                 currentSettings.enableFolderWatcher = false;
+                declineSuggestion('shared-folder');
                 step = 14;
               "
             />
@@ -443,6 +451,7 @@
               :label="t('no')"
               @click="
                 obsUsed = false;
+                declineSuggestion('obs');
                 step = 300;
               "
             />
@@ -489,6 +498,7 @@
               :label="t('no')"
               @click="
                 setZoomChosen(false);
+                declineSuggestion('zoom');
                 step = 103;
               "
             />
@@ -600,6 +610,7 @@
               :label="t('no')"
               @click="
                 obsIntegrate = false;
+                declineSuggestion('obs');
                 step = 300;
               "
             />
@@ -806,6 +817,7 @@
 
 <script setup lang="ts">
 import type { LanguageValue } from 'src/constants/locales';
+import type { FeatureNudgeId } from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
@@ -821,6 +833,7 @@ import { useLocale } from 'src/composables/useLocale';
 import { removeCongregationCache } from 'src/helpers/cleanup';
 import { isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { markSetUpThisSession } from 'src/helpers/feature-nudges';
 import { getRendererPlatform } from 'src/helpers/fs';
 import { downloadSongbookVideos, fetchMedia } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -940,7 +953,20 @@ const loadSystemLocale = async () => {
 
 onMounted(() => {
   void loadSystemLocale();
+  // No feature suggestion right after setting up: this wizard asks about them
+  if (currentCongregation.value)
+    markSetUpThisSession(currentCongregation.value);
 });
+
+/** A "No" here counts as declining that feature's later suggestion. */
+const declineSuggestion = (nudgeId: FeatureNudgeId) => {
+  if (!currentCongregation.value) return;
+  congregationSettings.recordFeatureNudgeResponse(
+    currentCongregation.value,
+    nudgeId,
+    'declined',
+  );
+};
 
 const goToPage = (path: string) => {
   router.push({ path }).catch((error: unknown) => {

@@ -437,6 +437,14 @@ Version`) — not by hand-editing `package.json`. The workflow bumps the
 
 - **Add/change a setting**: `src/constants/settings.ts` (`settingsDefinitions`,
   `defaultSettings`) + `src/types/settings.d.ts` + `src/i18n/en.json` keys.
+- **New feature? Suggest it**: if it's a good candidate (off by default,
+  useful to many congregations, a safe toggle or with its own setup path),
+  add it to `FEATURE_NUDGES` in `src/constants/feature-nudges.ts` (order =
+  priority, an eligibility rule, a Settings deep link or an event), with
+  friendly `feature-nudge-<id>-title` / `-body` strings in `src/i18n/en.json`
+  that say in plain words what it does and why it's worth turning on. The
+  "Did you know?" dialog (`DialogFeatureNudge.vue`) then suggests it once per
+  profile; picking, snoozing and timing live in `src/helpers/feature-nudges.ts`.
 - **New Electron API**: follow the IPC checklist above (4-5 files).
 - **Bug in downloads**: `src-electron/main/download-transfer.ts` (one file's
   transfer) → `src-electron/main/downloads.ts` (queue) → IPC events →
