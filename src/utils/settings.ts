@@ -9,6 +9,7 @@ import type {
 import { settingsDefinitions } from 'src/constants/settings';
 import { syncMeetingScheduleManually } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { resetFeatureNudgesForCurrentProfile } from 'src/helpers/feature-nudges';
 import {
   captureZoomMicTitle,
   captureZoomShareButtonTitle,
@@ -133,6 +134,8 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
         );
       } else if (action === 'openZoomSetupAssistant') {
         globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
+      } else if (action === 'resetFeatureNudges') {
+        resetFeatureNudgesForCurrentProfile();
       } else if (action === 'openZoomSetupAssistantIfNeeded') {
         // Turning the Zoom Meeting Manager on opens the assistant, unless
         // it was already set up (so finishing the assistant, which turns

@@ -158,6 +158,7 @@ export type SettingsItemAction =
   | 'openCongregationLookup'
   | 'openZoomSetupAssistant'
   | 'openZoomSetupAssistantIfNeeded'
+  | 'resetFeatureNudges'
   | 'setBackgroundMusicVolume'
   | 'syncMeetingSchedule'
   | 'zoomCaptureMicOffTitle'
@@ -194,6 +195,7 @@ export type SettingsItemSubgroup =
   | 'customEvents'
   | 'dangerZone'
   | 'dragAndDrop'
+  | 'featureSuggestions'
   | 'folderWatcher'
   | 'interfaceDisplay'
   | 'keyboardShortcuts'
@@ -317,6 +319,7 @@ export interface SettingsValues {
   recordingStartShortcut: null | string;
   recordingStopShortcut: null | string;
   relinkCongregationButton: boolean;
+  resetFeatureSuggestions: null;
   reSyncMeetingScheduleButton: boolean;
   shortcutMediaNext: null | string;
   shortcutMediaPauseResume: null | string;

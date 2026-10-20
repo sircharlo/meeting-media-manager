@@ -4,6 +4,7 @@ import type {
   SettingsItemRule,
 } from 'src/types';
 
+import { resetFeatureNudgesForCurrentProfile } from 'src/helpers/feature-nudges';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -18,6 +19,10 @@ import {
 // Mock error catcher
 vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: vi.fn(),
+}));
+
+vi.mock('src/helpers/feature-nudges', () => ({
+  resetFeatureNudgesForCurrentProfile: vi.fn(),
 }));
 
 // Mock date utilities
@@ -148,6 +153,12 @@ describe('Settings Utilities', () => {
           type: 'obsConnectFromSettings',
         }),
       );
+    });
+
+    it("resets the current profile's feature suggestions", () => {
+      performActions(['resetFeatureNudges']);
+
+      expect(resetFeatureNudgesForCurrentProfile).toHaveBeenCalledOnce();
     });
 
     it('should handle multiple actions', () => {
