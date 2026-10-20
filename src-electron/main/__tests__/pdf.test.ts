@@ -106,4 +106,27 @@ describe('exportHtmlToPdf', () => {
     expect(captureElectronError).toHaveBeenCalled();
     expect(browserWindows[0]?.destroy).toHaveBeenCalled();
   });
+
+  it.each(['EBUSY', 'EPERM'])(
+    'tells the user, without reporting it, when writing the chosen file fails with %s',
+    async (code) => {
+      showSaveDialog.mockResolvedValue({
+        canceled: false,
+        filePath: 'C:/reports/out.pdf',
+      });
+      writeFile.mockRejectedValue(
+        Object.assign(new Error(`${code}: open 'C:/reports/out.pdf'`), {
+          code,
+          syscall: 'open',
+        }),
+      );
+      const { exportHtmlToPdf } = await import('../pdf');
+
+      const result = await exportHtmlToPdf('<p>x</p>', 'r.pdf');
+
+      expect(result).toEqual({ canceled: false, error: 'file-not-writable' });
+      expect(captureElectronError).not.toHaveBeenCalled();
+      expect(browserWindows[0]?.destroy).toHaveBeenCalled();
+    },
+  );
 });
