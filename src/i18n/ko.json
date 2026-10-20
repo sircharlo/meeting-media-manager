@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "@:obsStudio 기본 연단 화면으로 사용할 장면입니다. 최신 지침에 따라 연단 전체가 보이는 화면을 사용해야 합니다.",
   "obsEnable": "@:obsStudio 와 M³ 연동",
   "obsEnable-explain": "M³를 @:obsStudio 연동해 미디어와 카메라 장면을 자동으로 전환합니다.",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "장면 전환기에 아이콘 표시 안 함",
   "obsHideIcons-explain": "활성화하는 경우 장면 전환기에 아이콘을 표시하지 않습니다. 장면 이름의 가독성을 높일 수 있습니다.",
   "obsImageScene": "@:obsStudio 이미지를 표시할 장면 (선택 사항)",
