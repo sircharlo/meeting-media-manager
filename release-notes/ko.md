@@ -4,6 +4,12 @@
 
 버전별 전체 변경 사항은 GitHub의 CHANGELOG.md 파일을 확인해 주세요.
 
+## 출시 예정 버전
+
+### ✨ 새로운 기능
+
+- ✨ **Feature Suggestions**: Now and then, M³ suggests a feature a profile isn't using yet, in a short "Did you know?" window that explains what it does. It shows at most one suggestion each time a profile is opened, never from 15 minutes before a meeting until it ends, and remembers each answer: "Remind me later" moves a suggestion to the back of the line, "No thanks" hides it for good, and "Stop suggesting features" turns them all off for the profile. A "No" in the setup wizard counts too, and the answers can be reset in Settings, under Advanced.
+
 ## v26.10.1
 
 ### ✨ 새로운 기능
