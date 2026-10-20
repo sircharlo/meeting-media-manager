@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
@@ -50,6 +50,11 @@ installQuasarPlugin();
 // createTestingPinia stubs actions by default (they become no-op spies) -
 // sceneExists (an action) needs to actually run for the scene-switch tests.
 installPinia({ stubActions: false });
+
+// Unmount every popup after its test: a still-mounted QMenu's transition
+// timer could otherwise fire after this file's DOM is torn down and fail
+// the run with "document is not defined" (seen once in CI).
+enableAutoUnmount(afterEach);
 
 afterEach(() => {
   document.body.innerHTML = '';
