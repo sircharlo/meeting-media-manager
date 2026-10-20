@@ -24,8 +24,8 @@ Te vai noa nei te nure parau tumu a teie fa’anahora’a nō te hi’opō’ara
 
 Te tauturu nei M³ i te Windows, macOS, e te Linux:
 
-- Windows: Windows 10 e te mau nure i muri mai (e vai nei te huru parau 64-bit e te 32-bit)
-- macOS: macOS 10.15 (Catalina) e te mau nure i muri mai (fa’anahora’a tura’i-’āmui-hia)
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - Linux: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
 
 ### :globe_with_meridians: Te ’ohipa nei ānei o M³ nō tō’u iho reo? {#language-support}
@@ -126,7 +126,7 @@ Teie te mau rāve’a nō te hīmene aratō:
 - Te fa’atere-ano’i-’ō’oā o te pūai reo
 - Te taime fa’ata’ara’a-tāpū-muri e nehenehe e fa’ahuru ’ē
 
-### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³? {#faq-meeting-timer}
+### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³?  {#faq-meeting-timer}
 
 E. Ia ha’amā-hia, e nehenehe te M³ e fa’a’ite i te ho’ē ha’amaramarama taime taa ’ē nō te faito i te taime o te feiā e paraparau ra. E nehenehe te reira e taio i ni’a aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te taime fa’ataime nō te putuputura’a, e mai te peu e hina’aro ’oe, e fa’a’ite i te taime hau aore rā mai te peu e te mua ra te putuputura’a aore rā te muri ra i ni’a i te porotarama. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
@@ -169,7 +169,7 @@ This setting delays sharing images to OBS until you manually trigger them. E mea
 - Te fā’fa’ahiahia o te rāve’a nō te fa’atere pāpū i te taime
 - Te ’ape’ara’a i te tauira’a tiri vitiviti roa
 
-### :record_button: E nehenehe anei te M³ e haruharu i te putuputura’a? {#faq-recordings}
+### :record_button: E nehenehe anei te M³ e haruharu i te putuputura’a?  {#faq-recordings}
 
 Aita te M³ e fa’a’ohipa ra i te ho’ē matini haruharu-reo o roto, tera rā, e nehenehe te reira e tauturu i te fa’atere-ra’a i te haruharu-reo nā roto e piti huru:
 
@@ -312,8 +312,8 @@ Māuruuru i tō ’oe hina’aro ’ia turu i te ’ohipa nei! Inaha rā, ma te 
 
 Ua hāmanihia te M³ nō te ohipa i ni’a i te mau huru anairaa porotarama e rave rahi:
 
-- Windows: Windows 10 e te mau nure i muri mai (e vai nei te huru parau 64-bit e te 32-bit)
-- macOS: macOS 10.15 (Catalina) e te mau nure i muri mai (fa’anahora’a tura’i-’āmui-hia)
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - Linux: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
 
 Teie te mau titaura’a nō ni’a i te matini nō M³:
