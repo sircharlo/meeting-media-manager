@@ -8,7 +8,7 @@ Para ver la lista completa de cambios entre versiones, consulta nuestro archivo 
 
 ### ✨ Nuevas funciones
 
-- ✨ **Feature Suggestions**: Now and then, M³ suggests a feature a profile isn't using yet, in a short "Did you know?" window that explains what it does. It shows at most one suggestion each time a profile is opened, never from 15 minutes before a meeting until it ends, and remembers each answer: "Remind me later" moves a suggestion to the back of the line, "No thanks" hides it for good, and "Stop suggesting features" turns them all off for the profile. A "No" in the setup wizard counts too, and the answers can be reset in Settings, under Advanced.
+- ✨ **Sugerencias de funciones**: De vez en cuando, M³ sugiere una función que un perfil todavía no usa, en una pequeña ventana de "¿Sabías que...?" que explica para qué sirve. Muestra como máximo una sugerencia cada vez que se abre un perfil, nunca desde 15 minutos antes de una reunión hasta que termina, y recuerda cada respuesta: "Recordármelo más tarde" pasa la sugerencia al final de la cola, "No, gracias" la oculta definitivamente y "Dejar de sugerir funciones" las desactiva todas para el perfil. Un "No" en el asistente de configuración también cuenta, y las respuestas se pueden restablecer en Configuración, dentro de Avanzado.
 
 ## v26.10.1
 

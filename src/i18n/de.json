@@ -569,7 +569,7 @@
   "obs-studio-is-a-free-app-used-to-manage-camera-and-video-feeds-in-many-kingdom-halls": "@:obsStudio ist eine kostenlose App, die in vielen Königreichssälen zur Verwaltung von Kamera- und Video-Feeds verwendet wird.",
   "obs-studio-media-scene": "@:{'obsStudio'}-Medienszene",
   "obs-studio-port-and-password": "@:{'obsStudio'}-Port und Passwort",
-  "obs-studio-scene-list-error-banner": "M³ is connected to @:{'obsStudio'} but couldn't retrieve its scene list. Try reconnecting @:{'obsStudio'}, or check the configured scenes in the Settings.",
+  "obs-studio-scene-list-error-banner": "M³ ist mit @:{'obsStudio'} verbunden, konnte aber die Szenenliste nicht abrufen. Verbinden Sie @:obsStudio erneut oder überprüfen Sie die konfigurierten Szenen in den Einstellungen.",
   "obs-studio-setup-connection-failed": "Es konnte keine Verbindung zu @:{'obsStudio'} hergestellt werden. Überprüfen Sie, ob Port und Passwort korrekt sind und @:obsStudio ausgeführt wird.",
   "obs-studio-stage-scene": "@:{'obsStudio'}-Bühnenszene",
   "obs.connected": "@:{'obsStudio'}: Verbunden",

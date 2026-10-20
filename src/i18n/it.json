@@ -569,7 +569,7 @@
   "obs-studio-is-a-free-app-used-to-manage-camera-and-video-feeds-in-many-kingdom-halls": "@:obsStudio è un'app gratuita usata in molte Sale del Regno per gestire le telecamere e i flussi video.",
   "obs-studio-media-scene": "Scena multimediale di @:obsStudio",
   "obs-studio-port-and-password": "Porta e password @:obsStudio",
-  "obs-studio-scene-list-error-banner": "M³ is connected to @:{'obsStudio'} but couldn't retrieve its scene list. Try reconnecting @:{'obsStudio'}, or check the configured scenes in the Settings.",
+  "obs-studio-scene-list-error-banner": "M³ è connesso a @:{'obsStudio'} ma non è riuscito a recuperare l'elenco delle scene. Prova a riconnettere @:obsStudio o controlla le scene configurate nelle Impostazioni.",
   "obs-studio-setup-connection-failed": "Impossibile connettersi a @:{'obsStudio'}. Verifica che la porta e la password siano corrette e che @:obsStudio sia in esecuzione.",
   "obs-studio-stage-scene": "Scena palco di @:obsStudio",
   "obs.connected": "@:{'obsStudio'}: Connesso",

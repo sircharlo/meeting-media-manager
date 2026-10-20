@@ -569,7 +569,7 @@
   "obs-studio-is-a-free-app-used-to-manage-camera-and-video-feeds-in-many-kingdom-halls": "@:obsStudio 是一款免费应用程序，许多王国聚会所都用它来管理摄像头和视频信号。",
   "obs-studio-media-scene": "@:obsStudio 媒体场景",
   "obs-studio-port-and-password": "@:obsStudio 端口和密码",
-  "obs-studio-scene-list-error-banner": "M³ is connected to @:{'obsStudio'} but couldn't retrieve its scene list. Try reconnecting @:{'obsStudio'}, or check the configured scenes in the Settings.",
+  "obs-studio-scene-list-error-banner": "M³ 已连接到 @:{'obsStudio'}，但无法获取场景列表。请尝试重新连接 @:{'obsStudio'}，或在设置中检查已配置的场景。",
   "obs-studio-setup-connection-failed": "无法连接到 @:{'obsStudio'}。请检查端口和密码是否正确，并确保 @:obsStudio 正在运行。",
   "obs-studio-stage-scene": "@:obsStudio 讲台场景",
   "obs.connected": "@:{'obsStudio'}：已连接",
