@@ -1,457 +1,457 @@
-# User Guide {#user-guide}
+# Посібник користувача {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+Цей докладний посібник допоможе вам освоїти всі функції M³ — від базового налаштування до розширених прийомів показу медіа.
 
-## Getting Started {#getting-started}
+## Початок роботи {#getting-started}
 
-### Download and Install {#download-and-install}
+### Завантаження та встановлення {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+Завантажте найновішу версію зі [сторінки завантаження](download). Вона підкаже, яка збірка найкраще підходить для вашого пристрою, і покаже найновішу версію.
 
-### First Launch {#first-launch}
+### Перший запуск {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Під час першого запуску M³ майстер початкової конфігурації допоможе вам задати основні налаштування для вашого збору:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Виберіть мову інтерфейсу** — від неї залежить, якою мовою відображатимуться меню та кнопки M³
+2. **Виберіть тип профілю** — «Звичайний» для звичайного використання в зборі або «Інший» для особливих подій
+3. **Укажіть дані про збір** — введіть дані свого збору або скористайтеся автоматичним пошуком
+4. **Налаштуйте розклад зібрань** — укажіть час зібрань серед тижня та у вихідні
+5. **Додаткові функції** — налаштуйте інтеграцію з OBS, фонову музику та інші розширені функції
 
 :::tip Порада
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Не поспішайте під час початкової конфігурації, хоча згодом ці параметри завжди можна змінити в меню «Налаштування».
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Огляд головного інтерфейсу {#main-interface}
 
-The main M³ interface consists of several key areas:
+Головний інтерфейс M³ складається з кількох основних частин:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **Бічна панель навігації** — доступ до різних розділів і налаштувань
+- **Календар** — перегляд медіа за датами
+- **Список медіа** — перегляд медіа на вибрані дати та керування ними
+- **Панель інструментів** — швидкий доступ до основних функцій
+- **Рядок стану** — показує перебіг завантаження, стан фонової музики та підключення до OBS Studio
 
-## Media Management {#user-guide-media-management}
+## Керування медіа {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### Як користуватися календарем {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+У календарі показано розклад ваших зібрань і доступні медіа:
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- **Дні зібрань** — виділені дні показують, коли заплановано зібрання
+- **Індикатори медіа** — значки показують, які типи медіа доступні
+- **Перехід між датами** — використовуйте клавіші зі стрілками, щоб переходити між місяцями
 
-### Organizing Media {#organizing-media}
+### Упорядкування медіа {#organizing-media}
 
-M³ automatically organizes media by meeting type and section:
+M³ автоматично впорядковує медіа за типом зібрання та розділами:
 
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
-- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
-- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
+- **Розділи зібрання** — медіа згруповано за частинами зібрання («Публічна промова», «Скарби з Божого слова» тощо)
+- **Власні розділи** — якщо на певний день зібрання не заплановано, можна створити власні розділи для додаткових медіа
+- **Сортування вручну** — перетягуйте медіаелементи в потрібному порядку або за потреби скидайте порядок
+- **Повторне відтворення** — зациклюйте окремий медіаелемент або повторюйте всі елементи розділу, доки відтворення не буде зупинено вручну
 
-### Hidden and Missing Media {#hidden-and-missing-media}
+### Приховані та відсутні медіа {#hidden-and-missing-media}
 
-Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
+Медіа можна приховати зі списку медіа зібрання, не видаляючи автоматично завантажених файлів. Якщо медіа приховано помилково, скористайтеся пунктом **Показати приховані медіа** для вибраного дня.
 
-If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
+Якщо M³ повідомляє про відсутні медіа, спершу перевірте, чи не має цей елемент з’явитися ближче до дати зібрання. Також відсутній елемент можна додати вручну через меню **Додати медіа** або перетягнувши його в список медіа.
 
-## Media Presentation {#media-presentation}
+## Показ медіа {#media-presentation}
 
-### Opening the Media Player {#opening-media-player}
+### Відкриття медіаплеєра {#opening-media-player}
 
-To present media during a meeting:
+Щоб показати медіа під час зібрання:
 
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
+1. Виберіть дату й медіаелемент, який хочете показати
+2. Натисніть кнопку відтворення або скористайтеся комбінацією клавіш
+3. Відтворення почнеться у вікні медіа
+4. Використовуйте елементи керування, щоб відтворювати медіа, ставити їх на паузу або переходити між ними
 
-### Media Player Controls {#media-player-controls}
+### Елементи керування медіаплеєра {#media-player-controls}
 
-The media player provides comprehensive controls:
+Медіаплеєр має повний набір елементів керування:
 
-- **Play/Pause** - Start or pause media playback
-- **Stop** - Stop playback
+- **Відтворення/пауза** — запуск або призупинення відтворення медіа
+- **Зупинка** — зупинення відтворення
 
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
-- **Live Preview** - When enabled, show a preview of the audience media window in the main app
-- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
+- **Масштабування/панорамування** — щоб змінити масштаб, утримуйте Ctrl або Shift і прокручуйте коліщатко миші або зводьте чи розводьте пальці на сенсорній панелі, а потім перетягуйте, щоб панорамувати (для зображень)
+- **Попередній перегляд наживо** — якщо цю функцію ввімкнено, у головному вікні програми показується попередній перегляд вікна медіа, яке бачать присутні
+- **Швидкість відтворення** — якщо цю функцію ввімкнено в налаштуваннях, швидкість аудіо й відео можна змінювати в контекстному меню медіаелемента
 
-### Advanced Presentation Features {#advanced-presentation}
+### Розширені функції показу {#advanced-presentation}
 
-#### Custom Timing {#custom-timing}
+#### Власний час відтворення {#custom-timing}
 
-Set custom start and end times for media:
+Задайте власний час початку й закінчення медіа:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
 
-1. Click on the duration of a video on the top left of its thumbnail
-2. Set start and end times
-3. Save your changes
+1. Натисніть на тривалість відео у верхньому лівому куті його мініатюри
+2. Задайте час початку й закінчення
+3. Збережіть зміни
 
-#### Zoom and Pan {#zoom-pan}
+#### Масштабування й панорамування {#zoom-pan}
 
-For images and videos:
+Для зображень і відео:
 
-- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
-- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
-- **Reset Zoom** - Click to return to original zoom
+- **Збільшення/зменшення** — утримуйте Ctrl або Shift і прокручуйте коліщатко миші, зводьте чи розводьте пальці на сенсорній панелі або скористайтеся кнопками масштабування на мініатюрі
+- **Панорамування** — після збільшення натисніть на мініатюру й перетягуйте її, щоб переміщати зображення (щоб змінити порядок елемента, перетягуйте решту рядка)
+- **Скидання масштабу** — натисніть, щоб повернути початковий масштаб
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+#### Комбінації клавіш {#user-guide-keyboard-shortcuts}
 
-Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
+Налаштуйте власні комбінації клавіш для швидкого доступу. Зверніть увагу, що за замовчуванням не встановлено комбінації клавіш.
 
-**Built-in Media Controls** (when main window is focused and showing the media list):
+**Вбудовані клавіші керування медіа** (коли головне вікно активне й показує список медіа):
 
-- **Tab/Shift+Tab** - Navigate between media items
-- **Up/Down Arrow** - Navigate between media items
-- **Space** - Play/Pause media
-- **Escape** - Stop media
+- **Tab/Shift+Tab** — перехід між медіаелементами
+- **Стрілка вгору/вниз** — перехід між медіаелементами
+- **Пробіл** — відтворення/пауза медіа
+- **Escape** — зупинення медіа
 
-**Customizable Shortcuts** (when enabled in settings):
+**Налаштовувані комбінації клавіш** (якщо їх увімкнено в налаштуваннях):
 
-- **Media Window** - Open/close media window
-- **Previous/Next Media** - Navigate between media items
-- **Pause/Resume** - Control media playback
-- **Stop Media** - Stop media playback
-- **Music Toggle** - Control background music
+- **Вікно медіа** — відкриття/закриття вікна медіа
+- **Попереднє/наступне медіа** — перехід між медіаелементами
+- **Пауза/продовження** — керування відтворенням медіа
+- **Зупинити медіа** — зупинення відтворення медіа
+- **Увімкнення/вимкнення музики** — керування фоновою музикою
 
-**Note (\*):** Global shortcut - available even when the app is not focused
+**Примітка (\*):** Глобальна комбінація клавіш — діє, навіть коли програма не активна
 
-## Display Tools {#display-tools}
+## Інструменти показу {#display-tools}
 
-### Media Display Window {#media-display-window}
+### Вікно медіа {#media-display-window}
 
-The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+Вікно медіа — це вікно, яке бачать присутні. Залежно від вашого обладнання його можна вивести на зовнішній екран або використовувати в режимі вікна.
 
-Use the display popup to:
+Використовуйте спливне вікно показу медіа, щоб:
 
-- Show or hide the media display
-- Choose the display or window type
-- Select a temporary custom background instead of the yeartext
-- Use an available camera as the background. This is mostly used in sign-language congregations.
+- показати або приховати вікно медіа;
+- вибрати дисплей або тип вікна;
+- вибрати тимчасовий власний фон замість вірша року;
+- використовувати доступну камеру як фон. Здебільшого це використовують у зборах жестовою мовою.
 
-Please note that custom backgrounds are temporary and are not saved after M³ quits.
+Зверніть увагу, що власний фон тимчасовий і не зберігається після закриття M³.
 
-### Meeting Timer {#user-guide-meeting-timer}
+### Таймер зібрання {#user-guide-meeting-timer}
 
-When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+Якщо таймер зібрання ввімкнено, M³ може показувати окреме вікно таймера, щоб стежити за часом виступів промовців. Таймер може вести прямий або зворотний відлік, показувати поточний час і відлік до початку запланованих зібрань, а за потреби — перевищення часу або те, чи зібрання йде з випередженням чи відставанням від графіка.
 
-The timer is a beta feature and should only be used when approved locally.
+Таймер — це бета-функція, і ним слід користуватися, лише якщо це схвалено у вашому зборі.
 
-#### Meeting Parts {#user-guide-timer-parts}
+#### Частини зібрання {#user-guide-timer-parts}
 
-The timer popup on the action island lists the parts of the selected day's meeting. For midweek meetings, choose how many Apply Yourself to the Field Ministry and Living as Christians parts there are; the section's minutes are shared out evenly, and each part can then be adjusted freely with the **+** and **−** buttons or by clicking the part. Any part can be set to any number of minutes, including 0 to skip it. A warning icon points out sections whose parts don't add up to the time allotted to them, but never changes anything on its own.
+У спливному вікні таймера на панелі дій перелічено частини зібрання вибраного дня. Для зібрань серед тижня виберіть, скільки частин у розділах «Вдосконалюймо своє служіння» і «Християнське життя»; хвилини розділу розподіляються між частинами порівну, а потім тривалість кожної частини можна вільно змінювати кнопками **+** і **−** або натиснувши на частину. Для будь-якої частини можна задати будь-яку кількість хвилин, зокрема 0, щоб її пропустити. Значок попередження вказує на розділи, у яких сумарна тривалість частин не збігається з відведеним часом, але сам нічого не змінює.
 
-**Custom parts** can be added on any day, for Governing Body updates, special programs or anything else that isn't on the regular schedule. On days without a meeting, the timer starts with one custom part per custom media section.
+**Власні частини** можна додати в будь-який день — для звітів Керівного органу, особливих програм чи всього іншого, чого немає у звичайному розкладі. У дні без зібрань таймер спочатку містить по одній власній частині для кожного власного розділу медіа.
 
-Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
+Кількість частин, змінена тривалість, власні частини й записаний час зберігаються для кожного дня окремо, тож вони не зникають після перезапуску M³, а час одного зібрання ніколи не змішується з часом іншого. Увесь записаний за день час можна одразу видалити кнопкою **Скинути всі заміри часу за цей день**, а звіт про час зібрання у форматі PDF можна експортувати будь-коли.
 
-#### Hand Alert {#user-guide-timer-hand-alert}
+#### Сигнал піднятої руки {#user-guide-timer-hand-alert}
 
-A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+Кнопка **Сигнал піднятої руки** у спливному вікні таймера показує на екрані таймера велику руку, щоб привернути увагу головуючого, наприклад коли хтось у Zoom підняв руку. Завдяки [помічнику для піднятих рук у Менеджері конференцій Zoom](/settings-guide#zoom-meeting-manager-hand-alert) M³ автоматично показує цей сигнал з іменем учасника щоразу, коли хтось піднімає руку в Zoom, і дає змогу одним натисканням увімкнути йому звук, а потім ще одним — вимкнути звук і опустити руку.
 
-#### Timer on a Tablet {#user-guide-timer-remote}
+#### Таймер на планшеті {#user-guide-timer-remote}
 
-The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³.
+Необов’язковий [віддалений таймер](/settings-guide#timer-remote) показує копію екрана таймера (лише для перегляду) як вебсторінку у вашій локальній мережі. Відкрийте адресу, показану в спливному вікні таймера, у браузері планшета чи телефона на кафедрі — і лише промовець бачитиме, скільки часу залишилося, а всі елементи керування залишаться в M³.
 
-#### Quick Access {#user-guide-timer-quick-access}
+#### Швидкий доступ {#user-guide-timer-quick-access}
 
-Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).
+Якщо навести курсор на кнопку таймера на панелі дій, з’явиться частина, час якої відраховується, і кнопки запуску, паузи, зупинення та переходу до наступної частини. Окреме налаштування дає змогу також закріпити праворуч у головному вікні панель таймера з повним списком частин і елементами керування таймером, які завжди будуть перед очима. Докладніше див. у [посібнику з налаштувань](/settings-guide#timer-quick-access).
 
-## Background Music {#user-guide-background-music}
+## Фонова музика {#user-guide-background-music}
 
-### Setting Up Background Music {#background-music-setup}
+### Налаштування фонової музики {#background-music-setup}
 
-Background music automatically plays before meetings and stops at the appropriate time:
+Фонова музика автоматично звучить перед зібраннями й зупиняється у відповідний момент:
 
-1. **Enable Music** - Turn on background music in settings
-2. **Auto-Start** - Music will start automatically when M³ launches, if appropriate
-3. **Meeting Stop** - Music stops automatically before meeting start time
-4. **Manual Control** - Use the music button in the status bar to start/stop manually
-5. **Restart** - Resume music after meetings with one click
+1. **Увімкнення музики** — увімкніть фонову музику в налаштуваннях
+2. **Автозапуск** — музика автоматично почне грати під час запуску M³, якщо це доречно
+3. **Зупинка перед зібранням** — музика автоматично зупиняється перед початком зібрання
+4. **Ручне керування** — щоб запустити або зупинити музику вручну, скористайтеся кнопкою музики в рядку стану
+5. **Перезапуск** — після зібрань відновлюйте музику одним натисканням
 
-## Zoom Integration {#user-guide-zoom-integration}
+## Інтеграція із Zoom {#user-guide-zoom-integration}
 
-M³ can integrate with Zoom for automatic screen sharing:
+M³ може інтегруватися із Zoom для автоматичної демонстрації екрана:
 
-1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
-3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
-4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
+1. **Увімкнення інтеграції** — увімкніть інтеграцію із Zoom у налаштуваннях
+2. **Налаштування комбінації клавіш** — укажіть комбінацію клавіш для демонстрації екрана, задану в Zoom. Переконайтеся, що в Zoom для неї встановлено прапорець «глобальна».
+3. **Автоматичне керування** — M³ за потреби автоматично вмикатиме й вимикатиме демонстрацію екрана в Zoom
+4. **Ручне втручання** — за потреби ви, як і раніше, можете керувати демонстрацією екрана вручну в Zoom
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## Інтеграція з OBS Studio {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#user-guide-obs-setup}
+### Налаштування інтеграції з OBS {#user-guide-obs-setup}
 
-To use M³ with OBS Studio for hybrid meetings:
+Щоб використовувати M³ разом з OBS Studio для гібридних зібрань:
 
-1. **Install OBS Studio** - Download and install OBS Studio
-2. **Enable WebSocket** - Install the WebSocket plugin in OBS
-3. **Configure M³** - Enter OBS port and password in M³ settings
-4. **Set Up Scenes** - Create scenes for camera, media, and other content
-5. **Test** - Verify playback works properly
+1. **Встановіть OBS Studio** — завантажте й установіть OBS Studio
+2. **Увімкніть WebSocket** — установіть плагін WebSocket в OBS
+3. **Налаштуйте M³** — введіть порт і пароль OBS у налаштуваннях M³
+4. **Налаштуйте сцени** — створіть сцени для камери, медіа та іншого вмісту
+5. **Перевірте** — переконайтеся, що відтворення працює правильно
 
-### OBS Scene Management {#obs-scene-management}
+### Керування сценами OBS {#obs-scene-management}
 
-M³ automatically switches OBS scenes during presentations:
+Під час показу медіа M³ автоматично перемикає сцени OBS:
 
-- **Camera Scene** - Shows the lectern/camera view
-- **Media Scene** - Displays media content
-- **Image Scene** - Shows images (can be postponed if enabled)
-- **Automatic Switching** - Scenes change based on media type and settings
-- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
+- **Сцена камери** — показує кафедру або зображення з камери
+- **Сцена медіа** — показує медіа
+- **Сцена зображень** — показує зображення (якщо ввімкнено, їх показ можна відкласти)
+- **Автоматичне перемикання** — сцени змінюються залежно від типу медіа й налаштувань
+- **Керування записом** — якщо цю функцію ввімкнено, M³ може починати й зупиняти запис в OBS зі спливного вікна OBS
 
-### Advanced OBS Features {#advanced-obs}
+### Розширені функції OBS {#advanced-obs}
 
-#### Do Not Automatically Share Images {#user-guide-postpone-images}
+#### Не транслювати зображення автоматично {#user-guide-postpone-images}
 
-Enable this option to delay sharing images to OBS until manually triggered:
+Увімкніть це налаштування, щоб відкласти трансляцію зображень в OBS, доки ви не запустите її вручну:
 
-1. Enable "Do not automatically share images" in OBS settings
-2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. This is useful for showing images to in-person audience first.
+1. Увімкніть налаштування «Не транслювати зображення автоматично» в налаштуваннях OBS
+2. Зображення транслюватимуться лише тоді, коли ви натиснете кнопку **Показати зображення для учасників Zoom** на зображенні, яке показується. Це корисно, щоб спочатку показувати зображення присутнім у залі.
 
-#### Scene Switching Behavior {#user-guide-scene-switching}
+#### Перемикання сцен {#user-guide-scene-switching}
 
-Configure how M³ handles scene changes:
+Налаштуйте, як M³ змінює сцени:
 
-- **Switch After Media** - Automatically return to previous scene
-- **Remember Previous Scene** - Restore the scene that was active before media
+- **Перемикання після медіа** — автоматичне повернення до попередньої сцени
+- **Запам’ятовування попередньої сцени** — відновлення сцени, яка була активна до показу медіа
 
-### Audio Configuration for Hybrid Meetings {#audio-configuration}
+### Налаштування звуку для гібридних зібрань {#audio-configuration}
 
-When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
+Якщо ви використовуєте M³ разом з OBS Studio для гібридних зібрань (у залі + у Zoom), потрібно налаштувати звук, щоб учасники зібрання чули медіа:
 
-#### Zoom Audio Settings {#zoom-audio-settings}
+#### Налаштування звуку в Zoom {#zoom-audio-settings}
 
-**Before every meeting, you must enable Original Audio in Zoom:**
+**Перед кожним зібранням потрібно вмикати в Zoom «Оригінальний звук»:**
 
-1. **Open Zoom** and go to Settings
-2. **Navigate to Audio** → **Advanced**
-3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
-4. **Check "Disable echo cancellation"** (first checkbox)
-5. **Check "Disable noise suppression"** (second checkbox)
-6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
-7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
+1. **Відкрийте Zoom** і перейдіть до налаштувань
+2. **Перейдіть до «Audio» (звук)** → **«Advanced» (додатково)**
+3. **Увімкніть «Show in-meeting option to 'Enable Original Sound'»** (показувати під час конференції параметр «Увімкнути оригінальний звук»)
+4. **Позначте «Disable echo cancellation»** (вимкнути придушення відлуння; перший прапорець)
+5. **Позначте «Disable noise suppression»** (вимкнути шумозаглушення; другий прапорець)
+6. **Зніміть позначку «Disable high-fidelity music mode»** (вимкнути режим високоякісної музики; третій прапорець)
+7. **Перед початком кожного зібрання** натисніть кнопку «Original Audio» (оригінальний звук) на панелі керування конференцією
 
-**Alternative: Share Computer Sound**
-If Original Audio doesn't work well in your setup:
+**Інший варіант: демонстрація звуку комп’ютера**
+Якщо «Оригінальний звук» погано працює з вашим обладнанням:
 
-1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
-2. **Check "Share computer sound"**
-3. **Note**: This option must be enabled every time you start a new Zoom session
+1. **Перед відтворенням медіа** перейдіть на вкладку **Advanced** (додатково) у параметрах демонстрації екрана Zoom
+2. **Позначте «Share computer sound»** (демонструвати звук комп’ютера)
+3. **Примітка**: Цей параметр потрібно вмикати щоразу, коли ви починаєте нову конференцію Zoom
 
-**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
+**Найкраща альтернатива**: Спробуйте замість OBS Studio використовувати інтеграцію M³ із Zoom, адже вона використовує вбудовану демонстрацію екрана Zoom, яка краще передає звук і не потребує складного налаштування звуку.
 
-#### Why Audio Configuration is Necessary {#why-audio-config}
+#### Чому потрібно налаштовувати звук {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+M³ відтворює медіа зі звуком на вашому комп’ютері, але цей звук **не передається автоматично** через відеопотік в OBS Studio. Так само було б і з будь-яким іншим медіаплеєром.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**Ця проблема зі звуком не пов’язана з M³** — це обмеження того, як відеопотік з OBS Studio працює із Zoom. Відеопотік працює як віртуальна камера без звуку, так само як вебкамера, тому потрібно окремо налаштувати Zoom, щоб він захоплював звук комп’ютера. Для цього комп’ютер повинен мати дві звукові карти; якщо це не так, вам, імовірно, не вдасться успішно використовувати інтеграцію з OBS Studio.
 
-**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
+**Альтернативне рішення**: Спробуйте натомість інтеграцію із Zoom, адже вона використовує вбудовану демонстрацію екрана й звуку Zoom, яка краще передає звук.
 
-#### Troubleshooting Audio Issues {#audio-troubleshooting}
+#### Усунення проблем зі звуком {#audio-troubleshooting}
 
-**Common Problems:**
+**Поширені проблеми:**
 
-- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
-- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
-- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
+- **У Zoom немає звуку**: Перевірте, чи ввімкнено й правильно налаштовано «Оригінальний звук»
+- **Погана якість звуку**: Перевірте, чи правильно встановлено три прапорці налаштування «Оригінальний звук»
+- **Звук не працює після перезапуску Zoom**: Налаштування «Оригінальний звук» потрібно знову вмикати для кожної нової конференції Zoom
 
-**Best Practices:**
+**Корисні поради:**
 
-- Test audio configuration and sharing before meetings
-- Create a checklist for audio setup
-- Consider using "Share Computer Sound" as a backup option
-- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
-- Ensure all AV operators are familiar with these settings
+- Перевіряйте налаштування звуку й демонстрацію екрана перед зібраннями
+- Складіть контрольний список для налаштування звуку
+- Як запасний варіант можна використовувати функцію «Демонстрація звуку комп’ютера»
+- **Спробуйте використовувати інтеграцію із Zoom замість OBS Studio**, щоб спростити роботу зі звуком
+- Подбайте, щоб усі, хто обслуговує аудіо- та відеообладнання, знали ці налаштування
 
-## Media Import and Management {#media-import}
+## Імпорт медіа та керування ними {#media-import}
 
-### Importing Custom Media {#importing-custom-media}
+### Імпорт власних медіа {#importing-custom-media}
 
-Add your own media files to M³:
+Додавайте власні медіафайли в M³:
 
-1. **File Import** - Use the import button to add videos, images, or audio files
-2. **Drag and Drop** - Drag files directly into M³
-3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
-4. **JWPUB Files and Playlists** - Import publications and playlists
+1. **Імпорт файлів** — додавайте відео, зображення або аудіофайли за допомогою кнопки імпорту
+2. **Перетягування** — перетягуйте файли безпосередньо в M³
+3. **Спільна папка** — автоматично додавайте медіа з папки, яка синхронізується через Dropbox, OneDrive, iCloud Drive або Google Drive
+4. **Файли JWPUB і списки відтворення** — імпортуйте публікації та списки відтворення
 5. **Публічні Talk Media (S-34 / S-34mp)** - Імпорт публічних розмов медіа з використанням S-34 або S-34mp JWPUB файлів
-6. **Videos from the official website** - Search for videos and add them to the selected date
-7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
+6. **Відео з офіційного сайту** — шукайте відео й додавайте їх до вибраної дати
+7. **Медіа з навчального видання Біблії та з Біблії жестовою мовою** — додавайте до вибраних уривків зображення, відео, карти, історичні довідки або відео з Біблії жестовою мовою
 
-### Managing Imported Media {#managing-imported-media}
+### Керування імпортованими медіа {#managing-imported-media}
 
-- **Organize by Date** - Assign imported media to specific dates
-- **Custom Sections** - Create custom sections for organization
-- **Edit Properties** - Modify titles, descriptions, and timing
-- **Remove Media** - Delete unwanted media items
+- **Упорядкування за датами** — прив’язуйте імпортовані медіа до певних дат
+- **Власні розділи** — створюйте власні розділи для впорядкування
+- **Редагування властивостей** — змінюйте назви, описи й час відтворення
+- **Видалення медіа** — видаляйте непотрібні медіаелементи
 
-### Audio Bible Import {#audio-bible-import}
+### Імпорт аудіо-Біблії {#audio-bible-import}
 
-Import audio recordings of Bible verses:
+Імпортуйте аудіозаписи біблійних віршів:
 
-1. Click the "Audio Bible" button
-2. Select the Bible book and chapter
+1. Натисніть кнопку «Аудіозаписи Біблії»
+2. Виберіть книгу Біблії та розділ
 3. Вибирати окремі вірші або діапазони віршів
-4. Download the audio files
-5. Use them
+4. Завантажте аудіофайли
+5. Використовуйте їх
 
-### Profile Settings Import and Export {#profile-settings-import-export}
+### Імпорт і експорт налаштувань профілю {#profile-settings-import-export}
 
-Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
+Налаштування кожного профілю можна експортувати у файл JSON у розділі «Налаштування». Імпорт файлу налаштувань профілю замінює налаштування поточного профілю — це зручно, коли потрібно перенести налаштування на інший комп’ютер або відновити перевірену конфігурацію.
 
-## Shared Folder and Export {#user-guide-folder-monitoring}
+## Спільна папка та експорт {#user-guide-folder-monitoring}
 
-### Setting Up a Shared Folder {#folder-monitoring-setup}
+### Налаштування спільної папки {#folder-monitoring-setup}
 
-Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
+Додавайте медіа з папки, яку синхронізує програма хмарного сховища, наприклад Dropbox, OneDrive, iCloud Drive або Google Drive:
 
-1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
-2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
-3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
-4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
-5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
+1. **Увімкніть функцію** — дайте відповідь «Так», коли майстер початкової конфігурації запитає про програми хмарного сховища, або відкрийте **Налаштування** > **Інтеграції** > **Спільна папка** й увімкніть **Додавати медіа зі спільної папки**
+2. **Виберіть папку** — виберіть папку у своєму хмарному сховищі, найкраще нову, призначену лише для цього
+3. **Папки з датами** — M³ створює в ній папку для кожного найближчого зібрання і називає її датою зібрання у форматі рік-місяць-день (наприклад, `2026-03-25`)
+4. **Додайте файли** — кладіть фотографії, відео, аудіофайли або списки відтворення JW Library у папку зібрання, і їх буде автоматично додано до списку медіа цього зібрання. Для іншого дня створіть папку з назвою в тому самому форматі
+5. **Минулі папки** — коли тиждень закінчується, M³ видаляє папки цього тижня разом із файлами в них у всіх, хто користується спільною папкою. Щоб зберегти їх, вимкніть **Видаляти папки минулих зібрань**
 
-### Media Export {#user-guide-media-export}
+### Експорт медіа {#user-guide-media-export}
 
-Automatically export media to organized folders:
+Автоматично експортуйте медіа у впорядковані папки:
 
-1. **Enable Auto-Export** - Turn on media export in settings
-2. **Select Export Folder** - Choose where to save exported files
-3. **Automatic Organization** - Files are organized by date and section
-4. **Format Options** - Convert files to MP4 for better compatibility
+1. **Увімкніть автоекспорт** — увімкніть експорт медіа в налаштуваннях
+2. **Виберіть папку для експорту** — укажіть, куди зберігати експортовані файли
+3. **Автоматичне впорядкування** — файли впорядковуються за датою та розділом
+4. **Параметри формату** — конвертуйте файли в MP4 для кращої сумісності
 
-## Website Presentation {#website-presentation}
+## Показ вебсайту {#website-presentation}
 
-### Presenting the Official Website {#presenting-the-website}
+### Показ офіційного сайту {#presenting-the-website}
 
-Share the official website on external displays:
+Показуйте офіційний сайт на зовнішніх екранах:
 
-1. **Open Website Mode** - Click the website presentation button
-2. **External Display** - The website opens in a new window
-3. **Navigation** - Use the browser controls to navigate
+1. **Відкрийте режим вебсайту** — натисніть кнопку показу вебсайту
+2. **Зовнішній екран** — вебсайт відкривається в новому вікні
+3. **Навігація** — переходьте між сторінками за допомогою елементів керування браузера
 
-### Website Controls {#website-controls}
+### Керування вебсайтом {#website-controls}
 
-- **Open Website** - Open a separate website window
-- **Start Mirroring** - Show the website window in the media display for the audience
-- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
-- **Navigation** - Standard browser navigation controls
-- **Refresh** - Reload the current page
-- **Close** - Exit website presentation mode
-- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+- **Відкрити сайт** — відкриття окремого вікна вебсайту
+- **Почати віддзеркалення** — показ вікна вебсайту у вікні медіа для присутніх
+- **Зупинити віддзеркалення** — припинення показу вебсайту й повернення до вірша року або фону вікна медіа
+- **Навігація** — стандартні елементи навігації браузера
+- **Оновити** — повторне завантаження поточної сторінки
+- **Закрити** — вихід із режиму показу вебсайту
+- **Автоповернення** — за бажанням автоматичний перехід до списку медіа після завершення віддзеркалення вебсайту
 
-## Meeting Recordings {#meeting-recordings}
+## Записи зібрань {#meeting-recordings}
 
-M³ can help control meeting recording, but it does not include a built-in recorder.
+M³ може допомогти керувати записом зібрань, але не має вбудованої функції запису.
 
-- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
-- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
-- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
+- **Запис в OBS** — якщо керування записом в OBS увімкнено, починайте й зупиняйте запис в OBS за допомогою спливного вікна OBS
+- **Зовнішня програма для запису** — налаштуйте комбінації клавіш для окремої програми запису, а потім надсилайте їх за допомогою спливного вікна записів зібрань
+- **Папка записів** — укажіть папку записів, щоб з’явилася кнопка для швидкого відкриття папки, у якій зберігаються записи
 
-## Advanced Features {#user-guide-advanced-features}
+## Додаткові функції {#user-guide-advanced-features}
 
-### Multiple Congregations {#user-guide-multiple-congregations}
+### Кілька зборів {#user-guide-multiple-congregations}
 
-Manage multiple congregations or groups:
+Керуйте кількома зборами або групами:
 
-1. **Create Profiles** - Set up separate profiles for different congregations
-2. **Switch Profiles** - Use the congregation selector to switch between profiles
-3. **Separate Settings** - Each profile has its own settings and media
-4. **Shared Resources** - Media files are shared between profiles whenever possible
+1. **Створюйте профілі** — налаштуйте окремі профілі для різних зборів
+2. **Перемикайте профілі** — перемикайтеся між профілями за допомогою меню вибору збору
+3. **Окремі налаштування** — кожен профіль має власні налаштування й медіа
+4. **Спільні ресурси** — медіафайли за можливості спільно використовуються різними профілями
 
-### Keyboard Shortcuts {#keyboard-shortcuts-guide}
+### Комбінації клавіш {#keyboard-shortcuts-guide}
 
-Configure custom keyboard shortcuts for efficient operation:
+Налаштуйте власні комбінації клавіш для ефективної роботи:
 
-1. **Enable Shortcuts** - Turn on keyboard shortcuts in settings
-2. **Configure Shortcuts** - Set up shortcuts for common actions
-3. **Practice** - Learn your shortcuts for faster operation
-4. **Customize** - Adjust shortcuts to match your preferences
+1. **Увімкніть комбінації клавіш** — увімкніть їх у налаштуваннях
+2. **Налаштуйте комбінації клавіш** — призначте комбінації для найпоширеніших дій
+3. **Тренуйтеся** — запам’ятайте свої комбінації клавіш, щоб працювати швидше
+4. **Змінюйте на свій смак** — налаштовуйте комбінації клавіш відповідно до своїх уподобань
 
-## Troubleshooting {#troubleshooting-guide}
+## Усунення проблем {#troubleshooting-guide}
 
-### Common Issues {#common-issues}
+### Поширені проблеми {#common-issues}
 
-#### Media Not Downloading {#user-guide-media-not-downloading}
+#### Медіа не завантажуються {#user-guide-media-not-downloading}
 
-- Check your meeting schedule settings
-- Verify internet connection
-- Check if media is available in your selected language
+- Перевірте налаштування розкладу зібрань
+- Перевірте підключення до інтернету
+- Перевірте, чи доступні медіа вибраною мовою
 
-#### OBS Integration Not Working {#user-guide-obs-not-working}
+#### Інтеграція з OBS не працює {#user-guide-obs-not-working}
 
-- Verify OBS WebSocket plugin is installed
-- Check port and password settings
-- Ensure OBS is running
+- Перевірте, чи встановлено плагін OBS WebSocket
+- Перевірте налаштування порту й пароля
+- Переконайтеся, що OBS запущено
 
-#### Audio Issues in Zoom/OBS {#audio-issues}
+#### Проблеми зі звуком у Zoom/OBS {#audio-issues}
 
-- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
-- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
-- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
-- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
+- **У Zoom немає звуку**: Увімкніть «Оригінальний звук» у налаштуваннях Zoom і перед кожним зібранням
+- **Погана якість звуку**: Перевірте три прапорці налаштування «Оригінальний звук» (перші два позначено, третій — ні)
+- **Звук не працює після перезапуску**: «Оригінальний звук» потрібно знову вмикати для кожної нової конференції Zoom
+- **Альтернативне рішення**: Скористайтеся параметром «Демонстрація звуку комп’ютера» під час демонстрації екрана в Zoom
 
-#### Performance Issues {#user-guide-performance-issues}
+#### Проблеми з продуктивністю {#user-guide-performance-issues}
 
-- Cache songbook video files
-- Reduce maximum resolution
-- Clear old cached files
-- Check available disk space
-- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
+- Кешувати відеофайли пісень
+- Зменште максимальну роздільну здатність
+- Видаліть старі файли з кешу
+- Перевірте, скільки вільного місця на диску
+- Якщо в програмі з’являються графічні збої або вона аварійно завершує роботу, спробуйте вимкнути апаратне прискорення й перезапустити M³
 
-#### Language Issues {#user-guide-language-issues}
+#### Проблеми з мовою {#user-guide-language-issues}
 
-- Check media language setting
-- Ensure language is available on JW.org
-- Try a fallback language
-- Verify interface language setting
+- Перевірте налаштування мови медіа
+- Переконайтеся, що мова доступна на JW.org
+- Спробуйте задати резервну мову
+- Перевірте налаштування мови інтерфейсу
 
-### Getting Help {#getting-help}
+### Як отримати допомогу {#getting-help}
 
-If you encounter issues:
+Якщо у вас виникли проблеми:
 
-1. **Check Documentation** - Review this guide and other available documentation
-2. **Search Issues** - Look for similar issues on GitHub
-3. **Report Problems** - Create a new issue with detailed information
+1. **Перегляньте документацію** — ознайомтеся з цим посібником та іншою доступною документацією
+2. **Пошукайте схожі проблеми** — перевірте, чи не повідомляли про схожі проблеми на GitHub
+3. **Повідомте про проблему** — створіть новий звіт (issue) з докладною інформацією
 
-## Best Practices {#best-practices}
+## Корисні поради {#best-practices}
 
-### Before Meetings {#before-meetings}
+### Перед зібраннями {#before-meetings}
 
-1. **Check Downloads** - Ensure all media is downloaded
-2. **Test Equipment** - Verify displays and audio work
-3. **Prepare Media** - Review and organize media for the meeting; make sure no media files are missing
-4. **Configure Audio** - For hybrid meetings, enable Original Audio in Zoom or set up "Share Computer Sound"
+1. **Перевірте завантаження** — переконайтеся, що всі медіа завантажено
+2. **Перевірте обладнання** — переконайтеся, що екрани й звук працюють
+3. **Підготуйте медіа** — перегляньте й упорядкуйте медіа для зібрання; переконайтеся, що всі медіафайли на місці
+4. **Налаштуйте звук** — для гібридних зібрань увімкніть у Zoom «Оригінальний звук» або налаштуйте функцію «Демонстрація звуку комп’ютера»
 
-### During Meetings {#during-meetings}
+### Під час зібрань {#during-meetings}
 
-1. **Stay Focused** - Use the clean and distraction-free interface
-2. **Use Shortcuts** - Master keyboard shortcuts for smooth operation
-3. **Monitor Audio** - Keep an eye on volume levels, if that's part of your responsibilities
-4. **Be Prepared** - Have the next media item ready
-5. **Verify Audio** - For hybrid meetings, ensure Zoom participants can hear the media
+1. **Зосередьтеся** — користуйтеся простим інтерфейсом, який не відволікає
+2. **Використовуйте комбінації клавіш** — опануйте комбінації клавіш, щоб працювати злагоджено
+3. **Стежте за звуком** — контролюйте рівень гучності, якщо це входить у ваші обов’язки
+4. **Будьте напоготові** — заздалегідь підготуйте наступний медіаелемент
+5. **Перевіряйте звук** — на гібридних зібраннях переконайтеся, що учасники в Zoom чують медіа
 
-### After Meetings {#after-meetings}
+### Після зібрань {#after-meetings}
 
-1. **Start Background Music** - Start the playback of background music
-2. **Plan Ahead** - Prepare for the next meeting by making sure everything is in place
-3. **Clean Up** - Close media player when you're ready to leave
+1. **Увімкніть фонову музику** — запустіть відтворення фонової музики
+2. **Плануйте наперед** — підготуйтеся до наступного зібрання й переконайтеся, що все готово
+3. **Завершіть роботу** — закрийте медіаплеєр, коли будете готові йти
 
-### Regular Maintenance {#regular-maintenance}
+### Регулярне обслуговування {#regular-maintenance}
 
-1. **Update M³** - Keep the application updated
-2. **Clear Cache** - Periodically clear old cached files
-3. **Check Settings** - Review and update settings as needed
+1. **Оновлюйте M³** — використовуйте найновішу версію програми
+2. **Очищуйте кеш** — час від часу видаляйте старі файли з кешу
+3. **Перевіряйте налаштування** — переглядайте й за потреби оновлюйте налаштування
