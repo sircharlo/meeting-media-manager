@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "The scene in @:obsStudio that will be used as the default stage view. As per latest direction, this should be a wide shot.",
   "obsEnable": "Integrate M³ with @:obsStudio",
   "obsEnable-explain": "Connect M³ to @:obsStudio to enable automated switching between media and camera scenes.",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "Do not display icons in the scene switcher",
   "obsHideIcons-explain": "When enabled, icons will be hidden in the scene switcher. This may increase the legibility of scene names.",
   "obsImageScene": "Scene to display images in @:obsStudio (optional)",
