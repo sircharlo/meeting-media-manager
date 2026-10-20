@@ -406,7 +406,7 @@ Te fa’anahora’a i te mau rāve’a pāpa’i-’āpee ta’a ’ē nō te �
 
 #### Te mau fifi nō te fa’aotira’a {#user-guide-performance-issues}
 
-- Cache songbook video files
+- E tōtautā i te mau tōta’a tōna’a hīmene i roto i te cache
 - ’A fa’aiti i te faito teitei o te hōho’a
 - ’A tāmā i te mau cache tahito
 - ’A hi’o i te vāhi tei toe i roto i te disk
