@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "La scena in @:obsStudio che verrà usata come vista predefinita del palco. Secondo le ultime indicazioni, dovrebbe essere un'inquadratura ampia.",
   "obsEnable": "Integra M³ con @:obsStudio",
   "obsEnable-explain": "Collega M³ a @:obsStudio per abilitare il passaggio automatico tra le scene multimediali e quelle della videocamera.",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "Non visualizzare le icone nel selettore della scena",
   "obsHideIcons-explain": "Quando abilitato, le icone saranno nascoste nel selettore di scene. Questo potrebbe migliorare la leggibilità dei nomi delle scene.",
   "obsImageScene": "Scena per mostrare le immagini in @:obsStudio (facoltativa)",

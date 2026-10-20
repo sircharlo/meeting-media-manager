@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "这个 @:obsStudio 场景会作为默认讲台画面。按照最新指引，建议使用广角镜头。",
   "obsEnable": "将 M³ 与 @:obsStudio 集成",
   "obsEnable-explain": "将 M³ 连接到 @:obsStudio",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "不要在场景切换器中显示图标",
   "obsHideIcons-explain": "启用后，场景切换器中的图标会被隐藏，这可能有助于更容易辨认场景名称。",
   "obsImageScene": "@:obsStudio 中用于显示图片的场景（可选）",

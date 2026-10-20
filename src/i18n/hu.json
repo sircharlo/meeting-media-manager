@@ -556,6 +556,8 @@
   "obsCameraScene-explain": "The scene in @:obsStudio that will be used as the default stage view. As per latest direction, this should be a wide shot.",
   "obsEnable": "Integrate M³ with @:obsStudio",
   "obsEnable-explain": "Connect M³ to @:obsStudio to enable automated switching between media and camera scenes.",
+  "obsEnableRecordingControls": "Show @:obsStudio recording controls",
+  "obsEnableRecordingControls-explain": "When enabled, the @:obsStudio popup shows a button to start and stop recording in @:{'obsStudio'}, and a button to open the folder where the recordings are saved. This replaces the option to control an external recording application.",
   "obsHideIcons": "Ne jelenítsen meg ikonokat a jelenetváltóban",
   "obsHideIcons-explain": "Ha engedélyezve van, az ikonok el lesznek rejtve a jelenetváltóban. Ez növelheti a jelenetek nevének olvashatóságát.",
   "obsImageScene": "Scene to display images in @:obsStudio (optional)",
