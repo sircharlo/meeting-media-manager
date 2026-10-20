@@ -23,7 +23,7 @@ export { data };
 // The last release that runs on 32-bit Windows and macOS 12 (Electron 43).
 // Newer releases can't run there, so these links stay pinned to it - and its
 // GitHub release must never be deleted.
-const LEGACY_VERSION = 'v26.10.0';
+const LEGACY_VERSION = 'v26.10.1';
 
 const releaseAssetUrl = (version: string, arch: string, ext: string) =>
   `https://github.com/sircharlo/meeting-media-manager/releases/download/${version}/meeting-media-manager-${version.slice(1)}-${arch}.${ext}`;
