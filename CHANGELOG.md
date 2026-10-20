@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Platform Support**: M³ now requires a 64-bit version of Windows 10 or later, or macOS 13 (Ventura) or later. v26.10.1 is the last version that runs on 32-bit Windows and macOS 12 (Monterey), and it stays available from the download page.
+
 ## v26.10.1
 
 ### ✨ New Features

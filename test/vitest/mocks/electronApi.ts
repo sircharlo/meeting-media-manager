@@ -87,7 +87,6 @@ export const electronApi: ElectronApi = {
   getMediaWindowCaptureSourceId: function () {
     throw new Error('Function not implemented.');
   },
-  getOsSupportWarning: async () => null,
   getScreenAccessStatus: function () {
     throw new Error('Function not implemented.');
   },
@@ -109,7 +108,6 @@ export const electronApi: ElectronApi = {
   inferExtension: async function (filename, filetype) {
     throw new Error('Function not implemented.');
   },
-  isArchitectureMismatch: async () => false,
   isDemoMode: false,
   isDev: false,
   isDownloadComplete: async () => null,

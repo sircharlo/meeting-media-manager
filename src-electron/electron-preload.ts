@@ -110,7 +110,6 @@ const electronApi: ElectronApi = {
   getLocalPathFromFileObject: (fo) => getPathFromFileObject(fo),
   getLowDiskSpaceStatus: () => invoke('getLowDiskSpaceStatus'),
   getMediaWindowCaptureSourceId: () => invoke('getMediaWindowCaptureSourceId'),
-  getOsSupportWarning: () => invoke('getOsSupportWarning'),
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getSharedDataPath: () => invoke('getSharedDataPath'),
   getUpdaterState: () => invoke('getUpdaterState'),
@@ -120,7 +119,6 @@ const electronApi: ElectronApi = {
   getZipEntries: (p) => invoke('getZipEntries', p),
   hideFileOnWindows,
   inferExtension,
-  isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
   isDemoMode: IS_DEMO_MODE,
   isDev: IS_DEV,
   isDownloadComplete: (downloadId: string) =>

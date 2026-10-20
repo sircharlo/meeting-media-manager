@@ -228,7 +228,6 @@ const {
   basename,
   dirname,
   ensureMacosFolderPermission,
-  isArchitectureMismatch,
   onDownloadCancelled,
   onDownloadCompleted,
   onDownloadError,
@@ -1428,7 +1427,6 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     const isBetaVersion = import.meta.env.IS_BETA;
     const areUpdatesDisabled = await updatesDisabled();
-    const hasArchitectureMismatch = await isArchitectureMismatch();
 
     // Priority: beta warning first
     if (isBetaVersion) {
@@ -1452,15 +1450,6 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
         deferWhileDialogOpen: true,
         message: t('updates-disabled-warning'),
         timeout: 10_000,
-        type: 'info',
-      });
-    }
-    if (hasArchitectureMismatch) {
-      createTemporaryNotification({
-        caption: t('architecture-mismatch-explain'),
-        deferWhileDialogOpen: true,
-        message: t('architecture-mismatch'),
-        timeout: 30_000,
         type: 'info',
       });
     }

@@ -179,7 +179,7 @@ export default defineConfig((ctx) => {
           files: ['!**/node_modules/robotjs/build/**'],
           hardenedRuntime: true,
           icon: getIconPath('icns'),
-          minimumSystemVersion: '10.15',
+          minimumSystemVersion: '13.0',
           target: {
             arch: ['universal'],
             target: 'default',
@@ -220,10 +220,7 @@ export default defineConfig((ctx) => {
             },
           ],
           icon: getIconPath('ico'),
-          target: [
-            { arch: ctx.debug ? 'x64' : ['x64', 'ia32'], target: 'nsis' },
-            'portable',
-          ],
+          target: [{ arch: 'x64', target: 'nsis' }, 'portable'],
         },
       },
       bundler: 'builder', // 'packager' or 'builder'

@@ -26,8 +26,6 @@ import {
   shell,
   systemPreferences,
 } from 'electron';
-import { pathExists } from 'fs-extra/esm';
-import { arch, platform } from 'node:os';
 import { PLATFORM } from 'src-electron/constants';
 import { updateDevMenuState } from 'src-electron/main/dev-menu';
 import {
@@ -61,7 +59,6 @@ import {
 } from 'src-electron/main/fs';
 import { convertHeic } from 'src-electron/main/heic';
 import { openFolder } from 'src-electron/main/open-folder';
-import { getOsSupportWarning } from 'src-electron/main/os-support';
 import { exportHtmlToPdf } from 'src-electron/main/pdf';
 import { getAllScreens } from 'src-electron/main/screen';
 import {
@@ -139,7 +136,6 @@ import {
 } from 'src-electron/main/zoom-helper-manager';
 import { isZoomCommand } from 'src-electron/main/zoom-helper-process';
 import { handleZoomTestParticipants } from 'src-electron/main/zoom-test-participants';
-import { join } from 'upath';
 
 const { openExternal } = shell;
 
@@ -467,36 +463,6 @@ function handleIpcInvoke<T = unknown>(
   });
 }
 
-async function isOS64Bit() {
-  try {
-    if (platform() === 'win32' && process.env.SystemRoot) {
-      // Check for the existence of the SysWOW64 directory
-      // PROGRAMFILES environment variable points to "C:\Program Files (x86)" for 32-bit apps on 64-bit systems
-      // process.env.SystemRoot points to the Windows directory (e.g., C:\Windows)
-      const sysWOW64Path = join(process.env.SystemRoot, 'SysWOW64');
-      return await pathExists(sysWOW64Path);
-    } else {
-      // For macOS and Linux, the os.arch() is usually reliable for the OS's capability
-      // (e.g., 'x64' or 'arm64')
-      return arch()?.includes('64') ?? false;
-    }
-  } catch (e) {
-    captureElectronError(e, {
-      contexts: {
-        fn: {
-          args: {
-            arch: arch(),
-            platform: platform(),
-            SystemRoot: process?.env?.SystemRoot,
-          },
-          name: 'isOS64Bit',
-        },
-      },
-    });
-    return false;
-  }
-}
-
 handleIpcInvoke('getAppDataPath', async () => getAppDataPath());
 handleIpcInvoke('getBetaUpdatesPath', async () => getBetaUpdatesPath());
 handleIpcInvoke('getLowDiskSpaceStatus', async () => getLowDiskSpaceStatus());
@@ -510,17 +476,10 @@ handleIpcInvoke('startZoomHelper', async () => startZoomHelper());
 handleIpcSend('stopZoomHelper', () => stopZoomHelper());
 handleIpcInvoke('restartZoomHelper', async () => restartZoomHelper());
 
-handleIpcInvoke(
-  'isArchitectureMismatch',
-  async () => process.arch === 'ia32' && (await isOS64Bit()),
-);
-
 handleIpcInvoke('isOnline', async () => {
   const { default: isOnline } = await import('is-online');
   return isOnline();
 });
-
-handleIpcInvoke('getOsSupportWarning', () => getOsSupportWarning());
 
 handleIpcInvoke('getScreenAccessStatus', (): MediaAccessStatus =>
   PLATFORM === 'linux'

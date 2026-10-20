@@ -1519,9 +1519,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^43.0.0":
-  version: 43.0.0
-  resolution: "electron@npm:43.0.0"
+"electron@npm:^44.9.0":
+  version: 44.9.0
+  resolution: "electron@npm:44.9.0"
   dependencies:
     "@electron-internal/extract-zip": "npm:^1.0.1"
     "@electron/get": "npm:^5.0.0"
@@ -1529,7 +1529,7 @@ __metadata:
   bin:
     electron: cli.js
     install-electron: install.js
-  checksum: 10c0/9f0bfb4e55dd97102941d009ce44ea1c5aa82325e877733284d75be8880ead11305ff45198d059e5127b441c94391ed159136cee23f2474e2416e2bbab2e9940
+  checksum: 10c0/f8f226fcc4d72bfedf78bd5ac8989cd94ab9b276016c657bc06ddad8e3e35edb06f0797971313db3d9f0e8f5c766d772b2d974fe8b6247aba5842f5f59b5bdf4
   languageName: node
   linkType: hard
 
@@ -2430,7 +2430,7 @@ __metadata:
     check-disk-space: "npm:^3.4.0"
     chokidar: "npm:^5.0.0"
     countries-and-timezones: "npm:^3.9.0"
-    electron: "npm:^43.0.0"
+    electron: "npm:^44.9.0"
     electron-builder: "npm:^26.15.3"
     electron-updater: "npm:^6.8.9"
     fluent-ffmpeg: "npm:^2.1.3"
