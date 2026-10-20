@@ -24,8 +24,8 @@ Le code source de cette application est disponible afin de donner à tous la pos
 
 M³ prend en charge Windows, macOS et Linux :
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows** : Windows 10 et versions ultérieures (64 bits). La dernière version pour Windows 32 bits est la v26.10.1, disponible sur la [page de téléchargement](download).
+- **macOS** : macOS 13 (Ventura) et versions ultérieures (version universelle). La dernière version pour macOS 12 (Monterey) est la v26.10.1, disponible sur la [page de téléchargement](download).
 - **Linux** : La plupart des distributions Linux modernes (format AppImage)
 
 ### :globe_with_meridians: M³ fonctionne-t-il dans ma langue ? {#language-support}
@@ -56,7 +56,7 @@ M³ inclut un assistant de configuration qui vous guide à travers la configurat
 
 ## Gestion des médias {#faq-media-management}
 
-### :desktop_computer: Comment M³ télécharge-t-il les médias ? {#media-download}
+### :desktop_computer: Comment M³ télécharge-t-il les médias ?  {#media-download}
 
 M³ télécharge automatiquement les médias pour les réunions à venir en :
 
@@ -66,7 +66,7 @@ M³ télécharge automatiquement les médias pour les réunions à venir en :
 4. Organisant les médias par date et type de réunion
 5. Mettant en cache les fichiers pour une utilisation hors ligne
 
-### :calendar: Puis-je télécharger des médias pour des dates spécifiques ? {#specific-dates}
+### :calendar: Puis-je télécharger des médias pour des dates spécifiques ?  {#specific-dates}
 
 Oui ! M³ vous permet de :
 
@@ -84,7 +84,7 @@ Vous pouvez importer des médias personnalisés de plusieurs façons :
 - **Fichiers multimédias pour les discours publics** : Importez des fichiers JWPUB au format S-34 ou S-34mp pour les discours publics
 - **Outils pour la Bible et l'édition d'étude de la Bible** : Ajoutez des enregistrements audio de la Bible, des ressources multimédias depuis l'édition d'étude de la Bible ou des ressources multimédias de la Bible en langue des signes
 
-### :speaker: Puis-je importer des enregistrements audio de la Bible ? {#audio-bible}
+### :speaker: Puis-je importer des enregistrements audio de la Bible ?  {#audio-bible}
 
 Oui ! M³ inclut une fonctionnalité Bible audio qui vous permet de :
 
@@ -95,7 +95,7 @@ Oui ! M³ inclut une fonctionnalité Bible audio qui vous permet de :
 
 ## Fonctionnalités de présentation des médias {#faq-presentation-features}
 
-### :tv: Comment présenter des médias pendant les réunions ? {#present-media}
+### :tv: Comment présenter des médias pendant les réunions ?  {#present-media}
 
 Pour présenter des médias :
 
@@ -105,7 +105,7 @@ Pour présenter des médias :
 4. Utilisez les fonctionnalités de zoom et de panoramique pour les images
 5. Définissez des temps de début et de fin personnalisés si nécessaire
 
-### :keyboard: Quels raccourcis clavier sont disponibles ? {#faq-keyboard-shortcuts}
+### :keyboard: Quels raccourcis clavier sont disponibles ?  {#faq-keyboard-shortcuts}
 
 M³ prend en charge les raccourcis clavier personnalisables pour :
 
@@ -116,7 +116,7 @@ M³ prend en charge les raccourcis clavier personnalisables pour :
 
 <!-- - Fullscreen mode -->
 
-### :notes: Comment la musique de fond fonctionne-t-elle ? {#faq-background-music}
+### :notes: Comment la musique de fond fonctionne-t-elle ?  {#faq-background-music}
 
 Les fonctionnalités de musique de fond incluent :
 
@@ -126,13 +126,13 @@ Les fonctionnalités de musique de fond incluent :
 - Contrôle de volume indépendant
 - Délai d'arrêt configurable avant la réunion
 
-### :stopwatch: M³ dispose-t-il d'un minuteur de réunion ? {#faq-meeting-timer}
+### :stopwatch: M³ dispose-t-il d'un minuteur de réunion ?  {#faq-meeting-timer}
 
 Oui. Lorsqu'il est activé, M³ peut afficher une fenêtre du minuteur distincte pour chronométrer les participants. Le minuteur peut compter de manière ascendante ou descendante, afficher l'heure actuelle, indiquer le temps restant avant le début de la réunion et, en option, signaler les dépassements de temps ou indiquer si la réunion est en avance ou en retard sur l'horaire prévu. Les durées des parties peuvent être ajustées librement, des parties personnalisées peuvent être ajoutées pour les programmes spéciaux et le minuteur peut être commandé depuis l'îlot d'actions (y compris au survol de son bouton) ou depuis un panneau ancré dans la fenêtre principale.
 
 Le minuteur est une fonctionnalité en version bêta et ne doit être activé qu'après avoir été approuvé localement.
 
-### :video_camera: Comment configurer l'intégration Zoom ? {#zoom-setup}
+### :video_camera: Comment configurer l'intégration Zoom ?  {#zoom-setup}
 
 Pour intégrer M³ à Zoom :
 
@@ -142,7 +142,7 @@ Pour intégrer M³ à Zoom :
 
 ## Intégration OBS Studio {#faq-obs-integration}
 
-### :video_camera: Comment configurer l'intégration OBS Studio ? {#faq-obs-setup}
+### :video_camera: Comment configurer l'intégration OBS Studio ?  {#faq-obs-setup}
 
 Pour intégrer M³ à OBS Studio :
 
@@ -152,7 +152,7 @@ Pour intégrer M³ à OBS Studio :
 4. Configurez les scènes pour la caméra, les médias et les images
 5. Testez la lecture
 
-### :arrows_counterclockwise: Comment fonctionne le basculement automatique des scènes ? {#faq-scene-switching}
+### :arrows_counterclockwise: Comment fonctionne le basculement automatique des scènes ?  {#faq-scene-switching}
 
 M³ bascule automatiquement les scènes OBS Studio en fonction de :
 
@@ -161,7 +161,7 @@ M³ bascule automatiquement les scènes OBS Studio en fonction de :
 - Paramètres comme « Ne pas partager automatiquement les images »
 - Le choix de revenir ou non à la scène précédente après le média
 
-### :pause_button: À quoi sert le paramètre « Ne pas partager automatiquement les images » ? {#faq-postpone-images}
+### :pause_button: À quoi sert le paramètre « Ne pas partager automatiquement les images » ?  {#faq-postpone-images}
 
 Ce paramètre retarde le partage des images vers OBS Studio jusqu'à ce que vous les déclenchiez manuellement. C'est utile pour :
 
@@ -169,7 +169,7 @@ Ce paramètre retarde le partage des images vers OBS Studio jusqu'à ce que vous
 - Avoir plus de contrôle sur le minutage
 - Éviter les changements de scène précoces
 
-### :record_button: M³ peut-il enregistrer les réunions ? {#faq-recordings}
+### :record_button: M³ peut-il enregistrer les réunions ?  {#faq-recordings}
 
 M³ n'inclut pas de fonctionnalité d'enregistrement intégrée, mais il peut aider à contrôler l'enregistrement de deux façons :
 
@@ -178,7 +178,7 @@ M³ n'inclut pas de fonctionnalité d'enregistrement intégrée, mais il peut ai
 
 ## Fonctionnalités avancées {#faq-advanced-features}
 
-### :cloud: Comment fonctionne le dossier partagé ? {#faq-folder-monitoring}
+### :cloud: Comment fonctionne le dossier partagé ?  {#faq-folder-monitoring}
 
 Si vous conservez les fichiers pour les réunions dans une application de stockage cloud comme Dropbox, OneDrive, iCloud Drive ou Google Drive, M³ peut les ajouter automatiquement à la bonne réunion :
 
@@ -198,7 +198,7 @@ L'exportation automatique des médias :
 3. Convertit les fichiers en format MP4 (optionnel)
 4. Maintient une sauvegarde organisée des fichiers multimédias de la réunion
 
-### :family: Puis-je gérer plusieurs assemblées ? {#faq-multiple-congregations}
+### :family: Puis-je gérer plusieurs assemblées ?  {#faq-multiple-congregations}
 
 Oui ! M³ prend en charge plusieurs profils pour :
 
@@ -211,7 +211,7 @@ Les profils peuvent également être exportés vers un fichier JSON et importés
 
 ## Résolution des problèmes {#faq-troubleshooting}
 
-### :warning: Les médias ne se téléchargent pas. Que dois-je vérifier ? {#faq-media-not-downloading}
+### :warning: Les médias ne se téléchargent pas. Que dois-je vérifier ?  {#faq-media-not-downloading}
 
 Vérifiez ces problèmes courants :
 
@@ -222,7 +222,7 @@ Vérifiez ces problèmes courants :
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: L'intégration OBS Studio n'est pas fonctionnelle. Que dois-je vérifier ? {#faq-obs-not-working}
+### :video_camera: L'intégration OBS Studio n'est pas fonctionnelle. Que dois-je vérifier ?  {#faq-obs-not-working}
 
 Vérifiez ces problèmes liés à OBS Studio :
 
@@ -231,7 +231,7 @@ Vérifiez ces problèmes liés à OBS Studio :
 3. **Port et mot de passe** : Vérifiez les paramètres de votre port et de votre mot de passe OBS Studio
 4. **Pare-feu** : Assurez-vous que le pare-feu n'empêche pas la connexion
 
-### :speaker: M³ envoie-t-il automatiquement l'audio des médias à Zoom lors de l'utilisation d'OBS Studio ? {#audio-to-zoom}
+### :speaker: M³ envoie-t-il automatiquement l'audio des médias à Zoom lors de l'utilisation d'OBS Studio ?  {#audio-to-zoom}
 
 **Non.** M³ ne transmet pas automatiquement l'audio des médias à Zoom ou OBS Studio. Le flux vidéo fonctionne comme une caméra virtuelle sans son, tout comme une webcam. Pour avoir le son de la musique/vidéo disponible automatiquement dans Zoom, vous devez vous assurer que Zoom « entend » le flux audio provenant de l'ordinateur, puis vous devez activer le paramètre **Son d'origine** dans Zoom.
 
@@ -246,7 +246,7 @@ Vérifiez ces problèmes liés à OBS Studio :
 **Pourquoi est-ce nécessaire ?**
 M³ lit des médias avec du son sur votre ordinateur, mais ce son n'est pas automatiquement transmis via le flux vidéo vers Zoom lors de l'utilisation d'OBS Studio. Le paramètre Son d'origine permet à Zoom de capturer le son diffusé sur votre ordinateur lors du partage d'écran, si votre ordinateur est correctement configuré (par exemple : l'ordinateur a une deuxième carte son qui est utilisée pour la lecture des médias et que Zoom écoute comme un microphone.)
 
-### :snail: M³ fonctionne lentement. Comment puis-je améliorer les performances ? {#performance-issues}
+### :snail: M³ fonctionne lentement. Comment puis-je améliorer les performances ?  {#performance-issues}
 
 Essayez ces optimisations de performances :
 
@@ -266,7 +266,7 @@ Vérifiez ces paramètres de langue :
 
 ## Support et communauté {#support-community}
 
-### :radioactive: Comment signaler un problème ? {#how-do-i-report-an-issue}
+### :radioactive: Comment signaler un problème ?  {#how-do-i-report-an-issue}
 
 Veuillez [signaler le problème sur GitHub](https://github.com/sircharlo/meeting-media-manager/issues). Incluez :
 
@@ -275,7 +275,7 @@ Veuillez [signaler le problème sur GitHub](https://github.com/sircharlo/meeting
 - Votre système d'exploitation et la version de M³
 - Les messages d'erreur, les journaux et les captures d'écran
 
-### :new: Comment puis-je demander une nouvelle fonctionnalité ou une amélioration ? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: Comment puis-je demander une nouvelle fonctionnalité ou une amélioration ?  {#how-can-i-request-a-new-feature-or-enhancement}
 
 Veuillez [ouvrir une discussion](https://github.com/sircharlo/meeting-media-manager/discussions) sur GitHub. Décrivez :
 
@@ -283,11 +283,11 @@ Veuillez [ouvrir une discussion](https://github.com/sircharlo/meeting-media-mana
 - Comment elle bénéficierait aux utilisateurs
 - Toute exigence ou préférence spécifique
 
-### :handshake: Comment puis-je contribuer au code ? {#how-can-i-contribute-some-code}
+### :handshake: Comment puis-je contribuer au code ?  {#how-can-i-contribute-some-code}
 
 Veuillez [consulter le guide de contribution](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) sur GitHub. Nous accueillons les contributions de code et les Pull Requests !
 
-### :globe_with_meridians: Comment puis-je aider à la traduction ? {#translations}
+### :globe_with_meridians: Comment puis-je aider à la traduction ?  {#translations}
 
 M³ utilise Crowdin pour la gestion des traductions. Vous pouvez contribuer aux traductions en :
 
@@ -296,7 +296,7 @@ M³ utilise Crowdin pour la gestion des traductions. Vous pouvez contribuer aux 
 3. Traduisant les phrases non traduites
 4. Examinant les traductions existantes
 
-### :x: Puis-je faire un don pour soutenir le projet ? {#can-i-make-a-donation-to-the-project}
+### :x: Puis-je faire un don pour soutenir le projet ?  {#can-i-make-a-donation-to-the-project}
 
 Merci de votre intérêt à soutenir le projet ! Cependant, dans l'esprit de Matthieu 10:8, les dons ne sont **pas** acceptés et ne le seront jamais. Cette appli a été faite avec amour et un peu de temps libre. Nous espérons que vous l'apprécierez ! :tada:
 
@@ -312,8 +312,8 @@ Merci de votre intérêt à soutenir le projet ! Cependant, dans l'esprit de Mat
 
 M³ est conçu pour fonctionner sur une large gamme de systèmes d'exploitation :
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows** : Windows 10 et versions ultérieures (64 bits). La dernière version pour Windows 32 bits est la v26.10.1, disponible sur la [page de téléchargement](download).
+- **macOS** : macOS 13 (Ventura) et versions ultérieures (version universelle). La dernière version pour macOS 12 (Monterey) est la v26.10.1, disponible sur la [page de téléchargement](download).
 - **Linux** : La plupart des distributions Linux modernes (format AppImage)
 
 M³ a les exigences matérielles suivantes :
