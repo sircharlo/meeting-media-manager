@@ -16,22 +16,22 @@ import fr from './fr.json' with { type: 'json' };
 // 99.0% translated as of 2026-10-20
 import it from './it.json' with { type: 'json' };
 
+// 98.6% translated as of 2026-10-20
+import sl from './sl.json' with { type: 'json' };
+
 // 98.5% translated as of 2026-10-20
 import es from './es.json' with { type: 'json' };
 
-// 98.5% translated as of 2026-10-20
-import sl from './sl.json' with { type: 'json' };
-
-// 89.6% translated as of 2026-10-20
+// 89.8% translated as of 2026-10-20
 import ty from './ty.json' with { type: 'json' };
+
+// 74.4% translated as of 2026-10-20
+import cmnHans from './cmn-hans.json' with { type: 'json' };
 
 // 74.3% translated as of 2026-10-20
 import ko from './ko.json' with { type: 'json' };
 
-// 74.2% translated as of 2026-10-20
-import cmnHans from './cmn-hans.json' with { type: 'json' };
-
-// 70.9% translated as of 2026-10-20
+// 71.4% translated as of 2026-10-20
 import et from './et.json' with { type: 'json' };
 
 // 55.9% translated as of 2026-10-20
