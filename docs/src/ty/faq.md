@@ -30,7 +30,7 @@ Te tauturu nei M³ i te Windows, macOS, e te Linux:
 
 ### :globe_with_meridians: Te ’ohipa nei ānei o M³ nō tō’u iho reo? {#language-support}
 
-’Ēiaha! E pū’oira’a parau nō te rave rau reo tō roto i te M³:
+**’Ē!** E pū’oira’a parau nō te rave rau reo tō roto i te M³:
 
 - Te mau ha’apararura’a: E tātari i te mau ha’apararura’a nā roto i te hō’ē o te mau rau hānere reo e vai nei i ni’a i te tahua natirara mana a te Ite nō Iehova
 - Huru fā’ari’ira’a o te fa’anahora’a: E fa’a’ohipa i te huru fā’ari’ira’a o M³ nā roto i te mau reo ta’a ’ē e rave rahi
@@ -126,7 +126,7 @@ Teie te mau rāve’a nō te hīmene aratō:
 - Te fa’atere-ano’i-’ō’oā o te pūai reo
 - Te taime fa’ata’ara’a-tāpū-muri e nehenehe e fa’ahuru ’ē
 
-### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³? {#faq-meeting-timer}
+### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³?  {#faq-meeting-timer}
 
 E. Ia ha’amā-hia, e nehenehe te M³ e fa’a’ite i te ho’ē ha’amaramarama taime taa ’ē nō te faito i te taime o te feiā e paraparau ra. E nehenehe te reira e taio i ni’a aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te taime fa’ataime nō te putuputura’a, e mai te peu e hina’aro ’oe, e fa’a’ite i te taime hau aore rā mai te peu e te mua ra te putuputura’a aore rā te muri ra i ni’a i te porotarama. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
@@ -169,7 +169,7 @@ This setting delays sharing images to OBS until you manually trigger them. E mea
 - Te fā’fa’ahiahia o te rāve’a nō te fa’atere pāpū i te taime
 - Te ’ape’ara’a i te tauira’a tiri vitiviti roa
 
-### :record_button: E nehenehe anei te M³ e haruharu i te putuputura’a? {#faq-recordings}
+### :record_button: E nehenehe anei te M³ e haruharu i te putuputura’a?  {#faq-recordings}
 
 Aita te M³ e fa’a’ohipa ra i te ho’ē matini haruharu-reo o roto, tera rā, e nehenehe te reira e tauturu i te fa’atere-ra’a i te haruharu-reo nā roto e piti huru:
 
