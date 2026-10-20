@@ -24,8 +24,8 @@ Der Quellcode dieser Anwendung ist für jedermann einsehbar, um zu überprüfen,
 
 M³ unterstützt Windows, macOS und Linux:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**: Windows 10 und neuer (64-Bit). Die letzte Version für 32-Bit-Windows ist v26.10.1 und auf der [Download-Seite](download) erhältlich.
+- **macOS**: macOS 13 (Ventura) und neuer (Universal-Build). Die letzte Version für macOS 12 (Monterey) ist v26.10.1 und auf der [Download-Seite](download) erhältlich.
 - **Linux**: Die meisten modernen Linux-Distrubutionen (AppImage-Format)
 
 ### :globe_with_meridians: Funktioniert M³ in meiner Sprache? {#language-support}
@@ -81,8 +81,8 @@ Sie können benutzerdefinierte Medien auf verschiedene Arten importieren:
 - **Drag & Drop**: Ziehen Sie Dateien direkt in M³
 - **Ordnerüberwachung**: Richten Sie einen überwachten Ordner für automatische Importe ein
 - **JWPUB-Dateien und Wiedergabelisten**: Importieren Sie Publikationen und Wiedergabelisten
-- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
-- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
+- **Medien für öffentliche Vorträge**: Importieren Sie die JWPUB-Datei S-34 oder S-34mp, um Medien für öffentliche Vorträge zu erhalten
+- **Bibel- und Studienbibel-Werkzeuge**: Fügen Sie Audioaufnahmen der Bibel, Medien aus der Studienbibel oder Medien aus der Bibel in Gebärdensprache hinzu
 
 ### :speaker: Kann ich Audio-Bibelaufnahmen importieren? {#audio-bible}
 
@@ -126,11 +126,11 @@ Die Hintergrundmusikfunktionen umfassen:
 - Unabhängige Lautstärkeregelung
 - Konfigurierbare Stopp-Pufferzeit
 
-### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+### :stopwatch: Enthält M³ einen Zusammenkunfts-Timer? {#faq-meeting-timer}
 
-Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
+Ja. Wenn aktiviert, kann M³ ein separates Timer-Fenster für die Zeitmessung der Mitwirkenden anzeigen. Der Timer kann hoch- oder herunterzählen, die aktuelle Uhrzeit anzeigen, vor der Zusammenkunft einen Countdown einblenden und optional Überziehungen anzeigen oder ob die Zusammenkunft dem Zeitplan voraus ist oder hinterherhinkt. Die Dauer der Programmpunkte lässt sich frei anpassen, für besondere Programme können eigene Programmpunkte hinzugefügt werden, und der Timer lässt sich über die Aktionsinsel (auch beim Überfahren mit der Maus) oder über ein im Hauptfenster angedocktes Panel steuern.
 
-The timer is a beta feature and should only be enabled if approved locally.
+Der Timer ist eine Beta-Funktion und sollte nur aktiviert werden, wenn dies vor Ort genehmigt wurde.
 
 ### :video_camera: Wie richte ich die Zoom-Integration ein? {#zoom-setup}
 
@@ -158,36 +158,36 @@ M³ wechselt automatisch OBS-Szenen basierend auf:
 
 - Medientyp (Video, Bild usw.)
 - Ihrer Szenenkonfiguration
-- Settings like "Do not automatically share images"
+- Einstellungen wie "Bilder nicht automatisch teilen"
 - Ob nach dem Medium zur vorherigen Szene zurückgekehrt werden soll
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: Was bewirkt die Einstellung "Bilder nicht automatisch teilen"? {#faq-postpone-images}
 
-This setting delays sharing images to OBS until you manually trigger them. Dies ist nützlich für:
+Mit dieser Einstellung werden Bilder erst dann über OBS geteilt, wenn Sie es manuell auslösen. Dies ist nützlich für:
 
 - Das Zeigen von Bildern zuerst für das anwesende Publikum
 - Mehr Kontrolle über das Timing
 - Vermeidung vorzeitiger Szenenwechsel
 
-### :record_button: Can M³ record meetings? {#faq-recordings}
+### :record_button: Kann M³ Zusammenkünfte aufzeichnen? {#faq-recordings}
 
-M³ does not include a built-in recorder, but it can help control recording in two ways:
+M³ verfügt über keine integrierte Aufnahmefunktion, kann aber auf zwei Arten beim Steuern der Aufnahme helfen:
 
-- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
-- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+- Wenn Sie OBS Studio verwenden, aktivieren Sie die OBS-Aufnahmesteuerung und starten oder stoppen Sie die OBS-Aufnahme im OBS-Popup
+- Wenn Sie eine andere Aufnahme-App verwenden, richten Sie Tastenkürzel ein, damit M³ die Befehle zum Starten und Stoppen über das Popup "Aufzeichnungen der Zusammenkunft" senden kann
 
 ## Erweiterte Funktionen {#faq-advanced-features}
 
-### :cloud: How does the shared folder work? {#faq-folder-monitoring}
+### :cloud: Wie funktioniert der geteilte Ordner? {#faq-folder-monitoring}
 
-If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
+Wenn Sie Dateien für die Zusammenkünfte in einer Cloudspeicher-App wie Dropbox, OneDrive, iCloud Drive oder Google Drive aufbewahren, kann M³ sie automatisch der richtigen Zusammenkunft hinzufügen:
 
-1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
-2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
-3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
-4. To add files for another day, create a folder for it, named the same way.
+1. Wählen Sie im Einrichtungsassistenten oder unter **Einstellungen** > **Integrationen** > **Geteilter Ordner** einen Ordner in Ihrer Cloudspeicher-App aus. Am besten eignet sich ein neuer Ordner, der nur dafür verwendet wird.
+2. M³ erstellt darin für jede bevorstehende Zusammenkunft einen Ordner, der nach dem Datum der Zusammenkunft im Format Jahr-Monat-Tag benannt ist (zum Beispiel `2026-03-25`).
+3. Legen Sie bei Bedarf jederzeit Fotos, Videos, Audiodateien oder JW Library-Wiedergabelisten in den Ordner einer Zusammenkunft. Sie werden der Medienliste dieser Zusammenkunft hinzugefügt – auf jedem Computer, der denselben Ordner verwendet.
+4. Um Dateien für einen anderen Tag hinzuzufügen, erstellen Sie dafür einen Ordner, der auf die gleiche Weise benannt ist.
 
-When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
+Wenn eine Woche vorbei ist, löscht M³ die datierten Ordner dieser Woche samt den darin enthaltenen Dateien – für alle, die den geteilten Ordner verwenden. Um sie zu behalten, deaktivieren Sie **Ordner von vergangenen Zusammenkünften löschen**.
 
 ### :file_folder: Was ist der automatische Medienexport? {#faq-media-export}
 
@@ -207,7 +207,7 @@ Ja! M³ unterstützt mehrere Profile für:
 - Verschiedene Gruppen
 - Separate Einstellungen und Medien für jede
 
-Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
+Profile können auch in eine JSON-Datei exportiert und auf einem anderen Computer oder in ein anderes Profil importiert werden. Das Importieren ersetzt die Einstellungen des aktuellen Profils.
 
 ## Fehlerbehebung {#faq-troubleshooting}
 
@@ -250,7 +250,7 @@ M³ spielt Medien mit Ton auf Ihrem Computer ab, aber dieser Ton wird nicht auto
 
 Versuchen Sie diese Leistungsoptimierungen:
 
-1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
+1. **Videos des Liederbuches zwischenspeichern**: Speichern Sie über die Einstellungen alle Liederbuch-Videos vorab zwischen
 2. **Andere Apps schließen**: Schließen Sie unnötige Anwendungen
 3. **Speicherplatz prüfen**: Stellen Sie sicher, dass Sie genügend freien Speicherplatz haben
 4. **Auflösung reduzieren**: Verringern Sie die Einstellung für die maximale Auflösung
@@ -312,8 +312,8 @@ Vielen Dank für Ihr Interesse, das Projekt zu unterstützen! Im Geiste von Matt
 
 M³ ist so konzipiert, dass es auf einer Vielzahl von Betriebssystemen funktioniert:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**: Windows 10 und neuer (64-Bit). Die letzte Version für 32-Bit-Windows ist v26.10.1 und auf der [Download-Seite](download) erhältlich.
+- **macOS**: macOS 13 (Ventura) und neuer (Universal-Build). Die letzte Version für macOS 12 (Monterey) ist v26.10.1 und auf der [Download-Seite](download) erhältlich.
 - **Linux**: Die meisten modernen Linux-Distrubutionen (AppImage-Format)
 
 M³ hat die folgenden Hardwareanforderungen:
