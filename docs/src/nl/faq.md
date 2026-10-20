@@ -1,6 +1,6 @@
 # Veelgestelde vragen {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## Algemene vragen {#general-questions}
 
 ### :earth_americas: Maakt deze applicatie gebruik van externe websites, bronnen of diensten om de publicaties en vergadering media te downloaden? {#external-dependencies}
 
@@ -20,337 +20,337 @@ De broncode voor deze app is voor iedereen beschikbaar om te onderzoeken en cont
 >
 > voor distributiedoeleinden software-applicaties, tools of technieken te ontwikkelen die specifiek worden gemaakt om gegevens, HTML, afbeeldingen of tekst van deze site te verzamelen, te kopiëren, te downloaden of te extraheren. (het is **wel** toegestaan om gratis, niet-commerciële sofware-applicaties te distribueren die ontwikkeld zijn om elektronische bestanden zoals EPUB, PDF, MP3 en MP4 te downloaden van openbare delen van deze site.)
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: Welke besturingssystemen ondersteunt M³? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+M³ ondersteunt Windows, macOS en Linux:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 en hoger (64-bits). De laatste versie voor 32-bits Windows is v26.10.1, te vinden op de [downloadpagina](download).
+- **macOS**: macOS 13 (Ventura) en hoger (Universal-versie). De laatste versie voor macOS 12 (Monterey) is v26.10.1, te vinden op de [downloadpagina](download).
+- **Linux**: De meeste moderne Linux-distributies (AppImage-formaat)
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians: Werkt M³ in mijn taal? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Ja!** M³ biedt uitgebreide meertalige ondersteuning:
 
-- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **App Interface**: Use M³'s interface in many different languages
-- **Independent Settings**: You can use the interface in one language while downloading media in another
-- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
-- **Subtitle support**: Download and display subtitles in various languages
+- **Media**: Download media in een van de honderden talen die beschikbaar zijn op de officiële website van Jehovah's Getuigen
+- **App-interface**: Gebruik de interface van M³ in veel verschillende talen
+- **Onafhankelijke instellingen**: Je kunt de interface in de ene taal gebruiken terwijl je media in een andere taal downloadt
+- **Reservetalen**: Configureer reservetalen voor gevallen waarin media niet beschikbaar is in de hoofdtaal
+- **Ondertiteling**: Download en toon ondertiteling in verschillende talen
 
-## Installation and Setup {#installation-setup}
+## Installatie en instellen {#installation-setup}
 
-### :computer: How do I download and install M³? {#installation}
+### :computer: Hoe kan ik M³ downloaden en installeren? {#installation}
 
-Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
+Download de juiste versie van de [downloadpagina](download) en volg de stappen in de [gebruikershandleiding](user-guide).
 
-### :gear: How do I set up M³ for the first time? {#first-time-setup}
+### :gear: Hoe stel ik M³ de eerste keer in? {#first-time-setup}
 
-M³ includes a setup wizard that guides you through the essential configuration:
+M³ bevat een installatiewizard die je door de essentiële configuratie loodst:
 
-1. Choose your interface language
-2. Select profile type (Regular or Other)
-3. Configure congregation information
-4. Set up meeting schedule
-5. Configure optional features like OBS integration
+1. Kies de taal van de interface
+2. Selecteer het profieltype (Regulier of Overig)
+3. Configureer de gemeentegegevens
+4. Stel het vergaderschema in
+5. Configureer optionele functies zoals OBS-integratie
 
-## Media Management {#faq-media-management}
+## Mediabeheer {#faq-media-management}
 
-### :desktop_computer: How does M³ download media? {#media-download}
+### :desktop_computer: Hoe downloadt M³ media? {#media-download}
 
-M³ automatically downloads media for upcoming meetings by:
+M³ downloadt automatisch media voor aankomende vergaderingen door:
 
-1. Checking your meeting schedule
-2. Determining what media is needed
-3. Downloading from the official website of Jehovah's Witnesses in your selected language
-4. Organizing media by date and meeting type
-5. Caching files for offline use
+1. Je vergaderschema te controleren
+2. Te bepalen welke media nodig is
+3. Te downloaden van de officiële website van Jehovah's Getuigen in de door jou geselecteerde taal
+4. Media te organiseren op datum en vergadertype
+5. Bestanden te cachen voor offline gebruik
 
-### :calendar: Can I download media for specific dates? {#specific-dates}
+### :calendar: Kan ik media downloaden voor specifieke datums? {#specific-dates}
 
-Yes! M³ allows you to:
+Ja! Met M³ kun je:
 
-- Download media for upcoming meetings automatically
-- Import custom media for any date
+- Automatisch media downloaden voor aankomende vergaderingen
+- Eigen media importeren voor elke gewenste datum
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: Hoe importeer ik mijn eigen mediabestanden? {#import-media}
 
-You can import custom media in several ways:
+Je kunt op verschillende manieren eigen media importeren:
 
-- **File Import**: Use the import button to add videos, images, or audio files
-- **Drag and Drop**: Drag files directly into M³
-- **Folder Monitoring**: Set up a watched folder for automatic imports
-- **JWPUB Files and Playlists**: Import publications and playlists
-- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
-- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
+- **Bestandsimport**: Gebruik de importknop om video's, afbeeldingen of audiobestanden toe te voegen
+- **Slepen en neerzetten**: Sleep bestanden rechtstreeks in M³
+- **Mapbewaking**: Stel een bewaakte map in voor automatische import
+- **JWPUB-bestanden en afspeellijsten**: Importeer publicaties en afspeellijsten vanuit JW Library
+- **Media voor openbare lezingen**: Importeer S-34- of S-34mp-JWPUB-bestanden voor de media van openbare lezingen
+- **Hulpmiddelen voor de Bijbel en de Studiebijbel**: Voeg audio-opnamen van de Bijbel, media uit de Studiebijbel of media uit de Bijbel in gebarentaal toe
 
-### :speaker: Can I import audio Bible recordings? {#audio-bible}
+### :speaker: Kan ik audio-opnames van de Bijbel importeren? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+Ja! M³ bevat een Audiobijbel-functie waarmee je:
 
-1. Select Bible books and chapters
-2. Choose specific verses or verse ranges
-3. Download audio recordings
-4. Use them at the meetings
+1. Bijbelboeken en hoofdstukken kunt selecteren
+2. Specifieke verzen of versreeksen kunt kiezen
+3. Audio-opnames kunt downloaden
+4. Deze kunt gebruiken tijdens de vergaderingen
 
-## Presentation Features {#faq-presentation-features}
+## Presentatiefuncties {#faq-presentation-features}
 
-### :tv: How do I present media during meetings? {#present-media}
+### :tv: Hoe presenteer ik media tijdens vergaderingen? {#present-media}
 
-To present media:
+Om media te presenteren:
 
-1. Select the date
-2. Click the play button on the media item you want to present or use keyboard shortcuts
-3. Use the media player controls to pause, navigate, or stop playback
-4. Use zoom/pan features for images
-5. Set custom timing if needed
+1. Selecteer de datum
+2. Klik op de afspeelknop op het media-item dat je wilt presenteren of gebruik sneltoetsen
+3. Gebruik de knoppen van de mediaspeler om te pauzeren, te navigeren of de weergave te stoppen
+4. Gebruik de zoom- en pan-functies voor afbeeldingen
+5. Stel indien nodig een aangepaste timing in
 
-### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
+### :keyboard: Welke sneltoetsen zijn er beschikbaar? {#faq-keyboard-shortcuts}
 
-M³ supports customizable keyboard shortcuts for:
+M³ ondersteunt aanpasbare sneltoetsen voor:
 
-- Opening/closing media window
-- Previous/next media navigation
-- Play/pause/stop controls
-- Background music toggle
+- Het openen/sluiten van het mediavenster
+- Navigatie naar de vorige/volgende media
+- Knoppen voor afspelen/pauzeren/stoppen
+- In- of uitschakelen van achtergrondmuziek
 
 <!-- - Fullscreen mode -->
 
-### :notes: How does background music work? {#faq-background-music}
+### :notes: Hoe werkt achtergrondmuziek? {#faq-background-music}
 
-Background music features include:
+Functies voor achtergrondmuziek zijn onder andere:
 
-- Automatic playback when M³ starts, before the meeting begins
-- Automatic stop before meetings begin
-- One-click restart after meetings
-- Independent volume control
-- Configurable stop buffer time
+- Automatisch afspelen wanneer M³ start, voordat de vergadering begint
+- Automatisch stoppen voordat de vergadering begint
+- Herstarten met één klik na de vergadering
+- Onafhankelijke volumeregeling
+- Configureerbare buffer-tijd voor het stoppen
 
-### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+### :stopwatch: Heeft M³ een vergadertimer? {#faq-meeting-timer}
 
-Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
+Ja. Als deze functie is ingeschakeld, kan M³ een apart timervenster tonen om de tijd van sprekers bij te houden. Hij kan optellen of aftellen, de huidige tijd tonen, aftellen tot het begin van de vergadering en optioneel tijdsoverschrijding aangeven, of laten zien of de vergadering voor of achter loopt op het schema. De duur van de onderdelen kan vrij worden aangepast, er kunnen aangepaste onderdelen worden toegevoegd voor speciale programma's, en de timer kan worden bediend vanaf de actiebalk (ook door eroverheen te bewegen) of vanuit een paneel dat in het hoofdvenster is vastgezet.
 
-The timer is a beta feature and should only be enabled if approved locally.
+De timer is een bètafunctie en mag alleen worden ingeschakeld als dat plaatselijk is goedgekeurd.
 
-### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
+### :video_camera: Hoe stel ik de Zoom-integratie in? {#zoom-setup}
 
-To integrate with Zoom:
+Om te integreren met Zoom:
 
-1. Enable Zoom integration in M³ settings
-2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
-3. M³ will automatically start and stop Zoom screen sharing during media presentations
+1. Schakel Zoom-integratie in bij de instellingen van M³
+2. Configureer de sneltoets voor het delen van het scherm zoals deze in Zoom is ingesteld. Zorg ervoor dat deze sneltoets "globaal" is in de instellingen van Zoom.
+3. M³ zal automatisch de schermdeling van Zoom starten en stoppen tijdens mediapresentaties
 
-## OBS Studio Integration {#faq-obs-integration}
+## OBS Studio-integratie {#faq-obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
+### :video_camera: Hoe stel ik de OBS Studio-integratie in? {#faq-obs-setup}
 
-To integrate with OBS Studio:
+Om te integreren met OBS Studio:
 
-1. Install OBS Studio and the WebSocket plugin
-2. Enable OBS integration in M³ settings
-3. Enter the OBS port and password
-4. Configure scenes for camera, media, and images
-5. Test playback
+1. Installeer OBS Studio en de WebSocket-plug-in
+2. Schakel OBS-integratie in bij de instellingen van M³
+3. Voer de poort en het wachtwoord van OBS in
+4. Configureer de scènes voor de camera, media en afbeeldingen
+5. Test de weergave
 
-### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
+### :arrows_counterclockwise: Hoe werkt het automatisch schakelen tussen scènes? {#faq-scene-switching}
 
-M³ automatically switches OBS scenes based on:
+M³ schakelt automatisch tussen OBS-scènes op basis van:
 
-- Media type (video, image, etc.)
-- Your scene configuration
-- Settings like "Do not automatically share images"
-- Whether to return to previous scene after media
+- Mediatype (video, afbeelding, enz.)
+- Je scène-configuratie
+- Instellingen zoals "Deel afbeeldingen niet automatisch"
+- Of er na de media moet worden teruggekeerd naar de vorige scène
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: Wat doet de instelling "Deel afbeeldingen niet automatisch"? {#faq-postpone-images}
 
-This setting delays sharing images to OBS until you manually trigger them. This is useful for:
+Met deze instelling worden afbeeldingen pas met OBS gedeeld wanneer je dat zelf doet. Dit is handig voor:
 
-- Showing images to in-person audience first
-- Having more control over timing
-- Avoiding premature scene changes
+- Het eerst tonen van afbeeldingen aan het fysieke publiek
+- Meer controle hebben over de timing
+- Het vermijden van voortijdige scène-wisselingen
 
-### :record_button: Can M³ record meetings? {#faq-recordings}
+### :record_button: Kan M³ vergaderingen opnemen? {#faq-recordings}
 
-M³ does not include a built-in recorder, but it can help control recording in two ways:
+M³ heeft geen ingebouwde recorder, maar kan op twee manieren helpen om de opname te bedienen:
 
-- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
-- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+- Als je OBS Studio gebruikt, schakel dan de OBS-opnamebediening in en start of stop de OBS-opname vanuit het OBS-pop-upvenster
+- Als je een andere opname-app gebruikt, stel dan sneltoetsen in zodat M³ de start- en stopopdrachten kan versturen vanuit het pop-upvenster voor vergaderopnames
 
-## Advanced Features {#faq-advanced-features}
+## Geavanceerde functies {#faq-advanced-features}
 
-### :cloud: How does the shared folder work? {#faq-folder-monitoring}
+### :cloud: Hoe werkt de gedeelde map? {#faq-folder-monitoring}
 
-If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
+Als je bestanden voor vergaderingen bewaart in een cloudopslag-app zoals Dropbox, OneDrive, iCloud Drive of Google Drive, kan M³ ze automatisch aan de juiste vergadering toevoegen:
 
-1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
-2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
-3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
-4. To add files for another day, create a folder for it, named the same way.
+1. Kies een map in je cloudopslag-app, in de installatiewizard of via **Instellingen** > **Integraties** > **Gedeelde map**. Een nieuwe map die je alleen hiervoor gebruikt, werkt het best.
+2. M³ maakt daarin een map aan voor elke komende vergadering, met de datum van de vergadering als naam in de vorm jaar-maand-dag (bijvoorbeeld `2026-03-25`).
+3. Zet foto's, video's, audiobestanden of JW Library-afspeellijsten in de map van een vergadering wanneer je maar wilt. Ze worden toegevoegd aan de medialijst van die vergadering, op elke computer die dezelfde map gebruikt.
+4. Wil je bestanden voor een andere dag toevoegen, maak dan een map voor die dag aan met een naam in dezelfde vorm.
 
-When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
+Als een week voorbij is, verwijdert M³ de gedateerde mappen van die week en de bestanden erin, voor iedereen die de gedeelde map gebruikt. Wil je ze bewaren, schakel dan **Mappen van eerdere vergaderingen verwijderen** uit.
 
-### :file_folder: What is media auto-export? {#faq-media-export}
+### :file_folder: Wat is de automatische media-export? {#faq-media-export}
 
-Media auto-export automatically:
+De automatische media-export doet het volgende:
 
-1. Exports media files to a specified folder
-2. Organizes files by date and section
-3. Converts files to MP4 format (optional)
-4. Maintains an organized backup of meeting media files
+1. Exporteert mediabestanden naar een opgegeven map
+2. Organiseert bestanden op datum en sectie
+3. Converteert bestanden naar het MP4-formaat (optioneel)
+4. Houdt een georganiseerde back-up bij van mediabestanden voor vergaderingen
 
-### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
+### :family: Kan ik meerdere gemeenten beheren? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+Ja! M³ ondersteunt meerdere profielen voor:
 
-- Different congregations
-- Special events
-- Different groups
-- Separate settings and media for each
+- Verschillende gemeenten
+- Speciale evenementen
+- Verschillende groepen
+- Aparte instellingen en media voor elk profiel
 
-Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
+Profielen kunnen ook worden geëxporteerd naar een JSON-bestand en worden geïmporteerd op een andere computer of in een ander profiel. Importeren vervangt de instellingen van het huidige profiel.
 
-## Troubleshooting {#faq-troubleshooting}
+## Probleemoplossing {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
+### :warning: De media wordt niet gedownload. Wat moet ik controleren? {#faq-media-not-downloading}
 
-Check these common issues:
+Controleer de volgende veelvoorkomende problemen:
 
-1. **Meeting Schedule**: Verify your meeting days and times are correct
-2. **Language Settings**: Ensure your media language is set correctly
-3. **Internet Connection**: Check your internet connection
-4. **Language Availability**: Verify media is available in your selected language
+1. **Vergaderschema**: Controleer of de vergaderdagen en -tijden correct zijn ingesteld
+2. **Taalinstellingen**: Zorg ervoor dat de taal voor media correct is ingesteld
+3. **Internetverbinding**: Controleer je internetverbinding
+4. **Taalbeschikbaarheid**: Controleer of de media beschikbaar is in de door jou geselecteerde taal
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
+### :video_camera: De OBS-integratie werkt niet. Wat moet ik verifiëren? {#faq-obs-not-working}
 
-Check these OBS-related issues:
+Controleer de volgende OBS-gerelateerde zaken:
 
-1. **OBS Installation**: Ensure OBS Studio is installed and running
-2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
-3. **Port and Password**: Check your OBS port and password settings
-4. **Firewall**: Ensure the firewall isn't blocking the connection
+1. **OBS-installatie**: Zorg ervoor dat OBS Studio is geïnstalleerd en actief is
+2. **WebSocket-plug-in**: Controleer of de WebSocket-plug-in is geïnstalleerd
+3. **Poort en wachtwoord**: Controleer de instellingen voor de OBS-poort en het wachtwoord
+4. **Firewall**: Zorg ervoor dat de firewall de verbinding niet blokkeert
 
-### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
+### :speaker: Stuurt Meeting Media Manager automatisch de media-audio naar Zoom wanneer OBS Studio wordt gebruikt? {#audio-to-zoom}
 
-**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
+**Nee.** M³ stuurt niet automatisch media-audio naar Zoom of OBS Studio. De videostroom werkt als een virtuele camera zonder geluid, net als een webcam. Om het geluid van de muziek of video automatisch beschikbaar te hebben in Zoom, moet je ervoor zorgen dat Zoom de audiofeed van de computer 'hoort', en vervolgens moet je de instelling **Origineel geluid** inschakelen in Zoom.
 
-**Important Notes:**
+**Belangrijke opmerkingen:**
 
-- You must enable Original Audio **every time** before starting a Zoom meeting
-- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
-- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
-- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
-- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
+- Je moet Origineel geluid **elke keer** inschakelen voordat je een Zoom-vergadering start
+- Deze instelling heeft niets te maken met M³ — je zou hetzelfde audioprobleem hebben met elke andere mediaspeler als je de functies van Zoom voor het delen van scherm en audio niet gebruikt
+- De instelling Origineel geluid heeft drie subopties — meestal moeten de eerste twee ingeschakeld zijn en de derde uitgeschakeld voor de beste audiokwaliteit
+- Als je nog steeds audioproblemen ervaart, moet je mogelijk in plaats daarvan de optie "Computergeluid delen" van Zoom gebruiken
+- Je kunt ook overwegen de Zoom-integratie te gebruiken, aangezien deze gebruikmaakt van de systeemeigen schermdeling van Zoom.
 
-**Why is this necessary?**
-M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
+**Waarom is dit nodig?**
+M³ speelt media af met geluid op je computer, maar deze audio wordt niet automatisch via de videostroom naar Zoom verzonden wanneer je OBS Studio gebruikt. De instelling Origineel geluid stelt Zoom in staat om de audio die op je computer wordt afgespeeld vast te leggen tijdens het delen van het scherm, mits je computer goed is geconfigureerd (bijvoorbeeld: de computer heeft een tweede geluidskaart die wordt gebruikt voor het afspelen van media waar Zoom naar luistert als een microfoon).
 
-### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
+### :snail: M³ draait traag. Hoe kan ik de prestaties verbeteren? {#performance-issues}
 
-Try these performance optimizations:
+Probeer deze prestatie-optimalisaties:
 
-1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
-2. **Close Other Apps**: Close unnecessary applications
-3. **Check Disk Space**: Ensure you have sufficient free disk space
-4. **Reduce Resolution**: Lower the maximum resolution setting
+1. **Download alle koninkrijksliederen**: Sla via de instellingen alle liedvideo's vooraf op in de cache
+2. **Andere apps sluiten**: Sluit onnodige applicaties
+3. **Schijfruimte controleren**: Zorg ervoor dat je voldoende vrije schijfruimte hebt
+4. **Resolutie verlagen**: Verlaag de instelling voor de maximale resolutie
 
-### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
+### :speech_balloon: Ik heb taalproblemen. Wat moet ik controleren? {#faq-language-issues}
 
-Verify these language settings:
+Controleer deze taalinstellingen:
 
-1. **Interface Language**: Check your display language setting
-2. **Media Language**: Verify your media download language
-3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
-4. **Fallback Language**: Try setting a fallback language
+1. **Interfacetaal**: Controleer de taalinstelling voor de weergave
+2. **Mediataal**: Controleer de taal voor het downloaden van media
+3. **Taalbeschikbaarheid**: Zorg ervoor dat de mediataal beschikbaar is op de officiële website van Jehovah's Getuigen
+4. **Reservetaal**: Probeer een reservetaal in te stellen
 
-## Support and Community {#support-community}
+## Ondersteuning en community {#support-community}
 
-### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
+### :radioactive: Hoe meld ik een probleem? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
+Maak alsjeblieft [een issue aan](https://github.com/sircharlo/meeting-media-manager/issues) op de officiële GitHub-repository. Vermeld daarbij:
 
-- Detailed description of the problem
-- Steps to reproduce the issue
-- Your operating system and M³ version
-- Any error messages, logs and screenshots
+- Een gedetailleerde beschrijving van het probleem
+- Stappen om het probleem te reproduceren
+- Je besturingssysteem en de versie van M³
+- Eventuele foutmeldingen, logs en schermafbeeldingen
 
-### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: Hoe kan ik een nieuwe functie of verbetering aanvragen? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
+Start alsjeblieft [een discussie](https://github.com/sircharlo/meeting-media-manager/discussions) op de officiële GitHub-repository. Beschrijf:
 
-- The feature you'd like to see
-- How it would benefit users
-- Any specific requirements or preferences
+- De functie die je graag zou zien
+- Welk voordeel dit biedt voor gebruikers
+- Eventuele specifieke vereisten of voorkeuren
 
-### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
+### :handshake: Hoe kan ik bijdragen aan de code? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
+Raadpleeg alsjeblieft de [bijdragershandleiding](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) op de officiële GitHub-repository. Bijdragen aan de code en Pull Requests zijn van harte welkom!
 
-### :globe_with_meridians: How can I help with translations? {#translations}
+### :globe_with_meridians: Hoe kan ik helpen met vertalingen? {#translations}
 
-M³ uses Crowdin for translation management. You can contribute translations by:
+M³ gebruikt Crowdin voor vertaalbeheer. Je kunt bijdragen aan vertalingen door:
 
-1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
-2. Selecting your language
-3. Translating strings that need work
-4. Reviewing existing translations
+1. Het [Crowdin-project](https://crowdin.com/project/meeting-media-manager) te bezoeken
+2. Je taal te selecteren
+3. Teksten te vertalen die nog werk nodig hebben
+4. Bestaande vertalingen te controleren
 
-### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
+### :x: Kan ik een donatie doen aan het project? {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Bedankt voor je interesse om het project te ondersteunen! In de geest van Mattheüs 10:8 worden donaties echter **niet** aangenomen, en dat zal ook nooit gebeuren. Deze app is gemaakt met liefde en een beetje vrije tijd. Veel plezier ermee! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Mattheüs 10:8
 
-"You received free, give free."
+"Jullie hebben het gratis gekregen, geef het gratis."
 
 :::
 
-## Technical Questions {#technical-questions}
+## Technische vragen {#technical-questions}
 
-### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+### :computer: Wat zijn de hardware- en softwarevereisten voor M³? {#hardware-and-software-requirements}
 
-M³ is designed to work on a wide range of operating systems:
+M³ is ontworpen om te werken op een breed scala aan besturingssystemen:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 en hoger (64-bits). De laatste versie voor 32-bits Windows is v26.10.1, te vinden op de [downloadpagina](download).
+- **macOS**: macOS 13 (Ventura) en hoger (Universal-versie). De laatste versie voor macOS 12 (Monterey) is v26.10.1, te vinden op de [downloadpagina](download).
+- **Linux**: De meeste moderne Linux-distributies (AppImage-formaat)
 
-M³ has the following hardware requirements:
+M³ heeft de volgende hardwarevereisten:
 
-- **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
+- **Minimum**: 4 GB RAM, 6 GB vrije schijfruimte
+- **Aanbevolen**: 8 GB RAM, 15 GB vrije schijfruimte voor media-caching
+- **Netwerk**: Internetverbinding voor het downloaden van media
 
-Depending on the features you use, M³ also requires the following additional software:
+Afhankelijk van de functies die je gebruikt, vereist M³ ook de volgende aanvullende software:
 
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+- **Zoom**: Alleen vereist bij gebruik van Zoom-integratiefuncties
+- **OBS Studio**: Alleen vereist bij gebruik van OBS-integratiefuncties
 
-### :floppy_disk: How much disk space does M³ use? {#disk-space}
+### :floppy_disk: Hoeveel schijfruimte gebruikt M³? {#disk-space}
 
-Disk space usage depends on:
+Schijfruimtegebruik hangt af van:
 
-- **Media Resolution**: Higher resolutions use more space
-- **Cached Content**: Media files are cached locally
-- **Extra Cache**: Additional caching can increase usage
-- **Exported Media**: Auto-export features use additional space
+- **Mediaresolutie**: Hogere resoluties gebruiken meer ruimte
+- **Inhoud in de cache**: Mediabestanden worden lokaal in de cache opgeslagen
+- **Extra cache**: Extra caching kan het gebruik verhogen
+- **Geëxporteerde media**: Automatische export gebruikt extra ruimte
 
-Typical usage ranges from 2-10GB depending on settings and usage.
+Typisch gebruik varieert van 2-10GB afhankelijk van instellingen en gebruik.
 
-### :shield: Is M³ secure and private? {#security-privacy}
+### :shield: Is M³ veilig en privé? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+Ja! M³ is ontworpen met beveiliging en privacy in gedachten:
 
-- **Local Storage**: All meeting data is stored locally on your computer
-- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
-- **Open Source**: The code is open for review and verification
-- **Bug Reports**: Limited data may be collected for bug reporting purposes
+- **Lokale opslag**: Alle vergadergegevens worden lokaal op je computer opgeslagen
+- **Directe downloads**: Media wordt rechtstreeks gedownload van de officiële website van Jehovah's Getuigen
+- **Open Source**: De code is open voor inspectie en verificatie
+- **Bugreports**: Er kunnen beperkte gegevens worden verzameld voor het rapporteren van bugs
 
-### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
+### :arrows_clockwise: Hoe vaak controleert M³ op updates? {#update-frequency}
 
-M³ checks for updates:
+M³ controleert op updates:
 
-- **Application Updates**: Automatically checks for new versions every time the app is opened
-- **Media Updates**: Automatically checks for new meeting media every time the app is opened
-- **Language Updates**: Dynamic detection of new languages as needed
+- **Toepassingsupdates**: Controleert automatisch op nieuwe versies elke keer dat de app wordt geopend
+- **Media-updates**: Controleert automatisch op nieuwe vergadermedia elke keer dat de app wordt geopend
+- **Taalupdates**: Dynamische detectie van nieuwe talen indien nodig

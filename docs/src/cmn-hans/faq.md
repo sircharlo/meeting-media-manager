@@ -24,8 +24,8 @@
 
 M³ 支持 Windows、macOS 和 Linux：
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**：Windows 10 及更高版本（64 位）。适用于 32 位 Windows 的最后一个版本是 v26.10.1，可在[下载页面](download)获取。
+- **macOS**：macOS 13（Ventura）及更高版本（通用版）。适用于 macOS 12（Monterey）的最后一个版本是 v26.10.1，可在[下载页面](download)获取。
 - **Linux**：大多数现代 Linux 发行版（AppImage 格式）
 
 ### :globe_with_meridians: M³ 支持我的语言吗？ {#language-support}
@@ -128,7 +128,7 @@ M³ 支持自定义以下快捷键：
 
 ### :stopwatch: M³ 有聚会计时器吗？ {#faq-meeting-timer}
 
-是！**有。** 启用后，M³ 可以显示一个单独的计时器窗口，为聚会节目参与者计时。计时器可以正计时或倒计时，也可以显示当前时间、聚会开始前的倒计时，并根据设置显示超时情况，或显示聚会整体是提前还是超时。它可以向上或向下计算，显示当前时间，显示会前倒计时。 并可选择说明加班或会议是否提前或晚于时间表。 Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
+有。启用后，M³ 可以显示一个单独的计时器窗口，为聚会节目参与者计时。计时器可以正计时或倒计时，显示当前时间和聚会开始前的倒计时，还可以根据设置显示超时情况，或显示聚会整体是提前还是落后于时间表。节目时长可以自由调整，可以为特别节目添加自定义部分，还可以通过操作图标（包括鼠标悬停时）或停靠在主窗口中的面板来控制计时器。
 
 计时器目前属于测试功能，只有在得到当地批准后才应启用。
 
@@ -158,12 +158,12 @@ M³ 会根据以下因素自动切换 OBS Studio 场景：
 
 - 媒体类型，例如视频或图片
 - 已配置的场景
-- Settings like "Do not automatically share images"
+- “不要自动共享图片”等设置
 - 媒体播放结束后是否恢复之前使用的场景
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: “不要自动共享图片”设置有什么作用？ {#faq-postpone-images}
 
-This setting delays sharing images to OBS until you manually trigger them. 好处:
+此设置会延迟将图片共享到 OBS，直到您手动触发为止。好处:
 
 - 先向现场观众显示图片
 - 更灵活地控制演示时机
@@ -178,16 +178,16 @@ M³ 本身没有内置录制功能，但可以通过两种方式帮助控制录�
 
 ## 高级功能 {#faq-advanced-features}
 
-### :cloud: How does the shared folder work? {#faq-folder-monitoring}
+### :cloud: 共享文件夹如何工作？ {#faq-folder-monitoring}
 
-If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
+如果您将聚会用的文件保存在 Dropbox、OneDrive、iCloud Drive 或 Google Drive 等云存储应用中，M³ 可以自动将它们添加到对应的聚会：
 
-1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
-2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
-3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
-4. To add files for another day, create a folder for it, named the same way.
+1. 在云存储应用中选择一个文件夹，可以在设置向导中选择，也可以在 **设置** > **集成** > **共享文件夹** 中选择。最好使用一个专门用于此用途的新文件夹。
+2. M³ 会在其中为每个即将举行的聚会创建一个文件夹，并以聚会日期按“年-月-日”的格式命名（例如 `2026-03-25`）。
+3. 需要时，可以随时将照片、视频、音频文件或 JW Library 播放列表放入聚会的文件夹。这些文件会被添加到该聚会的媒体列表中，所有使用同一文件夹的电脑都是如此。
+4. 如需为其他日期添加文件，请为该日期创建一个按相同方式命名的文件夹。
 
-When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
+一周结束后，M³ 会删除该周带日期的文件夹及其中的文件，所有使用该共享文件夹的人都会受到影响。如需保留这些文件，请关闭 **删除过往聚会的文件夹**。
 
 ### :file_folder: 什么是媒体自动导出？ {#faq-media-export}
 
@@ -250,7 +250,7 @@ M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时�
 
 尝试以下性能优化：
 
-1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
+1. **缓存诗歌视频文件**：在设置中预先缓存所有诗歌视频
 2. **关闭不需要的程序**：释放计算机资源
 3. **检查磁盘空间**：确保有足够的可用磁盘空间
 4. **降低分辨率**：降低视频最高分辨率设置
@@ -312,8 +312,8 @@ Thank you for your interest in supporting the project! However, in the spirit of
 
 M³ 可以在多种操作系统上运行：
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**：Windows 10 及更高版本（64 位）。适用于 32 位 Windows 的最后一个版本是 v26.10.1，可在[下载页面](download)获取。
+- **macOS**：macOS 13（Ventura）及更高版本（通用版）。适用于 macOS 12（Monterey）的最后一个版本是 v26.10.1，可在[下载页面](download)获取。
 - **Linux**：大多数现代Linux发行版（AppImage格式）
 
 :computer: M³ 的硬件和软件要求是什么？ {#hardware-and-software-requirements}
