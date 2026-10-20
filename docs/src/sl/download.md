@@ -92,13 +92,13 @@ onMounted(() => {
 ## Windows
 
 - **Windows 64-bit (.exe)**: <a :href="downloads.win64">Prenesi</a>
-- **Windows 32-bit (.exe)**, last version for 32-bit Windows ({{ downloads.legacyVersion }}): <a :href="downloads.win32">Download</a>
+- **Windows 32-bit (.exe)**, zadnja različica za 32-bitni Windows ({{ downloads.legacyVersion }}): <a :href="downloads.win32">Prenesi</a>
 - **Windows Portable (.exe)**: <a :href="downloads.winPortable">Prenesi</a>
 
 ## macOS
 
 - **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Prenos</a>
-- **macOS 12 (Monterey) (.dmg)**, last version for macOS 12 ({{ downloads.legacyVersion }}): <a :href="downloads.macLegacy">Download</a>
+- **macOS 12 (Monterey) (.dmg)**, zadnja različica za macOS 12 ({{ downloads.legacyVersion }}): <a :href="downloads.macLegacy">Prenesi</a>
 
 ## Linux
 
