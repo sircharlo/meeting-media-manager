@@ -1,10 +1,12 @@
 import type { MeetingPartOption } from 'src/types';
 
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
   buildTimerReportHtml,
   buildTimerReportRows,
+  exportTimerReport,
   isRtlLocale,
 } from '../timer-report';
 
@@ -84,6 +86,24 @@ describe('buildTimerReportHtml', () => {
     expect(html).toContain('part-skipped');
     expect(html).toContain('lang="en" dir="ltr"');
     expect(html).toContain('timer-report-title');
+  });
+});
+
+describe('exportTimerReport', () => {
+  it('explains what to do when the chosen file cannot be written', async () => {
+    vi.spyOn(globalThis.electronApi, 'exportHtmlToPdf').mockResolvedValue({
+      canceled: false,
+      error: 'file-not-writable',
+    });
+
+    await exportTimerReport(input, 'Congregation');
+
+    expect(createTemporaryNotification).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'timer-report-file-not-writable',
+        type: 'negative',
+      }),
+    );
   });
 });
 

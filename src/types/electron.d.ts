@@ -611,6 +611,11 @@ export type ElectronIpcSendSyncKey =
 export interface ExportPdfResult {
   /** The user closed the save dialog without choosing a file. */
   canceled: boolean;
+  /**
+   * 'invalid-html', 'file-not-writable' (the chosen file is locked by
+   * another program, read-only, or in a protected folder), or the message of
+   * any other failure.
+   */
   error?: string;
   filePath?: string;
 }
