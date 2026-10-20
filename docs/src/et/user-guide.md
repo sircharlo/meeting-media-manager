@@ -405,7 +405,7 @@ Loo endale sobivad kiirklahvid sujuvaks kasutuseks:
 
 #### Jõudlusprobleemid {#user-guide-performance-issues}
 
-- Cache songbook video files
+- Laulude videofailide vahemälu
 - Vähenda maksimaalset eraldusvõimet
 - Puhasta vanad vahemälufailid
 - Veendu kettaruumi olemasolus

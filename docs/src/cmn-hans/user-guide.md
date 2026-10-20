@@ -405,7 +405,7 @@ M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 
 #### 性能问题 {#user-guide-performance-issues}
 
-- Cache songbook video files
+- 缓存诗歌视频文件
 - 降低最高视频分辨率
 - 清理旧缓存文件
 - 检查可用磁盘空间
