@@ -110,11 +110,13 @@ const TYPOGRAPHIC_QUOTES = '‚‘’‛“”„‟';
 const HERO_ACTION_LINK_CONTEXT =
   /^CXPath: \/\/yaml\/hero\/actions\[\d+\]\/link$/;
 
-// docs/src folders that exist in the repo but aren't part of the app's
-// active language list (src/constants/locales.ts) - leftovers from past
-// language-code changes that the current crowdin.yml export no longer
-// writes to. Excluded so class 3 never guesses a folder name for a
-// language Crowdin isn't actually exporting there.
+// docs/src folders that aren't part of the app's active language list
+// (src/constants/locales.ts). Excluded so class 3 never guesses a folder
+// name for a language Crowdin isn't actually exporting there. `bzs` still
+// exists in the repo; `cmn-hant` and `zh` were leftovers from past
+// language-code changes and have been deleted, but stay listed so a stray
+// export recreating them is never picked up (`zh` would resolve to zh-CN
+// and fight `cmn-hans` over the same translations).
 const DOCS_ORPHAN_LOCALE_FOLDERS = new Set(['bzs', 'cmn-hant', 'zh']);
 
 // A few docs locale folders don't match Crowdin's own language id even via
@@ -346,7 +348,7 @@ function repairLinkedMessage(translation) {
  * language id directly (`fr` -> `fr`) or via its twoLettersCode (`es` ->
  * `es-ES`, `pt` -> `pt-BR`); `cmn-hans` matches neither and needs the
  * explicit override (confirmed live: `zh-CN`'s own twoLettersCode is `zh`,
- * which belongs to the separate, orphaned `zh` folder, not `cmn-hans`).
+ * which matched the old, now-deleted `zh` folder, not `cmn-hans`).
  */
 function resolveDocsLanguageId(
   folder,
