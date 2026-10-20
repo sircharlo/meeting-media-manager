@@ -211,7 +211,7 @@ When a week is over, M³ deletes that week's dated folders and the files in them
 
 ## 疑难解答 {#faq-troubleshooting}
 
-### :warning: 媒体无法下载，我该检查什么？ What should I check? {#faq-media-not-downloading}
+### :warning: 媒体无法下载。我该检查什么？ {#faq-media-not-downloading}
 
 请检查以下常见问题：
 
@@ -222,7 +222,7 @@ When a week is over, M³ deletes that week's dated folders and the files in them
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: OBS Studio 集成无法工作，我该检查什么？ {#faq-obs-not-working} 我应该进行什么验证？ {#faq-obs-not-working}
+### :video_camera: OBS Studio 集成无法工作。我应该进行什么验证？ {#faq-obs-not-working}
 
 请检查以下与 OBS Studio 有关的问题：
 
@@ -246,7 +246,7 @@ When a week is over, M³ deletes that week's dated folders and the files in them
 **为什么需要这样做？**
 M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时，此音频不会通过视频流自动传输到 Zoom。“原始音频”设置允许 Zoom 在屏幕共享期间捕捉电脑上播放的音频（如果您的电脑配置正确，例如：电脑有第二个声卡用于媒体播放，Zoom 将其作为麦克风收听）。
 
-### :snail: M³ 运行缓慢，如何改善？ {#performance-issues} ，如何改善？ {#performance-issues}
+### :snail: M³ 运行缓慢。如何改善性能？ {#performance-issues}
 
 尝试以下性能优化：
 
@@ -255,7 +255,7 @@ M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时�
 3. **检查磁盘空间**：确保有足够的可用磁盘空间
 4. **降低分辨率**：降低视频最高分辨率设置
 
-### :speech_balloon: 遇到语言相关问题，我该检查什么？ {#faq-language-issues} What should I check? {#faq-language-issues}
+### :speech_balloon: 遇到语言相关问题。我该检查什么？ {#faq-language-issues}
 
 请检查以下语言设置：
 
@@ -275,7 +275,7 @@ M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时�
 - 操作系统和 M³ 版本
 - 相关错误信息、日志和截图
 
-### :new: 如何提出新功能或改进建议？ {#how-can-i-request-a-new-feature-or-enhancement} :new: 如何提出新功能建议？ {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: 如何提出新功能或改进建议？ {#how-can-i-request-a-new-feature-or-enhancement}
 
 请在官方 GitHub 仓库[发起讨论](https://github.com/sircharlo/meeting-media-manager/discussions)，并说明：请说明：
 

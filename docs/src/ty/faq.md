@@ -30,7 +30,7 @@ Te tauturu nei M³ i te Windows, macOS, e te Linux:
 
 ### :globe_with_meridians: Te ’ohipa nei ānei o M³ nō tō’u iho reo? {#language-support}
 
-’Ēiaha! E pū’oira’a parau nō te rave rau reo tō roto i te M³:
+**’Ē!** E pū’oira’a parau nō te rave rau reo tō roto i te M³:
 
 - Te mau ha’apararura’a: E tātari i te mau ha’apararura’a nā roto i te hō’ē o te mau rau hānere reo e vai nei i ni’a i te tahua natirara mana a te Ite nō Iehova
 - Huru fā’ari’ira’a o te fa’anahora’a: E fa’a’ohipa i te huru fā’ari’ira’a o M³ nā roto i te mau reo ta’a ’ē e rave rahi

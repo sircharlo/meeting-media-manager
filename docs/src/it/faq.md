@@ -73,7 +73,7 @@ Sì! M³ ti permette di:
 - Scaricare automaticamente i media per le adunanze imminenti
 - Importare media personalizzati per qualsiasi data
 
-### :open_file_folder: Come posso importare i miei file multimediali? {#faq-media-export} :file_folder: What is media auto-export? {#import-media}
+### :open_file_folder: Come posso importare i miei file multimediali? {#import-media}
 
 Puoi importare media personalizzati in diversi modi:
 
