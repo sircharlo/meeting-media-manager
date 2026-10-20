@@ -24,8 +24,8 @@
 
 M³는 Windows, macOS, Linux를 지원합니다.
 
-- **Windows**: Windows 10 이상(64비트 및 32비트 버전 제공)
-- **macOS**: macOS 10.15(Catalina) 이상(유니버설 빌드 제공)
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - **Linux**: 대부분의 최신 Linux 배포판(AppImage 형식)
 
 ### :globe_with_meridians: M³를 한국어로도 사용할 수 있나요? {#language-support}
@@ -311,8 +311,8 @@ M³는 번역 관리를 위해 Crowdin을 사용합니다. 다음과 같은 방�
 
 M³는 다양한 운영 체제에서 작동하도록 설계되었습니다.
 
-- **Windows**: Windows 10 이상(64비트 및 32비트 버전 제공)
-- **macOS**: macOS 10.15(Catalina) 이상(유니버설 빌드 제공)
+- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
+- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
 - **Linux**: 대부분의 최신 Linux 배포판(AppImage 형식)
 
 M³의 하드웨어 요구 사항은 다음과 같습니다.
