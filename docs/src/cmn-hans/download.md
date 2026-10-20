@@ -92,13 +92,13 @@ onMounted(() => {
 ## Windows
 
 - **Windows 64 位（.exe）**：<a :href="downloads.win64">下载</a>
-- **Windows 32-bit (.exe)**, last version for 32-bit Windows ({{ downloads.legacyVersion }}): <a :href="downloads.win32">Download</a>
+- **Windows 32 位（.exe）**，适用于 32 位 Windows 的最后一个版本（{{ downloads.legacyVersion }}）：<a :href="downloads.win32">下载</a>
 - **Windows 便携版（.exe）**：<a :href="downloads.winPortable">下载</a>
 
 ## macOS
 
 - **macOS 通用版（.dmg）**：<a :href="downloads.macUniversal">下载</a>
-- **macOS 12 (Monterey) (.dmg)**, last version for macOS 12 ({{ downloads.legacyVersion }}): <a :href="downloads.macLegacy">Download</a>
+- **macOS 12（Monterey）（.dmg）**，适用于 macOS 12 的最后一个版本（{{ downloads.legacyVersion }}）：<a :href="downloads.macLegacy">下载</a>
 
 ## Linux
 
