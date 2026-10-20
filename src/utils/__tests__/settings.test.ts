@@ -7,6 +7,7 @@ import type {
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  getBlockingSettingReasons,
   getBlockingSettings,
   getDateOptions,
   getRules,
@@ -196,10 +197,118 @@ describe('Settings Utilities', () => {
       expect(
         getBlockingSettings({ zoomEnable: false }, 'zoomMeetingManagerEnable'),
       ).toEqual([]);
+      expect(
+        getBlockingSettings(
+          { zoomMeetingManagerEnable: true },
+          'obsMediaScene',
+        ),
+      ).toEqual([]);
+      expect(getBlockingSettings(undefined, 'zoomEnable')).toEqual([]);
+    });
+
+    // Both would show the media in Zoom: OBS Studio by switching to its media
+    // scene, Zoom by sharing the media window. Everything else (OBS Studio's
+    // camera scene and recording, the Meeting Manager's launching, muting,
+    // camera and raised hands) works together.
+    const obsWithMediaScene = {
+      obsEnable: true,
+      obsMediaScene: 'Media',
+      obsPassword: 'secret',
+      obsPort: '4455',
+    };
+
+    it('keeps the OBS Studio media scene and Zoom media sharing apart', () => {
+      expect(
+        getBlockingSettings({ zoomEnable: true }, 'obsMediaScene'),
+      ).toEqual(['zoomEnable']);
+      expect(
+        getBlockingSettings(
+          {
+            zoomMeetingManagerAutomateMediaSharing: true,
+            zoomMeetingManagerEnable: true,
+          },
+          'obsMediaScene',
+        ),
+      ).toEqual(['zoomMeetingManagerAutomateMediaSharing']);
+      expect(getBlockingSettings(obsWithMediaScene, 'zoomEnable')).toEqual([
+        'obsMediaScene',
+      ]);
+      expect(
+        getBlockingSettings(
+          obsWithMediaScene,
+          'zoomMeetingManagerAutomateMediaSharing',
+        ),
+      ).toEqual(['obsMediaScene']);
+    });
+
+    it('lets OBS Studio without a media scene work alongside Zoom sharing', () => {
+      const obsWithoutMediaScene = {
+        ...obsWithMediaScene,
+        obsMediaScene: null,
+      };
+      expect(getBlockingSettings(obsWithoutMediaScene, 'zoomEnable')).toEqual(
+        [],
+      );
+      expect(
+        getBlockingSettings(
+          obsWithoutMediaScene,
+          'zoomMeetingManagerAutomateMediaSharing',
+        ),
+      ).toEqual([]);
       expect(getBlockingSettings({ zoomEnable: true }, 'obsEnable')).toEqual(
         [],
       );
-      expect(getBlockingSettings(undefined, 'zoomEnable')).toEqual([]);
+      // A media scene left over while OBS Studio is off doesn't count
+      expect(
+        getBlockingSettings(
+          { ...obsWithMediaScene, obsEnable: false },
+          'zoomEnable',
+        ),
+      ).toEqual([]);
+    });
+
+    it("doesn't let OBS Studio block the rest of the Zoom Meeting Manager", () => {
+      expect(
+        getBlockingSettings(obsWithMediaScene, 'zoomMeetingManagerEnable'),
+      ).toEqual([]);
+      // Media sharing only counts while the Meeting Manager itself is on
+      expect(
+        getBlockingSettings(
+          {
+            zoomMeetingManagerAutomateMediaSharing: true,
+            zoomMeetingManagerEnable: false,
+          },
+          'obsMediaScene',
+        ),
+      ).toEqual([]);
+    });
+
+    it('says to turn a blocking toggle off, and to clear a blocking scene', () => {
+      expect(
+        getBlockingSettingReasons(obsWithMediaScene, 'zoomEnable'),
+      ).toEqual([
+        {
+          messageKey: 'setting-unavailable-while-set',
+          setting: 'obsMediaScene',
+        },
+      ]);
+      expect(
+        getBlockingSettingReasons({ zoomEnable: true }, 'obsMediaScene'),
+      ).toEqual([
+        {
+          messageKey: 'setting-unavailable-while-enabled',
+          setting: 'zoomEnable',
+        },
+      ]);
+    });
+
+    it('never locks a scene that is set, so it can be cleared', () => {
+      expect(
+        getBlockingSettings(
+          { ...obsWithMediaScene, zoomEnable: true },
+          'obsMediaScene',
+        ),
+      ).toEqual([]);
     });
 
     it('never locks a toggle that is on, so it can be turned off', () => {

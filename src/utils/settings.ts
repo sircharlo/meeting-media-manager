@@ -64,8 +64,8 @@ export const getDateOptions = (options: SettingsItemOption[] | undefined) => {
   }
 };
 
-// Whether a setting is on, with the settings it depends on on too.
-const isSettingInEffect = (
+// Whether a setting is on (or set), with the settings it depends on on too.
+export const isSettingInEffect = (
   settings: Partial<SettingsValues>,
   settingId: keyof SettingsValues,
 ): boolean => {
@@ -84,13 +84,31 @@ export const getBlockingSettings = (
   settings: null | Partial<SettingsValues> | undefined,
   settingId: keyof SettingsValues,
 ): (keyof SettingsValues)[] => {
-  const { disableWhen, type } = settingsDefinitions[settingId] ?? {};
+  const { disableWhen } = settingsDefinitions[settingId] ?? {};
   if (!settings || !disableWhen) return [];
-  // A toggle that is on can always be turned off, even if both ended up on.
-  if (type === 'toggle' && settings[settingId]) return [];
+  // A setting that is on (or set, like a scene) can always be turned off
+  // (or cleared), even if both ended up on.
+  if (settings[settingId]) return [];
   const blockers = Array.isArray(disableWhen) ? disableWhen : [disableWhen];
   return blockers.filter((blocker) => isSettingInEffect(settings, blocker));
 };
+
+/**
+ * Why a setting is unavailable, one entry per blocking setting, with the
+ * i18n key that says what to do about it: a blocking toggle is turned off,
+ * a blocking value (like an OBS Studio scene) is cleared.
+ */
+export const getBlockingSettingReasons = (
+  settings: null | Partial<SettingsValues> | undefined,
+  settingId: keyof SettingsValues,
+) =>
+  getBlockingSettings(settings, settingId).map((setting) => ({
+    messageKey:
+      settingsDefinitions[setting]?.type === 'toggle'
+        ? 'setting-unavailable-while-enabled'
+        : 'setting-unavailable-while-set',
+    setting,
+  }));
 
 export const getRules = (
   rules: SettingsItemRule[] | undefined,
