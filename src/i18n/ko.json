@@ -569,7 +569,7 @@
   "obs-studio-is-a-free-app-used-to-manage-camera-and-video-feeds-in-many-kingdom-halls": "@:obsStudio 는 많은 왕국회관에서 카메라와 비디오 소스,를 관리하는 데 사용되는 무료 애플리케이션입니다.",
   "obs-studio-media-scene": "@:obsStudio 미디어 장면",
   "obs-studio-port-and-password": "@:obsStudio 포트 및 비밀번호",
-  "obs-studio-scene-list-error-banner": "M³ is connected to @:{'obsStudio'} but couldn't retrieve its scene list. Try reconnecting @:{'obsStudio'}, or check the configured scenes in the Settings.",
+  "obs-studio-scene-list-error-banner": "M³가 @:{'obsStudio'}에 연결되어 있지만 장면 목록을 가져올 수 없습니다. @:{'obsStudio'}에 다시 연결하거나 설정에서 지정된 장면을 확인하십시오.",
   "obs-studio-setup-connection-failed": "@:{'obsStudio'} 연결에 실패했습니다. @:obsStudio 이 실행 중이고 포트와 비밀번호가 올바른지 확인하여 주십시오.",
   "obs-studio-stage-scene": "@:obsStudio 연단 장면",
   "obs.connected": "@:{'obsStudio'}: 연결됨",
