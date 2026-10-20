@@ -10,6 +10,10 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 - 🛠️ **Platform Support**: M³ now requires a 64-bit version of Windows 10 or later, or macOS 13 (Ventura) or later. v26.10.1 is the last version that runs on 32-bit Windows and macOS 12 (Monterey), and it stays available from the download page.
 
+### 🐞 Bug Fixes
+
+- 🐞 **OBS Studio**: The setting that shows recording controls in the OBS Studio popup now has a proper name and explanation, instead of showing an internal identifier.
+
 ## v26.10.1
 
 ### ✨ New Features
