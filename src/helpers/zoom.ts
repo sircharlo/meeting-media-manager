@@ -337,7 +337,67 @@ export const getZoomMeetingState = async (
   const meeting = result.ok ? (result.meeting ?? null) : null;
   // What the action island's Zoom button shows.
   useZoomStateStore().setMeeting(meeting);
+  noticeZoomChanges(meeting);
   return meeting;
+};
+
+// --- Noticing that Zoom changed ---------------------------------------------
+
+/** Dispatched on `globalThis` when Zoom looks different from what M³ learned. */
+export const ZOOM_CHANGED_EVENT = 'zoomChanged';
+
+let noticedZoomVersion: null | string = null;
+let noticedVideoTitle: null | string = null;
+
+/**
+ * Zoom was updated since the learned names last passed a check, or its
+ * buttons no longer read as learned (its language was changed, say): worth
+ * checking everything again before the meeting, which the startup check
+ * does on this event (see watchZoomChanges). Each change is noticed once.
+ */
+const noticeZoomChanges = (meeting: null | ZoomMeetingState) => {
+  const settings = getSettings();
+  if (!meeting?.found || !settings?.zoomMeetingManagerEnable) return;
+  let reason: 'names' | 'version' | null = null;
+  const { zoomVersion } = meeting;
+  if (
+    zoomVersion &&
+    settings.zoomLearnedVersion &&
+    zoomVersion !== settings.zoomLearnedVersion &&
+    noticedZoomVersion !== zoomVersion
+  ) {
+    noticedZoomVersion = zoomVersion;
+    reason = 'version';
+  }
+  const { videoTitle } = meeting;
+  const { zoomVideoOffTitle, zoomVideoOnTitle } = settings;
+  if (
+    !reason &&
+    videoTitle &&
+    zoomVideoOnTitle &&
+    zoomVideoOffTitle &&
+    videoTitle !== zoomVideoOnTitle &&
+    videoTitle !== zoomVideoOffTitle &&
+    noticedVideoTitle !== videoTitle
+  ) {
+    noticedVideoTitle = videoTitle;
+    reason = 'names';
+  }
+  if (!reason) return;
+  log(`Zoom changed (${reason}): worth checking again`, 'zoom', 'warn', {
+    learnedVersion: settings.zoomLearnedVersion,
+    videoTitle,
+    zoomVersion,
+  });
+  globalThis.dispatchEvent(
+    new CustomEvent(ZOOM_CHANGED_EVENT, { detail: { reason } }),
+  );
+};
+
+/** Remembers Zoom's version as the one the learned names work with. */
+export const rememberZoomVersion = () => {
+  const version = useZoomStateStore().meeting?.zoomVersion;
+  if (version) saveSetting('zoomLearnedVersion', version);
 };
 
 // --- Individual steps ------------------------------------------------------
@@ -1027,13 +1087,17 @@ const learnButtonTitles = async (
   what: 'mic' | 'video',
   isOn: boolean,
   settingKeys: { off: keyof SettingsValues; on: keyof SettingsValues },
+  assumeAudioJoined = false,
 ): Promise<{ error?: string; ok: boolean }> => {
-  const toggle = what === 'mic' ? 'toggle-mic' : 'toggle-video';
-  const switched = await runCommand({ type: toggle });
+  const toggle: ZoomCommand =
+    what === 'mic'
+      ? { assumeAudioJoined, type: 'toggle-mic' }
+      : { type: 'toggle-video' };
+  const switched = await runCommand(toggle);
   if (!switched.ok || !switched.before || !switched.after) {
     return { error: switched.error ?? `${what}-not-changed`, ok: false };
   }
-  const back = await runCommand({ type: toggle });
+  const back = await runCommand(toggle);
   if (!back.ok || back.after !== switched.before) {
     return { error: back.error ?? `${what}-not-restored`, ok: false };
   }
@@ -1057,19 +1121,34 @@ export const learnZoomVideoTitles = (cameraIsOn: boolean) =>
  * Computer audio has to be joined first (see joinZoomAudioForSetup).
  * @param micIsOn What the user says their microphone is doing right now.
  */
-export const learnZoomMicTitles = (micIsOn: boolean) =>
-  learnButtonTitles('mic', micIsOn, {
-    off: 'zoomMicOffTitle',
-    on: 'zoomMicOnTitle',
-  });
+/**
+ * @param assumeAudioJoined The user said computer audio is joined, where
+ * M³ couldn't tell (see joinZoomAudioForSetup).
+ */
+export const learnZoomMicTitles = (
+  micIsOn: boolean,
+  assumeAudioJoined = false,
+) =>
+  learnButtonTitles(
+    'mic',
+    micIsOn,
+    { off: 'zoomMicOffTitle', on: 'zoomMicOnTitle' },
+    assumeAudioJoined,
+  );
 
 /**
  * Joins computer audio for the setup assistant, without a notification or
  * the meeting checklist: Zoom only has a microphone button once joined.
- * Resolves to whether computer audio is joined.
+ * 'unknown' when M³ can't tell "Join audio" from a microphone button that
+ * has no keyboard shortcut (nothing was changed): the user is asked.
  */
-export const joinZoomAudioForSetup = async () =>
-  (await runCommand({ type: 'join-audio' })).ok;
+export const joinZoomAudioForSetup = async (): Promise<
+  'failed' | 'joined' | 'unknown'
+> => {
+  const result = await runCommand({ type: 'join-audio' });
+  if (result.audioStateUnknown) return 'unknown';
+  return result.ok ? 'joined' : 'failed';
+};
 
 /**
  * Checks that Zoom's share picker opens through the given Share entry (or

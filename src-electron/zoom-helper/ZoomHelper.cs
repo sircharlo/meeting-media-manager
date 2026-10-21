@@ -878,16 +878,24 @@ namespace M3.ZoomHelper
         /// while not joined: told apart by their learned names, and failing
         /// those by the keyboard shortcut Zoom shows in the microphone's name
         /// (and not in "Join audio"'s), which also teaches the latter.</summary>
-        static bool AudioJoined(El window)
+        enum AudioState { Joined, NotJoined, Unknown }
+
+        /// <summary>Unknown when the first button has no shortcut and no
+        /// learned name: "Join audio", or a microphone whose shortcut the
+        /// user removed, before the setup assistant learned its names.</summary>
+        static AudioState GetAudioState(El window)
         {
             var buttons = ToolbarButtons(window);
-            if (buttons.Count == 0) return false;
+            if (buttons.Count == 0) return AudioState.NotJoined;
             var name = FirstSegment(buttons[0].Name);
-            if (name.Length > 0 && (name == Known.MicOn || name == Known.MicOff)) return true;
-            if (name.Length > 0 && name == Known.JoinAudio) return false;
-            var joined = AnyHotkey.IsMatch(buttons[0].Name);
-            if (!joined) Known.Learn("joinAudio", name);
-            return joined;
+            if (name.Length > 0 && (name == Known.MicOn || name == Known.MicOff)) return AudioState.Joined;
+            if (name.Length > 0 && name == Known.JoinAudio) return AudioState.NotJoined;
+            return AnyHotkey.IsMatch(buttons[0].Name) ? AudioState.Joined : AudioState.Unknown;
+        }
+
+        static bool AudioJoined(El window)
+        {
+            return GetAudioState(window) == AudioState.Joined;
         }
 
         /// <summary>The microphone button, which only exists once joined to
@@ -946,6 +954,7 @@ namespace M3.ZoomHelper
             {
                 { "audioJoined", toolbarVisible ? (object)(mic != null) : null },
                 { "dialogs", ZoomDialogClasses() },
+                { "zoomVersion", CachedZoomVersion() },
                 { "found", true },
                 { "handle", window.Raw.CurrentNativeWindowHandle.ToInt64() },
                 { "micTitle", mic == null ? null : FirstSegment(mic.Name) },
@@ -964,20 +973,45 @@ namespace M3.ZoomHelper
             return new Dictionary<string, object> { { "changed", changed } };
         }
 
+        /// <summary>Joins computer audio through the toolbar's first button.
+        /// When it can't be told whether that button is "Join audio" or a
+        /// microphone without a shortcut (see GetAudioState), the press
+        /// decides: Zoom's join-audio dialog means "Join audio"; a button
+        /// that only changed its name was the microphone, which is pressed
+        /// again to put it back, and the user is asked instead
+        /// (audioStateUnknown).</summary>
         public static Dictionary<string, object> JoinAudio()
         {
             var window = RequireMeetingWindow();
-            if (AudioJoined(window)) return Changed(false);
+            var state = GetAudioState(window);
+            if (state == AudioState.Joined) return Changed(false);
             var buttons = ToolbarButtons(window);
             if (buttons.Count == 0) throw new ZoomActionError("join-audio-button-not-found");
+            var nameBefore = FirstSegment(buttons[0].Name);
             Focus(window);
             Press(buttons[0]);
-            var dialog = WaitForWindow(JoinAudioDialogClass, 5000);
+            var dialog = WaitForWindow(JoinAudioDialogClass, state == AudioState.Unknown ? 2500 : 5000);
             if (dialog != null)
             {
                 var button = LargestButton(dialog);
                 if (button == null) throw new ZoomActionError("join-audio-button-not-found");
                 Press(button);
+                Known.Learn("joinAudio", nameBefore);
+            }
+            else if (state == AudioState.Unknown)
+            {
+                var latest = ToolbarButtons(window);
+                var nameAfter = latest.Count > 0 ? FirstSegment(latest[0].Name) : nameBefore;
+                if (nameAfter != nameBefore)
+                {
+                    Press(latest[0]);
+                    WaitUntil(() =>
+                    {
+                        var now = ToolbarButtons(window);
+                        return now.Count > 0 && FirstSegment(now[0].Name) == nameBefore;
+                    }, 4000);
+                    return new Dictionary<string, object> { { "audioStateUnknown", true }, { "changed", false } };
+                }
             }
             if (!WaitUntil(() => AudioJoined(window), WaitTimeoutMs)) throw new ZoomActionError("audio-not-joined");
             return Changed(true);
@@ -1004,6 +1038,9 @@ namespace M3.ZoomHelper
             if (items.Count < 2) throw new ZoomActionError("leave-audio-item-not-found");
             Press(items[items.Count - 2]);
             if (!WaitUntil(() => !AudioJoined(window), WaitTimeoutMs)) throw new ZoomActionError("audio-not-left");
+            // The first button now reads "Join audio", worth remembering.
+            var after = ToolbarButtons(window);
+            if (after.Count > 0 && GetAudioState(window) == AudioState.Unknown) Known.Learn("joinAudio", FirstSegment(after[0].Name));
             return Changed(true);
         }
 
@@ -2289,7 +2326,9 @@ namespace M3.ZoomHelper
         }
 
         /// <summary>The share toolbar's buttons while sharing, for the user to
-        /// pick which one stops sharing when M3 can't tell.</summary>
+        /// pick which one stops sharing when M3 can't tell. Zoom exposes the
+        /// toolbar's status texts as (invokable) buttons too, so they're
+        /// listed as well; pressing one does no harm.</summary>
         public static Dictionary<string, object> ShareToolbarEntries()
         {
             var entries = new List<object>();
@@ -2388,10 +2427,20 @@ namespace M3.ZoomHelper
             return ToggleButton(window, () => VideoButton(window), "video");
         }
 
-        public static Dictionary<string, object> ToggleMic()
+        /// <summary>`assumeAudioJoined`: the user said computer audio is
+        /// joined, where M3 can't tell (see JoinAudio).</summary>
+        public static Dictionary<string, object> ToggleMic(bool assumeAudioJoined)
         {
             var window = RequireMeetingWindow();
             ControlPanel(window);
+            if (assumeAudioJoined && GetAudioState(window) == AudioState.Unknown)
+            {
+                return ToggleButton(window, () =>
+                {
+                    var buttons = ToolbarButtons(window);
+                    return buttons.Count > 0 ? buttons[0] : null;
+                }, "mic");
+            }
             if (!AudioJoined(window)) throw new ZoomActionError("audio-not-joined");
             return ToggleButton(window, () => MicButton(window), "mic");
         }
@@ -2467,6 +2516,22 @@ namespace M3.ZoomHelper
             var names = new List<object>();
             foreach (var element in elements) if (element.Name.Length > 0) names.Add(element.Name);
             return names;
+        }
+
+        static string cachedZoomVersion;
+        static DateTime cachedZoomVersionAt = DateTime.MinValue;
+
+        /// <summary>Zoom's version, read again at most once a minute: M3
+        /// polls the meeting state, and a changed version means Zoom was
+        /// updated (and restarted) meanwhile.</summary>
+        static string CachedZoomVersion()
+        {
+            if ((DateTime.UtcNow - cachedZoomVersionAt).TotalSeconds > 60)
+            {
+                cachedZoomVersion = ZoomVersion();
+                cachedZoomVersionAt = DateTime.UtcNow;
+            }
+            return cachedZoomVersion;
         }
 
         static string ZoomVersion()
@@ -2668,7 +2733,7 @@ namespace M3.ZoomHelper
                 case "diagnose":
                     return new Dictionary<string, object> { { "diagnosis", Diagnose() } };
                 case "toggle-video": return ToggleVideo();
-                case "toggle-mic": return ToggleMic();
+                case "toggle-mic": return ToggleMic(GetBool(request, "assumeAudioJoined"));
                 case "test-share-picker":
                     return TestSharePicker(GetString(request, "windowTitle") ?? "", GetString(request, "shareButtonTitle"));
                 default: throw new ZoomActionError("unknown-command");

@@ -12,9 +12,11 @@ import {
   getZoomTitlesFromSettings,
   isZoomSetupNeeded,
   prepareMediaWindowForZoomTest,
+  rememberZoomVersion,
   runWhileHoldingZoomAutomations,
   testZoomShareEntry,
   withZoomRun,
+  ZOOM_CHANGED_EVENT,
 } from 'src/helpers/zoom';
 import {
   runZoomSelfTest,
@@ -233,7 +235,10 @@ const reportFailedCheck = async (problems: string[]) => {
   try {
     const { captureMessage } = await import('@sentry/vue');
     captureMessage('Zoom check failed: automations paused', {
-      extra: { problems },
+      extra: {
+        problems,
+        zoomVersion: useZoomStateStore().meeting?.zoomVersion ?? null,
+      },
       fingerprint: ['zoom-check-failed', ...problems],
       level: 'warning',
       tags: { feature: 'zoom-meeting-manager' },
@@ -277,6 +282,7 @@ const report = (
 
   const wasPaused = zoomState.automationsPaused;
   zoomState.resumeAutomations();
+  rememberZoomVersion();
   log('Zoom check passed', 'zoom', 'info');
   if (manual || wasPaused) {
     createTemporaryNotification({
@@ -335,6 +341,26 @@ export const runZoomStartupCheck = async ({
   } finally {
     zoomState.checkRunning = false;
   }
+};
+
+/**
+ * Zoom was updated, or its buttons no longer read as learned (see
+ * ZOOM_CHANGED_EVENT): today's check no longer counts, and a new one runs
+ * as soon as a meeting can be checked.
+ */
+const onZoomChanged = () => {
+  const zoomState = useZoomStateStore();
+  const congregationId = useCurrentStateStore().currentCongregation;
+  zoomState.checkedCongregations = zoomState.checkedCongregations.filter(
+    (id) => id !== congregationId,
+  );
+  void runZoomStartupCheck();
+};
+
+/** Starts checking again whenever Zoom changes (once per app window). */
+export const watchZoomChanges = () => {
+  globalThis.removeEventListener(ZOOM_CHANGED_EVENT, onZoomChanged);
+  globalThis.addEventListener(ZOOM_CHANGED_EVENT, onZoomChanged);
 };
 
 let startupTimer: ReturnType<typeof setTimeout> | undefined;

@@ -26,6 +26,7 @@ const zoom = vi.hoisted(() => ({
   getZoomMeetingState: vi.fn<() => Promise<null | ZoomMeetingState>>(),
   isZoomSetupNeeded: vi.fn(() => false),
   notify: vi.fn(),
+  rememberZoomVersion: vi.fn(),
   runZoomSelfTest: vi.fn<() => Promise<ZoomSelfTestStep[]>>(),
   testZoomShareEntry: vi.fn(),
   withZoomRun: vi.fn(<T>(_label: string, run: () => Promise<T>) => run()),
@@ -46,9 +47,11 @@ vi.mock('src/helpers/zoom', () => ({
   }),
   isZoomSetupNeeded: zoom.isZoomSetupNeeded,
   prepareMediaWindowForZoomTest: vi.fn(),
+  rememberZoomVersion: zoom.rememberZoomVersion,
   runWhileHoldingZoomAutomations: <T>(check: () => Promise<T>) => check(),
   testZoomShareEntry: zoom.testZoomShareEntry,
   withZoomRun: zoom.withZoomRun,
+  ZOOM_CHANGED_EVENT: 'zoomChanged',
 }));
 
 vi.mock('src/helpers/zoom-self-test', async (importOriginal) => ({
@@ -152,6 +155,7 @@ describe('Zoom startup check', () => {
     expect(await runZoomStartupCheck()).toBe('skipped');
 
     expect(await runZoomStartupCheck()).toBe('passed');
+    expect(zoom.rememberZoomVersion).toHaveBeenCalledOnce();
     expect(await runZoomStartupCheck()).toBe('skipped');
     // Asked for, it runs again.
     expect(await runZoomStartupCheck({ manual: true })).toBe('passed');
@@ -283,6 +287,29 @@ describe('Zoom startup check', () => {
       problems: ['zoom-check-problem-meeting'],
     });
     expect(notification()?.type).toBe('negative');
+  });
+
+  it('checks again when Zoom changed, even if today was checked already', async () => {
+    const { watchZoomChanges } = await import('../zoom-startup-check');
+    const zoomState = useZoomStateStore();
+    zoomState.checkedCongregations = ['cong-1'];
+    // A meeting with others in it: the check only looks.
+    zoom.getZoomMeetingState.mockResolvedValue({ found: true, sharing: false });
+    zoom.countZoomMeetingParticipants.mockResolvedValue(3);
+    zoom.diagnoseZoom.mockResolvedValue(ALL_FOUND);
+    zoom.testZoomShareEntry.mockResolvedValue({
+      opened: true,
+      windowListed: true,
+      windowSelected: true,
+    });
+    watchZoomChanges();
+
+    globalThis.dispatchEvent(
+      new CustomEvent('zoomChanged', { detail: { reason: 'version' } }),
+    );
+
+    // The check ran again (and counts as today's check once more).
+    await vi.waitFor(() => expect(zoom.getZoomMeetingState).toHaveBeenCalled());
   });
 
   it('pauses the automations when a test step fails, until a new check passes', async () => {

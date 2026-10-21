@@ -13,6 +13,11 @@ export interface ZoomCommandResult {
   after?: string;
   /** `set-participant-mic`: the "Ask to unmute" button's name, when first seen. */
   askToUnmuteTitle?: null | string;
+  /**
+   * `join-audio`: M³ couldn't tell "Join audio" from a microphone button
+   * without a shortcut, and pressed nothing for good: the user is asked.
+   */
+  audioStateUnknown?: boolean;
   /** `toggle-mic`/`toggle-video`: the button's name before switching. */
   before?: string;
   /** `set-participant-mic`: what the row's microphone button said. */
@@ -151,6 +156,8 @@ export interface ZoomMeetingState {
   toolbarVisible?: boolean;
   /** The video button's name, in the user's Zoom language. */
   videoTitle?: null | string;
+  /** Zoom's version: a change means Zoom was updated since the names were learned. */
+  zoomVersion?: null | string;
 }
 
 export interface ZoomParticipantRow {
@@ -233,6 +240,7 @@ type ZoomCommandBody =
       type: 'set-participant-mic';
     }
   | { allowSelfUnmute: boolean; type: 'mute-all' }
+  | { assumeAudioJoined?: boolean; type: 'toggle-mic' }
   | { echo?: string; type: 'ping' }
   | { name: string; type: 'inspect-participant' }
   | { names: string[]; type: 'admit' }
@@ -265,12 +273,12 @@ type ZoomCommandBody =
   | { title: string; type: 'test-stop-share-entry' }
   | { type: 'ask-all-to-unmute' }
   | { type: 'diagnose' }
-  | { type: 'join-audio' }
   /**
    * `reveal` brings Zoom's auto-hidden toolbar back (moving the mouse over
    * the meeting) to read the audio and video states; without it, nothing
    * on screen changes.
    */
+  | { type: 'join-audio' }
   | { type: 'leave-audio' }
   | { type: 'mic-title' }
   | { type: 'panel-entries' }
@@ -278,6 +286,5 @@ type ZoomCommandBody =
   | { type: 'share-entries' }
   | { type: 'share-toolbar-entries' }
   | { type: 'stop-share' }
-  | { type: 'toggle-mic' }
   | { type: 'toggle-video' }
   | { type: 'video-title' };
