@@ -31,7 +31,16 @@ app.on('ready', () => {
         return callback(false);
       }
 
-      const allowed: (typeof permission)[] = ['media', 'notifications'];
+      // Electron asks for clipboard-sanitized-write even when the copy follows
+      // a click, so denying it made every navigator.clipboard.writeText()
+      // fail with "Write permission denied" (MMM-V2-3ME: the timer remote's
+      // copy button). Sanitized writes are limited to text, HTML and PNG
+      // images, and only our own or trusted pages get this far.
+      const allowed: (typeof permission)[] = [
+        'clipboard-sanitized-write',
+        'media',
+        'notifications',
+      ];
       if (allowed.includes(permission)) {
         callback(true);
       } else {

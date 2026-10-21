@@ -70,4 +70,45 @@ describe('permission request handler', () => {
 
     expect(callback).toHaveBeenCalledWith(false);
   });
+
+  // MMM-V2-3ME: Electron asks for clipboard-sanitized-write even right after
+  // a click, so denying it broke navigator.clipboard.writeText() everywhere.
+  it('lets our own pages write to the clipboard', async () => {
+    const handler = await getPermissionHandler();
+    const callback = vi.fn();
+
+    handler(
+      { getURL: () => 'app://index.html', id: 1 },
+      'clipboard-sanitized-write',
+      callback,
+    );
+
+    expect(callback).toHaveBeenCalledWith(true);
+  });
+
+  it('still blocks clipboard writes from an untrusted origin', async () => {
+    const handler = await getPermissionHandler();
+    const callback = vi.fn();
+
+    handler(
+      { getURL: () => 'https://example.com/', id: 1 },
+      'clipboard-sanitized-write',
+      callback,
+    );
+
+    expect(callback).toHaveBeenCalledWith(false);
+  });
+
+  it('still blocks reading the clipboard', async () => {
+    const handler = await getPermissionHandler();
+    const callback = vi.fn();
+
+    handler(
+      { getURL: () => 'app://index.html', id: 1 },
+      'clipboard-read',
+      callback,
+    );
+
+    expect(callback).toHaveBeenCalledWith(false);
+  });
 });
