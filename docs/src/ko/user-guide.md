@@ -1,457 +1,457 @@
-# User Guide {#user-guide}
+# 사용자 가이드 {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+이 종합 사용자 가이드는 기본 설정부터 고급 미디어 표시 방법까지 M³의 모든 기능을 익히는 데 도움이 됩니다.
 
-## Getting Started {#getting-started}
+## 시작하기 {#getting-started}
 
-### Download and Install {#download-and-install}
+### 다운로드 및 설치 {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+[다운로드 페이지](download)에서 최신 버전을 다운로드하십시오. 이 페이지에서는 사용 중인 기기에 가장 적합한 빌드를 추천하고 최신 버전을 보여 줍니다.
 
-### First Launch {#first-launch}
+### 처음 실행하기 {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+M³를 처음 실행하면 초기 설정 마법사가 회중에 필요한 필수 설정을 단계별로 안내합니다.
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **인터페이스 언어 선택** - M³의 메뉴와 버튼이 표시될 언어를 정합니다.
+2. **프로필 유형 선택** - 일반적인 회중 집회에는 ‘일반’을, 특별 행사에는 ‘기타’를 선택합니다.
+3. **회중 정보 설정** - 회중 정보를 직접 입력하거나 자동 검색 기능을 사용합니다.
+4. **집회 일정 설정** - 평일 집회와 공개 집회 시간을 설정합니다.
+5. **선택 기능** - OBS 연동, 배경 음악 및 기타 고급 기능을 설정합니다.
 
-:::tip Tip
+:::tip 참고
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+천천히 설정해도 됩니다. 이 설정은 나중에 언제든지 설정 메뉴에서 변경할 수 있습니다.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### 메인 인터페이스 개요 {#main-interface}
 
-The main M³ interface consists of several key areas:
+M³의 메인 인터페이스는 다음과 같은 주요 영역으로 구성됩니다.
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **탐색 메뉴** - 여러 섹션과 설정으로 이동합니다.
+- **달력 보기** - 날짜별로 미디어를 찾아봅니다.
+- **미디어 목록** - 선택한 날짜의 미디어를 확인하고 관리합니다.
+- **도구 모음** - 자주 사용하는 기능을 빠르게 실행합니다.
+- **상태 표시줄** - 다운로드 진행 상황과 배경 음악 및 OBS Studio 연결 상태를 표시합니다.
 
-## Media Management {#user-guide-media-management}
+## 미디어 관리 {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### 달력 보기 이해하기 {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+달력 보기에는 집회 일정과 사용 가능한 미디어가 표시됩니다.
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- **집회일** - 집회가 예정된 날짜가 강조 표시됩니다.
+- **미디어 표시기** - 아이콘으로 사용 가능한 미디어의 유형을 알려 줍니다.
+- **날짜 이동** - 화살표 키를 사용하여 다른 달로 이동합니다.
 
-### Organizing Media {#organizing-media}
+### 미디어 정리 {#organizing-media}
 
-M³ automatically organizes media by meeting type and section:
+M³는 집회 유형과 섹션에 따라 미디어를 자동으로 정리합니다.
 
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
-- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
-- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
+- **집회 섹션** - 미디어가 집회 프로그램별로 묶입니다(공개 강연, 성경에 담긴 보물 등).
+- **사용자 지정 섹션** - 해당 날짜에 예정된 집회가 없으면 추가 미디어를 위한 사용자 지정 섹션을 만들 수 있습니다.
+- **수동 정렬** - 미디어 항목을 원하는 순서로 끌어다 놓거나, 필요할 때 순서를 초기화합니다.
+- **반복 재생** - 직접 재생을 중지할 때까지 미디어 항목 하나를 반복하거나 섹션의 모든 항목을 반복 재생합니다.
 
-### Hidden and Missing Media {#hidden-and-missing-media}
+### 숨긴 미디어 및 누락된 미디어 {#hidden-and-missing-media}
 
-Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
+자동으로 다운로드된 파일을 삭제하지 않고도 미디어를 집회 목록에서 숨길 수 있습니다. 실수로 미디어를 숨긴 경우 선택한 날짜에서 **숨긴 미디어 표시**를 사용하십시오.
 
-If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
+M³에 누락된 미디어가 있다고 표시되면 먼저 해당 항목이 집회 날짜가 가까워지면 제공될 예정인지 확인하십시오. **미디어 추가** 메뉴를 사용하거나 미디어 목록으로 끌어다 놓아 누락된 항목을 직접 추가할 수도 있습니다.
 
-## Media Presentation {#media-presentation}
+## 미디어 표시 {#media-presentation}
 
-### Opening the Media Player {#opening-media-player}
+### 미디어 플레이어 열기 {#opening-media-player}
 
-To present media during a meeting:
+집회 중에 미디어를 표시하려면 다음 단계를 따르십시오.
 
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
+1. 표시할 날짜와 미디어 항목을 선택합니다.
+2. 재생 버튼을 클릭하거나 키보드 단축키를 사용합니다.
+3. 미디어 화면에서 미디어 재생이 시작됩니다.
+4. 제어 버튼을 사용하여 미디어를 재생하거나 일시 정지하거나 다른 위치로 이동합니다.
 
-### Media Player Controls {#media-player-controls}
+### 미디어 플레이어 제어 {#media-player-controls}
 
-The media player provides comprehensive controls:
+미디어 플레이어에서는 다음과 같은 다양한 제어 기능을 제공합니다.
 
-- **Play/Pause** - Start or pause media playback
-- **Stop** - Stop playback
+- **재생/일시 정지** - 미디어 재생을 시작하거나 일시 정지합니다.
+- **중지** - 재생을 중지합니다.
 
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
-- **Live Preview** - When enabled, show a preview of the audience media window in the main app
-- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
+- **확대/이동** - Ctrl 또는 Shift 키를 누른 채 마우스 휠을 사용하거나 터치패드에서 두 손가락을 오므리거나 벌려 확대/축소한 다음, 드래그하여 화면을 이동합니다(이미지의 경우).
+- **실시간 미리 보기** - 활성화하면 청중에게 보이는 미디어 창의 미리 보기를 메인 창에 표시합니다.
+- **재생 속도** - 설정에서 활성화하면 미디어 항목의 컨텍스트 메뉴에서 오디오와 동영상의 재생 속도를 조정할 수 있습니다.
 
-### Advanced Presentation Features {#advanced-presentation}
+### 고급 표시 기능 {#advanced-presentation}
 
-#### Custom Timing {#custom-timing}
+#### 재생 구간 지정 {#custom-timing}
 
-Set custom start and end times for media:
+미디어의 시작 시간과 종료 시간을 직접 지정할 수 있습니다.
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
 
-1. Click on the duration of a video on the top left of its thumbnail
-2. Set start and end times
-3. Save your changes
+1. 동영상 썸네일 왼쪽 위에 표시된 재생 시간을 클릭합니다.
+2. 시작 시간과 종료 시간을 설정합니다.
+3. 변경 사항을 저장합니다.
 
-#### Zoom and Pan {#zoom-pan}
+#### 확대/축소 및 이동 {#zoom-pan}
 
-For images and videos:
+이미지 및 동영상의 경우:
 
-- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
-- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
-- **Reset Zoom** - Click to return to original zoom
+- **확대/축소** - Ctrl 또는 Shift 키를 누른 채 마우스 휠을 사용하거나, 터치패드에서 두 손가락을 오므리거나 벌리거나, 썸네일의 확대/축소 컨트롤을 사용합니다.
+- **이동** - 확대한 상태에서 썸네일을 클릭하고 드래그하면 이미지를 이동할 수 있습니다(항목의 순서를 바꾸려면 행의 나머지 부분을 드래그합니다).
+- **확대/축소 초기화** - 클릭하면 원래 크기로 돌아갑니다.
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+#### 키보드 단축키 {#user-guide-keyboard-shortcuts}
 
-Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
+원하는 키보드 단축키를 설정하여 기능을 빠르게 사용할 수 있습니다. 기본적으로 설정된 키보드 단축키는 없습니다.
 
-**Built-in Media Controls** (when main window is focused and showing the media list):
+**기본 제공 미디어 제어**(메인 창에 포커스가 있고 미디어 목록이 표시된 경우):
 
-- **Tab/Shift+Tab** - Navigate between media items
-- **Up/Down Arrow** - Navigate between media items
-- **Space** - Play/Pause media
-- **Escape** - Stop media
+- **Tab/Shift+Tab** - 미디어 항목 사이를 이동합니다.
+- **위/아래 방향키** - 미디어 항목 사이를 이동합니다.
+- **스페이스바** - 미디어를 재생하거나 일시 정지합니다.
+- **Esc** - 미디어를 중지합니다.
 
-**Customizable Shortcuts** (when enabled in settings):
+**사용자 지정 단축키**(설정에서 활성화한 경우):
 
-- **Media Window** - Open/close media window
-- **Previous/Next Media** - Navigate between media items
-- **Pause/Resume** - Control media playback
-- **Stop Media** - Stop media playback
-- **Music Toggle** - Control background music
+- **미디어 창** - 미디어 창을 열거나 닫습니다.
+- **이전/다음 미디어** - 미디어 항목 사이를 이동합니다.
+- **일시 정지/재개** - 미디어 재생을 제어합니다.
+- **미디어 중지** - 미디어 재생을 중지합니다.
+- **음악 켜기/끄기** - 배경 음악을 제어합니다.
 
-**Note (\*):** Global shortcut - available even when the app is not focused
+**참고(\*):** 전역 단축키 - 앱에 포커스가 없을 때도 사용할 수 있습니다.
 
-## Display Tools {#display-tools}
+## 화면 표시 도구 {#display-tools}
 
-### Media Display Window {#media-display-window}
+### 미디어 표시 창 {#media-display-window}
 
-The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+미디어 표시 창은 청중에게 보이는 창입니다. 사용하는 장비에 따라 외부 화면에 표시하거나 창 모드로 사용할 수 있습니다.
 
-Use the display popup to:
+디스플레이 팝업에서 다음 작업을 할 수 있습니다.
 
-- Show or hide the media display
-- Choose the display or window type
-- Select a temporary custom background instead of the yeartext
-- Use an available camera as the background. This is mostly used in sign-language congregations.
+- 미디어 화면을 표시하거나 숨깁니다.
+- 디스플레이 또는 창 종류를 선택합니다.
+- 올해의 성구 대신 임시로 사용할 사용자 지정 배경 화면을 선택합니다.
+- 사용 가능한 카메라를 배경 화면으로 사용합니다. 이 기능은 주로 수어 회중에서 사용합니다.
 
-Please note that custom backgrounds are temporary and are not saved after M³ quits.
+사용자 지정 배경 화면은 임시로 적용되며 M³를 종료하면 저장되지 않습니다.
 
-### Meeting Timer {#user-guide-meeting-timer}
+### 집회 타이머 {#user-guide-meeting-timer}
 
-When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+집회 타이머를 활성화하면 M³에서 프로그램 참여자의 파트 시간을 측정하는 별도의 타이머 창을 표시할 수 있습니다. 타이머는 카운트업이나 카운트다운을 할 수 있고, 현재 시각과 예정된 집회 전의 집회 시작 카운트다운을 표시하며, 필요에 따라 시간 초과 여부나 집회가 예정보다 빠르게 또는 늦게 진행되고 있는지를 표시할 수 있습니다.
 
-The timer is a beta feature and should only be used when approved locally.
+타이머는 베타 기능이므로 현지에서 사용 승인을 받은 경우에만 사용해야 합니다.
 
-#### Meeting Parts {#user-guide-timer-parts}
+#### 집회 파트 {#user-guide-timer-parts}
 
-The timer popup on the action island lists the parts of the selected day's meeting. For midweek meetings, choose how many Apply Yourself to the Field Ministry and Living as Christians parts there are; the section's minutes are shared out evenly, and each part can then be adjusted freely with the **+** and **−** buttons or by clicking the part. Any part can be set to any number of minutes, including 0 to skip it. A warning icon points out sections whose parts don't add up to the time allotted to them, but never changes anything on its own.
+작업 아일랜드의 타이머 팝업에는 선택한 날짜의 집회 파트가 나열됩니다. 평일 집회의 경우 ‘야외 봉사에 힘쓰십시오’와 ‘그리스도인 생활’의 파트가 각각 몇 개인지 선택하십시오. 섹션의 시간이 균등하게 나뉘며, 이후 **+** 및 **−** 버튼을 사용하거나 파트를 클릭하여 각 파트의 시간을 자유롭게 조정할 수 있습니다. 모든 파트는 원하는 시간(분)으로 설정할 수 있으며, 0분으로 설정하면 해당 파트를 건너뜁니다. 파트 시간의 합계가 섹션에 배정된 시간과 맞지 않으면 경고 아이콘이 표시되지만, 자동으로 무언가를 변경하지는 않습니다.
 
-**Custom parts** can be added on any day, for Governing Body updates, special programs or anything else that isn't on the regular schedule. On days without a meeting, the timer starts with one custom part per custom media section.
+중앙장로회 최신 소식, 특별 프로그램 등 정규 일정에 없는 내용을 위해 어느 날이든 **사용자 지정 파트**를 추가할 수 있습니다. 집회가 없는 날에는 사용자 지정 미디어 섹션마다 사용자 지정 파트가 하나씩 있는 상태로 타이머가 시작됩니다.
 
-Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
+파트 수, 변경한 시간, 사용자 지정 파트, 기록된 시간은 날짜별로 저장되므로 M³를 다시 시작해도 유지되며, 한 집회의 시간 기록이 다른 집회와 섞이지 않습니다. **이 날의 모든 시간 기록 초기화**를 사용하면 해당 날짜에 기록된 시간을 한 번에 지울 수 있으며, PDF 시간 보고서는 언제든지 내보낼 수 있습니다.
 
-#### Hand Alert {#user-guide-timer-hand-alert}
+#### 손 들기 알림 {#user-guide-timer-hand-alert}
 
-A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+타이머 팝업의 **손 들기 알림** 버튼을 누르면 타이머 화면에 큰 손 모양이 표시되어 사회자의 주의를 끌 수 있습니다. 예를 들어 Zoom에서 누군가 손을 들었을 때 사용할 수 있습니다. [Zoom 회의 관리자의 손 들기 도우미](/settings-guide#zoom-meeting-manager-hand-alert)를 사용하면 누군가 Zoom에서 손을 들 때마다 M³가 그 사람의 이름과 함께 손 모양을 자동으로 표시하며, 클릭 한 번으로 음소거를 해제하고, 다시 클릭 한 번으로 음소거하고 손을 내릴 수 있습니다.
 
-#### Timer on a Tablet {#user-guide-timer-remote}
+#### 태블릿에서 타이머 보기 {#user-guide-timer-remote}
 
-The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³.
+선택 기능인 [원격 타이머](/settings-guide#timer-remote)는 타이머 화면을 읽기 전용 웹 페이지로 로컬 네트워크에 제공합니다. 연단에 있는 태블릿이나 휴대폰의 브라우저에서 타이머 팝업에 표시된 주소를 열면 연사만 남은 시간을 볼 수 있으며, 모든 제어는 그대로 M³에서 합니다.
 
-#### Quick Access {#user-guide-timer-quick-access}
+#### 빠른 접근 {#user-guide-timer-quick-access}
 
-Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).
+작업 아일랜드의 타이머 버튼에 마우스를 올리면 시간을 측정 중인 파트와 함께 ‘시작’, ‘일시 정지’, ‘중지’, ‘다음 파트’ 버튼이 표시됩니다. 설정을 통해 전체 파트 목록과 타이머 제어가 포함된 타이머 패널을 메인 창 오른쪽에 고정하여 항상 보이도록 할 수도 있습니다. [설정 가이드](/settings-guide#timer-quick-access)를 참조하십시오.
 
-## Background Music {#user-guide-background-music}
+## 배경 음악 {#user-guide-background-music}
 
-### Setting Up Background Music {#background-music-setup}
+### 배경 음악 설정하기 {#background-music-setup}
 
-Background music automatically plays before meetings and stops at the appropriate time:
+배경 음악은 집회 전에 자동으로 재생되고 적절한 때에 중지됩니다.
 
-1. **Enable Music** - Turn on background music in settings
-2. **Auto-Start** - Music will start automatically when M³ launches, if appropriate
-3. **Meeting Stop** - Music stops automatically before meeting start time
-4. **Manual Control** - Use the music button in the status bar to start/stop manually
-5. **Restart** - Resume music after meetings with one click
+1. **음악 활성화** - 설정에서 배경 음악을 켭니다.
+2. **자동 시작** - 적절한 경우 M³를 실행할 때 음악이 자동으로 시작됩니다.
+3. **집회 전 중지** - 집회 시작 시간 전에 음악이 자동으로 중지됩니다.
+4. **수동 제어** - 상태 표시줄의 음악 버튼을 사용하여 직접 시작하거나 중지합니다.
+5. **다시 재생** - 집회가 끝난 후 클릭 한 번으로 음악을 다시 재생합니다.
 
-## Zoom Integration {#user-guide-zoom-integration}
+## Zoom 연동 {#user-guide-zoom-integration}
 
-M³ can integrate with Zoom for automatic screen sharing:
+M³를 Zoom과 연동하여 화면을 자동으로 공유할 수 있습니다.
 
-1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
-3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
-4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
+1. **연동 활성화** - 설정에서 Zoom 연동을 켭니다.
+2. **단축키 설정** - Zoom에서 설정한 화면 공유 키보드 단축키를 입력합니다. Zoom에서 ‘전역’ 확인란이 선택되어 있는지 확인하십시오.
+3. **자동 제어** - 필요에 따라 M³가 Zoom 화면 공유를 자동으로 시작하고 중지합니다.
+4. **직접 제어** - 필요한 경우 Zoom에서 화면 공유를 직접 제어할 수도 있습니다.
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## OBS Studio 연동 {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#user-guide-obs-setup}
+### OBS 연동 설정하기 {#user-guide-obs-setup}
 
-To use M³ with OBS Studio for hybrid meetings:
+혼합형 집회에서 M³를 OBS Studio와 함께 사용하려면 다음 단계를 따르십시오.
 
-1. **Install OBS Studio** - Download and install OBS Studio
-2. **Enable WebSocket** - Install the WebSocket plugin in OBS
-3. **Configure M³** - Enter OBS port and password in M³ settings
-4. **Set Up Scenes** - Create scenes for camera, media, and other content
-5. **Test** - Verify playback works properly
+1. **OBS Studio 설치** - OBS Studio를 다운로드하여 설치합니다.
+2. **WebSocket 활성화** - OBS에 WebSocket 플러그인을 설치합니다.
+3. **M³ 설정** - M³ 설정에서 OBS 포트와 비밀번호를 입력합니다.
+4. **장면 설정** - 카메라, 미디어 및 기타 콘텐츠에 사용할 장면을 만듭니다.
+5. **테스트** - 재생이 제대로 작동하는지 확인합니다.
 
-### OBS Scene Management {#obs-scene-management}
+### OBS 장면 관리 {#obs-scene-management}
 
-M³ automatically switches OBS scenes during presentations:
+M³는 미디어를 표시하는 동안 OBS 장면을 자동으로 전환합니다.
 
-- **Camera Scene** - Shows the lectern/camera view
-- **Media Scene** - Displays media content
-- **Image Scene** - Shows images (can be postponed if enabled)
-- **Automatic Switching** - Scenes change based on media type and settings
-- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
+- **카메라 장면** - 연단/카메라 화면을 보여 줍니다.
+- **미디어 장면** - 미디어 콘텐츠를 표시합니다.
+- **이미지 장면** - 이미지를 보여 줍니다(활성화한 경우 나중에 표시하도록 미룰 수 있음).
+- **자동 전환** - 미디어 유형과 설정에 따라 장면이 바뀝니다.
+- **녹화 제어** - 활성화하면 M³의 OBS 팝업에서 OBS 녹화를 시작하고 중지할 수 있습니다.
 
-### Advanced OBS Features {#advanced-obs}
+### OBS 고급 기능 {#advanced-obs}
 
-#### Do Not Automatically Share Images {#user-guide-postpone-images}
+#### 이미지를 자동으로 공유하지 않음 {#user-guide-postpone-images}
 
-Enable this option to delay sharing images to OBS until manually triggered:
+직접 공유할 때까지 OBS로 이미지를 공유하지 않으려면 이 옵션을 활성화하십시오.
 
-1. Enable "Do not automatically share images" in OBS settings
-2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. This is useful for showing images to in-person audience first.
+1. OBS 설정에서 ‘이미지를 자동으로 공유하지 않음’을 활성화합니다.
+2. 표시 중인 이미지의 **Zoom 참여자에게만 이미지 표시** 버튼을 클릭할 때만 이미지가 공유됩니다. 왕국회관에 있는 청중에게 이미지를 먼저 보여 줄 때 유용합니다.
 
-#### Scene Switching Behavior {#user-guide-scene-switching}
+#### 장면 전환 방식 {#user-guide-scene-switching}
 
-Configure how M³ handles scene changes:
+M³의 장면 전환 방식을 설정합니다.
 
-- **Switch After Media** - Automatically return to previous scene
-- **Remember Previous Scene** - Restore the scene that was active before media
+- **미디어 재생 후 전환** - 이전 장면으로 자동으로 돌아갑니다.
+- **이전 장면 기억** - 미디어 재생 전에 사용하던 장면으로 되돌립니다.
 
-### Audio Configuration for Hybrid Meetings {#audio-configuration}
+### 혼합형 집회를 위한 오디오 설정 {#audio-configuration}
 
-When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
+혼합형 집회(왕국회관 + Zoom)에서 M³를 OBS Studio와 함께 사용하는 경우 집회 참석자가 미디어 소리를 들을 수 있도록 오디오 설정을 구성해야 합니다.
 
-#### Zoom Audio Settings {#zoom-audio-settings}
+#### Zoom 오디오 설정 {#zoom-audio-settings}
 
-**Before every meeting, you must enable Original Audio in Zoom:**
+**매 집회 전에 Zoom에서 원본 오디오를 활성화해야 합니다.**
 
-1. **Open Zoom** and go to Settings
-2. **Navigate to Audio** → **Advanced**
-3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
-4. **Check "Disable echo cancellation"** (first checkbox)
-5. **Check "Disable noise suppression"** (second checkbox)
-6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
-7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
+1. **Zoom을 열고** 설정으로 이동합니다.
+2. **오디오** → **고급**으로 이동합니다.
+3. **‘회의 중 원본 사운드 활성화 옵션 표시’를 활성화합니다**
+4. **‘에코 제거 비활성화’를 선택합니다**(첫 번째 확인란)
+5. **‘소음 억제 비활성화’를 선택합니다**(두 번째 확인란)
+6. **‘고음질 음악 모드 비활성화’를 선택 해제합니다**(세 번째 확인란)
+7. **각 집회를 시작하기 전에** 회의 컨트롤에서 ‘원본 오디오’ 버튼을 클릭합니다.
 
-**Alternative: Share Computer Sound**
-If Original Audio doesn't work well in your setup:
+**대안: 컴퓨터 소리 공유**
+사용 환경에서 원본 오디오가 잘 작동하지 않는 경우:
 
-1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
-2. **Check "Share computer sound"**
-3. **Note**: This option must be enabled every time you start a new Zoom session
+1. **미디어를 재생하기 전에** Zoom 화면 공유 옵션의 **고급** 탭으로 이동합니다.
+2. **‘컴퓨터 소리 공유’를 선택합니다**
+3. **참고**: 새 Zoom 회의를 시작할 때마다 이 옵션을 활성화해야 합니다.
 
-**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
+**가장 좋은 대안**: OBS Studio 대신 M³의 Zoom 연동 기능을 사용하는 것을 고려해 보십시오. Zoom 연동 기능은 Zoom의 기본 화면 공유를 사용하므로 오디오를 더 매끄럽게 처리하며 복잡한 오디오 설정이 필요하지 않습니다.
 
-#### Why Audio Configuration is Necessary {#why-audio-config}
+#### 오디오 설정이 필요한 이유 {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+M³는 컴퓨터에서 소리와 함께 미디어를 재생하지만, 이 소리는 동영상 스트림을 통해 OBS Studio로 **자동 전송되지 않습니다**. 이는 다른 미디어 플레이어를 사용할 때도 마찬가지입니다.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**이 오디오 문제는 M³와 관련이 없습니다** - OBS Studio의 동영상 스트리밍이 Zoom과 함께 작동하는 방식의 한계입니다. 동영상 스트림은 웹캠과 마찬가지로 소리가 없는 가상 카메라처럼 작동하므로, 컴퓨터의 소리를 받아들이도록 Zoom을 따로 설정해야 합니다. 이를 위해서는 컴퓨터에 사운드 카드가 두 개 있어야 하며, 그렇지 않다면 OBS Studio 연동 기능을 제대로 사용하기 어려울 것입니다.
 
-**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
+**대체 방법**: 대신 Zoom 연동 기능을 사용하는 것을 고려해 보십시오. Zoom 연동 기능은 Zoom의 기본 화면 및 오디오 공유를 사용하므로 오디오를 더 매끄럽게 처리합니다.
 
-#### Troubleshooting Audio Issues {#audio-troubleshooting}
+#### 오디오 문제 해결 {#audio-troubleshooting}
 
-**Common Problems:**
+**일반적인 문제:**
 
-- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
-- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
-- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
+- **Zoom에서 소리가 들리지 않는 경우**: 원본 오디오가 활성화되어 있고 올바르게 설정되어 있는지 확인합니다.
+- **음질이 좋지 않은 경우**: 원본 오디오 확인란 세 개가 올바르게 설정되어 있는지 확인합니다.
+- **Zoom을 다시 시작한 후 소리가 나지 않는 경우**: 새 Zoom 회의를 시작할 때마다 원본 오디오 설정을 다시 활성화해야 합니다.
 
-**Best Practices:**
+**권장 사항:**
 
-- Test audio configuration and sharing before meetings
-- Create a checklist for audio setup
-- Consider using "Share Computer Sound" as a backup option
-- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
-- Ensure all AV operators are familiar with these settings
+- 집회 전에 오디오 설정과 공유를 테스트합니다.
+- 오디오 설정용 체크리스트를 만듭니다.
+- 예비 방법으로 ‘컴퓨터 소리 공유’를 사용하는 것을 고려합니다.
+- 오디오를 더 간단하게 처리하려면 **OBS Studio 대신 Zoom 연동 기능을 사용하는 것을 고려합니다**.
+- 모든 음향·영상 담당자가 이 설정을 잘 알고 있는지 확인합니다.
 
-## Media Import and Management {#media-import}
+## 미디어 가져오기 및 관리 {#media-import}
 
-### Importing Custom Media {#importing-custom-media}
+### 사용자 지정 미디어 가져오기 {#importing-custom-media}
 
-Add your own media files to M³:
+M³에 직접 준비한 미디어 파일을 추가할 수 있습니다.
 
-1. **File Import** - Use the import button to add videos, images, or audio files
-2. **Drag and Drop** - Drag files directly into M³
-3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
-4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
-6. **Videos from the official website** - Search for videos and add them to the selected date
-7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
+1. **파일 가져오기** - 가져오기 버튼을 사용하여 동영상, 이미지 또는 오디오 파일을 추가합니다.
+2. **드래그 앤 드롭** - 파일을 M³로 직접 끌어다 놓습니다.
+3. **공유 폴더** - Dropbox, OneDrive, iCloud Drive 또는 Google Drive로 동기화되는 폴더에서 미디어를 자동으로 추가합니다.
+4. **JWPUB 파일 및 재생 목록** - 출판물과 재생 목록을 가져옵니다.
+5. **공개 강연 미디어(S-34 / S-34mp)** - S‑34 또는 S‑34mp JWPUB 파일을 사용하여 공개 강연 미디어를 가져옵니다.
+6. **공식 웹사이트의 동영상** - 동영상을 검색하여 선택한 날짜에 추가합니다.
+7. **연구용 성경 및 수어 성경 미디어** - 선택한 성구에 대한 이미지, 동영상, 지도, 역사적 참고 자료 또는 수어 성경 동영상을 추가합니다.
 
-### Managing Imported Media {#managing-imported-media}
+### 가져온 미디어 관리 {#managing-imported-media}
 
-- **Organize by Date** - Assign imported media to specific dates
-- **Custom Sections** - Create custom sections for organization
-- **Edit Properties** - Modify titles, descriptions, and timing
-- **Remove Media** - Delete unwanted media items
+- **날짜별 정리** - 가져온 미디어를 특정 날짜에 지정합니다.
+- **사용자 지정 섹션** - 미디어를 정리할 사용자 지정 섹션을 만듭니다.
+- **속성 편집** - 제목, 설명 및 재생 구간을 수정합니다.
+- **미디어 제거** - 필요 없는 미디어 항목을 삭제합니다.
 
-### Audio Bible Import {#audio-bible-import}
+### 성경 오디오 녹음 가져오기 {#audio-bible-import}
 
-Import audio recordings of Bible verses:
+성경 구절의 오디오 녹음을 가져올 수 있습니다.
 
-1. Click the "Audio Bible" button
-2. Select the Bible book and chapter
+1. ‘성경 오디오 녹음’ 버튼을 클릭합니다.
+2. 성경 책과 장을 선택합니다.
 3. 특정 성구나 성구 범위를 선택합니다.
-4. Download the audio files
-5. Use them
+4. 오디오 파일을 다운로드합니다.
+5. 다운로드한 파일을 사용합니다.
 
-### Profile Settings Import and Export {#profile-settings-import-export}
+### 프로필 설정 가져오기 및 내보내기 {#profile-settings-import-export}
 
-Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
+각 프로필의 설정은 설정 화면에서 JSON 파일로 내보낼 수 있습니다. 프로필 설정 파일을 가져오면 현재 프로필의 설정이 대체됩니다. 설정을 다른 컴퓨터로 옮기거나 이전에 사용하던 구성을 복원할 때 유용합니다.
 
-## Shared Folder and Export {#user-guide-folder-monitoring}
+## 공유 폴더 및 내보내기 {#user-guide-folder-monitoring}
 
-### Setting Up a Shared Folder {#folder-monitoring-setup}
+### 공유 폴더 설정하기 {#folder-monitoring-setup}
 
-Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
+Dropbox, OneDrive, iCloud Drive, Google Drive와 같은 클라우드 저장소 앱으로 동기화되는 폴더에서 미디어를 추가할 수 있습니다.
 
-1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
-2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
-3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
-4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
-5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
+1. **기능 켜기** - 초기 설정 마법사에서 클라우드 저장소 앱에 대해 물으면 ‘예’라고 답하거나, **설정** > **연동 기능** > **공유 폴더**로 이동하여 **공유 폴더에서 미디어 추가**를 켭니다.
+2. **폴더 선택** - 클라우드 저장소 앱 안에 있는 폴더를 선택합니다. 이 용도로만 사용할 새 폴더가 가장 좋습니다.
+3. **날짜별 폴더** - M³가 그 안에 예정된 집회마다 폴더를 만들고, 집회 날짜를 연-월-일 형식으로 적어 이름을 붙입니다(예: `2026-03-25`).
+4. **파일 추가** - 사진, 동영상, 오디오 파일 또는 JW 라이브러리 재생 목록을 집회 폴더에 넣으면 해당 집회의 미디어 목록에 자동으로 추가됩니다. 다른 날짜의 파일은 같은 방식으로 이름을 붙인 폴더를 만들어 넣습니다.
+5. **지난 폴더** - 한 주가 지나면 M³가 그 주의 폴더와 그 안의 파일을 삭제하며, 이는 공유 폴더를 사용하는 모든 사람에게 적용됩니다. 폴더를 보관하려면 **지난 집회 폴더 삭제**를 끕니다.
 
-### Media Export {#user-guide-media-export}
+### 미디어 내보내기 {#user-guide-media-export}
 
-Automatically export media to organized folders:
+미디어를 정리된 폴더로 자동으로 내보낼 수 있습니다.
 
-1. **Enable Auto-Export** - Turn on media export in settings
-2. **Select Export Folder** - Choose where to save exported files
-3. **Automatic Organization** - Files are organized by date and section
-4. **Format Options** - Convert files to MP4 for better compatibility
+1. **자동 내보내기 활성화** - 설정에서 미디어 내보내기를 켭니다.
+2. **내보내기 폴더 선택** - 내보낸 파일을 저장할 위치를 선택합니다.
+3. **자동 정리** - 파일이 날짜와 섹션별로 정리됩니다.
+4. **형식 옵션** - 호환성을 높이기 위해 파일을 MP4로 변환합니다.
 
-## Website Presentation {#website-presentation}
+## 웹사이트 표시 {#website-presentation}
 
-### Presenting the Official Website {#presenting-the-website}
+### 공식 웹사이트 표시하기 {#presenting-the-website}
 
-Share the official website on external displays:
+외부 디스플레이에 공식 웹사이트를 표시할 수 있습니다.
 
-1. **Open Website Mode** - Click the website presentation button
-2. **External Display** - The website opens in a new window
-3. **Navigation** - Use the browser controls to navigate
+1. **웹사이트 모드 열기** - 웹사이트 표시 버튼을 클릭합니다.
+2. **외부 디스플레이** - 웹사이트가 새 창에서 열립니다.
+3. **탐색** - 브라우저 컨트롤을 사용하여 페이지를 이동합니다.
 
-### Website Controls {#website-controls}
+### 웹사이트 제어 {#website-controls}
 
-- **Open Website** - Open a separate website window
-- **Start Mirroring** - Show the website window in the media display for the audience
-- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
-- **Navigation** - Standard browser navigation controls
-- **Refresh** - Reload the current page
-- **Close** - Exit website presentation mode
-- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+- **웹사이트 열기** - 별도의 웹사이트 창을 엽니다.
+- **미러링 시작** - 청중이 볼 수 있도록 웹사이트 창을 미디어 화면에 표시합니다.
+- **미러링 중지** - 웹사이트 표시를 중지하고 올해의 성구 또는 미디어 화면 배경으로 돌아갑니다.
+- **탐색** - 일반적인 브라우저 탐색 컨트롤입니다.
+- **새로 고침** - 현재 페이지를 다시 불러옵니다.
+- **닫기** - 웹사이트 표시 모드를 종료합니다.
+- **자동 복귀** - 원하는 경우 웹사이트 미러링을 중지한 후 자동으로 미디어 목록으로 돌아갑니다.
 
-## Meeting Recordings {#meeting-recordings}
+## 집회 녹화 {#meeting-recordings}
 
-M³ can help control meeting recording, but it does not include a built-in recorder.
+M³는 집회 녹화를 제어하는 데 도움을 줄 수 있지만 자체 녹화 기능은 없습니다.
 
-- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
-- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
-- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
+- **OBS 녹화** - OBS 녹화 제어 기능을 활성화한 경우 OBS 팝업에서 OBS 녹화를 시작하고 중지합니다.
+- **외부 녹화 앱** - 별도의 녹화 앱에 사용할 키보드 단축키를 설정한 다음, 집회 녹화 팝업에서 해당 단축키를 보냅니다.
+- **녹화 폴더** - 녹화 폴더를 지정하면 녹화 파일이 저장된 폴더를 바로 여는 버튼이 표시됩니다.
 
-## Advanced Features {#user-guide-advanced-features}
+## 고급 기능 {#user-guide-advanced-features}
 
-### Multiple Congregations {#user-guide-multiple-congregations}
+### 여러 회중 관리 {#user-guide-multiple-congregations}
 
-Manage multiple congregations or groups:
+여러 회중이나 그룹을 관리할 수 있습니다.
 
-1. **Create Profiles** - Set up separate profiles for different congregations
-2. **Switch Profiles** - Use the congregation selector to switch between profiles
-3. **Separate Settings** - Each profile has its own settings and media
-4. **Shared Resources** - Media files are shared between profiles whenever possible
+1. **프로필 만들기** - 회중마다 별도의 프로필을 설정합니다.
+2. **프로필 전환** - 회중 선택 메뉴를 사용하여 프로필을 전환합니다.
+3. **별도 설정** - 각 프로필에는 고유한 설정과 미디어가 있습니다.
+4. **공유 리소스** - 가능한 경우 미디어 파일을 여러 프로필에서 함께 사용합니다.
 
-### Keyboard Shortcuts {#keyboard-shortcuts-guide}
+### 키보드 단축키 {#keyboard-shortcuts-guide}
 
-Configure custom keyboard shortcuts for efficient operation:
+효율적으로 작업할 수 있도록 원하는 키보드 단축키를 설정할 수 있습니다.
 
-1. **Enable Shortcuts** - Turn on keyboard shortcuts in settings
-2. **Configure Shortcuts** - Set up shortcuts for common actions
-3. **Practice** - Learn your shortcuts for faster operation
-4. **Customize** - Adjust shortcuts to match your preferences
+1. **단축키 활성화** - 설정에서 키보드 단축키를 켭니다.
+2. **단축키 설정** - 자주 사용하는 작업에 단축키를 지정합니다.
+3. **연습** - 더 빠르게 작업할 수 있도록 단축키를 익힙니다.
+4. **사용자 지정** - 원하는 대로 단축키를 조정합니다.
 
-## Troubleshooting {#troubleshooting-guide}
+## 문제 해결 {#troubleshooting-guide}
 
-### Common Issues {#common-issues}
+### 일반적인 문제 {#common-issues}
 
-#### Media Not Downloading {#user-guide-media-not-downloading}
+#### 미디어가 다운로드되지 않는 경우 {#user-guide-media-not-downloading}
 
-- Check your meeting schedule settings
-- Verify internet connection
-- Check if media is available in your selected language
+- 집회 일정 설정을 확인합니다.
+- 인터넷 연결을 확인합니다.
+- 선택한 언어로 미디어가 제공되는지 확인합니다.
 
-#### OBS Integration Not Working {#user-guide-obs-not-working}
+#### OBS 연동이 작동하지 않는 경우 {#user-guide-obs-not-working}
 
-- Verify OBS WebSocket plugin is installed
-- Check port and password settings
-- Ensure OBS is running
+- OBS WebSocket 플러그인이 설치되어 있는지 확인합니다.
+- 포트 및 비밀번호 설정을 확인합니다.
+- OBS가 실행 중인지 확인합니다.
 
-#### Audio Issues in Zoom/OBS {#audio-issues}
+#### Zoom/OBS의 오디오 문제 {#audio-issues}
 
-- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
-- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
-- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
-- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
+- **Zoom에서 소리가 들리지 않는 경우**: Zoom 설정에서, 그리고 매 집회 전에 원본 오디오를 활성화합니다.
+- **음질이 좋지 않은 경우**: 원본 오디오 확인란 세 개를 확인합니다(처음 두 개는 선택, 세 번째는 선택 해제).
+- **다시 시작한 후 소리가 나지 않는 경우**: 새 Zoom 회의를 시작할 때마다 원본 오디오를 다시 활성화해야 합니다.
+- **대체 방법**: Zoom 화면 공유에서 ‘컴퓨터 소리 공유’ 옵션을 사용합니다.
 
-#### Performance Issues {#user-guide-performance-issues}
+#### 성능 문제 {#user-guide-performance-issues}
 
-- Cache songbook video files
-- Reduce maximum resolution
-- Clear old cached files
-- Check available disk space
-- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
+- 노래책 동영상 파일을 미리 저장합니다.
+- 최대 해상도를 낮춥니다.
+- 오래된 캐시 파일을 삭제합니다.
+- 디스크 여유 공간을 확인합니다.
+- 앱에 그래픽 문제가 생기거나 앱이 강제 종료되면 하드웨어 가속을 비활성화하고 M³를 다시 시작해 봅니다.
 
-#### Language Issues {#user-guide-language-issues}
+#### 언어 문제 {#user-guide-language-issues}
 
-- Check media language setting
-- Ensure language is available on JW.org
-- Try a fallback language
-- Verify interface language setting
+- 미디어 언어 설정을 확인합니다.
+- JW.org에서 해당 언어를 사용할 수 있는지 확인합니다.
+- 대체 언어를 설정해 봅니다.
+- 인터페이스 언어 설정을 확인합니다.
 
-### Getting Help {#getting-help}
+### 도움 받기 {#getting-help}
 
-If you encounter issues:
+문제가 발생하면 다음과 같이 하십시오.
 
-1. **Check Documentation** - Review this guide and other available documentation
-2. **Search Issues** - Look for similar issues on GitHub
-3. **Report Problems** - Create a new issue with detailed information
+1. **문서 확인** - 이 가이드와 기타 문서를 검토합니다.
+2. **이슈 검색** - GitHub에서 비슷한 문제가 있는지 찾아봅니다.
+3. **문제 신고** - 자세한 정보와 함께 새 이슈를 등록합니다.
 
-## Best Practices {#best-practices}
+## 권장 사항 {#best-practices}
 
-### Before Meetings {#before-meetings}
+### 집회 전 {#before-meetings}
 
-1. **Check Downloads** - Ensure all media is downloaded
-2. **Test Equipment** - Verify displays and audio work
-3. **Prepare Media** - Review and organize media for the meeting; make sure no media files are missing
-4. **Configure Audio** - For hybrid meetings, enable Original Audio in Zoom or set up "Share Computer Sound"
+1. **다운로드 확인** - 모든 미디어가 다운로드되었는지 확인합니다.
+2. **장비 테스트** - 디스플레이와 오디오가 제대로 작동하는지 확인합니다.
+3. **미디어 준비** - 집회에 사용할 미디어를 검토하고 정리하며, 누락된 미디어 파일이 없는지 확인합니다.
+4. **오디오 설정** - 혼합형 집회의 경우 Zoom에서 원본 오디오를 활성화하거나 ‘컴퓨터 소리 공유’를 설정합니다.
 
-### During Meetings {#during-meetings}
+### 집회 중 {#during-meetings}
 
-1. **Stay Focused** - Use the clean and distraction-free interface
-2. **Use Shortcuts** - Master keyboard shortcuts for smooth operation
-3. **Monitor Audio** - Keep an eye on volume levels, if that's part of your responsibilities
-4. **Be Prepared** - Have the next media item ready
-5. **Verify Audio** - For hybrid meetings, ensure Zoom participants can hear the media
+1. **집중 유지** - 깔끔하고 방해 요소가 없는 인터페이스를 활용합니다.
+2. **단축키 사용** - 원활하게 작업할 수 있도록 키보드 단축키를 익혀 둡니다.
+3. **오디오 모니터링** - 맡은 일에 포함된다면 음량을 계속 확인합니다.
+4. **미리 준비** - 다음 미디어 항목을 준비해 둡니다.
+5. **오디오 확인** - 혼합형 집회의 경우 Zoom 참여자가 미디어 소리를 들을 수 있는지 확인합니다.
 
-### After Meetings {#after-meetings}
+### 집회 후 {#after-meetings}
 
-1. **Start Background Music** - Start the playback of background music
-2. **Plan Ahead** - Prepare for the next meeting by making sure everything is in place
-3. **Clean Up** - Close media player when you're ready to leave
+1. **배경 음악 시작** - 배경 음악 재생을 시작합니다.
+2. **미리 계획** - 모든 것이 준비되어 있는지 확인하여 다음 집회에 대비합니다.
+3. **정리** - 자리를 떠날 준비가 되면 미디어 플레이어를 닫습니다.
 
-### Regular Maintenance {#regular-maintenance}
+### 정기 관리 {#regular-maintenance}
 
-1. **Update M³** - Keep the application updated
-2. **Clear Cache** - Periodically clear old cached files
-3. **Check Settings** - Review and update settings as needed
+1. **M³ 업데이트** - 애플리케이션을 최신 상태로 유지합니다.
+2. **캐시 정리** - 오래된 캐시 파일을 주기적으로 삭제합니다.
+3. **설정 확인** - 필요에 따라 설정을 검토하고 업데이트합니다.

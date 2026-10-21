@@ -2,7 +2,7 @@
 
 See põhjalik juhend selgitab kõiki M³-s saadaval olevaid sätteid, mis on järjestatud kategooriate kaupa. Nende sättete mõistmine aitab sul M³ seadistada nii, et see vastaks täielikult teie koguduse vajadustele.
 
-## General {#application-configuration}
+## Üldine {#application-configuration}
 
 ### Rakenduse keel {#display-language}
 
@@ -165,11 +165,11 @@ Kui see funktsioon on sisse lülitatud, kontrollib M³ regulaarselt Jehoova tunn
 
 See toimib ainult nende profiilide puhul, mis on lisatud koguduse otsingu abil ja mille koguduse nime ei ole käsitsi muudetud. Kui sünkroniseerimine lülitati välja koguduse nime muutumise tõttu, kasuta valikut **Luba ajakava sünkroniseerimine**, et profiil uuesti ühendada.
 
-#### Enable Schedule Sync {#relink-congregation}
+#### Luba ajakava sünkroniseerimine {#relink-congregation}
 
 <!-- **Setting**: `relinkCongregationButton` -->
 
-Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+Seob praeguse profiili uuesti koguduse otsinguga, et koosolekupäevade ja -aegade automaatsed uuendused saaksid jätkuda. Kuvatakse ainult siis, kui koguduse nime on käsitsi muudetud, sest just see katkestab seose.
 
 #### Värskenda koosolekute ajakava {#refresh-meeting-schedule}
 
@@ -177,7 +177,7 @@ Re-links the current profile to congregation lookup so automatic meeting day and
 
 Sünkroniseeri praegune ja tulevane koosolekute ajakava käsitsi ametliku veebisaidi andmetega.
 
-## Media & Playback {#media-retrieval-and-playback}
+## Meedia & taasesitamine {#media-retrieval-and-playback}
 
 ### Mõõdetav ühendus {#metered-connection}
 
@@ -247,7 +247,7 @@ Taustamuusika helitugevus (1–100%).
 
 **Vaikimisi**: 100%
 
-### Playback and Download Options {#media-display}
+### Taasesituse ja allalaadimise valikud {#media-display}
 
 <!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
 these control the media window's playback behavior and which downloaded media is
@@ -312,13 +312,13 @@ Võimaluse korral jäta allmärkuste pildid meedia allalaadimistest välja.
 
 **Vaikimisi**: `väljas`
 
-#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+#### Välista koguduse piibliuurimise videod {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+Vali väljaanded, mille viidatud videoid koguduse piibliuurimise ajal ei näidata. Otsi väljaande pealkirja või tähise järgi.
 
-**Default**: Walk Courageously With God (`wcg`)
+**Vaikimisi**: Walk Courageously With God (`wcg`)
 
 #### Ära kaasa meediat "Õpeta armastusega" brošüürist {#exclude-theocratic-ministry-school}
 
@@ -350,11 +350,11 @@ Subtiitrite keel (võib erineda meedia keelest).
 
 ### Vahemälu haldamine {#cache-management}
 
-#### Cache Songbook Video Files {#enable-extra-cache}
+#### Laulude videofailide vahemälu {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
+Salvesta kõik laulikuvideod parema jõudluse huvides eelnevalt vahemällu. Pea meeles, et see suurendab meedia vahemälu mahtu.
 
 **Vaikimisi**: `väljas`
 
@@ -374,21 +374,21 @@ Kustuta automaatselt vanad vahemällu salvestatud failid, et säästa kettaruumi
 
 **Vaikimisi**: `lubatud`
 
-### Pinyin Song Titles {#pinyin-song-titles}
+### Pinyini laulupealkirjad {#pinyin-song-titles}
 
-#### Prefer Pinyin Songs {#enable-pinyin-songs}
+#### Eelista pinyin laule {#enable-pinyin-songs}
 
 <!-- **Setting**: `enablePinyinSongs` -->
 
-When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+Kui pinyini laulude kaustast leitakse koosolekulaulu pinyini versioon, kasutatakse seda tavalise laulu asemel.
 
 **Vaikimisi**: `väljas`
 
-#### Pinyin Song Folder {#pinyin-song-folder}
+#### Pinyini laulude kaust {#pinyin-song-folder}
 
 <!-- **Setting**: `pinyinSongFolder` -->
 
-Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+Kaust, mis sisaldab pinyini videolaule (nt `sjjm_s-Pi_CHS_066_r720P.mp4`). Kui leitakse koosolekulaulu numbrile vastav pinyini fail, esitatakse see tavalise laulu asemel.
 
 **Vaikimisi**: Tühi
 
@@ -418,41 +418,41 @@ Salvesta eksporditud meediafailid MP4-vormingusse, et saavutada parem ühilduvus
 
 **Vaikimisi**: `väljas`
 
-### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
+### Jagatud kaust (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-These settings are in the **Integrations** category.
+Need seaded on kategoorias **Koostöö**.
 
-M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+M³ saab lisada sinu koosolekutele meediat kaustast, mida hoiab sünkroonis pilvesalvestusrakendus, näiteks Dropbox, OneDrive, iCloud Drive või Google Drive. See on kasulik, kui teised valmistavad oma osade jaoks meediat ette ja jagavad seda sinuga või kui M³ on kasutusel rohkem kui ühes arvutis. Sobib ka kaust selles arvutis või sinu võrgus.
 
-M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. Mõne muu päeva jaoks failide lisamiseks loo selle jaoks samamoodi nimetatud kaust. Anything else in the shared folder is ignored.
+M³ loob jagatud kausta sisse iga eesseisva koosoleku jaoks kausta, mille nimi on koosoleku kuupäev kujul aasta-kuu-päev (näiteks `2026-03-25`). Pane fotod, videod, helifailid või JW Library esitusloendid koosoleku kausta ja need lisatakse automaatselt selle koosoleku meedialoendisse. Mõne muu päeva jaoks failide lisamiseks loo selle jaoks samamoodi nimetatud kaust. Kõike muud jagatud kaustas eiratakse.
 
 :::tip Nõuanne
 
-Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+Loo uus kaust, mida kasutad ainult selleks, näiteks „Koosoleku meedia“, ja määra pilvesalvestusrakenduses, et see oleks alati selles arvutis olemas (sageli nimetatakse seda „võrguühenduseta saadaval“), et failid oleksid enne koosoleku algust valmis.
 
 :::
 
-#### Add Media From a Shared Folder {#enable-folder-watcher}
+#### Lisa meediat jagatud kaustast {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Add the files put in the shared folder to the right meeting automatically.
+Lisa jagatud kausta pandud failid automaatselt õigele koosolekule.
 
 **Vaikimisi**: `väljas`
 
-#### Shared Folder {#folder-to-watch}
+#### Jagatud kaust {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder to add media from. The setup wizard offers to set it up for you.
+Kaust, kust meediat lisatakse. Seadistusviisard pakub selle sinu eest seadistamist.
 
 **Vaikimisi**: Tühi
 
-#### Delete Past Meeting Folders {#delete-past-watched-folders}
+#### Kustuta möödunud koosolekute kaustad {#delete-past-watched-folders}
 
 <!-- **Setting**: `deletePastWatchedFolders` -->
 
-When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+Kui nädal on läbi, kustuta selle nädala kuupäevadega kaustad koos neis olevate failidega, et jagatud kaust püsiks korras. Kuna kaust on jagatud, kustutatakse need ka kõigi teiste jaoks, kes seda kasutavad. Lülita see välja, kui soovid need alles jätta.
 
 **Vaikimisi**: `lubatud`
 
@@ -472,24 +472,24 @@ Luba eraldi taimeri akna kasutamine koosoleku osade ajastamiseks. Taimer on beet
 
 Määrake, kas ajastuse aken avatakse automaatselt, kas osalejate taimerid loevad vaikimisi üles või alla, kas kell kasutab 12- või 24-tunnist ajavormingut ning kas ajastuse hetkeväärtus kuvatakse tegevusala ajastuse nupul.
 
-### Quick Access to the Timer {#timer-quick-access}
+### Kiirjuurdepääs taimerile {#timer-quick-access}
 
 <!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
 
-Choose how the timer is reached from the main window:
+Vali, kuidas põhiaknast taimerini jõuda:
 
-- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
-- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+- **Kiirjuhtnupud taimeri nupu kohal hõljumisel**: kui viid hiirekursori tegevussaare taimerinupu kohale, näed ajastatavat osa ning nuppe Käivita, Paus, Peata ja Järgmine osa, ilma et peaksid avama kogu taimeri hüpikakna. Vaikimisi sisse lülitatud.
+- **Näita põhiaknas taimeripaneeli**: hoiab kogu koosoleku osade loendi ja taimeri juhtnupud põhiakna paremasse serva kinnitatud paneelil alati nähtaval. Akna- ja kuvaseadete jaoks jääb täielik hüpikaken tegevussaarelt endiselt kättesaadavaks.
 
-### Timer Remote {#timer-remote}
+### Taimeri kaugkuva {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
 
-When turned on, M³ serves a read-only copy of the timer display as a web page on your local network, for a tablet or phone at the lectern: the speaker sees the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time, including the pre-meeting countdown, the clock, overtime colors and the hand alert, and all the controls stay in M³.
+Kui see on sisse lülitatud, pakub M³ kohalikus võrgus veebilehena taimeri kuva koopiat, mida saab ainult vaadata, kõnepuldi juures olevale tahvelarvutile või telefonile: kõneleja näeb järelejäänud aega, ilma et see oleks koguduse ekraanil või Zoomi jagamises. Leht järgib taimerit reaalajas, sealhulgas koosoleku-eelset loendust, kella, ajaületuse värve ja käetõstmise märguannet, ning kõik juhtnupud jäävad M³-sse.
 
-The addresses to open on the device are listed in the timer popup, with a copy button. Change the port only if another program already uses it. Note that anyone on the same network can open the page while this is on; it shows nothing but the timer.
+Seadmes avatavad aadressid on loetletud taimeri hüpikaknas koos kopeerimisnupuga. Muuda porti ainult siis, kui mõni teine programm seda juba kasutab. Pea meeles, et kui see on sisse lülitatud, saab lehte avada igaüks samas võrgus; sellel ei ole midagi peale taimeri.
 
-**Default**: `false`, port `8787`
+**Vaikimisi**: `false`, port `8787`
 
 ### Taimeri kuvamisvormingud {#timer-display-formats}
 
@@ -497,7 +497,7 @@ The addresses to open on the device are listed in the timer popup, with a copy b
 
 Vali kellaaja ja tagasilugemistimeri jaoks analoog- või digitaalne kuvamisviis. Tagasilugemise hoiatusnäidik võib viimasel minutil muuta analoogse tagasilugemise ringi hoiatusvärviks.
 
-The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
+Loendurivorming **Analoogkell ajakaarega** näitab osa järelejäänud aega analoogkella sihverplaadil sektorina minutiosutist kuni kavandatud lõpuni, nii et ühe pilguga näed nii kellaaega kui ka järelejäänud aega. Ületatud aeg kuvatakse teise sektorina ajaületuse värviga. See kehtib ka koosoleku-eelse loenduse kohta ja töötab ka ülespoole loendamise režiimis.
 
 ### Koosoleku taimer ja ajakava staatus {#meeting-countdown-and-schedule-status}
 
@@ -513,7 +513,7 @@ Saate kohandada taimeri teksti suurust ja värve ning seadistada üle aja näita
 
 ## Koostöö {#integrations}
 
-This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
+Selles kategoorias on ka [jagatud kausta](#settings-guide-folder-monitoring) seaded, et lisada meediat Dropboxist, OneDrive'ist, iCloud Drive'ist või Google Drive'ist.
 
 ### Koostöö Zoomiga {#settings-guide-zoom-integration}
 
@@ -533,35 +533,35 @@ Klaviatuuri kiirklahv Zoom ekraani jagamise käivitamiseks.
 
 **Vaikimisi**: Tühi
 
-#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+#### Keskendu automaatselt meediaaknale {#zoom-auto-focus-media-window}
 
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
-Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+Too meediaaken automaatselt fookusesse, kui ekraani jagamine Zoomis algab. Tavaliselt pole see vajalik, kuid mõnes süsteemis võib see aidata, kui meediaaken kaotab pärast ekraani jagamise algust sageli fookuse.
 
 **Vaikimisi**: `väljas`
 
-### Zoom Meeting Manager {#zoom-meeting-manager}
+### Zoomi koosolekuhaldur {#zoom-meeting-manager}
 
-The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+Zoomi koosolekuhaldur (beeta, ainult Windows) juhib sinu eest iga koosoleku eel ja järel Zoomi töölauarakendust. Selle seadistusabiline, mida pakutakse funktsiooni sisselülitamisel, juhendab sind läbi iga automatiseeritud toimingu.
 
-#### While M³ Operates Zoom {#zoom-meeting-manager-overlay}
+#### Kui M³ juhib Zoomi {#zoom-meeting-manager-overlay}
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom offers no proper automation interface, so M³ drives the Zoom app through its accessibility interface, which works without the mouse for nearly everything (the participants list, its menus, the Share window). A few actions can still have to move the mouse or the focused window for a moment, for example to bring Zoom's auto-hidden toolbar back. Whenever that happens, M³ covers its own window with a "M³ is operating Zoom" notice naming what is going on, with a **Cancel this automation** button. The same notice shows during the setup assistant's checks and the self-test. A global keyboard shortcut (default `Ctrl+Alt+Escape`), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Cancelling stops M³ at once; Zoom may then be left part-way, so check it.
+Zoom ei paku korralikku automatiseerimisliidest, seega juhib M³ Zoomi rakendust selle hõlbustusliidese kaudu, mis töötab peaaegu kõige puhul ilma hiireta (osalejate loend, selle menüüd, jagamisaken). Mõned toimingud võivad siiski hetkeks hiirt või fookuses olevat akent liigutada, näiteks et Zoomi automaatselt peidetud tööriistariba tagasi tuua. Kui see juhtub, katab M³ oma akna teatega „M³ juhib Zoomi“, mis nimetab käimasoleva toimingu, ja nupuga **Tühista see automatiseeritud toiming**. Sama teadet näidatakse ka seadistusabilise kontrollide ja enesetesti ajal. Üldine kiirklahv (vaikimisi `Ctrl+Alt+Escape`), mis on aktiivne ainult automatiseeritud toimingu ajal, tühistab selle ükskõik kust, isegi kui fookus on Zoomil. Tühistamine peatab M³ kohe; Zoom võib seejärel jääda pooleli, seega kontrolli seda.
 
-**Default**: `Ctrl+Alt+Escape`
+**Vaikimisi**: `Ctrl+Alt+Escape`
 
-#### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
+#### Tõstetud käte abiline {#zoom-meeting-manager-hand-alert}
 
 <!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
 
-During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
+Koosoleku ajal jälgib M³ Zoomi osalejate loendis tõstetud käsi. Kui keegi tõstab käe, saad M³ teate kaudu ühe klõpsuga selle osaleja **mikrofoni sisse lülitada** ja pärast tema rääkimist teise klõpsuga **ta uuesti vaigistada ja käe langetada**. Tegevussaare Zoomi nupp loetleb tõstetud käed samade nuppudega. Iga toiming läheb Zoomis selle osaleja enda reale tema täpse nime järgi; kui kahel osalejal on sama nimi, ei puutu M³ kumbagi.
 
-If the [meeting timer](#meeting-timer) is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and a **Hand alert** button in the timer and Zoom popups shows it by hand. This part needs the timer display; the notifications and buttons work without it.
+Kui [koosoleku taimer](#meeting-timer) on sisse lülitatud, ilmub juhataja jaoks taimeri ekraanile ka suur käsi koos osaleja nimega ning taimeri ja Zoomi hüpikakende nupp **Käetõstmise märguanne** näitab seda käsitsi. See osa vajab taimeri ekraani; teated ja nupud töötavad ka ilma selleta.
 
-Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list and which menu entry lowers it, then lowers it again. The setup assistant offers this step too.
+Zoom märgib tõstetud käsi oma keeles, seega peab M³ esmalt selgeks õppima, kuidas: kui sinu koosolek on Zoomis avatud, klõpsa **Õpi selgeks, kuidas Zoom tõstetud käsi märgib**. M³ tõstab sinu enda käe, loeb, kuidas Zoom seda osalejate loendis märgib ja milline menüükäsk selle langetab, ning langetab selle siis uuesti. Seda sammu pakub ka seadistusabiline.
 
 **Vaikimisi**: `väljas`
 
@@ -609,7 +609,7 @@ Määra, milliseid OBS-stseene kasutada erinevateks eesmärkideks:
 
 #### OBS Studio lisasätted {#obs-advanced-options}
 
-- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
+- **Ära jaga automaatselt pilte**: lükka piltide jagamine OBS-i edasi, kuni see käivitatakse käsitsi
 - **Kiirlüliti**: Lülita sisse OBS-i koostöö kiirelt sisse-/välja nupu abil
 - **Vaheta stseeni pärast meediat**: naase automaatselt eelmisele stseenile pärast meediat
 - **Eelmise stseeni meeldejätmine**: Eelmise stseeni meeldejätmine ja taastamine
@@ -686,7 +686,7 @@ See valik on peidetud, kui OBS-i salvestusfunktsioonid on sisse lülitatud. Kui 
 
 Määra salvestamise alustamiseks vajalik klahvikombinatsioon, salvestamise lõpetamiseks vajalik valikuline klahvikombinatsioon ning kaust, kuhu välisrakendus salvestused salvestab. Kui peatamise kiirklahvi pole määratud, kasutab M³ uuesti käivitamise kiirklahvi. Kui kaust on seadistatud, kuvab M³ selle avamiseks nuppu.
 
-## Interface & Shortcuts {#interface-shortcuts}
+## Kasutajaliides & otseteed {#interface-shortcuts}
 
 ### Kiirklahvid {#settings-guide-keyboard-shortcuts}
 
@@ -709,47 +709,47 @@ Meedia esitamise kiirklahvide seadistamine:
 - **Stop Media**: Peata meedia taasesitus
 - **Taustamuusika lüliti**: Lülita taustamuusika sisse või välja
 
-### Add More Media Button {#add-more-media-button}
+### Nupp meedia lisamiseks {#add-more-media-button}
 
-#### Sections with an Add Media Button {#add-media-button-sections}
+#### Koosoleku osad nupuga „Lisa juurde meediafaile“ {#add-media-button-sections}
 
 <!-- **Setting**: `addMediaButtonSections` -->
 
-Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
+Vali, millistel koosoleku osadel on oma nupp enda meedia lisamiseks, lisaks ülemise tööriistariba nupule „Lisa meediafail“, mis töötab alati kõigi osade puhul.
 
-**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
+**Vaikimisi**: avalik kõne, „Kristlik eluviis“, ringkonnaülevaataja külastus ja kohandatud jaotised
 
-#### Compact Add Media Button {#compact-add-media-button}
+#### Nupu „Lisa juurde meediafaile“ kompaktne režiim {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
-Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
+Näita jaotiste päistes nupu „Lisa juurde meediafaile“/„Lisa laul“ asemel ainult ikooni. Kui see on välja lülitatud, kuvatakse nupul ikooni kõrval ka tekst, kui ruumi on piisavalt.
 
 **Vaikimisi**: `lubatud`
 
-### Media Drag Handle {#media-drag-handle}
+### Meedia lohistamiskäepide {#media-drag-handle}
 
-#### Show Drag Handle {#show-media-drag-handle}
+#### Näita meediaelementidel lohistamiskäepidemeid {#show-media-drag-handle}
 
 <!-- **Setting**: `showMediaDragHandle` -->
 
-Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
+Näita igal meediaelemendil väikest käepidet, mille abil saab elemendi lohistades ümber järjestada. Meediaelemente saab alati ümber järjestada, lohistades neid ükskõik kust; see mõjutab ainult seda, kas käepideme ikooni ennast näidatakse.
 
 **Vaikimisi**: `lubatud`
 
-### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
+### Kiirtoimingud enne ja pärast koosolekut {#before-after-meeting-quick-actions}
 
-#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
+#### Näita koosoleku kiirtoiminguid {#enable-meeting-quick-actions}
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
-Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
+Näita enne koosolekut ja pärast koosolekut paneeli kasulike juhtnuppudega (taustamuusika, salvestamine) ning kummagi jaoks kohandatavat kontrollnimekirja.
 
 **Vaikimisi**: `lubatud`
 
-The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
+Mõlema paneeli kontrollnimekirja kategooriaid ja ülesandeid hallatakse samas seadete jaotises: lisa, nimeta ümber, järjesta ümber või kustuta kategooriaid ja ülesandeid vastavalt oma koguduse vajadustele.
 
-## Advanced {#advanced-settings}
+## Lisavalikud {#advanced-settings}
 
 ### Profiili seaded – ülekandmine {#profile-settings-transfer}
 
@@ -800,20 +800,20 @@ Lülita automaatne meedia allalaadimine täielikult välja. Kasuta seda ainult p
 ### Uutele kasutajatele {#new-users}
 
 1. Alusta määramiste abil, et seadistada põhilised sätted
-2. Turn on "Enable media playback" to access presentation features
+2. Esitlusfunktsioonide kasutamiseks lülita sisse „Luba meedia esitamine“
 3. Seadista koosolekute ajakava
 4. Kui sa kasutad hübriidkoosolekuid, siis seadista OBS Studio koostöö
 
 ### Edasijõudnud kasutajatele {#advanced-users}
 
-1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
+1. Kasuta jagatud kausta, et lisada meediat pilvesalvestusest, näiteks Dropboxist või OneDrive'ist
 2. Luba meedia automaatne eksportimine varundamise eesmärgil
 3. Seadista kiirklahvid tõhusaks tööks
 4. Zoom-koostöö seadistamine automaatseks ekraani jagamiseks
 
 ### Jõudluse parandamise nipid {#performance-optimization}
 
-1. Cache songbook video files for better performance
+1. Salvesta laulikuvideod parema jõudluse huvides vahemällu
 2. Kasuta oma vajadustele vastavat maksimaalset resolutsiooni
 3. Seadista vahemälu automaatne tühjendamine, et hallata kettaruumi
 4. Kui andmemaht on piiratud, kaalu mõõdetud ühenduse seadistamist

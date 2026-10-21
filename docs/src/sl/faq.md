@@ -42,7 +42,7 @@ M³ deluje na Windows, macOS in Linux:
 
 ### :computer: Kako prenesem in namestim program M³? {#installation}
 
-Ustrezno različico prenesi s strani za [Prenos] (download) in sledi korakom v [Uporabniškem vodniku] (user-guide).
+Ustrezno različico prenesi s [strani za prenos](download) in sledi korakom v [Uporabniškem vodniku](user-guide).
 
 ### :gear: Kako prvič nastavim M³? {#first-time-setup}
 

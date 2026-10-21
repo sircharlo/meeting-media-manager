@@ -2,7 +2,7 @@
 
 Deze uitgebreide gids legt alle instellingen uit die beschikbaar zijn in M³, georganiseerd per categorie. Het begrijpen van deze instellingen zal je helpen om M³ perfect te configureren voor de behoeften van je gemeente.
 
-## General {#application-configuration}
+## Algemeen {#application-configuration}
 
 ### Weergave Taal {#display-language}
 
@@ -44,7 +44,7 @@ Stel in welke dag in de kalenderweergave als eerste dag van de week geldt.
 
 Notatie die wordt gebruikt om datums in de app weer te geven.
 
-**Example**: D MMMM YYYY
+**Voorbeeld**: D MMMM YYYY
 
 **Standaard**: D MMMM YYYY
 
@@ -56,7 +56,7 @@ Start M³ automatisch wanneer de computer opstart.
 
 **Standaard**: `false`
 
-## Congregation Meetings {#congregation-meetings}
+## Gemeentevergaderingen {#congregation-meetings}
 
 ### Gemeentenaam {#congregation-name}
 
@@ -86,7 +86,7 @@ Een secundaire taal die wordt gebruikt wanneer media niet beschikbaar is in de p
 
 **Standaard**: Geen
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Doordeweekse vergaderdag {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
@@ -96,17 +96,17 @@ De dag van de week waarop je doordeweekse vergadering wordt gehouden.
 
 **Standaard**: Geen (must be set during setup)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Doordeweekse vergadertijd {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
 De begintijd van je doordeweekse vergadering.
 
-**Format**: HH:MM (24-hour format)
+**Formaat**: UU:MM (24-uursnotatie)
 
 **Standaard**: Geen (must be set during setup)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Weekendvergaderdag {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
@@ -116,70 +116,70 @@ De dag van de week waarop je weekendvergadering wordt gehouden.
 
 **Standaard**: Geen (must be set during setup)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Weekendvergadertijd {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
 De begintijd van je weekendvergadering.
 
-**Format**: HH:MM (24-hour format)
+**Formaat**: UU:MM (24-uursnotatie)
 
 **Standaard**: Geen (must be set during setup)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Week van het bezoek van de kringopziener {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
 De week van het volgende bezoek van de kringopziener.
 
-**Format**: MM/DD/YYYY
+**Formaat**: MM/DD/JJJJ
 
 **Standaard**: Geen
 
-### Memorial Date {#memorial-date}
+### Datum van de Herdenking {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration.
+De datum van de volgende Herdenking.
 
-**Format**: MM/DD/YYYY
+**Formaat**: MM/DD/JJJJ
 
 **Standaard**: Automatically retrieved periodically
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Wijzigingen in het vergaderschema {#meeting-schedule-changes}
 
 Met deze instellingen kun je tijdelijke wijzigingen in je vergaderschema configureren:
 
 - **Wijzigingsdatum**: Wanneer de wijziging ingaat
 - **Eenmalige wijziging**: Of dit een permanente of tijdelijke wijziging is
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Nieuwe doordeweekse vergaderdag**: Nieuwe dag voor de doordeweekse vergadering
+- **Nieuwe doordeweekse vergadertijd**: Nieuwe tijd voor de doordeweekse vergadering
+- **Nieuwe openbare vergaderdag**: Nieuwe dag voor de weekendvergadering
+- **Nieuwe openbare vergadertijd**: Nieuwe tijd voor de weekendvergadering
 
-### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
+### Automatische updates van het vergaderschema {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
+Als dit is ingeschakeld, controleert M³ regelmatig op de officiële website van Jehovah's Getuigen of de vergaderdagen en -tijden zijn gewijzigd, en werkt het huidige profiel automatisch bij.
 
-This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
+Dit werkt alleen voor profielen die zijn toegevoegd met de zoekfunctie voor gemeenten en waarvan de gemeentenaam niet handmatig is gewijzigd. Als de synchronisatie is uitgeschakeld omdat de gemeentenaam is gewijzigd, gebruik dan **Schemasynchronisatie inschakelen** om het profiel opnieuw te koppelen.
 
-#### Enable Schedule Sync {#relink-congregation}
+#### Schemasynchronisatie inschakelen {#relink-congregation}
 
 <!-- **Setting**: `relinkCongregationButton` -->
 
-Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+Koppelt het huidige profiel opnieuw aan de zoekfunctie voor gemeenten, zodat de vergaderdagen en -tijden weer automatisch kunnen worden bijgewerkt. Wordt alleen getoond als de gemeentenaam handmatig is gewijzigd, omdat juist dat de koppeling verbreekt.
 
-#### Refresh Meeting Schedule {#refresh-meeting-schedule}
+#### Vergaderschema vernieuwen {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Manually synchronize the current and future meeting schedule with the information from the official website.
+Synchroniseer handmatig het huidige en toekomstige vergaderschema met de informatie van de officiële website.
 
-## Media & Playback {#media-retrieval-and-playback}
+## Media en afspelen {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Beperkte gegevensverbinding {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
@@ -187,7 +187,7 @@ Schakel dit in als je een beperkte dataverbinding gebruikt om bandbreedte te bes
 
 **Standaard**: `false`
 
-### Media Display {#media-display-button}
+### Mediaweergave {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
@@ -195,15 +195,15 @@ Schakel de functie voor mediaweergave in. Dit is nodig om media op een tweede sc
 
 **Standaard**: `false`
 
-#### Enable Media Preview {#enable-media-preview}
+#### Mediavoorbeeld inschakelen {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Show a live preview of the media window while an image or video is being displayed.
+Toon een live voorbeeld van het mediavenster terwijl er een afbeelding of video wordt weergegeven.
 
 **Standaard**: `true`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Weergave beginnen gepauzeerd {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
@@ -211,7 +211,7 @@ Start video's gepauzeerd wanneer het afspelen begint.
 
 **Standaard**: `false`
 
-### Background Music {#settings-guide-background-music}
+### Achtergrondmuziek {#settings-guide-background-music}
 
 #### Muziek inschakelen {#enable-music-button}
 
@@ -239,7 +239,7 @@ Hoeveel seconden vóór de begintijd van de vergadering de achtergrondmuziek moe
 
 **Standaard**: 60 seconden
 
-#### Music Volume {#music-volume}
+#### Muziekvolume {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
@@ -247,7 +247,7 @@ Volumeniveau voor achtergrondmuziek (1-100%).
 
 **Standaard**: 100%
 
-### Playback and Download Options {#media-display}
+### Opties voor afspelen en downloaden {#media-display}
 
 <!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
 these control the media window's playback behavior and which downloaded media is
@@ -262,73 +262,73 @@ Schakel fade-in/out-overgangen in bij het tonen of verbergen van het mediavenste
 
 **Standaard**: `true`
 
-#### Enable Playback Speed Control {#enable-playback-speed-control}
+#### Regeling van de afspeelsnelheid inschakelen {#enable-playback-speed-control}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
-Allow audio and video playback speed to be adjusted from the media item's context menu.
+Sta toe dat de afspeelsnelheid van audio en video wordt aangepast via het contextmenu van het media-item.
 
 **Standaard**: `false`
 
-#### Hide Media Logo {#hide-media-logo}
+#### Medialogo verbergen {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Verberg het logo in het mediavenster.
 
 **Standaard**: `false`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Maximale resolutie {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+Maximale resolutie voor gedownloade mediabestanden.
 
-**Options**: 240p, 360p, 480p, 720p, 1080p
+**Opties**: 240p, 360p, 480p, 720p, 1080p
 
 **Standaard**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### Gedrukte media opnemen {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+Media uit gedrukte publicaties opnemen in mediadownloads.
 
 **Standaard**: `true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Voetnoten uitsluiten {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Indien mogelijk afbeeldingen van voetnoten uitsluiten van mediadownloads.
 
 **Standaard**: `false`
 
-#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+#### Extra video's uit de Wachttoren-studie uitsluiten {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
-Exclude additional videos that are referenced in Watchtower Study paragraphs.
+Sluit extra video's uit waarnaar in de paragrafen van de Wachttoren-studie wordt verwezen.
 
 **Standaard**: `false`
 
-#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+#### Video's voor de Gemeentebijbelstudie uitsluiten {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+Kies publicaties waarvan de video's waarnaar verwezen wordt niet getoond moeten worden tijdens de Gemeentebijbelstudie. Zoek op titel of symbool van de publicatie.
 
-**Default**: Walk Courageously With God (`wcg`)
+**Standaard**: Wees moedig en vertrouw op Jehovah (`wcg`)
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Media uit de th-brochure uitsluiten {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Media uit de brochure "Leg je toe op voorlezen en onderwijzen" (th) uitsluiten van mediadownloads.
 
 **Standaard**: `true`
 
-### Subtitles {#subtitles}
+### Ondertitels {#subtitles}
 
 #### Ondertiteling inschakelen {#enable-subtitles}
 
@@ -338,11 +338,11 @@ Schakel ondersteuning voor ondertiteling in bij het afspelen van media.
 
 **Standaard**: `false`
 
-#### Subtitle Language {#subtitle-language}
+#### Ondertitelingstaal {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Taal voor ondertiteling (kan verschillen van de mediataal).
 
 **Opties**: All available languages from the official website of Jehovah's Witnesses
 
@@ -350,15 +350,15 @@ Language for subtitles (can be different from media language).
 
 ### Cachebeheer {#cache-management}
 
-#### Cache Songbook Video Files {#enable-extra-cache}
+#### Download alle koninkrijksliederen {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
+Sla alle liedvideo's vooraf op in de cache voor betere prestaties. Houd er rekening mee dat de mediacache hierdoor groter wordt.
 
 **Standaard**: `false`
 
-#### Cache Folder {#cache-folder}
+#### Cachelocatie {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
@@ -374,25 +374,25 @@ Verwijder oude cachebestanden automatisch om schijfruimte te besparen.
 
 **Standaard**: `true`
 
-### Pinyin Song Titles {#pinyin-song-titles}
+### Pinyin-liedtitels {#pinyin-song-titles}
 
-#### Prefer Pinyin Songs {#enable-pinyin-songs}
+#### Pinyin-liederen bij voorkeur gebruiken {#enable-pinyin-songs}
 
 <!-- **Setting**: `enablePinyinSongs` -->
 
-When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+Als er in de map met pinyin-liederen een pinyinversie van een vergaderlied staat, wordt die gebruikt in plaats van het standaardlied.
 
 **Standaard**: `false`
 
-#### Pinyin Song Folder {#pinyin-song-folder}
+#### Map met pinyin-liederen {#pinyin-song-folder}
 
 <!-- **Setting**: `pinyinSongFolder` -->
 
-Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+Map met pinyin-liedvideo's (bijv. `sjjm_s-Pi_CHS_066_r720P.mp4`). Als er een pinyinbestand wordt gevonden dat bij het liednummer van de vergadering past, wordt dat afgespeeld in plaats van het standaardlied.
 
 **Standaard**: Empty
 
-### Media Export {#settings-guide-media-export}
+### Media-export {#settings-guide-media-export}
 
 #### Automatische media-export inschakelen {#enable-media-auto-export}
 
@@ -402,120 +402,120 @@ Exporteer mediabestanden automatisch naar een opgegeven map.
 
 **Standaard**: `false`
 
-#### Media Export Folder {#media-export-folder}
+#### Exportmap voor media {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Mappad waarnaar mediabestanden automatisch worden geëxporteerd.
 
 **Standaard**: Empty
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Bestanden converteren naar MP4 {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Instelling**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Zet geëxporteerde mediabestanden om naar MP4-formaat voor betere compatibiliteit.
 
 **Standaard**: `false`
 
-### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
+### Gedeelde map (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-These settings are in the **Integrations** category.
+Deze instellingen staan in de categorie **Integraties**.
 
-M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+M³ kan media aan je vergaderingen toevoegen vanuit een map die gesynchroniseerd wordt door een cloudopslag-app, zoals Dropbox, OneDrive, iCloud Drive of Google Drive. Dit is handig als anderen media voor hun onderdelen voorbereiden en met je delen, of als M³ op meer dan één computer wordt gebruikt. Een map op deze computer of op je netwerk werkt ook.
 
-M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. Wil je bestanden voor een andere dag toevoegen, maak dan een map voor die dag aan met een naam in dezelfde vorm. Anything else in the shared folder is ignored.
+M³ maakt in de gedeelde map een map aan voor elke komende vergadering, met de datum van de vergadering als naam in de vorm jaar-maand-dag (bijvoorbeeld `2026-03-25`). Zet foto's, video's, audiobestanden of JW Library-afspeellijsten in de map van een vergadering, en ze worden automatisch toegevoegd aan de medialijst van die vergadering. Wil je bestanden voor een andere dag toevoegen, maak dan een map voor die dag aan met een naam in dezelfde vorm. Al het andere in de gedeelde map wordt genegeerd.
 
 :::tip Tip
 
-Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+Maak een nieuwe map aan die je alleen hiervoor gebruikt, zoals "Vergadermedia", en stel in je cloudopslag-app in dat die altijd op deze computer blijft (vaak "offline beschikbaar" genoemd), zodat de bestanden klaarstaan voordat de vergadering begint.
 
 :::
 
-#### Add Media From a Shared Folder {#enable-folder-watcher}
+#### Media toevoegen uit een gedeelde map {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Add the files put in the shared folder to the right meeting automatically.
+Voeg de bestanden die in de gedeelde map worden gezet automatisch toe aan de juiste vergadering.
 
 **Standaard**: `false`
 
-#### Shared Folder {#folder-to-watch}
+#### Gedeelde map {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder to add media from. The setup wizard offers to set it up for you.
+De map waaruit media wordt toegevoegd. De installatiewizard biedt aan om die voor je in te stellen.
 
 **Standaard**: Empty
 
-#### Delete Past Meeting Folders {#delete-past-watched-folders}
+#### Mappen van eerdere vergaderingen verwijderen {#delete-past-watched-folders}
 
 <!-- **Setting**: `deletePastWatchedFolders` -->
 
-When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+Verwijder als een week voorbij is de gedateerde mappen van die week, samen met de bestanden erin, zodat de gedeelde map overzichtelijk blijft. Omdat de map gedeeld is, worden ze ook verwijderd voor iedereen die hem gebruikt. Schakel dit uit om ze te bewaren.
 
 **Standaard**: `true`
 
-## Meeting Timer {#meeting-timer}
+## Vergadertimer {#meeting-timer}
 
-### Enable Meeting Timer {#enable-meeting-timer}
+### Vergadertimer inschakelen {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+Schakel een apart timervenster in om de tijd van vergaderonderdelen bij te houden. Dit is een bètafunctie en mag alleen worden ingeschakeld als dat plaatselijk is goedgekeurd.
 
 **Standaard**: `false`
 
-### Timer Window Behavior {#timer-window-behavior}
+### Gedrag van het timervenster {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+Stel in of het timervenster automatisch opent, of timers voor sprekers standaard optellen of aftellen, of de klok de 12- of 24-uursnotatie gebruikt, en of de huidige timerwaarde op de timerknop van de actiebalk wordt getoond.
 
-### Quick Access to the Timer {#timer-quick-access}
+### Snelle toegang tot de timer {#timer-quick-access}
 
 <!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
 
-Choose how the timer is reached from the main window:
+Kies hoe je de timer vanuit het hoofdvenster bereikt:
 
-- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
-- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+- **Snelle bediening bij aanwijzen van de timerknop**: als je de muisaanwijzer op de timerknop op de actiebalk houdt, zie je het onderdeel dat getimed wordt, met de knoppen Starten, Pauzeren, Stop en Volgend onderdeel, zonder het volledige pop-upvenster van de timer te openen. Standaard ingeschakeld.
+- **Een timerpaneel tonen in het hoofdvenster**: houdt de hele lijst met vergaderonderdelen en de timerbediening altijd in beeld, in een paneel dat rechts in het hoofdvenster is vastgezet. Het volledige pop-upvenster blijft via de actiebalk beschikbaar voor de instellingen van het venster en de weergave.
 
-### Timer Remote {#timer-remote}
+### Timer op afstand {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
 
-When turned on, M³ serves a read-only copy of the timer display as a web page on your local network, for a tablet or phone at the lectern: the speaker sees the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time, including the pre-meeting countdown, the clock, overtime colors and the hand alert, and all the controls stay in M³.
+Als dit is ingeschakeld, biedt M³ een alleen-lezen kopie van de timerweergave aan als webpagina op je lokale netwerk, voor een tablet of telefoon bij het spreekgestoelte: de spreker ziet de resterende tijd zonder dat die op het scherm van de gemeente of in een gedeeld Zoom-scherm te zien is. De pagina volgt de timer in realtime, inclusief het aftellen vóór de vergadering, de klok, de kleuren voor overschrijding en het handsignaal, en alle bediening blijft in M³.
 
-The addresses to open on the device are listed in the timer popup, with a copy button. Change the port only if another program already uses it. Note that anyone on the same network can open the page while this is on; it shows nothing but the timer.
+De adressen die je op het apparaat moet openen, staan in het pop-upvenster van de timer, met een kopieerknop. Wijzig de poort alleen als een ander programma die al gebruikt. Let op: zolang dit is ingeschakeld, kan iedereen op hetzelfde netwerk de pagina openen; die toont echter alleen de timer.
 
-**Default**: `false`, port `8787`
+**Standaard**: `false`, poort `8787`
 
-### Timer Display Formats {#timer-display-formats}
+### Weergaveformaten van de timer {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+Kies analoge of digitale weergaveformaten voor de huidige tijd en voor het aftellen. De waarschuwingsindicator voor het aftellen kan de analoge aftelring tijdens de laatste minuut naar een waarschuwingskleur laten verschuiven.
 
-The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
+Het aftelformaat **Analoge klok met tijdboog** toont de resterende tijd van een onderdeel als een taartpunt op een analoge wijzerplaat, van de minutenwijzer tot het geplande einde, zodat je in één oogopslag zowel de huidige tijd als de resterende tijd ziet. Overschrijding wordt getoond als een tweede taartpunt in de kleur voor overschrijding. Het geldt ook voor het aftellen vóór de vergadering en werkt in optelmodus.
 
-### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+### Aftellen tot de vergadering en schemastatus {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+Toon een aftelling vóór geplande vergaderingen en laat optioneel zien of de vergadering voor of achter loopt op het schema. Het aftellen tot de vergadering verschijnt alleen op de timerweergave, niet op de mediaweergave.
 
-### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+### Uiterlijk van de timer en overschrijding {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
-Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
+Pas de tekstgrootte en kleuren van de timer aan en stel indicatoren voor overschrijding in, zoals afwijkende kleuren, knipperen en in optelmodus alleen de verstreken overschrijding tonen.
 
 ## Integraties {#integrations}
 
-This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
+Deze categorie bevat ook de instellingen voor de [gedeelde map](#settings-guide-folder-monitoring), om media toe te voegen uit Dropbox, OneDrive, iCloud Drive of Google Drive.
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Zoom-integratie {#settings-guide-zoom-integration}
 
 #### Zoom inschakelen {#enable-zoom}
 
@@ -533,39 +533,39 @@ Sneltoets om Zoom-schermdeling te starten.
 
 **Standaard**: Geen
 
-#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+#### Mediavenster automatisch focussen {#zoom-auto-focus-media-window}
 
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
-Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+Focus het mediavenster automatisch nadat het scherm delen in Zoom is gestart. Dit is meestal niet nodig, maar kan op sommige systemen helpen als het mediavenster regelmatig de focus verliest nadat het scherm delen is gestart.
 
 **Standaard**: `false`
 
-### Zoom Meeting Manager {#zoom-meeting-manager}
+### Zoom-vergaderbeheerder {#zoom-meeting-manager}
 
-The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+De Zoom-vergaderbeheerder (bèta, alleen Windows) bedient de Zoom-desktopapp voor je rond elke vergadering. De configuratieassistent, die wordt aangeboden als je de functie inschakelt, leidt je door elke automatisering.
 
-#### While M³ Operates Zoom {#zoom-meeting-manager-overlay}
+#### Terwijl M³ Zoom bedient {#zoom-meeting-manager-overlay}
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom offers no proper automation interface, so M³ drives the Zoom app through its accessibility interface, which works without the mouse for nearly everything (the participants list, its menus, the Share window). A few actions can still have to move the mouse or the focused window for a moment, for example to bring Zoom's auto-hidden toolbar back. Whenever that happens, M³ covers its own window with a "M³ is operating Zoom" notice naming what is going on, with a **Cancel this automation** button. The same notice shows during the setup assistant's checks and the self-test. A global keyboard shortcut (default `Ctrl+Alt+Escape`), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Cancelling stops M³ at once; Zoom may then be left part-way, so check it.
+Zoom biedt geen echte interface voor automatisering, dus M³ bestuurt de Zoom-app via de toegankelijkheidsinterface, die voor bijna alles zonder muis werkt (de deelnemerslijst, de menu's daarvan, het venster voor delen). Voor een paar acties moet M³ soms nog even de muis bewegen of een ander venster de focus geven, bijvoorbeeld om de automatisch verborgen werkbalk van Zoom terug te halen. Wanneer dat gebeurt, bedekt M³ zijn eigen venster met de melding "M³ bedient Zoom", waarin staat wat er gebeurt, met een knop **Deze automatisering annuleren**. Dezelfde melding verschijnt tijdens de controles van de configuratieassistent en tijdens de zelftest. Een globale sneltoets (standaard `Ctrl+Alt+Escape`), die alleen actief is terwijl een automatisering loopt, annuleert die vanaf elke plek, zelfs als Zoom de focus heeft. Annuleren stopt M³ meteen; Zoom kan dan half afgehandeld achterblijven, dus controleer Zoom even.
 
-**Default**: `Ctrl+Alt+Escape`
+**Standaard**: `Ctrl+Alt+Escape`
 
-#### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
+#### Hulp bij opgestoken handen {#zoom-meeting-manager-hand-alert}
 
 <!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
 
-During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
+Tijdens een vergadering houdt M³ de deelnemerslijst van Zoom in de gaten voor opgestoken handen. Als iemand de hand opsteekt, kun je via een melding in M³ met één klik **het dempen van die deelnemer opheffen**, en als die klaar is met spreken, met nog een klik **de deelnemer weer dempen en de hand laten zakken**. De Zoom-knop op de actiebalk toont de opgestoken handen met dezelfde knoppen. Elke actie gaat naar de eigen rij van die deelnemer in Zoom, op basis van de exacte naam; als twee deelnemers dezelfde naam hebben, doet M³ bij geen van beiden iets.
 
-If the [meeting timer](#meeting-timer) is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and a **Hand alert** button in the timer and Zoom popups shows it by hand. This part needs the timer display; the notifications and buttons work without it.
+Als de [vergadertimer](#meeting-timer) is ingeschakeld, verschijnt er voor de voorzitter ook een grote hand met de naam van de deelnemer op de timerweergave, en met een knop **Handsignaal** in de pop-upvensters van de timer en Zoom kun je die zelf tonen. Dit deel heeft de timerweergave nodig; de meldingen en knoppen werken ook zonder.
 
-Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list and which menu entry lowers it, then lowers it again. The setup assistant offers this step too.
+Zoom geeft opgestoken handen aan in zijn eigen taal, dus M³ moet eerst leren hoe: klik, terwijl je vergadering in Zoom geopend is, op **Leren hoe Zoom opgestoken handen aangeeft**. M³ steekt je eigen hand op, leest hoe Zoom die in de deelnemerslijst aangeeft en met welk menu-item de hand weer omlaag gaat, en laat de hand daarna weer zakken. De configuratieassistent biedt deze stap ook aan.
 
 **Standaard**: `false`
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### OBS Studio-integratie {#settings-guide-obs-integration}
 
 #### OBS inschakelen {#enable-obs}
 
@@ -601,26 +601,26 @@ Het wachtwoord voor de OBS Studio WebSocket-verbinding.
 
 #### OBS-scènes {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Configureer welke OBS-scènes voor verschillende doeleinden worden gebruikt:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Camerascène**: Scène die de camera of het spreekgestoelte toont
+- **Mediascène**: Scène voor het weergeven van media
+- **Afbeeldingsscène**: Scène voor het weergeven van afbeeldingen (bijvoorbeeld een beeld-in-beeld-scène die zowel de media als de spreker toont)
 
 #### Geavanceerde OBS-opties {#obs-advanced-options}
 
-- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
+- **Deel afbeeldingen niet automatisch**: Stel het delen van afbeeldingen met OBS uit totdat je dat zelf doet
 - **Snelschakelaar**: Schakel snel in/uit voor OBS-integratie
 - **Scène wisselen na media**: Keer na media automatisch terug naar de vorige scène
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
-- **Recording Controls**: Show controls that start and stop OBS recording from M³
+- **Vorige scène onthouden**: De vorige scène onthouden en herstellen
+- **Pictogrammen verbergen**: Verberg OBS-gerelateerde pictogrammen in de interface
+- **Opnamebediening**: Toon knoppen waarmee je de OBS-opname vanuit M³ start en stopt
 
 :::warning Belangrijke opmerking
 
 **Audioconfiguratie vereist**: OBS Studio-integratie regelt alleen video-/scènewisselingen. Audio van M³-media wordt **niet automatisch doorgestuurd** naar Zoom of OBS. De videostream werkt als een virtuele camera zonder geluid, net als een webcam. Je moet daarom Zooms instellingen voor Originele audio configureren of "Computergeluid delen" gebruiken, zodat deelnemers de media kunnen horen. Zie de [Gebruikershandleiding](/user-guide#audio-configuration) voor gedetailleerde audio-instructies.
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Alternatief**: Overweeg in plaats daarvan de Zoom-integratie te gebruiken, omdat die de ingebouwde schermdeling van Zoom gebruikt, die audio soepeler verwerkt.
 
 :::
 
@@ -634,61 +634,61 @@ Schakel aangepaste sneltoetsen in die worden geactiveerd wanneer een specifieke 
 
 **Standaard**: `false`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Sneltoetsen voor aangepaste gebeurtenissen {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Sneltoets voor afspelen van media {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+Sneltoets die wordt geactiveerd wanneer media wordt afgespeeld.
 
 **Standaard**: Geen
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Sneltoets voor pauzeren van media {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+Sneltoets die wordt geactiveerd wanneer media wordt gepauzeerd.
 
 **Standaard**: Geen
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Sneltoets voor stoppen van media {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+Sneltoets die wordt geactiveerd wanneer media wordt gestopt.
 
 **Standaard**: Geen
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Sneltoets voor het laatste lied {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Sneltoets die wordt geactiveerd wanneer het laatste lied van de vergadering wordt afgespeeld.
 
 **Standaard**: Geen
 
-### Meeting Recordings {#meeting-recordings}
+### Vergaderopnames {#meeting-recordings}
 
-#### Enable External Recording App Integration {#enable-external-recording-app-integration}
+#### Integratie met een extern opnameprogramma inschakelen {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
+Laat M³ een apart opnameprogramma bedienen met sneltoetsen. Dit neemt niet op in M³ zelf; het verstuurt de ingestelde sneltoetsen wanneer je in het pop-upvenster voor vergaderopnames op **Opname starten** of **Opname stoppen** drukt.
 
-This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
+Deze optie is verborgen als de OBS-opnamebediening is ingeschakeld. Als je OBS Studio gebruikt, gebruik dan in plaats daarvan de OBS-opnamebediening van de OBS-integratie.
 
 **Standaard**: `false`
 
-#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
+#### Sneltoetsen en map voor opnames {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
+Stel de sneltoets in die de opname start, de optionele sneltoets die de opname stopt, en de map waarin het externe programma opnamen opslaat. Als er geen stopsneltoets is opgegeven, gebruikt M³ de startsneltoets opnieuw. Als er een map is ingesteld, toont M³ een knop om die te openen.
 
-## Interface & Shortcuts {#interface-shortcuts}
+## Interface en sneltoetsen {#interface-shortcuts}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Sneltoetsen {#settings-guide-keyboard-shortcuts}
 
 #### Sneltoetsen inschakelen {#enable-keyboard-shortcuts}
 
@@ -698,64 +698,64 @@ Schakel aanpasbare sneltoetsen in voor mediabediening.
 
 **Standaard**: `false`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Sneltoetsen voor mediabediening {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Configureer sneltoetsen voor het afspelen van media:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Mediavenster**: Mediavenster openen of sluiten
+- **Vorige media**: Ga naar het vorige media-item
+- **Volgende media**: Ga naar het volgende media-item
+- **Pauzeren/Hervatten**: Het afspelen van media pauzeren of hervatten
+- **Media stoppen**: Het afspelen van media stoppen
+- **Muziek in-/uitschakelen**: Achtergrondmuziek in- of uitschakelen
 
-### Add More Media Button {#add-more-media-button}
+### Knop "Meer media toevoegen" {#add-more-media-button}
 
-#### Sections with an Add Media Button {#add-media-button-sections}
+#### Secties met een knop "Meer media toevoegen" {#add-media-button-sections}
 
 <!-- **Setting**: `addMediaButtonSections` -->
 
-Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
+Kies welke vergadersecties een eigen knop krijgen om je eigen media toe te voegen, naast de knop "Media toevoegen" in de bovenste werkbalk, die altijd voor elke sectie werkt.
 
-**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
+**Standaard**: Openbare lezing, Leven als Christenen, Bezoek van de kringopziener en aangepaste secties
 
-#### Compact Add Media Button {#compact-add-media-button}
+#### Compacte knop Media toevoegen {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
-Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
+Toon alleen een pictogram voor de knop "Meer media toevoegen"/"Een lied toevoegen" in de koppen van secties. Als dit is uitgeschakeld, toont de knop naast het pictogram ook tekst wanneer er genoeg ruimte is.
 
 **Standaard**: `true`
 
-### Media Drag Handle {#media-drag-handle}
+### Sleepgreep voor media {#media-drag-handle}
 
-#### Show Drag Handle {#show-media-drag-handle}
+#### Sleepgreep tonen {#show-media-drag-handle}
 
 <!-- **Setting**: `showMediaDragHandle` -->
 
-Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
+Toon een kleine greep op elk media-item waarmee je het kunt slepen om de volgorde te wijzigen. Media-items kunnen altijd in een andere volgorde worden gezet door ze op een willekeurige plek vast te pakken en te slepen; dit bepaalt alleen of het pictogram van de greep zelf wordt getoond.
 
 **Standaard**: `true`
 
-### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
+### Snelle acties vóór en na de vergadering {#before-after-meeting-quick-actions}
 
-#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
+#### Snelle acties voor vergaderingen tonen {#enable-meeting-quick-actions}
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
-Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
+Toon een paneel vóór de vergadering en een paneel na de vergadering, met handige bediening (achtergrondmuziek, opname) en voor elk een aanpasbare checklist.
 
 **Standaard**: `true`
 
-The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
+De categorieën en taken van de checklists voor zowel het paneel vóór als het paneel na de vergadering beheer je in ditzelfde gedeelte van de instellingen: voeg categorieën en taken toe, wijzig hun naam, verander de volgorde of verwijder ze, al naargelang wat je gemeente nodig heeft.
 
-## Advanced {#advanced-settings}
+## Geavanceerd {#advanced-settings}
 
-### Profile Settings Transfer {#profile-settings-transfer}
+### Profielinstellingen overzetten {#profile-settings-transfer}
 
-Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importeren vervangt de instellingen van het huidige profiel.
+Exporteer de instellingen van het huidige profiel naar een JSON-bestand, of importeer een eerder geëxporteerd bestand met profielinstellingen. Importeren vervangt de instellingen van het huidige profiel.
 
-### Danger Zone {#danger-zone}
+### Gevarenzone {#danger-zone}
 
 :::warning Waarschuwing
 
@@ -763,66 +763,66 @@ Wijzig deze instellingen alleen als je de gevolgen ervan begrijpt.
 
 :::
 
-#### Base URL {#base-url}
+#### Basis-URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+Basisdomein dat wordt gebruikt om publicaties en media te downloaden.
 
 **Standaard**: `jw.org`
 
-#### Disable Hardware Acceleration {#disable-hardware-acceleration}
+#### Hardwareversnelling uitschakelen {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
+Schakel hardwareversnelling uit nadat M³ opnieuw is gestart. Dit kan helpen bij grafische fouten of crashes op sommige systemen, maar wordt verder niet aanbevolen.
 
 **Standaard**: `false`
 
-#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
+#### Herinnering voor hardwareversnelling onderdrukken {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
+Verberg de herinnering om hardwareversnelling weer in te schakelen nadat deze handmatig is uitgeschakeld.
 
 **Standaard**: `false`
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Media ophalen uitschakelen {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Schakel het automatisch downloaden van media volledig uit. Gebruik dit alleen voor profielen die worden gebruikt voor speciale evenementen of andere aangepaste configuraties.
 
 **Standaard**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Tips voor een optimale configuratie {#configuration-tips}
 
 ### Voor nieuwe gebruikers {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Turn on "Enable media playback" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Begin met de installatiewizard om de basisinstellingen te configureren
+2. Zet "Afspelen van media inschakelen" aan om de presentatiefuncties te gebruiken
+3. Configureer je vergaderschema nauwkeurig
+4. Stel de OBS-integratie in als je hybride vergaderingen houdt
 
 ### Voor gevorderde gebruikers {#advanced-users}
 
-1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
+1. Gebruik een gedeelde map om media toe te voegen uit cloudopslag, zoals Dropbox of OneDrive
 2. Schakel automatische media-export in voor back-updoeleinden
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+3. Configureer sneltoetsen voor een efficiënte bediening
+4. Configureer de Zoom-integratie voor automatisch schermdelen
 
 ### Prestatie-optimalisatie {#performance-optimization}
 
-1. Cache songbook video files for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Download alle koninkrijksliederen voor betere prestaties
+2. Gebruik een maximale resolutie die past bij je behoeften
+3. Configureer het automatisch legen van de cache om schijfruimte te beheren
+4. Overweeg de instelling voor een beperkte dataverbinding als je weinig bandbreedte hebt
 
 ### Problemen oplossen {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Als media niet wordt gedownload, controleer dan de instellingen van je vergaderschema
+- Als de OBS-integratie niet werkt, controleer dan de poort- en wachtwoordinstellingen
+- Als de prestaties traag zijn, probeer dan de extra cache in te schakelen of de resolutie te verlagen
+- Als je taalproblemen hebt, controleer dan zowel de instellingen voor de interfacetaal als de mediataal
+- Als Zoom-deelnemers de media-audio niet kunnen horen, configureer dan de instellingen voor Origineel geluid in Zoom of gebruik "Computergeluid delen"
+- **Tip**: Overweeg om de Zoom-integratie te gebruiken in plaats van OBS Studio voor een eenvoudigere audioverwerking
