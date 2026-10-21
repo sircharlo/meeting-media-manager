@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const currentSettings = {
   zoomHandRaisedPhrase: null as null | string,
   zoomJoinAudioTitle: null as null | string,
+  zoomLearnedVersion: null as null | string,
   zoomMeetingManagerAutoLaunchMeeting: false,
   zoomMeetingManagerAutomateMeetingAudioSettings: false,
   zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
@@ -783,11 +784,74 @@ describe('Zoom setup assistant', () => {
   it('joins computer audio for the microphone step without telling the checklist', async () => {
     const { joinZoomAudioForSetup } = await import('../zoom');
 
-    expect(await joinZoomAudioForSetup()).toBe(true);
+    expect(await joinZoomAudioForSetup()).toBe('joined');
 
     expect(commandTypes()).toEqual(['join-audio']);
     expect(updateChecklistMock).not.toHaveBeenCalled();
     expect(notifyMock).not.toHaveBeenCalled();
+  });
+
+  it("says when M³ can't tell whether computer audio is joined, and learns the microphone on the user's word", async () => {
+    zoomCommandMock.mockResolvedValueOnce({
+      audioStateUnknown: true,
+      changed: false,
+      ok: true,
+    });
+    const { joinZoomAudioForSetup, learnZoomMicTitles } =
+      await import('../zoom');
+
+    expect(await joinZoomAudioForSetup()).toBe('unknown');
+
+    const toggles = [
+      { after: 'Unmute', before: 'Mute', ok: true },
+      { after: 'Mute', before: 'Unmute', ok: true },
+    ];
+    zoomCommandMock.mockImplementation(
+      async () => toggles.shift() ?? { ok: false },
+    );
+    expect(await learnZoomMicTitles(true, true)).toEqual({ ok: true });
+    expect(zoomCommandMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ assumeAudioJoined: true, type: 'toggle-mic' }),
+    );
+    expect(currentSettings.zoomMicOnTitle).toBe('Mute');
+  });
+
+  it('notices Zoom changing (updated, or buttons no longer reading as learned) once each', async () => {
+    Object.assign(currentSettings, {
+      zoomLearnedVersion: '7.2.1',
+      zoomVideoOffTitle: 'Start Video',
+      zoomVideoOnTitle: 'Stop Video',
+    });
+    const changed = vi.fn();
+    globalThis.addEventListener('zoomChanged', changed);
+    const states = [
+      { found: true, sharing: false, zoomVersion: '7.2.1' },
+      { found: true, sharing: false, zoomVersion: '7.3.0' },
+      { found: true, sharing: false, zoomVersion: '7.3.0' },
+      { found: true, sharing: false, videoTitle: 'Stop Video' },
+      { found: true, sharing: false, videoTitle: 'Vidéo' },
+      { found: true, sharing: false, videoTitle: 'Vidéo' },
+    ];
+    zoomCommandMock.mockImplementation(async () => ({
+      meeting: states.shift(),
+      ok: true,
+    }));
+    const { getZoomMeetingState, rememberZoomVersion } =
+      await import('../zoom');
+
+    for (let i = 0; i < 6; i++) await getZoomMeetingState(); // NOSONAR: sequential, in order
+
+    expect(changed).toHaveBeenCalledTimes(2);
+    expect(changed.mock.calls.map(([e]) => (e as CustomEvent).detail)).toEqual([
+      { reason: 'version' },
+      { reason: 'names' },
+    ]);
+    globalThis.removeEventListener('zoomChanged', changed);
+
+    // A passing check keeps the version the names work with.
+    zoomState.meeting = { found: true, sharing: false, zoomVersion: '7.3.0' };
+    rememberZoomVersion();
+    expect(currentSettings.zoomLearnedVersion).toBe('7.3.0');
   });
 });
 

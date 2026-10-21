@@ -37,6 +37,14 @@
         />
       </div>
 
+      <!-- A Zoom dialog or popup (an invite window, say) may block M³'s actions -->
+      <div v-if="meeting?.dialogs?.length" class="action-popup__banner">
+        <q-icon color="warning" name="mmm-warning" size="18px" />
+        <div class="col text-caption">
+          {{ t('zoom-dialog-in-the-way') }}
+        </div>
+      </div>
+
       <div v-if="checkRunning" class="action-popup__banner">
         <q-spinner color="primary" size="18px" />
         <div class="col text-caption text-weight-medium">

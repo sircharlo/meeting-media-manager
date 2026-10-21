@@ -175,6 +175,14 @@ describe('DialogZoomMeetingManagerPopup', () => {
     );
   });
 
+  it('warns when a Zoom dialog is open and may be in the way', async () => {
+    await mountPopup({
+      meeting: { dialogs: ['InviteToJoinWndCls'], found: true, sharing: false },
+    });
+
+    expect(document.body.textContent).toContain("may be in M³'s way");
+  });
+
   it('launches the configured meeting, and only when an ID is set', async () => {
     const launchSpy = vi.spyOn(globalThis.electronApi, 'launchZoomMeeting');
     launchSpy.mockImplementation(() => undefined);

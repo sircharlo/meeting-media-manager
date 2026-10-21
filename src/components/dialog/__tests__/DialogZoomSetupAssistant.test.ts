@@ -48,6 +48,7 @@ vi.mock('src/helpers/zoom', () => ({
   learnZoomMicTitles: zoom.learnZoomMicTitles,
   learnZoomVideoTitles: zoom.learnZoomVideoTitles,
   prepareMediaWindowForZoomTest: async () => () => undefined,
+  rememberZoomVersion: vi.fn(),
   testZoomShareEntry: zoom.testZoomShareEntry,
   tryZoomMuteAllEntry: zoom.tryZoomMuteAllEntry,
   tryZoomParticipantsEntry: zoom.tryZoomParticipantsEntry,
@@ -163,7 +164,7 @@ beforeEach(() => {
     settings().zoomVideoOffTitle = 'Start Video';
     return { ok: true };
   });
-  zoom.joinZoomAudioForSetup.mockResolvedValue(true);
+  zoom.joinZoomAudioForSetup.mockResolvedValue('joined');
   zoom.learnZoomMicTitles.mockImplementation(async () => {
     settings().zoomMicOnTitle = 'Mute';
     settings().zoomMicOffTitle = 'Unmute';
@@ -278,13 +279,13 @@ describe('DialogZoomSetupAssistant', () => {
     expect(isDisabled(button('Continue'))).toBe(true);
     await click("No, it's muted");
 
-    expect(zoom.learnZoomMicTitles).toHaveBeenCalledWith(false);
+    expect(zoom.learnZoomMicTitles).toHaveBeenCalledWith(false, false);
     expect(text()).toContain("“Mute” while it's on");
     expect(isDisabled(button('Continue'))).toBe(false);
   });
 
   it('only asks about the microphone once computer audio is joined', async () => {
-    zoom.joinZoomAudioForSetup.mockResolvedValueOnce(false);
+    zoom.joinZoomAudioForSetup.mockResolvedValueOnce('failed');
     await mountAssistant();
     await reachVideoStep();
     await click("Yes, it's on"); // camera
@@ -295,6 +296,24 @@ describe('DialogZoomSetupAssistant', () => {
 
     await click('Try again');
     expect(text()).toContain('Is your microphone on');
+  });
+
+  it("asks whether computer audio is joined when M³ can't tell, and learns the microphone on that word", async () => {
+    zoom.joinZoomAudioForSetup.mockResolvedValueOnce('unknown');
+    await mountAssistant();
+    await reachVideoStep();
+    await click("Yes, it's on"); // camera
+    await click('Continue');
+
+    expect(text()).toContain("M³ can't tell whether computer audio is joined");
+    expect(text()).not.toContain('Is your microphone on');
+
+    await click('Computer audio is joined');
+    expect(text()).toContain('Is your microphone on');
+    await click("Yes, it's on");
+
+    expect(zoom.learnZoomMicTitles).toHaveBeenCalledWith(true, true);
+    expect(isDisabled(button('Continue'))).toBe(false);
   });
 
   it('learns how Zoom marks a raised hand', async () => {

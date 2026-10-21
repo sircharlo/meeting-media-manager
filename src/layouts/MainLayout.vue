@@ -160,7 +160,10 @@ import {
   startHandAlertDisplaySync,
   syncZoomHandAlertWatcher,
 } from 'src/helpers/zoom-hand-alert';
-import { scheduleZoomStartupCheck } from 'src/helpers/zoom-startup-check';
+import {
+  scheduleZoomStartupCheck,
+  watchZoomChanges,
+} from 'src/helpers/zoom-startup-check';
 import { localeOptions } from 'src/i18n';
 import { log, type LogPrefix } from 'src/shared/vanilla';
 import { useAppSettingsStore } from 'src/stores/app-settings';
@@ -1814,6 +1817,7 @@ watchImmediate(
 watchImmediate(
   () => currentCongregation.value,
   (congregation) => {
+    watchZoomChanges();
     if (congregation) scheduleZoomStartupCheck();
   },
 );

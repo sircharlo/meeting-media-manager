@@ -353,6 +353,8 @@ export interface SettingsValues {
   zoomEnable: boolean;
   zoomHandRaisedPhrase: null | string;
   zoomJoinAudioTitle: null | string;
+  /** Zoom's version when the learned names last passed a check. */
+  zoomLearnedVersion: null | string;
   zoomLowerHandTitle: null | string;
   zoomMeetingManagerAutoLaunchMeeting: boolean;
   zoomMeetingManagerAutomateMediaSharing: boolean;

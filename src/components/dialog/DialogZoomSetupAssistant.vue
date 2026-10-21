@@ -258,15 +258,29 @@
             @learn="learnMic"
             @relearn="joinAudioForMic"
           >
-            <q-btn
+            <div
               v-if="micStatus === 'failed' && !micAudioJoined"
-              color="primary"
-              dense
-              flat
-              :label="t('try-again')"
-              no-caps
-              @click="joinAudioForMic"
-            />
+              class="row q-gutter-sm"
+            >
+              <q-btn
+                v-if="micAudioUnknown"
+                class="btn-tonal"
+                color="primary"
+                dense
+                flat
+                :label="t('zoom-setup-mic-audio-joined')"
+                no-caps
+                @click="assumeAudioJoined"
+              />
+              <q-btn
+                color="primary"
+                dense
+                flat
+                :label="t('try-again')"
+                no-caps
+                @click="joinAudioForMic"
+              />
+            </div>
           </ButtonStep>
 
           <!-- Raised hands: how Zoom marks them in the user's language -->
@@ -589,6 +603,7 @@ import {
   learnZoomMicTitles,
   learnZoomVideoTitles,
   prepareMediaWindowForZoomTest,
+  rememberZoomVersion,
   testZoomShareEntry,
   tryZoomMuteAllEntry,
   tryZoomParticipantsEntry,
@@ -831,11 +846,18 @@ const micChoices = computed(() =>
   MIC_CHOICES.map((choice) => ({ ...choice, label: t(choice.label) })),
 );
 
+// M³ can't tell "Join audio" from a microphone button without a keyboard
+// shortcut until it has learned the microphone's names: the user then says
+// whether computer audio is joined.
+const micAudioUnknown = ref(false);
+const micAssumeJoined = ref(false);
+
 const micStatusText = computed(() => {
   if (!micAudioJoined.value) {
-    return micStatus.value === 'failed'
-      ? t('zoom-setup-mic-join-failed')
-      : t('zoom-setup-mic-joining');
+    if (micStatus.value !== 'failed') return t('zoom-setup-mic-joining');
+    return micAudioUnknown.value
+      ? t('zoom-setup-mic-audio-unknown')
+      : t('zoom-setup-mic-join-failed');
   }
   return micStatus.value === 'failed'
     ? t('zoom-setup-mic-failed')
@@ -845,13 +867,23 @@ const micStatusText = computed(() => {
 const joinAudioForMic = async () => {
   micStatus.value = 'running';
   micAudioJoined.value = false;
-  micAudioJoined.value = await joinZoomAudioForSetup();
+  micAudioUnknown.value = false;
+  micAssumeJoined.value = false;
+  const outcome = await joinZoomAudioForSetup();
+  micAudioJoined.value = outcome === 'joined';
+  micAudioUnknown.value = outcome === 'unknown';
   micStatus.value = micAudioJoined.value ? 'pending' : 'failed';
+};
+
+const assumeAudioJoined = () => {
+  micAssumeJoined.value = true;
+  micAudioJoined.value = true;
+  micStatus.value = 'pending';
 };
 
 const learnMic = async (micIsOn: boolean) => {
   micStatus.value = 'running';
-  const result = await learnZoomMicTitles(micIsOn);
+  const result = await learnZoomMicTitles(micIsOn, micAssumeJoined.value);
   micStatus.value = result.ok ? 'passed' : 'failed';
 };
 
@@ -1249,6 +1281,8 @@ const finish = () => {
   if (currentSettings.value) {
     currentSettings.value.zoomMeetingManagerEnable = true;
   }
+  // The names learned go with this Zoom version.
+  rememberZoomVersion();
   open.value = false;
 };
 
