@@ -1039,7 +1039,7 @@
   "zoom-automations-paused": "Zoom avtomatizacije so začasno ustavljene",
   "zoom-automations-paused-failed": "Kaj je spodletelo pri zadnjem preverjanju: {problems}. M³ ne bo izvajal svojih Zoom avtomatizacij, dokler preverjanje ne uspe.",
   "zoom-check-failed-caption": "M³ je preveril Zoom in to ni delovalo: {problems}. Da bi se izognili napaki med shodom, M³ ne bo upravljal Zooma, dokler ga znova ne zaženeš \nali dokler nov preizkus ne uspe.",
-  "zoom-check-names-changed": "Zoomovi gumbi niso več takšni, kot se jih je M³ naučil, običajno zato, ker je bil spremenjen jezik v Zoomu ali pa je bil Zoom posodobljen. M³ ne bo izvajal svojih avtomatizacij za Zoom, dokler se čarovnik za nastavitev ne nauči njihovih novih imen.",
+  "zoom-check-names-changed": "Zoomovi gumbi niso več takšni, kot se jih je M³ naučil, običajno zato, ker je bil spremenjen jezik v Zoomu ali pa je bil Zoom posodobljen. M³ ne bo izvajal svojih avtomatizacij za Zoom, dokler se pomočnik za nastavitev ne nauči njihovih novih imen.",
   "zoom-check-passed": "M³ je preveril Zoom: vse, kar avtomatizira, deluje.",
   "zoom-check-problem-helper": "Povezava M³ z Zoomom",
   "zoom-check-problem-meeting": "Odpiranje Zoom shoda vaše občine",
