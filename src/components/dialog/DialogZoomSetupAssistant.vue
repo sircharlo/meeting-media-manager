@@ -41,6 +41,9 @@
             <div class="text-h6 q-mb-sm">
               {{ t('zoom-setup-welcome-title') }}
             </div>
+            <p v-if="relearning" class="text-weight-medium">
+              {{ t('zoom-setup-relearn-intro') }}
+            </p>
             <p>{{ t('zoom-setup-welcome-intro') }}</p>
             <div
               v-for="feature in FEATURES"
@@ -590,6 +593,7 @@ import {
   getZoomHelperErrorMessageKey,
   ZOOM_DIAGNOSIS_CHECKS,
 } from 'src/constants/zoom';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   diagnoseZoom,
   getZoomMeetingState,
@@ -617,6 +621,7 @@ import {
 import { isSettingInEffect } from 'src/utils/settings';
 import { parseZoomMeetingId } from 'src/utils/zoom';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useZoomStateStore } from 'stores/zoom-state';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -675,8 +680,14 @@ const open = defineModel<boolean>({ default: false });
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
+const zoomState = useZoomStateStore();
 
 const step = ref<Step>('welcome');
+
+// The automations are paused because Zoom's buttons no longer read as
+// learned (Zoom's language was changed, or Zoom was updated): every name is
+// learned again, and the old ones stay until a new one replaces them.
+const relearning = ref(false);
 const stepIndex = computed(() => STEPS.indexOf(step.value));
 
 // --- Welcome: the helper ---------------------------------------------------
@@ -1283,26 +1294,45 @@ const finish = () => {
   }
   // The names learned go with this Zoom version.
   rememberZoomVersion();
+  // Its checks and test cover everything the startup check tries, so once
+  // both passed, automations a failed check paused can run again.
+  if (
+    zoomState.automationsPaused &&
+    checksPassed.value &&
+    testOutcome.value === 'passed'
+  ) {
+    zoomState.resumeAutomations();
+    createTemporaryNotification({
+      group: 'zoom-check',
+      message: t('zoom-check-passed'),
+      type: 'positive',
+    });
+  }
   open.value = false;
 };
 
 const reset = () => {
   step.value = 'welcome';
+  relearning.value = zoomState.relearnNeeded;
+  const learned = (...titles: (null | string | undefined)[]) =>
+    !relearning.value && titles.every(Boolean);
   meetingIdInput.value =
     currentSettings.value?.zoomMeetingManagerMeetingId ?? '';
   diagnosis.value = null;
-  videoStatus.value =
-    currentSettings.value?.zoomVideoOnTitle &&
-    currentSettings.value.zoomVideoOffTitle
-      ? 'passed'
-      : 'pending';
-  micStatus.value =
-    currentSettings.value?.zoomMicOnTitle &&
-    currentSettings.value.zoomMicOffTitle
-      ? 'passed'
-      : 'pending';
+  videoStatus.value = learned(
+    currentSettings.value?.zoomVideoOnTitle,
+    currentSettings.value?.zoomVideoOffTitle,
+  )
+    ? 'passed'
+    : 'pending';
+  micStatus.value = learned(
+    currentSettings.value?.zoomMicOnTitle,
+    currentSettings.value?.zoomMicOffTitle,
+  )
+    ? 'passed'
+    : 'pending';
   micAudioJoined.value = false;
-  handStatus.value = currentSettings.value?.zoomHandRaisedPhrase
+  handStatus.value = learned(currentSettings.value?.zoomHandRaisedPhrase)
     ? 'passed'
     : 'pending';
   handReactMissing.value = false;

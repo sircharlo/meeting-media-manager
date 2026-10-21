@@ -4,6 +4,7 @@ import type {
   ZoomCommandResult,
   ZoomCommandType,
   ZoomDiagnosis,
+  ZoomFailureSnapshot,
   ZoomKnownTitles,
   ZoomMeetingState,
 } from 'src/types';
@@ -245,6 +246,31 @@ const leaveFailureBreadcrumb = async (
   }
 };
 
+/** A Zoom action that failed, with what Zoom showed then. */
+export interface ZoomActionFailure {
+  action: ZoomCommandType;
+  error?: string;
+  snapshot?: ZoomFailureSnapshot;
+}
+
+// The latest failed actions, for the startup check to report along with its
+// own results, rather than leaving them to the breadcrumbs alone, which later
+// ones push out.
+const MAX_KEPT_FAILURES = 20;
+const actionFailures: ZoomActionFailure[] = [];
+
+const keepFailure = (action: ZoomCommandType, result: ZoomCommandResult) => {
+  actionFailures.push({
+    action,
+    error: result.error,
+    snapshot: result.snapshot,
+  });
+  if (actionFailures.length > MAX_KEPT_FAILURES) actionFailures.shift();
+};
+
+/** The Zoom actions that failed since the last call, oldest first. */
+export const takeZoomActionFailures = () => actionFailures.splice(0);
+
 const sendCommand = async (
   command: ZoomCommand,
 ): Promise<ZoomCommandResult> => {
@@ -256,6 +282,7 @@ const sendCommand = async (
     rememberLearnedTitles(result.learned);
     if (!result.ok) {
       log(`Zoom action failed: ${command.type}`, 'zoom', 'warn', result);
+      keepFailure(command.type, result);
       void leaveFailureBreadcrumb(command.type, result);
     }
     return result;
@@ -350,6 +377,24 @@ let noticedZoomVersion: null | string = null;
 let noticedVideoTitle: null | string = null;
 
 /**
+ * Whether Zoom's buttons no longer read as M³ learned them: the camera
+ * button reads as neither of its learned names (after a change of Zoom's
+ * language, or a Zoom update). False when that can't be told, e.g. with
+ * Zoom's toolbar hidden.
+ */
+export const zoomNamesChanged = (meeting: null | ZoomMeetingState) => {
+  const settings = getSettings();
+  const videoTitle = meeting?.videoTitle;
+  return (
+    !!videoTitle &&
+    !!settings?.zoomVideoOnTitle &&
+    !!settings.zoomVideoOffTitle &&
+    videoTitle !== settings.zoomVideoOnTitle &&
+    videoTitle !== settings.zoomVideoOffTitle
+  );
+};
+
+/**
  * Zoom was updated since the learned names last passed a check, or its
  * buttons no longer read as learned (its language was changed, say): worth
  * checking everything again before the meeting, which the startup check
@@ -369,15 +414,10 @@ const noticeZoomChanges = (meeting: null | ZoomMeetingState) => {
     noticedZoomVersion = zoomVersion;
     reason = 'version';
   }
-  const { videoTitle } = meeting;
-  const { zoomVideoOffTitle, zoomVideoOnTitle } = settings;
+  const videoTitle = meeting.videoTitle ?? null;
   if (
     !reason &&
-    videoTitle &&
-    zoomVideoOnTitle &&
-    zoomVideoOffTitle &&
-    videoTitle !== zoomVideoOnTitle &&
-    videoTitle !== zoomVideoOffTitle &&
+    zoomNamesChanged(meeting) &&
     noticedVideoTitle !== videoTitle
   ) {
     noticedVideoTitle = videoTitle;

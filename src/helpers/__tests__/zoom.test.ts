@@ -781,6 +781,33 @@ describe('Zoom setup assistant', () => {
     );
   });
 
+  it('keeps the latest failed actions for the startup check to report', async () => {
+    zoomCommandMock.mockResolvedValue({
+      error: 'participants-panel-not-opened',
+      ok: false,
+      snapshot: { toolbar: ['Mute, Alt+A'] },
+    });
+    const {
+      getZoomMeetingState,
+      muteAllZoomParticipants,
+      takeZoomActionFailures,
+    } = await import('../zoom');
+
+    await muteAllZoomParticipants(false);
+
+    expect(takeZoomActionFailures()).toContainEqual({
+      action: 'mute-all',
+      error: 'participants-panel-not-opened',
+      snapshot: { toolbar: ['Mute, Alt+A'] },
+    });
+    // Taken: the next report starts afresh.
+    expect(takeZoomActionFailures()).toEqual([]);
+
+    // Only the latest ones are kept.
+    for (let i = 0; i < 25; i++) await getZoomMeetingState(); // NOSONAR: sequential - one failure each
+    expect(takeZoomActionFailures()).toHaveLength(20);
+  });
+
   it('joins computer audio for the microphone step without telling the checklist', async () => {
     const { joinZoomAudioForSetup } = await import('../zoom');
 
@@ -853,6 +880,23 @@ describe('Zoom setup assistant', () => {
     rememberZoomVersion();
     expect(currentSettings.zoomLearnedVersion).toBe('7.3.0');
   });
+
+  it.each([
+    ['Start my video', true],
+    ['Start Video', false],
+    ['Stop Video', false],
+    // Zoom's toolbar hidden: can't be told.
+    [null, false],
+  ])(
+    'tells whether the camera button reading "%s" means Zoom\'s names changed',
+    async (videoTitle, changed) => {
+      const { zoomNamesChanged } = await import('../zoom');
+
+      expect(
+        zoomNamesChanged({ found: true, sharing: false, videoTitle }),
+      ).toBe(changed);
+    },
+  );
 });
 
 describe('stopping Zoom sharing after media', () => {

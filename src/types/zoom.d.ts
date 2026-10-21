@@ -88,11 +88,18 @@ export interface ZoomDiagnosis {
  * Zoom's own labels only: no window titles, no participant names.
  */
 export interface ZoomFailureSnapshot {
+  /**
+   * Zoom's other windows (dialogs in the way), keyed by class and size, with
+   * the names of their buttons, menu entries, checkboxes and tabs.
+   */
+  dialogs?: Record<string, string[]>;
   error?: string;
   meeting?: boolean;
   /** Names of the buttons under the participants list. */
   panelRow?: string[];
   participantsPanelOpen?: boolean;
+  /** While sharing: names of the share toolbar's controls. */
+  shareToolbar?: string[];
   sharing?: boolean;
   titles?: ZoomKnownTitles;
   /** Names of the meeting toolbar's buttons. */
