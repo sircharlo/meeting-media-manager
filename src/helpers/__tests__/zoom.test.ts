@@ -22,16 +22,21 @@ const currentSettings = {
   zoomVideoOnTitle: 'Stop Video' as null | string,
 };
 
-const { dateMocks, notifyMock, updateChecklistMock } = vi.hoisted(() => ({
-  dateMocks: {
-    getMeetingStartToday: vi.fn((): Date | null => null),
-    isMemorialDay: vi.fn(() => false),
-  },
-  notifyMock: vi.fn(),
-  updateChecklistMock: vi.fn(),
-}));
+const { dateMocks, notifyMock, sentryMocks, updateChecklistMock } = vi.hoisted(
+  () => ({
+    dateMocks: {
+      getMeetingStartToday: vi.fn((): Date | null => null),
+      isMemorialDay: vi.fn(() => false),
+    },
+    notifyMock: vi.fn(),
+    sentryMocks: { addBreadcrumb: vi.fn(), captureMessage: vi.fn() },
+    updateChecklistMock: vi.fn(),
+  }),
+);
 
 vi.mock('src/helpers/date', () => dateMocks);
+
+vi.mock('@sentry/vue', () => sentryMocks);
 
 vi.mock('stores/current-state', () => ({
   useCurrentStateStore: () => ({ currentSettings }),
@@ -714,6 +719,65 @@ describe('Zoom setup assistant', () => {
       type: 'participants',
     });
     expect(currentSettings.zoomParticipantsButtonTitle).toBe('Participants');
+  });
+
+  it('keeps a "Mute all" or "Stop share" pick only once Zoom confirmed it', async () => {
+    zoomCommandMock.mockImplementation(async (command) => {
+      if (command.type === 'panel-entries') {
+        return { entries: ['Invite', 'Mute all'], ok: true };
+      }
+      if (command.type === 'test-mute-all-entry') {
+        return { isMuteAll: command.title === 'Mute all', ok: true };
+      }
+      if (command.type === 'share-toolbar-entries') {
+        return { entries: ['Pause share', 'Stop share'], ok: true };
+      }
+      if (command.type === 'test-stop-share-entry') {
+        return { ok: true, stopped: command.title === 'Stop share' };
+      }
+      return { ok: true };
+    });
+    const {
+      getZoomPanelEntries,
+      getZoomShareToolbarEntries,
+      tryZoomMuteAllEntry,
+      tryZoomStopShareEntry,
+    } = await import('../zoom');
+
+    expect(await getZoomPanelEntries()).toEqual(['Invite', 'Mute all']);
+    expect(await tryZoomMuteAllEntry('Invite')).toBe(false);
+    expect(await tryZoomMuteAllEntry('Mute all')).toBe(true);
+    expect(await getZoomShareToolbarEntries()).toEqual([
+      'Pause share',
+      'Stop share',
+    ]);
+    expect(await tryZoomStopShareEntry('Pause share')).toBe(false);
+    expect(await tryZoomStopShareEntry('Stop share')).toBe(true);
+  });
+
+  it('leaves what Zoom showed on the Sentry trail when an action fails', async () => {
+    zoomCommandMock.mockResolvedValue({
+      error: 'participants-panel-not-opened',
+      ok: false,
+      snapshot: { toolbar: ['Mute, Alt+A'], zoomVersion: '7.2.1' },
+    });
+    const { muteAllZoomParticipants } = await import('../zoom');
+
+    await muteAllZoomParticipants(false);
+
+    await vi.waitFor(() =>
+      expect(sentryMocks.addBreadcrumb).toHaveBeenCalledWith(
+        expect.objectContaining({
+          category: 'zoom',
+          data: {
+            error: 'participants-panel-not-opened',
+            toolbar: ['Mute, Alt+A'],
+            zoomVersion: '7.2.1',
+          },
+          message: 'Zoom action failed: mute-all',
+        }),
+      ),
+    );
   });
 
   it('joins computer audio for the microphone step without telling the checklist', async () => {

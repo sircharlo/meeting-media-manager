@@ -25,7 +25,10 @@ import { useI18n } from 'vue-i18n';
 // The user picks one of Zoom's toolbar or "More" entries (named in their
 // Zoom language), e.g. the one that shares the screen.
 const props = defineProps<{
-  entries: { more: string[]; toolbar: string[] };
+  /** Toolbar and "More" entries; or `groups`, for entries from elsewhere. */
+  entries?: { more: string[]; toolbar: string[] };
+  /** Entries by group, each under an i18n label (in place of `entries`). */
+  groups?: { entries: string[]; label: string }[];
   /** List the "More" menu's entries first. */
   moreFirst?: boolean;
   question: string;
@@ -36,6 +39,8 @@ const selected = defineModel<null | string>({ required: true });
 const { t } = useI18n();
 
 const groups = computed(() => {
+  if (props.groups) return props.groups.filter((group) => group.entries.length);
+  if (!props.entries) return [];
   const toolbar = {
     entries: props.entries.toolbar,
     label: 'zoom-setup-share-in-toolbar',

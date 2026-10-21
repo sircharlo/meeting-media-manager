@@ -1,3 +1,4 @@
+import type { ZoomSelfTestStep } from 'src/helpers/zoom-self-test';
 import type { ZoomDiagnosis } from 'src/types';
 
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils';
@@ -13,20 +14,26 @@ import DialogZoomSetupAssistant from '../DialogZoomSetupAssistant.vue';
 const zoom = vi.hoisted(() => ({
   diagnoseZoom: vi.fn(),
   getZoomMeetingState: vi.fn(),
+  getZoomPanelEntries: vi.fn(),
   getZoomShareEntries: vi.fn(),
+  getZoomShareToolbarEntries: vi.fn(),
   joinZoomAudioForSetup: vi.fn(),
   learnZoomHandRaisedPhrase: vi.fn(),
   learnZoomMicTitles: vi.fn(),
   learnZoomVideoTitles: vi.fn(),
   runZoomSelfTest: vi.fn(),
   testZoomShareEntry: vi.fn(),
+  tryZoomMuteAllEntry: vi.fn(),
   tryZoomParticipantsEntry: vi.fn(),
+  tryZoomStopShareEntry: vi.fn(),
 }));
 
 vi.mock('src/helpers/zoom', () => ({
   diagnoseZoom: zoom.diagnoseZoom,
   getZoomMeetingState: zoom.getZoomMeetingState,
+  getZoomPanelEntries: zoom.getZoomPanelEntries,
   getZoomShareEntries: zoom.getZoomShareEntries,
+  getZoomShareToolbarEntries: zoom.getZoomShareToolbarEntries,
   getZoomTitlesFromSettings: () => ({
     micOffTitle: 'Unmute',
     micOnTitle: 'Mute',
@@ -42,7 +49,9 @@ vi.mock('src/helpers/zoom', () => ({
   learnZoomVideoTitles: zoom.learnZoomVideoTitles,
   prepareMediaWindowForZoomTest: async () => () => undefined,
   testZoomShareEntry: zoom.testZoomShareEntry,
+  tryZoomMuteAllEntry: zoom.tryZoomMuteAllEntry,
   tryZoomParticipantsEntry: zoom.tryZoomParticipantsEntry,
+  tryZoomStopShareEntry: zoom.tryZoomStopShareEntry,
   withoutZoomFeedback: (run: () => unknown) => run(),
 }));
 
@@ -170,6 +179,8 @@ beforeEach(() => {
     windowSelected: true,
   });
   zoom.getZoomShareEntries.mockResolvedValue({ more: [], toolbar: [] });
+  zoom.getZoomPanelEntries.mockResolvedValue([]);
+  zoom.getZoomShareToolbarEntries.mockResolvedValue([]);
   zoom.runZoomSelfTest.mockResolvedValue([]);
 });
 
@@ -354,6 +365,113 @@ describe('DialogZoomSetupAssistant', () => {
     // The checks ran again with the panel open and all passed.
     await vi.waitFor(() => expect(isDisabled(button('Continue'))).toBe(false));
     expect(text()).not.toContain('Which of these opens the participants list');
+  });
+
+  it('lets the host point out the "Mute all" button when M³ doesn\'t recognize it', async () => {
+    zoom.diagnoseZoom.mockResolvedValue({
+      ...ALL_GOOD,
+      hostControls: false,
+      muteAllButtonMissing: true,
+    });
+    zoom.getZoomPanelEntries.mockResolvedValue([
+      'Inviter',
+      'Désactiver tous les sons',
+    ]);
+    zoom.tryZoomMuteAllEntry
+      .mockResolvedValueOnce(false)
+      .mockImplementationOnce(async () => {
+        zoom.diagnoseZoom.mockResolvedValue(ALL_GOOD);
+        return true;
+      });
+    await mountAssistant();
+    await click('Continue'); // welcome
+    await typeMeetingId('987 654 3210');
+    await vi.waitFor(() =>
+      expect(text()).toContain('Connected to your Zoom meeting'),
+    );
+    await click('Continue'); // meeting: the checks run
+
+    await vi.waitFor(() =>
+      expect(text()).toContain(
+        "didn't recognize the button that mutes everyone",
+      ),
+    );
+    expect(text()).toContain("Under Zoom's participants list");
+    expect(isDisabled(button('Continue'))).toBe(true);
+
+    const pick = async (label: string) => {
+      const option = Array.from(document.querySelectorAll('.q-radio')).find(
+        (el) => el.textContent?.includes(label),
+      ) as HTMLElement;
+      option.click();
+      await flushPromises();
+      await click('Try this one');
+    };
+
+    await pick('Inviter');
+    expect(zoom.tryZoomMuteAllEntry).toHaveBeenLastCalledWith('Inviter');
+    expect(text()).toContain("That didn't ask to confirm muting everyone");
+
+    await pick('Désactiver tous les sons');
+    await vi.waitFor(() => expect(isDisabled(button('Continue'))).toBe(false));
+    expect(text()).not.toContain('Which of these mutes everyone?');
+  });
+
+  it('lets the user point out the "Stop share" button when the test could not stop sharing', async () => {
+    const failedStop: ZoomSelfTestStep[] = [
+      { id: 'share-start', status: 'passed' },
+      { id: 'share-stop', status: 'failed' },
+    ];
+    zoom.runZoomSelfTest
+      .mockResolvedValueOnce(failedStop)
+      .mockResolvedValueOnce([
+        { id: 'share-start', status: 'passed' },
+        { id: 'share-stop', status: 'passed' },
+      ]);
+    zoom.getZoomMeetingState.mockResolvedValue({ found: true, sharing: true });
+    zoom.getZoomShareToolbarEntries.mockResolvedValue([
+      'Mettre le partage en pause',
+      'Arrêter le partage',
+    ]);
+    zoom.tryZoomStopShareEntry
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce(true);
+    await mountAssistant();
+    await reachVideoStep();
+    await learnButtons();
+    await click('Check sharing');
+    await click('Continue'); // share
+    await click('Continue'); // automations
+
+    await click('Run the test');
+    await vi.waitFor(() =>
+      expect(text()).toContain("didn't recognize the button that stops it"),
+    );
+    expect(text()).toContain("In Zoom's sharing toolbar");
+
+    const pick = async (label: string) => {
+      const option = Array.from(document.querySelectorAll('.q-radio')).find(
+        (el) => el.textContent?.includes(label),
+      ) as HTMLElement;
+      option.click();
+      await flushPromises();
+      await click('Try this one');
+    };
+
+    await pick('Mettre le partage en pause');
+    expect(text()).toContain("That didn't stop sharing");
+
+    await pick('Arrêter le partage');
+    expect(zoom.tryZoomStopShareEntry).toHaveBeenLastCalledWith(
+      'Arrêter le partage',
+    );
+    // Sharing stopped through that button: the test ran again and passed.
+    await vi.waitFor(() =>
+      expect(zoom.runZoomSelfTest).toHaveBeenCalledTimes(2),
+    );
+    await vi.waitFor(() =>
+      expect(text()).not.toContain("In Zoom's sharing toolbar"),
+    );
   });
 
   it("lets the user pick the React entry when M³ can't find Zoom's React button", async () => {

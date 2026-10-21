@@ -221,6 +221,30 @@ const rememberLearnedTitles = (learned: undefined | ZoomKnownTitles) => {
   }
 };
 
+/**
+ * Leaves what Zoom showed when an action failed (its version, windows and
+ * button names: nothing personal) on the Sentry trail, so a report of
+ * paused automations says what M³ was looking at.
+ */
+const leaveFailureBreadcrumb = async (
+  commandType: ZoomCommandType,
+  result: ZoomCommandResult,
+) => {
+  try {
+    const { addBreadcrumb } = await import('@sentry/vue');
+    addBreadcrumb({
+      category: 'zoom',
+      data: { error: result.error, ...result.snapshot },
+      level: 'warning',
+      message: `Zoom action failed: ${commandType}`,
+    });
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'leaveFailureBreadcrumb' } },
+    });
+  }
+};
+
 const sendCommand = async (
   command: ZoomCommand,
 ): Promise<ZoomCommandResult> => {
@@ -232,6 +256,7 @@ const sendCommand = async (
     rememberLearnedTitles(result.learned);
     if (!result.ok) {
       log(`Zoom action failed: ${command.type}`, 'zoom', 'warn', result);
+      void leaveFailureBreadcrumb(command.type, result);
     }
     return result;
   } catch (error) {
@@ -953,6 +978,43 @@ export const tryZoomParticipantsEntry = async (entry: string) => {
   });
   if (result.ok) saveSetting('zoomParticipantsButtonTitle', entry);
   return result.ok;
+};
+
+/** The buttons under Zoom's participants list, to pick "Mute all" from. */
+export const getZoomPanelEntries = async (): Promise<string[]> => {
+  const result = await runCommand({ type: 'panel-entries' });
+  return result.ok ? (result.entries ?? []) : [];
+};
+
+/**
+ * Tries an entry the user picked as Zoom's "Mute all" button: it counts,
+ * and is kept, once Zoom has asked to confirm muting everyone (which the
+ * helper declines).
+ */
+export const tryZoomMuteAllEntry = async (entry: string) => {
+  const result = await runCommand({
+    title: entry,
+    type: 'test-mute-all-entry',
+  });
+  return result.ok && !!result.isMuteAll;
+};
+
+/** The share toolbar's buttons while sharing, to pick "Stop share" from. */
+export const getZoomShareToolbarEntries = async (): Promise<string[]> => {
+  const result = await runCommand({ type: 'share-toolbar-entries' });
+  return result.ok ? (result.entries ?? []) : [];
+};
+
+/**
+ * Tries an entry the user picked as Zoom's "Stop share" button: it counts,
+ * and is kept, once sharing has stopped.
+ */
+export const tryZoomStopShareEntry = async (entry: string) => {
+  const result = await runCommand({
+    title: entry,
+    type: 'test-stop-share-entry',
+  });
+  return result.ok && !!result.stopped;
 };
 
 /**

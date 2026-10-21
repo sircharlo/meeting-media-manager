@@ -87,6 +87,7 @@ namespace M3.ZoomHelper
         [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hwnd);
         [DllImport("user32.dll")] public static extern bool BringWindowToTop(IntPtr hwnd);
         [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hwnd, IntPtr processId);
+        [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint processId);
         [DllImport("user32.dll")] public static extern bool AttachThreadInput(uint attach, uint attachTo, bool doAttach);
         [DllImport("kernel32.dll")] public static extern uint GetCurrentThreadId();
 
@@ -271,6 +272,15 @@ namespace M3.ZoomHelper
             return title.Length == 0 ? null : title;
         }
 
+        public static Dictionary<string, object> Titles()
+        {
+            return new Dictionary<string, object>
+            {
+                { "joinAudio", JoinAudio }, { "micOff", MicOff }, { "micOn", MicOn },
+                { "muteAll", MuteAll }, { "participants", Participants }, { "stopShare", StopShare },
+            };
+        }
+
         /// <summary>Remembers a name just seen, when it's news.</summary>
         public static void Learn(string key, string title)
         {
@@ -298,6 +308,9 @@ namespace M3.ZoomHelper
         const string SharePickerClass = "ZPShareEntranceClass";
         const string ShareToolbarClass = "ZPFloatToolbarClass";
         const string ReactionPanelClass = "ZPReactionWndClass";
+        // The video thumbnail Zoom shows in place of the meeting window in
+        // its mini view.
+        const string FloatVideoClass = "ZPFloatVideoWndClass";
         // Zoom's annotation layer, laid over whatever is being shared.
         const string AnnotationLayerClass = "ZoomAnnoWindowWndClass";
 
@@ -733,9 +746,50 @@ namespace M3.ZoomHelper
             return minimized;
         }
 
+        /// <summary>Zoom's mini view: the meeting window is hidden behind a
+        /// small floating video thumbnail (which the user may have chosen,
+        /// or Zoom when another window took the screen).</summary>
+        static bool InMiniView()
+        {
+            return TopWindows(FloatVideoClass, true).Count > 0;
+        }
+
+        /// <summary>Brings the meeting window back from Zoom's mini view:
+        /// the thumbnail shows its controls while hovered, the last of which
+        /// (after Hide video, microphone, camera and Share) shows the full
+        /// meeting window. Only the mouse is moved, and Handle puts it
+        /// back.</summary>
+        static El ExitMiniView()
+        {
+            var floats = TopWindows(FloatVideoClass, true);
+            if (floats.Count == 0) return null;
+            var handle = floats[0];
+            Native.Rect rect;
+            if (!Native.GetWindowRect(handle, out rect)) return null;
+            Native.SetCursorPos((rect.Left + rect.Right) / 2, (rect.Top + rect.Bottom) / 2);
+            var thumbnail = Uia.FromHandle(handle);
+            var show = WaitFor(() => LastControlRowButton(thumbnail), found => found != null, 2000);
+            if (show == null) return null;
+            Press(show);
+            return WaitFor(FindMeetingWindow, found => found != null, 4000);
+        }
+
+        /// <summary>The rightmost button of the thumbnail's control row (its
+        /// drag handles sit lower and are tiny).</summary>
+        static El LastControlRowButton(El thumbnail)
+        {
+            El last = null;
+            foreach (var button in Uia.Descendants(thumbnail, Uia.ButtonType))
+            {
+                if (button.Rect.bottom - button.Rect.top < 24) continue;
+                if (last == null || button.Rect.left > last.Rect.left) last = button;
+            }
+            return last;
+        }
+
         static El RequireMeetingWindow()
         {
-            var window = FindMeetingWindow();
+            var window = FindMeetingWindow() ?? ExitMiniView();
             if (window == null) throw new ZoomActionError("meeting-not-found");
             return window;
         }
@@ -867,11 +921,14 @@ namespace M3.ZoomHelper
         {
             var sharing = IsSharing();
             var window = FindMeetingWindow();
+            if (window == null && reveal) window = ExitMiniView();
             if (window == null)
             {
                 // While sharing, Zoom hides the meeting window behind its share
-                // toolbar: still in a meeting.
-                return new Dictionary<string, object> { { "found", sharing }, { "sharing", sharing } };
+                // toolbar, and in its mini view behind a thumbnail: still in a
+                // meeting.
+                var miniView = InMiniView();
+                return new Dictionary<string, object> { { "found", sharing || miniView }, { "miniView", miniView }, { "sharing", sharing } };
             }
             var toolbarVisible = Uia.FirstByClass(window, ControlPanelClass) != null;
             if (!toolbarVisible && reveal)
@@ -888,6 +945,7 @@ namespace M3.ZoomHelper
             return new Dictionary<string, object>
             {
                 { "audioJoined", toolbarVisible ? (object)(mic != null) : null },
+                { "dialogs", ZoomDialogClasses() },
                 { "found", true },
                 { "handle", window.Raw.CurrentNativeWindowHandle.ToInt64() },
                 { "micTitle", mic == null ? null : FirstSegment(mic.Name) },
@@ -1062,6 +1120,63 @@ namespace M3.ZoomHelper
             if (found == null) found = MuteAllByLayout(window, buttons);
             if (found != null) Known.Learn("muteAll", FirstSegment(found.Name));
             return found;
+        }
+
+        /// <summary>The plain buttons in the row under the participants list
+        /// ([Invite] [Mute all], for the host), left to right.</summary>
+        static List<El> PanelRowButtons(El window)
+        {
+            var row = new List<El>();
+            var list = ParticipantsList(window);
+            if (list == null) return row;
+            foreach (var button in Named(Uia.Descendants(window, Uia.ButtonType)))
+                if (button.Rect.top >= list.Rect.bottom - RowTolerance && button.Rect.right > list.Rect.left && button.Rect.left < list.Rect.right) row.Add(button);
+            row.Sort((a, b) => a.Rect.left.CompareTo(b.Rect.left));
+            return row;
+        }
+
+        /// <summary>The buttons under the participants list, for the user to
+        /// pick which one mutes everyone when M3 can't tell.</summary>
+        public static Dictionary<string, object> PanelEntries()
+        {
+            var window = RequireMeetingWindow();
+            OpenParticipantsPanel(window);
+            var entries = new List<object>();
+            foreach (var button in PanelRowButtons(window))
+            {
+                var name = FirstSegment(button.Name);
+                if (name.Length > 0 && !entries.Contains(name)) entries.Add(name);
+            }
+            return new Dictionary<string, object> { { "entries", entries } };
+        }
+
+        /// <summary>Presses the panel button the user picked as "Mute all":
+        /// it's the one if Zoom asks to confirm muting everyone (a dialog of
+        /// its own class, in every language), which is answered No, and is
+        /// then remembered. Otherwise whatever it opened is dismissed.</summary>
+        public static Dictionary<string, object> TestMuteAllEntry(string title)
+        {
+            var window = RequireMeetingWindow();
+            OpenParticipantsPanel(window);
+            var button = ByName(PanelRowButtons(window), FirstSegment(title ?? ""));
+            if (button == null) throw new ZoomActionError("mute-all-entry-not-found");
+            var before = ZoomWindows();
+            Focus(window);
+            Press(button);
+            var dialog = WaitForWindow(MuteAllDialogClass, 4000);
+            if (dialog == null)
+            {
+                return new Dictionary<string, object> { { "isMuteAll", false }, { "windowsLeft", DismissNewWindows(before) } };
+            }
+            var buttons = ActionRowButtons(dialog);
+            if (buttons.Count > 0) Press(buttons[buttons.Count - 1]); // No, to the right of Yes
+            if (!WaitUntil(() => TopWindows(MuteAllDialogClass, true).Count == 0, 4000))
+            {
+                Focus(dialog);
+                Escape();
+            }
+            Known.Learn("muteAll", FirstSegment(button.Name));
+            return new Dictionary<string, object> { { "isMuteAll", true } };
         }
 
         static El MuteAllByLayout(El window, List<El> buttons)
@@ -1525,6 +1640,7 @@ namespace M3.ZoomHelper
             learnedTitle = reactTitle;
             var open = TopWindows(ReactionPanelClass, true);
             if (open.Count > 0) return Uia.FromHandle(open[0]);
+            var before = ZoomWindows();
             var button = ReactButton(window, reactTitle);
             if (button == null && !string.IsNullOrEmpty(reactTitle))
             {
@@ -1544,7 +1660,7 @@ namespace M3.ZoomHelper
                         Press(entry);
                         var panel = WaitForWindow(ReactionPanelClass, 1500);
                         if (panel != null) return panel;
-                        if (TopWindows(SharePickerClass, true).Count > 0) throw NotReactButton();
+                        if (TopWindows(SharePickerClass, true).Count > 0) throw NotReactButton(before);
                         button = WaitFor(() => ReactButton(window, reactTitle), found => found != null, 3000);
                     }
                 }
@@ -1563,16 +1679,17 @@ namespace M3.ZoomHelper
             var opened = WaitForWindow(ReactionPanelClass, 4000);
             if (opened != null) return opened;
             // Only a button known by its shortcut is surely the Reactions one.
-            if (!ReactHotkey.IsMatch(button.Name)) throw NotReactButton();
+            if (!ReactHotkey.IsMatch(button.Name)) throw NotReactButton(before);
             throw new ZoomActionError("reaction-panel-not-found");
         }
 
         /// <summary>Gives up on an entry that turned out not to be React,
-        /// closing Zoom's share window should it have been Share.</summary>
-        static ZoomActionError NotReactButton()
+        /// closing whatever it opened instead (Zoom's share window, say).</summary>
+        static ZoomActionError NotReactButton(Dictionary<IntPtr, string> before)
         {
             var pickers = TopWindows(SharePickerClass, true);
             if (pickers.Count > 0) CloseSharePicker(Uia.FromHandle(pickers[0]));
+            DismissNewWindows(before);
             return new ZoomActionError("react-button-not-found");
         }
 
@@ -2164,6 +2281,40 @@ namespace M3.ZoomHelper
             return Changed(true);
         }
 
+        static List<El> ShareToolbarButtons()
+        {
+            var toolbars = TopWindows(ShareToolbarClass, true);
+            if (toolbars.Count == 0) throw new ZoomActionError("not-sharing");
+            return Named(Uia.Descendants(Uia.FromHandle(toolbars[0]), Uia.ButtonType));
+        }
+
+        /// <summary>The share toolbar's buttons while sharing, for the user to
+        /// pick which one stops sharing when M3 can't tell.</summary>
+        public static Dictionary<string, object> ShareToolbarEntries()
+        {
+            var entries = new List<object>();
+            foreach (var button in ShareToolbarButtons())
+            {
+                var name = FirstSegment(button.Name);
+                if (name.Length > 0 && !entries.Contains(name)) entries.Add(name);
+            }
+            return new Dictionary<string, object> { { "entries", entries } };
+        }
+
+        /// <summary>Presses the share toolbar button the user picked as "Stop
+        /// share": it's the one if sharing stops, and is then remembered.
+        /// Otherwise whatever it opened is dismissed.</summary>
+        public static Dictionary<string, object> TestStopShareEntry(string title)
+        {
+            var button = ByName(ShareToolbarButtons(), FirstSegment(title ?? ""));
+            if (button == null) throw new ZoomActionError("stop-share-entry-not-found");
+            var before = ZoomWindows();
+            Press(button);
+            var stopped = WaitUntil(() => !IsSharing(), 5000);
+            if (stopped) Known.Learn("stopShare", FirstSegment(button.Name));
+            return new Dictionary<string, object> { { "stopped", stopped }, { "windowsLeft", stopped ? new List<object>() : DismissNewWindows(before) } };
+        }
+
         // --- Setup assistant -------------------------------------------------------------
 
         /// <summary>Whether everything the Zoom Meeting Manager relies on can be
@@ -2171,7 +2322,7 @@ namespace M3.ZoomHelper
         public static Dictionary<string, object> Diagnose()
         {
             var result = new Dictionary<string, object>();
-            var window = FindMeetingWindow();
+            var window = FindMeetingWindow() ?? ExitMiniView();
             result["meeting"] = window != null;
             if (window == null) return result;
 
@@ -2203,6 +2354,8 @@ namespace M3.ZoomHelper
             result["participantsPanel"] = ParticipantsPanelOpen(window);
             // Only the host and co-hosts can mute everyone.
             result["hostControls"] = MuteAllButton(window) != null;
+            // The user can then point M3 to the "Mute all" button, if any.
+            result["muteAllButtonMissing"] = (bool)result["participantsPanel"] && !(bool)result["hostControls"];
             return result;
         }
 
@@ -2250,18 +2403,18 @@ namespace M3.ZoomHelper
         {
             if (IsSharing()) throw new ZoomActionError("already-sharing");
             var window = RequireMeetingWindow();
+            var before = ZoomWindows();
+            El picker = null;
             try
             {
                 OpenSharePicker(window, shareTitle);
+                picker = WaitForWindow(SharePickerClass, 5000);
             }
-            catch (ZoomActionError)
-            {
-                return new Dictionary<string, object> { { "opened", false }, { "windowListed", false } };
-            }
-            var picker = WaitForWindow(SharePickerClass, 5000);
+            catch (ZoomActionError) { }
             if (picker == null)
             {
-                return new Dictionary<string, object> { { "opened", false }, { "windowListed", false } };
+                // A wrong entry may have opened something else: close it.
+                return new Dictionary<string, object> { { "opened", false }, { "windowListed", false }, { "windowsLeft", DismissNewWindows(before) } };
             }
             var problem = SelectShareWindow(picker, windowTitle);
             CloseSharePicker(picker);
@@ -2271,6 +2424,157 @@ namespace M3.ZoomHelper
                 { "windowListed", problem != "window-to-share-not-found" },
                 { "windowSelected", problem == null },
             };
+        }
+
+        // --- Diagnostics ---------------------------------------------------------------
+
+        /// <summary>What Zoom showed when an action failed, for M3's error
+        /// reports: Zoom's version, its visible windows' classes, the names
+        /// of its toolbar and participants panel buttons, and the names M3
+        /// knows. Nothing personal: no window titles, no participant rows.
+        /// Reads only, without moving the mouse or focus.</summary>
+        public static Dictionary<string, object> Snapshot()
+        {
+            var snapshot = new Dictionary<string, object>();
+            try
+            {
+                snapshot["zoomVersion"] = ZoomVersion();
+                snapshot["windows"] = ZoomWindowClasses();
+                snapshot["sharing"] = IsSharing();
+                snapshot["titles"] = Known.Titles();
+                var window = FindMeetingWindow();
+                snapshot["meeting"] = window != null;
+                if (window == null) return snapshot;
+                var panel = Uia.FirstByClass(window, ControlPanelClass);
+                snapshot["toolbarVisible"] = panel != null;
+                if (panel != null)
+                {
+                    snapshot["toolbar"] = Names(Uia.Descendants(panel, Uia.ButtonType));
+                    snapshot["toolbarMenus"] = Names(Uia.Descendants(panel, Uia.MenuItemType));
+                }
+                snapshot["participantsPanelOpen"] = ParticipantsPanelOpen(window);
+                snapshot["panelRow"] = Names(PanelRowButtons(window));
+            }
+            catch (Exception error)
+            {
+                snapshot["error"] = error.Message;
+            }
+            return snapshot;
+        }
+
+        static List<object> Names(List<El> elements)
+        {
+            var names = new List<object>();
+            foreach (var element in elements) if (element.Name.Length > 0) names.Add(element.Name);
+            return names;
+        }
+
+        static string ZoomVersion()
+        {
+            try
+            {
+                foreach (var process in System.Diagnostics.Process.GetProcessesByName("Zoom"))
+                {
+                    var version = process.MainModule.FileVersionInfo.FileVersion;
+                    if (!string.IsNullOrEmpty(version)) return version;
+                }
+            }
+            catch (Exception) { }
+            return null;
+        }
+
+        /// <summary>The classes of Zoom's visible top-level windows.</summary>
+        static List<object> ZoomWindowClasses()
+        {
+            var classes = new List<object>();
+            foreach (var className in ZoomWindows().Values)
+                if (!classes.Contains(className)) classes.Add(className);
+            return classes;
+        }
+
+        /// <summary>Zoom's visible top-level windows (from any of its
+        /// processes: dialogs may come from another than the meeting's), by
+        /// handle, with their classes.</summary>
+        static Dictionary<IntPtr, string> ZoomWindows()
+        {
+            var zoomPids = new HashSet<uint>();
+            foreach (var process in System.Diagnostics.Process.GetProcessesByName("Zoom")) zoomPids.Add((uint)process.Id);
+            var windows = new Dictionary<IntPtr, string>();
+            Native.EnumWindows(delegate (IntPtr hwnd, IntPtr lParam)
+            {
+                if (!Native.IsWindowVisible(hwnd)) return true;
+                uint pid;
+                Native.GetWindowThreadProcessId(hwnd, out pid);
+                if (!zoomPids.Contains(pid)) return true;
+                // Zoom's hidden helper windows count as visible but have no
+                // size (notification and accessibility relays).
+                Native.Rect rect;
+                if (!Native.GetWindowRect(hwnd, out rect) || rect.Right <= rect.Left || rect.Bottom <= rect.Top) return true;
+                var buffer = new StringBuilder(256);
+                Native.GetClassName(hwnd, buffer, buffer.Capacity);
+                windows[hwnd] = buffer.ToString();
+                return true;
+            }, IntPtr.Zero);
+            return windows;
+        }
+
+        // Zoom windows that are never dialogs to dismiss: the meeting, its
+        // mini view, sharing, Zoom's home window, its menus' shadows.
+        static readonly string[] ZoomMainWindowClasses =
+        {
+            MeetingWindowClass, FloatVideoClass, ShareToolbarClass, AnnotationLayerClass,
+            "ZPPTMainFrmWndClassEx", "ZPToolBarParentWndClass", "ZoomShadowFrameClass", "VideoFrameWndClass",
+        };
+
+        /// <summary>The classes of Zoom's other visible windows: dialogs and
+        /// popups that may be in the way (e.g. the invite dialog).</summary>
+        static List<object> ZoomDialogClasses()
+        {
+            var classes = new List<object>();
+            foreach (var className in ZoomWindows().Values)
+                if (Array.IndexOf(ZoomMainWindowClasses, className) < 0 && !classes.Contains(className)) classes.Add(className);
+            return classes;
+        }
+
+        /// <summary>Closes the dialogs a wrong pick opened: Zoom's windows
+        /// that weren't there before, by Escape, else by their title bar's
+        /// close button. Returns the classes of those still open, so M3 can
+        /// say a window is in the way.</summary>
+        static List<object> DismissNewWindows(Dictionary<IntPtr, string> before)
+        {
+            var left = new List<object>();
+            foreach (var entry in ZoomWindows())
+            {
+                if (before.ContainsKey(entry.Key) || Array.IndexOf(ZoomMainWindowClasses, entry.Value) >= 0) continue;
+                var handle = entry.Key;
+                Native.BringToFront(handle);
+                Thread.Sleep(150);
+                Escape();
+                if (WaitUntil(() => !Native.IsWindowVisible(handle), 1500)) continue;
+                var close = TitleBarCloseButton(handle);
+                if (close != null)
+                {
+                    Press(close);
+                    if (WaitUntil(() => !Native.IsWindowVisible(handle), 1500)) continue;
+                }
+                left.Add(entry.Value);
+            }
+            return left;
+        }
+
+        /// <summary>A window's close button: the rightmost button in its top
+        /// strip. Null if there's none there (then nothing is pressed).</summary>
+        static El TitleBarCloseButton(IntPtr handle)
+        {
+            Native.Rect rect;
+            if (!Native.GetWindowRect(handle, out rect)) return null;
+            El close = null;
+            foreach (var button in Uia.Descendants(Uia.FromHandle(handle), Uia.ButtonType))
+            {
+                if (button.Rect.top > rect.Top + 48 || button.Rect.right < rect.Right - 80) continue;
+                if (close == null || button.Rect.left > close.Rect.left) close = button;
+            }
+            return close;
         }
 
         // --- Requests ------------------------------------------------------------------
@@ -2354,6 +2658,10 @@ namespace M3.ZoomHelper
                 case "lower-participant-hand":
                     return LowerParticipantHand(GetString(request, "name"), GetString(request, "lowerHandTitle"), GetString(request, "phrase"), GetString(request, "micOnTitle"), GetString(request, "micOffTitle"), GetString(request, "askToUnmuteTitle"));
                 case "share-entries": return ShareEntries();
+                case "panel-entries": return PanelEntries();
+                case "test-mute-all-entry": return TestMuteAllEntry(GetString(request, "title"));
+                case "share-toolbar-entries": return ShareToolbarEntries();
+                case "test-stop-share-entry": return TestStopShareEntry(GetString(request, "title"));
                 case "start-share":
                     return StartShare(GetString(request, "windowTitle") ?? "", GetString(request, "shareButtonTitle"));
                 case "stop-share": return StopShare();
@@ -2398,6 +2706,8 @@ namespace M3.ZoomHelper
                 catch (ZoomActionError error)
                 {
                     reply = new Dictionary<string, object> { { "error", error.Message }, { "ok", false } };
+                    // Only an action in Zoom that failed is worth a look at Zoom.
+                    if (error.Message != "unknown-command" && error.Message != "invalid-request") reply["snapshot"] = Helper.Snapshot();
                 }
                 catch (ArgumentException)
                 {
@@ -2406,7 +2716,7 @@ namespace M3.ZoomHelper
                 catch (Exception error)
                 {
                     Console.Error.WriteLine("Zoom helper error: " + error);
-                    reply = new Dictionary<string, object> { { "error", "unexpected:" + error.Message }, { "ok", false } };
+                    reply = new Dictionary<string, object> { { "error", "unexpected:" + error.Message }, { "ok", false }, { "snapshot", Helper.Snapshot() } };
                 }
                 reply["id"] = id;
                 stdout.WriteLine(json.Serialize(reply));

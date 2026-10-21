@@ -155,6 +155,28 @@
                 {{ t('zoom-setup-participants-not-opened') }}
               </p>
             </template>
+            <!-- "Mute all" wasn't recognized (or the user isn't host): the user points M³ to it -->
+            <template v-if="muteAllEntries.length">
+              <p class="q-mb-none q-mt-sm">
+                {{ t('zoom-setup-mute-all-not-found') }}
+              </p>
+              <EntryPicker
+                v-model="selectedMuteAllEntry"
+                :groups="[
+                  {
+                    entries: muteAllEntries,
+                    label: 'zoom-setup-in-participants-panel',
+                  },
+                ]"
+                :question="t('zoom-setup-mute-all-pick')"
+              />
+              <p
+                v-if="muteAllEntryFailed"
+                class="text-caption text-negative q-mb-none"
+              >
+                {{ t('zoom-setup-mute-all-not-opened') }}
+              </p>
+            </template>
             <div class="row q-gutter-sm q-mt-sm">
               <q-btn
                 v-if="hasParticipantsEntries"
@@ -168,13 +190,24 @@
                 @click="tryParticipantsEntry"
               />
               <q-btn
+                v-else-if="muteAllEntries.length"
+                class="btn-tonal"
+                color="primary"
+                :disable="!selectedMuteAllEntry || checking"
+                flat
+                :label="t('zoom-setup-share-try')"
+                :loading="checking"
+                no-caps
+                @click="tryMuteAllEntry"
+              />
+              <q-btn
                 class="btn-tonal"
                 color="primary"
                 :disable="checking"
                 flat
                 icon="mmm-refresh"
                 :label="t('zoom-setup-check-again')"
-                :loading="checking && !hasParticipantsEntries"
+                :loading="checking && !hasChecksPicker"
                 no-caps
                 @click="runChecks"
               />
@@ -421,16 +454,52 @@
                   : t('zoom-setup-test-failed')
               "
             />
-            <q-btn
-              class="btn-tonal q-mt-md"
-              color="primary"
-              flat
-              icon="mmm-play"
-              :label="t('zoom-setup-test-run')"
-              :loading="testRunning"
-              no-caps
-              @click="runTest"
-            />
+            <!-- Sharing didn't stop: the user points M³ to the "Stop share" button -->
+            <template v-if="stopShareEntries.length">
+              <p class="q-mb-none q-mt-sm">
+                {{ t('zoom-setup-stop-share-not-found') }}
+              </p>
+              <EntryPicker
+                v-model="selectedStopShareEntry"
+                :groups="[
+                  {
+                    entries: stopShareEntries,
+                    label: 'zoom-setup-in-share-toolbar',
+                  },
+                ]"
+                :question="t('zoom-setup-stop-share-pick')"
+              />
+              <p
+                v-if="stopShareEntryFailed"
+                class="text-caption text-negative q-mb-none"
+              >
+                {{ t('zoom-setup-stop-share-not-opened') }}
+              </p>
+            </template>
+            <div class="row q-gutter-sm q-mt-md">
+              <q-btn
+                v-if="stopShareEntries.length"
+                class="btn-tonal"
+                color="primary"
+                :disable="!selectedStopShareEntry || testRunning"
+                flat
+                :label="t('zoom-setup-share-try')"
+                :loading="testRunning"
+                no-caps
+                @click="tryStopShareEntry"
+              />
+              <q-btn
+                class="btn-tonal"
+                color="primary"
+                :disable="testRunning"
+                flat
+                icon="mmm-play"
+                :label="t('zoom-setup-test-run')"
+                :loading="testRunning && !stopShareEntries.length"
+                no-caps
+                @click="runTest"
+              />
+            </div>
           </div>
 
           <!-- Done -->
@@ -510,7 +579,9 @@ import {
 import {
   diagnoseZoom,
   getZoomMeetingState,
+  getZoomPanelEntries,
   getZoomShareEntries,
+  getZoomShareToolbarEntries,
   getZoomTitlesFromSettings,
   isZoomReactButtonMissing,
   joinZoomAudioForSetup,
@@ -519,7 +590,9 @@ import {
   learnZoomVideoTitles,
   prepareMediaWindowForZoomTest,
   testZoomShareEntry,
+  tryZoomMuteAllEntry,
   tryZoomParticipantsEntry,
+  tryZoomStopShareEntry,
   withoutZoomFeedback,
 } from 'src/helpers/zoom';
 import {
@@ -672,34 +745,66 @@ const hasParticipantsEntries = computed(
     0,
 );
 
+// Likewise for "Mute all", the one host control: its name is learned from
+// Zoom's shortcut or its place in the panel, and when neither tells, the
+// user (if host) picks it from the buttons under the participants list.
+const muteAllEntries = ref<string[]>([]);
+const selectedMuteAllEntry = ref<null | string>(null);
+const muteAllEntryFailed = ref(false);
+
+const hasChecksPicker = computed(
+  () => hasParticipantsEntries.value || muteAllEntries.value.length > 0,
+);
+
 const runChecks = async () => {
   checking.value = true;
   try {
     diagnosis.value = (await diagnoseZoom()) ?? { meeting: false };
-    if (diagnosis.value.participantsButtonMissing) {
-      participantsEntries.value = await getZoomShareEntries();
-    } else {
-      participantsEntries.value = { more: [], toolbar: [] };
-    }
+    participantsEntries.value = diagnosis.value.participantsButtonMissing
+      ? await getZoomShareEntries()
+      : { more: [], toolbar: [] };
     selectedParticipantsEntry.value = null;
     participantsEntryFailed.value = false;
+    muteAllEntries.value = diagnosis.value.muteAllButtonMissing
+      ? await getZoomPanelEntries()
+      : [];
+    selectedMuteAllEntry.value = null;
+    muteAllEntryFailed.value = false;
   } finally {
     checking.value = false;
   }
 };
 
-const tryParticipantsEntry = async () => {
-  const entry = selectedParticipantsEntry.value;
+/** Runs a pick's test with the checks shown as running; checks again if it worked. */
+const tryChecksEntry = async (
+  entry: null | string,
+  test: (entry: string) => Promise<boolean>,
+  failed: { value: boolean },
+) => {
   if (!entry) return;
   checking.value = true;
   try {
-    participantsEntryFailed.value = !(await tryZoomParticipantsEntry(entry));
+    failed.value = !(await test(entry));
   } finally {
     checking.value = false;
   }
-  // The panel is open now: the checks pass, and learn the rest from it.
-  if (!participantsEntryFailed.value) await runChecks();
+  // The control is known now: the checks pass, and learn the rest.
+  if (!failed.value) await runChecks();
 };
+
+const tryParticipantsEntry = () =>
+  tryChecksEntry(
+    selectedParticipantsEntry.value,
+    tryZoomParticipantsEntry,
+    participantsEntryFailed,
+  );
+
+const tryMuteAllEntry = () =>
+  tryChecksEntry(
+    selectedMuteAllEntry.value,
+    tryZoomMuteAllEntry,
+    muteAllEntryFailed,
+  );
 
 // --- Video -----------------------------------------------------------------
 
@@ -973,9 +1078,19 @@ const testSteps = ref<ZoomSelfTestStep[]>([]);
 const testRunning = ref(false);
 const testOutcome = ref<'' | 'failed' | 'passed'>('');
 
+// When the test couldn't stop sharing (the "Stop share" button is named in
+// the user's Zoom language), Zoom is still sharing: the user picks the
+// button from Zoom's sharing toolbar, and the test runs again.
+const stopShareEntries = ref<string[]>([]);
+const selectedStopShareEntry = ref<null | string>(null);
+const stopShareEntryFailed = ref(false);
+
 const runTest = async () => {
   testRunning.value = true;
   testOutcome.value = '';
+  stopShareEntries.value = [];
+  selectedStopShareEntry.value = null;
+  stopShareEntryFailed.value = false;
   try {
     const steps = await runZoomSelfTest({
       onProgress: (progress) => {
@@ -988,9 +1103,28 @@ const runTest = async () => {
     testOutcome.value = steps.some((s) => s.status === 'failed')
       ? 'failed'
       : 'passed';
+    const stopFailed = steps.some(
+      (s) => s.id === 'share-stop' && s.status === 'failed',
+    );
+    if (stopFailed && (await getZoomMeetingState())?.sharing) {
+      stopShareEntries.value = await getZoomShareToolbarEntries();
+    }
   } finally {
     testRunning.value = false;
   }
+};
+
+const tryStopShareEntry = async () => {
+  const entry = selectedStopShareEntry.value;
+  if (!entry) return;
+  testRunning.value = true;
+  try {
+    stopShareEntryFailed.value = !(await tryZoomStopShareEntry(entry));
+  } finally {
+    testRunning.value = false;
+  }
+  // Sharing stopped through that button, now remembered: test it all again.
+  if (!stopShareEntryFailed.value) await runTest();
 };
 
 // --- Done --------------------------------------------------------------------
