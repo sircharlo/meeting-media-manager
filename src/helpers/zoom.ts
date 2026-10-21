@@ -377,6 +377,24 @@ let noticedZoomVersion: null | string = null;
 let noticedVideoTitle: null | string = null;
 
 /**
+ * Whether Zoom's buttons no longer read as M³ learned them: the camera
+ * button reads as neither of its learned names (after a change of Zoom's
+ * language, or a Zoom update). False when that can't be told, e.g. with
+ * Zoom's toolbar hidden.
+ */
+export const zoomNamesChanged = (meeting: null | ZoomMeetingState) => {
+  const settings = getSettings();
+  const videoTitle = meeting?.videoTitle;
+  return (
+    !!videoTitle &&
+    !!settings?.zoomVideoOnTitle &&
+    !!settings.zoomVideoOffTitle &&
+    videoTitle !== settings.zoomVideoOnTitle &&
+    videoTitle !== settings.zoomVideoOffTitle
+  );
+};
+
+/**
  * Zoom was updated since the learned names last passed a check, or its
  * buttons no longer read as learned (its language was changed, say): worth
  * checking everything again before the meeting, which the startup check
@@ -396,15 +414,10 @@ const noticeZoomChanges = (meeting: null | ZoomMeetingState) => {
     noticedZoomVersion = zoomVersion;
     reason = 'version';
   }
-  const { videoTitle } = meeting;
-  const { zoomVideoOffTitle, zoomVideoOnTitle } = settings;
+  const videoTitle = meeting.videoTitle ?? null;
   if (
     !reason &&
-    videoTitle &&
-    zoomVideoOnTitle &&
-    zoomVideoOffTitle &&
-    videoTitle !== zoomVideoOnTitle &&
-    videoTitle !== zoomVideoOffTitle &&
+    zoomNamesChanged(meeting) &&
     noticedVideoTitle !== videoTitle
   ) {
     noticedVideoTitle = videoTitle;

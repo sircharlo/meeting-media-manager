@@ -60,13 +60,24 @@
           <div class="text-weight-medium">
             {{ t('zoom-automations-paused') }}
           </div>
-          <div>
+          <div v-if="relearnNeeded">{{ t('zoom-check-names-changed') }}</div>
+          <div v-else>
             {{
               t('zoom-automations-paused-failed', { problems: pausedProblems })
             }}
           </div>
         </div>
         <q-btn
+          v-if="relearnNeeded"
+          color="primary"
+          dense
+          flat
+          :label="t('zoom-setup-open')"
+          no-caps
+          @click="openSetupAssistant"
+        />
+        <q-btn
+          v-else
           color="primary"
           dense
           flat
@@ -321,7 +332,8 @@ const currentState = useCurrentStateStore();
 const { currentSettings, zoomHelperLogs } = storeToRefs(currentState);
 
 const zoomState = useZoomStateStore();
-const { automationsPaused, checkRunning, pause } = storeToRefs(zoomState);
+const { automationsPaused, checkRunning, pause, relearnNeeded } =
+  storeToRefs(zoomState);
 
 const handAlert = useHandAlertStore();
 const { raisedHands } = storeToRefs(handAlert);

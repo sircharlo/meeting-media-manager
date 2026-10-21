@@ -880,6 +880,23 @@ describe('Zoom setup assistant', () => {
     rememberZoomVersion();
     expect(currentSettings.zoomLearnedVersion).toBe('7.3.0');
   });
+
+  it.each([
+    ['Start my video', true],
+    ['Start Video', false],
+    ['Stop Video', false],
+    // Zoom's toolbar hidden: can't be told.
+    [null, false],
+  ])(
+    'tells whether the camera button reading "%s" means Zoom\'s names changed',
+    async (videoTitle, changed) => {
+      const { zoomNamesChanged } = await import('../zoom');
+
+      expect(
+        zoomNamesChanged({ found: true, sharing: false, videoTitle }),
+      ).toBe(changed);
+    },
+  );
 });
 
 describe('stopping Zoom sharing after media', () => {

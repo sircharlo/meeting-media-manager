@@ -5,10 +5,17 @@ import { useCurrentStateStore } from 'stores/current-state';
 
 // The Zoom Meeting Manager's state for this M³ session (not persisted): the
 // startup check's progress, and whether a failed check paused the Zoom
-// automations, which then stay paused until M³ restarts or a check passes.
+// automations, which then stay paused until M³ restarts or a check passes
+// (or the setup assistant's checks and test do).
 
 export interface ZoomAutomationPause {
   congregationId: string;
+  /**
+   * Zoom's buttons no longer read as M³ learned them (its language was
+   * changed, or it was updated): only the setup assistant, learning them
+   * again, fixes it.
+   */
+  namesChanged: boolean;
   /** i18n keys of what failed, to show the user. */
   problems: string[];
 }
@@ -71,8 +78,12 @@ export const useZoomStateStore = defineStore('zoom-state', {
       this.runDepth--;
       if (this.runDepth === 0) this.abortRun();
     },
-    pauseAutomations(congregationId: string, problems: string[]) {
-      this.pause = { congregationId, problems };
+    pauseAutomations(
+      congregationId: string,
+      problems: string[],
+      namesChanged = false,
+    ) {
+      this.pause = { congregationId, namesChanged, problems };
     },
     requestCancel() {
       if (this.runDepth === 0) return;
@@ -94,6 +105,10 @@ export const useZoomStateStore = defineStore('zoom-state', {
     automationsPaused: (state) =>
       !!state.pause &&
       state.pause.congregationId === useCurrentStateStore().currentCongregation,
+    /** Whether they're paused until the setup assistant relearns Zoom's names. */
+    relearnNeeded(): boolean {
+      return this.automationsPaused && !!this.pause?.namesChanged;
+    },
     runActive: (state) => state.runDepth > 0,
   },
   state: (): Store => ({

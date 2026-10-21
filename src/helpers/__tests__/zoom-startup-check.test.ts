@@ -32,6 +32,7 @@ const zoom = vi.hoisted(() => ({
   takeZoomActionFailures: vi.fn<() => ZoomActionFailure[]>(),
   testZoomShareEntry: vi.fn(),
   withZoomRun: vi.fn(<T>(_label: string, run: () => Promise<T>) => run()),
+  zoomNamesChanged: vi.fn(() => false),
 }));
 
 vi.mock('stores/current-state', () => ({
@@ -55,6 +56,7 @@ vi.mock('src/helpers/zoom', () => ({
   testZoomShareEntry: zoom.testZoomShareEntry,
   withZoomRun: zoom.withZoomRun,
   ZOOM_CHANGED_EVENT: 'zoomChanged',
+  zoomNamesChanged: zoom.zoomNamesChanged,
 }));
 
 vi.mock('src/helpers/zoom-self-test', async (importOriginal) => ({
@@ -115,7 +117,11 @@ const passed = (...ids: ZoomSelfTestStep['id'][]): ZoomSelfTestStep[] =>
 const notification = () =>
   zoom.notify.mock.lastCall?.[0] as
     | undefined
-    | { actions?: { handler?: () => void; label?: string }[]; type: string };
+    | {
+        actions?: { handler?: () => void; label?: string }[];
+        caption?: string;
+        type: string;
+      };
 
 beforeEach(() => {
   setActivePinia(createPinia());
@@ -135,6 +141,7 @@ beforeEach(() => {
   zoom.isZoomSetupNeeded.mockReturnValue(false);
   zoom.runZoomSelfTest.mockImplementation(async () => passed('meeting'));
   zoom.takeZoomActionFailures.mockReturnValue([]);
+  zoom.zoomNamesChanged.mockReturnValue(false);
   zoom.testZoomShareEntry.mockResolvedValue({
     opened: true,
     windowListed: true,
@@ -288,6 +295,7 @@ describe('Zoom startup check', () => {
     expect(await outcome).toBe('failed');
     expect(useZoomStateStore().pause).toEqual({
       congregationId: 'cong-1',
+      namesChanged: false,
       problems: ['zoom-check-problem-meeting'],
     });
     expect(notification()?.type).toBe('negative');
@@ -334,7 +342,7 @@ describe('Zoom startup check', () => {
       .mockReturnValueOnce([
         {
           action: 'set-video',
-          error: 'video-title-unrecognized:Start my video',
+          error: 'video-not-changed',
           snapshot: {
             dialogs: { 'CVoiceActivityDetectedDlgCls 400x120': ['Unmute'] },
             toolbar: ['Start my video, Alt+V'],
@@ -353,10 +361,9 @@ describe('Zoom startup check', () => {
         expect.objectContaining({
           extra: {
             dialogs: { 'CVoiceActivityDetectedDlgCls 400x120': ['Unmute'] },
-            failedActions: [
-              'set-video: video-title-unrecognized:Start my video',
-            ],
+            failedActions: ['set-video: video-not-changed'],
             failedSteps: ['video-off: Video button reads "x"'],
+            namesChanged: false,
             problems: [
               'zoom-self-test-step-video-off',
               'zoom-setup-check-host',
@@ -386,6 +393,46 @@ describe('Zoom startup check', () => {
     await vi.waitFor(() => expect(zoomState.automationsPaused).toBe(false));
     expect(notification()?.type).toBe('positive');
   });
+
+  it.each([
+    [
+      'an action found a button named otherwise',
+      () => {
+        zoom.takeZoomActionFailures.mockReturnValue([
+          { action: 'set-mic', error: 'mic-title-unrecognized:Mute' },
+        ]);
+      },
+    ],
+    [
+      'the camera button reads otherwise',
+      () => {
+        zoom.zoomNamesChanged.mockReturnValue(true);
+      },
+    ],
+  ])(
+    "offers the setup assistant instead of testing again when Zoom's names changed: %s",
+    async (_cause, arrange) => {
+      const { runZoomStartupCheck } = await import('../zoom-startup-check');
+      arrange();
+      zoom.runZoomSelfTest.mockResolvedValueOnce([
+        { id: 'meeting', status: 'passed' },
+        { detail: 'Mute the microphone', id: 'mic-off', status: 'failed' },
+      ]);
+      const dispatch = vi.spyOn(globalThis, 'dispatchEvent');
+
+      expect(await runZoomStartupCheck()).toBe('failed');
+      expect(useZoomStateStore().pause?.namesChanged).toBe(true);
+      expect(notification()?.caption).toContain(
+        "Zoom's language was changed or Zoom was updated",
+      );
+      const action = notification()?.actions?.find((a) => a.handler);
+      expect(action?.label).toBe('Open setup assistant');
+      action?.handler?.();
+      expect(dispatch).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'openZoomSetupAssistant' }),
+      );
+    },
+  );
 
   it('only looks, without pressing anything, when others are in the meeting', async () => {
     const { runZoomStartupCheck } = await import('../zoom-startup-check');

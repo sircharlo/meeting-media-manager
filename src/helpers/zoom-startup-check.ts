@@ -19,6 +19,7 @@ import {
   withZoomRun,
   ZOOM_CHANGED_EVENT,
   type ZoomActionFailure,
+  zoomNamesChanged,
 } from 'src/helpers/zoom';
 import {
   runZoomSelfTest,
@@ -37,8 +38,10 @@ import { useZoomStateStore } from 'stores/zoom-state';
 // M³ opens it in the same window background music can start in, before the
 // meeting. If anything fails, the user is told and the Zoom automations are
 // paused until M³ restarts or a new check passes, rather than risking an
-// automation going wrong in front of the congregation. A check the user
-// stops changes nothing.
+// automation going wrong in front of the congregation. When it fails because
+// Zoom's buttons no longer read as learned (Zoom's language was changed, or
+// Zoom was updated), the user is offered the setup assistant instead, to
+// learn them again. A check the user stops changes nothing.
 
 export type ZoomStartupCheckOutcome =
   'cancelled' | 'failed' | 'passed' | 'scheduled' | 'skipped';
@@ -257,6 +260,7 @@ const findProblems = async (
 const reportFailedCheck = async (
   { details, problems }: Findings,
   failures: ZoomActionFailure[],
+  namesChanged: boolean,
 ) => {
   try {
     const { captureMessage } = await import('@sentry/vue');
@@ -269,6 +273,7 @@ const reportFailedCheck = async (
           ({ action, error }) => `${action}: ${error ?? 'failed'}`,
         ),
         failedSteps: details,
+        namesChanged,
         problems,
         snapshotAction: last?.action ?? null,
         zoomVersion:
@@ -285,6 +290,52 @@ const reportFailedCheck = async (
   }
 };
 
+// A microphone or camera button that reads as neither of its learned names.
+const UNRECOGNIZED_TITLE = /^(?:mic|video)-title-unrecognized:/;
+
+/**
+ * Whether the check failed because Zoom's buttons no longer read as learned,
+ * which testing again won't fix: an action said so, or Zoom's camera button
+ * reads as neither of its learned names.
+ */
+const failedOnChangedNames = (failures: ZoomActionFailure[]) =>
+  failures.some(({ error }) => UNRECOGNIZED_TITLE.test(error ?? '')) ||
+  zoomNamesChanged(useZoomStateStore().meeting);
+
+const notifyFailedCheck = (problems: string[], namesChanged: boolean) => {
+  createTemporaryNotification({
+    actions: [
+      namesChanged
+        ? {
+            color: 'white',
+            handler: () => {
+              globalThis.dispatchEvent(
+                new CustomEvent('openZoomSetupAssistant'),
+              );
+            },
+            label: t('zoom-setup-open'),
+          }
+        : {
+            color: 'white',
+            handler: () => {
+              void runZoomStartupCheck({ manual: true });
+            },
+            label: t('zoom-check-test-again'),
+          },
+      { color: 'white', icon: 'close', round: true },
+    ],
+    caption: namesChanged
+      ? t('zoom-check-names-changed')
+      : t('zoom-check-failed-caption', {
+          problems: problems.map((key) => t(key)).join(', '),
+        }),
+    group: 'zoom-check',
+    message: t('zoom-automations-paused'),
+    timeout: 0,
+    type: 'negative',
+  });
+};
+
 const report = (
   congregationId: string,
   found: Findings,
@@ -293,28 +344,15 @@ const report = (
   const zoomState = useZoomStateStore();
   const { problems } = found;
   if (problems.length) {
-    zoomState.pauseAutomations(congregationId, problems);
-    log('Zoom check failed: automations paused', 'zoom', 'warn', found);
-    void reportFailedCheck(found, takeZoomActionFailures());
-    createTemporaryNotification({
-      actions: [
-        {
-          color: 'white',
-          handler: () => {
-            void runZoomStartupCheck({ manual: true });
-          },
-          label: t('zoom-check-test-again'),
-        },
-        { color: 'white', icon: 'close', round: true },
-      ],
-      caption: t('zoom-check-failed-caption', {
-        problems: problems.map((key) => t(key)).join(', '),
-      }),
-      group: 'zoom-check',
-      message: t('zoom-automations-paused'),
-      timeout: 0,
-      type: 'negative',
+    const failures = takeZoomActionFailures();
+    const namesChanged = failedOnChangedNames(failures);
+    zoomState.pauseAutomations(congregationId, problems, namesChanged);
+    log('Zoom check failed: automations paused', 'zoom', 'warn', {
+      ...found,
+      namesChanged,
     });
+    void reportFailedCheck(found, failures, namesChanged);
+    notifyFailedCheck(problems, namesChanged);
     return 'failed';
   }
 

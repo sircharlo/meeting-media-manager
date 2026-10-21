@@ -119,6 +119,29 @@ describe('DialogZoomMeetingManagerPopup', () => {
     expect(startupCheckMock).toHaveBeenCalledWith({ manual: true });
   });
 
+  it("offers the setup assistant instead when Zoom's names changed", async () => {
+    await mountPopup({ meeting: MEETING });
+    useZoomStateStore().pauseAutomations(
+      CONGREGATION_ID,
+      ['zoom-self-test-step-video-off'],
+      true,
+    );
+    await flushPromises();
+    const dispatch = vi.spyOn(globalThis, 'dispatchEvent');
+
+    const banner = document.querySelector('.action-popup__banner--negative');
+    expect(banner?.textContent).toContain(
+      "Zoom's language was changed or Zoom was updated",
+    );
+    expect(banner?.textContent).not.toContain('Test again');
+    banner?.querySelector('button')?.click();
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'openZoomSetupAssistant' }),
+    );
+    expect(startupCheckMock).not.toHaveBeenCalled();
+  });
+
   it('reports a missing Zoom window and disables the automation buttons', async () => {
     await mountPopup({
       settings: {

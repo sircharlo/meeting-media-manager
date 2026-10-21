@@ -87,7 +87,11 @@ describe('ZoomMeetingManagerButton', () => {
     zoomMocks.isAroundMeetingTime.mockReturnValue(true);
     const zoomState = useZoomStateStore();
     zoomState.meeting = { found: true, sharing: false };
-    zoomState.pause = { congregationId: CONGREGATION_ID, problems: [] };
+    zoomState.pause = {
+      congregationId: CONGREGATION_ID,
+      namesChanged: false,
+      problems: [],
+    };
     const button = await mountButton();
 
     expect(button.classes()).toContain('bg-negative');
