@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const currentSettings = {
   zoomHandRaisedPhrase: null as null | string,
+  zoomJoinAudioTitle: null as null | string,
   zoomMeetingManagerAutoLaunchMeeting: false,
   zoomMeetingManagerAutomateMeetingAudioSettings: false,
   zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
@@ -12,8 +13,11 @@ const currentSettings = {
   zoomMeetingManagerMeetingId: '123 456' as null | string,
   zoomMicOffTitle: 'Unmute' as null | string,
   zoomMicOnTitle: 'Mute' as null | string,
+  zoomMuteAllTitle: null as null | string,
+  zoomParticipantsButtonTitle: null as null | string,
   zoomReactButtonTitle: null as null | string,
   zoomShareButtonTitle: 'Share' as null | string,
+  zoomStopShareTitle: null as null | string,
   zoomVideoOffTitle: 'Start Video' as null | string,
   zoomVideoOnTitle: 'Stop Video' as null | string,
 };
@@ -162,16 +166,19 @@ describe('Zoom meeting automation', () => {
       offTitle: 'Unmute',
       on: true,
       onTitle: 'Mute',
+      titles: expect.any(Object),
       type: 'set-mic',
     });
     expect(zoomCommandMock).toHaveBeenCalledWith({
       offTitle: 'Start Video',
       on: true,
       onTitle: 'Stop Video',
+      titles: expect.any(Object),
       type: 'set-video',
     });
     expect(zoomCommandMock).toHaveBeenCalledWith({
       allowSelfUnmute: false,
+      titles: expect.any(Object),
       type: 'mute-all',
     });
   });
@@ -191,6 +198,7 @@ describe('Zoom meeting automation', () => {
     ]);
     expect(zoomCommandMock).toHaveBeenCalledWith({
       allowSelfUnmute: true,
+      titles: expect.any(Object),
       type: 'mute-all',
     });
   });
@@ -309,6 +317,7 @@ describe('Zoom media sharing', () => {
     expect(await startSharingMediaInZoom()).toBe(true);
     expect(zoomCommandMock).toHaveBeenCalledWith({
       shareButtonTitle: 'Share',
+      titles: expect.any(Object),
       type: 'start-share',
       windowTitle: MEDIA_WINDOW_TITLE,
     });
@@ -626,6 +635,7 @@ describe('Zoom setup assistant', () => {
 
     expect(zoomCommandMock).toHaveBeenCalledWith({
       reactButtonTitle: 'React',
+      titles: expect.any(Object),
       type: 'learn-hand-raised',
     });
     expect(currentSettings).toMatchObject({
@@ -653,57 +663,57 @@ describe('Zoom setup assistant', () => {
     });
   });
 
-  it("asks which entry is React when M³ can't find it, until one works or the user cancels", async () => {
+  it('sends the names learned so far with every action and keeps what the helper learns', async () => {
     Object.assign(currentSettings, {
-      zoomHandRaisedPhrase: null,
-      zoomReactButtonTitle: null,
+      zoomJoinAudioTitle: null,
+      zoomMuteAllTitle: null,
+      zoomParticipantsButtonTitle: 'Participants',
+      zoomStopShareTitle: null,
     });
-    const picks = ['Partager', 'Réagir'];
-    const { Dialog } = await import('quasar');
-    vi.mocked(Dialog.create).mockImplementation(() => {
-      const pick = picks.shift();
-      const chain = {
-        onCancel: vi.fn((cancel: () => void) => {
-          if (!pick) cancel();
-          return chain;
-        }),
-        onOk: vi.fn((ok: (entry: string) => void) => {
-          if (pick) ok(pick);
-          return chain;
-        }),
-      };
-      return chain as unknown as ReturnType<typeof Dialog.create>;
+    zoomCommandMock.mockResolvedValue({
+      diagnosis: { meeting: true },
+      learned: { joinAudio: 'Join audio', muteAll: 'Mute all' },
+      ok: true,
     });
-    zoomCommandMock.mockImplementation(async (command) => {
-      if (command.type === 'share-entries') {
-        return { entries: ['Partager'], moreEntries: ['Réagir'], ok: true };
-      }
-      if (command.type === 'learn-hand-raised') {
-        return command.reactButtonTitle === 'Réagir'
-          ? { ok: true, phrase: 'Main levée', reactButtonTitle: 'Réagir' }
-          : { error: 'react-button-not-found', ok: false };
-      }
-      return { ok: true };
-    });
-    const { learnZoomHandRaisedPhraseAskingForReact } = await import('../zoom');
+    const { diagnoseZoom } = await import('../zoom');
 
-    expect((await learnZoomHandRaisedPhraseAskingForReact()).ok).toBe(true);
+    await diagnoseZoom();
 
-    expect(Dialog.create).toHaveBeenCalledTimes(2);
+    expect(zoomCommandMock).toHaveBeenCalledWith({
+      titles: {
+        joinAudio: null,
+        micOff: 'Unmute',
+        micOn: 'Mute',
+        muteAll: null,
+        participants: 'Participants',
+        stopShare: null,
+      },
+      type: 'diagnose',
+    });
     expect(currentSettings).toMatchObject({
-      zoomHandRaisedPhrase: 'Main levée',
-      zoomReactButtonTitle: 'Réagir',
+      zoomJoinAudioTitle: 'Join audio',
+      zoomMuteAllTitle: 'Mute all',
+      zoomParticipantsButtonTitle: 'Participants',
     });
-    // A missing React button is asked about, not reported as a failure.
-    expect(notifyMock).not.toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'negative' }),
-    );
+  });
 
-    // Cancelling the question stops there.
-    currentSettings.zoomReactButtonTitle = 'Stale';
-    const result = await learnZoomHandRaisedPhraseAskingForReact();
-    expect(result.error).toBe('react-button-not-found');
-    expect(Dialog.create).toHaveBeenCalledTimes(3);
+  it('keeps a Participants entry the user picked only once it opened the panel', async () => {
+    currentSettings.zoomParticipantsButtonTitle = null;
+    zoomCommandMock.mockResolvedValueOnce({
+      error: 'participants-button-not-found',
+      ok: false,
+    });
+    const { tryZoomParticipantsEntry } = await import('../zoom');
+
+    expect(await tryZoomParticipantsEntry('Enregistrer')).toBe(false);
+    expect(currentSettings.zoomParticipantsButtonTitle).toBeNull();
+
+    expect(await tryZoomParticipantsEntry('Participants')).toBe(true);
+    expect(zoomCommandMock).toHaveBeenLastCalledWith({
+      titles: expect.objectContaining({ participants: 'Participants' }),
+      type: 'participants',
+    });
+    expect(currentSettings.zoomParticipantsButtonTitle).toBe('Participants');
   });
 
   it('joins computer audio for the microphone step without telling the checklist', async () => {

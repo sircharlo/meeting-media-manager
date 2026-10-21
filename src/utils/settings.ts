@@ -10,13 +10,7 @@ import { settingsDefinitions } from 'src/constants/settings';
 import { syncMeetingScheduleManually } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { resetFeatureNudgesForCurrentProfile } from 'src/helpers/feature-nudges';
-import {
-  captureZoomMicTitle,
-  captureZoomShareButtonTitle,
-  captureZoomVideoTitle,
-  isZoomSetupNeeded,
-  learnZoomHandRaisedPhraseAskingForReact,
-} from 'src/helpers/zoom';
+import { isZoomSetupNeeded } from 'src/helpers/zoom';
 import { getDateDiff, getSpecificWeekday, isInPast } from 'src/utils/date';
 
 const requiredRule: ValidationRule = (val: boolean | string) =>
@@ -161,18 +155,6 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
         if (isZoomSetupNeeded()) {
           globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
         }
-      } else if (action === 'zoomCaptureVideoOffTitle') {
-        void captureZoomVideoTitle('zoomVideoOffTitle');
-      } else if (action === 'zoomCaptureVideoOnTitle') {
-        void captureZoomVideoTitle('zoomVideoOnTitle');
-      } else if (action === 'zoomCaptureMicOffTitle') {
-        void captureZoomMicTitle('zoomMicOffTitle');
-      } else if (action === 'zoomCaptureMicOnTitle') {
-        void captureZoomMicTitle('zoomMicOnTitle');
-      } else if (action === 'zoomCaptureShareButtonTitle') {
-        void captureZoomShareButtonTitle();
-      } else if (action === 'zoomLearnHandRaised') {
-        void learnZoomHandRaisedPhraseAskingForReact();
       }
     } catch (error) {
       errorCatcher(error);

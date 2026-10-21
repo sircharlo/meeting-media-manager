@@ -20,6 +20,7 @@ const zoom = vi.hoisted(() => ({
   learnZoomVideoTitles: vi.fn(),
   runZoomSelfTest: vi.fn(),
   testZoomShareEntry: vi.fn(),
+  tryZoomParticipantsEntry: vi.fn(),
 }));
 
 vi.mock('src/helpers/zoom', () => ({
@@ -41,6 +42,7 @@ vi.mock('src/helpers/zoom', () => ({
   learnZoomVideoTitles: zoom.learnZoomVideoTitles,
   prepareMediaWindowForZoomTest: async () => () => undefined,
   testZoomShareEntry: zoom.testZoomShareEntry,
+  tryZoomParticipantsEntry: zoom.tryZoomParticipantsEntry,
   withoutZoomFeedback: (run: () => unknown) => run(),
 }));
 
@@ -63,7 +65,6 @@ const ALL_GOOD: ZoomDiagnosis = {
   participantsPanel: true,
   toolbar: true,
   videoButton: true,
-  videoShortcutDefault: true,
 };
 
 let wrapper: undefined | VueWrapper;
@@ -300,6 +301,59 @@ describe('DialogZoomSetupAssistant', () => {
     expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenCalledOnce();
     expect(text()).toContain('recognizes raised hands (“Hand raised”)');
     expect(isDisabled(button('Continue'))).toBe(false);
+  });
+
+  it("lets the user pick the Participants entry when M³ can't find Zoom's Participants button", async () => {
+    zoom.diagnoseZoom.mockResolvedValue({
+      ...ALL_GOOD,
+      hostControls: false,
+      participantsButtonMissing: true,
+      participantsPanel: false,
+    });
+    zoom.getZoomShareEntries.mockResolvedValue({
+      more: ['Participants', 'Enregistrer'],
+      toolbar: ['Partager'],
+    });
+    zoom.tryZoomParticipantsEntry
+      .mockResolvedValueOnce(false)
+      .mockImplementationOnce(async () => {
+        zoom.diagnoseZoom.mockResolvedValue(ALL_GOOD);
+        return true;
+      });
+    await mountAssistant();
+    await click('Continue'); // welcome
+    await typeMeetingId('987 654 3210');
+    await vi.waitFor(() =>
+      expect(text()).toContain('Connected to your Zoom meeting'),
+    );
+    await click('Continue'); // meeting: the checks run
+
+    await vi.waitFor(() =>
+      expect(text()).toContain('find the one that opens the participants list'),
+    );
+    expect(text()).toContain('Which of these opens the participants list');
+    expect(isDisabled(button('Continue'))).toBe(true);
+
+    const pick = async (label: string) => {
+      const option = Array.from(document.querySelectorAll('.q-radio')).find(
+        (el) => el.textContent?.includes(label),
+      ) as HTMLElement;
+      option.click();
+      await flushPromises();
+      await click('Try this one');
+    };
+
+    await pick('Partager');
+    expect(zoom.tryZoomParticipantsEntry).toHaveBeenLastCalledWith('Partager');
+    expect(text()).toContain("That didn't open the participants list");
+
+    await pick('Participants');
+    expect(zoom.tryZoomParticipantsEntry).toHaveBeenLastCalledWith(
+      'Participants',
+    );
+    // The checks ran again with the panel open and all passed.
+    await vi.waitFor(() => expect(isDisabled(button('Continue'))).toBe(false));
+    expect(text()).not.toContain('Which of these opens the participants list');
   });
 
   it("lets the user pick the React entry when M³ can't find Zoom's React button", async () => {

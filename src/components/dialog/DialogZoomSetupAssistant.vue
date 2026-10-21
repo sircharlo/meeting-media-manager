@@ -137,14 +137,36 @@
               :status="check.status"
               :text="t(check.label)"
             />
-            <p
-              v-if="shortcutsChanged"
-              class="text-caption text-grey row no-wrap q-mt-sm"
-            >
-              <q-icon class="q-mr-xs q-mt-xs" name="mmm-info" size="14px" />
-              {{ t('zoom-setup-shortcuts-changed') }}
-            </p>
+            <!-- Zoom's Participants button couldn't be found: the user points M³ to it -->
+            <template v-if="hasParticipantsEntries">
+              <p class="q-mb-none q-mt-sm">
+                {{ t('zoom-setup-participants-not-found') }}
+              </p>
+              <EntryPicker
+                v-model="selectedParticipantsEntry"
+                :entries="participantsEntries"
+                more-first
+                :question="t('zoom-setup-participants-pick')"
+              />
+              <p
+                v-if="participantsEntryFailed"
+                class="text-caption text-negative q-mb-none"
+              >
+                {{ t('zoom-setup-participants-not-opened') }}
+              </p>
+            </template>
             <div class="row q-gutter-sm q-mt-sm">
+              <q-btn
+                v-if="hasParticipantsEntries"
+                class="btn-tonal"
+                color="primary"
+                :disable="!selectedParticipantsEntry || checking"
+                flat
+                :label="t('zoom-setup-share-try')"
+                :loading="checking"
+                no-caps
+                @click="tryParticipantsEntry"
+              />
               <q-btn
                 class="btn-tonal"
                 color="primary"
@@ -152,7 +174,7 @@
                 flat
                 icon="mmm-refresh"
                 :label="t('zoom-setup-check-again')"
-                :loading="checking"
+                :loading="checking && !hasParticipantsEntries"
                 no-caps
                 @click="runChecks"
               />
@@ -497,6 +519,7 @@ import {
   learnZoomVideoTitles,
   prepareMediaWindowForZoomTest,
   testZoomShareEntry,
+  tryZoomParticipantsEntry,
   withoutZoomFeedback,
 } from 'src/helpers/zoom';
 import {
@@ -631,20 +654,51 @@ const checksPassed = computed(
   () => !checking.value && checks.value.every((c) => c.status === 'passed'),
 );
 
-const shortcutsChanged = computed(
+// Zoom's Participants button is named in the user's Zoom language and is
+// sometimes kept in Zoom's "More" menu. When M³ can't find it, the user
+// picks it from Zoom's entries, as for Share; opening the panel by hand in
+// Zoom works too (the checks then learn the names from the open panel).
+const participantsEntries = ref<{ more: string[]; toolbar: string[] }>({
+  more: [],
+  toolbar: [],
+});
+const selectedParticipantsEntry = ref<null | string>(null);
+const participantsEntryFailed = ref(false);
+
+const hasParticipantsEntries = computed(
   () =>
-    !!diagnosis.value?.toolbar &&
-    (diagnosis.value.audioShortcutDefault === false ||
-      diagnosis.value.videoShortcutDefault === false),
+    participantsEntries.value.toolbar.length +
+      participantsEntries.value.more.length >
+    0,
 );
 
 const runChecks = async () => {
   checking.value = true;
   try {
     diagnosis.value = (await diagnoseZoom()) ?? { meeting: false };
+    if (diagnosis.value.participantsButtonMissing) {
+      participantsEntries.value = await getZoomShareEntries();
+    } else {
+      participantsEntries.value = { more: [], toolbar: [] };
+    }
+    selectedParticipantsEntry.value = null;
+    participantsEntryFailed.value = false;
   } finally {
     checking.value = false;
   }
+};
+
+const tryParticipantsEntry = async () => {
+  const entry = selectedParticipantsEntry.value;
+  if (!entry) return;
+  checking.value = true;
+  try {
+    participantsEntryFailed.value = !(await tryZoomParticipantsEntry(entry));
+  } finally {
+    checking.value = false;
+  }
+  // The panel is open now: the checks pass, and learn the rest from it.
+  if (!participantsEntryFailed.value) await runChecks();
 };
 
 // --- Video -----------------------------------------------------------------
