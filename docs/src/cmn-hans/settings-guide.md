@@ -1,6 +1,6 @@
 # 设置指南 {#settings-guide}
 
-本综合指南按类别说明所有可用设置。了解这些设置，可以帮助你根据会众的实际需要配置 M³。了解这些设置将有助于配置M3来完全满足您会众的需要。
+本综合指南按类别说明 M³ 中所有可用的设置。了解这些设置，可以帮助你根据会众的实际需要配置 M³。
 
 ## 常规 {#application-configuration}
 
@@ -8,7 +8,7 @@
 
 <!-- **Setting**: `localAppLang` -->
 
-选择 M³ 的界面语言。此设置不会影响媒体下载所使用的语言。这只适用于媒体下载的语言。
+选择 M³ 的界面语言。此设置不会影响媒体下载所使用的语言。
 
 **选项**：所有可用的界面语言（英语、西班牙语、法语等）
 
@@ -22,8 +22,8 @@
 
 **选项**：
 
-- **自动**：根据系统设置自动切换
-- **深色**：始终使用暗色模式
+- 根据系统设置自动切换
+- 始终使用深色模式
 - 始终使用浅色模式
 
 **默认**：自动
@@ -70,7 +70,7 @@
 
 <!-- **Setting**: `lang` -->
 
-下载聚会媒体时使用的主要语言。通常应与会众聚会所使用的语言一致。这应与您的会众聚会所使用的语言相匹配。
+下载聚会媒体时使用的主要语言。这应与你的会众聚会所使用的语言一致。
 
 **选项**：耶和华见证人官方网站上提供的所有语言
 
@@ -144,7 +144,7 @@
 
 **格式**：MM/DD/YYYY
 
-**默认**：通常会自动获取
+**默认**：定期自动获取
 
 ### 聚会时间安排变更 {#meeting-schedule-changes}
 
@@ -163,7 +163,7 @@
 
 启用后，M³ 会定期检查耶和华见证人官方网站，查看会众当前和未来的聚会日期或时间是否有变化，并自动更新当前配置。
 
-此功能仅适用于通过会众搜索添加、且会众名称未被手动更改的配置。如果因手动更改会众名称而停用了同步，请使用**启用时间安排同步**重新关联当前配置。如果因聚合名称被更改而同步被禁用，请使用 **启用聚会时间同步** 重新链接配置文件。
+此功能仅适用于通过会众搜索添加、且会众名称未被手动更改的配置。如果因会众名称被更改而停用了同步，请使用**启用时间安排同步**重新关联该配置。
 
 #### 启用时间安排同步 {#relink-congregation}
 
@@ -191,7 +191,7 @@
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-启用媒体显示功能。如果需要在第二个显示器或外部屏幕上显示媒体，必须启用此功能。 This is required to present media on a second monitor.
+启用媒体显示功能。如果要在第二个显示器上显示媒体，必须启用此功能。
 
 **Default**: `false`
 
@@ -237,7 +237,7 @@
 
 **范围**：0-300 秒
 
-**默认**：100 秒
+**默认**：60 秒
 
 #### 背景音乐音量 {#music-volume}
 
@@ -286,7 +286,7 @@ whether the media window feature is enabled at all). -->
 
 **选项**：240p、360p、480p、720p、1080p
 
-**默认**：自动设置
+**默认**：720p
 
 #### 包括印刷版中的媒体 {#include-printed-media}
 
@@ -316,7 +316,7 @@ whether the media window feature is enabled at all). -->
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-选择在会众研经班期间不显示其中所提及视频的出版物。可以按出版物标题或代号搜索。可按出版物标题或代号搜索。
+选择在会众研经班期间不显示其中所提及视频的出版物。可按出版物标题或代号搜索。
 
 **默认**：Walk Courageously With God（`wcg`）
 
@@ -328,9 +328,9 @@ whether the media window feature is enabled at all). -->
 
 **默认**：`true`
 
-### 启用字幕 {#subtitles}
+### 字幕 {#subtitles}
 
-#### 字幕 {#enable-subtitles}
+#### 启用字幕 {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
@@ -362,9 +362,9 @@ whether the media window feature is enabled at all). -->
 
 <!-- **Setting**: `cacheFolder` -->
 
-设置出版物和媒体等缓存文件的存储位置。如果留空，应用程序会自动进行设置。
+用于存储缓存媒体文件的自定义位置。
 
-**浅色**：始终使用浅色模式
+**默认**：系统默认位置
 
 #### 启用缓存自动清理 {#enable-cache-auto-clear}
 
@@ -392,9 +392,9 @@ whether the media window feature is enabled at all). -->
 
 **默认**：空
 
-### 启用自动导出 {#settings-guide-media-export}
+### 媒体导出 {#settings-guide-media-export}
 
-#### 自动导出文件夹 {#enable-media-auto-export}
+#### 启用媒体自动导出 {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
@@ -402,7 +402,7 @@ whether the media window feature is enabled at all). -->
 
 **Default**: `false`
 
-#### 媒体导出 {#media-export-folder}
+#### 媒体导出文件夹 {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
@@ -412,7 +412,7 @@ whether the media window feature is enabled at all). -->
 
 #### 将导出的文件转换为 MP4 {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**设置**：`convertFilesToMp4`
 
 启用后，非视频文件会在导出前转换为 MP4 格式，以提高兼容性。
 
@@ -456,13 +456,13 @@ M³ 会在共享文件夹中为每个即将举行的聚会创建一个文件夹�
 
 **默认**：`true`
 
-## 启用聚会计时器 {#meeting-timer}
+## 聚会计时器 {#meeting-timer}
 
-### 聚会计时器 {#enable-meeting-timer}
+### 启用聚会计时器 {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-启用一个单独的计时器窗口，用于为聚会节目参与者计时。只有得到当地长老批准后才应启用此功能。这是一项测试功能，只有得到当地批准后才应启用。
+启用一个单独的计时器窗口，用于为聚会节目计时。这是一项测试功能，只有得到当地批准后才应启用。
 
 **Default**: `false`
 
@@ -515,9 +515,9 @@ M³ 会在共享文件夹中为每个即将举行的聚会创建一个文件夹�
 
 此类别中还包括[共享文件夹](#settings-guide-folder-monitoring)设置，用于从 Dropbox、OneDrive、iCloud Drive 或 Google Drive 添加媒体。
 
-### 启用 Zoom {#settings-guide-zoom-integration}
+### Zoom 集成 {#settings-guide-zoom-integration}
 
-#### Zoom 集成 {#enable-zoom}
+#### 启用 Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
@@ -537,7 +537,7 @@ M³ 会在共享文件夹中为每个即将举行的聚会创建一个文件夹�
 
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
-Zoom 开始屏幕共享后自动聚焦媒体窗口。通常不需要启用，但如果某些系统在开始共享后媒体窗口经常失去焦点，可以尝试启用此项。通常不需要启用此选项，但在某些系统上，如果开始屏幕共享后媒体窗口经常失去焦点，启用此选项可能会有所帮助。
+Zoom 开始屏幕共享后自动聚焦媒体窗口。通常不需要启用此选项，但在某些系统上，如果开始屏幕共享后媒体窗口经常失去焦点，启用此选项可能会有所帮助。
 
 **默认**：`false`
 
@@ -565,9 +565,9 @@ Zoom 会用自己的语言标示举手，因此 M³ 需要先学会识别：在 
 
 **默认**：`false`
 
-### 启用 OBS Studio {#settings-guide-obs-integration}
+### OBS Studio 集成 {#settings-guide-obs-integration}
 
-#### OBS Studio 集成 {#enable-obs}
+#### 启用 OBS {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
@@ -577,9 +577,9 @@ Zoom 会用自己的语言标示举手，因此 M³ 需要先学会识别：在 
 
 :::warning 重要提示
 
-**需要配置音频**：OBS Studio 集成仅处理屏幕共享。使用 OBS Studio 时，M³ 媒体的音频**不会自动传输**给 Zoom 与会者。您必须配置 Zoom 的“原始音频 (Original Audio)”设置或使用“共享电脑声音”以确保与会者能听到媒体。有关详细的音频设置说明，请参阅[用户指南](/user-guide#audio-configuration)。**需要配置音频**：OBS Studio 集成只负责视频和场景切换。M³ 媒体的声音不会通过视频流自动传输给 Zoom。视频流类似一个没有声音的虚拟摄像头。您必须配置 Zoom 原始音频设置或使用 “共享计算机声音” 以确保聚会参与者能够听到媒体。详细说明请参阅[用户指南](/user-guide#audio-configuration)。
+**需要配置音频**：OBS Studio 集成仅处理屏幕共享。使用 OBS Studio 时，M³ 媒体的音频**不会自动传输**给 Zoom 参与者。您必须配置 Zoom 原始音频设置或使用 “共享计算机声音” 以确保聚会参与者能够听到媒体。详细说明请参阅[用户指南](/user-guide#audio-configuration)。
 
-**提示**：也可以考虑使用 Zoom 集成。Zoom 集成使用 Zoom 原生的屏幕共享功能，因此媒体共享和音频处理通常更方便
+**注意**：Zoom 集成使用 Zoom 原生的屏幕共享功能，处理音频比 OBS Studio 集成更加顺畅。
 
 :::
 
@@ -618,13 +618,13 @@ OBS Studio WebSocket 连接所使用的密码。
 
 :::warning 重要提示
 
-**需要音频配置**：OBS Studio 集成只处理视频/场景切换。来自 M3 媒体的音频**不会自动传输**到 Zoom 或 OBS。视频流像一个没有声音的虚拟摄像头，类似于摄像头一样。您必须配置 Zoom 原始音频设置或使用 “共享计算机声音” 以确保聚会参与者能够听到媒体。详细说明请参阅[用户指南](/user-guide#audio-configuration)。
+**需要音频配置**：OBS Studio 集成只处理视频/场景切换。来自 M³ 媒体的音频**不会自动传输**到 Zoom 或 OBS。视频流就像一个没有声音的虚拟摄像头，与网络摄像头一样。您必须配置 Zoom 原始音频设置或使用 “共享计算机声音” 以确保聚会参与者能够听到媒体。详细说明请参阅[用户指南](/user-guide#audio-configuration)。
 
-**提示**：也可以考虑使用 Zoom 集成。Zoom 集成使用 Zoom 原生的屏幕共享功能，因此媒体共享和音频处理通常更方便。
+**替代方案**：也可以考虑改用 Zoom 集成。它使用 Zoom 原生的屏幕共享功能，处理音频更加顺畅。
 
 :::
 
-### 自定义事件快捷键 {#custom-events}
+### 自定义事件 {#custom-events}
 
 #### 启用自定义事件 {#enable-custom-events}
 
@@ -634,7 +634,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 媒体暂停快捷键 {#custom-event-shortcuts}
+#### 自定义事件快捷键 {#custom-event-shortcuts}
 
 ##### 媒体播放快捷键 {#custom-event-media-play-shortcut}
 
@@ -644,7 +644,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：无
 
-##### 启用自定义事件集成。检测到媒体开始播放、暂停、停止或聚会最后一首诗歌播放等事件时，M³ 可以发送指定的键盘快捷键。 {#custom-event-media-pause-shortcut}
+##### 媒体暂停快捷键 {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
@@ -664,7 +664,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-聚会期间播放最后一首歌曲时触发的快捷键。
+聚会期间播放最后一首诗歌时触发的快捷键。
 
 **默认**：无
 
@@ -674,7 +674,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 <!-- **Setting**: `recordingEnable` -->
 
-允许 M³ 通过键盘快捷键控制外部录制应用程序。M³ 本身没有内置录制功能；在“聚会录制”窗口中点击**开始录制**或**停止录制**时，M³ 会向外部应用程序发送设置好的快捷键。 M³ 本身不会进行录制；当你在“聚会录制”窗口中点击**开始录制**或**停止录制**时，M³ 会向外部应用程序发送设置好的快捷
+允许 M³ 通过键盘快捷键控制外部录制应用程序。 M³ 本身不会进行录制；当你在“聚会录制”窗口中点击**开始录制**或**停止录制**时，M³ 会发送设置好的快捷键。
 
 启用 OBS 录制控制后，此选项会被隐藏。如果使用 OBS Studio，请改用 OBS Studio 集成中的录制功能。
 
@@ -709,7 +709,7 @@ OBS Studio WebSocket 连接所使用的密码。
 - **停止媒体**：停止播放当前媒体
 - **背景音乐**：开始或停止播放背景音乐
 
-### “添加媒体”按钮使用紧凑模式 {#add-more-media-button}
+### “添加更多媒体”按钮 {#add-more-media-button}
 
 #### 显示“添加媒体”按钮的部分 {#add-media-button-sections}
 
@@ -719,7 +719,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：公众演讲、基督徒的生活、分区监督探访和自定义部分
 
-#### “添加更多媒体”按钮 {#compact-add-media-button}
+#### “添加媒体”按钮使用紧凑模式 {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
@@ -733,7 +733,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 <!-- **Setting**: `showMediaDragHandle` -->
 
-在每个媒体项目上显示一个小型拖动手柄，以便通过拖动调整顺序。在每个媒体项目上显示一个小手柄，用于拖动并重新排序。无论是否显示手柄，都可以直接拖动媒体项目的任意位置进行排序；此设置只影响手柄图标是否显示。
+在每个媒体项目上显示一个小型拖动手柄，以便通过拖动调整顺序。无论是否显示手柄，都可以直接拖动媒体项目的任意位置进行排序；此设置只影响手柄图标是否显示。
 
 **默认**：`true`
 
@@ -753,11 +753,11 @@ OBS Studio WebSocket 连接所使用的密码。
 
 ### 配置设置导入和导出 {#profile-settings-transfer}
 
-可以将当前配置的设置导出为 JSON 文件，也可以导入之前导出的配置设置文件。导入后，当前配置的设置会被导入文件中的设置替换。导入替换当前配置文件的设置。
+可以将当前配置的设置导出为 JSON 文件，也可以导入之前导出的配置设置文件。导入后会替换当前配置的设置。
 
 ### 危险区域 {#danger-zone}
 
-:::warning 小贴士
+:::warning 警告
 
 只有在了解这些设置可能产生的影响时才应修改。
 
@@ -769,13 +769,13 @@ OBS Studio WebSocket 连接所使用的密码。
 
 用于下载出版物和媒体的基础域名。
 
-**深色**：始终使用深色模式
+**默认**：`jw.org`
 
 #### 禁用硬件加速 {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-在 M³ 中禁用硬件加速。更改此设置后需要重新启动应用程序才能生效。这可能有助于解决某些系统上的图像异常或崩溃问题，但一般不建议禁用。这可能有助于解决某些系统上的图形异常或崩溃问题，但通常不建议禁用。
+重新启动 M³ 后禁用硬件加速。这可能有助于解决某些系统上的图形异常或崩溃问题，但通常不建议禁用。
 
 **默认**：`false`
 
@@ -824,5 +824,5 @@ OBS Studio WebSocket 连接所使用的密码。
 - 如果 OBS Studio 集成无法使用，请检查 WebSocket 端口、密码和场景设置
 - 如果 M³ 运行缓慢，请尝试启用额外缓存或降低分辨率
 - 如果语言显示不正确，请检查界面语言、媒体语言和字幕语言设置
-- 如果 Zoom 参与者听不到媒体声音，请检查计算机和 Zoom 的音频配置
-- **需要配置音频**：OBS Studio 集成主要负责视频和场景切换。M³ 媒体的声音不会通过视频流自动传输给 Zoom 参与者。视频流类似于一个没有声音的虚拟摄像头。你必须正确配置 Zoom 的“原始音频（Original Audio）”或其他适当的音频传输方式，以确保参与者能够听到媒体声音。详细说明请参阅[用户指南](/user-guide#audio-configuration)。
+- 如果 Zoom 参与者听不到媒体声音，请配置 Zoom 的原始音频设置或使用“共享计算机声音”
+- **提示**：可以考虑使用 Zoom 集成代替 OBS Studio，以便更简单地处理音频
