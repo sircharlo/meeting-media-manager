@@ -444,18 +444,22 @@ export const isZoomReactButtonMissing = (result: ZoomCommandResult) =>
  * until one works or the user cancels.
  */
 export const learnZoomHandRaisedPhraseAskingForReact = async () => {
-  let result = await learnZoomHandRaisedPhrase();
-  let message = [
-    t('zoom-setup-react-not-found'),
-    t('zoom-setup-react-pick'),
-  ].join(' ');
-  while (isZoomReactButtonMissing(result)) {
-    const entry = await pickZoomEntry(message);
-    if (!entry) break;
-    result = await learnZoomHandRaisedPhrase(entry);
-    message = t('zoom-setup-react-not-opened');
-  }
-  return result;
+  const result = await learnZoomHandRaisedPhrase();
+  if (!isZoomReactButtonMissing(result)) return result;
+  return learnZoomHandRaisedPhraseFromPick(
+    [t('zoom-setup-react-not-found'), t('zoom-setup-react-pick')].join(' '),
+  );
+};
+
+/** Asks which entry is React and tries it; asks again after a wrong pick. */
+const learnZoomHandRaisedPhraseFromPick = async (
+  message: string,
+): Promise<ZoomCommandResult> => {
+  const entry = await pickZoomEntry(message);
+  if (!entry) return { error: 'react-button-not-found', ok: false };
+  const result = await learnZoomHandRaisedPhrase(entry);
+  if (!isZoomReactButtonMissing(result)) return result;
+  return learnZoomHandRaisedPhraseFromPick(t('zoom-setup-react-not-opened'));
 };
 
 /**

@@ -271,9 +271,6 @@ namespace M3.ZoomHelper
         // The Reactions button's trailing "(Ctrl+Shift+Y)", matched by shape
         // like TrailingHotkey.
         static readonly Regex ReactHotkey = new Regex(@"\((?:[^()\s+]+\+){2}Y\)\s*$");
-        // Zoom ends each share picker entry's name with its place in its
-        // group, in the user's language ("Media Player - M³, 7 of 10").
-        static readonly Regex ShareItemPosition = new Regex(@",\s*\d+\s+\S+\s+\d+$");
 
         // Buttons whose tops are this close (in pixels) count as one row.
         const int RowTolerance = 8;
@@ -1756,19 +1753,26 @@ namespace M3.ZoomHelper
         // entry is found by its exact title, and its position is read afresh
         // before every click.
 
-        /// <summary>The window title a share picker entry stands for: its name
-        /// without the place Zoom appends (once, so a title that itself ends
-        /// that way can't pass for another).</summary>
-        static string ShareItemTitle(El item)
+        /// <summary>Whether a share picker entry stands for the window: its
+        /// name contains the window's title. Zoom adds the entry's place in
+        /// its group to the name (", 7 of 10"), worded in the user's
+        /// language, so nothing more exact can be relied on; M3's media
+        /// window title is distinctive enough.</summary>
+        static bool IsShareItemFor(El item, string windowTitle)
         {
-            return ShareItemPosition.Replace(item.Name, "");
+            return (item.Name ?? "").Contains(windowTitle);
         }
 
+        /// <summary>The picker's entry for the window: the shortest name
+        /// containing its title (another window whose title contains it too
+        /// would be longer). Should that still pick the wrong window,
+        /// StartShare notices and stops the share.</summary>
         static El ShareItem(El picker, string windowTitle)
         {
+            El found = null;
             foreach (var item in Uia.Descendants(picker, Uia.ListItemType))
-                if (ShareItemTitle(item) == windowTitle) return item;
-            return null;
+                if (IsShareItemFor(item, windowTitle) && (found == null || item.Name.Length < found.Name.Length)) found = item;
+            return found;
         }
 
         static string ShareItemsLayout(El picker)
@@ -1856,7 +1860,7 @@ namespace M3.ZoomHelper
                     if (pattern == null) continue;
                     reported = true;
                     if (pattern.CurrentIsSelected == 0) continue;
-                    if (ShareItemTitle(item) != windowTitle) return false;
+                    if (!IsShareItemFor(item, windowTitle)) return false;
                     selected = true;
                 }
                 catch (Exception) { }
