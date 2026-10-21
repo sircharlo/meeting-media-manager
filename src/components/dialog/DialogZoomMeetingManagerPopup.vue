@@ -280,7 +280,7 @@ import { storeToRefs } from 'pinia';
 import {
   getZoomMeetingState,
   isZoomSetupNeeded,
-  learnZoomHandRaisedPhrase,
+  learnZoomHandRaisedPhraseAskingForReact,
   muteZoomParticipantAndLowerHand,
   runZoomMeetingSequence,
   runZoomPostMeetingSequence,
@@ -326,7 +326,7 @@ const busyParticipant = ref<null | string>(null);
 const learnHand = async () => {
   learningHand.value = true;
   try {
-    await learnZoomHandRaisedPhrase();
+    await learnZoomHandRaisedPhraseAskingForReact();
   } finally {
     learningHand.value = false;
   }

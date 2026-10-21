@@ -219,14 +219,26 @@
             <div class="text-h6 q-mb-sm">{{ t('zoom-setup-hand-title') }}</div>
             <p>{{ t('zoom-setup-hand-intro') }}</p>
             <StatusRow
-              v-if="handStatus !== 'pending'"
+              v-if="handStatus !== 'pending' && !handNeedsFirstPick"
               class="q-mb-sm"
               :status="handStatus"
               :text="handStatusText"
             />
+            <template v-if="hasHandEntries && handStatus !== 'passed'">
+              <p v-if="handNeedsFirstPick" class="q-mb-none">
+                {{ t('zoom-setup-react-not-found') }}
+              </p>
+              <!-- Asked for once Zoom has moved React into "More". -->
+              <EntryPicker
+                v-model="selectedHandEntry"
+                :entries="handEntries"
+                more-first
+                :question="t('zoom-setup-react-pick')"
+              />
+            </template>
             <div class="row q-gutter-sm q-mt-sm">
               <q-btn
-                v-if="handStatus !== 'passed'"
+                v-if="!hasHandEntries && handStatus !== 'passed'"
                 class="btn-tonal"
                 color="primary"
                 flat
@@ -235,6 +247,17 @@
                 :loading="handStatus === 'running'"
                 no-caps
                 @click="learnHand"
+              />
+              <q-btn
+                v-else-if="handStatus !== 'passed'"
+                class="btn-tonal"
+                color="primary"
+                :disable="!selectedHandEntry"
+                flat
+                :label="t('zoom-setup-share-try')"
+                :loading="handStatus === 'running'"
+                no-caps
+                @click="tryHandEntry"
               />
               <q-btn
                 v-else
@@ -269,27 +292,11 @@
               <p v-if="shareNeedsFirstPick" class="q-mb-none">
                 {{ t('zoom-setup-share-not-found') }}
               </p>
-              <div class="text-subtitle2 q-mt-md q-mb-xs">
-                {{ t('zoom-setup-share-pick') }}
-              </div>
-              <div class="zoom-setup__entries action-popup__scroll">
-                <template v-for="group in shareGroups" :key="group.label">
-                  <div class="text-caption text-grey q-mt-xs">
-                    {{ t(group.label) }}
-                  </div>
-                  <q-option-group
-                    v-model="selectedShareEntry"
-                    dense
-                    :options="
-                      group.entries.map((entry) => ({
-                        label: entry,
-                        value: entry,
-                      }))
-                    "
-                    type="radio"
-                  />
-                </template>
-              </div>
+              <EntryPicker
+                v-model="selectedShareEntry"
+                :entries="shareEntries"
+                :question="t('zoom-setup-share-pick')"
+              />
             </template>
             <div class="row q-gutter-sm q-mt-sm">
               <q-btn
@@ -471,6 +478,7 @@ import type { ZoomDiagnosis } from 'src/types';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ZoomSelfTestSteps from 'components/dialog/ZoomSelfTestSteps.vue';
 import ButtonStep from 'components/dialog/ZoomSetupButtonStep.vue';
+import EntryPicker from 'components/dialog/ZoomSetupEntryPicker.vue';
 import StatusRow from 'components/dialog/ZoomSetupStatusRow.vue';
 import { storeToRefs } from 'pinia';
 import {
@@ -482,6 +490,7 @@ import {
   getZoomMeetingState,
   getZoomShareEntries,
   getZoomTitlesFromSettings,
+  isZoomReactButtonMissing,
   joinZoomAudioForSetup,
   learnZoomHandRaisedPhrase,
   learnZoomMicTitles,
@@ -692,19 +701,69 @@ const learnMic = async (micIsOn: boolean) => {
 // How Zoom marks a raised hand (and lowers one) is only known in the user's
 // Zoom language: M³ raises and lowers the host's own hand to read it.
 const handStatus = ref<Status>('pending');
+// Its hand is raised from Zoom's React button. Should M³ not find it (named
+// in the user's language, and sometimes kept in "More"), the user picks it
+// from Zoom's entries, as for Share.
+const handReactMissing = ref(false);
+const handEntries = ref<{ more: string[]; toolbar: string[] }>({
+  more: [],
+  toolbar: [],
+});
+const selectedHandEntry = ref<null | string>(null);
+/** Whether the user has tried an entry from the list yet. */
+const handEntryTried = ref(false);
+
+const hasHandEntries = computed(
+  () => handEntries.value.toolbar.length + handEntries.value.more.length > 0,
+);
+
+/** Like shareNeedsFirstPick: an expected step, not an error. */
+const handNeedsFirstPick = computed(
+  () =>
+    handStatus.value === 'failed' &&
+    handReactMissing.value &&
+    !handEntryTried.value &&
+    hasHandEntries.value,
+);
 
 const handStatusText = computed(() => {
   if (handStatus.value === 'running') return t('zoom-setup-hand-learning');
-  if (handStatus.value === 'failed') return t('zoom-setup-hand-failed');
-  return t('zoom-setup-hand-done', {
-    phrase: currentSettings.value?.zoomHandRaisedPhrase ?? '',
-  });
+  if (handStatus.value === 'passed') {
+    return t('zoom-setup-hand-done', {
+      phrase: currentSettings.value?.zoomHandRaisedPhrase ?? '',
+    });
+  }
+  if (handReactMissing.value && hasHandEntries.value) {
+    return t('zoom-setup-react-not-opened');
+  }
+  return t('zoom-setup-hand-failed');
 });
 
-const learnHand = async () => {
+/** Learns raised hands through a React entry (the remembered one if none). */
+const runHandLearning = async (reactEntry?: string) => {
   handStatus.value = 'running';
-  const result = await withoutZoomFeedback(() => learnZoomHandRaisedPhrase());
+  const result = await withoutZoomFeedback(() =>
+    learnZoomHandRaisedPhrase(reactEntry),
+  );
+  handReactMissing.value = isZoomReactButtonMissing(result);
   handStatus.value = result.ok && result.phrase ? 'passed' : 'failed';
+};
+
+const learnHand = async () => {
+  await runHandLearning();
+  if (!handReactMissing.value) return;
+  handEntries.value = await getZoomShareEntries();
+  selectedHandEntry.value = null;
+  handEntryTried.value = false;
+};
+
+const tryHandEntry = async () => {
+  const entry = selectedHandEntry.value;
+  if (!entry) return;
+  handEntryTried.value = true;
+  await runHandLearning(entry);
+  // The list stays only while the entry picked wasn't React.
+  if (!handReactMissing.value) handEntries.value = { more: [], toolbar: [] };
 };
 
 // --- Share -----------------------------------------------------------------
@@ -721,20 +780,6 @@ const shareEntryTried = ref(false);
 
 const hasShareEntries = computed(
   () => shareEntries.value.toolbar.length + shareEntries.value.more.length > 0,
-);
-
-// Share is nearly always in Zoom's toolbar, so its entries come first.
-const shareGroups = computed(() =>
-  [
-    {
-      entries: shareEntries.value.toolbar,
-      label: 'zoom-setup-share-in-toolbar' as const,
-    },
-    {
-      entries: shareEntries.value.more,
-      label: 'zoom-setup-share-in-more' as const,
-    },
-  ].filter((group) => group.entries.length),
 );
 
 /**
@@ -1038,6 +1083,9 @@ const reset = () => {
   handStatus.value = currentSettings.value?.zoomHandRaisedPhrase
     ? 'passed'
     : 'pending';
+  handReactMissing.value = false;
+  handEntries.value = { more: [], toolbar: [] };
+  handEntryTried.value = false;
   shareStatus.value = 'pending';
   shareEntries.value = { more: [], toolbar: [] };
   shareEntryTried.value = false;
@@ -1081,11 +1129,6 @@ onBeforeUnmount(stopWatchingMeeting);
 .zoom-setup__body {
   max-height: min(560px, 70vh);
   min-height: 300px;
-  overflow: auto;
-}
-
-.zoom-setup__entries {
-  max-height: 180px;
   overflow: auto;
 }
 

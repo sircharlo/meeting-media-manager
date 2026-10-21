@@ -33,6 +33,8 @@ vi.mock('src/helpers/zoom', () => ({
     videoOffTitle: 'Start Video',
     videoOnTitle: 'Stop Video',
   }),
+  isZoomReactButtonMissing: (result: { error?: string }) =>
+    result.error === 'react-button-not-found',
   joinZoomAudioForSetup: zoom.joinZoomAudioForSetup,
   learnZoomHandRaisedPhrase: zoom.learnZoomHandRaisedPhrase,
   learnZoomMicTitles: zoom.learnZoomMicTitles,
@@ -297,6 +299,57 @@ describe('DialogZoomSetupAssistant', () => {
 
     expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenCalledOnce();
     expect(text()).toContain('recognizes raised hands (“Hand raised”)');
+    expect(isDisabled(button('Continue'))).toBe(false);
+  });
+
+  it("lets the user pick the React entry when M³ can't find Zoom's React button", async () => {
+    zoom.learnZoomHandRaisedPhrase
+      .mockResolvedValueOnce({ error: 'react-button-not-found', ok: false })
+      .mockResolvedValueOnce({ error: 'react-button-not-found', ok: false })
+      .mockImplementationOnce(async () => {
+        settings().zoomHandRaisedPhrase = 'Main levée';
+        return { ok: true, phrase: 'Main levée', reactButtonTitle: 'Réagir' };
+      });
+    zoom.getZoomShareEntries.mockResolvedValue({
+      more: ['Réagir', 'Enregistrer'],
+      toolbar: ['Partager'],
+    });
+    await mountAssistant();
+    await reachVideoStep();
+    await click("Yes, it's on"); // camera
+    await click('Continue');
+    await click("Yes, it's on"); // microphone
+    await click('Continue');
+
+    await click('Raise and lower my hand');
+    expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenLastCalledWith(undefined);
+    // Asking is expected, not reported as an error.
+    expect(text()).toContain('M³ needs your help to find its React button');
+    expect(text()).not.toContain("That didn't open Zoom's reactions");
+    expect(text()).toContain("Which of these opens Zoom's reactions?");
+    // React is asked for once Zoom has moved it into "More": listed first.
+    expect(text().indexOf('In Zoom\'s "More" menu')).toBeLessThan(
+      text().indexOf("In Zoom's toolbar"),
+    );
+    expect(isDisabled(button('Continue'))).toBe(true);
+
+    const pick = async (label: string) => {
+      const option = Array.from(document.querySelectorAll('.q-radio')).find(
+        (el) => el.textContent?.includes(label),
+      ) as HTMLElement;
+      option.click();
+      await flushPromises();
+      await click('Try this one');
+    };
+
+    await pick('Partager');
+    expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenLastCalledWith('Partager');
+    expect(text()).toContain("That didn't open Zoom's reactions");
+
+    await pick('Réagir');
+    expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenLastCalledWith('Réagir');
+    expect(text()).toContain('recognizes raised hands (“Main levée”)');
+    expect(text()).not.toContain("Which of these opens Zoom's reactions?");
     expect(isDisabled(button('Continue'))).toBe(false);
   });
 

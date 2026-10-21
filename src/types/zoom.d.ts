@@ -48,6 +48,7 @@ export type ZoomCommand =
       type: 'set-video';
     }
   | { phrase: null | string; type: 'raised-hands' }
+  | { reactButtonTitle: null | string; type: 'learn-hand-raised' }
   | { reveal?: boolean; type: 'meeting' }
   | {
       shareButtonTitle: null | string;
@@ -62,7 +63,6 @@ export type ZoomCommand =
   | { type: 'ask-all-to-unmute' }
   | { type: 'diagnose' }
   | { type: 'join-audio' }
-  | { type: 'learn-hand-raised' }
   | { type: 'leave-audio' }
   | { type: 'mic-title' }
   /**
@@ -111,6 +111,8 @@ export interface ZoomCommandResult {
   pressed?: boolean;
   /** `raised-hands`: who in the meeting has their hand raised. */
   raisedHands?: string[];
+  /** `learn-hand-raised`: the Reactions button's name, when seen. */
+  reactButtonTitle?: null | string;
   title?: null | string;
   version?: number;
   /** `test-share-picker`: whether M³'s media window was offered. */
