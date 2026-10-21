@@ -24,6 +24,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **OBS Studio**: The setting that shows recording controls in the OBS Studio popup now has a proper name and explanation, instead of showing an internal identifier.
 - 🐞 **Meeting Timer**: When the timing report can't be saved because a file with the same name is open in another program, or the folder doesn't allow it, M³ now says what to do instead of only saying the report wasn't saved.
 - 🐞 **OBS Studio**: The warning shown when M³ can't get the list of OBS Studio scenes now names OBS Studio properly, instead of showing "obsStudio".
+- 🐞 **Zoom Meeting Manager**: Tested with Zoom in Korean, and fixed what didn't carry over from English and French: the entries of Zoom's "More" menu are now read correctly whatever the language's word order (Korean puts the number before the word for "row"), so Share, React and Participants are found there; joining computer audio presses the "Join with computer audio" button rather than the "Test speaker and microphone" link, which is a wider button in Korean and opened Zoom's device-test wizard; and M³ waits longer for Zoom's join-audio dialog before deciding what the first toolbar button was.
 - 🐞 **Zoom Meeting Manager**: Sharing the media window works again with the current version of Zoom. M³ said Zoom's share window didn't offer the media window even though it was plainly there, because Zoom now adds each window's position to its name in that list.
 
 ## v26.10.1

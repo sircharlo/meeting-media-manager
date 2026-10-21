@@ -664,11 +664,24 @@ namespace M3.ZoomHelper
 
         // --- Dialogs and menus -------------------------------------------------
 
-        static El LargestButton(El dialog)
+        /// <summary>A dialog's main action button: the tallest below the
+        /// title bar, the widest among equals. Not the largest by area: the
+        /// join-audio dialog's "Test speaker and microphone" link is a wide,
+        /// flat button that outgrows "Join with computer audio" in some
+        /// languages (Korean).</summary>
+        static El MainActionButton(El dialog)
         {
+            var top = dialog.Raw.CurrentBoundingRectangle.top;
             El best = null;
             foreach (var button in Uia.Descendants(dialog, Uia.ButtonType))
-                if (best == null || button.Area > best.Area) best = button;
+            {
+                if (button.Rect.top < top + 48) continue; // title bar: Close
+                var height = button.Rect.bottom - button.Rect.top;
+                var width = button.Rect.right - button.Rect.left;
+                var bestHeight = best == null ? -1 : best.Rect.bottom - best.Rect.top;
+                var bestWidth = best == null ? -1 : best.Rect.right - best.Rect.left;
+                if (height > bestHeight || (height == bestHeight && width > bestWidth)) best = button;
+            }
             return best;
         }
 
@@ -990,28 +1003,41 @@ namespace M3.ZoomHelper
             var nameBefore = FirstSegment(buttons[0].Name);
             Focus(window);
             Press(buttons[0]);
-            var dialog = WaitForWindow(JoinAudioDialogClass, state == AudioState.Unknown ? 2500 : 5000);
+            // Whichever comes first: Zoom's join-audio dialog, or (not knowing
+            // which button that was) the button changing its name.
+            El dialog = null;
+            var renamed = false;
+            WaitUntil(() =>
+            {
+                var dialogs = TopWindows(JoinAudioDialogClass, true);
+                if (dialogs.Count > 0)
+                {
+                    dialog = Uia.FromHandle(dialogs[0]);
+                    return true;
+                }
+                if (state != AudioState.Unknown) return false;
+                var latest = ToolbarButtons(window);
+                renamed = latest.Count > 0 && FirstSegment(latest[0].Name) != nameBefore;
+                return renamed;
+            }, 5000);
             if (dialog != null)
             {
-                var button = LargestButton(dialog);
+                var button = MainActionButton(dialog);
                 if (button == null) throw new ZoomActionError("join-audio-button-not-found");
                 Press(button);
                 Known.Learn("joinAudio", nameBefore);
             }
-            else if (state == AudioState.Unknown)
+            else if (renamed)
             {
+                // A two-state button: the microphone. Put it back.
                 var latest = ToolbarButtons(window);
-                var nameAfter = latest.Count > 0 ? FirstSegment(latest[0].Name) : nameBefore;
-                if (nameAfter != nameBefore)
+                if (latest.Count > 0) Press(latest[0]);
+                WaitUntil(() =>
                 {
-                    Press(latest[0]);
-                    WaitUntil(() =>
-                    {
-                        var now = ToolbarButtons(window);
-                        return now.Count > 0 && FirstSegment(now[0].Name) == nameBefore;
-                    }, 4000);
-                    return new Dictionary<string, object> { { "audioStateUnknown", true }, { "changed", false } };
-                }
+                    var now = ToolbarButtons(window);
+                    return now.Count > 0 && FirstSegment(now[0].Name) == nameBefore;
+                }, 4000);
+                return new Dictionary<string, object> { { "audioStateUnknown", true }, { "changed", false } };
             }
             if (!WaitUntil(() => AudioJoined(window), WaitTimeoutMs)) throw new ZoomActionError("audio-not-joined");
             return Changed(true);
@@ -1262,10 +1288,10 @@ namespace M3.ZoomHelper
             if (string.IsNullOrEmpty(Known.Participants)) return false;
             var grid = OpenMoreGrid(window);
             if (grid == null) return false;
-            foreach (var item in Uia.Descendants(grid, Uia.TabItemType))
+            El entry;
+            if (GridEntries(grid).TryGetValue(Known.Participants, out entry))
             {
-                if (GridEntryName(item) != Known.Participants) continue;
-                Press(item);
+                Press(entry);
                 return true;
             }
             Focus(window);
@@ -1684,9 +1710,8 @@ namespace M3.ZoomHelper
                 var grid = OpenMoreGrid(window);
                 if (grid != null)
                 {
-                    El entry = null;
-                    foreach (var item in Uia.Descendants(grid, Uia.TabItemType))
-                        if (GridEntryName(item) == reactTitle) entry = item;
+                    El entry;
+                    GridEntries(grid).TryGetValue(reactTitle, out entry);
                     if (entry == null)
                     {
                         Focus(window);
@@ -1994,6 +2019,51 @@ namespace M3.ZoomHelper
             return match.Success ? match.Groups[1].Value.Trim() : FirstSegment(item.Name);
         }
 
+        // A word that starts with a digit: "1", "1/12", Korean "1행" (row 1).
+        static readonly Regex NumberToken = new Regex(@"^\d");
+
+        /// <summary>The "More" menu's entries by their titles. Zoom appends
+        /// each entry's place to its name in the user's language and word
+        /// order: "Partager ligne 1, colonne 1 1 sur 12 épinglé" (French),
+        /// "공유 1행, 1열 1/12 고정됨" (Korean). The title is what comes
+        /// before the first number, less any word every entry has there
+        /// (French "ligne"), which belongs to the place, not the title.</summary>
+        static Dictionary<string, El> GridEntries(El grid)
+        {
+            var items = Uia.Descendants(grid, Uia.TabItemType);
+            var heads = new List<List<string>>();
+            foreach (var item in items)
+            {
+                var head = new List<string>();
+                foreach (var word in Regex.Split(item.Name, @"[\s,，、]+"))
+                {
+                    if (word.Length == 0) continue;
+                    if (NumberToken.IsMatch(word)) break;
+                    head.Add(word);
+                }
+                heads.Add(head);
+            }
+            // A last word shared by every entry (and never the whole title)
+            // is the row word.
+            string shared = null;
+            foreach (var head in heads)
+            {
+                if (head.Count < 2) { shared = null; break; }
+                var last = head[head.Count - 1];
+                if (shared == null) shared = last;
+                else if (shared != last) { shared = null; break; }
+            }
+            var entries = new Dictionary<string, El>();
+            for (int i = 0; i < items.Count; i++)
+            {
+                var head = heads[i];
+                if (shared != null) head.RemoveAt(head.Count - 1);
+                var title = head.Count > 0 ? string.Join(" ", head.ToArray()) : GridEntryName(items[i]);
+                if (!entries.ContainsKey(title)) entries[title] = items[i];
+            }
+            return entries;
+        }
+
         static El OpenMoreGrid(El window)
         {
             var menus = ToolbarMenus(window);
@@ -2033,11 +2103,8 @@ namespace M3.ZoomHelper
             var grid = OpenMoreGrid(window);
             if (grid != null)
             {
-                foreach (var item in Uia.Descendants(grid, Uia.TabItemType))
-                {
-                    var name = GridEntryName(item);
+                foreach (var name in GridEntries(grid).Keys)
                     if (name.Length > 0 && !entries.Contains(name) && !moreEntries.Contains(name)) moreEntries.Add(name);
-                }
                 Focus(window);
                 Escape();
             }
@@ -2067,13 +2134,11 @@ namespace M3.ZoomHelper
             var grid = OpenMoreGrid(window);
             if (grid != null)
             {
-                foreach (var item in Uia.Descendants(grid, Uia.TabItemType))
+                El entry;
+                if (GridEntries(grid).TryGetValue(wanted, out entry))
                 {
-                    if (GridEntryName(item) == wanted || item.Name.StartsWith(wanted, StringComparison.Ordinal))
-                    {
-                        Press(item);
-                        return;
-                    }
+                    Press(entry);
+                    return;
                 }
                 Focus(window);
                 Escape();
