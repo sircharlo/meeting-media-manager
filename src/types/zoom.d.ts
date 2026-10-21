@@ -22,10 +22,12 @@ export interface ZoomCommandResult {
   diagnosis?: ZoomDiagnosis;
   /** The `ping` command's echo, to check the helper's text encoding. */
   echo?: null | string;
-  /** `share-entries`: Share candidates from Zoom's toolbar. */
+  /** `share-entries`, `panel-entries`, `share-toolbar-entries`: the buttons to pick from. */
   entries?: string[];
   /** A short machine-readable reason, e.g. `meeting-not-found`. */
   error?: string;
+  /** `test-mute-all-entry`: whether the entry picked asked to confirm muting everyone. */
+  isMuteAll?: boolean;
   /** Names of Zoom's controls the action saw for the first time. */
   learned?: ZoomKnownTitles;
   /** `set-participant-mic`/`lower-participant-hand`: the "Lower hand" button's name, seen on that row. */
@@ -45,6 +47,10 @@ export interface ZoomCommandResult {
   raisedHands?: string[];
   /** `learn-hand-raised`: the Reactions button's name, when seen. */
   reactButtonTitle?: null | string;
+  /** On failure: what Zoom showed, for error reports (nothing personal). */
+  snapshot?: ZoomFailureSnapshot;
+  /** `test-stop-share-entry`: whether the entry picked stopped sharing. */
+  stopped?: boolean;
   title?: null | string;
   version?: number;
   /** `test-share-picker`: whether M³'s media window was offered. */
@@ -61,12 +67,36 @@ export interface ZoomDiagnosis {
   /** The mute-everyone button: only for the meeting's host and co-hosts. */
   hostControls?: boolean;
   meeting: boolean;
+  /** The panel is open but "Mute all" wasn't found: the user can point M³ to it (if host). */
+  muteAllButtonMissing?: boolean;
   /** Whether the Participants button couldn't be found: the user can point M³ to it. */
   participantsButtonMissing?: boolean;
   participantsPanel?: boolean;
   toolbar?: boolean;
   videoButton?: boolean;
   videoTitle?: null | string;
+}
+
+/**
+ * What the helper saw in Zoom when an action failed, attached to error
+ * reports so breakage in any Zoom version or language can be understood.
+ * Zoom's own labels only: no window titles, no participant names.
+ */
+export interface ZoomFailureSnapshot {
+  error?: string;
+  meeting?: boolean;
+  /** Names of the buttons under the participants list. */
+  panelRow?: string[];
+  participantsPanelOpen?: boolean;
+  sharing?: boolean;
+  titles?: ZoomKnownTitles;
+  /** Names of the meeting toolbar's buttons. */
+  toolbar?: string[];
+  toolbarMenus?: string[];
+  toolbarVisible?: boolean;
+  /** Classes of Zoom's visible windows. */
+  windows?: string[];
+  zoomVersion?: null | string;
 }
 
 export interface ZoomHelperStartResult {
@@ -103,6 +133,8 @@ export interface ZoomKnownTitles {
 export interface ZoomMeetingState {
   /** Unknown (null) while Zoom has its toolbar hidden. */
   audioJoined?: boolean | null;
+  /** Classes of Zoom's other open windows: dialogs that may be in the way. */
+  dialogs?: string[];
   found: boolean;
   handle?: number;
   /**
@@ -110,6 +142,8 @@ export interface ZoomMeetingState {
    * computer audio is joined, or while Zoom has its toolbar hidden).
    */
   micTitle?: null | string;
+  /** Zoom's mini view: a thumbnail in place of the meeting window (actions bring it back). */
+  miniView?: boolean;
   participantsPanelOpen?: boolean;
   sharing: boolean;
   title?: string;
@@ -227,18 +261,22 @@ type ZoomCommandBody =
       type: 'test-share-picker';
       windowTitle: string;
     }
+  | { title: string; type: 'test-mute-all-entry' }
+  | { title: string; type: 'test-stop-share-entry' }
   | { type: 'ask-all-to-unmute' }
   | { type: 'diagnose' }
   | { type: 'join-audio' }
-  | { type: 'leave-audio' }
-  | { type: 'mic-title' }
   /**
    * `reveal` brings Zoom's auto-hidden toolbar back (moving the mouse over
    * the meeting) to read the audio and video states; without it, nothing
    * on screen changes.
    */
+  | { type: 'leave-audio' }
+  | { type: 'mic-title' }
+  | { type: 'panel-entries' }
   | { type: 'participants' }
   | { type: 'share-entries' }
+  | { type: 'share-toolbar-entries' }
   | { type: 'stop-share' }
   | { type: 'toggle-mic' }
   | { type: 'toggle-video' }

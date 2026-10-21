@@ -90,6 +90,9 @@ vi.mock('src/helpers/notifications', () => ({
   createTemporaryNotification: zoom.notify,
 }));
 
+const sentry = vi.hoisted(() => ({ captureMessage: vi.fn() }));
+vi.mock('@sentry/vue', () => sentry);
+
 const ALL_FOUND: ZoomDiagnosis = {
   hostControls: true,
   meeting: true,
@@ -296,6 +299,20 @@ describe('Zoom startup check', () => {
     expect(await runZoomStartupCheck()).toBe('failed');
     const zoomState = useZoomStateStore();
     expect(zoomState.automationsPaused).toBe(true);
+    // Reported to Sentry, grouped by what failed.
+    await vi.waitFor(() =>
+      expect(sentry.captureMessage).toHaveBeenCalledWith(
+        'Zoom check failed: automations paused',
+        expect.objectContaining({
+          fingerprint: [
+            'zoom-check-failed',
+            'zoom-self-test-step-video-off',
+            'zoom-setup-check-host',
+          ],
+          level: 'warning',
+        }),
+      ),
+    );
     expect(zoomState.pause?.problems).toEqual([
       'zoom-self-test-step-video-off',
       'zoom-setup-check-host',
