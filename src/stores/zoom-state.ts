@@ -14,6 +14,11 @@ export interface ZoomAutomationPause {
 }
 
 interface Store {
+  /**
+   * How many times the user stopped an automation this session: a run can
+   * tell it was stopped even once it's over (abortRun clears cancelRequested).
+   */
+  cancellations: number;
   /** The user asked for the running automation to stop. */
   cancelRequested: boolean;
   /** Congregations whose Zoom was checked today. */
@@ -70,7 +75,9 @@ export const useZoomStateStore = defineStore('zoom-state', {
       this.pause = { congregationId, problems };
     },
     requestCancel() {
-      if (this.runDepth > 0) this.cancelRequested = true;
+      if (this.runDepth === 0) return;
+      this.cancelRequested = true;
+      this.cancellations++;
     },
     resumeAutomations() {
       this.pause = null;
@@ -90,6 +97,7 @@ export const useZoomStateStore = defineStore('zoom-state', {
     runActive: (state) => state.runDepth > 0,
   },
   state: (): Store => ({
+    cancellations: 0,
     cancelRequested: false,
     checkedCongregations: [],
     checkRunning: false,

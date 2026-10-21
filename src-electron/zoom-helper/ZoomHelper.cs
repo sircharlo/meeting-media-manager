@@ -198,9 +198,22 @@ namespace M3.ZoomHelper
 
         public static List<El> Descendants(El root, int controlType)
         {
-            var condition = controlType == 0
+            return FindAll(root, controlType == 0
                 ? Automation.CreateTrueCondition()
-                : Automation.CreatePropertyCondition(ControlTypeProperty, controlType);
+                : Automation.CreatePropertyCondition(ControlTypeProperty, controlType));
+        }
+
+        /// <summary>The descendants of any of these control types.</summary>
+        public static List<El> Descendants(El root, int[] controlTypes)
+        {
+            var condition = Automation.CreatePropertyCondition(ControlTypeProperty, controlTypes[0]);
+            for (int i = 1; i < controlTypes.Length; i++)
+                condition = Automation.CreateOrCondition(condition, Automation.CreatePropertyCondition(ControlTypeProperty, controlTypes[i]));
+            return FindAll(root, condition);
+        }
+
+        static List<El> FindAll(El root, IUIAutomationCondition condition)
+        {
             var result = new List<El>();
             IUIAutomationElementArray found;
             try
@@ -2562,9 +2575,11 @@ namespace M3.ZoomHelper
 
         /// <summary>What Zoom showed when an action failed, for M3's error
         /// reports: Zoom's version, its visible windows' classes, the names
-        /// of its toolbar and participants panel buttons, and the names M3
-        /// knows. Nothing personal: no window titles, no participant rows.
-        /// Reads only, without moving the mouse or focus.</summary>
+        /// of its toolbar and participants panel buttons, those of its other
+        /// windows (dialogs in the way) and of the share toolbar, and the
+        /// names M3 knows. Nothing personal: no window titles, no participant
+        /// rows, nothing in a list. Reads only, without moving the mouse or
+        /// focus.</summary>
         public static Dictionary<string, object> Snapshot()
         {
             var snapshot = new Dictionary<string, object>();
@@ -2572,7 +2587,10 @@ namespace M3.ZoomHelper
             {
                 snapshot["zoomVersion"] = ZoomVersion();
                 snapshot["windows"] = ZoomWindowClasses();
-                snapshot["sharing"] = IsSharing();
+                snapshot["dialogs"] = DialogControlNames();
+                var sharing = IsSharing();
+                snapshot["sharing"] = sharing;
+                if (sharing) snapshot["shareToolbar"] = ShareToolbarControlNames();
                 snapshot["titles"] = Known.Titles();
                 var window = FindMeetingWindow();
                 snapshot["meeting"] = window != null;
@@ -2598,6 +2616,69 @@ namespace M3.ZoomHelper
         {
             var names = new List<object>();
             foreach (var element in elements) if (element.Name.Length > 0) names.Add(element.Name);
+            return names;
+        }
+
+        // A snapshot stays small and quick whatever Zoom has open.
+        const int SnapshotMaxWindows = 8;
+        const int SnapshotMaxNames = 25;
+        const int SnapshotMaxNameLength = 120;
+        const int SnapshotWindowsBudgetMs = 1500;
+
+        static readonly int[] SnapshotControlTypes =
+        {
+            Uia.ButtonType, Uia.CheckBoxType, Uia.MenuItemType, Uia.TabItemType, Uia.SplitButtonType,
+        };
+
+        /// <summary>Zoom's other visible windows (dialogs and popups that may
+        /// be in the way), keyed by class and size, with their controls'
+        /// names (see ControlNames).</summary>
+        static Dictionary<string, object> DialogControlNames()
+        {
+            var dialogs = new Dictionary<string, object>();
+            var elapsed = System.Diagnostics.Stopwatch.StartNew();
+            foreach (var entry in ZoomWindows())
+            {
+                if (dialogs.Count >= SnapshotMaxWindows || elapsed.ElapsedMilliseconds > SnapshotWindowsBudgetMs) break;
+                if (Array.IndexOf(ZoomMainWindowClasses, entry.Value) >= 0) continue;
+                Native.Rect rect;
+                if (!Native.GetWindowRect(entry.Key, out rect)) continue;
+                var key = entry.Value + " " + (rect.Right - rect.Left) + "x" + (rect.Bottom - rect.Top);
+                var unique = key;
+                for (int n = 2; dialogs.ContainsKey(unique); n++) unique = key + " #" + n;
+                dialogs[unique] = ControlNames(entry.Key);
+            }
+            return dialogs;
+        }
+
+        static List<object> ShareToolbarControlNames()
+        {
+            var toolbars = TopWindows(ShareToolbarClass, true);
+            return toolbars.Count == 0 ? new List<object>() : ControlNames(toolbars[0]);
+        }
+
+        /// <summary>The names of a window's buttons, menu entries, checkboxes
+        /// and tabs, capped. None inside a list: Zoom lists people, chat
+        /// messages and the windows offered for sharing.</summary>
+        static List<object> ControlNames(IntPtr handle)
+        {
+            var names = new List<object>();
+            try
+            {
+                var window = Uia.FromHandle(handle);
+                var lists = Uia.Descendants(window, Uia.ListType);
+                foreach (var element in Uia.Descendants(window, SnapshotControlTypes))
+                {
+                    if (names.Count >= SnapshotMaxNames) break;
+                    if (element.Name.Length == 0) continue;
+                    if (lists.Exists(list => Contains(list.Rect, element))) continue;
+                    var name = element.Name.Length > SnapshotMaxNameLength
+                        ? element.Name.Substring(0, SnapshotMaxNameLength) + "..."
+                        : element.Name;
+                    if (!names.Contains(name)) names.Add(name);
+                }
+            }
+            catch (Exception) { } // the window went away
             return names;
         }
 

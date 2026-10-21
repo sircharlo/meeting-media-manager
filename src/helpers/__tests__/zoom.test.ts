@@ -781,6 +781,33 @@ describe('Zoom setup assistant', () => {
     );
   });
 
+  it('keeps the latest failed actions for the startup check to report', async () => {
+    zoomCommandMock.mockResolvedValue({
+      error: 'participants-panel-not-opened',
+      ok: false,
+      snapshot: { toolbar: ['Mute, Alt+A'] },
+    });
+    const {
+      getZoomMeetingState,
+      muteAllZoomParticipants,
+      takeZoomActionFailures,
+    } = await import('../zoom');
+
+    await muteAllZoomParticipants(false);
+
+    expect(takeZoomActionFailures()).toContainEqual({
+      action: 'mute-all',
+      error: 'participants-panel-not-opened',
+      snapshot: { toolbar: ['Mute, Alt+A'] },
+    });
+    // Taken: the next report starts afresh.
+    expect(takeZoomActionFailures()).toEqual([]);
+
+    // Only the latest ones are kept.
+    for (let i = 0; i < 25; i++) await getZoomMeetingState(); // NOSONAR: sequential - one failure each
+    expect(takeZoomActionFailures()).toHaveLength(20);
+  });
+
   it('joins computer audio for the microphone step without telling the checklist', async () => {
     const { joinZoomAudioForSetup } = await import('../zoom');
 

@@ -4,6 +4,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { useZoomStateStore } from 'stores/zoom-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { ZoomActionFailure } from '../zoom';
 import type { ZoomSelfTestStep } from '../zoom-self-test';
 
 const currentState = vi.hoisted(() => ({
@@ -28,6 +29,7 @@ const zoom = vi.hoisted(() => ({
   notify: vi.fn(),
   rememberZoomVersion: vi.fn(),
   runZoomSelfTest: vi.fn<() => Promise<ZoomSelfTestStep[]>>(),
+  takeZoomActionFailures: vi.fn<() => ZoomActionFailure[]>(),
   testZoomShareEntry: vi.fn(),
   withZoomRun: vi.fn(<T>(_label: string, run: () => Promise<T>) => run()),
 }));
@@ -49,6 +51,7 @@ vi.mock('src/helpers/zoom', () => ({
   prepareMediaWindowForZoomTest: vi.fn(),
   rememberZoomVersion: zoom.rememberZoomVersion,
   runWhileHoldingZoomAutomations: <T>(check: () => Promise<T>) => check(),
+  takeZoomActionFailures: zoom.takeZoomActionFailures,
   testZoomShareEntry: zoom.testZoomShareEntry,
   withZoomRun: zoom.withZoomRun,
   ZOOM_CHANGED_EVENT: 'zoomChanged',
@@ -131,6 +134,7 @@ beforeEach(() => {
   meetingStartsIn(30 * MINUTE);
   zoom.isZoomSetupNeeded.mockReturnValue(false);
   zoom.runZoomSelfTest.mockImplementation(async () => passed('meeting'));
+  zoom.takeZoomActionFailures.mockReturnValue([]);
   zoom.testZoomShareEntry.mockResolvedValue({
     opened: true,
     windowListed: true,
@@ -322,15 +326,45 @@ describe('Zoom startup check', () => {
       ...ALL_FOUND,
       hostControls: false,
     });
+    zoom.takeZoomActionFailures
+      // Before the check: an earlier failure, left out of its report.
+      .mockReturnValueOnce([
+        { action: 'raised-hands', error: 'helper-stopped' },
+      ])
+      .mockReturnValueOnce([
+        {
+          action: 'set-video',
+          error: 'video-title-unrecognized:Start my video',
+          snapshot: {
+            dialogs: { 'CVoiceActivityDetectedDlgCls 400x120': ['Unmute'] },
+            toolbar: ['Start my video, Alt+V'],
+            zoomVersion: '7.2.1',
+          },
+        },
+      ]);
 
     expect(await runZoomStartupCheck()).toBe('failed');
     const zoomState = useZoomStateStore();
     expect(zoomState.automationsPaused).toBe(true);
-    // Reported to Sentry, grouped by what failed.
+    // Reported to Sentry, grouped by what failed, with what Zoom showed.
     await vi.waitFor(() =>
       expect(sentry.captureMessage).toHaveBeenCalledWith(
         'Zoom check failed: automations paused',
         expect.objectContaining({
+          extra: {
+            dialogs: { 'CVoiceActivityDetectedDlgCls 400x120': ['Unmute'] },
+            failedActions: [
+              'set-video: video-title-unrecognized:Start my video',
+            ],
+            failedSteps: ['video-off: Video button reads "x"'],
+            problems: [
+              'zoom-self-test-step-video-off',
+              'zoom-setup-check-host',
+            ],
+            snapshotAction: 'set-video',
+            toolbar: ['Start my video, Alt+V'],
+            zoomVersion: '7.2.1',
+          },
           fingerprint: [
             'zoom-check-failed',
             'zoom-self-test-step-video-off',
@@ -367,6 +401,38 @@ describe('Zoom startup check', () => {
     expect(useZoomStateStore().pause?.problems).toEqual([
       'zoom-self-test-step-share-start',
     ]);
+    await vi.waitFor(() =>
+      expect(sentry.captureMessage).toHaveBeenCalledWith(
+        'Zoom check failed: automations paused',
+        expect.objectContaining({
+          extra: expect.objectContaining({
+            failedSteps: [
+              'share-picker: {"opened":true,"windowListed":true,"windowSelected":false}',
+            ],
+          }),
+        }),
+      ),
+    );
+  });
+
+  it('changes nothing when the user stops the check', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    const zoomState = useZoomStateStore();
+    zoom.runZoomSelfTest.mockImplementationOnce(async () => {
+      // Stopped, then force-ended: the steps left all fail.
+      zoomState.beginRun('zoom-run-self-test');
+      zoomState.requestCancel();
+      zoomState.abortRun();
+      return [
+        { id: 'meeting', status: 'passed' },
+        { detail: 'Join audio: cancelled', id: 'join-audio', status: 'failed' },
+      ];
+    });
+
+    expect(await runZoomStartupCheck()).toBe('cancelled');
+    expect(zoomState.pause).toBeNull();
+    expect(zoom.notify).not.toHaveBeenCalled();
+    expect(sentry.captureMessage).not.toHaveBeenCalled();
   });
 
   it("doesn't show the media window to check sharing while others are in", async () => {

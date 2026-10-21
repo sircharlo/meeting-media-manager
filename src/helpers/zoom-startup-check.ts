@@ -14,9 +14,11 @@ import {
   prepareMediaWindowForZoomTest,
   rememberZoomVersion,
   runWhileHoldingZoomAutomations,
+  takeZoomActionFailures,
   testZoomShareEntry,
   withZoomRun,
   ZOOM_CHANGED_EVENT,
+  type ZoomActionFailure,
 } from 'src/helpers/zoom';
 import {
   runZoomSelfTest,
@@ -35,10 +37,24 @@ import { useZoomStateStore } from 'stores/zoom-state';
 // M³ opens it in the same window background music can start in, before the
 // meeting. If anything fails, the user is told and the Zoom automations are
 // paused until M³ restarts or a new check passes, rather than risking an
-// automation going wrong in front of the congregation.
+// automation going wrong in front of the congregation. A check the user
+// stops changes nothing.
 
 export type ZoomStartupCheckOutcome =
-  'failed' | 'passed' | 'scheduled' | 'skipped';
+  'cancelled' | 'failed' | 'passed' | 'scheduled' | 'skipped';
+
+/** What a check found wrong. */
+interface Findings {
+  /** What each failed step ran into, for the error report. */
+  details: string[];
+  /** i18n keys of what doesn't work, to show the user. */
+  problems: string[];
+}
+
+const findings = (problems: string[], details: string[] = []): Findings => ({
+  details,
+  problems,
+});
 
 const STARTUP_DELAY_MS = 10_000;
 const MEETING_OPEN_TIMEOUT_MS = 90_000;
@@ -88,11 +104,11 @@ const missingControls = (
  */
 const checkWithoutPressing = async (
   alreadySharing: boolean,
-): Promise<string[]> => {
+): Promise<Findings> => {
   const needs = getNeeds();
   const diagnosis = await diagnoseZoom();
-  if (!diagnosis) return [HELPER_PROBLEM];
-  if (!diagnosis.meeting) return [MEETING_PROBLEM];
+  if (!diagnosis) return findings([HELPER_PROBLEM]);
+  if (!diagnosis.meeting) return findings([MEETING_PROBLEM]);
 
   const problems: string[] = missingControls(
     diagnosis,
@@ -100,6 +116,7 @@ const checkWithoutPressing = async (
       ? ['toolbar', 'videoButton', 'participantsPanel', 'hostControls']
       : ['toolbar'],
   );
+  const details: string[] = [];
   // Zoom's share window only opens on the host's screen. The media window
   // has to be showing to be offered, and it isn't shown just for this, as
   // it might be on the congregation's screens.
@@ -108,13 +125,16 @@ const checkWithoutPressing = async (
     const share = await testZoomShareEntry(
       getZoomTitlesFromSettings().shareButtonTitle,
     );
-    if (!share.opened || !share.windowSelected) problems.push(SHARE_PROBLEM);
+    if (!share.opened || !share.windowSelected) {
+      problems.push(SHARE_PROBLEM);
+      details.push(`share-picker: ${JSON.stringify(share)}`);
+    }
   }
-  return problems;
+  return findings(problems, details);
 };
 
 /** With nobody else in the meeting: tries each automated action. */
-const testEverything = async (): Promise<string[]> => {
+const testEverything = async (): Promise<Findings> => {
   const needs = getNeeds();
   const steps: ZoomSelfTestStepId[] = ['meeting'];
   if (needs.audio) {
@@ -135,9 +155,11 @@ const testEverything = async (): Promise<string[]> => {
     steps,
     titles: getZoomTitlesFromSettings(),
   });
-  const problems = results
-    .filter((step) => step.status === 'failed')
-    .map((step) => ZOOM_SELF_TEST_STEP_LABELS[step.id]);
+  const failed = results.filter((step) => step.status === 'failed');
+  const problems = failed.map((step) => ZOOM_SELF_TEST_STEP_LABELS[step.id]);
+  const details = failed.map(
+    (step) => `${step.id}: ${step.detail ?? 'failed'}`,
+  );
 
   // Muting everyone can't be tried without anyone to mute: check that the
   // host controls it needs are there.
@@ -150,7 +172,7 @@ const testEverything = async (): Promise<string[]> => {
       );
     }
   }
-  return problems;
+  return findings(problems, details);
 };
 
 /**
@@ -184,16 +206,16 @@ const waitForMeeting = async () => {
 };
 
 /**
- * What doesn't work in Zoom (i18n keys); null if there's nothing to check
- * (no meeting open, and none to open now); or, before the meeting's window,
- * when to check.
+ * What doesn't work in Zoom; null if there's nothing to check (no meeting
+ * open, and none to open now); or, before the meeting's window, when to
+ * check.
  */
 const findProblems = async (
   manual: boolean,
-): Promise<null | string[] | { checkInSeconds: number }> => {
+): Promise<Findings | null | { checkInSeconds: number }> => {
   // Only looking, so far: nothing to tell the user about.
   const meeting = await getZoomMeetingState();
-  if (!meeting) return [HELPER_PROBLEM];
+  if (!meeting) return findings([HELPER_PROBLEM]);
 
   const meetingId =
     useCurrentStateStore().currentSettings?.zoomMeetingManagerMeetingId?.trim();
@@ -203,7 +225,7 @@ const findProblems = async (
       if (!meetingId || opening === null) return null;
       if (opening !== 'now') return { checkInSeconds: opening };
     }
-    if (!meetingId) return [MEETING_PROBLEM];
+    if (!meetingId) return findings([MEETING_PROBLEM]);
   }
 
   // From here on, M³ may open the meeting and press things in Zoom.
@@ -211,7 +233,7 @@ const findProblems = async (
     if (!meeting.found && meetingId) {
       log('Zoom check: opening the meeting', 'zoom', 'info');
       globalThis.electronApi.launchZoomMeeting(meetingId);
-      if (!(await waitForMeeting())) return [MEETING_PROBLEM];
+      if (!(await waitForMeeting())) return findings([MEETING_PROBLEM]);
       await sleep(MEETING_SETTLE_MS);
     }
 
@@ -226,18 +248,33 @@ const findProblems = async (
 };
 
 /**
- * Tells Sentry that a check failed, grouped by what failed. The failed
- * actions' breadcrumbs carry what Zoom showed (version, windows, button
- * names), so a Zoom update or an untested language breaking the Zoom
- * Meeting Manager shows up as one issue with the details to fix it.
+ * Tells Sentry that a check failed, grouped by what failed, with what each
+ * failed step and action ran into and what Zoom showed at the last failed
+ * action (version, windows, button names), so a Zoom update or an untested
+ * language breaking the Zoom Meeting Manager shows up as one issue with the
+ * details to fix it. Each failed action also left its own breadcrumb.
  */
-const reportFailedCheck = async (problems: string[]) => {
+const reportFailedCheck = async (
+  { details, problems }: Findings,
+  failures: ZoomActionFailure[],
+) => {
   try {
     const { captureMessage } = await import('@sentry/vue');
+    const last = failures.at(-1);
     captureMessage('Zoom check failed: automations paused', {
       extra: {
+        // Spread out: Sentry flattens the snapshot's lists if nested deeper.
+        ...last?.snapshot,
+        failedActions: failures.map(
+          ({ action, error }) => `${action}: ${error ?? 'failed'}`,
+        ),
+        failedSteps: details,
         problems,
-        zoomVersion: useZoomStateStore().meeting?.zoomVersion ?? null,
+        snapshotAction: last?.action ?? null,
+        zoomVersion:
+          last?.snapshot?.zoomVersion ??
+          useZoomStateStore().meeting?.zoomVersion ??
+          null,
       },
       fingerprint: ['zoom-check-failed', ...problems],
       level: 'warning',
@@ -250,14 +287,15 @@ const reportFailedCheck = async (problems: string[]) => {
 
 const report = (
   congregationId: string,
-  problems: string[],
+  found: Findings,
   manual: boolean,
 ): ZoomStartupCheckOutcome => {
   const zoomState = useZoomStateStore();
+  const { problems } = found;
   if (problems.length) {
     zoomState.pauseAutomations(congregationId, problems);
-    log('Zoom check failed: automations paused', 'zoom', 'warn', { problems });
-    void reportFailedCheck(problems);
+    log('Zoom check failed: automations paused', 'zoom', 'warn', found);
+    void reportFailedCheck(found, takeZoomActionFailures());
     createTemporaryNotification({
       actions: [
         {
@@ -321,14 +359,22 @@ export const runZoomStartupCheck = async ({
   }
   try {
     log('Zoom check: starting', 'zoom', 'info', { manual });
+    // Only this check's failed actions go in its report.
+    takeZoomActionFailures();
+    const cancellations = zoomState.cancellations;
     const found = await runWhileHoldingZoomAutomations(() =>
       findProblems(manual),
     );
+    if (zoomState.cancellations !== cancellations) {
+      // Whatever failed after the user stopped it never ran.
+      log('Zoom check: stopped by the user', 'zoom', 'info');
+      return 'cancelled';
+    }
     if (found === null) {
       log('Zoom check: no meeting to check now', 'zoom', 'info');
       return 'skipped';
     }
-    if (!Array.isArray(found)) {
+    if ('checkInSeconds' in found) {
       // Too early: check when the meeting's window opens, if M³ is still on.
       zoomState.checkedCongregations = zoomState.checkedCongregations.filter(
         (id) => id !== congregationId,
