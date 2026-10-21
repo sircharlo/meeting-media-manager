@@ -4,112 +4,118 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## AANKOMENDE VERSIE
+
+### ✨ Nieuwe functies
+
+- ✨ **Functiesuggesties**: Af en toe stelt M³ een functie voor die een profiel nog niet gebruikt, in een kort venster "Wist je dat?" dat uitlegt wat de functie doet. Er wordt hoogstens één suggestie getoond telkens als een profiel wordt geopend, nooit vanaf 15 minuten voor een vergadering tot het einde ervan, en elk antwoord wordt onthouden: "Herinner mij later" zet een suggestie achteraan in de rij, "Nee, bedankt" verbergt die voorgoed, en "Geen functies meer voorstellen" zet ze voor het profiel allemaal uit. Een "Nee" in de installatiewizard telt ook mee, en de antwoorden kunnen worden gereset in Instellingen, onder Geavanceerd.
+
 ## v26.10.1
 
 ### ✨ Nieuwe functies
 
-- ✨ **Zoom Meeting Manager (beta, Windows)**: A new integration that operates Zoom for you around each meeting. It can launch your congregation's Zoom meeting when background music starts before the meeting. When the music stops just before the meeting starts, it joins computer audio, unmutes the microphone, turns on the host video, and mutes everyone without letting them unmute. When music plays before or after a meeting, it does the reverse: it leaves computer audio, turns off the host video, and lets everyone unmute again (asking them to do so). It can also share the media window in Zoom automatically while media is being shown, making sure the media window is what gets shared and never anything else on your screen. A new Zoom button in the action island shows whether a Zoom meeting window was found and lets you run these steps manually. A setup assistant, offered when you turn the option on (the initial setup wizard now offers it on Windows instead of the keyboard-shortcut screen sharing) and available anytime from the Zoom button or Settings, checks your Zoom, learns the names of its microphone and camera buttons in your language, and tries every step with you. When M³ starts, it also checks that everything it automates in Zoom works, opening the meeting if needed on meeting days in the hour and a quarter before it starts (only looking, without pressing anything, if others are already in the meeting); if something doesn't, it tells you and pauses its Zoom automations until it's restarted or a new check passes, so nothing goes wrong during the meeting. This check is on by default and can be turned off in Settings. As each of these steps succeeds, the matching reminders in the before- and after-meeting checklists of the meeting quick actions are ticked off for you, marked as done automatically in Zoom. Since it can't be used together with the keyboard-shortcut screen sharing, Settings says so under whichever of the two is unavailable, naming the one to turn off. It works whatever language Zoom is in, and needs nothing installed beyond Zoom itself.
+- ✨ **Zoom-vergaderbeheerder (bèta, Windows)**: Een nieuwe integratie die Zoom rond elke vergadering voor je bedient. Die kan de Zoom-vergadering van je gemeente starten wanneer de achtergrondmuziek vóór de vergadering begint. Wanneer de muziek vlak voor het begin van de vergadering stopt, verbindt de integratie met de computeraudio, heft het dempen van de microfoon op, zet de video van de host aan en dempt iedereen, zonder dat ze het dempen zelf kunnen opheffen. Wanneer er vóór of na een vergadering muziek speelt, doet de integratie het omgekeerde: de computeraudio wordt verbroken, de video van de host wordt uitgeschakeld en iedereen mag het dempen weer opheffen (met het verzoek dat ook te doen). Ook kan de integratie het mediavenster automatisch in Zoom delen terwijl er media wordt getoond, waarbij altijd het mediavenster wordt gedeeld en nooit iets anders op je scherm. Een nieuwe Zoom-knop op de actiebalk laat zien of er een venster van een Zoom-vergadering is gevonden, en laat je deze stappen handmatig uitvoeren. Een configuratieassistent, die wordt aangeboden als je de optie inschakelt (de installatiewizard biedt die op Windows nu aan in plaats van scherm delen via een sneltoets) en altijd beschikbaar is via de Zoom-knop of Instellingen, controleert je Zoom, leert de namen van de microfoon- en cameraknoppen in jouw taal en probeert elke stap samen met je uit. Bij het starten van M³ wordt ook gecontroleerd of alles wat in Zoom wordt geautomatiseerd werkt, waarbij de vergadering op vergaderdagen zo nodig wordt geopend in de vijf kwartier voordat die begint (er wordt alleen gekeken, zonder iets aan te klikken, als anderen al in de vergadering zijn); als iets niet werkt, laat M³ dat weten en pauzeert het de Zoom-automatiseringen tot M³ opnieuw is gestart of een nieuwe controle slaagt, zodat er tijdens de vergadering niets misgaat. Deze controle staat standaard aan en kan in Instellingen worden uitgeschakeld. Telkens als een van deze stappen slaagt, worden de bijbehorende herinneringen in de checklists vóór en na de vergadering van de snelle acties voor vergaderingen voor je afgevinkt, met de markering dat ze automatisch in Zoom zijn uitgevoerd. Omdat de integratie niet samen met scherm delen via een sneltoets kan worden gebruikt, staat dat in Instellingen vermeld bij de optie die niet beschikbaar is, met de naam van de optie die je moet uitschakelen. De integratie werkt in elke taal van Zoom en vereist niets anders dan Zoom zelf.
 
-- ✨ **Meeting Timer**: Custom parts can now be added on meeting days too, for Governing Body updates, special programs and anything else that isn't on the regular schedule. Each is timed like any other part, and its name and length can be changed from the timer popup or from the parts list.
+- ✨ **Vergadertimer**: Aangepaste onderdelen kunnen nu ook op vergaderdagen worden toegevoegd, voor updates van het Besturende Lichaam, speciale programma's en alles wat niet op het gewone schema staat. Elk ervan wordt getimed zoals elk ander onderdeel, en de naam en lengte kunnen worden gewijzigd vanuit het pop-upvenster van de timer of de lijst met onderdelen.
 
-- ✨ **Meeting Timer**: Quicker access to the timer. Hovering the timer button on the action island now shows the part being timed with Start, Pause, Stop and Next part buttons, without opening the popup (a setting, on by default). A new setting also keeps the whole parts list and the timer controls in a panel docked on the right side of the main window, always in view.
+- ✨ **Vergadertimer**: Snellere toegang tot de timer. Als je de muisaanwijzer op de timerknop op de actiebalk houdt, zie je nu het onderdeel dat getimed wordt, met de knoppen Starten, Pauzeren, Stop en Volgend onderdeel, zonder het pop-upvenster te openen (een instelling die standaard aan staat). Met een nieuwe instelling blijven de hele lijst met onderdelen en de timerbediening bovendien altijd in beeld, in een paneel dat rechts in het hoofdvenster is vastgezet.
 
-- ✨ **Meeting Timer**: A new "Analog clock with time arc" countdown display shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a red wedge. It also works for the pre-meeting countdown and in count-up mode.
+- ✨ **Vergadertimer**: Een nieuwe aftelweergave "Analoge klok met tijdboog" toont de resterende tijd van een onderdeel als een taartpunt op een analoge wijzerplaat, van de minutenwijzer tot het geplande einde, zodat je in één oogopslag zowel de huidige tijd als de resterende tijd ziet. Overschrijding wordt als een rode taartpunt getoond. Dit werkt ook voor het aftellen vóór de vergadering en in optelmodus.
 
-- ✨ **Meeting Timer**: The pre-meeting countdown is now labelled "Meeting starts in", and the timer display shows the name of the part being timed, so "4:59" can no longer be mistaken for the time of day.
+- ✨ **Vergadertimer**: Het aftellen vóór de vergadering heeft nu het label "De vergadering begint over", en de timerweergave toont de naam van het onderdeel dat getimed wordt, zodat "4:59" niet meer voor de huidige tijd kan worden aangezien.
 
-- ✨ **Meeting Timer**: Each day's recorded timings can be cleared in one go, after a confirmation, from the timer popup or the docked panel.
+- ✨ **Vergadertimer**: De geregistreerde tijden van een dag kunnen na bevestiging in één keer worden gewist vanuit het pop-upvenster van de timer of het vastgezette paneel.
 
-- ✨ **Zoom Meeting Manager (beta, Windows)**: A new raised-hand helper. During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets the operator unmute that participant with one click, and, once they're done speaking, mute them again and lower their hand with another; the Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name, and M³ touches no one when two participants share a name. If the meeting timer is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and can be switched on by hand from the timer or Zoom popups. M³ learns how Zoom marks raised hands in your language with a single button (it raises and lowers your own hand), offered in the setup assistant as well.
+- ✨ **Zoom-vergaderbeheerder (bèta, Windows)**: Een nieuwe hulp bij opgestoken handen. Tijdens een vergadering houdt M³ de deelnemerslijst van Zoom in de gaten voor opgestoken handen. Als iemand de hand opsteekt, kan de bediener via een melding in M³ met één klik het dempen van die deelnemer opheffen, en als die klaar is met spreken, met nog een klik de deelnemer weer dempen en de hand laten zakken; de Zoom-knop op de actiebalk toont de opgestoken handen met dezelfde knoppen. Elke actie gaat naar de eigen rij van die deelnemer in Zoom, op basis van de exacte naam, en M³ doet niets als twee deelnemers dezelfde naam hebben. Als de vergadertimer is ingeschakeld, verschijnt er voor de voorzitter ook een grote hand met de naam van de deelnemer op de timerweergave, die ook zelf kan worden ingeschakeld vanuit de pop-upvensters van de timer of Zoom. M³ leert met één knop hoe Zoom opgestoken handen in jouw taal aangeeft (je eigen hand wordt daarbij opgestoken en weer neergelaten), en die stap wordt ook in de configuratieassistent aangeboden.
 
-- ✨ **Meeting Timer**: A new, optional timer remote. When turned on, M³ serves a read-only copy of the timer display as a web page on the local network, so a tablet or phone at the lectern can show the speaker the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time (parts, pre-meeting countdown, clock, overtime colors, hand alert) and all the controls stay in M³. The addresses to open are shown in the timer popup, with a copy button.
+- ✨ **Vergadertimer**: Een nieuwe, optionele timer op afstand. Als die is ingeschakeld, biedt M³ een alleen-lezen kopie van de timerweergave aan als webpagina op het lokale netwerk, zodat een tablet of telefoon bij het spreekgestoelte de spreker de resterende tijd kan laten zien zonder dat die op het scherm van de gemeente of in een gedeeld Zoom-scherm te zien is. De pagina volgt de timer in realtime (onderdelen, aftellen vóór de vergadering, klok, kleuren voor overschrijding, handsignaal) en alle bediening blijft in M³. De adressen die je moet openen, worden getoond in het pop-upvenster van de timer, met een kopieerknop.
 
-- ✨ **Setup Wizard**: The setup wizard now asks whether you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive. If you do, it helps you choose a shared folder there and shows how it works: M³ creates a folder for each upcoming meeting, named with the meeting's date, and the files put in it are added to that meeting automatically, on every computer that uses the folder.
+- ✨ **Installatiewizard**: De installatiewizard vraagt nu of je bestanden voor vergaderingen bewaart in een cloudopslag-app zoals Dropbox, OneDrive, iCloud Drive of Google Drive. Is dat zo, dan helpt de wizard je daar een gedeelde map te kiezen en laat hij zien hoe het werkt: M³ maakt een map aan voor elke komende vergadering, met de datum van de vergadering als naam, en de bestanden die je erin zet, worden automatisch aan die vergadering toegevoegd, op elke computer die de map gebruikt.
 
 ## v26.9.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+- ✨ **Snelle acties vóór en na de vergadering**: Een nieuw paneel met grote knoppen helpt bij de aanloop naar elke vergadering en direct daarna — met een live aftelling, achtergrondmuziek starten/stoppen met één tik, opname starten/stoppen, en een checklist per gemeente, ingedeeld in categorieën en te bewerken via Instellingen. Het paneel vóór de vergadering verdwijnt automatisch zodra de vergadering begint en de checklist is afgerond (of na een korte wachttijd), en kan altijd handmatig worden gesloten.
 
 ## v26.8.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **App-Wide Redesign**: A broad visual and interaction refresh across dialogs, the media list/header, Settings, and the Setup Wizard. The Setup Wizard is now a one-question-per-screen flow with a progress bar. All prompts were replaced with a consistent branded dialog, and PDF page-range selection (for publication and drag-and-drop imports) now uses a thumbnail-grid picker instead of a free-text prompt. Added a new Quick Start Guide tour after the Setup Wizard completes. Also includes refreshed card/header styling with dark-mode-aware shadows and several dark-mode contrast fixes (focused field labels, download-progress percentages).
-- ✨ **Settings Page**: Reworked into a two-pane layout, with a new global Preferences section for auto-update/beta-update toggles moved out of the About dialog (which is now purely informational).
-- ✨ **Add More Media Button**: Added a setting to choose exactly which meeting sections show the "add more media" shortcut button, along with a setting for a compact (icon-only) mode.
-- ✨ **Media List**: Items now show loading skeletons while being added instead of appearing empty, media groups show a hidden-item count in their badge (e.g. "9 items (2 hidden)"), children within a group can be reordered via drag-and-drop, and at very narrow window widths items collapse into compact, tooltip-carrying chips instead of crowding the row.
+- ✨ **Vernieuwd ontwerp van de hele app**: Een brede visuele en interactieve vernieuwing van de dialoogvensters, de medialijst en de koptekst, de instellingen en de installatiewizard. De installatiewizard stelt nu één vraag per scherm, met een voortgangsbalk. Alle prompts zijn vervangen door een consistent dialoogvenster in de huisstijl, en voor het kiezen van paginabereiken in PDF's (bij het importeren van publicaties en bij slepen en neerzetten) wordt nu een kiezer met miniaturen gebruikt in plaats van een invoerveld voor vrije tekst. Nieuwe rondleiding als snelstartgids toegevoegd, die start nadat de installatiewizard is voltooid. Bevat ook een vernieuwde stijl voor kaarten en kopteksten met schaduwen die zich aanpassen aan de donkere modus, en diverse contrastverbeteringen in de donkere modus (labels van actieve velden, percentages van de downloadvoortgang).
+- ✨ **Instellingenpagina**: Omgebouwd tot een indeling met twee panelen, met een nieuwe sectie Algemene voorkeuren voor de schakelaars voor automatische updates en bèta-updates, die zijn verplaatst uit het venster Over deze app (dat nu alleen nog informatie geeft).
+- ✨ **Knop "Meer media toevoegen"**: Instelling toegevoegd om precies te kiezen welke vergadersecties de snelknop "Meer media toevoegen" tonen, plus een instelling voor een compacte modus (alleen een pictogram).
+- ✨ **Medialijst**: Items tonen nu een laadweergave terwijl ze worden toegevoegd, in plaats van leeg te lijken; mediagroepen tonen het aantal verborgen items in hun badge (bijv. "9 items (2 verborgen)"); items binnen een groep kunnen met slepen en neerzetten van volgorde worden veranderd; en bij heel smalle vensters worden items samengevouwen tot compacte chips met tooltip, in plaats van de rij te overvullen.
 
 ## v26.7.7
 
 ### ✨ Nieuwe functies
 
-- ✨ **Media Preview Quality**: Media preview now renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). The preview also auto-disables itself if it has to repeatedly correct playback drift on a single video, with a one-click way to turn it back on.
+- ✨ **Kwaliteit van het mediavoorbeeld**: Het mediavoorbeeld geeft videobeelden nu weer via canvas met hoogwaardige verkleining, waardoor gekartelde of wazige voorbeelden verholpen zijn (vooral bij inhoud met veel tekst, zoals liederen). Het voorbeeld schakelt zichzelf ook automatisch uit als het bij één video herhaaldelijk een afwijking in het afspelen moet corrigeren; met één klik zet je het weer aan.
 
 ## v26.7.6
 
 ### ✨ Nieuwe functies
 
-- ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
-- ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
+- ✨ **Video's uitsluiten bij de Gemeentebijbelstudie**: Instelling toegevoegd om video's uit specifieke publicaties uit te sluiten bij de Gemeentebijbelstudie (standaard het boek **Wees moedig en vertrouw op Jehovah**), met een doorzoekbare publicatiekiezer.
+- ✨ **Paginanummers van documenten**: In de lijsten van Publicatiemedia en JWPUB-import staat nu na de titel het paginanummer van elk document (of de paginanummers als er meerdere pagina's zijn). Zo kun je specifieke media snel vinden als je weet op welke pagina ze staan.
 
 ## v26.7.4
 
 ### ✨ Nieuwe functies
 
-- ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
-- ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
+- ✨ **Herstel van ontbrekende media**: Media-items waarvan het lokale bestand ontbreekt (bijv. verwijderd door het automatisch wissen van de cache of handmatig verwijderd), tonen nu een uitgeschakelde afspeelknop, een bijschrift "ontbreekt" met de naam van het bestand dat je moet zoeken, en een nieuwe actie "Bestand zoeken" om het item opnieuw aan een bestand op de schijf te koppelen.
+- ✨ **Compatibiliteitswaarschuwing**: Sluitbare banner toegevoegd die gebruikers van binnenkort niet meer ondersteunde combinaties van besturingssysteem en architectuur (macOS 12 Monterey en 32-bits Windows) waarschuwt om te upgraden voordat toekomstige app-updates een nieuwer systeem vereisen.
 
 ## v26.7.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
-- ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
+- ✨ **Gekoppeld audio afspelen**: Ondersteuning toegevoegd om audio uit het ene bestand samen met video uit een ander bestand af te spelen. Dit kan handig zijn om diavoorstellingen op video met begeleidende muziek af te spelen.
+- ✨ **Indeling van media uit de gedeelde map**: De volgorde van media-items en secties uit gedeelde mappen blijft nu bewaard. Zo wordt de medialijst op dezelfde manier weergegeven, zelfs als de gedeelde map tussen apparaten wordt gesynchroniseerd.
 
 ## v26.6.1
 
 ### ✨ Nieuwe functies
 
-- ✨ **Media Preview**: Added a live media preview overlay that can be toggled on or off from the settings or from the display popup.
-- ✨ **Search media**: Added a quick search box in the media list that allows you to quickly find media by title. To use it, simply use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
-- ✨ **Filter settings**: Added a filter box to the settings page that allows you to find settings by keyword or category. To use it, simply click on the Search button in the top right corner of the settings page, or use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
-- ✨ **Background Music Overlap Warning**: Added a warning notification when media is started while background music is playing. Users can choose to stop the background music from the notification.
+- ✨ **Mediavoorbeeld**: Live mediavoorbeeld toegevoegd dat je kunt in- of uitschakelen via de instellingen of het pop-upvenster voor de mediaweergave.
+- ✨ **Media zoeken**: Zoekvak toegevoegd in de medialijst waarmee je media snel op titel kunt vinden. Gebruik daarvoor gewoon de standaardsneltoets voor zoeken (Ctrl+F of Cmd+F).
+- ✨ **Instellingen filteren**: Filtervak toegevoegd op de instellingenpagina waarmee je instellingen op trefwoord of categorie kunt vinden. Klik daarvoor op de knop Zoeken in de rechterbovenhoek van de instellingenpagina, of gebruik de standaardsneltoets voor zoeken (Ctrl+F of Cmd+F).
+- ✨ **Waarschuwing bij overlap met achtergrondmuziek**: Er verschijnt een waarschuwing als media wordt gestart terwijl er achtergrondmuziek speelt. Gebruikers kunnen de achtergrondmuziek vanuit de melding stoppen.
 
 ## v26.6.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **Timer**: Added analog display modes and timing report status.
-- ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard.
-- ✨ **Media Window**: Added support for automatically hiding the media window after playback when it was initially hidden. This is practical when a remote speaker wants to display images, for example.
+- ✨ **Timer**: Analoge weergavemodi en status in het tijdrapport toegevoegd.
+- ✨ **Profielen**: Importeren en exporteren van profielinstellingen toegevoegd in de geavanceerde instellingen en de installatiewizard.
+- ✨ **Mediavenster**: Ondersteuning toegevoegd om het mediavenster na het afspelen automatisch te verbergen als het eerst verborgen was. Dat is praktisch wanneer een externe spreker bijvoorbeeld afbeeldingen wil laten zien.
 
 ## v26.5.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **PDF Import**: Added a new PDF import flow to the Publication Media dialog, allowing the PDF version of a publication to be automatically imported as individual images when desired.
+- ✨ **PDF importeren**: Nieuwe manier toegevoegd om PDF's te importeren in het dialoogvenster Publicatiemedia, zodat de PDF-versie van een publicatie desgewenst automatisch als afzonderlijke afbeeldingen kan worden geïmporteerd.
 
 ## v26.4.8
 
 ### ✨ Nieuwe functies
 
-- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
+- ✨ **JW Stream**: JW Stream toegevoegd aan de lijst met websites die gepresenteerd kunnen worden.
 
 ## v26.4.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
+- ✨ **Vergadertimer**: Er is een nieuwe vergadertimer toegevoegd. Deze functie is optioneel en kan desgewenst worden ingeschakeld in de geavanceerde instellingen. Met de timer kan de mediabediener de tijd van vergaderonderdelen bijhouden, of kan de tijd van het huidige onderdeel worden getoond op een apart scherm dat alleen de spreker ziet.
 
 ## v26.3.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
-- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
-- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+- ✨ **Media voor de Herdenking**: Het automatisch ophalen van media voor de Herdenking is nu uit de bètafase! De app downloadt automatisch de welkomstvideo voor de Herdenking en de afbeelding die tijdens de Herdenking wordt getoond, als die beschikbaar zijn in de ingestelde taal.
+- ✨ **Afspeelsnelheid**: Snelheidsregeling voor afspelen met visuele indicator en handmatige reset toegevoegd. Deze functie is alleen zichtbaar als deze is ingeschakeld in de geavanceerde instellingen.
+- ✨ **Pinyin-liederen**: Schakelaar toegevoegd om liederen te vervangen door pinyinversies bij vergaderingen in het Chinees.
 
 ## v26.2.0
 
@@ -159,13 +165,13 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 - ✨ **JWPUB-mediaselectie**: Mogelijkheid toegevoegd om individuele media uit JWPUB-bestanden te selecteren.
 - ✨ **Automatische focus op mediavenster**: Optionele instelling toegevoegd om het mediavenster automatisch te focussen na Zoom-schermdeling.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
+- ✨ **Cursoroverlay voor tv-schermen**: Cursoroverlay in het websitevenster verbeterd, zodat de muisaanwijzer beter zichtbaar is op tv-schermen.
 - ✨ **Vergaderopname**: Nieuwe functie toegevoegd om een externe opname-app te bedienen.
 - ✨ **Zoeken op website**: Mogelijkheid toegevoegd om met slim zoeken media of publicaties op de website te vinden.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
+- ✨ **Eenvoudig publicaties handmatig importeren**: Functionaliteit toegevoegd om eenvoudig publicaties van de officiële website te importeren, zoals tijdschriften, boeken, programma's en uitnodigingen.
 - ✨ **Verbeteringen voor gebarentaal**: Bevestiging toegevoegd vóór het afspelen van volledige bestanden in gebarentaal en ondersteuning voor het selecteren van meerdere clips, bijvoorbeeld wanneer meerdere alinea's achter elkaar gelezen moeten worden.
 - ✨ **Clipnavigatie**: Weergave van duur toegevoegd aan clips in de lijst en de clipnavigatie verbeterd.
-- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+- 🛠️ **Mediaweergave**: Zorgt ervoor dat het mediavenster zichtbaar wordt zodra het afspelen begint, zelfs als het eerder verborgen was.
 
 ## v25.10.1
 
@@ -190,7 +196,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - ✨ **Mediavenster Altijd Boven & Volledig Scherm Gedrag**: Het altijd-boven-gedrag voor het mediavenster is opgelost en verbeterd, met dynamische aanpassingen gebaseerd op de volledig-scherm-status.
 - ✨ **Datumweergave Indelingsinstelling**: Er is een gebruikersinstelling toegevoegd om een datumweergave-indeling te configureren.
 - ✨ **Media Overvloeien**: Er zijn overvloei-overgangen geïmplementeerd voor mediaweergave, in plaats van de meer abrupte vervagen-naar-zwart overgang die eerder aanwezig was.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not
+- ✨ **Muziek automatisch stoppen**: Het automatisch stoppen van de achtergrondmuziek werkt nu hetzelfde, of de muziek nu automatisch is gestart of niet
 - ✨ **macOS Klikken Door op Inactieve Vensters**: Muisklikken doorgang ingeschakeld op het hoofdvenster voor macOS, wat het eenvoudiger moet maken om de app te bedienen zelfs wanneer het niet gefocust is.
 
 ## v25.9.0
@@ -220,7 +226,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### ✨ Nieuwe functies
 
-- No new features for this release!
+- Geen nieuwe functies voor deze release!
 
 ## 25.6.0
 
@@ -262,48 +268,48 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### ✨ Nieuwe functies
 
-- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
-- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
+- 🔄 **Opnieuw verbinden met OBS**: Mogelijkheid toegevoegd om OBS handmatig opnieuw verbinding te laten maken wanneer dat nodig is.
+- 🗑 **Oude exportmappen automatisch opruimen**: Verouderde exportmappen per datum worden automatisch verwijderd om de opslag overzichtelijk te houden.
 
 ## 25.2.0
 
 ### ✨ Nieuwe functies
 
-- 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
-- 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
-- 🔄 **Automatic Beta to Stable Downgrade**: Allow automatic downgrades from beta versions to stable releases when necessary.
-- 🌐 **Extract Latest MEPS Language Indexes**: Fetch the most recent MEPS language indexes directly from the official website, ensuring up-to-date language support.
+- 🌍 **Standaard de systeemtaal gebruiken**: De landinstelling van het systeem wordt automatisch gedetecteerd en gebruikt voor een persoonlijkere ervaring.
+- 🏷 **Tags voor geëxporteerde media**: Metadatatags toegevoegd aan geëxporteerde mediabestanden voor een betere organisatie.
+- 🔄 **Automatisch terug van bèta naar stabiel**: Automatisch terugschakelen van bètaversies naar stabiele versies toegestaan wanneer dat nodig is.
+- 🌐 **Nieuwste MEPS-taalindexen ophalen**: De meest recente MEPS-taalindexen worden rechtstreeks van de officiële website opgehaald, zodat de taalondersteuning altijd actueel is.
 
 ## 25.1.0
 
 ### ✨ Nieuwe functies
 
-- 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
-- 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
-- 📚 **Group Media by Publication**: Group media from the same referred publication for a cleaner and more organized media overview.
-- 🎵 **Duplicate Song Warning**: Show a warning if songs are listed more than once in the media list for weekend meetings.
-- 🔄 **Future Schedule Planning**: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
+- 📅 **Eerdere datums openen**: Eerdere datums van de huidige week kunnen nu worden geopend, wat handig is als de vergaderdag later in de week wordt verplaatst.
+- 🛑 **Foutmelding voor OBS Studio**: Er verschijnt een foutbanner als OBS Studio op een vergaderdag niet verbonden is, zodat gebruikers gewaarschuwd worden.
+- 📚 **Media groeperen per publicatie**: Media uit dezelfde publicatie waarnaar verwezen wordt, worden gegroepeerd voor een overzichtelijker mediaoverzicht.
+- 🎵 **Waarschuwing voor dubbele liederen**: Er wordt een waarschuwing getoond als liederen meer dan één keer in de medialijst van de weekendvergadering staan.
+- 🔄 **Toekomstige schemawijzigingen plannen**: Toekomstige wijzigingen in het vergaderschema kunnen nu worden gepland, wat handig is voor jaarlijkse schemawijzigingen of voor het bezoek van de kringopziener aan een naburige gemeente.
 
 ## 24.11.0
 
 ### ✨ Nieuwe functies
 
-- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
-- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
-- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
-- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
-- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
+- 🖥️ **Website presenteren op macOS**: Het presenteren van de website wordt nu ondersteund op macOS 🚀
+- ⌨️ **Sneltoetsen voor afspelen**: Sneltoetsen toegevoegd om het afspelen van media te stoppen, te pauzeren en te hervatten 🚀
+- 🌐 **Aangepast downloadadres voor media**: Ondersteuning toegevoegd om het webadres in te stellen waarvandaan media wordt gedownload 🚀
+- 🎬 **Directe scènewisselaar voor OBS**: Directe scènewisselaar voor OBS Studio toegevoegd en de scènekiezer in de instellingen vernieuwd
+- 📖 **Meer talen voor de documentatie**: De documentatiewebsite ondersteunt nu meer talen
 
 ## 24.10.10
 
 ### ✨ Nieuwe functies
 
-- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
-- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
-- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
+- ⌨️ **Sneltoetsen voor medianavigatie**: Sneltoetsen toegevoegd om naar het volgende/vorige media-item te gaan
+- 🖱️ **Contextmenu voor media-items**: Contextmenu (rechtermuisknop) toegevoegd aan media-items om ze te verbergen en een andere naam te geven
+- ✂️ **Ingekorte JWL-afspeellijsten importeren**: Ingekorte videotijden worden nu gerespecteerd in geïmporteerde JWL-afspeellijsten
 
 ## 24.10.9
 
 ### ✨ Nieuwe functies
 
-- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
+- 🗑️ **Extra media van een dag verwijderen**: Optie toegevoegd om alle extra mediabestanden van de geselecteerde dag te verwijderen

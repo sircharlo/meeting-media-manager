@@ -92,13 +92,13 @@ onMounted(() => {
 ## Windows
 
 - **Windows 64-bit (.exe)**: <a :href="downloads.win64">Lae alla</a>
-- **Windows 32-bit (.exe)**, last version for 32-bit Windows ({{ downloads.legacyVersion }}): <a :href="downloads.win32">Download</a>
+- **Windows 32-bit (.exe)**, viimane versioon 32-bitisele Windowsile ({{ downloads.legacyVersion }}): <a :href="downloads.win32">Lae alla</a>
 - **Kaasaskantav Windows(.exe)**: <a :href="downloads.winPortable">Lae alla</a>
 
 ## macOS
 
 - **macOS (Universaal) (.dmg)**: <a :href="downloads.macUniversal">Lae alla</a>
-- **macOS 12 (Monterey) (.dmg)**, last version for macOS 12 ({{ downloads.legacyVersion }}): <a :href="downloads.macLegacy">Download</a>
+- **macOS 12 (Monterey) (.dmg)**, viimane versioon macOS 12 jaoks ({{ downloads.legacyVersion }}): <a :href="downloads.macLegacy">Lae alla</a>
 
 ## Linux
 

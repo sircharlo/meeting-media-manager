@@ -1,4 +1,5 @@
 import type {
+  ExportPdfResult,
   MeetingPart,
   MeetingPartOption,
   MeetingPartTimings,
@@ -180,6 +181,13 @@ export const buildTimerReportHtml = (
 </html>`;
 };
 
+const getExportMessageKey = (result: ExportPdfResult) => {
+  if (!result.error) return 'timer-report-saved';
+  return result.error === 'file-not-writable'
+    ? 'timer-report-file-not-writable'
+    : 'timer-report-not-saved';
+};
+
 /** Builds the timing report for the selected day and lets the user save it. */
 export const exportTimerReport = async (
   input: TimerReportInput,
@@ -195,9 +203,7 @@ export const exportTimerReport = async (
     createTemporaryNotification({
       group: 'timer-report',
       icon: result.error ? 'mmm-error' : 'mmm-file',
-      message: t(
-        result.error ? 'timer-report-not-saved' : 'timer-report-saved',
-      ),
+      message: t(getExportMessageKey(result)),
       type: result.error ? 'negative' : 'positive',
     });
     return result;

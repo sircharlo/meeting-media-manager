@@ -4,244 +4,250 @@
 
 Для повного списку змін між версіями перегляньте наш файл CHANGELOG.md на GitHub.
 
+## НАСТУПНА ВЕРСІЯ
+
+### ✨ Нові функції
+
+- ✨ **Пропозиції функцій**: Час від часу M³ пропонує функцію, якою профіль ще не користується, у короткому вікні «Чи знали ви?», де пояснено, що вона робить. Щоразу, коли відкривається профіль, з’являється щонайбільше одна пропозиція, і ніколи — від 15 хвилин до початку зібрання до його завершення; M³ запам’ятовує кожну відповідь: «Нагадати пізніше» переносить пропозицію в кінець черги, «Ні, дякую» приховує її назавжди, а «Більше не пропонувати функції» вимикає всі пропозиції для цього профілю. Відповідь «Ні» в майстрі початкової конфігурації теж враховується, а скинути відповіді можна в налаштуваннях, у розділі «Додатково».
+
 ## v26.10.1
 
 ### ✨ Нові функції
 
-- ✨ **Zoom Meeting Manager (beta, Windows)**: A new integration that operates Zoom for you around each meeting. It can launch your congregation's Zoom meeting when background music starts before the meeting. When the music stops just before the meeting starts, it joins computer audio, unmutes the microphone, turns on the host video, and mutes everyone without letting them unmute. When music plays before or after a meeting, it does the reverse: it leaves computer audio, turns off the host video, and lets everyone unmute again (asking them to do so). It can also share the media window in Zoom automatically while media is being shown, making sure the media window is what gets shared and never anything else on your screen. A new Zoom button in the action island shows whether a Zoom meeting window was found and lets you run these steps manually. A setup assistant, offered when you turn the option on (the initial setup wizard now offers it on Windows instead of the keyboard-shortcut screen sharing) and available anytime from the Zoom button or Settings, checks your Zoom, learns the names of its microphone and camera buttons in your language, and tries every step with you. When M³ starts, it also checks that everything it automates in Zoom works, opening the meeting if needed on meeting days in the hour and a quarter before it starts (only looking, without pressing anything, if others are already in the meeting); if something doesn't, it tells you and pauses its Zoom automations until it's restarted or a new check passes, so nothing goes wrong during the meeting. This check is on by default and can be turned off in Settings. As each of these steps succeeds, the matching reminders in the before- and after-meeting checklists of the meeting quick actions are ticked off for you, marked as done automatically in Zoom. Since it can't be used together with the keyboard-shortcut screen sharing, Settings says so under whichever of the two is unavailable, naming the one to turn off. It works whatever language Zoom is in, and needs nothing installed beyond Zoom itself.
+- ✨ **Менеджер конференцій Zoom (бета-версія, Windows)**: Нова інтеграція, яка керує Zoom замість вас до, під час і після кожного зібрання. Вона може запускати конференцію Zoom вашого збору, коли перед зібранням починає грати фонова музика. Коли музика зупиняється безпосередньо перед початком зібрання, вона під’єднує звук комп’ютера, вмикає мікрофон і відео організатора та вимикає звук усім учасникам, не дозволяючи їм увімкнути його самостійно. Коли музика грає до або після зібрання, вона робить навпаки: від’єднує звук комп’ютера, вимикає відео організатора й знову дозволяє всім увімкнути звук (і просить їх це зробити). Вона також може автоматично демонструвати вікно медіа в Zoom під час показу медіа, стежачи за тим, щоб демонструвалося саме вікно медіа, а не щось інше з вашого екрана. Нова кнопка Zoom на панелі дій показує, чи знайдено вікно конференції Zoom, і дає змогу виконати ці кроки вручну. Помічник налаштування, який з’являється, коли ви вмикаєте цей параметр (у Windows майстер початкової конфігурації тепер пропонує його замість демонстрації екрана за допомогою комбінації клавіш) і доступний будь-коли через кнопку Zoom або налаштування, перевіряє ваш Zoom, дізнається, як називаються його кнопки мікрофона й камери вашою мовою, і разом з вами випробовує кожен крок. Під час запуску M³ також перевіряє, чи працює все, що він автоматизує в Zoom, і в дні зібрань за потреби відкриває конференцію протягом години й чверті до її початку (якщо в конференції вже є інші учасники, він лише перевіряє, нічого не натискаючи); якщо щось не працює, M³ повідомляє вас про це й призупиняє автоматичні дії в Zoom, доки його не буде перезапущено або доки нова перевірка не пройде успішно, щоб під час зібрання нічого не пішло не так. Ця перевірка ввімкнена за замовчуванням, і її можна вимкнути в налаштуваннях. Щойно кожен із цих кроків успішно виконано, відповідні нагадування в контрольних списках швидких дій до й після зібрання позначаються за вас як виконані автоматично в Zoom. Оскільки її не можна використовувати разом із демонстрацією екрана за допомогою комбінації клавіш, у налаштуваннях під тією з двох функцій, яка недоступна, про це сказано й указано, яку з них потрібно вимкнути. Вона працює з будь-якою мовою інтерфейсу Zoom і не потребує встановлення нічого, крім самого Zoom.
 
-- ✨ **Meeting Timer**: Custom parts can now be added on meeting days too, for Governing Body updates, special programs and anything else that isn't on the regular schedule. Each is timed like any other part, and its name and length can be changed from the timer popup or from the parts list.
+- ✨ **Таймер зібрання**: Тепер власні частини можна додавати й у дні зібрань — для звітів Керівного органу, особливих програм і всього іншого, чого немає у звичайному розкладі. Час кожної з них відраховується так само, як і для інших частин, а її назву й тривалість можна змінити в спливному вікні таймера або в списку частин.
 
-- ✨ **Meeting Timer**: Quicker access to the timer. Hovering the timer button on the action island now shows the part being timed with Start, Pause, Stop and Next part buttons, without opening the popup (a setting, on by default). A new setting also keeps the whole parts list and the timer controls in a panel docked on the right side of the main window, always in view.
+- ✨ **Таймер зібрання**: Швидший доступ до таймера. Якщо навести курсор на кнопку таймера на панелі дій, тепер показується частина, час якої відраховується, з кнопками запуску, паузи, зупинення й переходу до наступної частини, без відкриття спливного вікна (це налаштування ввімкнене за замовчуванням). Нове налаштування також дає змогу постійно бачити повний список частин і елементи керування таймером на панелі, закріпленій праворуч у головному вікні.
 
-- ✨ **Meeting Timer**: A new "Analog clock with time arc" countdown display shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a red wedge. It also works for the pre-meeting countdown and in count-up mode.
+- ✨ **Таймер зібрання**: Новий формат відліку «Аналоговий годинник із дугою часу» показує час, що залишився для частини, у вигляді сектора на циферблаті аналогового годинника — від хвилинної стрілки до запланованого кінця, тож з одного погляду видно і поточний час, і скільки залишилося. Перевищення часу показується червоним сектором. Цей формат також працює для відліку перед зібранням і в режимі прямого відліку.
 
-- ✨ **Meeting Timer**: The pre-meeting countdown is now labelled "Meeting starts in", and the timer display shows the name of the part being timed, so "4:59" can no longer be mistaken for the time of day.
+- ✨ **Таймер зібрання**: Відлік перед зібранням тепер має підпис «До початку зібрання», а на екрані таймера показується назва частини, час якої відраховується, тож «4:59» більше не сплутати з поточним часом.
 
-- ✨ **Meeting Timer**: Each day's recorded timings can be cleared in one go, after a confirmation, from the timer popup or the docked panel.
+- ✨ **Таймер зібрання**: Увесь записаний за день час тепер можна одразу видалити (після підтвердження) у спливному вікні таймера або на закріпленій панелі.
 
-- ✨ **Zoom Meeting Manager (beta, Windows)**: A new raised-hand helper. During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets the operator unmute that participant with one click, and, once they're done speaking, mute them again and lower their hand with another; the Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name, and M³ touches no one when two participants share a name. If the meeting timer is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and can be switched on by hand from the timer or Zoom popups. M³ learns how Zoom marks raised hands in your language with a single button (it raises and lowers your own hand), offered in the setup assistant as well.
+- ✨ **Менеджер конференцій Zoom (бета-версія, Windows)**: Новий помічник для піднятих рук. Під час зібрання M³ стежить за піднятими руками в списку учасників Zoom. Коли хтось піднімає руку, сповіщення в M³ дає змогу операторові одним натисканням увімкнути цьому учасникові звук, а коли той закінчить говорити, ще одним — знову вимкнути звук і опустити руку; кнопка Zoom на панелі дій показує список піднятих рук із такими самими кнопками. Кожна дія виконується в рядку саме цього учасника в Zoom за його точним іменем, а якщо у двох учасників однакове ім’я, M³ не чіпає нікого. Якщо таймер зібрання ввімкнено, на екрані таймера для головуючого також з’являється велика рука з іменем учасника; її можна показати й вручну зі спливних вікон таймера або Zoom. M³ дізнається, як Zoom позначає підняті руки вашою мовою, після натискання однієї кнопки (при цьому він піднімає й опускає вашу руку); цей крок пропонує й помічник налаштування.
 
-- ✨ **Meeting Timer**: A new, optional timer remote. When turned on, M³ serves a read-only copy of the timer display as a web page on the local network, so a tablet or phone at the lectern can show the speaker the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time (parts, pre-meeting countdown, clock, overtime colors, hand alert) and all the controls stay in M³. The addresses to open are shown in the timer popup, with a copy button.
+- ✨ **Таймер зібрання**: Новий необов’язковий віддалений таймер. Якщо цю функцію ввімкнено, M³ показує копію екрана таймера (лише для перегляду) як вебсторінку в локальній мережі, тож планшет чи телефон на кафедрі може показувати промовцеві, скільки часу залишилося, і цього не буде видно ні на екрані для збору, ні в демонстрації в Zoom. Сторінка в реальному часі повторює таймер (частини, відлік перед зібранням, годинник, кольори перевищення часу, сигнал піднятої руки), а всі елементи керування залишаються в M³. Адреси, які потрібно відкрити, показано в спливному вікні таймера разом із кнопкою копіювання.
 
-- ✨ **Setup Wizard**: The setup wizard now asks whether you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive. If you do, it helps you choose a shared folder there and shows how it works: M³ creates a folder for each upcoming meeting, named with the meeting's date, and the files put in it are added to that meeting automatically, on every computer that uses the folder.
+- ✨ **Майстер початкової конфігурації**: Тепер майстер початкової конфігурації запитує, чи зберігаєте ви файли для зібрань у програмі хмарного сховища, як-от Dropbox, OneDrive, iCloud Drive або Google Drive. Якщо так, він допоможе вибрати там спільну папку й покаже, як вона працює: M³ створює папку для кожного найближчого зібрання, названу датою зібрання, а покладені в неї файли автоматично додаються до цього зібрання на кожному комп’ютері, який використовує цю папку.
 
 ## v26.9.0
 
 ### ✨ Нові функції
 
-- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+- ✨ **Швидкі дії до й після зібрання**: Нова панель із великими кнопками допомагає перед кожним зібранням і одразу після нього — відлік у реальному часі, запуск і зупинка фонової музики одним натисканням, початок і зупинка запису, а також окремий для кожного збору контрольний список, згрупований за категоріями, який можна редагувати в налаштуваннях. Панель перед зібранням автоматично закривається, коли зібрання починається й контрольний список виконано (або після короткого додаткового часу), і її завжди можна закрити вручну.
 
 ## v26.8.0
 
 ### ✨ Нові функції
 
-- ✨ **App-Wide Redesign**: A broad visual and interaction refresh across dialogs, the media list/header, Settings, and the Setup Wizard. The Setup Wizard is now a one-question-per-screen flow with a progress bar. All prompts were replaced with a consistent branded dialog, and PDF page-range selection (for publication and drag-and-drop imports) now uses a thumbnail-grid picker instead of a free-text prompt. Added a new Quick Start Guide tour after the Setup Wizard completes. Also includes refreshed card/header styling with dark-mode-aware shadows and several dark-mode contrast fixes (focused field labels, download-progress percentages).
-- ✨ **Settings Page**: Reworked into a two-pane layout, with a new global Preferences section for auto-update/beta-update toggles moved out of the About dialog (which is now purely informational).
-- ✨ **Add More Media Button**: Added a setting to choose exactly which meeting sections show the "add more media" shortcut button, along with a setting for a compact (icon-only) mode.
-- ✨ **Media List**: Items now show loading skeletons while being added instead of appearing empty, media groups show a hidden-item count in their badge (e.g. "9 items (2 hidden)"), children within a group can be reordered via drag-and-drop, and at very narrow window widths items collapse into compact, tooltip-carrying chips instead of crowding the row.
+- ✨ **Оновлений дизайн усієї програми**: Масштабне оновлення вигляду й взаємодії в діалогових вікнах, списку медіа та його заголовку, налаштуваннях і майстрі початкової конфігурації. Майстер початкової конфігурації тепер ставить по одному запитанню на екран і має індикатор перебігу. Усі запити замінено єдиним фірмовим діалоговим вікном, а для вибору діапазону сторінок PDF (під час імпорту публікацій і перетягування файлів) тепер замість поля для довільного тексту використовується сітка мініатюр. Додано новий огляд «Швидкий старт», який з’являється після завершення майстра початкової конфігурації. Також оновлено стиль карток і заголовків (з тінями, що враховують темний режим) і виправлено кілька проблем із контрастністю в темному режимі (підписи активних полів, відсотки перебігу завантаження).
+- ✨ **Сторінка налаштувань**: Перероблено на макет із двома панелями з новим розділом «Загальні параметри», куди з вікна «Про додаток» (яке тепер лише інформаційне) перенесено перемикачі автооновлення й бета-оновлень.
+- ✨ **Кнопка «Додати ще медіа»**: Додано налаштування, щоб точно вибрати, у яких розділах зібрання показувати кнопку швидкого доступу «Додати ще медіа», а також налаштування компактного режиму (лише значок).
+- ✨ **Список медіа**: Під час додавання елементи тепер показують заготовки завантаження замість порожнього місця, групи медіа показують на значку кількість прихованих елементів (наприклад, «Елементів: 9 (прихованих: 2)»), порядок елементів усередині групи можна змінювати перетягуванням, а в дуже вузькому вікні елементи згортаються в компактні мітки з підказками, щоб не переповнювати рядок.
 
 ## v26.7.7
 
 ### ✨ Нові функції
 
-- ✨ **Media Preview Quality**: Media preview now renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). The preview also auto-disables itself if it has to repeatedly correct playback drift on a single video, with a one-click way to turn it back on.
+- ✨ **Якість попереднього перегляду медіа**: Попередній перегляд медіа тепер відтворює кадри відео через canvas із високоякісним зменшенням масштабу, що усуває зубчасте чи розмите зображення (особливо в матеріалах із великою кількістю тексту, як-от піснях). Попередній перегляд також автоматично вимикається, якщо йому доводиться неодноразово виправляти розсинхронізацію відтворення одного відео; знову ввімкнути його можна одним натисканням.
 
 ## v26.7.6
 
 ### ✨ Нові функції
 
-- ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
-- ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
+- ✨ **Виключення відео для Вивчення Біблії у зборі**: Додано налаштування, яке дає змогу виключити відео для Вивчення Біблії у зборі з певних публікацій (за замовчуванням — книжка **«Вони подали нам приклад мужності»**), з пошуком публікацій під час вибору.
+- ✨ **Номери сторінок документів**: У списках «Медіа з публікацій» та імпорту JWPUB після назви кожного документа тепер показується номер його сторінки (або номери, якщо сторінок кілька). Це допоможе швидко знайти потрібні медіа, якщо ви знаєте номер сторінки, на якій вони розміщені.
 
 ## v26.7.4
 
 ### ✨ Нові функції
 
-- ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
-- ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
+- ✨ **Відновлення відсутніх медіа**: Для медіаелементів, локальний файл яких зник (наприклад, його видалило автоматичне очищення кешу або його видалено вручну), тепер показується неактивна кнопка відтворення, підпис «відсутній» із назвою файлу, який потрібно знайти, і нова дія «Знайти файл», щоб знову пов’язати елемент із файлом на диску.
+- ✨ **Попередження про сумісність**: Додано банер, який можна закрити, що попереджає користувачів систем, підтримку яких незабаром буде припинено (macOS 12 Monterey і 32-бітна Windows), про потребу оновити систему, перш ніж майбутні оновлення програми вимагатимуть новішої версії.
 
 ## v26.7.0
 
 ### ✨ Нові функції
 
-- ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
-- ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
+- ✨ **Відтворення пов’язаного аудіо**: Додано підтримку відтворення аудіо з одного файлу разом із відео з іншого файлу. Це може бути корисно для показу відеослайд-шоу з музичним супроводом.
+- ✨ **Порядок медіа зі спільної папки**: Тепер зберігається порядок медіаелементів і розділів, доданих зі спільних папок. Завдяки цьому список медіа виглядає однаково, навіть якщо спільна папка синхронізується між кількома пристроями.
 
 ## v26.6.1
 
 ### ✨ Нові функції
 
-- ✨ **Media Preview**: Added a live media preview overlay that can be toggled on or off from the settings or from the display popup.
-- ✨ **Search media**: Added a quick search box in the media list that allows you to quickly find media by title. To use it, simply use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
-- ✨ **Filter settings**: Added a filter box to the settings page that allows you to find settings by keyword or category. To use it, simply click on the Search button in the top right corner of the settings page, or use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
-- ✨ **Background Music Overlap Warning**: Added a warning notification when media is started while background music is playing. Users can choose to stop the background music from the notification.
+- ✨ **Попередній перегляд медіа**: Додано накладку з попереднім переглядом медіа в реальному часі, яку можна вмикати й вимикати в налаштуваннях або в спливному вікні дисплея.
+- ✨ **Пошук медіа**: У списку медіа додано поле швидкого пошуку, яке дає змогу швидко знаходити медіа за назвою. Щоб скористатися ним, просто натисніть стандартну комбінацію клавіш для пошуку (Ctrl+F або Cmd+F).
+- ✨ **Фільтр налаштувань**: На сторінку налаштувань додано поле фільтра, яке дає змогу знаходити налаштування за ключовим словом або категорією. Щоб скористатися ним, просто натисніть кнопку «Пошук» у верхньому правому куті сторінки налаштувань або стандартну комбінацію клавіш для пошуку (Ctrl+F або Cmd+F).
+- ✨ **Попередження про накладання фонової музики**: Додано сповіщення-попередження, коли медіа запускається під час відтворення фонової музики. Користувачі можуть зупинити фонову музику безпосередньо зі сповіщення.
 
 ## v26.6.0
 
 ### ✨ Нові функції
 
-- ✨ **Timer**: Added analog display modes and timing report status.
-- ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard.
-- ✨ **Media Window**: Added support for automatically hiding the media window after playback when it was initially hidden. This is practical when a remote speaker wants to display images, for example.
+- ✨ **Таймер**: Додано аналогові режими відображення та стан звіту про час зібрання.
+- ✨ **Профілі**: Додано імпорт і експорт налаштувань профілю в розділі налаштувань «Додатково» та в майстрі початкової конфігурації.
+- ✨ **Вікно медіа**: Додано підтримку автоматичного приховування вікна медіа після відтворення, якщо до цього воно було приховане. Це зручно, наприклад, коли промовець, який виступає віддалено, хоче показати зображення.
 
 ## v26.5.0
 
 ### ✨ Нові функції
 
-- ✨ **PDF Import**: Added a new PDF import flow to the Publication Media dialog, allowing the PDF version of a publication to be automatically imported as individual images when desired.
+- ✨ **Імпорт PDF**: У діалоговому вікні «Медіа з публікацій» додано новий спосіб імпорту PDF, який за бажанням дає змогу автоматично імпортувати PDF-версію публікації як окремі зображення.
 
 ## v26.4.8
 
 ### ✨ Нові функції
 
-- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
+- ✨ **JW Stream**: JW Stream додано до списку вебсайтів, які можна віддзеркалювати.
 
 ## v26.4.0
 
 ### ✨ Нові функції
 
-- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
+- ✨ **Таймер зібрання**: Додано нову функцію таймера зібрання. Вона необов’язкова, і за бажанням її можна ввімкнути в розділі налаштувань «Додатково». За допомогою таймера оператор медіа може стежити за часом, витраченим на частини зібрання, або показувати час поточної частини на окремому екрані, який бачить лише промовець.
 
 ## v26.3.0
 
 ### ✨ Нові функції
 
-- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
-- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
-- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+- ✨ **Медіа для Спомину**: Автоматичне отримання медіа для Спомину вийшло з бета-тестування! Програма автоматично завантажуватиме вітальне відео до Спомину й зображення для показу під час Спомину, якщо вони доступні вибраною мовою.
+- ✨ **Швидкість відтворення**: Додано керування швидкістю відтворення з візуальним індикатором і можливістю скинути її вручну. Ця функція видима, лише якщо її ввімкнено в розділі налаштувань «Додатково».
+- ✨ **Пісні з піньїнем**: Додано перемикач для заміни пісень на версії з піньїнем на зібраннях китайською мовою.
 
 ## v26.2.0
 
 ### ✨ Нові функції
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ **Перевірка місця на диску**: Додано відстеження вільного місця на диску й сповіщення, коли його залишається мало.
 
 ## v26.1.5
 
 ### ✨ Нові функції
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ **Медіа для Спомину**: Після вибору дати Спомину банер і вступне відео до Спомину автоматично завантажуються підтримуваними мовами.
 
 ## v26.1.0
 
 ### ✨ Нові функції
 
-- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
-- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
-- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+- ✨ **Автоматична синхронізація розкладу зібрань**: Додано можливість автоматично синхронізувати дати й час зібрань з офіційним сайтом. Ця функція ввімкнена за замовчуванням; запустити її вручну або вимкнути можна в розділі налаштувань «Додатково».
+- ✨ **Майбутні зміни розкладу**: Під час створення збору за допомогою пошуку на сайті програма тепер враховує майбутні зміни розкладу, якщо вони є.
+- ✨ **Спільний кеш для встановлень для всіх користувачів**: Програма, встановлена для всіх користувачів комп’ютера, тепер за замовчуванням використовує спільну папку даних, що заощаджує місце на диску й трафік, коли на одному комп’ютері працює кілька користувачів.
 
 ## v25.12.2
 
 ### ✨ Нові функції
 
-- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+- ✨ **Кнопки масштабування й панорамування**: Тепер кнопки масштабування й панорамування можна натиснути й утримувати для плавного налаштування.
 
 ## v25.12.0
 
 ### ✨ Нові функції
 
-- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
-- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
-- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
-- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
-- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
-- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
-- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
-- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
-- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
-- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
-- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+- ✨ **Контекстне меню для кількох елементів**: Додано підтримку дій контекстного меню (правою кнопкою миші), коли вибрано кілька медіаелементів.
+- ✨ **Комбінації клавіш**: Додано `Ctrl/Cmd+A` для вибору всіх медіа, `H` для приховування вибраних медіа та `Shift+Up/Down` для вибору елементів за допомогою клавіатури.
+- ✨ **Налаштування відео для Вивчення «Вартової башти»**: Додано налаштування, щоб виключати додаткові відео для Вивчення «Вартової башти».
+- ✨ **Згортання розділів**: У дні без зібрань розділи тепер можна згортати, щоб список виглядав охайніше.
+- ✨ **Вебсайт JW Events**: Окрім основного офіційного сайту, тепер можна показувати й вебсайт JW Events.
+- ✨ **Налаштування імпорту списків відтворення**: Тепер можна змінювати префікс, який додається до медіаелементів під час імпорту списків відтворення JW.
+- ✨ **Перехід після віддзеркалення вебсайту**: Додано перемикач, щоб автоматично переходити до списку медіа після завершення віддзеркалення вебсайту.
+- ✨ **Керування записом в OBS**: Додано можливість керувати записом в OBS.
+- ✨ **Попередній перегляд вірша року**: Щороку починаючи з грудня можна попередньо переглянути вірш на наступний рік.
+- ✨ **Сповіщення про оновлення**: Додано попередження, якщо використовується бета-версія або оновлення вимкнено, а також покращено відображення перебігу завантаження оновлень.
+- ✨ **Налаштування апаратного прискорення**: Додано параметр, який за потреби дає змогу назавжди вимкнути апаратне прискорення.
 
 ## v25.11.0
 
 ### ✨ Нові функції
 
-- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
-- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
-- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
-- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
-- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+- ✨ **Вибір медіа з JWPUB**: Додано можливість вибирати окремі медіа з файлів JWPUB.
+- ✨ **Автоматична активація вікна медіа**: Додано необов’язкове налаштування, щоб автоматично активувати вікно медіа після початку демонстрації екрана в Zoom.
+- ✨ **Накладка курсора для телевізорів**: Покращено накладку курсора у вікні вебсайту, щоб курсор миші було краще видно на екранах телевізорів.
+- ✨ **Запис зібрань**: Додано нову функцію запису зібрань для керування зовнішньою програмою для запису.
+- ✨ **Пошук на сайті**: Додано можливість шукати медіа чи публікації на сайті за допомогою розумного пошуку.
+- ✨ **Простий ручний імпорт публікацій**: Додано можливість легко імпортувати публікації з офіційного сайту, як-от журнали, книжки, програми та запрошення.
+- ✨ **Покращення для жестових мов**: Для жестових мов додано підтвердження перед відтворенням цілих файлів і можливість вибирати кілька кліпів, наприклад коли потрібно прочитати поспіль кілька абзаців.
+- ✨ **Навігація кліпами**: Для елементів списку кліпів додано показ тривалості й покращено навігацію між кліпами.
+- 🛠️ **Показ медіа**: Вікно медіа тепер стає видимим під час запуску відтворення, навіть якщо до цього воно було приховане.
 
 ## v25.10.1
 
 ### ✨ Нові функції
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ **Майстер початкової конфігурації – крок Zoom**: До майстра початкової конфігурації додано крок інтеграції із Zoom для легшого початкового налаштування.
+- ✨ **Покращений вибір екрана**: У спливному вікні дисплея тепер точно показано всі екрани, а також поточний розмір і розташування головного вікна. Так легше вибрати правильний екран для показу вікна медіа.
+- ✨ **Бажаний екран для вікна медіа**: Тепер програма запам’ятовує екран, на якому користувач хоче показувати вікно медіа, якщо його вказано.
 
 ## v25.10.0
 
 ### ✨ Нові функції
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **Починати відтворення на паузі**: Додано нове налаштування, щоб відтворення починалося на паузі: так операторам аудіо- та відеообладнання зручніше все підготувати (наприклад, почати демонстрацію в Zoom), перш ніж медіа почнуть відтворюватися у вікні медіа.
+- ✨ **Сповіщення про оновлення**: Тепер користувачі отримуватимуть сповіщення про оновлення через банер у програмі, з якого можна одразу встановити оновлення, не чекаючи наступного перезапуску програми.
+- ✨ **Власні події**: Додано необов’язкові обробники подій, які можуть надсилати комбінації клавіш, коли відбуваються певні події. Це може бути корисно операторам аудіо- та відеообладнання, щоб автоматично виконувати дії поза програмою. Наприклад, у залах, де використовуються проєктори, розумне освітлення можна вимикати й вмикати до й після відтворення медіа; або після відтворення останньої пісні зібрання можна запустити скрипт, щоб автоматизувати різні дії в конференції Zoom.
 
 ## v25.9.1
 
 ### ✨ Нові функції
 
-- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
-- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
-- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not
-- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+- ✨ **Вікно медіа поверх інших вікон і в повноекранному режимі**: Виправлено й покращено режим «поверх інших вікон» для вікна медіа — тепер він динамічно змінюється залежно від повноекранного режиму.
+- ✨ **Налаштування формату дати**: Додано налаштування, яке дає змогу вибрати формат відображення дат.
+- ✨ **Плавна зміна медіа**: Для показу медіа запроваджено плавні переходи з перехресним затуханням замість різкішого переходу через чорний екран, що був раніше.
+- ✨ **Автозупинка музики**: Оптимізовано автоматичну зупинку фонової музики, щоб вона працювала однаково незалежно від того, чи музику було запущено автоматично
+- ✨ **Натискання в неактивних вікнах у macOS**: У macOS головне вікно тепер реагує на натискання миші, навіть коли воно не активне, тож програмою легше керувати.
 
 ## v25.9.0
 
 ### ✨ Нові функції
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **Покращене спливне вікно завантажень**: У спливному вікні завантажень додано кнопку оновлення й групування завантажень за датами.
+- ✨ **Запам’ятовування порядку медіа зі спільної папки**: Тепер запам’ятовується порядок розділів для медіаелементів зі спільної папки.
 
 ## v25.8.3
 
 ### ✨ Нові функції
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
-- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+- ✨ **Плавні переходи вікна медіа**: Додано нове розширене налаштування, завдяки якому вікно медіа з’являється й зникає плавно.
+- ✨ **Тривалість показу зображень і відстеження перебігу**: Для розділів, що повторюються, додано можливість задавати тривалість показу зображень і стежити за перебігом.
 
 ## v25.8.1
 
 ### ✨ Нові функції
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **Власні розділи медіа**: Повноцінна система створення, редагування й керування власними розділами медіа з вибором кольору та зміною порядку перетягуванням.
+- ✨ **Роздільники медіа**: Додавайте до списків медіа роздільники із заголовками для кращого впорядкування, з розміщенням угорі чи внизу.
+- ✨ **Режим повторення розділу**: Вмикайте безперервне відтворення в окремих розділах для плавного циклічного показу медіа.
+- ✨ **Інтеграція із Zoom**: Автоматичний запуск і зупинка демонстрації екрана відповідно до відтворення медіа.
 
 ## v25.7.0
 
 ### ✨ Нові функції
 
-- No new features for this release!
+- Немає нових функцій для цього релізу!
 
 ## 25.6.0
 
 ### ✨ Нові функції
 
-- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
-- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+- ✨ **Налаштування обмеженого з’єднання**: Додано нове налаштування для зменшення використання трафіку на обмежених з’єднаннях.
+- ✨ **Покращена робота з потоковими медіа**: Краща підтримка потокових медіа, менше проблем, пов’язаних із затримками.
 
 ## 25.5.0
 
 ### ✨ Нові функції
 
-- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
-- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+- 🖼️ **Затримка OBS для зображень**: Додано налаштування OBS Studio, яке затримує зміну сцен під час показу зображень і покращує переходи.
+- 🔊 **Підтримка аудіоформату `.m4a`**: Додано сумісність з аудіофайлами `.m4a`, що розширює перелік підтримуваних типів медіа.
 
 ## 25.4.0
 
 ### ✨ Нові функції
 
-- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
-- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+- 🇵🇭 **Нова мова: тагальська**: Додано підтримку тагальської мови, що розширює багатомовні можливості програми.
+- 🎞 **Підтримка відеоформату `.m4v`**: Тепер підтримується відтворення файлів `.m4v` для кращої сумісності медіа.
 
 ## 25.3.1
 
@@ -262,48 +268,48 @@
 
 ### ✨ Нові функції
 
-- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
-- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
+- 🔄 **Повторні спроби підключення до OBS**: Додано можливість за потреби вручну примусово перепідключитися до OBS.
+- 🗑 **Автоматичне очищення старих папок експорту з датами**: Застарілі папки експорту з датами автоматично видаляються, щоб у сховищі був порядок.
 
 ## 25.2.0
 
 ### ✨ Нові функції
 
-- 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
-- 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
-- 🔄 **Automatic Beta to Stable Downgrade**: Allow automatic downgrades from beta versions to stable releases when necessary.
-- 🌐 **Extract Latest MEPS Language Indexes**: Fetch the most recent MEPS language indexes directly from the official website, ensuring up-to-date language support.
+- 🌍 **Мова системи за замовчуванням**: Мова й регіональні налаштування системи визначаються та використовуються автоматично для зручнішої роботи.
+- 🏷 **Підтримка тегів для експортованих медіа**: До експортованих медіафайлів додаються теги метаданих для кращого впорядкування.
+- 🔄 **Автоматичний перехід із бета-версії на стабільну**: За потреби програма автоматично повертається з бета-версії на стабільну.
+- 🌐 **Найновіші індекси мов MEPS**: Найновіші індекси мов MEPS отримуються безпосередньо з офіційного сайту, що забезпечує актуальну підтримку мов.
 
 ## 25.1.0
 
 ### ✨ Нові функції
 
-- 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
-- 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
-- 📚 **Group Media by Publication**: Group media from the same referred publication for a cleaner and more organized media overview.
-- 🎵 **Duplicate Song Warning**: Show a warning if songs are listed more than once in the media list for weekend meetings.
-- 🔄 **Future Schedule Planning**: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
+- 📅 **Відкриття попередніх дат**: Тепер можна відкривати попередні дати поточного тижня, що зручно, коли день зібрання перенесено на пізніше в тижні.
+- 🛑 **Банер помилки для OBS Studio**: Якщо в день зібрання OBS Studio не підключено, з’являється банер помилки, щоб користувачі про це знали.
+- 📚 **Групування медіа за публікаціями**: Медіа з однієї й тієї самої публікації, на яку є посилання, групуються, щоб список медіа був охайнішим і впорядкованішим.
+- 🎵 **Попередження про повторення пісень**: Показується попередження, якщо в списку медіа для зібрання у вихідні пісня трапляється більше одного разу.
+- 🔄 **Планування майбутнього розкладу**: Тепер можна заздалегідь планувати зміни в розкладі зібрань, що корисно для щорічних змін розкладу або під час візиту районного наглядача до сусіднього збору.
 
 ## 24.11.0
 
 ### ✨ Нові функції
 
-- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
-- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
-- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
-- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
-- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
+- 🖥️ **Показ вебсайту в macOS**: Показ вебсайту тепер підтримується в macOS 🚀
+- ⌨️ **Комбінації клавіш для відтворення**: Додано комбінації клавіш для зупинення, призупинення й продовження відтворення медіа 🚀
+- 🌐 **Власна адреса для завантаження медіа**: Додано можливість указати вебадресу, з якої потрібно завантажувати медіа 🚀
+- 🎬 **Миттєвий вибір сцен OBS**: Додано миттєвий перемикач сцен OBS Studio й перероблено вибір сцен у налаштуваннях
+- 📖 **Більше мов документації**: Сайт документації тепер підтримує більше мов
 
 ## 24.10.10
 
 ### ✨ Нові функції
 
-- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
-- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
-- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
+- ⌨️ **Комбінації клавіш для навігації медіа**: Додано комбінації клавіш для переходу до наступного/попереднього медіаелемента
+- 🖱️ **Контекстне меню медіаелементів**: Для медіаелементів додано контекстне меню (правою кнопкою миші), щоб приховувати й перейменовувати їх
+- ✂️ **Імпорт обрізаних відео зі списків відтворення JWL**: В імпортованих списках відтворення JWL тепер враховується обрізаний час відео
 
 ## 24.10.9
 
 ### ✨ Нові функції
 
-- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
+- 🗑️ **Видалення додаткових медіа за день**: Додано можливість видалити всі додаткові медіафайли для вибраного дня

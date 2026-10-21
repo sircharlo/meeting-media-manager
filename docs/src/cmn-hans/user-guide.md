@@ -6,7 +6,7 @@
 
 ### 下载与安装 {#download-and-install}
 
-从 [下载页面](download)获取最新版本。从 [下载页面](download) 获取最新版本。它能为您的设备推荐最佳版本并显示最新版本。
+从 [下载页面](download)获取最新版本。它会为你的设备推荐最合适的版本，并显示最新版本号。
 
 ### 首次启动 {#first-launch}
 
@@ -57,7 +57,7 @@ M³ 会按聚会类型和节目部分自动整理媒体：
 
 可以把媒体从聚会媒体列表中隐藏，而不会删除自动下载的文件。如果误将媒体隐藏，可以在所选日期使用**显示隐藏的媒体**功能恢复显示。
 
-如果 M³ 提示缺少媒体，请先确认该媒体是否预计会在临近聚会日期时提供。你也可以通过添加媒体菜单手动添加缺少的项目，或将其拖入媒体列表。
+如果 M³ 提示缺少媒体，请先确认该媒体是否预计会在临近聚会日期时提供。你也可以通过**添加媒体**菜单手动添加缺少的项目，或将其拖入媒体列表。
 
 ## 媒体显示 {#media-presentation}
 
@@ -82,7 +82,7 @@ M³ 会按聚会类型和节目部分自动整理媒体：
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
+- **缩放/平移** - 按住 Ctrl 或 Shift 并滚动鼠标滚轮，或在触控板上双指捏合来缩放，然后拖动来平移（适用于图片）
 - **实时预览** —— 启用后，可以在主应用程序中预览观众看到的媒体窗口
 - **播放速度** —— 在设置中启用后，可以从媒体项目菜单调整音频和视频的播放速度
 
@@ -103,13 +103,13 @@ M³ 会按聚会类型和节目部分自动整理媒体：
 
 适用于图片和视频：
 
-- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
-- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
+- **放大/缩小** - 按住 Ctrl 或 Shift 并滚动鼠标滚轮、在触控板上双指捏合，或使用缩略图上的缩放控件
+- **平移** - 放大后，单击并拖动缩略图来移动图片（拖动该行的其他部分可调整项目顺序）
 - **重置** —— 一键恢复原始缩放比例
 
 #### 键盘快捷键 {#user-guide-keyboard-shortcuts}
 
-可以配置自定义快捷键，以便快速操作。请注意，默认情况下没有设置自定义键盘快捷键。请注意，默认设置没有键盘快捷键。
+可以配置自定义快捷键，以便快速操作。请注意，默认设置没有键盘快捷键。
 
 **内置媒体列表控制**（主窗口处于焦点状态且显示媒体列表时）：
 
@@ -149,25 +149,25 @@ M³ 会按聚会类型和节目部分自动整理媒体：
 
 计时器目前属于测试功能，只有得到当地批准后才应使用。
 
-#### Meeting Parts {#user-guide-timer-parts}
+#### 聚会节目 {#user-guide-timer-parts}
 
-The timer popup on the action island lists the parts of the selected day's meeting. For midweek meetings, choose how many Apply Yourself to the Field Ministry and Living as Christians parts there are; the section's minutes are shared out evenly, and each part can then be adjusted freely with the **+** and **−** buttons or by clicking the part. Any part can be set to any number of minutes, including 0 to skip it. A warning icon points out sections whose parts don't add up to the time allotted to them, but never changes anything on its own.
+操作图标上的计时器弹出窗口会列出所选日期聚会的各个节目。对于周中聚会，可以选择“用心准备传道工作”和“基督徒的生活”各有几个节目；该部分的分钟数会平均分配，然后可以用 **+** 和 **−** 按钮或点击节目来自由调整每个节目的时间。任何节目都可以设置为任意分钟数，包括设为 0 来跳过该节目。如果某部分各节目的时间加起来与分配给该部分的时间不符，会显示警告图标提醒，但不会自动更改任何内容。
 
-**Custom parts** can be added on any day, for Governing Body updates, special programs or anything else that isn't on the regular schedule. On days without a meeting, the timer starts with one custom part per custom media section.
+**自定义节目**可以添加到任何一天，用于中央长老团的最新消息、特别节目或其他不在常规安排中的内容。在没有聚会的日子，计时器会为每个自定义媒体部分各创建一个自定义节目。
 
-Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
+节目数量、修改过的时长、自定义节目和记录的计时都会按日期分别保存，因此重新启动 M³ 后依然保留，也不会把一个聚会的计时混入另一个聚会。可以使用 **重置这一天的所有计时** 一次性清除某一天记录的计时，也可以随时导出 PDF 计时报告。
 
-#### Hand Alert {#user-guide-timer-hand-alert}
+#### 举手提示 {#user-guide-timer-hand-alert}
 
-A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+计时器弹出窗口中的 **举手提示** 按钮会在计时器显示上显示一只大手，以引起主席的注意，例如有人在 Zoom 上举手时。使用 [Zoom 会议管理器的举手助手](/settings-guide#zoom-meeting-manager-hand-alert) 后，每当有人在 Zoom 中举手，M³ 都会自动显示提示和对方的名字，并让您一键为对方取消静音，之后再一键将其静音并放下举手。
 
-#### Timer on a Tablet {#user-guide-timer-remote}
+#### 在平板电脑上显示计时器 {#user-guide-timer-remote}
 
-The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³.
+可选的[远程计时器](/settings-guide#timer-remote)会在本地网络上以网页形式提供计时器显示的只读副本。在讲台上的平板电脑或手机浏览器中打开计时器弹出窗口中显示的地址，讲者就能私下看到剩余时间，而所有控制仍保留在 M³ 中。
 
-#### Quick Access {#user-guide-timer-quick-access}
+#### 快速访问 {#user-guide-timer-quick-access}
 
-Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).
+将鼠标悬停在操作图标上的计时器按钮上，会显示正在计时的节目，以及“开始”“暂停”“停止”和“下一个节目”按钮。还可以通过一项设置，在主窗口右侧固定一个计时器面板，始终显示完整的节目列表和计时器控制按钮。请参阅[设置指南](/settings-guide#timer-quick-access)。
 
 ## 背景音乐 {#user-guide-background-music}
 
@@ -186,9 +186,9 @@ Hovering the timer button on the action island shows the part being timed, with 
 M³ 可以与 Zoom 集成，以便自动触发屏幕共享：
 
 1. **启用集成** —— 在设置中开启 Zoom 集成
-2. **配置快捷键** —— 在 Zoom 中设置“开始/停止屏幕共享”的快捷键，并将其设为全局快捷键请确保已勾选“全局快捷键”
+2. **配置快捷键** —— 设置 Zoom 中配置的屏幕共享键盘快捷键。请确保已在 Zoom 中勾选“全局”复选框。
 3. **自动控制** —— 当 M³ 开始或停止播放媒体时，会自动触发 Zoom 开始或停止屏幕共享
-4. **配置快捷键** —— 在 Zoom 中设置屏幕共享快捷键 ，并勾选“全局快捷键”
+4. **手动控制** —— 如有需要，仍可以在 Zoom 中手动控制屏幕共享
 
 ## OBS Studio 集成 {#user-guide-obs-integration}
 
@@ -208,25 +208,25 @@ M³ 可以与 Zoom 集成，以便自动触发屏幕共享：
 
 - **摄像机场景** —— 显示讲台或摄像头画面
 - **媒体场景** —— 显示正在播放的媒体
-- **图片场景** —— 显示图片；如果启用了“延迟图片”，则会等待手动触发
+- **图片场景** —— 显示图片（启用相应设置后可以延后共享）
 - **自动切换** —— 根据媒体类型和设置自动切换
 - **录制控制** —— 启用后，可以从 M³ 的 OBS 窗口开始或停止 OBS Studio 录制
 
 ### 高级功能 {#advanced-obs}
 
-#### Do Not Automatically Share Images {#user-guide-postpone-images}
+#### 不要自动共享图片 {#user-guide-postpone-images}
 
 启用此选项以延迟共享图像到 OBS 直到手动触发：
 
-1. Enable "Do not automatically share images" in OBS settings
-2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. 这有助于首先将图像展示给亲自观看者。
+1. 在 OBS 设置中启用“不要自动共享图片”
+2. 只有当您在正在显示的图片上点击 **向 Zoom 参与者显示图片** 按钮时，图片才会被共享。这样可以先向现场观众显示图片。
 
 #### 场景切换行为 {#user-guide-scene-switching}
 
-配置 M³ 如何处理场景变化。如果您使用混合聚会，请熟悉这些行为并进行练习，以确保演示顺畅。
+配置 M³ 如何处理场景切换：
 
-- **开始镜像** —— 准备好后，将网站窗口的内容显示在媒体窗口中
-- **媒体开始和结束** —— 了解不同媒体播放时会切换到哪个场景，以及播放结束后会返回哪个场景
+- **媒体播放后切换** —— 自动返回之前的场景
+- **记住之前的场景** —— 恢复媒体播放前使用的场景
 
 ### 混合聚会音频配置 {#audio-configuration}
 
@@ -234,29 +234,30 @@ M³ 可以与 Zoom 集成，以便自动触发屏幕共享：
 
 #### Zoom 音频设置 {#zoom-audio-settings}
 
-**检查音频** —— 混合聚会时，确认 Zoom 可以正常接收到媒体声音
+**每次聚会前，都必须在 Zoom 中启用原始音频：**
 
-1. **打开 Zoom** → **设置**
+1. **打开 Zoom**，然后进入设置
 2. 进入 **音频** → **高级**
 3. 勾选 **“在会议内显示‘启用原始音频’选项”**
 4. 勾选 **“禁用回声消除”**（第一项）
 5. 勾选 **“禁用噪声抑制”**（第二项）
-6. **不勾选** **“禁用高保真音乐模式”**（第三项）
+6. **取消勾选“禁用高保真音乐模式”**（第三项）
 7. **每次聚会开始前**，在会议控制条中点击“Original Audio/原始音频”按钮
 
-**共享计算机声音**：如果适合当前设备配置，可以把它作为另一种方案
+**替代方案：共享计算机声音**
+如果原始音频在你的设备配置中效果不佳：
 
 1. **播放媒体前**，在 Zoom 的共享界面切换到 **“高级”** 选项卡
-2. **替代方案：共享计算机声音**
+2. **勾选“共享计算机声音”**
 3. **注意**：每次新开 Zoom 会话都要重新开启
 
-**更简单的替代方案**：可以考虑使用 M³ 的 Zoom 集成。它使用 Zoom 原生屏幕共享，音频处理通常更加直接。
+**最佳替代方案**：可以考虑使用 M³ 的 Zoom 集成来代替 OBS Studio。它使用 Zoom 原生的屏幕共享功能，处理音频更加顺畅，也不需要复杂的音频配置。
 
 #### 为什么需要这些设置 {#why-audio-config}
 
-M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频输出本身不会自动把这些声音一起传给 Zoom。视频输出的工作方式类似一个没有声音的虚拟摄像头。这是与任何其他媒体播放器相同的行为。
+M³ 会在计算机上播放带声音的媒体，但这些声音**不会自动**通过视频流传送到 OBS Studio。这是与任何其他媒体播放器相同的行为。
 
-**音频问题与 M³ 无关** —— 这是 OBS Studio 视频流与 Zoom 配合使用时的一个限制。视频流像一个没有声音的虚拟摄像头，因此您必须明确配置缩放来捕捉计算机的音频。这意味着您的计算机有两个声音卡，如果不是这样，就有两个声音卡了。 您可能无法成功使用 OBS 工作室集成。
+**音频问题与 M³ 无关** —— 这是 OBS Studio 视频流与 Zoom 配合使用时的一个限制。视频流就像一个没有声音的虚拟摄像头，与网络摄像头一样，因此你必须专门配置 Zoom 来捕获计算机的音频。这意味着你的计算机需要有两块声卡；如果没有，你可能无法顺利使用 OBS Studio 集成。
 
 **更简单的方案**：也可以考虑使用 M³ 的 Zoom 集成。它使用 Zoom 原生的屏幕共享功能，因此音频处理通常更加直接。
 
@@ -264,27 +265,27 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 
 **常见问题：**
 
-- **音质不理想**：检查 Zoom 的原始音频和音频处理设置
-- **音质不理想**：检查 Zoom 的原始音频和其他音频处理设置
-- **重新开始 Zoom 聚会后失效**：再次确认音频设置
+- **Zoom 中没有声音**：检查是否已启用并正确配置原始音频
+- **音质不理想**：确认原始音频的三个复选框设置正确
+- **重新启动 Zoom 后没有声音**：每次新的 Zoom 会话都必须重新启用原始音频设置
 
 **建议做法：**
 
 - 聚会前测试完整的音频路径和共享设置
 - 准备一份音频设置检查清单，方便人员交接
 - 把“共享电脑声音”当作备选方案
-- 使用 OBS Studio 时，需要让 Zoom 能接收到计算机播放的媒体声音。具体设置会根据计算机和音频设备的配置而有所不同。
+- **考虑使用 Zoom 集成代替 OBS Studio**，以便更简单地处理音频
 - 确保负责音视频操作的人员熟悉这些设置
 
-## 导入自定义媒体 {#media-import}
+## 媒体导入和管理 {#media-import}
 
-### 媒体导入和管理 {#importing-custom-media}
+### 导入自定义媒体 {#importing-custom-media}
 
 向 M³ 添加自己的媒体文件：
 
 1. **添加媒体** —— 使用添加媒体功能加入视频、图片或音频
 2. **拖放导入** —— 直接将文件拖入 M³
-3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
+3. **共享文件夹** - 从由 Dropbox、OneDrive、iCloud Drive 或 Google Drive 同步的文件夹中自动添加媒体
 4. **JWPUB/播放列表** —— 导入出版物和 JW Library 播放列表
 5. **公众演讲媒体（S-34 / S-34mp）** —— 通过 S-34 或 S-34mp JWPUB 文件导入
 6. **官方网站视频** —— 搜索视频，并将其添加到所选日期
@@ -311,17 +312,17 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 
 可以从“设置”中将每个配置的设置导出为 JSON 文件。导入配置设置文件会替换当前配置的设置，适合把现有设置转移到另一台计算机，或恢复之前保存的配置。
 
-## Shared Folder and Export {#user-guide-folder-monitoring}
+## 共享文件夹和导出 {#user-guide-folder-monitoring}
 
-### Setting Up a Shared Folder {#folder-monitoring-setup}
+### 设置共享文件夹 {#folder-monitoring-setup}
 
-Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
+从由云存储应用（例如 Dropbox、OneDrive、iCloud Drive 或 Google Drive）同步的文件夹中添加媒体：
 
-1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
-2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
-3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
-4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
-5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
+1. **启用** - 在设置向导询问云存储应用时回答“是”，或前往 **设置** > **集成** > **共享文件夹** 并启用 **从共享文件夹添加媒体**
+2. **选择文件夹** - 在云存储应用中选择一个文件夹，最好是专门用于此用途的新文件夹
+3. **带日期的文件夹** - M³ 会在其中为每个即将举行的聚会创建一个文件夹，并以聚会日期按“年-月-日”的格式命名（例如 `2026-03-25`）
+4. **添加文件** - 将照片、视频、音频文件或 JW Library 播放列表放入聚会的文件夹，它们就会自动添加到该聚会的媒体列表中。如需添加其他日期的文件，请创建一个按相同方式命名的文件夹
+5. **过往文件夹** - 一周结束后，M³ 会删除该周的文件夹及其中的文件，所有使用该共享文件夹的人都会受到影响。如需保留这些文件，请关闭 **删除过往聚会的文件夹**
 
 ### 媒体导出 {#user-guide-media-export}
 
@@ -332,9 +333,9 @@ Add media from a folder kept in sync by a cloud storage app, such as Dropbox, On
 3. **自动整理** —— 按日期和部分分类保存
 4. **格式选项** —— 可以转换为 MP4，以提高兼容性
 
-## 展示官方网站 {#website-presentation}
+## 网站展示 {#website-presentation}
 
-### 网站展示 {#presenting-the-website}
+### 展示官方网站 {#presenting-the-website}
 
 在外部显示器上展示官方网站：
 
@@ -347,7 +348,7 @@ Add media from a folder kept in sync by a cloud storage app, such as Dropbox, On
 - **打开网站** —— 打开单独的网站窗口
 - **开始镜像** —— 将网站窗口显示在媒体窗口中，让观众看到
 - **停止镜像** —— 停止显示网站，并返回全年经文或媒体窗口背景
-- **如果希望简化操作，可以优先考虑 Zoom 集成**
+- **导航** —— 标准的浏览器导航控制
 - **刷新** —— 重新加载当前页面
 - **关闭** —— 关闭网站窗口
 - **自动返回** —— 可以设置在停止网站镜像后自动返回媒体列表
@@ -398,14 +399,14 @@ M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 
 #### Zoom/OBS Studio 音频问题 {#audio-issues}
 
-- 如果使用 Zoom 的\*\*原始音频（Original Audio）\*\*功能，请先在 Zoom 的音频设置中启用相关选项，并在聚会开始后确认原始音频已经开启。
-- **Zoom 没有声音**：检查 Zoom 是否能够接收到计算机播放的媒体声音
-- **重新开始 Zoom 聚会后没有声音**：确认新聚会中的音频设置是否仍然正确
-- 如果当前设备配置适合使用 Zoom 的原生共享功能，也可以使用**共享计算机声音**，让 Zoom 直接共享计算机播放的音频。
+- **Zoom 中没有声音**：在 Zoom 设置中启用原始音频，并在每次聚会前开启
+- **音质不理想**：检查原始音频的三个复选框（勾选前两个，不勾选第三个）
+- **重新启动后没有声音**：每次新的 Zoom 会话都必须重新启用原始音频
+- **替代方案**：在 Zoom 屏幕共享中使用“共享计算机声音”选项
 
 #### 性能问题 {#user-guide-performance-issues}
 
-- Cache songbook video files
+- 缓存诗歌视频文件
 - 降低最高视频分辨率
 - 清理旧缓存文件
 - 检查可用磁盘空间
@@ -433,7 +434,7 @@ M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 1. **检查下载** —— 确认所有需要的媒体都已经下载完成
 2. **测试设备** —— 检查显示和音频是否正常
 3. **准备媒体** —— 查看并整理本次聚会所需的媒体，确认没有缺失
-4. **替代方案**：根据设备配置使用 Zoom 的“共享计算机声音”
+4. **配置音频** —— 对于混合聚会，在 Zoom 中启用原始音频或设置“共享计算机声音”
 
 ### 聚会期间 {#during-meetings}
 

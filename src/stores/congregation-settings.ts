@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
-import type { SettingsValues } from 'src/types';
+import type {
+  FeatureNudgeId,
+  FeatureNudgeProfileState,
+  FeatureNudgeResponse,
+  SettingsValues,
+} from 'src/types';
 
 import { defineStore } from 'pinia';
 import { defaultSettings } from 'src/constants/settings';
@@ -12,6 +17,8 @@ import { useJwStore } from 'stores/jw';
 interface Store {
   announcements: Partial<Record<string, string[]>>;
   congregations: Partial<Record<string, SettingsValues>>;
+  /** Answers to the "Did you know?" feature suggestions, per profile. */
+  featureNudges: Partial<Record<string, FeatureNudgeProfileState>>;
   quickStartTourSeen: Partial<Record<string, boolean>>;
 }
 
@@ -152,6 +159,7 @@ export const useCongregationSettingsStore = defineStore(
         // to remember to duplicate it.
         const congId = String(id);
         delete this.announcements[congId];
+        delete this.featureNudges[congId];
         delete this.quickStartTourSeen[congId];
         delete useJwStore().lookupPeriod[congId];
       },
@@ -165,6 +173,27 @@ export const useCongregationSettingsStore = defineStore(
       markQuickStartTourSeen(congId: string) {
         if (!congId) return;
         this.quickStartTourSeen[congId] = true;
+      },
+      recordFeatureNudgeResponse(
+        congId: string,
+        nudgeId: FeatureNudgeId,
+        response: FeatureNudgeResponse,
+      ) {
+        if (!congId) return;
+        this.featureNudges[congId] ??= { responses: {} };
+        this.featureNudges[congId].responses[nudgeId] = {
+          at: Date.now(),
+          response,
+        };
+      },
+      resetFeatureNudges(congId: string) {
+        if (!congId) return;
+        delete this.featureNudges[congId];
+      },
+      stopFeatureNudges(congId: string) {
+        if (!congId) return;
+        this.featureNudges[congId] ??= { responses: {} };
+        this.featureNudges[congId].stopped = true;
       },
       updateCongregationsWithMissingSettings() {
         let updatedCount = 0;
@@ -290,7 +319,12 @@ export const useCongregationSettingsStore = defineStore(
       },
     },
     state: (): Store => {
-      return { announcements: {}, congregations: {}, quickStartTourSeen: {} };
+      return {
+        announcements: {},
+        congregations: {},
+        featureNudges: {},
+        quickStartTourSeen: {},
+      };
     },
   },
 );

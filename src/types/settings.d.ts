@@ -158,14 +158,9 @@ export type SettingsItemAction =
   | 'openCongregationLookup'
   | 'openZoomSetupAssistant'
   | 'openZoomSetupAssistantIfNeeded'
+  | 'resetFeatureNudges'
   | 'setBackgroundMusicVolume'
-  | 'syncMeetingSchedule'
-  | 'zoomCaptureMicOffTitle'
-  | 'zoomCaptureMicOnTitle'
-  | 'zoomCaptureShareButtonTitle'
-  | 'zoomCaptureVideoOffTitle'
-  | 'zoomCaptureVideoOnTitle'
-  | 'zoomLearnHandRaised';
+  | 'syncMeetingSchedule';
 
 export type SettingsItemListKey =
   | 'appLanguages'
@@ -194,6 +189,7 @@ export type SettingsItemSubgroup =
   | 'customEvents'
   | 'dangerZone'
   | 'dragAndDrop'
+  | 'featureSuggestions'
   | 'folderWatcher'
   | 'interfaceDisplay'
   | 'keyboardShortcuts'
@@ -317,6 +313,7 @@ export interface SettingsValues {
   recordingStartShortcut: null | string;
   recordingStopShortcut: null | string;
   relinkCongregationButton: boolean;
+  resetFeatureSuggestions: null;
   reSyncMeetingScheduleButton: boolean;
   shortcutMediaNext: null | string;
   shortcutMediaPauseResume: null | string;
@@ -355,6 +352,9 @@ export interface SettingsValues {
   zoomCancelAutomationShortcut: null | string;
   zoomEnable: boolean;
   zoomHandRaisedPhrase: null | string;
+  zoomJoinAudioTitle: null | string;
+  /** Zoom's version when the learned names last passed a check. */
+  zoomLearnedVersion: null | string;
   zoomLowerHandTitle: null | string;
   zoomMeetingManagerAutoLaunchMeeting: boolean;
   zoomMeetingManagerAutomateMediaSharing: boolean;
@@ -368,8 +368,12 @@ export interface SettingsValues {
   zoomMeetingManagerStartupCheck: boolean;
   zoomMicOffTitle: null | string;
   zoomMicOnTitle: null | string;
+  zoomMuteAllTitle: null | string;
+  zoomParticipantsButtonTitle: null | string;
+  zoomReactButtonTitle: null | string;
   zoomScreenShareShortcut: null | string;
   zoomShareButtonTitle: null | string;
+  zoomStopShareTitle: null | string;
   zoomVideoOffTitle: null | string;
   zoomVideoOnTitle: null | string;
 }

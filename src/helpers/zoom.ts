@@ -4,11 +4,11 @@ import type {
   ZoomCommandResult,
   ZoomCommandType,
   ZoomDiagnosis,
+  ZoomKnownTitles,
   ZoomMeetingState,
 } from 'src/types';
 
 import { i18n } from 'boot/i18n';
-import { Dialog } from 'quasar';
 import { AUTO_START_WINDOW_HOURS } from 'src/constants/date';
 import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { getMeetingStartToday, isMemorialDay } from 'src/helpers/date';
@@ -190,13 +190,73 @@ const runCommand = async (command: ZoomCommand): Promise<ZoomCommandResult> => {
   );
 };
 
+/** Which Setting keeps each name the helper learns from Zoom. */
+const LEARNED_TITLE_SETTINGS: Partial<
+  Record<keyof ZoomKnownTitles, keyof SettingsValues>
+> = {
+  joinAudio: 'zoomJoinAudioTitle',
+  muteAll: 'zoomMuteAllTitle',
+  participants: 'zoomParticipantsButtonTitle',
+  stopShare: 'zoomStopShareTitle',
+};
+
+/** The names of Zoom's controls learned so far, for the helper to go by. */
+const knownZoomTitles = (): ZoomKnownTitles => {
+  const settings = getSettings();
+  return {
+    joinAudio: settings?.zoomJoinAudioTitle ?? null,
+    micOff: settings?.zoomMicOffTitle ?? null,
+    micOn: settings?.zoomMicOnTitle ?? null,
+    muteAll: settings?.zoomMuteAllTitle ?? null,
+    participants: settings?.zoomParticipantsButtonTitle ?? null,
+    stopShare: settings?.zoomStopShareTitle ?? null,
+  };
+};
+
+const rememberLearnedTitles = (learned: undefined | ZoomKnownTitles) => {
+  if (!learned) return;
+  for (const [key, settingKey] of Object.entries(LEARNED_TITLE_SETTINGS)) {
+    const title = learned[key as keyof ZoomKnownTitles];
+    if (title) saveSetting(settingKey, title);
+  }
+};
+
+/**
+ * Leaves what Zoom showed when an action failed (its version, windows and
+ * button names: nothing personal) on the Sentry trail, so a report of
+ * paused automations says what M³ was looking at.
+ */
+const leaveFailureBreadcrumb = async (
+  commandType: ZoomCommandType,
+  result: ZoomCommandResult,
+) => {
+  try {
+    const { addBreadcrumb } = await import('@sentry/vue');
+    addBreadcrumb({
+      category: 'zoom',
+      data: { error: result.error, ...result.snapshot },
+      level: 'warning',
+      message: `Zoom action failed: ${commandType}`,
+    });
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'leaveFailureBreadcrumb' } },
+    });
+  }
+};
+
 const sendCommand = async (
   command: ZoomCommand,
 ): Promise<ZoomCommandResult> => {
   try {
-    const result = await globalThis.electronApi.zoomCommand(command);
+    const result = await globalThis.electronApi.zoomCommand({
+      ...command,
+      titles: { ...knownZoomTitles(), ...command.titles },
+    });
+    rememberLearnedTitles(result.learned);
     if (!result.ok) {
       log(`Zoom action failed: ${command.type}`, 'zoom', 'warn', result);
+      void leaveFailureBreadcrumb(command.type, result);
     }
     return result;
   } catch (error) {
@@ -277,7 +337,67 @@ export const getZoomMeetingState = async (
   const meeting = result.ok ? (result.meeting ?? null) : null;
   // What the action island's Zoom button shows.
   useZoomStateStore().setMeeting(meeting);
+  noticeZoomChanges(meeting);
   return meeting;
+};
+
+// --- Noticing that Zoom changed ---------------------------------------------
+
+/** Dispatched on `globalThis` when Zoom looks different from what M³ learned. */
+export const ZOOM_CHANGED_EVENT = 'zoomChanged';
+
+let noticedZoomVersion: null | string = null;
+let noticedVideoTitle: null | string = null;
+
+/**
+ * Zoom was updated since the learned names last passed a check, or its
+ * buttons no longer read as learned (its language was changed, say): worth
+ * checking everything again before the meeting, which the startup check
+ * does on this event (see watchZoomChanges). Each change is noticed once.
+ */
+const noticeZoomChanges = (meeting: null | ZoomMeetingState) => {
+  const settings = getSettings();
+  if (!meeting?.found || !settings?.zoomMeetingManagerEnable) return;
+  let reason: 'names' | 'version' | null = null;
+  const { zoomVersion } = meeting;
+  if (
+    zoomVersion &&
+    settings.zoomLearnedVersion &&
+    zoomVersion !== settings.zoomLearnedVersion &&
+    noticedZoomVersion !== zoomVersion
+  ) {
+    noticedZoomVersion = zoomVersion;
+    reason = 'version';
+  }
+  const { videoTitle } = meeting;
+  const { zoomVideoOffTitle, zoomVideoOnTitle } = settings;
+  if (
+    !reason &&
+    videoTitle &&
+    zoomVideoOnTitle &&
+    zoomVideoOffTitle &&
+    videoTitle !== zoomVideoOnTitle &&
+    videoTitle !== zoomVideoOffTitle &&
+    noticedVideoTitle !== videoTitle
+  ) {
+    noticedVideoTitle = videoTitle;
+    reason = 'names';
+  }
+  if (!reason) return;
+  log(`Zoom changed (${reason}): worth checking again`, 'zoom', 'warn', {
+    learnedVersion: settings.zoomLearnedVersion,
+    videoTitle,
+    zoomVersion,
+  });
+  globalThis.dispatchEvent(
+    new CustomEvent(ZOOM_CHANGED_EVENT, { detail: { reason } }),
+  );
+};
+
+/** Remembers Zoom's version as the one the learned names work with. */
+export const rememberZoomVersion = () => {
+  const version = useZoomStateStore().meeting?.zoomVersion;
+  if (version) saveSetting('zoomLearnedVersion', version);
 };
 
 // --- Individual steps ------------------------------------------------------
@@ -397,25 +517,36 @@ export const askAllZoomParticipantsToUnmute = async () => {
 
 /**
  * Learns how Zoom marks a raised hand in the user's language, by raising
- * and lowering the host's own hand, and saves it to Settings.
+ * and lowering the host's own hand from Zoom's Reactions panel, and saves it
+ * to Settings (for the setup assistant, which reports the outcome itself).
+ * The Reactions button's name is remembered too: it's how the button is
+ * found once Zoom moves it into its "More" menu. `reactButtonTitle` is the
+ * React entry to try, the remembered one by default; when M³ can't find it,
+ * the result says so (see isZoomReactButtonMissing) and the assistant asks
+ * the user to pick it.
  */
-export const learnZoomHandRaisedPhrase = async () => {
-  const result = await runCommand({ type: 'learn-hand-raised' });
+export const learnZoomHandRaisedPhrase = async (
+  reactButtonTitle = getSettings()?.zoomReactButtonTitle ?? null,
+) => {
+  const result = await runCommand({
+    reactButtonTitle,
+    type: 'learn-hand-raised',
+  });
+  if (
+    result.reactButtonTitle &&
+    getSettings()?.zoomReactButtonTitle !== result.reactButtonTitle
+  ) {
+    saveSetting('zoomReactButtonTitle', result.reactButtonTitle);
+  }
   if (result.ok && result.phrase) {
     saveSetting('zoomHandRaisedPhrase', result.phrase);
-    if (!feedbackMuted) {
-      createTemporaryNotification({
-        group: 'zoom-settings',
-        icon: 'mmm-check',
-        message: t('zoom-hand-learned', { phrase: result.phrase }),
-        type: 'positive',
-      });
-    }
-  } else {
-    notifyFailure('zoom-settings', 'zoom-hand-learn-failed');
   }
   return result;
 };
+
+/** M³ couldn't find Zoom's React button, so the user should pick it. */
+export const isZoomReactButtonMissing = (result: ZoomCommandResult) =>
+  result.error === 'react-button-not-found';
 
 /**
  * Who in the meeting has their hand raised, or null if Zoom's participants
@@ -896,6 +1027,57 @@ export const diagnoseZoom = async (): Promise<null | ZoomDiagnosis> => {
 };
 
 /**
+ * Tries an entry the user picked as Zoom's Participants button (named in
+ * their Zoom language, and sometimes kept in Zoom's "More" menu), and keeps
+ * it once it has opened the participants panel.
+ */
+export const tryZoomParticipantsEntry = async (entry: string) => {
+  const result = await runCommand({
+    titles: { participants: entry },
+    type: 'participants',
+  });
+  if (result.ok) saveSetting('zoomParticipantsButtonTitle', entry);
+  return result.ok;
+};
+
+/** The buttons under Zoom's participants list, to pick "Mute all" from. */
+export const getZoomPanelEntries = async (): Promise<string[]> => {
+  const result = await runCommand({ type: 'panel-entries' });
+  return result.ok ? (result.entries ?? []) : [];
+};
+
+/**
+ * Tries an entry the user picked as Zoom's "Mute all" button: it counts,
+ * and is kept, once Zoom has asked to confirm muting everyone (which the
+ * helper declines).
+ */
+export const tryZoomMuteAllEntry = async (entry: string) => {
+  const result = await runCommand({
+    title: entry,
+    type: 'test-mute-all-entry',
+  });
+  return result.ok && !!result.isMuteAll;
+};
+
+/** The share toolbar's buttons while sharing, to pick "Stop share" from. */
+export const getZoomShareToolbarEntries = async (): Promise<string[]> => {
+  const result = await runCommand({ type: 'share-toolbar-entries' });
+  return result.ok ? (result.entries ?? []) : [];
+};
+
+/**
+ * Tries an entry the user picked as Zoom's "Stop share" button: it counts,
+ * and is kept, once sharing has stopped.
+ */
+export const tryZoomStopShareEntry = async (entry: string) => {
+  const result = await runCommand({
+    title: entry,
+    type: 'test-stop-share-entry',
+  });
+  return result.ok && !!result.stopped;
+};
+
+/**
  * Learns a two-state button's name in both states (Zoom only shows them in
  * the user's language): switches it once, then back, and saves both names
  * to Settings.
@@ -905,13 +1087,17 @@ const learnButtonTitles = async (
   what: 'mic' | 'video',
   isOn: boolean,
   settingKeys: { off: keyof SettingsValues; on: keyof SettingsValues },
+  assumeAudioJoined = false,
 ): Promise<{ error?: string; ok: boolean }> => {
-  const toggle = what === 'mic' ? 'toggle-mic' : 'toggle-video';
-  const switched = await runCommand({ type: toggle });
+  const toggle: ZoomCommand =
+    what === 'mic'
+      ? { assumeAudioJoined, type: 'toggle-mic' }
+      : { type: 'toggle-video' };
+  const switched = await runCommand(toggle);
   if (!switched.ok || !switched.before || !switched.after) {
     return { error: switched.error ?? `${what}-not-changed`, ok: false };
   }
-  const back = await runCommand({ type: toggle });
+  const back = await runCommand(toggle);
   if (!back.ok || back.after !== switched.before) {
     return { error: back.error ?? `${what}-not-restored`, ok: false };
   }
@@ -935,19 +1121,34 @@ export const learnZoomVideoTitles = (cameraIsOn: boolean) =>
  * Computer audio has to be joined first (see joinZoomAudioForSetup).
  * @param micIsOn What the user says their microphone is doing right now.
  */
-export const learnZoomMicTitles = (micIsOn: boolean) =>
-  learnButtonTitles('mic', micIsOn, {
-    off: 'zoomMicOffTitle',
-    on: 'zoomMicOnTitle',
-  });
+/**
+ * @param assumeAudioJoined The user said computer audio is joined, where
+ * M³ couldn't tell (see joinZoomAudioForSetup).
+ */
+export const learnZoomMicTitles = (
+  micIsOn: boolean,
+  assumeAudioJoined = false,
+) =>
+  learnButtonTitles(
+    'mic',
+    micIsOn,
+    { off: 'zoomMicOffTitle', on: 'zoomMicOnTitle' },
+    assumeAudioJoined,
+  );
 
 /**
  * Joins computer audio for the setup assistant, without a notification or
  * the meeting checklist: Zoom only has a microphone button once joined.
- * Resolves to whether computer audio is joined.
+ * 'unknown' when M³ can't tell "Join audio" from a microphone button that
+ * has no keyboard shortcut (nothing was changed): the user is asked.
  */
-export const joinZoomAudioForSetup = async () =>
-  (await runCommand({ type: 'join-audio' })).ok;
+export const joinZoomAudioForSetup = async (): Promise<
+  'failed' | 'joined' | 'unknown'
+> => {
+  const result = await runCommand({ type: 'join-audio' });
+  if (result.audioStateUnknown) return 'unknown';
+  return result.ok ? 'joined' : 'failed';
+};
 
 /**
  * Checks that Zoom's share picker opens through the given Share entry (or
@@ -976,56 +1177,6 @@ export const getZoomShareEntries = async (): Promise<{
   const result = await runCommand({ type: 'share-entries' });
   if (!result.ok) return { more: [], toolbar: [] };
   return { more: result.moreEntries ?? [], toolbar: result.entries ?? [] };
-};
-
-// --- Capturing Zoom's translated names into Settings -----------------------
-
-/**
- * Saves a button's current name, which Zoom only exposes in the user's Zoom
- * language, as its name for the state being captured.
- */
-const captureButtonTitle = async (
-  command: 'mic-title' | 'video-title',
-  settingKey: keyof SettingsValues,
-) => {
-  const result = await runCommand({ type: command });
-  if (result.ok && result.title) {
-    saveSetting(settingKey, result.title);
-  } else {
-    notifyFailure('zoom-settings', 'zoom-capture-failed');
-  }
-};
-
-export const captureZoomVideoTitle = (
-  settingKey: 'zoomVideoOffTitle' | 'zoomVideoOnTitle',
-) => captureButtonTitle('video-title', settingKey);
-
-export const captureZoomMicTitle = (
-  settingKey: 'zoomMicOffTitle' | 'zoomMicOnTitle',
-) => captureButtonTitle('mic-title', settingKey);
-
-/** Lets the user pick which toolbar or "More" entry is Share. */
-export const captureZoomShareButtonTitle = async () => {
-  const { more, toolbar } = await getZoomShareEntries();
-  const entries = [...toolbar, ...more];
-  if (entries.length === 0) {
-    notifyFailure('zoom-settings', 'zoom-capture-failed');
-    return;
-  }
-
-  Dialog.create({
-    cancel: true,
-    message: t('zoom-select-button-message'),
-    options: {
-      items: entries.map((entry) => ({ label: entry, value: entry })),
-      model: '',
-      type: 'radio',
-    },
-    persistent: true,
-    title: t('zoom-select-button'),
-  }).onOk((entry: string) => {
-    if (entry) saveSetting('zoomShareButtonTitle', entry);
-  });
 };
 
 /**

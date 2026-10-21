@@ -18,10 +18,14 @@ let hasReportedMissingSecretEncryption = false;
  * plausible real-world case for an always-on congregation media PC. The
  * renderer surfaces this so the user knows a secret like the OBS password is
  * sitting on disk as plain text, instead of that happening silently.
+ *
+ * Uses safeStorage's asynchronous API: the synchronous methods are
+ * deprecated in Electron 45 and removed in 46. Both use the same OS key
+ * stores, so values encrypted by earlier versions still decrypt.
  * @returns Whether OS-backed secret encryption is available
  */
-export const isSecretEncryptionAvailable = (): boolean =>
-  safeStorage.isEncryptionAvailable();
+export const isSecretEncryptionAvailable = (): Promise<boolean> =>
+  safeStorage.isAsyncEncryptionAvailable().catch(() => false);
 
 /**
  * Encrypts a secret (e.g. the OBS websocket password) using the OS
@@ -35,9 +39,9 @@ export const isSecretEncryptionAvailable = (): boolean =>
  * @returns The encrypted, prefixed value, or the original text if
  * encryption isn't available
  */
-export const encryptSecret = (plainText: string): string => {
+export const encryptSecret = async (plainText: string): Promise<string> => {
   if (!plainText) return '';
-  if (!safeStorage.isEncryptionAvailable()) {
+  if (!(await isSecretEncryptionAvailable())) {
     if (!hasReportedMissingSecretEncryption) {
       hasReportedMissingSecretEncryption = true;
       addElectronBreadcrumb({
@@ -50,7 +54,7 @@ export const encryptSecret = (plainText: string): string => {
   }
 
   try {
-    const encrypted = safeStorage.encryptString(plainText);
+    const encrypted = await safeStorage.encryptStringAsync(plainText);
     return `${ENCRYPTED_PREFIX}${encrypted.toString('base64')}`;
   } catch {
     return plainText;
@@ -63,12 +67,16 @@ export const encryptSecret = (plainText: string): string => {
  * secrets stored before encryption was introduced, and are returned
  * unchanged so existing users aren't forced to re-enter them; the next
  * save transparently re-encrypts them.
+ *
+ * `shouldReEncrypt` from safeStorage is not acted on here: the renderer
+ * re-encrypts every secret on its first save of each session anyway (its
+ * encryption cache starts empty), which picks up the current key.
  * @param value The stored value to decrypt
  * @returns The decrypted secret, the original value if it was never
  * encrypted, or an empty string if a genuinely encrypted value can no
  * longer be decrypted (e.g. moved to a different machine/OS user)
  */
-export const decryptSecret = (value: string): string => {
+export const decryptSecret = async (value: string): Promise<string> => {
   if (!value) return '';
   if (!value.startsWith(ENCRYPTED_PREFIX)) return value;
 
@@ -77,7 +85,8 @@ export const decryptSecret = (value: string): string => {
       value.slice(ENCRYPTED_PREFIX.length),
       'base64',
     );
-    return safeStorage.decryptString(encrypted);
+    const { result } = await safeStorage.decryptStringAsync(encrypted);
+    return result;
   } catch {
     return '';
   }

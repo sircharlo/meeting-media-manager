@@ -1,3 +1,4 @@
+import type { ZoomSelfTestStep } from 'src/helpers/zoom-self-test';
 import type { ZoomDiagnosis } from 'src/types';
 
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils';
@@ -13,19 +14,26 @@ import DialogZoomSetupAssistant from '../DialogZoomSetupAssistant.vue';
 const zoom = vi.hoisted(() => ({
   diagnoseZoom: vi.fn(),
   getZoomMeetingState: vi.fn(),
+  getZoomPanelEntries: vi.fn(),
   getZoomShareEntries: vi.fn(),
+  getZoomShareToolbarEntries: vi.fn(),
   joinZoomAudioForSetup: vi.fn(),
   learnZoomHandRaisedPhrase: vi.fn(),
   learnZoomMicTitles: vi.fn(),
   learnZoomVideoTitles: vi.fn(),
   runZoomSelfTest: vi.fn(),
   testZoomShareEntry: vi.fn(),
+  tryZoomMuteAllEntry: vi.fn(),
+  tryZoomParticipantsEntry: vi.fn(),
+  tryZoomStopShareEntry: vi.fn(),
 }));
 
 vi.mock('src/helpers/zoom', () => ({
   diagnoseZoom: zoom.diagnoseZoom,
   getZoomMeetingState: zoom.getZoomMeetingState,
+  getZoomPanelEntries: zoom.getZoomPanelEntries,
   getZoomShareEntries: zoom.getZoomShareEntries,
+  getZoomShareToolbarEntries: zoom.getZoomShareToolbarEntries,
   getZoomTitlesFromSettings: () => ({
     micOffTitle: 'Unmute',
     micOnTitle: 'Mute',
@@ -33,12 +41,18 @@ vi.mock('src/helpers/zoom', () => ({
     videoOffTitle: 'Start Video',
     videoOnTitle: 'Stop Video',
   }),
+  isZoomReactButtonMissing: (result: { error?: string }) =>
+    result.error === 'react-button-not-found',
   joinZoomAudioForSetup: zoom.joinZoomAudioForSetup,
   learnZoomHandRaisedPhrase: zoom.learnZoomHandRaisedPhrase,
   learnZoomMicTitles: zoom.learnZoomMicTitles,
   learnZoomVideoTitles: zoom.learnZoomVideoTitles,
   prepareMediaWindowForZoomTest: async () => () => undefined,
+  rememberZoomVersion: vi.fn(),
   testZoomShareEntry: zoom.testZoomShareEntry,
+  tryZoomMuteAllEntry: zoom.tryZoomMuteAllEntry,
+  tryZoomParticipantsEntry: zoom.tryZoomParticipantsEntry,
+  tryZoomStopShareEntry: zoom.tryZoomStopShareEntry,
   withoutZoomFeedback: (run: () => unknown) => run(),
 }));
 
@@ -61,7 +75,6 @@ const ALL_GOOD: ZoomDiagnosis = {
   participantsPanel: true,
   toolbar: true,
   videoButton: true,
-  videoShortcutDefault: true,
 };
 
 let wrapper: undefined | VueWrapper;
@@ -151,7 +164,7 @@ beforeEach(() => {
     settings().zoomVideoOffTitle = 'Start Video';
     return { ok: true };
   });
-  zoom.joinZoomAudioForSetup.mockResolvedValue(true);
+  zoom.joinZoomAudioForSetup.mockResolvedValue('joined');
   zoom.learnZoomMicTitles.mockImplementation(async () => {
     settings().zoomMicOnTitle = 'Mute';
     settings().zoomMicOffTitle = 'Unmute';
@@ -167,6 +180,8 @@ beforeEach(() => {
     windowSelected: true,
   });
   zoom.getZoomShareEntries.mockResolvedValue({ more: [], toolbar: [] });
+  zoom.getZoomPanelEntries.mockResolvedValue([]);
+  zoom.getZoomShareToolbarEntries.mockResolvedValue([]);
   zoom.runZoomSelfTest.mockResolvedValue([]);
 });
 
@@ -264,13 +279,13 @@ describe('DialogZoomSetupAssistant', () => {
     expect(isDisabled(button('Continue'))).toBe(true);
     await click("No, it's muted");
 
-    expect(zoom.learnZoomMicTitles).toHaveBeenCalledWith(false);
+    expect(zoom.learnZoomMicTitles).toHaveBeenCalledWith(false, false);
     expect(text()).toContain("“Mute” while it's on");
     expect(isDisabled(button('Continue'))).toBe(false);
   });
 
   it('only asks about the microphone once computer audio is joined', async () => {
-    zoom.joinZoomAudioForSetup.mockResolvedValueOnce(false);
+    zoom.joinZoomAudioForSetup.mockResolvedValueOnce('failed');
     await mountAssistant();
     await reachVideoStep();
     await click("Yes, it's on"); // camera
@@ -281,6 +296,24 @@ describe('DialogZoomSetupAssistant', () => {
 
     await click('Try again');
     expect(text()).toContain('Is your microphone on');
+  });
+
+  it("asks whether computer audio is joined when M³ can't tell, and learns the microphone on that word", async () => {
+    zoom.joinZoomAudioForSetup.mockResolvedValueOnce('unknown');
+    await mountAssistant();
+    await reachVideoStep();
+    await click("Yes, it's on"); // camera
+    await click('Continue');
+
+    expect(text()).toContain("M³ can't tell whether computer audio is joined");
+    expect(text()).not.toContain('Is your microphone on');
+
+    await click('Computer audio is joined');
+    expect(text()).toContain('Is your microphone on');
+    await click("Yes, it's on");
+
+    expect(zoom.learnZoomMicTitles).toHaveBeenCalledWith(true, true);
+    expect(isDisabled(button('Continue'))).toBe(false);
   });
 
   it('learns how Zoom marks a raised hand', async () => {
@@ -297,6 +330,217 @@ describe('DialogZoomSetupAssistant', () => {
 
     expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenCalledOnce();
     expect(text()).toContain('recognizes raised hands (“Hand raised”)');
+    expect(isDisabled(button('Continue'))).toBe(false);
+  });
+
+  it("lets the user pick the Participants entry when M³ can't find Zoom's Participants button", async () => {
+    zoom.diagnoseZoom.mockResolvedValue({
+      ...ALL_GOOD,
+      hostControls: false,
+      participantsButtonMissing: true,
+      participantsPanel: false,
+    });
+    zoom.getZoomShareEntries.mockResolvedValue({
+      more: ['Participants', 'Enregistrer'],
+      toolbar: ['Partager'],
+    });
+    zoom.tryZoomParticipantsEntry
+      .mockResolvedValueOnce(false)
+      .mockImplementationOnce(async () => {
+        zoom.diagnoseZoom.mockResolvedValue(ALL_GOOD);
+        return true;
+      });
+    await mountAssistant();
+    await click('Continue'); // welcome
+    await typeMeetingId('987 654 3210');
+    await vi.waitFor(() =>
+      expect(text()).toContain('Connected to your Zoom meeting'),
+    );
+    await click('Continue'); // meeting: the checks run
+
+    await vi.waitFor(() =>
+      expect(text()).toContain('find the one that opens the participants list'),
+    );
+    expect(text()).toContain('Which of these opens the participants list');
+    expect(isDisabled(button('Continue'))).toBe(true);
+
+    const pick = async (label: string) => {
+      const option = Array.from(document.querySelectorAll('.q-radio')).find(
+        (el) => el.textContent?.includes(label),
+      ) as HTMLElement;
+      option.click();
+      await flushPromises();
+      await click('Try this one');
+    };
+
+    await pick('Partager');
+    expect(zoom.tryZoomParticipantsEntry).toHaveBeenLastCalledWith('Partager');
+    expect(text()).toContain("That didn't open the participants list");
+
+    await pick('Participants');
+    expect(zoom.tryZoomParticipantsEntry).toHaveBeenLastCalledWith(
+      'Participants',
+    );
+    // The checks ran again with the panel open and all passed.
+    await vi.waitFor(() => expect(isDisabled(button('Continue'))).toBe(false));
+    expect(text()).not.toContain('Which of these opens the participants list');
+  });
+
+  it('lets the host point out the "Mute all" button when M³ doesn\'t recognize it', async () => {
+    zoom.diagnoseZoom.mockResolvedValue({
+      ...ALL_GOOD,
+      hostControls: false,
+      muteAllButtonMissing: true,
+    });
+    zoom.getZoomPanelEntries.mockResolvedValue([
+      'Inviter',
+      'Désactiver tous les sons',
+    ]);
+    zoom.tryZoomMuteAllEntry
+      .mockResolvedValueOnce(false)
+      .mockImplementationOnce(async () => {
+        zoom.diagnoseZoom.mockResolvedValue(ALL_GOOD);
+        return true;
+      });
+    await mountAssistant();
+    await click('Continue'); // welcome
+    await typeMeetingId('987 654 3210');
+    await vi.waitFor(() =>
+      expect(text()).toContain('Connected to your Zoom meeting'),
+    );
+    await click('Continue'); // meeting: the checks run
+
+    await vi.waitFor(() =>
+      expect(text()).toContain(
+        "didn't recognize the button that mutes everyone",
+      ),
+    );
+    expect(text()).toContain("Under Zoom's participants list");
+    expect(isDisabled(button('Continue'))).toBe(true);
+
+    const pick = async (label: string) => {
+      const option = Array.from(document.querySelectorAll('.q-radio')).find(
+        (el) => el.textContent?.includes(label),
+      ) as HTMLElement;
+      option.click();
+      await flushPromises();
+      await click('Try this one');
+    };
+
+    await pick('Inviter');
+    expect(zoom.tryZoomMuteAllEntry).toHaveBeenLastCalledWith('Inviter');
+    expect(text()).toContain("That didn't ask to confirm muting everyone");
+
+    await pick('Désactiver tous les sons');
+    await vi.waitFor(() => expect(isDisabled(button('Continue'))).toBe(false));
+    expect(text()).not.toContain('Which of these mutes everyone?');
+  });
+
+  it('lets the user point out the "Stop share" button when the test could not stop sharing', async () => {
+    const failedStop: ZoomSelfTestStep[] = [
+      { id: 'share-start', status: 'passed' },
+      { id: 'share-stop', status: 'failed' },
+    ];
+    zoom.runZoomSelfTest
+      .mockResolvedValueOnce(failedStop)
+      .mockResolvedValueOnce([
+        { id: 'share-start', status: 'passed' },
+        { id: 'share-stop', status: 'passed' },
+      ]);
+    zoom.getZoomMeetingState.mockResolvedValue({ found: true, sharing: true });
+    zoom.getZoomShareToolbarEntries.mockResolvedValue([
+      'Mettre le partage en pause',
+      'Arrêter le partage',
+    ]);
+    zoom.tryZoomStopShareEntry
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce(true);
+    await mountAssistant();
+    await reachVideoStep();
+    await learnButtons();
+    await click('Check sharing');
+    await click('Continue'); // share
+    await click('Continue'); // automations
+
+    await click('Run the test');
+    await vi.waitFor(() =>
+      expect(text()).toContain("didn't recognize the button that stops it"),
+    );
+    expect(text()).toContain("In Zoom's sharing toolbar");
+
+    const pick = async (label: string) => {
+      const option = Array.from(document.querySelectorAll('.q-radio')).find(
+        (el) => el.textContent?.includes(label),
+      ) as HTMLElement;
+      option.click();
+      await flushPromises();
+      await click('Try this one');
+    };
+
+    await pick('Mettre le partage en pause');
+    expect(text()).toContain("That didn't stop sharing");
+
+    await pick('Arrêter le partage');
+    expect(zoom.tryZoomStopShareEntry).toHaveBeenLastCalledWith(
+      'Arrêter le partage',
+    );
+    // Sharing stopped through that button: the test ran again and passed.
+    await vi.waitFor(() =>
+      expect(zoom.runZoomSelfTest).toHaveBeenCalledTimes(2),
+    );
+    await vi.waitFor(() =>
+      expect(text()).not.toContain("In Zoom's sharing toolbar"),
+    );
+  });
+
+  it("lets the user pick the React entry when M³ can't find Zoom's React button", async () => {
+    zoom.learnZoomHandRaisedPhrase
+      .mockResolvedValueOnce({ error: 'react-button-not-found', ok: false })
+      .mockResolvedValueOnce({ error: 'react-button-not-found', ok: false })
+      .mockImplementationOnce(async () => {
+        settings().zoomHandRaisedPhrase = 'Main levée';
+        return { ok: true, phrase: 'Main levée', reactButtonTitle: 'Réagir' };
+      });
+    zoom.getZoomShareEntries.mockResolvedValue({
+      more: ['Réagir', 'Enregistrer'],
+      toolbar: ['Partager'],
+    });
+    await mountAssistant();
+    await reachVideoStep();
+    await click("Yes, it's on"); // camera
+    await click('Continue');
+    await click("Yes, it's on"); // microphone
+    await click('Continue');
+
+    await click('Raise and lower my hand');
+    expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenLastCalledWith(undefined);
+    // Asking is expected, not reported as an error.
+    expect(text()).toContain('M³ needs your help to find its React button');
+    expect(text()).not.toContain("That didn't open Zoom's reactions");
+    expect(text()).toContain("Which of these opens Zoom's reactions?");
+    // React is asked for once Zoom has moved it into "More": listed first.
+    expect(text().indexOf('In Zoom\'s "More" menu')).toBeLessThan(
+      text().indexOf("In Zoom's toolbar"),
+    );
+    expect(isDisabled(button('Continue'))).toBe(true);
+
+    const pick = async (label: string) => {
+      const option = Array.from(document.querySelectorAll('.q-radio')).find(
+        (el) => el.textContent?.includes(label),
+      ) as HTMLElement;
+      option.click();
+      await flushPromises();
+      await click('Try this one');
+    };
+
+    await pick('Partager');
+    expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenLastCalledWith('Partager');
+    expect(text()).toContain("That didn't open Zoom's reactions");
+
+    await pick('Réagir');
+    expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenLastCalledWith('Réagir');
+    expect(text()).toContain('recognizes raised hands (“Main levée”)');
+    expect(text()).not.toContain("Which of these opens Zoom's reactions?");
     expect(isDisabled(button('Continue'))).toBe(false);
   });
 
@@ -433,6 +677,56 @@ describe('DialogZoomSetupAssistant', () => {
     expect(text()).toContain("You're all set!");
     await click('Finish');
     expect(settings().zoomMeetingManagerEnable).toBe(true);
+  });
+
+  // With a media scene, OBS Studio already shows the media in Zoom, so Zoom
+  // mustn't share it too
+  it('leaves media sharing off while OBS Studio has a media scene, and offers to switch', async () => {
+    await mountAssistant({
+      obsCameraScene: 'Camera',
+      obsEnable: true,
+      obsImageScene: 'Images',
+      obsMediaScene: 'Media',
+      obsPassword: 'secret',
+      obsPort: '4455',
+    });
+    await reachVideoStep();
+    await learnButtons();
+    await click('Check sharing');
+    await click('Continue');
+
+    expect(settings().zoomMeetingManagerAutomateMediaSharing).toBe(false);
+    expect(settings().zoomMeetingManagerAutomateMeetingAudioSettings).toBe(
+      true,
+    );
+    expect(text()).toContain(
+      "Zoom can't share the media window while OBS Studio has a media scene set",
+    );
+
+    await click('Let Zoom share media instead');
+    expect(settings().obsMediaScene).toBeNull();
+    expect(settings().obsImageScene).toBeNull();
+    // The rest of the OBS Studio integration stays on
+    expect(settings().obsEnable).toBe(true);
+    expect(settings().obsCameraScene).toBe('Camera');
+    expect(settings().zoomMeetingManagerAutomateMediaSharing).toBe(true);
+    expect(text()).not.toContain("Zoom can't share the media window");
+  });
+
+  it('preselects media sharing when OBS Studio has no media scene', async () => {
+    await mountAssistant({
+      obsCameraScene: 'Camera',
+      obsEnable: true,
+      obsPassword: 'secret',
+      obsPort: '4455',
+    });
+    await reachVideoStep();
+    await learnButtons();
+    await click('Check sharing');
+    await click('Continue');
+
+    expect(settings().zoomMeetingManagerAutomateMediaSharing).toBe(true);
+    expect(text()).not.toContain("Zoom can't share the media window");
   });
 
   it('lets optional steps be skipped', async () => {

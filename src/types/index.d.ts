@@ -1,6 +1,7 @@
 export * from './congregation-lookups';
 export * from './dates';
 export * from './electron';
+export * from './feature-nudges';
 export * from './fs';
 export * from './general';
 export * from './github';

@@ -10,9 +10,9 @@ E fa’ata’a teie arata’i a’ano i te mau fa’anahora’a ato’a i roto i
 
 Mā’iti i te reo nō te tāpura o te M³. E ’ere teie i te mea ti’aturi i ni’a i te reo e fa’a’ohipahia nō te uta-mai i te mau mēdia.
 
-Mau mā’itira’a (Options): Te mau reo ato’a e vai nei nō te tāpura (Perētānia, Paniora, Farāni, e te tahi atu mau reo)
+**Mau mā’itira’a (Options)**: Te mau reo ato’a e vai nei nō te tāpura (Perētānia, Paniora, Farāni, e te tahi atu mau reo)
 
-Fa’anahora’a tumu: Reo Perētānia
+**Fa’anahora’a tumu**: Reo Perētānia
 
 ### Mode Pōuri {#dark-mode}
 
@@ -20,13 +20,13 @@ Fa’anahora’a tumu: Reo Perētānia
 
 E fa’atere i te huru o te M³.
 
-Mau mā’itira’a:
+**Mau mā’itira’a**:
 
 - Fa’a’ohipa-’aunoa-ra’a ’ia au i te fa’anahora’a o te rorouira
 - Fa’a’ohipa i te huru pōuri i te mau taime ato’a
 - Fa’a’ohipa i te huru māramarama i te mau taime ato’a
 
-Fa’anahora’a tumu: ’Aunoa
+**Fa’anahora’a tumu**: ’Aunoa
 
 ### Mahana mātāmua o te hepetoma {#first-day-of-week}
 
@@ -34,9 +34,9 @@ Fa’anahora’a tumu: ’Aunoa
 
 Fa’anaho i te mahana mātāmua o te hepetoma i ni’a i te tapura mahana.
 
-Mau mā’itira’a: Tapati e tae atu i te Mahana mā’a
+**Mau mā’itira’a**: Tapati e tae atu i te Mahana mā’a
 
-Fa’anahora’a tumu: Tapati
+**Fa’anahora’a tumu**: Tapati
 
 ### Hurura’a o te mahana {#date-format}
 
@@ -44,9 +44,9 @@ Fa’anahora’a tumu: Tapati
 
 Te huru fa’a’ite i te mau mahana i ni’a i te M³.
 
-Hi’ora’a: M AAAA MMMM
+**Hi’ora’a**: M AAAA MMMM
 
-Fa'anahora'a tumu: M AAAA MMMM
+**Fa'anahora'a tumu**: M AAAA MMMM
 
 ### Fa’a’ohipa-’aunoa-ra’a i te taime e tomo ai {#auto-start-at-login}
 
@@ -54,7 +54,7 @@ Fa'anahora'a tumu: M AAAA MMMM
 
 Fa’a’ohipa-’aunoa-hia te M³ i te taime ’ia tū te rorouira.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 ## Putuputura’a a te ’amuira’a {#congregation-meetings}
 
@@ -64,7 +64,7 @@ Fa'anahora'a tumu: `Hape`
 
 Te i’oa o tō ’oe ’amuira’a. E fa’a’ohipahia teie nō te fa’anahora’a e te fa’a’itera’a.
 
-Fa’anahora’a tumu: ’Aita e mea (e tano ’ia fa’ata’ahia i te taime o te fa’anahora’a)
+**Fa’anahora’a tumu**: ’Aita e mea (e tano ’ia fa’ata’ahia i te taime o te fa’anahora’a)
 
 ### Reo o te putuputura’a {#meeting-language}
 
@@ -72,9 +72,9 @@ Fa’anahora’a tumu: ’Aita e mea (e tano ’ia fa’ata’ahia i te taime o 
 
 Te reo tumu nō te tairi-mana’o-ra’a i te mau rorouira. E tano teie ia tu’ati i te reo e fa’a’ohipahia i roto i te mau putuputura’a a tō ’oe ’amuira’a.
 
-Te mau mā’itira’a: Te mau reo ato’a i te pae o te reo i ni’a i te ’api reva tōmite o te mau ’Ite nō Iehova
+**Te mau mā’itira’a**: Te mau reo ato’a i te pae o te reo i ni’a i te ’api reva tōmite o te mau ’Ite nō Iehova
 
-Fa’anahora’a tumu: Reo Peretānia (E)
+**Fa’anahora’a tumu**: Reo Peretānia (E)
 
 ### Reo nō te fa’aho’i-ra’a {#fallback-language}
 
@@ -82,9 +82,9 @@ Fa’anahora’a tumu: Reo Peretānia (E)
 
 Hō’ē reo piti nō te fa’a’ohipa i te taime ’aita te rorouira i te reo tumu.
 
-Te mau mā’itira’a: Te mau reo ato’a i te pae o te reo i ni’a i te ’api reva tōmite o te mau ’Ite nō Iehova
+**Te mau mā’itira’a**: Te mau reo ato’a i te pae o te reo i ni’a i te ’api reva tōmite o te mau ’Ite nō Iehova
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
 ### Mahana nō te Putuputura’a i te Mahana i rotopū i te hepetoma {#midweek-meeting-day}
 
@@ -92,9 +92,9 @@ Fa’anahora’a tumu: ’Aita
 
 Te mahana o te hepetoma i reira tō ’oe putuputura’a i te hepetoma e tupu ai.
 
-Mau mā’itira’a: Tapati e tae atu i te Mahana mā’a
+**Mau mā’itira’a**: Tapati e tae atu i te Mahana mā’a
 
-Fa’anahora’a tumu: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa’anahora’a)
+**Fa’anahora’a tumu**: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa’anahora’a)
 
 ### Hora nō te putuputura’a i te hepetoma {#midweek-meeting-time}
 
@@ -102,9 +102,9 @@ Fa’anahora’a tumu: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa
 
 Te hora ha’amatara’a nō tō ’oe putuputura’a i te hepetoma.
 
-Fa’anahora’a: HH:MM (Te hora i ni’a i te 24 hora)
+**Fa’anahora’a**: HH:MM (Te hora i ni’a i te 24 hora)
 
-Fa’anahora’a tumu: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa’anahora’a)
+**Fa’anahora’a tumu**: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa’anahora’a)
 
 ### Mahana nō te Putuputura’a i te hope’a hepetoma {#weekend-meeting-day}
 
@@ -112,9 +112,9 @@ Fa’anahora’a tumu: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa
 
 Te mahana o te hepetoma i reira tō ’oe putuputura’a i te hope’a hepetoma e tupu ai.
 
-Mau mā’itira’a: Tapati e tae atu i te Mahana mā’a
+**Mau mā’itira’a**: Tapati e tae atu i te Mahana mā’a
 
-Fa’anahora’a tumu: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa’anahora’a)
+**Fa’anahora’a tumu**: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa’anahora’a)
 
 ### Hora nō te Putuputura’a i te hope’a hepetoma {#weekend-meeting-time}
 
@@ -122,9 +122,9 @@ Fa’anahora’a tumu: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa
 
 Te hora ha’amatara’a nō tō ’oe putuputura’a i te hope’a hepetoma.
 
-Fa’anahora’a: HH:MM (Te hora i ni’a i te 24 hora)
+**Fa’anahora’a**: HH:MM (Te hora i ni’a i te 24 hora)
 
-Fa’anahora’a tumu: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa’anahora’a)
+**Fa’anahora’a tumu**: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa’anahora’a)
 
 ### Hepetoma nō te Tia’i Ha’a’ati {#circuit-overseer-week}
 
@@ -132,9 +132,9 @@ Fa’anahora’a tumu: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa
 
 Te hepetoma nō te haerera’a mai i muri iho o te tia’i ha’a’ati.
 
-Fa’anahora’a: AA/MM/MMMM
+**Fa’anahora’a**: AA/MM/MMMM
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
 ### Mahana nō te Oro’a Ha’amana’ora’a {#memorial-date}
 
@@ -142,20 +142,20 @@ Fa’anahora’a tumu: ’Aita
 
 Te mahana nō te Oro’a Ha’amana’ora’a i muri iho.
 
-Fa’anahora’a: AA/MM/MMMM
+**Fa’anahora’a**: AA/MM/MMMM
 
-Fa’anahora’a tumu: ’Ohi-’otometi-hia i te mau taime ato’a
+**Fa’anahora’a tumu**: ’Ohi-’otometi-hia i te mau taime ato’a
 
 ### Te mau taui’ura’a i te porotarama o te mau putuputura’a {#meeting-schedule-changes}
 
 E nehenehe ta ’oe e fa’atano i te mau taui’ura’a poto i te porotarama o te mau putuputura’a nā roto i teie mau fa’anahora’a:
 
-- Mahana o te taui’ura’a: Afea te taui’ura’a e tupu ai
-- Taui’ura’a ho’ē taime: Tei te huru ē, e taui’ura’a mure ’ore anei aore rā e taui’ura’a poto
-- Mahana nō te putuputura’a i te ropura’a hepetoma: Te mahana ’āpī nō te putuputura’a i te ropura’a hepetoma
-- Hora nō te putuputura’a i te ropura’a hepetoma: Te hora ’āpī nō te putuputura’a i te ropura’a hepetoma
-- Mahana nō te putuputura’a i te hope’a hepetoma: Te mahana ’āpī nō te putuputura’a i te hope’a hepetoma
-- Hora nō te putuputura’a i te hope’a hepetoma: Te hora ’āpī nō te putuputura’a i te hope’a hepetoma
+- **Mahana o te taui’ura’a**: Afea te taui’ura’a e tupu ai
+- **Taui’ura’a ho’ē taime**: Tei te huru ē, e taui’ura’a mure ’ore anei aore rā e taui’ura’a poto
+- **Mahana nō te putuputura’a i te ropura’a hepetoma**: Te mahana ’āpī nō te putuputura’a i te ropura’a hepetoma
+- **Hora nō te putuputura’a i te ropura’a hepetoma**: Te hora ’āpī nō te putuputura’a i te ropura’a hepetoma
+- **Mahana nō te putuputura’a i te hope’a hepetoma**: Te mahana ’āpī nō te putuputura’a i te hope’a hepetoma
+- **Hora nō te putuputura’a i te hope’a hepetoma**: Te hora ’āpī nō te putuputura’a i te hope’a hepetoma
 
 ### Te mau fa’aapī-ra’a taime nō te putuputura’a ma te ’ore e tauturu-hia {#automatic-meeting-schedule-updates}
 
@@ -163,7 +163,7 @@ E nehenehe ta ’oe e fa’atano i te mau taui’ura’a poto i te porotarama o 
 
 Ia ha’amā-hia, e hi’o-tamau-hia e te M³ te tahua iteneti a te mau Ite nō Iehova nō te mau tauira’a i te mahana e te hora o te putuputura’a, e e fa’aapī-hia te hoho’a-taata o tei fa’a’ohipa-hia i teie taime ma te ’ore e tauturu-hia.
 
-E ohipa noa teie nō te mau hoho’a-taata i tāpirihia nā roto i te imi-ra’a i te amuira’a, e ’aita te i’oa o te amuira’a i tauihia e te rima. Mai te peu e ua fa’aore-hia te fa’aaura’a nō te mea e ua taui te i’oa o te amuira’a, a fa’a’ohipa i te Enable schedule sync nō te tu’ati fa’ahou i te hoho’a-taata.
+E ohipa noa teie nō te mau hoho’a-taata i tāpirihia nā roto i te imi-ra’a i te amuira’a, e ’aita te i’oa o te amuira’a i tauihia e te rima. Mai te peu ’ua fa’a’orehia te tū’atira’a nō te mea ’ua taui te i’oa o te amuiraa, ’a fa’a’ohipa i te **Fa’atere i te tū’atira’a tōpata taime** nō te tū’ati fa’ahou i te tōfati.
 
 #### Faahuru ê i te faanahoraa o te taime {#relink-congregation}
 
@@ -185,7 +185,7 @@ A fa’aaura’a ma te rima i te tāpura taime nō te putuputura’a i teie taim
 
 ’Ia ’ohie te fa’a’ohipara’a i te mau rāve’a ha’amāramaramara’a, ’a tu’u i teie fa’anahora’a mai te mea e fa’a’ohipa ra ’oe i te hō’ē tapura-’ohipa-raa nō te fa’aiti i te rahira’a o te mau ha’amāramaramara’a e haere mai i roto.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 ### Fa’a’ite’itera’a i te mau rāve’a ha’amāramaramara’a {#media-display-button}
 
@@ -193,7 +193,7 @@ Fa'anahora'a tumu: `Hape`
 
 ’Ia ’ohie te fa’a’ite’itera’a i te mau rāve’a ha’amāramaramara’a. E titauhia teie nō te fa’a’ite i te mau rāve’a ha’amāramaramara’a i ni’a i te piti o te matini fa’a’ite.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### A ha’amā i te hi’o-mata-ra’a i te mau ve’a {#enable-media-preview}
 
@@ -201,7 +201,7 @@ Fa'anahora'a tumu: `Hape`
 
 A fa’a’ite i te hi’o-mata-ra’a ora o te ha’amaramarama ve’a i te taime a fa’a’ite-hia ai te ho’ē hoho’a aore rā te ho’ē video.
 
-Fa’anahora’a tumu: `’oia`
+**Fa’anahora’a tumu**: `true`
 
 #### Fa’atō’o i te rāve’a ha’amāramaramara’a ma te fa’ata’a {#begin-playback-paused}
 
@@ -209,7 +209,7 @@ Fa’anahora’a tumu: `’oia`
 
 ’A fa’atō’o i te mau video ma te fa’ata’a, i te taime e ha’amata ai te fa’atō’ora’a.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 ### Pehe ha’amata {#settings-guide-background-music}
 
@@ -219,7 +219,7 @@ Fa'anahora'a tumu: `Hape`
 
 ’Ia ’ohie te fa’a’ohipara’a i te pehe ha’amata.
 
-Fa’anahora’a tumu: `’oia`
+**Fa’anahora’a tumu**: `true`
 
 #### Fa’atō’o-’otometi-hia i te pehe {#auto-start-music}
 
@@ -227,7 +227,7 @@ Fa’anahora’a tumu: `’oia`
 
 ’A fa’atō’o-’otometi i te pehe ha’amata i te taime e matara ai te M³, mai te mea e au te reira.
 
-Fa’anahora’a tumu: `’oia`
+**Fa’anahora’a tumu**: `true`
 
 #### Taime fa’ata’a nō te hope’a o te putuputura’a {#meeting-stop-buffer}
 
@@ -235,9 +235,9 @@ Fa’anahora’a tumu: `’oia`
 
 Ehia tetoni hou te ha’amatara’a o te putuputura’a e fa’ata’i ai i te pehe ha’amata.
 
-Te faito: 0-300 tetoni
+**Te faito**: 0-300 tetoni
 
-Fa’anahora’a tumu: 60 tetoni
+**Fa’anahora’a tumu**: 60 tetoni
 
 #### Te puai o te pehe {#music-volume}
 
@@ -245,7 +245,7 @@ Fa’anahora’a tumu: 60 tetoni
 
 Te faito o te puai nō te pehe ha’amata (1-100%).
 
-Fa'anahora'a tumu: 100%
+**Fa'anahora'a tumu**: 100%
 
 ### Te mau maitiraa no te poro'i e te taʻuraa i raro {#media-display}
 
@@ -260,7 +260,7 @@ whether the media window feature is enabled at all). -->
 
 ’Ia ’ohie te fa’aho’ora’a i te mau taui’ura’a (fa’a’ite aore rā fa’atapuni) o te matapihi rāve’a ha’amāramaramara’a.
 
-Fa’anahora’a tumu: `’oia`
+**Fa’anahora’a tumu**: `true`
 
 #### Ha’amatinata i te fa’anahora’a vitiviti o te rāve’a ha’ata’i {#enable-playback-speed-control}
 
@@ -268,7 +268,7 @@ Fa’anahora’a tumu: `’oia`
 
 E nehenehe e fa’aau i te vitiviti o te rāve’a ha’ata’i, na roto i te tāpura ’ohipa o te rāve’a ha’ata’i.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### Fa’atapuni i te tapao rāve’a ha’amāramaramara’a {#hide-media-logo}
 
@@ -276,7 +276,7 @@ Fa'anahora'a tumu: `Hape`
 
 Fa’atapuni i te tapao i roto i te matapihi rāve’a ha’amāramaramara’a.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### Te faito teitei roa a’e nō te hoho’a {#maximum-resolution}
 
@@ -284,9 +284,9 @@ Fa'anahora'a tumu: `Hape`
 
 Te faito teitei roa a’e nō te hoho’a nō te mau rāve’a ha’amāramaramara’a i ’ohihia.
 
-Te mau mā’itira’a: 240p, 360p, 480p, 720p, 1080p
+**Te mau mā’itira’a**: 240p, 360p, 480p, 720p, 1080p
 
-Fa'anahora'a tumu: 720p
+**Fa'anahora'a tumu**: 720p
 
 #### ’Ia amui-ato’a-hia te mau rāve’a ha’amāramaramara’a i nīnihia. {#include-printed-media}
 
@@ -294,7 +294,7 @@ Fa'anahora'a tumu: 720p
 
 ’Ia amui-ato’a-hia te mau rāve’a ha’amāramaramara’a nō roto mai i te mau buka i nīnihia i roto i te mau rāve’a ha’amāramaramara’a i ’ohihia.
 
-Fa’anahora’a tumu: `’oia`
+**Fa’anahora’a tumu**: `true`
 
 #### Fa’ata’a i te mau nota i raro i te ’api {#exclude-footnotes}
 
@@ -302,7 +302,7 @@ Fa’anahora’a tumu: `’oia`
 
 Fa’ata’a i te mau hoho’a o te mau nota i raro i te ’api i roto i te mau rāve’a ha’amāramaramara’a i ’ohihia, mai te mea e nehenehe.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### Fa’ata’a ’ē i te mau video ha’api’ira’a nō te Pare Tia’ira’a hau {#exclude-additional-watchtower-study-videos}
 
@@ -310,7 +310,7 @@ Fa'anahora'a tumu: `Hape`
 
 Fa’ata’a ’ē i te mau video hau i fa’ahitihia i roto i te mau paratarapha o te ha’api’ira’a o te Pare Tia’ira’a.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### E taotia i te mau ata no te Haapiiraa Bibilia a te Amuiraa {#exclude-cbs-pubs}
 
@@ -326,7 +326,7 @@ A maiti i te mau papai o te ore e tia ia faaitehia ta ratou mau ata i te Haapiir
 
 Fa’ata’a i te mau rāve’a ha’amāramaramara’a nō roto mai i te buka ra ’Ia fana’o i te orara’a oaoa e a muri noa atu! (th) i roto i te mau rāve’a ha’amāramaramara’a i ’ohihia.
 
-Fa’anahora’a tumu: `’oia`
+**Fa’anahora’a tumu**: `true`
 
 ### Mau parau i ni’a i te hoho’a {#subtitles}
 
@@ -336,7 +336,7 @@ Fa’anahora’a tumu: `’oia`
 
 ’Ia fa’a’ohipa i te mau parau i ni’a i te hoho’a nō te fa’atō’ora’a i te mau rāve’a ha’amāramaramara’a.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### Te reo nō te mau parau i ni’a i te hoho’a {#subtitle-language}
 
@@ -344,19 +344,19 @@ Fa'anahora'a tumu: `Hape`
 
 Te reo nō te mau parau i ni’a i te hoho’a (e nehenehe e ta’a-ē-hia mai te reo o te rāve’a ha’amāramaramara’a).
 
-Te mau mā’itira’a: Te mau reo ato’a i te pae o te reo i ni’a i te ’api reva tōmite o te mau ’Ite nō Iehova
+**Te mau mā’itira’a**: Te mau reo ato’a i te pae o te reo i ni’a i te ’api reva tōmite o te mau ’Ite nō Iehova
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
 ### Fa’anahora’a o te tairura’a {#cache-management}
 
-#### Cache Songbook Video Files {#enable-extra-cache}
+#### E tōtautā i te mau tōta’a tōna’a hīmene i roto i te cache {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
+’A tu’u nā mua i te mau video ato’a o te puta hīmene i roto i te cache nō te ha’amaita’i i te terera’a. ’A ha’amana’o ē, e mara’a te fāito o te cache media.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### Putu’a tairura’a {#cache-folder}
 
@@ -364,7 +364,7 @@ Fa'anahora'a tumu: `Hape`
 
 Vāhi fa’ata’ahia nō te tairura’a i te mau rorouira ha’amāramaramara’a.
 
-Fa’anahora’a tumu: Vāhi i fa’ata’ahia e te rorouira
+**Fa’anahora’a tumu**: Vāhi i fa’ata’ahia e te rorouira
 
 #### Fa’ati’a i te ha’amāua-’ōtohe-ra’a o te tairura’a {#enable-cache-auto-clear}
 
@@ -372,7 +372,7 @@ Fa’anahora’a tumu: Vāhi i fa’ata’ahia e te rorouira
 
 Ha’amāua-’ōtohe-ra’a i te mau tairura’a tahito nō te fa’aherehere i te vāhi i ni’a i te pāhani rorouira.
 
-Fa’anahora’a tumu: `’oia`
+**Fa’anahora’a tumu**: `true`
 
 ### Te mau upoo parau o te mau hiti no Pinyin {#pinyin-song-titles}
 
@@ -382,7 +382,7 @@ Fa’anahora’a tumu: `’oia`
 
 Ia itehia te hoê pehe Pinyin i roto i te putuputuraa pehe Pinyin, a faaohipa i te reira ei mono no te pehe matauhia.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### Te pueraa pehe Pinyin {#pinyin-song-folder}
 
@@ -390,7 +390,7 @@ Fa'anahora'a tumu: `Hape`
 
 Te pueraa o te mau pehe video Pinyin (ei hiʻoraa, `sjjm_s-Pi_CHS_066_r720P.mp4`). Ia itehia te hoê matini Pinyin e tau e te numera pehe no te putuputuraa, e faahoro-roa-hia ïa te reira ei mono no te pehe matauhia.
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
 ### Fa’ahotura’a i te mau rāve’a ha’amāramaramara’a {#settings-guide-media-export}
 
@@ -400,7 +400,7 @@ Fa’anahora’a tumu: ’Aita
 
 ’Ia fa’ahotu-’otometi-hia te mau rāve’a ha’amāramaramara’a i roto i te hō’ē puhapā tei fa’ata’ahia.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### Puhapā nō te fa’ahotura’a i te mau rāve’a ha’amāramaramara’a {#media-export-folder}
 
@@ -408,53 +408,53 @@ Fa'anahora'a tumu: `Hape`
 
 Te vāhi o te puhapā e fa’ahotu-’otometi-hia ai te mau rāve’a ha’amāramaramara’a.
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
 #### ’Ia fa’ahuru-ē-hia te mau rāve’a ha’amāramaramara’a i roto i te huru MP4 {#convert-files-to-mp4}
 
-Fa’ahuru-ē-ra’a i te mau rāve’a ha’amāramaramara’a i roto i te huru MP4
+**Fa’anahora’a**: `convertFilesToMp4`
 
 ’Ia fa’ahuru-ē-hia te mau rāve’a ha’amāramaramara’a i fa’ahotuhia i roto i te huru MP4 nō te hō’ē fa’a’ohipara’a maita’i a’e.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
-### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
+### Pu'e 'ite tufahia (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-These settings are in the **Integrations** category.
+Tei roto teie mau fa’anahora’a i te tuha’a **Te mau tū’atira’a fa’anahora’a**.
 
-M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+E nehenehe tā M³ e ’āmui i te media i tā ’oe mau putuputura’a mai roto mai i te hō’ē fā’ari parau e tū’ati-noa-hia e te hō’ē porotarama vaira’a nā ni’a i te itenati, mai ia Dropbox, OneDrive, iCloud Drive ’aore rā Google Drive. E mea faufa’a teie ’ia fa’aineine te tahi atu mau ta’ata i te media nō tō rātou mau tuha’a ’e ’ia ’ōpere mai rātou i te reira ia ’oe, ’aore rā ’ia fa’a’ohipahia M³ i ni’a hau atu i te hō’ē roro uira. E ha’a ato’a te hō’ē fā’ari parau i ni’a i teie roro uira ’aore rā i ni’a i tō ’oe reni itenati.
 
-M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. To add files for another day, create a folder for it, named the same way. Anything else in the shared folder is ignored.
+E hāmani M³ i roto i te pu'e 'ite tufahia i te hō’ē fā’ari parau nō te putuputura’a tā’itahi e tae mai, ma te i’oa o te mahana o te putuputura’a i pāpa’ihia mai teie te huru: matahiti-’āva’e-mahana (ei hi’ora’a, `2026-03-25`). ’A tu’u i te mau hōho’a, te mau video, te mau dosie reo ’aore rā te mau tāpura ha’uti JW Library i roto i te fā’ari parau o te hō’ē putuputura’a, ’e e ’āmui otometihia te reira i roto i te tāpura media o taua putuputura’a ra. Nō te ’āmui i te mau dosie nō te tahi atu mahana, ’a hāmani i te hō’ē fā’ari parau nō te reira, ma te i’oa i pāpa’ihia mai te reira ato’a te huru. E vaiihohia te mau mea ’ē atu i roto i te pu'e 'ite tufahia.
 
 :::tip A’o
 
-Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+’A hāmani i te hō’ē fā’ari parau ’āpī nō teie ana’e ohipa, mai te "Media putuputura’a", ’e ’a fa’anaho i te reira i roto i tā ’oe porotarama vaira’a ’ia vai noa i ni’a i teie roro uira (e pi’ihia pinepine "available offline"), ’ia ineine te mau dosie hou te putuputura’a e ha’amata ai.
 
 :::
 
-#### Add Media From a Shared Folder {#enable-folder-watcher}
+#### A amui mai i te mau hōho'a pehe fāro'o no roto mai i te hoê pu'e 'ite tufahia {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Add the files put in the shared folder to the right meeting automatically.
+E ’āmui otometi i te mau dosie i tu’uhia i roto i te pu'e 'ite tufahia i te putuputura’a tano.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
-#### Shared Folder {#folder-to-watch}
+#### Pu'e 'ite tufahia {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder to add media from. The setup wizard offers to set it up for you.
+Te fā’ari parau e ’āmuihia mai ai te media. E hōro’a te tauturu fa’aineinera’a i te fa’anaho i te reira nō ’oe.
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
-#### Delete Past Meeting Folders {#delete-past-watched-folders}
+#### A faaore i te mau pu'e 'ite o te mau taro'oraa i ma'iri {#delete-past-watched-folders}
 
 <!-- **Setting**: `deletePastWatchedFolders` -->
 
-When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+’Ia oti te hō’ē hepetoma, e fa’a’ore i te mau fā’ari parau ma te mahana o taua hepetoma ra, ’e tō rātou mau dosie, ’ia vai nehenehe noa te pu'e 'ite tufahia. I te mea ē e fā’ari parau tufahia te reira, e fa’a’orehia ato’a te reira nō te feiā ato’a e fa’a’ohipa ra i te reira. ’A tāpū i teie nō te vaiiho i te reira.
 
-Fa’anahora’a tumu: `’oia`
+**Fa’anahora’a tumu**: `true`
 
 ## Taime nō te Putuputura’a {#meeting-timer}
 
@@ -464,7 +464,7 @@ Fa’anahora’a tumu: `’oia`
 
 Ha’amatinata i te ho’e ha’amāramarama tāime ta’a ’ē nō te faito i te mau tuha’a o te putuputura’a. E tuha’a ’ohipa ’āpī teie (beta) e e nehenehe noa e ha’amatinata i te reira mai te mea ua fa’atia-hia-na e te mau tia o te amuira’a.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 ### Te huru o te ha’amāramarama tāime {#timer-window-behavior}
 
@@ -472,24 +472,24 @@ Fa'anahora'a tumu: `Hape`
 
 A fa’anaho i te huru o te ha’amāramarama tāime: ia ’īrava ’ōpani-’ore-hia anei te reira, ia faito i ni’a a’e aore rā i raro te tāime o te mau ta’ata ’orero, ia fa’a’ohipa i te hora 12 aore rā 24, e ia fa’a’ite-hia anei te tāime i ni’a i te tuha’a fa’a’itera’a o te tāime.
 
-### Quick Access to the Timer {#timer-quick-access}
+### Fa’a’ohipara’a vitiviti i te fa’atere-hora {#timer-quick-access}
 
 <!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
 
-Choose how the timer is reached from the main window:
+’A mā’iti e nāfea e tae ai i te fa’atere-hora mai roto mai i te ha’amāramarama matamua:
 
-- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
-- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+- **Faatere oioi ia tuuhia te tautai i nia i te pitopito taime**: ’ia tu’u ’oe i te ’iore i ni’a i te pitopito fa’atere-hora i ni’a i te motu ha’atere, e fa’aitehia te tuha’a e fāitohia ra, ’e te mau pitopito ’A ha’amata, ’A fa’ataime, ’A fa’aoti ’e Tuhaa i mua nei, ma te ’ore e ’iriti i te ha’amāramarama iti tā’āto’a o te fa’atere-hora. Ua fa’atupuhia mai te mātauhia.
+- **A faaite i te matini taime i roto i te haamaramarama matamua**: e vaiiho i te tāpura tā’āto’a o te mau tuha’a o te putuputura’a ’e te mau pitopito fa’atere-hora i roto i te hō’ē ’api i tāpirihia i te pae ’atau o te ha’amāramarama matamua, e ’itehia noa. E vai noa te ha’amāramarama iti tā’āto’a i ni’a i te motu ha’atere nō te mau fa’anahora’a o te ha’amāramarama ’e o te fa’aitera’a.
 
-### Timer Remote {#timer-remote}
+### Haapa'oraa taime mai te ātea {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
 
-When turned on, M³ serves a read-only copy of the timer display as a web page on your local network, for a tablet or phone at the lectern: the speaker sees the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time, including the pre-meeting countdown, the clock, overtime colors and the hand alert, and all the controls stay in M³.
+’Ia fa’atupuhia, e hōro’a M³ i te hō’ē hōho’a ta’io-noa o te tapura hora mai te hō’ē ’api itenati i ni’a i tō ’oe reni itenati nō te fare, nō te hō’ē tablet ’aore rā te hō’ē niuniu i te ’amura’i ’ōrero: e ’ite te ’ōrero i te taime e toe ra ma te ’ore e fa’aitehia i ni’a i te paruai o te amuiraa ’aore rā i roto i te ’ōperera’a Zoom. E pe’e te ’api i te fa’atere-hora i te taime mau, ’oia ato’a te taime fa’ataime hou te putuputura’a, te uati, te mau ’ū o te taime hau ’e te tapao rima, ’e e vai noa te mau fa’aterera’a ato’a i roto ia M³.
 
-The addresses to open on the device are listed in the timer popup, with a copy button. Change the port only if another program already uses it. Note that anyone on the same network can open the page while this is on; it shows nothing but the timer.
+Tē fa’aitehia ra te mau vāhi e ’iriti i ni’a i te mātini i roto i te ha’amāramarama iti o te fa’atere-hora, ma te hō’ē pitopito nō te hāmani hōho’a. ’A taui i te uputa ana’e mai te peu e te fa’a’ohipa ra te tahi atu porotarama i te reira. ’A ha’amana’o ē, e nehenehe te ta’ata ato’a i ni’a i taua reni itenati ra e ’iriti i te ’api ’a fa’atupuhia ai teie; ’aita e mea ’ē atu i ni’a iho maori rā te fa’atere-hora.
 
-**Default**: `false`, port `8787`
+**Fa’anahora’a tumu**: `false`, uputa `8787`
 
 ### Te mau huru fa’a’itera’a o te tāime {#timer-display-formats}
 
@@ -497,7 +497,7 @@ The addresses to open on the device are listed in the timer popup, with a copy b
 
 A mā’iti i te huru fa’a’itera’a, ’aiguille’ aore rā ’digital’, nō te hora o te mahana e nō te mau tāime tāta’u ha’amau. E nehenehe te tā’u ha’amau fa’aara e fa’ahuri i te rōpī ’analog’ o te tā’u i ni’a i te ho’e hoho’a fa’aara i te roara’a o te minuti hope’a.
 
-The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
+Te huru fa’aitera’a taime **Uati rima e te fana hora** e fa’aite i te taime e toe ra nō te hō’ē tuha’a mai te hō’ē tuha’a ’ōpe’a i ni’a i te hō’ē uati rima, mai te rima minuti e tae atu i te hope’a i fa’anahohia, nō reira hō’ē noa hi’ora’a e ’ite ai ’oe i te hora ’e te taime e toe ra. E fa’aitehia te taime hau mai te piti o te tuha’a ’ōpe’a i te ’ū o te taime hau. E tano ato’a te reira nō te taime fa’ataime hou te putuputura’a ’e e ha’a ato’a i roto i te huru tai’ora’a i ni’a.
 
 ### Tāime tāta’u o te putuputura’a e te huru o te porotarama {#meeting-countdown-and-schedule-status}
 
@@ -513,7 +513,7 @@ A fa’anaho i te rahi e te mau fa’a’ine’ine o te tāreta tāime, e a fa�
 
 ## Te mau tāpirira’a {#integrations}
 
-This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
+Tei roto ato’a i teie tuha’a te mau fa’anahora’a o te [pu'e 'ite tufahia](#settings-guide-folder-monitoring), nō te ’āmui i te media mai ia Dropbox, OneDrive, iCloud Drive ’aore rā Google Drive.
 
 ### Tāpirira’a Zoom {#settings-guide-zoom-integration}
 
@@ -523,7 +523,7 @@ This category also holds the [shared folder](#settings-guide-folder-monitoring) 
 
 Fa’ati’a i te mau rāve’a tāpirira’a o te putuputura’a Zoom.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### Pāotira’a nō te fa’a’ite i te vairaa o te rorouira {#screen-share-shortcut}
 
@@ -531,7 +531,7 @@ Fa'anahora'a tumu: `Hape`
 
 Pāotira’a nō ni’a i te tāhitohito nō te fa’a’ite i te vairaa o te rorouira Zoom.
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
 #### Faahoro-taue-hia i nia i te matapihi video {#zoom-auto-focus-media-window}
 
@@ -539,31 +539,31 @@ Fa’anahora’a tumu: ’Aita
 
 A faahoro taue i nia i te matapihi video i muri aˈe i te haamataraa te tuhaa tufaaraaata i nia i te Zoom. Eita paha e titauhia ia na reira, tera ra e tauturu i nia i vetahi mau matini ia erehia te matapihi video i te mana i muri aˈe i te haamataraa te tufaaraaata.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
-### Zoom Meeting Manager {#zoom-meeting-manager}
+### Fa’atere Putuputura’a Zoom {#zoom-meeting-manager}
 
-The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+E fa’ahoro te Fa’atere Putuputura’a Zoom (beta, Windows ana’e) i te porotarama Zoom nō ’oe nā mua ’e i muri i te putuputura’a tā’itahi. Tōna tauturu fa’aineinera’a, e hōro’ahia ’ia fa’atupu ’oe i te reira, e arata’i ia ’oe nā roto i te ohipa otometi tā’itahi.
 
-#### While M³ Operates Zoom {#zoom-meeting-manager-overlay}
+#### ’A fa’ahoro ai M³ ia Zoom {#zoom-meeting-manager-overlay}
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom offers no proper automation interface, so M³ drives the Zoom app through its accessibility interface, which works without the mouse for nearly everything (the participants list, its menus, the Share window). A few actions can still have to move the mouse or the focused window for a moment, for example to bring Zoom's auto-hidden toolbar back. Whenever that happens, M³ covers its own window with a "M³ is operating Zoom" notice naming what is going on, with a **Cancel this automation** button. The same notice shows during the setup assistant's checks and the self-test. A global keyboard shortcut (default `Ctrl+Alt+Escape`), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Cancelling stops M³ at once; Zoom may then be left part-way, so check it.
+’Aita Zoom e hōro’a nei i te hō’ē rāve’a tano nō te ohipa otometi, nō reira e fa’ahoro M³ i te porotarama Zoom nā roto i tōna rāve’a nō te feiā hapa tino, e ha’a ’aita e ’iore nō te rahira’a o te mau mea (te tāpura o te feiā i putuputu mai, tōna mau tāpura, te ha’amāramarama ’Ōpere). E nehenehe noa te tahi mau ohipa e fa’ane’e i te ’iore ’aore rā te ha’amāramarama e ha’a ra nō te hō’ē taime poto, ei hi’ora’a nō te fa’aho’i mai i te tāpura pitopito a Zoom tei huna-noa-hia. I te mau taime ato’a e tupu ai te reira, e tāpo’i M³ i tōna iho ha’amāramarama i te hō’ē fa’aarara’a "Te fa’ahoro nei M³ ia Zoom" e fa’aite ra i te ohipa e ravehia ra, ma te hō’ē pitopito **’A fa’aru’e i teie ohipa otometi**. E fa’aitehia ato’a taua fa’aarara’a ra i te taime o te mau hi’opo’ara’a a te tauturu fa’aineinera’a ’e o te tāmatara’a iho. Te hō’ē pā’atā papāmāha nō te mau vāhi ato’a (mātauhia `Ctrl+Alt+Escape`), e ha’a ana’e ’a ha’a ai te hō’ē ohipa otometi, e fa’aru’e i te reira nō hea mai ato’a, noa atu ē o Zoom te ha’amāramarama e ha’a ra. Nā te fa’aru’era’a e fa’aea ’oi’oi ia M³; peneia’e ’aita te ohipa i ’oti roa i roto ia Zoom, nō reira ’a hi’opo’a i te reira.
 
-**Default**: `Ctrl+Alt+Escape`
+**Fa’anahora’a tumu**: `Ctrl+Alt+Escape`
 
-#### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
+#### Tauturu nō te mau rima i fa’ateiteihia {#zoom-meeting-manager-hand-alert}
 
 <!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
 
-During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
+I te roara’a o te hō’ē putuputura’a, e hi’o M³ i te tāpura o te feiā i putuputu mai a Zoom nō te ’ite i te mau rima i fa’ateiteihia. ’Ia fa’ateitei te hō’ē ta’ata i tōna rima, e vaiiho te hō’ē fa’aarara’a i roto ia M³ ia ’oe ’ia **fa’amatara i tōna reo** nā roto i hō’ē noa patara’a, ’e ’ia oti ’oia i te paraparau, ’ia **tāpe’a fa’ahou i tōna reo ’e ’ia tu’u i tōna rima i raro** nā roto i te tahi atu patara’a. E fa’aite ato’a te pitopito Zoom i ni’a i te motu ha’atere i te mau rima i fa’ateiteihia ma te mau pitopito ato’a. E tae te ohipa tā’itahi i te reni iho o taua ta’ata ra i roto ia Zoom, nā roto i tōna i’oa mau; mai te peu e hō’ē ā i’oa tō e piti ta’ata, e’ita M³ e fāfā i te hō’ē o rāua.
 
-If the [meeting timer](#meeting-timer) is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and a **Hand alert** button in the timer and Zoom popups shows it by hand. This part needs the timer display; the notifications and buttons work without it.
+Mai te peu ’ua fa’atupuhia te [fa’atere-hora nō te putuputura’a](#meeting-timer), e fa’aitehia ato’a te hō’ē rima rahi ’e te i’oa o te ta’ata i ni’a i te tapura hora nō te ti’a’au, ’e e fa’aite te pitopito **Tapao rima** i roto i te ha’amāramarama iti o te fa’atere-hora ’e o Zoom i te reira mā te rima. E tītau teie tuha’a i te tapura hora; e ha’a te mau fa’aarara’a ’e te mau pitopito noa atu ’aita te reira.
 
-Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list and which menu entry lowers it, then lowers it again. The setup assistant offers this step too.
+E tāpa’o Zoom i te mau rima i fa’ateiteihia i tōna iho reo, nō reira e tītau na mua M³ i te ha’api’i e nāfea: ’ia vai matara tō ’oe putuputura’a i roto ia Zoom, ’a pata i **’A ha’api’i e nāfea Zoom e tāpa’o ai i te mau rima i fa’ateiteihia**. E fa’ateitei M³ i tō ’oe iho rima, e tai’o e nāfea Zoom e tāpa’o ai i te reira i roto i te tāpura o te feiā i putuputu mai ’e o tei hea te mea i roto i te tāpura e tu’u i te reira i raro, ’e e tu’u fa’ahou i te reira i raro. E hōro’a ato’a te tauturu fa’aineinera’a i teie ta’ahira’a.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 ### Tāpirira’a OBS Studio {#settings-guide-obs-integration}
 
@@ -573,13 +573,13 @@ Fa'anahora'a tumu: `Hape`
 
 Fa’a’ohipa i te tūhonora’a nō te OBS Studio nō te fa’afariura’a ’ōhie i te mau tōpata.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 :::warning Parau Fa’aarara’a faufa’a
 
-Parau fa’aarara’a faufa’a: E titauhia te fa’anahora’a o te upā: E fa’atere noa te tūhonora’a o te OBS Studio i te fa’a’itera’a o te matapihi. Parau fa’aarara’a faufa’a: ’Aita te upā nō te rorouira M³ i hōro’a-’ōhie-hia i te mau ta’ata e apiti mai i te Zoom i te taime e fa’a’ohipa-hia ai te OBS Studio. E titauhia ia ’oe ’ia fa’anaho i te mau fa’anahora’a "Reo tumu" o te Zoom aore rā ’ia fa’a’ohipa i te "Hōro’a i te upā o te rorouira" nō te ha’apāpū ē ’ia fa’aro’o maita’i te mau ta’ata i te rorouira. A hi’o i te [Arata’i nō te ta’ata fa’a’ohipa](/user-guide#audio-configuration) nō te mau fa’anahora’a ha’amāramaramara’a nō ni’a i te fa’anahora’a o te upā.
+**Parau fa’aarara’a faufa’a**: E titauhia te fa’anahora’a o te upā: E fa’atere noa te tūhonora’a o te OBS Studio i te fa’a’itera’a o te matapihi. Te reo o te media a M³ **’aita e hā’onohia otometi** i te mau ta’ata i ni’a ia Zoom ’ia fa’a’ohipahia te OBS Studio. E titauhia ia ’oe ’ia fa’anaho i te mau fa’anahora’a "Reo tumu" o te Zoom aore rā ’ia fa’a’ohipa i te "Hōro’a i te upā o te rorouira" nō te ha’apāpū ē ’ia fa’aro’o maita’i te mau ta’ata i te rorouira. A hi’o i te [Arata’i nō te ta’ata fa’a’ohipa](/user-guide#audio-configuration) nō te mau fa’anahora’a ha’amāramaramara’a nō ni’a i te fa’anahora’a o te upā.
 
-Parau fa’aarara’a: E fa’a’ohipa te tūhonora’a Zoom i te rāve’a fa’a’ite-’ōhie-ra’a i te hōho’a nō te Zoom, o tei fa’atere maita’i a’e i te upā i te tūhonora’a a te OBS Studio.
+**Parau fa’aarara’a**: E fa’a’ohipa te tūhonora’a Zoom i te rāve’a fa’a’ite-’ōhie-ra’a i te hōho’a nō te Zoom, o tei fa’atere maita’i a’e i te upā i te tūhonora’a a te OBS Studio.
 
 :::
 
@@ -589,7 +589,7 @@ Parau fa’aarara’a: E fa’a’ohipa te tūhonora’a Zoom i te rāve’a fa�
 
 Te numera pōto’i nō te tūhonora’a i te OBS Studio WebSocket.
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
 #### Parau huna nō te OBS {#obs-password}
 
@@ -597,30 +597,30 @@ Fa’anahora’a tumu: ’Aita
 
 Te parau huna nō te tūhonora’a OBS Studio WebSocket.
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
 #### Te mau tōpata OBS {#obs-scenes}
 
 Fa’anaho i te mau tōpata OBS e fa’a’ohipahia nō te mau hina’aro ta’a ’ē:
 
-- Tōpata hōho’a nūmera: Tōpata e fa’a’ite ra i te hōho’a nūmera/tei ni’a i te tēpē-parau
-- Tōpata rorouira: Tōpata nō te fa’a’itera’a i te mau rorouira
-- Tōpata hoho’a: Tōpata nō te fa’a’itera’a i te mau hoho’a (ei hi’ora’a, hō’ē tōpata PIP e fa’a’ite ra i te rorouira ’e te ta’ata e parau ra)
+- **Tōpata hōho’a nūmera**: Tōpata e fa’a’ite ra i te hōho’a nūmera/tei ni’a i te tēpē-parau
+- **Tōpata rorouira**: Tōpata nō te fa’a’itera’a i te mau rorouira
+- **Tōpata hoho’a**: Tōpata nō te fa’a’itera’a i te mau hoho’a (ei hi’ora’a, hō’ē tōpata PIP e fa’a’ite ra i te rorouira ’e te ta’ata e parau ra)
 
 #### Te mau mā’itira’a nō te OBS {#obs-advanced-options}
 
-- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
-- Tāpere-’ōhie: E fa’ati’a i te tū’era’a/tī’era’a ’ōhie nō te tūhonora’a OBS
-- Taui i te tōpata i muri a’e i te rorouira: Fa’aho’i-’ōhie-ra’a i te tōpata na mua atu i te hope’a o te rorouira
-- Ha’amana’o i te tōpata na mua atu: Ha’amana’o ’e fa’aho’i mai i te tōpata i fa’a’ohipa-hia na mua atu
-- Huna i te mau hoho’a-tapa’o: Huna i te mau hoho’a-tapa’o nō te OBS i roto i te matapihi fa’a’ohipa
-- Te mau Fa’atere-ra’a Haruharu-reo: A fa’a’ite i te mau fa’atere-ra’a o te ha’amata e o te fa’ata’a i te haruharu-reo OBS mai roto mai i te M³
+- **’Eiaha e ’ōpere noa i te mau hōho’a**: E fa’ataere i te ’ōperera’a i te mau hōho’a i ni’a ia OBS e tae noa atu ’ia fa’ahorohia mā te rima
+- **Tāpere-’ōhie**: E fa’ati’a i te tū’era’a/tī’era’a ’ōhie nō te tūhonora’a OBS
+- **Taui i te tōpata i muri a’e i te rorouira**: Fa’aho’i-’ōhie-ra’a i te tōpata na mua atu i te hope’a o te rorouira
+- **Ha’amana’o i te tōpata na mua atu**: Ha’amana’o ’e fa’aho’i mai i te tōpata i fa’a’ohipa-hia na mua atu
+- **Huna i te mau hoho’a-tapa’o**: Huna i te mau hoho’a-tapa’o nō te OBS i roto i te matapihi fa’a’ohipa
+- **Te mau Fa’atere-ra’a Haruharu-reo**: A fa’a’ite i te mau fa’atere-ra’a o te ha’amata e o te fa’ata’a i te haruharu-reo OBS mai roto mai i te M³
 
 :::warning Parau Fa’aarara’a faufa’a
 
-E titauhia te fa’anahora’a o te upā: E fa’atere noa te tūhonora’a o te OBS Studio i te tauira’a i te mau tōpata ’e te hōho’a. Te upā nō te rorouira M³: ’Aita i hōro’a-’ōhie-hia i te Zoom aore rā te OBS. Te hōro’a-ra’a hōho’a: E ’ohipa mai te hō’ē mātini hōho’a nūmera tei ’ore i te upā, mai te hō’ē webcam. E titauhia ia ’oe ’ia fa’anaho i te mau fa’anahora’a "Reo tumu" o te Zoom aore rā ’ia fa’a’ohipa i te "Hōro’a i te upā o te rorouira" nō te ha’apāpū ē ’ia fa’aro’o maita’i te mau ta’ata i te rorouira. A hi’o i te [Arata’i nō te ta’ata fa’a’ohipa](/user-guide#audio-configuration) nō te mau fa’anahora’a ha’amāramaramara’a nō ni’a i te fa’anahora’a o te upā.
+**E titauhia te fa’anahora’a o te upā**: E fa’atere noa te tūhonora’a o te OBS Studio i te tauira’a i te mau tōpata ’e te hōho’a. Te reo o te media a M³ **’aita e hā’onohia otometi** i ni’a ia Zoom ’aore rā ia OBS. Te hōro’a-ra’a hōho’a: E ’ohipa mai te hō’ē mātini hōho’a nūmera tei ’ore i te upā, mai te hō’ē webcam. E titauhia ia ’oe ’ia fa’anaho i te mau fa’anahora’a "Reo tumu" o te Zoom aore rā ’ia fa’a’ohipa i te "Hōro’a i te upā o te rorouira" nō te ha’apāpū ē ’ia fa’aro’o maita’i te mau ta’ata i te rorouira. A hi’o i te [Arata’i nō te ta’ata fa’a’ohipa](/user-guide#audio-configuration) nō te mau fa’anahora’a ha’amāramaramara’a nō ni’a i te fa’anahora’a o te upā.
 
-Mā’itira’a ê: ’A fa’a’ohipa i te tūhonora’a Zoom, no te mea e fa’a’ohipa te reira i te rāve’a fa’a’ite-’ōhie-ra’a i te hōho’a nō te Zoom, o tei fa’atere maita’i a’e i te upā.
+**Mā’itira’a ê**: ’A fa’a’ohipa i te tūhonora’a Zoom, no te mea e fa’a’ohipa te reira i te rāve’a fa’a’ite-’ōhie-ra’a i te hōho’a nō te Zoom, o tei fa’atere maita’i a’e i te upā.
 
 :::
 
@@ -632,7 +632,7 @@ Mā’itira’a ê: ’A fa’a’ohipa i te tūhonora’a Zoom, no te mea e fa�
 
 Fa’ati’a i te mau rāve’a ha’apotora’a ta’a ’ē tei fa’a’ohipa-hia i te taime e ’ite-hia ’i hō’ē oro’a ta’a ’ē
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### Te mau rāve’a ha’apotora’a nō te mau Oro’a ta’a ’ē {#custom-event-shortcuts}
 
@@ -642,7 +642,7 @@ Fa'anahora'a tumu: `Hape`
 
 Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’ata’i-hia ’i te rorouira.
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
 ##### Rāve’a ha’apotora’a nō te fa’afa’aea i te rorouira {#custom-event-media-pause-shortcut}
 
@@ -650,7 +650,7 @@ Fa’anahora’a tumu: ’Aita
 
 Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’afa’aea-hia ’i te rorouira.
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
 ##### Rāve’a ha’apotora’a nō te fa’a’ore i te rorouira {#custom-event-media-stop-shortcut}
 
@@ -658,7 +658,7 @@ Fa’anahora’a tumu: ’Aita
 
 Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’a’ore-hia ’i te rorouira.
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
 ##### Rāve’a ha’apotora’a nō te hīmene hope’a {#custom-event-last-song-shortcut}
 
@@ -666,7 +666,7 @@ Fa’anahora’a tumu: ’Aita
 
 Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’ata’i-hia ’i te hīmene hope’a i roto i te hō’ē putuputura’a.
 
-Fa’anahora’a tumu: ’Aita
+**Fa’anahora’a tumu**: ’Aita
 
 ### Te mau Haruharu-reo nō te Putuputura’a {#meeting-recordings}
 
@@ -674,11 +674,11 @@ Fa’anahora’a tumu: ’Aita
 
 <!-- **Setting**: `recordingEnable` -->
 
-A fa’ati’a i te M³ ia fa’atere i te ho’ē fa’anahora’a haruharu-reo ta’a ’ē ma te fa’a’ohipa i te mau tāpa’o pāpere pātō-pātē. ’Aita teie e haruharu-reo i roto i te M³; e tono atu teie i te mau tāpa’o pāpere pātō-pātē i fa’anahohia i te taime a pātō ai ’oe i ni’a i te Ha’amata i te haruharu aore rā Fa’ata’a i te haruharu i roto i te ha’amaramarama nō te mau haruharu-reo putuputura’a.
+A fa’ati’a i te M³ ia fa’atere i te ho’ē fa’anahora’a haruharu-reo ta’a ’ē ma te fa’a’ohipa i te mau tāpa’o pāpere pātō-pātē. ’Aita teie e haruharu i roto ia M³; e hā’ono teie i te mau pā’atā papāmāha i fa’anahohia ’ia pata ’oe i ni’a i te **’A ha’amata i te haruharu** ’aore rā **’A fa’aoti i te haruharu** i roto i te ha’amāramarama iti nō te mau haruharura’a putuputura’a.
 
 E tapuni-hia teie mā’itira’a i te taime a fa’a’ohipa-hia ai te mau fa’atere-ra’a haruharu-reo OBS. Mai te peu e te fa’a’ohipa ra ’oe i te OBS Studio, a fa’a’ohipa atu i te mau fa’atere-ra’a haruharu-reo OBS i roto i te tu’atira’a OBS.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### Te mau Tāpa’o Pāpere Pātō-pātē nō te Haruharu-reo e te Pātura {#recording-shortcuts-and-folder}
 
@@ -696,18 +696,18 @@ A fa’anahora’a i te tāpa’o pāpere pātō-pātē no te ha’amata i te ha
 
 Fa’ati’a i te mau rāve’a ha’apotora’a i ni’a i te tāhitō pereo nō te fa’aterera’a i te rorouira.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### Te mau rāve’a ha’apotora’a nō te fa’aterera’a i te rorouira {#media-control-shortcuts}
 
 Fa’anaho i te mau rāve’a ha’apotora’a nō te fa’ata’i-fa’ahou-ra’a i te rorouira:
 
-- Matapihi Rorouira: ’A iriti/’a tāpani i te matapihi rorouira
-- Rorouira na mua atu: ’A haere i te parau rorouira na mua atu
-- Rorouira i muri nei: ’A haere i te parau rorouira i muri nei
-- Fa’afa’aea/Fa’ata’i-fa’ahou: ’A fa’afa’aea aore rā ’a fa’ata’i-fa’ahou i te fa’ata’i-ra’a rorouira
-- Fa’a’ore i te Rorouira: ’A fa’a’ore i te fa’ata’i-ra’a rorouira
-- Fa’afariu i te pehe: Fa’afariu i te pehe ha’amata
+- **Matapihi Rorouira**: ’A iriti/’a tāpani i te matapihi rorouira
+- **Rorouira na mua atu**: ’A haere i te parau rorouira na mua atu
+- **Rorouira i muri nei**: ’A haere i te parau rorouira i muri nei
+- **Fa’afa’aea/Fa’ata’i-fa’ahou**: ’A fa’afa’aea aore rā ’a fa’ata’i-fa’ahou i te fa’ata’i-ra’a rorouira
+- **Fa’a’ore i te Rorouira**: ’A fa’a’ore i te fa’ata’i-ra’a rorouira
+- **Fa’afariu i te pehe**: Fa’afariu i te pehe ha’amata
 
 ### Faahuahuaraa no te tuʻti Haaputupeturaa Atâ Ata {#add-more-media-button}
 
@@ -725,7 +725,7 @@ A maiti e inaha tuhaa o te faaite i ta ratou iho tuʻti no te apiti i ta oe iho 
 
 A faaite noa i te tapao no te tuʻti 'Apiti i te mau ata hau' / 'Apiti i te hoê pehe' i nia i te mau pane o te tuhaa. Ia tapurahia, e faaite atoa te tuʻti i te parau i pihai iho i te tapao mai te peu e navai te vahi.
 
-Fa’anahora’a tumu: `’oia`
+**Fa’anahora’a tumu**: `true`
 
 ### Tapearaa iriti no teuri i te mau ata {#media-drag-handle}
 
@@ -735,7 +735,7 @@ Fa’anahora’a tumu: `’oia`
 
 A faaite i te hoê tapearaa rii i nia i te mau tauihaaata tataˈe no te tuuri e no te faahotu faahou i te mau faturaa. E nehenehe noa e faahotu faahou i te mau tauihaaata ma te tuuri i te mau vahi atoa i nia ia ratou; e tano noa teie i nia i te mea e faaitehia anei te tapao tapearaa.
 
-Fa’anahora’a tumu: `’oia`
+**Fa’anahora’a tumu**: `true`
 
 ### Mau Ohipa Ru no te Mau Putuputuraa Hou/I muri aˈe {#before-after-meeting-quick-actions}
 
@@ -745,7 +745,7 @@ Fa’anahora’a tumu: `’oia`
 
 A faaite i te hoê pane hou putuputuraa e te hoê pane i muri aˈe i te putuputuraa e te mau taviri maitatai (pehe muri, nenei raa) e te hoê tapura hiˈopoaraa tia ia taui no te mau tuhaa tataˈe.
 
-Fa’anahora’a tumu: `’oia`
+**Fa’anahora’a tumu**: `true`
 
 Te mau tuhaa e te mau ohipa no te tapura hiˈopoaraa no te mau pane hou putuputuraa e i muri aˈe i te putuputuraa, e faaterehia ïa no roto mai i teie tuhaa faanahoraa hoê o te faatia i te apiti, te huri i te iˈoa, te tuuri aore ra te tatara i te mau tuhaa e te mau ohipa ia au i te titau-hia-raa no ta outou amuiraa.
 
@@ -769,7 +769,7 @@ A hōro’a i te mau fa’anahora’a o te hōho’a ta’ata i teie nei i roto 
 
 Te vāhi ha’amatara’a o te upe’a rāve’a tei fa’a’ohipahia nō te ’ohi i te mau parau nīnihia e te mau rāve’a ha’amāramaramara’a.
 
-Fa'anahora'a tumu: `jw.org`
+**Fa'anahora'a tumu**: `jw.org`
 
 #### Fa’aore i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini {#disable-hardware-acceleration}
 
@@ -777,7 +777,7 @@ Fa'anahora'a tumu: `jw.org`
 
 A fa’aore i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini i muri iho i te ha’amata-fa’ahou-ra’a i te M³. E nehenehe teie e tauturu i te fa’aore i te mau hape o te hōho’a aore rā te mātini, ’aita rā i tū’utu’uhia i te tahi atu mau taime.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### Fa’aore i te fa’aara nō ni’a i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini {#suppress-hardware-acceleration-reminder}
 
@@ -785,7 +785,7 @@ Fa'anahora'a tumu: `Hape`
 
 A huna i te fa’aara nō te ha’amata-fa’ahou-ra’a i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini, i muri iho i tōna fa’aore-ra’a-hia e ’oe.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 #### ’Ia fa’ata’a i te ’ohira’a i te mau rāve’a ha’amāramaramara’a. {#disable-media-fetching}
 
@@ -793,27 +793,27 @@ Fa'anahora'a tumu: `Hape`
 
 ’Ia fa’ata’a-ta’i-ro’a-hia te ’ohira’a-’otometi-ra’a i te mau rāve’a ha’amāramaramara’a. ’Ia fa’a’ohipa noa i teie nō te mau fa’anahora’a ta’a-ē i fa’ata’ahia nō te mau oroa ha’amana’ora’a aore rā te tahi atu mau fa’anahora’a tano.
 
-Fa'anahora'a tumu: `Hape`
+**Fa’anahora’a tumu**: `false`
 
 ## Te mau mana’o nō te hō’ē fa’anahora’a maita’i a’e {#configuration-tips}
 
 ### Nō te feiā ’āpī e fa’a’ohipa ra {#new-users}
 
 1. ’Ia ha’amata i te rāve’a fa’anahora’a mātāmua nō te fa’atano i te mau fa’anahora’a tumu
-2. Turn on "Enable media playback" to access presentation features
+2. ’A fa’atupu i "’A fa’atupu i te hī’ora’a-rorouira" nō te fa’a’ohipa i te mau rave’a fa’aitera’a
 3. ’Ia fa’atano maita’i i tō ’oe tāpura putuputura’a
 4. ’Ia fa’anahohia te fa’a’ohipara’a o te OBS mai te mea e fa’a’ohipa ’oe i te mau putuputura’a hō’ēra’a (hybrid)
 
 ### Nō te feiā ’aravihi i te fa’a’ohipa {#advanced-users}
 
-1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
+1. ’A fa’a’ohipa i te hō’ē pu'e 'ite tufahia nō te ’āmui i te media mai te vaira’a nā ni’a i te itenati, mai ia Dropbox ’aore rā OneDrive
 2. ’Ia fa’ati’a i te tu’ura’a-’otometi-ra’a i te mau rāve’a ha’amāramaramara’a nō te mau ho’o-parau-ra’a
 3. ’Ia fa’atano i te mau tāpura rāve’a poto nō te tāpapa-matini nō te hō’ē fa’a’ohipara’a ’oi’oi
 4. ’Ia fa’atano i te fa’a’ohipara’a i te Zoom nō te tu’ura’a-’otometi-ra’a i te fa’a’itera’a i te ’ata-matini
 
 ### Te fa’a’au maita’i-ra’a i te puai o te mātini {#performance-optimization}
 
-1. Cache songbook video files for better performance
+1. ’A tu’u i te mau video o te puta hīmene i roto i te cache nō te ha’amaita’i i te terera’a
 2. ’A fa’a’ohipa i te nūmera nō te fa’ahotura’a teitei roa a’e i au i tō ’oe mau hina’aro
 3. Fa’anaho i te fa’a’ore-’ōhie-ra’a i te tahi’o nō te ha’amaita’i i te vāhi teimaha i ni’a i te matini
 4. ’A hi’o i te fa’anahora’a nō te hō’ē ta’amura’a ta’ohia mai te mea e iti te terera’a o te ’uterete
@@ -825,4 +825,4 @@ Fa'anahora'a tumu: `Hape`
 - Mai te mea e māri’i te terera’a, ’a tamata i te ha’amana i te tahi’o hau aore rā ’a fa’aiti i te nūmera nō te fa’ahotura’a
 - Mai te mea e fifi tō ’oe i te reo, ’a hi’o i te mau fa’anahora’a reo nō te matapihi fa’a’ohipa e nō te rorouira
 - Mai te mea ’aita te feiā i roto i te Zoom e fa’aro’o ra i te rorouira, ’a fa’anaho i te mau fa’anahora’a « Original Audio » nō Zoom aore rā ’a fa’a’ohipa i te « Share Computer Sound »
-- Mana’o tauturu: ’A feruri i te fa’a’ohipa i te Zoom noa i te vāhi o te OBS Studio nō te fa’atere-’ōhie-ra’a i te ta’o
+- **Mana’o tauturu**: ’A feruri i te fa’a’ohipa i te Zoom noa i te vāhi o te OBS Studio nō te fa’atere-’ōhie-ra’a i te ta’o

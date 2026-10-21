@@ -92,13 +92,13 @@ onMounted(() => {
 ## Windows
 
 - **Windows de 64 bits (.exe)**: <a :href="downloads.win64">Descargar</a>
-- **Windows 32-bit (.exe)**, last version for 32-bit Windows ({{ downloads.legacyVersion }}): <a :href="downloads.win32">Download</a>
+- **Windows de 32 bits (.exe)**, última versión para Windows de 32 bits ({{ downloads.legacyVersion }}): <a :href="downloads.win32">Descargar</a>
 - **Windows portátil (.exe)**: <a :href="downloads.winPortable">Descargar</a>
 
 ## macOS
 
 - **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Descargar</a>
-- **macOS 12 (Monterey) (.dmg)**, last version for macOS 12 ({{ downloads.legacyVersion }}): <a :href="downloads.macLegacy">Download</a>
+- **macOS 12 (Monterey) (.dmg)**, última versión para macOS 12 ({{ downloads.legacyVersion }}): <a :href="downloads.macLegacy">Descargar</a>
 
 ## Linux
 

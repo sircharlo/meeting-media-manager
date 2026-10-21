@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
@@ -50,6 +50,11 @@ installQuasarPlugin();
 // createTestingPinia stubs actions by default (they become no-op spies) -
 // sceneExists (an action) needs to actually run for the scene-switch tests.
 installPinia({ stubActions: false });
+
+// Unmount every popup after its test: a still-mounted QMenu's transition
+// timer could otherwise fire after this file's DOM is torn down and fail
+// the run with "document is not defined" (seen once in CI).
+enableAutoUnmount(afterEach);
 
 afterEach(() => {
   document.body.innerHTML = '';
@@ -292,5 +297,48 @@ describe('DialogObsPopup - recording footer', () => {
     expect(openFolderSpy).toHaveBeenCalledWith('C:/Recordings');
 
     openFolderSpy.mockRestore();
+  });
+});
+
+// Like in Settings (obsImageScene depends on obsMediaScene), the image scene
+// only applies along with a media scene: clearing the media scene (e.g. to
+// let Zoom share the media instead) must stop OBS Studio showing images too.
+describe('DialogObsPopup - image scene', () => {
+  const showImage = async () => {
+    useCurrentStateStore().mediaPlaying.url = 'file:///media/picture.jpg';
+    globalThis.dispatchEvent(
+      new CustomEvent('obsSceneEvent', { detail: { scene: 'media' } }),
+    );
+    await flushPromises();
+  };
+
+  const setupConnected = (overrides: Partial<typeof defaultSettings>) => {
+    const obsState = setupObsSettings(overrides);
+    obsState.obsConnectionState = 'connected';
+    obsState.scenes = [
+      { sceneName: 'Camera' },
+      { sceneName: 'Media' },
+      { sceneName: 'Images' },
+    ];
+    mount(DialogObsPopup, { props: { modelValue: true } });
+  };
+
+  it('switches to the image scene for an image when a media scene is set', async () => {
+    setupConnected({ obsImageScene: 'Images', obsMediaScene: 'Media' });
+    await showImage();
+
+    expect(callMock).toHaveBeenCalledWith('SetCurrentProgramScene', {
+      sceneName: 'Images',
+    });
+  });
+
+  it("doesn't switch to the image scene without a media scene", async () => {
+    setupConnected({ obsImageScene: 'Images', obsMediaScene: null });
+    await showImage();
+
+    expect(callMock).not.toHaveBeenCalledWith(
+      'SetCurrentProgramScene',
+      expect.anything(),
+    );
   });
 });

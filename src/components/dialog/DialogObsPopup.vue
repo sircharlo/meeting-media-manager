@@ -167,7 +167,9 @@ const getProgramSceneFromType = (sceneType: ObsSceneType) => {
 
   let scene = mediaScene;
 
-  if (isImage(mediaPlaying.value.url) && imageScene) {
+  // Like in Settings (obsImageScene depends on obsMediaScene), the image
+  // scene only applies along with a media scene.
+  if (mediaScene && imageScene && isImage(mediaPlaying.value.url)) {
     scene = imageScene;
   }
 

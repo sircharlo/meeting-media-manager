@@ -24,8 +24,8 @@
 
 M³는 Windows, macOS, Linux를 지원합니다.
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**: Windows 10 이상(64비트). 32비트 Windows용 마지막 버전은 v26.10.1이며, [다운로드 페이지](download)에서 받을 수 있습니다.
+- **macOS**: macOS 13(Ventura) 이상(유니버설 빌드). macOS 12(Monterey)용 마지막 버전은 v26.10.1이며, [다운로드 페이지](download)에서 받을 수 있습니다.
 - **Linux**: 대부분의 최신 Linux 배포판(AppImage 형식)
 
 ### :globe_with_meridians: M³를 한국어로도 사용할 수 있나요? {#language-support}
@@ -86,7 +86,7 @@ M³는 다음과 같은 과정을 통해 다가오는 집회에 필요한 미디
 
 ### :speaker: 성경 오디오 녹음 파일도 가져올 수 있나요? {#audio-bible}
 
-네! **네!** M³의 성경 오디오 기능을 사용하면 다음과 같은 작업을 할 수 있습니다.
+네! M³의 성경 오디오 기능을 사용하면 다음과 같은 작업을 할 수 있습니다.
 
 1. 성경 책과 장을 선택합니다.
 2. 특정 성구나 성구 범위를 선택합니다.
@@ -128,7 +128,7 @@ M³에서는 다음 기능의 키보드 단축키를 원하는 대로 설정할 
 
 ### :stopwatch: M³에 집회 타이머 기능도 있나요? {#faq-meeting-timer}
 
-네. 이 기능을 활성화하면 M³에서 프로그램 참여자의 시간을 측정하는 별도의 타이머 창을 표시할 수 있습니다. 경과 시간이나 남은 시간을 표시하고, 현재 시각과 집회 시작까지 남은 시간을 확인할 수 있습니다. 또한 프로그램이 예정된 시간을 초과했는지, 집회가 예정보다 빠르게 또는 늦게 진행되고 있는지를 선택적으로 표시할 수 있습니다. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
+네. 이 기능을 활성화하면 M³에서 프로그램 참여자의 시간을 측정하는 별도의 타이머 창을 표시할 수 있습니다. 경과 시간이나 남은 시간을 표시하고, 현재 시각과 집회 시작까지 남은 시간을 확인할 수 있습니다. 또한 프로그램이 예정된 시간을 초과했는지, 집회가 예정보다 빠르게 또는 늦게 진행되고 있는지를 선택적으로 표시할 수 있습니다. 프로그램 시간은 자유롭게 조정할 수 있고, 특별 프로그램을 위한 사용자 지정 부분을 추가할 수 있으며, 타이머는 작업 아일랜드(마우스를 올렸을 때 포함)나 메인 창에 고정된 패널에서 제어할 수 있습니다.
 
 타이머는 현재 베타 기능이므로, 현지에서 사용 승인을 받은 경우에만 활성화해야 합니다.
 
@@ -158,12 +158,12 @@ M³는 다음 조건에 따라 OBS 장면을 자동으로 전환합니다.
 
 - 미디어 유형(동영상, 이미지 등)
 - 사용자가 설정한 장면 구성
-- Settings like "Do not automatically share images"
+- ‘이미지를 자동으로 공유하지 않음’과 같은 설정
 - 미디어 표시가 끝난 후 이전 장면으로 돌아가도록 설정했는지 여부
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: ‘이미지를 자동으로 공유하지 않음’ 설정은 어떤 기능인가요? {#faq-postpone-images}
 
-This setting delays sharing images to OBS until you manually trigger them. 필요한 상황:
+이 설정을 사용하면 직접 실행하기 전까지 OBS로 이미지를 공유하지 않습니다. 필요한 상황:
 
 - 왕국회관에 있는 청중에게 이미지를 먼저 보여 주려는 경우
 - 타이밍을 더 미세하게 조정
@@ -178,16 +178,16 @@ M³에는 자체 녹화 기능이 없지만, 다음 두 가지 방법으로 외�
 
 ## 고급 기능 {#faq-advanced-features}
 
-### :cloud: How does the shared folder work? {#faq-folder-monitoring}
+### :cloud: 공유 폴더는 어떻게 작동하나요? {#faq-folder-monitoring}
 
-If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
+Dropbox, OneDrive, iCloud Drive, Google Drive와 같은 클라우드 저장소 앱에 집회용 파일을 보관하고 있다면, M³가 해당 파일을 알맞은 집회에 자동으로 추가할 수 있습니다.
 
-1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
-2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
-3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
-4. To add files for another day, create a folder for it, named the same way.
+1. 설정 마법사나 **설정** > **연동 기능** > **공유 폴더**에서 클라우드 저장소 앱의 폴더를 선택합니다. 이 용도로만 사용할 새 폴더를 선택하는 것이 가장 좋습니다.
+2. M³는 그 안에 다가오는 집회마다 폴더를 만들고, 집회 날짜를 연-월-일 형식으로 표시한 이름을 붙입니다(예: `2026-03-25`).
+3. 필요할 때마다 사진, 동영상, 오디오 파일 또는 JW 라이브러리 재생 목록을 집회 폴더에 넣으십시오. 이 파일들은 같은 폴더를 사용하는 모든 컴퓨터에서 해당 집회의 미디어 목록에 추가됩니다.
+4. 다른 날짜에 파일을 추가하려면 같은 방식으로 이름을 붙인 폴더를 만드십시오.
 
-When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
+한 주가 끝나면 M³는 그 주의 날짜별 폴더와 그 안의 파일을 삭제하며, 이는 공유 폴더를 사용하는 모든 사람에게 적용됩니다. 이 파일들을 보관하려면 **지난 집회 폴더 삭제**를 끄십시오.
 
 ### :file_folder: 미디어 자동 내보내기란 무엇인가요? {#faq-media-export}
 
@@ -200,7 +200,7 @@ When a week is over, M³ deletes that week's dated folders and the files in them
 
 ### :family: 여러 회중을 관리할 수 있나요? {#faq-multiple-congregations}
 
-네! **네!** M³는 다음과 같은 용도로 여러 프로필을 사용할 수 있습니다.
+네! M³는 다음과 같은 용도로 여러 프로필을 사용할 수 있습니다.
 
 - 서로 다른 회중
 - 특별 행사
@@ -243,13 +243,14 @@ OBS 관련 문제가 있을 수 있습니다:
 - 오디오 문제가 계속 발생한다면 Zoom의 '컴퓨터 소리 공유' 기능을 사용해야 할 수도 있습니다.
 - 또는 Zoom의 기본 화면 공유 기능을 사용하는 M³의 Zoom 연동 기능을 활용할 수도 있습니다.
 
+**왜 이렇게 해야 합니까?**
 M³는 컴퓨터에서 소리와 함께 미디어를 재생하지만, OBS Studio를 사용할 경우 이 소리가 동영상 스트림을 통해 Zoom으로 자동 전송되지는 않습니다. 예를 들어, 컴퓨터에 두 번째 사운드 카드가 있고 이를 미디어 재생에 사용한다면, Zoom에서 해당 사운드 카드의 오디오를 마이크 입력으로 받아들이도록 설정할 수 있습니다.
 
 ### :snail: M³의 실행 속도가 느립니다. 성능을 개선하려면 어떻게 해야 하나요? {#performance-issues}
 
 성능 최적화를 진행해보세요:
 
-1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
+1. **노래책 동영상 미리 저장**: 설정에서 모든 노래책 동영상을 미리 저장합니다.
 2. **다른 프로그램 종료**: 사용하지 않는 프로그램을 종료합니다.
 3. **디스크 공간 확인**: 저장 장치에 충분한 여유 공간이 있는지 확인합니다.
 4. **해상도 낮추기**: 최대 해상도 설정을 낮춥니다.
@@ -311,8 +312,8 @@ M³는 번역 관리를 위해 Crowdin을 사용합니다. 다음과 같은 방�
 
 M³는 다양한 운영 체제에서 작동하도록 설계되었습니다.
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**: Windows 10 이상(64비트). 32비트 Windows용 마지막 버전은 v26.10.1이며, [다운로드 페이지](download)에서 받을 수 있습니다.
+- **macOS**: macOS 13(Ventura) 이상(유니버설 빌드). macOS 12(Monterey)용 마지막 버전은 v26.10.1이며, [다운로드 페이지](download)에서 받을 수 있습니다.
 - **Linux**: 대부분의 최신 Linux 배포판(AppImage 형식)
 
 M³의 하드웨어 요구 사항은 다음과 같습니다.
@@ -339,7 +340,7 @@ M³의 하드웨어 요구 사항은 다음과 같습니다.
 
 ### :shield: M³는 보안과 개인정보 보호 측면에서 안전한가요? {#security-privacy}
 
-네! **네!** M³는 보안과 개인정보 보호를 고려하여 설계되었습니다.
+네! M³는 보안과 개인정보 보호를 고려하여 설계되었습니다.
 
 - **로컬 저장**: 모든 집회 데이터는 사용자의 컴퓨터에 저장됩니다.
 - **직접 다운로드**: 미디어는 여호와의 증인 공식 웹사이트에서 직접 다운로드됩니다.

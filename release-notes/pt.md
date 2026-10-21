@@ -4,112 +4,118 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## PRÓXIMA VERSÃO
+
+### ✨ Novos Recursos
+
+- ✨ **Sugestões de recursos**: De vez em quando, o M³ sugere um recurso que um perfil ainda não usa, em uma pequena janela "Você sabia?" que explica o que ele faz. Ele mostra no máximo uma sugestão cada vez que um perfil é aberto, nunca desde 15 minutos antes de uma reunião até o fim dela, e se lembra de cada resposta: "Lembre-me depois" manda a sugestão para o fim da fila, "Não, obrigado" a oculta de vez, e "Parar de sugerir recursos" desativa todas as sugestões para o perfil. Um "Não" no assistente de configuração inicial também conta, e as respostas podem ser redefinidas nas Configurações, em Avançado.
+
 ## v26.10.1
 
 ### ✨ Novos Recursos
 
-- ✨ **Zoom Meeting Manager (beta, Windows)**: A new integration that operates Zoom for you around each meeting. It can launch your congregation's Zoom meeting when background music starts before the meeting. When the music stops just before the meeting starts, it joins computer audio, unmutes the microphone, turns on the host video, and mutes everyone without letting them unmute. When music plays before or after a meeting, it does the reverse: it leaves computer audio, turns off the host video, and lets everyone unmute again (asking them to do so). It can also share the media window in Zoom automatically while media is being shown, making sure the media window is what gets shared and never anything else on your screen. A new Zoom button in the action island shows whether a Zoom meeting window was found and lets you run these steps manually. A setup assistant, offered when you turn the option on (the initial setup wizard now offers it on Windows instead of the keyboard-shortcut screen sharing) and available anytime from the Zoom button or Settings, checks your Zoom, learns the names of its microphone and camera buttons in your language, and tries every step with you. When M³ starts, it also checks that everything it automates in Zoom works, opening the meeting if needed on meeting days in the hour and a quarter before it starts (only looking, without pressing anything, if others are already in the meeting); if something doesn't, it tells you and pauses its Zoom automations until it's restarted or a new check passes, so nothing goes wrong during the meeting. This check is on by default and can be turned off in Settings. As each of these steps succeeds, the matching reminders in the before- and after-meeting checklists of the meeting quick actions are ticked off for you, marked as done automatically in Zoom. Since it can't be used together with the keyboard-shortcut screen sharing, Settings says so under whichever of the two is unavailable, naming the one to turn off. It works whatever language Zoom is in, and needs nothing installed beyond Zoom itself.
+- ✨ **Gerenciador de Reuniões do Zoom (beta, Windows)**: Uma nova integração que opera o Zoom por você em cada reunião. Ele pode abrir a reunião do Zoom da sua congregação quando os cânticos de fundo começam a tocar antes da reunião. Quando os cânticos param, pouco antes de a reunião começar, ele conecta o áudio do computador, ativa o microfone, ativa o vídeo do anfitrião e desativa o áudio de todos, sem permitir que eles o ativem. Quando os cânticos tocam antes ou depois de uma reunião, ele faz o contrário: desconecta o áudio do computador, desativa o vídeo do anfitrião e permite que todos ativem o áudio novamente (pedindo que façam isso). Ele também pode compartilhar automaticamente a janela de mídia no Zoom enquanto a mídia é exibida, garantindo que o que é compartilhado seja a janela de mídia e nunca outra coisa da sua tela. Um novo botão do Zoom na barra de ações mostra se uma janela de reunião do Zoom foi encontrada e permite executar essas etapas manualmente. Um assistente de configuração, oferecido quando você ativa a opção (no Windows, o assistente de configuração inicial agora o oferece no lugar do compartilhamento de tela por atalho de teclado) e disponível a qualquer momento pelo botão do Zoom ou nas Configurações, verifica o seu Zoom, aprende os nomes dos botões de microfone e câmera no seu idioma e testa cada etapa com você. Quando o M³ é iniciado, ele também verifica se tudo o que automatiza no Zoom funciona, abrindo a reunião se necessário nos dias de reunião, durante a hora e quinze minutos que antecedem o início (apenas olhando, sem pressionar nada, se já houver outras pessoas na reunião); se algo não funcionar, ele avisa você e pausa as automações do Zoom até ser reiniciado ou até uma nova verificação dar certo, para que nada dê errado durante a reunião. Essa verificação vem ativada por padrão e pode ser desativada nas Configurações. À medida que cada uma dessas etapas dá certo, os lembretes correspondentes nas listas de verificação de antes e de depois da reunião das ações rápidas da reunião são marcados para você, como concluídos automaticamente no Zoom. Como ele não pode ser usado junto com o compartilhamento de tela por atalho de teclado, as Configurações avisam isso na opção que estiver indisponível, indicando qual das duas desativar. Funciona em qualquer idioma do Zoom e não precisa de nada instalado além do próprio Zoom.
 
-- ✨ **Meeting Timer**: Custom parts can now be added on meeting days too, for Governing Body updates, special programs and anything else that isn't on the regular schedule. Each is timed like any other part, and its name and length can be changed from the timer popup or from the parts list.
+- ✨ **Temporizador da reunião**: Agora também é possível adicionar partes personalizadas nos dias de reunião, para informativos do Corpo Governante, programas especiais e qualquer outra coisa que não esteja na programação normal. Cada uma é cronometrada como qualquer outra parte, e o nome e a duração podem ser alterados no pop-up do temporizador ou na lista de partes.
 
-- ✨ **Meeting Timer**: Quicker access to the timer. Hovering the timer button on the action island now shows the part being timed with Start, Pause, Stop and Next part buttons, without opening the popup (a setting, on by default). A new setting also keeps the whole parts list and the timer controls in a panel docked on the right side of the main window, always in view.
+- ✨ **Temporizador da reunião**: Acesso mais rápido ao temporizador. Ao passar o mouse sobre o botão do temporizador na barra de ações, agora aparece a parte que está sendo cronometrada, com os botões Iniciar, Pausar, Parar e Próxima parte, sem abrir o pop-up (uma configuração ativada por padrão). Uma nova configuração também mantém a lista completa de partes e os controles do temporizador em um painel fixado no lado direito da janela principal, sempre à vista.
 
-- ✨ **Meeting Timer**: A new "Analog clock with time arc" countdown display shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a red wedge. It also works for the pre-meeting countdown and in count-up mode.
+- ✨ **Temporizador da reunião**: Um novo formato de contagem regressiva, "Relógio analógico com arco de tempo", mostra o tempo restante de uma parte como um setor no mostrador de um relógio analógico, do ponteiro dos minutos até o término previsto; assim, com uma só olhada, você vê a hora atual e quanto tempo falta. O tempo excedido aparece como um setor vermelho. Ele também funciona na contagem regressiva antes da reunião e no modo progressivo.
 
-- ✨ **Meeting Timer**: The pre-meeting countdown is now labelled "Meeting starts in", and the timer display shows the name of the part being timed, so "4:59" can no longer be mistaken for the time of day.
+- ✨ **Temporizador da reunião**: A contagem regressiva antes da reunião agora tem o rótulo "A reunião começa em", e a tela do temporizador mostra o nome da parte que está sendo cronometrada, para que "4:59" não seja mais confundido com a hora atual.
 
-- ✨ **Meeting Timer**: Each day's recorded timings can be cleared in one go, after a confirmation, from the timer popup or the docked panel.
+- ✨ **Temporizador da reunião**: Os tempos registrados de cada dia podem ser apagados de uma só vez, depois de uma confirmação, no pop-up do temporizador ou no painel fixado.
 
-- ✨ **Zoom Meeting Manager (beta, Windows)**: A new raised-hand helper. During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets the operator unmute that participant with one click, and, once they're done speaking, mute them again and lower their hand with another; the Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name, and M³ touches no one when two participants share a name. If the meeting timer is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and can be switched on by hand from the timer or Zoom popups. M³ learns how Zoom marks raised hands in your language with a single button (it raises and lowers your own hand), offered in the setup assistant as well.
+- ✨ **Gerenciador de Reuniões do Zoom (beta, Windows)**: Um novo assistente de mãos levantadas. Durante uma reunião, o M³ observa a lista de participantes do Zoom em busca de mãos levantadas. Quando alguém levanta a mão, uma notificação no M³ permite que o operador ative o áudio desse participante com um clique e, quando ele terminar de falar, desative o áudio de novo e abaixe a mão dele com outro clique; o botão do Zoom na barra de ações lista as mãos levantadas com os mesmos botões. Cada ação é feita na linha desse participante no Zoom, pelo nome exato, e o M³ não mexe em ninguém quando dois participantes têm o mesmo nome. Se o temporizador da reunião estiver ativado, uma mão grande com o nome do participante também aparece na tela do temporizador para o presidente, e ela pode ser mostrada manualmente pelos pop-ups do temporizador ou do Zoom. O M³ aprende como o Zoom marca as mãos levantadas no seu idioma com um único botão (ele levanta e abaixa sua própria mão), que também é oferecido no assistente de configuração.
 
-- ✨ **Meeting Timer**: A new, optional timer remote. When turned on, M³ serves a read-only copy of the timer display as a web page on the local network, so a tablet or phone at the lectern can show the speaker the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time (parts, pre-meeting countdown, clock, overtime colors, hand alert) and all the controls stay in M³. The addresses to open are shown in the timer popup, with a copy button.
+- ✨ **Temporizador da reunião**: Um novo temporizador remoto opcional. Quando ativado, o M³ disponibiliza uma cópia somente leitura da tela do temporizador como uma página web na rede local, para que um tablet ou celular na tribuna mostre ao orador o tempo restante sem que ele apareça na tela da congregação ou em um compartilhamento do Zoom. A página acompanha o temporizador em tempo real (partes, contagem regressiva antes da reunião, relógio, cores de tempo excedido, alerta de mão levantada), e todos os controles continuam no M³. Os endereços para abrir aparecem no pop-up do temporizador, com um botão para copiar.
 
-- ✨ **Setup Wizard**: The setup wizard now asks whether you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive. If you do, it helps you choose a shared folder there and shows how it works: M³ creates a folder for each upcoming meeting, named with the meeting's date, and the files put in it are added to that meeting automatically, on every computer that uses the folder.
+- ✨ **Assistente de configuração inicial**: O assistente de configuração inicial agora pergunta se você guarda os arquivos das reuniões em um aplicativo de armazenamento em nuvem, como Dropbox, OneDrive, iCloud Drive ou Google Drive. Se for o caso, ele ajuda você a escolher uma pasta compartilhada lá e mostra como funciona: o M³ cria uma pasta para cada reunião futura, com a data da reunião no nome, e os arquivos colocados nela são adicionados automaticamente a essa reunião, em todos os computadores que usam a pasta.
 
 ## v26.9.0
 
 ### ✨ Novos Recursos
 
-- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+- ✨ **Ações rápidas antes/depois da reunião**: Um novo painel com botões grandes ajuda nos momentos que antecedem cada reunião e logo depois dela — uma contagem regressiva ao vivo, início/parada dos cânticos de fundo com um toque, início/parada da gravação e uma lista de verificação por congregação, agrupada em categorias e editável nas Configurações. O painel de antes da reunião se fecha automaticamente quando a reunião começa e a lista de verificação está completa (ou depois de um curto período de tolerância), e sempre pode ser fechado manualmente.
 
 ## v26.8.0
 
 ### ✨ Novos Recursos
 
-- ✨ **App-Wide Redesign**: A broad visual and interaction refresh across dialogs, the media list/header, Settings, and the Setup Wizard. The Setup Wizard is now a one-question-per-screen flow with a progress bar. All prompts were replaced with a consistent branded dialog, and PDF page-range selection (for publication and drag-and-drop imports) now uses a thumbnail-grid picker instead of a free-text prompt. Added a new Quick Start Guide tour after the Setup Wizard completes. Also includes refreshed card/header styling with dark-mode-aware shadows and several dark-mode contrast fixes (focused field labels, download-progress percentages).
-- ✨ **Settings Page**: Reworked into a two-pane layout, with a new global Preferences section for auto-update/beta-update toggles moved out of the About dialog (which is now purely informational).
-- ✨ **Add More Media Button**: Added a setting to choose exactly which meeting sections show the "add more media" shortcut button, along with a setting for a compact (icon-only) mode.
-- ✨ **Media List**: Items now show loading skeletons while being added instead of appearing empty, media groups show a hidden-item count in their badge (e.g. "9 items (2 hidden)"), children within a group can be reordered via drag-and-drop, and at very narrow window widths items collapse into compact, tooltip-carrying chips instead of crowding the row.
+- ✨ **Redesenho de todo o aplicativo**: Uma ampla renovação visual e de interação nas caixas de diálogo, na lista de mídia e no cabeçalho, nas Configurações e no assistente de configuração inicial. O assistente de configuração inicial agora mostra uma pergunta por tela, com uma barra de progresso. Todos os avisos foram substituídos por uma caixa de diálogo padronizada com a identidade visual do aplicativo, e a seleção de intervalos de páginas de PDF (nas importações de publicações e por arrastar e soltar) agora usa uma grade de miniaturas em vez de um campo de texto livre. Adicionado um novo tour de início rápido, que aparece depois que o assistente de configuração inicial é concluído. Também inclui um novo estilo para cartões e cabeçalhos, com sombras adaptadas ao modo escuro, e várias correções de contraste no modo escuro (rótulos de campos em foco, porcentagens do progresso de download).
+- ✨ **Página de configurações**: Reorganizada em um layout de dois painéis, com uma nova seção "Preferências globais" para as opções de atualização automática e de atualizações beta, que saíram da caixa de diálogo "Sobre este aplicativo" (agora apenas informativa).
+- ✨ **Botão "Adicionar mais mídia"**: Adicionada uma configuração para escolher exatamente quais seções da reunião mostram o botão de atalho "Adicionar mais mídia", além de uma configuração para um modo compacto (só com ícone).
+- ✨ **Lista de mídia**: Agora os itens mostram um indicador de carregamento enquanto são adicionados, em vez de aparecerem vazios; os grupos de mídia mostram no selo a quantidade de itens ocultos (por exemplo, "9 itens (2 ocultos)"); os itens dentro de um grupo podem ser reordenados arrastando e soltando; e, em janelas muito estreitas, os itens se recolhem em chips compactos com dica de ferramenta, em vez de lotar a linha.
 
 ## v26.7.7
 
 ### ✨ Novos Recursos
 
-- ✨ **Media Preview Quality**: Media preview now renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). The preview also auto-disables itself if it has to repeatedly correct playback drift on a single video, with a one-click way to turn it back on.
+- ✨ **Qualidade da pré-visualização de mídia**: A pré-visualização de mídia agora renderiza os quadros de vídeo via canvas com redução de escala de alta qualidade, corrigindo pré-visualizações serrilhadas ou borradas (principalmente em conteúdos com muito texto, como os cânticos). A pré-visualização também se desativa automaticamente se precisar corrigir repetidamente a dessincronização da reprodução em um mesmo vídeo, com uma opção para reativá-la com um clique.
 
 ## v26.7.6
 
 ### ✨ Novos Recursos
 
-- ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
-- ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
+- ✨ **Exclusão de vídeos do Estudo bíblico de congregação**: Adicionada uma configuração para excluir vídeos de publicações específicas no Estudo bíblico de congregação (por padrão, o livro **Ande Corajosamente com Deus**), com um seletor de publicações pesquisável.
+- ✨ **Números de página dos documentos**: As listas de Mídias de publicações e de importação de JWPUB agora mostram o número da página de cada documento (ou os números, quando há várias páginas) após o título. Isso pode ajudá-lo a encontrar rapidamente uma mídia específica quando você souber o número da página em que ela é encontrada.
 
 ## v26.7.4
 
 ### ✨ Novos Recursos
 
-- ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
-- ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
+- ✨ **Recuperação de mídia ausente**: Itens de mídia cujo arquivo local sumiu (por exemplo, excluído pela limpeza automática do armazenamento local ou removido manualmente) agora mostram um botão de reprodução desativado, uma legenda "ausente" com o nome do arquivo a procurar e uma nova ação "Localizar arquivo" para vincular o item novamente a um arquivo no disco.
+- ✨ **Aviso de compatibilidade**: Adicionado um banner, que pode ser dispensado, avisando os usuários de combinações de sistema operacional/arquitetura que em breve deixarão de ser suportadas (macOS 12 Monterey e Windows 32-bit) para que atualizem o sistema antes que futuras atualizações do aplicativo exijam um sistema mais recente.
 
 ## v26.7.0
 
 ### ✨ Novos Recursos
 
-- ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
-- ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
+- ✨ **Reprodução de áudio vinculada**: Adicionado suporte para reproduzir áudio de um arquivo junto com vídeo de outro arquivo. Isso pode ser útil para reproduzir apresentações de slides em vídeo com música de acompanhamento.
+- ✨ **Layout das mídias da pasta compartilhada**: Agora a ordem dos itens de mídia e das seções vindos das pastas compartilhadas é mantida. Isso garante que a lista de mídia seja exibida da mesma forma, mesmo quando a pasta compartilhada é sincronizada entre dispositivos.
 
 ## v26.6.1
 
 ### ✨ Novos Recursos
 
-- ✨ **Media Preview**: Added a live media preview overlay that can be toggled on or off from the settings or from the display popup.
-- ✨ **Search media**: Added a quick search box in the media list that allows you to quickly find media by title. To use it, simply use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
-- ✨ **Filter settings**: Added a filter box to the settings page that allows you to find settings by keyword or category. To use it, simply click on the Search button in the top right corner of the settings page, or use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
-- ✨ **Background Music Overlap Warning**: Added a warning notification when media is started while background music is playing. Users can choose to stop the background music from the notification.
+- ✨ **Pré-visualização de mídia**: Adicionada uma sobreposição com a pré-visualização ao vivo da mídia, que pode ser ativada ou desativada nas configurações ou no pop-up de exibição.
+- ✨ **Pesquisar mídia**: Adicionada uma caixa de pesquisa rápida na lista de mídia que permite encontrar rapidamente a mídia pelo título. Para usá-la, basta usar o atalho de teclado padrão de pesquisa (Ctrl+F ou Cmd+F).
+- ✨ **Filtrar configurações**: Adicionada uma caixa de filtro na página de configurações que permite encontrar configurações por palavra-chave ou categoria. Para usá-la, basta clicar no botão Procurar no canto superior direito da página de configurações ou usar o atalho de teclado padrão de pesquisa (Ctrl+F ou Cmd+F).
+- ✨ **Aviso de sobreposição dos cânticos de fundo**: Adicionada uma notificação de aviso quando uma mídia é iniciada enquanto os cânticos de fundo estão tocando. Os usuários podem parar os cânticos de fundo pela própria notificação.
 
 ## v26.6.0
 
 ### ✨ Novos Recursos
 
-- ✨ **Timer**: Added analog display modes and timing report status.
-- ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard.
-- ✨ **Media Window**: Added support for automatically hiding the media window after playback when it was initially hidden. This is practical when a remote speaker wants to display images, for example.
+- ✨ **Temporizador**: Adicionados modos de exibição analógica e o status do relatório de tempo.
+- ✨ **Perfis**: Adicionadas a importação e a exportação das configurações do perfil nas configurações avançadas e no assistente de configuração inicial.
+- ✨ **Janela de mídia**: Adicionado suporte para ocultar automaticamente a janela de mídia após a reprodução, quando ela estava oculta inicialmente. Isso é prático, por exemplo, quando um orador remoto quer mostrar imagens.
 
 ## v26.5.0
 
 ### ✨ Novos Recursos
 
-- ✨ **PDF Import**: Added a new PDF import flow to the Publication Media dialog, allowing the PDF version of a publication to be automatically imported as individual images when desired.
+- ✨ **Importação de PDF**: Adicionado um novo fluxo de importação de PDF à caixa de diálogo Mídias de publicações, que permite importar automaticamente a versão em PDF de uma publicação como imagens individuais, quando desejado.
 
 ## v26.4.8
 
 ### ✨ Novos Recursos
 
-- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
+- ✨ **JW Stream**: Adicionado JW Stream à lista de sites que podem ser espelhados.
 
 ## v26.4.0
 
 ### ✨ Novos Recursos
 
-- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
+- ✨ **Temporizador da reunião**: Foi adicionado um novo recurso de temporizador da reunião. É opcional e pode ser ativado nas configurações avançadas, se desejar. O temporizador pode ser usado para que o operador de mídia acompanhe o tempo gasto nas partes da reunião, ou para mostrar o tempo gasto na parte atual da reunião em uma tela dedicada, visível somente para o orador.
 
 ## v26.3.0
 
 ### ✨ Novos Recursos
 
-- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
-- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
-- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+- ✨ **Mídia da Celebração**: A obtenção automática da mídia da Celebração não está mais em beta! O aplicativo vai baixar automaticamente o vídeo de boas-vindas e a imagem da Celebração para exibir durante a Celebração, quando estiverem disponíveis no idioma configurado.
+- ✨ **Velocidade de reprodução**: Adicionado o controle de velocidade de reprodução, com indicador visual e redefinição manual. Este recurso só é visível se ativado nas configurações avançadas.
+- ✨ **Cânticos com pinyin**: Adicionada uma opção para substituir os cânticos por versões em pinyin nas reuniões realizadas em chinês.
 
 ## v26.2.0
 
@@ -162,7 +168,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 - ✨ **Sobreposição de cursor para exibição em TV**: Aprimorada a sobreposição do cursor da janela do site para melhor visibilidade do cursor do mouse em exibições de TV.
 - ✨ **Gravação de reunião**: Adicionado um novo recurso de gravação de reunião, para controlar um aplicativo de gravação externo.
 - ✨ **Pesquisa no site**: Adicionada a capacidade de pesquisar mídias ou publicações no site usando pesquisa inteligente.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
+- ✨ **Importação manual fácil de publicações**: Adicionada a possibilidade de importar facilmente publicações do site oficial, como revistas, livros, programas e convites.
 - ✨ **Melhorias em língua de sinais**: Adicionada confirmação antes de reproduzir arquivos inteiros para línguas de sinais e suporte para selecionar vários clipes, como para quando vários parágrafos devem ser lidos consecutivamente.
 - ✨ **Navegação de clipes**: Adicionada exibição de duração aos itens da lista de clipes e melhorada a navegação de clipes.
 - 🛠️ **Exibição de mídia**: Garantido que a exibição de mídia se torne visível quando a reprodução iniciar, mesmo que estivesse oculta antes.
@@ -179,19 +185,19 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **Iniciar reprodução em pausa**: Adicionada uma nova configuração que permite iniciar a reprodução em pausa, o que pode ser útil para os operadores de áudio e vídeo prepararem tudo (por exemplo, iniciar o compartilhamento no Zoom) antes de a mídia começar a ser reproduzida na janela de mídia.
+- ✨ **Notificações de atualização**: Agora os usuários serão avisados sobre atualizações por um banner no aplicativo, que também permite instalar as atualizações na hora, em vez de esperar o próximo reinício do aplicativo.
+- ✨ **Eventos personalizados**: Adicionados hooks de eventos opcionais que podem acionar atalhos de teclado quando certos eventos são detectados. Isso pode ser útil para os operadores AV executarem automaticamente ações fora do aplicativo. Por exemplo, luzes inteligentes poderiam ser acesas e apagadas antes e depois da reprodução de mídia em auditórios onde se usam projetores; ou um script pode ser executado depois que o último cântico de uma reunião for reproduzido, para automatizar várias ações em uma reunião do Zoom.
 
 ## v25.9.1
 
 ### ✨ Novos Recursos
 
-- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
-- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
-- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not
-- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+- ✨ **Janela de mídia sempre visível e comportamento em tela cheia**: Corrigido e melhorado o comportamento de "sempre visível" da janela de mídia, que agora se ajusta dinamicamente de acordo com o estado de tela cheia.
+- ✨ **Configuração do formato de data**: Adicionada uma configuração para definir o formato de exibição das datas.
+- ✨ **Transição cruzada de mídia**: Implementadas transições cruzadas (crossfade) na exibição de mídia, em vez da transição mais brusca com fade para preto usada antes.
+- ✨ **Parada automática dos cânticos de fundo**: Otimizado o comportamento da parada automática dos cânticos de fundo, para funcionar da mesma forma quer os cânticos tenham sido iniciados automaticamente ou não
+- ✨ **Clique em janelas inativas no macOS**: Ativado o clique direto na janela principal no macOS, o que deve facilitar o controle do aplicativo mesmo quando ele não está em foco.
 
 ## v25.9.0
 
@@ -204,23 +210,23 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
-- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+- ✨ **Transições graduais da janela de mídia**: Adicionada uma nova configuração avançada para fazer a janela de mídia aparecer e desaparecer gradualmente, proporcionando transições visuais mais suaves.
+- ✨ **Controle da duração das imagens e acompanhamento do progresso**: Adicionados o controle da duração das imagens e o acompanhamento do progresso para seções repetidas.
 
 ## v25.8.1
 
 ### ✨ Novos Recursos
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **Seções de mídia personalizadas**: Sistema completo para criar, editar e gerenciar seções de mídia personalizadas, com personalização de cores e reordenação por arrastar e soltar.
+- ✨ **Divisores de mídia**: Adicione divisores com título nas listas de mídia para uma melhor organização, com opções de posicionamento no topo ou no final.
+- ✨ **Modo de repetição de seção**: Ative a reprodução contínua em seções específicas para repetir mídias sem interrupções.
+- ✨ **Integração com o Zoom**: Início e parada automáticos do compartilhamento de tela, coordenados com a reprodução de mídia.
 
 ## v25.7.0
 
 ### ✨ Novos Recursos
 
-- No new features for this release!
+- Não há novos recursos para esta versão!
 
 ## 25.6.0
 
@@ -262,48 +268,48 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
-- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
+- 🔄 **Permitir tentativas de reconexão do OBS**: Introduzida a possibilidade de forçar manualmente a reconexão do OBS quando necessário.
+- 🗑 **Limpeza automática de pastas de exportação antigas**: Remove automaticamente as pastas de datas de exportação desatualizadas para manter o armazenamento organizado.
 
 ## 25.2.0
 
 ### ✨ Novos Recursos
 
-- 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
-- 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
-- 🔄 **Automatic Beta to Stable Downgrade**: Allow automatic downgrades from beta versions to stable releases when necessary.
-- 🌐 **Extract Latest MEPS Language Indexes**: Fetch the most recent MEPS language indexes directly from the official website, ensuring up-to-date language support.
+- 🌍 **Usar a localidade do sistema por padrão**: Detecta e usa automaticamente a localidade do sistema para uma experiência mais personalizada.
+- 🏷 **Suporte a tags na mídia exportada**: Adiciona tags de metadados aos arquivos de mídia exportados para uma melhor organização.
+- 🔄 **Downgrade automático de beta para estável**: Permite fazer o downgrade automático de versões beta para versões estáveis quando necessário.
+- 🌐 **Extração dos índices de idioma MEPS mais recentes**: Obtém os índices de idioma MEPS mais recentes diretamente do site oficial, garantindo suporte atualizado aos idiomas.
 
 ## 25.1.0
 
 ### ✨ Novos Recursos
 
-- 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
-- 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
-- 📚 **Group Media by Publication**: Group media from the same referred publication for a cleaner and more organized media overview.
-- 🎵 **Duplicate Song Warning**: Show a warning if songs are listed more than once in the media list for weekend meetings.
-- 🔄 **Future Schedule Planning**: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
+- 📅 **Abrir datas anteriores**: Permite abrir datas anteriores da semana atual, o que é útil quando o dia da reunião é mudado para mais tarde na semana.
+- 🛑 **Banner de erro para o OBS Studio**: Adicionar um banner de erro quando o OBS Studio não estiver conectado em um dia de reunião, garantindo que os usuários sejam alertados.
+- 📚 **Agrupar mídia por publicação**: Agrupa a mídia da mesma publicação referenciada para uma visão geral da mídia mais limpa e organizada.
+- 🎵 **Aviso de cântico duplicado**: Mostra um aviso se algum cântico aparecer mais de uma vez na lista de mídia das reuniões do fim de semana.
+- 🔄 **Planejamento de programações futuras**: Permite planejar mudanças futuras na programação das reuniões, o que é útil para as mudanças anuais de horário ou para a visita do superintendente de circuito a uma congregação vizinha.
 
 ## 24.11.0
 
 ### ✨ Novos Recursos
 
-- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
-- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
-- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
-- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
-- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
+- 🖥️ **Apresentação de sites no macOS**: Agora é possível apresentar o site no macOS 🚀
+- ⌨️ **Atalhos de teclado para reprodução**: Introduzidos atalhos de teclado para parar, pausar e retomar a reprodução de mídia 🚀
+- 🌐 **Endereço personalizado para download de mídia**: Adicionado suporte para definir o endereço web a partir do qual a mídia deve ser baixada 🚀
+- 🎬 **Seletor instantâneo de cenas do OBS**: Adicionado o seletor instantâneo de cenas do OBS Studio e reformulado o funcionamento do seletor de cenas nas configurações
+- 📖 **Documentação em mais idiomas**: O site de documentação foi ampliado para oferecer suporte a mais idiomas
 
 ## 24.10.10
 
 ### ✨ Novos Recursos
 
-- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
-- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
-- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
+- ⌨️ **Atalhos de navegação de mídia**: Adicionados atalhos de teclado para ir ao próximo item de mídia ou ao anterior
+- 🖱️ **Menu de clique direito nos itens de mídia**: Adicionado um menu de clique direito aos itens de mídia para ocultá-los e renomeá-los
+- ✂️ **Importação de listas de reprodução do JW Library com cortes**: Os tempos de corte dos vídeos agora são respeitados nas listas de reprodução do JW Library importadas
 
 ## 24.10.9
 
 ### ✨ Novos Recursos
 
-- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
+- 🗑️ **Excluir mídias extras de um dia**: Adicionada uma opção para excluir todos os arquivos de mídia extras do dia selecionado

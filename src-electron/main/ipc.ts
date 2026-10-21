@@ -183,7 +183,7 @@ function handleIpcSend(
 function handleIpcSendSync<T>(
   channel: ElectronIpcSendSyncKey,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  listener: (event: IpcMainEvent, ...args: any[]) => T,
+  listener: (event: IpcMainEvent, ...args: any[]) => Promise<T> | T,
 ) {
   ipcMain.on(channel, (e, ...args) => {
     if (!isSelf(e.senderFrame?.url)) {
@@ -197,12 +197,24 @@ function handleIpcSendSync<T>(
       return;
     }
     // BE-20 (full-audit-2026-09-05.md): mirrors handleIpcSend's guard - a
-    // synchronous throw here would otherwise propagate unguarded and
-    // e.returnValue would never be set, leaving the renderer's blocking
-    // sendSync() call waiting forever (a worse failure mode than an
-    // unobserved async rejection).
+    // synchronous throw or async rejection here would otherwise leave
+    // e.returnValue unset, and the renderer's blocking sendSync() call
+    // waiting forever (a worse failure mode than an unobserved async
+    // rejection). An async listener is allowed: setting e.returnValue after
+    // an await still answers the call, the renderer just stays blocked until
+    // then (needed for safeStorage, whose sync API Electron 46 removes).
     try {
-      e.returnValue = listener(e, ...args);
+      Promise.resolve(listener(e, ...args)).then(
+        (value) => {
+          e.returnValue = value;
+        },
+        (error: unknown) => {
+          captureElectronError(error, {
+            contexts: { fn: { channel, name: 'handleIpcSendSync' } },
+          });
+          e.returnValue = undefined;
+        },
+      );
     } catch (error) {
       captureElectronError(error, {
         contexts: { fn: { channel, name: 'handleIpcSendSync' } },

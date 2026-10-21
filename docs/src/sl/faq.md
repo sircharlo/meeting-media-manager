@@ -24,8 +24,8 @@ Izvorna koda tega programa je na voljo vsem, da jo lahko preučijo in preverijo,
 
 M³ deluje na Windows, macOS in Linux:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**: Windows 10 in novejši (64-bitni). Zadnja različica za 32-bitni Windows je v26.10.1, na [strani s prenosi](download).
+- **macOS**: macOS 13 (Ventura) in novejši (Universal build). Zadnja različica za macOS 12 (Monterey) je v26.10.1 na [strani s prenosi](download).
 - **Linux**: Večina sodobnih distribucij Linuxa (v formatu AppImage)
 
 ### :globe_with_meridians: Ali M³ deluje v mojem jeziku? {#language-support}
@@ -42,7 +42,7 @@ M³ deluje na Windows, macOS in Linux:
 
 ### :computer: Kako prenesem in namestim program M³? {#installation}
 
-Ustrezno različico prenesi s strani za [Prenos] (download) in sledi korakom v [Uporabniškem vodniku] (user-guide).
+Ustrezno različico prenesi s [strani za prenos](download) in sledi korakom v [Uporabniškem vodniku](user-guide).
 
 ### :gear: Kako prvič nastavim M³? {#first-time-setup}
 
@@ -312,8 +312,8 @@ Hvala za tvojo pripravljenost, da podpreš projekt! Vendar pa v duhu tega, kar p
 
 M³ je zasnovan tako, da deluje na širokem naboru operacijskih sistemov:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**: Windows 10 in novejši (64-bitni). Zadnja različica za 32-bitni Windows je v26.10.1, na [strani s prenosi](download).
+- **macOS**: macOS 13 (Ventura) in novejši (Universal build). Zadnja različica za macOS 12 (Monterey) je v26.10.1 na [strani s prenosi](download).
 - **Linux**: Večina sodobnih distribucij Linuxa (v formatu AppImage)
 
 M³ ima naslednje strojne zahteve:

@@ -92,13 +92,13 @@ onMounted(() => {
 ## Windows
 
 - **Windows 64비트 (.exe)**: <a :href="downloads.win64">다운로드</a>
-- **Windows 32-bit (.exe)**, last version for 32-bit Windows ({{ downloads.legacyVersion }}): <a :href="downloads.win32">Download</a>
+- **Windows 32비트 (.exe)**, 32비트 Windows용 마지막 버전({{ downloads.legacyVersion }}): <a :href="downloads.win32">다운로드</a>
 - **Windows 포터블 (.exe)**: <a :href="downloads.winPortable">다운로드</a>
 
 ## macOS
 
 - **macOS (유니버설) (.dmg)**: <a :href="downloads.macUniversal">다운로드</a>
-- **macOS 12 (Monterey) (.dmg)**, last version for macOS 12 ({{ downloads.legacyVersion }}): <a :href="downloads.macLegacy">Download</a>
+- **macOS 12 (Monterey) (.dmg)**, macOS 12용 마지막 버전({{ downloads.legacyVersion }}): <a :href="downloads.macLegacy">다운로드</a>
 
 ## Linux
 

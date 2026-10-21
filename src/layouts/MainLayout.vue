@@ -16,6 +16,7 @@
     <DialogCongregationSwitcher />
     <DialogZoomSetupAssistant v-model="zoomSetupAssistantOpen" />
     <DialogZoomAutomationOverlay />
+    <DialogFeatureNudge />
 
     <!-- Main content -->
     <q-page-container class="app-main-scroll main-bg">
@@ -100,6 +101,7 @@ import {
 import { queues } from 'boot/globals';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogCongregationSwitcher from 'components/dialog/DialogCongregationSwitcher.vue';
+import DialogFeatureNudge from 'components/dialog/DialogFeatureNudge.vue';
 import DialogZoomAutomationOverlay from 'components/dialog/DialogZoomAutomationOverlay.vue';
 import DialogZoomSetupAssistant from 'components/dialog/DialogZoomSetupAssistant.vue';
 import HeaderBase from 'components/header/HeaderBase.vue';
@@ -158,7 +160,10 @@ import {
   startHandAlertDisplaySync,
   syncZoomHandAlertWatcher,
 } from 'src/helpers/zoom-hand-alert';
-import { scheduleZoomStartupCheck } from 'src/helpers/zoom-startup-check';
+import {
+  scheduleZoomStartupCheck,
+  watchZoomChanges,
+} from 'src/helpers/zoom-startup-check';
 import { localeOptions } from 'src/i18n';
 import { log, type LogPrefix } from 'src/shared/vanilla';
 import { useAppSettingsStore } from 'src/stores/app-settings';
@@ -1812,6 +1817,7 @@ watchImmediate(
 watchImmediate(
   () => currentCongregation.value,
   (congregation) => {
+    watchZoomChanges();
     if (congregation) scheduleZoomStartupCheck();
   },
 );

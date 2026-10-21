@@ -4,6 +4,12 @@
 
 Para ver la lista completa de cambios entre versiones, consulta nuestro archivo CHANGELOG.md en GitHub.
 
+## PRÓXIMA VERSIÓN
+
+### ✨ Nuevas funciones
+
+- ✨ **Sugerencias de funciones**: De vez en cuando, M³ sugiere una función que un perfil todavía no usa, en una pequeña ventana de "¿Sabías que...?" que explica para qué sirve. Muestra como máximo una sugerencia cada vez que se abre un perfil, nunca desde 15 minutos antes de una reunión hasta que termina, y recuerda cada respuesta: "Recordármelo más tarde" pasa la sugerencia al final de la cola, "No, gracias" la oculta definitivamente y "Dejar de sugerir funciones" las desactiva todas para el perfil. Un "No" en el asistente de configuración también cuenta, y las respuestas se pueden restablecer en Configuración, dentro de Avanzado.
+
 ## v26.10.1
 
 ### ✨ Nuevas funciones

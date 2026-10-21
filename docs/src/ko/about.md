@@ -80,7 +80,7 @@ M³는 집회에 필요한 모든 미디어를 손쉽게 자동으로 다운로�
 
 ### 고급 기능 {#about-advanced-features}
 
-- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
+- **공유 폴더**: Dropbox, OneDrive, iCloud Drive 또는 Google Drive로 동기화되는 폴더에서 미디어를 자동으로 집회에 추가할 수 있습니다.
 - **미디어 내보내기**: 미디어를 날짜별로 정리하여 지정한 폴더로 자동으로 내보낼 수 있습니다.
 - **웹사이트 표시**: 여호와의 증인 공식 웹사이트를 외부 모니터에 표시할 수 있습니다.
 - **집회 타이머**: 선택적으로 타이머 창을 표시하여 집회 프로그램의 진행 시간을 측정할 수 있습니다.

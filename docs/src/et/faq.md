@@ -4,7 +4,7 @@
 
 ### :earth_americas: Kas see rakendus kasutab väljaannete ja koosolekute meedia allalaadimiseks väliseid saite, allikaid või "kuraatoreid"? {#external-dependencies}
 
-\*\*Ei. See rakendus töötab sarnaselt JW Library rakendusele. Väljaanded ja meedia laetakse alla Jw. org ametlikult lehelt ja serveritest. Rakendus määrab automaatselt kindlaks, mida on vaja alla laadida ja millal varem alla laaditud sisu ei ole enam ajakohane ja tuleks uuesti alla laadida.
+**Ei.** See rakendus töötab sarnaselt JW Library rakendusele. Väljaanded ja meedia laetakse alla Jw. org ametlikult lehelt ja serveritest. Rakendus määrab automaatselt kindlaks, mida on vaja alla laadida ja millal varem alla laaditud sisu ei ole enam ajakohane ja tuleks uuesti alla laadida.
 
 :::info Märkus
 
@@ -14,7 +14,7 @@ Selle rakenduse lähtekood on kõigile kättesaadav, et uurida ja kontrollida, m
 
 ### :thinking: Kas see rakendus rikub Jehoova tunnistajate ametliku veebisaidi kasutustingimusi? {#terms-of-use}
 
-**Ei.** Jehoova tunnistajate ametliku veebisaidi [kasutustingimused] (https://www.jw.org/finder?docid=1011511&prefer=content) lubavad selgesõnaliselt sellist kasutamist, mida me teeme. Siin on väljavõte nendest mõtetest (tsiteeritult):
+**Ei.** Jehoova tunnistajate ametliku veebisaidi [kasutustingimused](https://www.jw.org/finder?docid=1011511&prefer=content) lubavad selgesõnaliselt sellist kasutamist, mida me teeme. Siin on väljavõte nendest mõtetest (tsiteeritult):
 
 > Te ei tohi:
 >
@@ -24,8 +24,8 @@ Selle rakenduse lähtekood on kõigile kättesaadav, et uurida ja kontrollida, m
 
 M³ toetab Windowsit, macOS-i ja Linuxit:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**: Windows 10 ja uuemad (64-bitine). Viimane versioon 32-bitisele Windowsile on v26.10.1, mille leiad [allalaadimiste lehelt](download).
+- **macOS**: macOS 13 (Ventura) ja uuemad (universaalne versioon). Viimane versioon macOS 12 (Monterey) jaoks on v26.10.1, mille leiad [allalaadimiste lehelt](download).
 - **Linux**: enamik kaasaegseid Linuxi distributsioone (AppImage-vorming)
 
 ### :globe_with_meridians: Kas M³ töötab minu keeles? {#language-support}
@@ -128,7 +128,7 @@ Taustamuusika funktsioon hõlmab:
 
 ### :stopwatch: Kas M³-s on koosolekute taimer? {#faq-meeting-timer}
 
-Jah. Kui see funktsioon on sisse lülitatud, võib M³ kuvada osalejate aja mõõtmiseks eraldi taimeri akna. See suudab aega üles- või allapoole loendada, näidata praegust kellaaega, kuvada koosoleku alguseni jäänud aega ning vajaduse korral näidata, kas koosolek kestab üle aja või on ajakavast ees. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
+Jah. Kui see funktsioon on sisse lülitatud, võib M³ kuvada osalejate aja mõõtmiseks eraldi taimeri akna. See suudab aega üles- või allapoole loendada, näidata praegust kellaaega, kuvada koosoleku alguseni jäänud aega ning vajaduse korral näidata, kas koosolek kestab üle aja või on ajakavast ees. Osade kestust saab vabalt muuta, eriprogrammide jaoks saab lisada kohandatud osi ning taimerit saab juhtida tegevussaarelt (ka siis, kui hiirekursor on selle kohal) või põhiaknasse kinnitatud paneelilt.
 
 Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
 
@@ -158,12 +158,12 @@ M³ lülitab OBS Studio-stseene automaatselt ümber järgmiste kriteeriumide alu
 
 - Meedia tüüp (video, pilt jne)
 - Sinu stseeni seadistus
-- Settings like "Do not automatically share images"
+- Seaded nagu „Ära jaga automaatselt pilte“
 - Kas pärast meedia esitamist naasta eelmisele stseenile või mitte
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: Mida teeb seade „Ära jaga automaatselt pilte“? {#faq-postpone-images}
 
-This setting delays sharing images to OBS until you manually trigger them. See on kasulik kui:
+See seade lükkab piltide jagamise OBS-i edasi, kuni käivitad selle ise. See on kasulik kui:
 
 - Pilte näidatakse esmalt kohapeal viibivale kuulajaskonnale
 - On vaja suuremat kontrolli ajastuse üle
@@ -178,16 +178,16 @@ M³-l pole sisseehitatud salvestusseadet, kuid see aitab salvestamist juhtida ka
 
 ## Lisasätted {#faq-advanced-features}
 
-### :cloud: How does the shared folder work? {#faq-folder-monitoring}
+### :cloud: Kuidas jagatud kaust töötab? {#faq-folder-monitoring}
 
-If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
+Kui hoiad koosolekute faile pilvesalvestusrakenduses, nagu Dropbox, OneDrive, iCloud Drive või Google Drive, saab M³ need automaatselt õige koosoleku juurde lisada:
 
-1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
-2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
-3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
-4. To add files for another day, create a folder for it, named the same way.
+1. Vali pilvesalvestusrakenduses kaust – seadistusviisardis või jaotises **Seaded** > **Koostöö** > **Jagatud kaust**. Kõige parem on kasutada uut kausta, mis on ainult selleks mõeldud.
+2. M³ loob selle sisse iga eesseisva koosoleku jaoks kausta, mille nimi on koosoleku kuupäev kujul aasta-kuu-päev (näiteks `2026-03-25`).
+3. Pane fotod, videod, helifailid või JW Library esitusloendid koosoleku kausta alati, kui vaja. Need lisatakse selle koosoleku meedialoendisse igas arvutis, mis kasutab sama kausta.
+4. Mõne muu päeva jaoks failide lisamiseks loo selle jaoks samamoodi nimetatud kaust.
 
-When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
+Kui nädal on läbi, kustutab M³ selle nädala kuupäevadega kaustad ja neis olevad failid kõigi jaoks, kes jagatud kausta kasutavad. Kui soovid need alles jätta, lülita välja **Kustuta möödunud koosolekute kaustad**.
 
 ### :file_folder: Mis on meedia automaatne eksport? {#faq-media-export}
 
@@ -250,7 +250,7 @@ M³ mängib sinu arvutis heli sisaldavat meediat, kuid OBS Studio kasutamisel ei
 
 Proovi järgmisi jõudluse optimeerimisi:
 
-1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
+1. **Laulude videofailide vahemälu**: Salvesta seadetes kõik laulikuvideod eelnevalt vahemällu
 2. **Sulge muud rakendused**: Sulge mittevajalikud rakendused
 3. **Kontrolli kettaruumi**: veendu, et sul on piisavalt vaba kettaruumi
 4. **Vähenda resolutsiooni**: vähenda maksimaalset resolutsiooni seadet
@@ -312,8 +312,8 @@ Täname sind sinu huvi eest projekti toetamise vastu! Matteuse 10:8 vaimus **ei 
 
 M³ on loodud töötama paljude erinevate operatsioonisüsteemidega:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**: Windows 10 ja uuemad (64-bitine). Viimane versioon 32-bitisele Windowsile on v26.10.1, mille leiad [allalaadimiste lehelt](download).
+- **macOS**: macOS 13 (Ventura) ja uuemad (universaalne versioon). Viimane versioon macOS 12 (Monterey) jaoks on v26.10.1, mille leiad [allalaadimiste lehelt](download).
 - **Linux**: enamik kaasaegseid Linuxi distributsioone (AppImage-vorming)
 
 M³-l on järgmised riistvaranõuded:

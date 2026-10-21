@@ -4,7 +4,7 @@
 
 ### :earth_americas: Te tura’i nei ānei teie fa’anahora’a i ni’a i te tahi atu mau tahua natirara, te mau rāve’a nō rāpae mai, ’oia ho’i te mau "ta’ata ha’apa’o" nō te tātari mai i te mau piri’i parau, te mau media nō te mau putuputura’a, e te tahi atu mau parau e vai nei? {#external-dependencies}
 
-’Aita. E ha’ariro teie fa’anahora’a tōna huru mai tō te JW Library. Te tātari parau nei ’ōna i te mau piri’i parau, te mau media e te tahi atu mau parau e vai nei mai ni’a mai rō i te tahua natirara mana a te Ite nō Iehova e tāna ho’i pū tātari-ra’a parau. E fa’ata’a ’ōmoti noa te fa’anahora’a i te mea e tītauhia ia tātarihia, e i te taime ho’i e ’ere ai te parau i tātari-ā-na-hia i te mea ’āpī nō te tātari-fa’ahou-ra’a.
+**’Aita.** E ha’a teie fa’anahora’a mai te JW Library. Te tātari parau nei ’ōna i te mau piri’i parau, te mau media e te tahi atu mau parau e vai nei mai ni’a mai rō i te tahua natirara mana a te Ite nō Iehova e tāna ho’i pū tātari-ra’a parau. E fa’ata’a ’ōmoti noa te fa’anahora’a i te mea e tītauhia ia tātarihia, e i te taime ho’i e ’ere ai te parau i tātari-ā-na-hia i te mea ’āpī nō te tātari-fa’ahou-ra’a.
 
 :::info Nota
 
@@ -14,29 +14,29 @@ Te vai noa nei te nure parau tumu a teie fa’anahora’a nō te hi’opō’ara
 
 ### :thinking: Te ofati nei ānei teie fa’anahora’a i te mau Parau No te Fariira’a i te Faaohiparaa o te tahua natirara mana a te Ite nō Iehova? {#terms-of-use}
 
-’Aita. Te hōro’a pāpū mai nei te [Parau No te Fariira’a i te Faaohiparaa](https://www.jw.org/finder?docid=1011511&prefer=content) o te tahua natirara mana a te Ite nō Iehova i te fa’amanara’a nō te huru fa’a’ohipara’a tā tātou e rave nei. Teie te ha’apotora’a parau tano mai roto mai i taua mau parau fariira’a ra (ha’apāpūra’a tu’uhia):
+**’Aita.** Te hōro’a pāpū mai nei te [Parau No te Fariira’a i te Faaohiparaa](https://www.jw.org/finder?docid=1011511&prefer=content) o te tahua natirara mana a te Ite nō Iehova i te fa’amanara’a nō te huru fa’a’ohipara’a tā tātou e rave nei. Teie te ha’apotora’a parau tano mai roto mai i taua mau parau fariira’a ra (ha’apāpūra’a tu’uhia):
 
 > ’Eiaha ’oe e:
 >
-> Hāmani nō te tūha’a ra’a, i te tahi atu mau fa’anahora’a rorouira, te mau mauha’a, ’aore rā te mau rāve’a ’ohipa i hāmanihia nō te ha’aputu, te tātari, te tā’atira’a, te huti mai, ’aore rā te pāhi’u mai i te mau parau, te HTML, te mau tōna’o parau, ’aore rā te mau pāpa’ira’a parau mai ni’a mai i teie tahua natirara. (’Aita teie e ’ōpani nei i te tūha’a ra’a i te mau fa’anahora’a tōna’o hāmani-noa-hia, tei ’ere i te ’ohipa ho’ora’a parau, i hāmanihia nō te tātari mai i te mau piri’i parau uira mai te EPUB, PDF, MP3, e te MP4 mai ni’a mai i te mau vāhi matara nō te hō’ē ta’ata ato’a o teie tahua natirara.)
+> Hāmani nō te tūha’a ra’a, i te tahi atu mau fa’anahora’a rorouira, te mau mauha’a, ’aore rā te mau rāve’a ’ohipa i hāmanihia nō te ha’aputu, te tātari, te tā’atira’a, te huti mai, ’aore rā te pāhi’u mai i te mau parau, te HTML, te mau tōna’o parau, ’aore rā te mau pāpa’ira’a parau mai ni’a mai i teie tahua natirara. (**’Aita** teie e ’ōpani nei i te tūha’ara’a i te mau fa’anahora’a tōna’o hāmani-noa-hia, tei ’ere i te ’ohipa ho’ora’a parau, i hāmanihia nō te tātari mai i te mau piri’i parau uira mai te EPUB, PDF, MP3, e te MP4 mai ni’a mai i te mau vāhi matara nō te hō’ē ta’ata ato’a o teie tahua natirara.)
 
 ### :question: E aha te mau fa’anahora’a tōna’o (OS) e tauturūhia nei e M³? {#operating-systems}
 
 Te tauturu nei M³ i te Windows, macOS, e te Linux:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
-- Linux: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
+- **Windows**: Windows 10 ’e te mau neneira’a i muri mai (64-bit). Te version hope’a nō Windows 32-bit, o te v26.10.1 ïa, i ni’a i te [api tu’u-haere](download).
+- **macOS**: macOS 13 (Ventura) ’e te mau neneira’a i muri mai (Universal). Te version hope’a nō macOS 12 (Monterey), o te v26.10.1 ïa, i ni’a i te [api tu’u-haere](download).
+- **Linux**: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
 
 ### :globe_with_meridians: Te ’ohipa nei ānei o M³ nō tō’u iho reo? {#language-support}
 
-’Ēiaha! E pū’oira’a parau nō te rave rau reo tō roto i te M³:
+**’Ē!** E pū’oira’a parau nō te rave rau reo tō roto i te M³:
 
-- Te mau ha’apararura’a: E tātari i te mau ha’apararura’a nā roto i te hō’ē o te mau rau hānere reo e vai nei i ni’a i te tahua natirara mana a te Ite nō Iehova
-- Huru fā’ari’ira’a o te fa’anahora’a: E fa’a’ohipa i te huru fā’ari’ira’a o M³ nā roto i te mau reo ta’a ’ē e rave rahi
-- Mau fa’anahora’a ta’a ’ē: E nehenehe tā ’oe e fa’a’ohipa i te huru fā’ari’ira’a nā roto i te hō’ē reo, ’a tātari ai i te mau ha’apararura’a nā roto i te tahi atu reo ta’a ’ē
-- Mau reo mono: E fa’anaho i te mau reo mono nō te taime ’aore te ha’apararura’a e vai nei nā roto i te reo mātāmua
-- Tauturu nō te mau pāpa’ira’a i raro: E tātari e e fa’a’ite i te mau pāpa’ira’a i raro nā roto i te mau reo ta’a ’ē e rave rahi
+- **Te mau ha’apararura’a**: E tātari i te mau ha’apararura’a nā roto i te hō’ē o te mau rau hānere reo e vai nei i ni’a i te tahua natirara mana a te Ite nō Iehova
+- **Huru fā’ari’ira’a o te fa’anahora’a**: E fa’a’ohipa i te huru fā’ari’ira’a o M³ nā roto i te mau reo ta’a ’ē e rave rahi
+- **Mau fa’anahora’a ta’a ’ē**: E nehenehe tā ’oe e fa’a’ohipa i te huru fā’ari’ira’a nā roto i te hō’ē reo, ’a tātari ai i te mau ha’apararura’a nā roto i te tahi atu reo ta’a ’ē
+- **Mau reo mono**: E fa’anaho i te mau reo mono nō te taime ’aore te ha’apararura’a e vai nei nā roto i te reo mātāmua
+- **Tauturu nō te mau pāpa’ira’a i raro**: E tātari e e fa’a’ite i te mau pāpa’ira’a i raro nā roto i te mau reo ta’a ’ē e rave rahi
 
 ## Te fa’atā’atira’a e te fa’anaho ra’a {#installation-setup}
 
@@ -77,12 +77,12 @@ E tōviri noa te fa’anahora’a M³ i te mau ha’apararura’a nō te mau put
 
 E nehenehe tā ’oe e fa’ahu’e mai i te mau ha’apararura’a i mā’itihia nā roto i te tahi atu mau rāve’a:
 
-- Fa’ahu’era’a rorou: A pata i ni’a i te tōpata fa’ahu’e nō te tāmau mai i te mau tōfamamāte, te mau tōfata’a, ’aore rā te mau rorou fa’aro’o
-- ’Ūto’ira’a e tōmura’a: A ’ūtoi i te mau rorou na roto tonu i te fa’anahora’a M³
-- Ara’ira’a pu’era’a rorou: A fa’anaho i te hō’ē pu’era’a rorou ara’ihia nō te mau fa’ahu’era’a noa
-- Mau rorou JWPUB e te mau ‘āfata hīmene: A fa’ahu’e mai i te mau puta e te mau ‘āfata hīmene
-- Te mau ve’a nō te Orerora’a parau i mua i te ta’ata rahi: A tāvaha i te mau pu’e parau JWPUB S-34 aore rā S-34mp nō te mau ve’a o te orerora’a parau
-- Te mau mauihaa nō te Bibilia e te Bibilia ha’api’ira’a: A tu’u atu i te mau haruharu-reo o te Bibilia, te mau ve’a Bibilia ha’api’ira’a, aore rā te mau ve’a Bibilia reo o te rima
+- **Fa’ahu’era’a rorou**: A pata i ni’a i te tōpata fa’ahu’e nō te tāmau mai i te mau tōfamamāte, te mau tōfata’a, ’aore rā te mau rorou fa’aro’o
+- **’Ūto’ira’a e tōmura’a**: A ’ūtoi i te mau rorou na roto tonu i te fa’anahora’a M³
+- **Ara’ira’a pu’era’a rorou**: A fa’anaho i te hō’ē pu’era’a rorou ara’ihia nō te mau fa’ahu’era’a noa
+- **Mau rorou JWPUB e te mau ‘āfata hīmene**: A fa’ahu’e mai i te mau puta e te mau ‘āfata hīmene
+- **Te mau ve’a nō te Orerora’a parau i mua i te ta’ata rahi**: A tāvaha i te mau pu’e parau JWPUB S-34 aore rā S-34mp nō te mau ve’a o te orerora’a parau
+- **Te mau mauihaa nō te Bibilia e te Bibilia ha’api’ira’a**: A tu’u atu i te mau haruharu-reo o te Bibilia, te mau ve’a Bibilia ha’api’ira’a, aore rā te mau ve’a Bibilia reo o te rima
 
 ### :speaker: E nehenehe ānei iā’u e fa’ahu’e mai i te mau haruharura’a pātere reo o te Bibilia? {#audio-bible}
 
@@ -128,7 +128,7 @@ Teie te mau rāve’a nō te hīmene aratō:
 
 ### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³? {#faq-meeting-timer}
 
-E. Ia ha’amā-hia, e nehenehe te M³ e fa’a’ite i te ho’ē ha’amaramarama taime taa ’ē nō te faito i te taime o te feiā e paraparau ra. E nehenehe te reira e taio i ni’a aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te taime fa’ataime nō te putuputura’a, e mai te peu e hina’aro ’oe, e fa’a’ite i te taime hau aore rā mai te peu e te mua ra te putuputura’a aore rā te muri ra i ni’a i te porotarama. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
+E. Ia ha’amā-hia, e nehenehe te M³ e fa’a’ite i te ho’ē ha’amaramarama taime taa ’ē nō te faito i te taime o te feiā e paraparau ra. E nehenehe te reira e taio i ni’a aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te taime fa’ataime nō te putuputura’a, e mai te peu e hina’aro ’oe, e fa’a’ite i te taime hau aore rā mai te peu e te mua ra te putuputura’a aore rā te muri ra i ni’a i te porotarama. E nehenehe e taui noa i te roara’a o te mau tuha’a, e nehenehe e ’āmui i te mau tuha’a ta’a ’ē nō te mau porotarama ta’a ’ē, ’e e nehenehe e fa’atere i te fa’atere-hora nā ni’a i te motu ha’atere (noa atu ’ia tu’uhia te ’iore i ni’a iho) ’aore rā nā roto i te hō’ē ’api i tāpirihia i roto i te ha’amāramarama matamua.
 
 E hoho’a-taata beta teie ha’amaramarama taime, eiaha e fa’a’ohipa i te reira ma te ’ore e fāriihia e te mau ti’a o te amuira’a.
 
@@ -158,12 +158,12 @@ E taui noa te fa’anahora’a M³ i te mau ’āfata OBS ia au i te:
 
 - Huru pāpāho (teata, hōho’a, tōpāto)
 - Tō ’oe fa’anahora’a tiri
-- Settings like "Do not automatically share images"
+- Te mau fa’anahora’a mai te "’Eiaha e ’ōpere noa i te mau hōho’a"
 - Ē ho’i ā rānei i ni’a i te tiri nā mua atu i muri a’e i te pāpāho
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: Eaha te ohipa a te fa’anahora’a "’Eiaha e ’ōpere noa i te mau hōho’a"? {#faq-postpone-images}
 
-This setting delays sharing images to OBS until you manually trigger them. E mea faufa’a teie nō:
+E fa’ataere teie fa’anahora’a i te ’ōperera’a i te mau hōho’a i ni’a ia OBS e tae noa atu ’ia fa’ahoro ’oe iho i te reira. E mea faufa’a teie nō:
 
 - Te fa’ahōho’ara’a nā mua i te mau hōho’a i mua i te feiā e fāri’i-tinana-hia ra
 - Te fā’fa’ahiahia o te rāve’a nō te fa’atere pāpū i te taime
@@ -178,16 +178,16 @@ Aita te M³ e fa’a’ohipa ra i te ho’ē matini haruharu-reo o roto, tera r�
 
 ## Mau tātara’a hōhonu {#faq-advanced-features}
 
-### :cloud: How does the shared folder work? {#faq-folder-monitoring}
+### :cloud: Nāfea te pu'e 'ite tufahia e ha’a ai? {#faq-folder-monitoring}
 
-If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
+Mai te peu e vaiiho ’oe i te mau dosie nō te mau putuputura’a i roto i te hō’ē porotarama vaira’a nā ni’a i te itenati mai ia Dropbox, OneDrive, iCloud Drive ’aore rā Google Drive, e nehenehe tā M³ e ’āmui otometi i te reira i te putuputura’a tano:
 
-1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
-2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
-3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
-4. To add files for another day, create a folder for it, named the same way.
+1. ’A mā’iti i te hō’ē fā’ari parau i roto i tā ’oe porotarama vaira’a, i roto i te tauturu fa’aineinera’a ’aore rā i roto i **Te mau fa’anahora’a** > **Te mau tū’atira’a fa’anahora’a** > **Pu'e 'ite tufahia**. E mea maita’i a’e te hō’ē fā’ari parau ’āpī nō teie ana’e ohipa.
+2. E hāmani M³ i roto i te reira i te hō’ē fā’ari parau nō te putuputura’a tā’itahi e tae mai, ma te i’oa o te mahana o te putuputura’a i pāpa’ihia mai teie te huru: matahiti-’āva’e-mahana (ei hi’ora’a, `2026-03-25`).
+3. ’A tu’u i te mau hōho’a, te mau video, te mau dosie reo ’aore rā te mau tāpura ha’uti JW Library i roto i te fā’ari parau o te hō’ē putuputura’a i te mau taime ato’a e tītauhia ai. E ’āmuihia te reira i roto i te tāpura media o taua putuputura’a ra, i ni’a i te mau roro uira ato’a e fa’a’ohipa ra i taua fā’ari parau ra.
+4. Nō te ’āmui i te mau dosie nō te tahi atu mahana, ’a hāmani i te hō’ē fā’ari parau nō te reira, ma te i’oa i pāpa’ihia mai te reira ato’a te huru.
 
-When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
+’Ia oti te hō’ē hepetoma, e fa’a’ore M³ i te mau fā’ari parau o taua hepetoma ra ’e tō rātou mau dosie, nō te feiā ato’a e fa’a’ohipa ra i te pu'e 'ite tufahia. Nō te vaiiho i te reira, ’a tāpū i **A faaore i te mau pu'e 'ite o te mau taro'oraa i ma'iri**.
 
 ### :file_folder: E aha te huru nō te fa’atahe-ti’amā-ra’a pāpāho? {#faq-media-export}
 
@@ -215,10 +215,10 @@ E nehenehe ato’a te mau hoho’a-taata e fa’ahaponohia i roto i te ho’ē p
 
 ’A hi’opo’a i teie mau fifi pinepine:
 
-1. 'Afa'atoratera'a o te putuputura'a: 'A hi'opo'a e mea ti'a te mau mahana 'e te mau hora o tā 'outou putuputura'a
-2. Te mau fa’anahora’a reo: ’A ha’apāpū e mea tano te reo o tā ’outou pāpāho
-3. Tū’atira’a rorouira: ’A hi’opo’a i tā ’outou tū’atira’a rorouira
-4. Fā’ira’a o te reo: ’A hi’opo’a ē tē vai ra ānei te pāpāho i roto i te reo i mā’itihia e ’outou
+1. **'Afa'atoratera'a o te putuputura'a**: 'A hi'opo'a e mea ti'a te mau mahana 'e te mau hora o tā 'outou putuputura'a
+2. **Te mau fa’anahora’a reo**: ’A ha’apāpū e mea tano te reo o tā ’outou pāpāho
+3. **Tū’atira’a rorouira**: ’A hi’opo’a i tā ’outou tū’atira’a rorouira
+4. **Fā’ira’a o te reo**: ’A hi’opo’a ē tē vai ra ānei te pāpāho i roto i te reo i mā’itihia e ’outou
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
@@ -226,43 +226,43 @@ E nehenehe ato’a te mau hoho’a-taata e fa’ahaponohia i roto i te ho’ē p
 
 ’A hi’opo’a i teie mau fifi nō ni’a i te OBS:
 
-1. Te fa’ataura’a OBS: ’A ha’apāpū ē tē vai ra te OBS Studio ’e tē ’ohipa nei te reira
-2. Te tū’atira’a WebSocket: ’A ha’apāpū ē tē vai ra te tū’atira’a WebSocket
-3. Te uputa ’e te ta’o fā’ito: ’A hi’opo’a i te mau fa’anahora’a nō te uputa ’e te ta’o fā’ito o tā ’outou OBS
-4. Pāpa’i pāruru: ’A ha’apāpū ’aita te pāpa’i pāruru e ’ōpani nei i te tū’atira’a
+1. **Te fa’ataura’a OBS**: ’A ha’apāpū ē tē vai ra te OBS Studio ’e tē ’ohipa nei te reira
+2. **Te tū’atira’a WebSocket**: ’A ha’apāpū ē tē vai ra te tū’atira’a WebSocket
+3. **Te uputa ’e te ta’o fā’ito**: ’A hi’opo’a i te mau fa’anahora’a nō te uputa ’e te ta’o fā’ito o tā ’outou OBS
+4. **Pāpa’i pāruru**: ’A ha’apāpū ’aita te pāpa’i pāruru e ’ōpani nei i te tū’atira’a
 
 ### :speaker: E hā’ono ’āu’a noa ānei te Meeting Media Manager i te haruru pehe o te pāpāho i ni’a ia Zoom ’ia fāna’o-ana-hia te OBS Studio? {#audio-to-zoom}
 
-’Aita. ’Aita te M³ e hā’ono ’āu’a noa nei i te haruru pehe o te pāpāho i ni’a ia Zoom ’e i ni’a ato’a ia OBS Studio. E ’ohipa te rorouira hā’onora’a tātā’ura’a hōho’a mai te hō’ē ’āfata hōho’a rorouira ’aita tōna e haruru pehe, mai te hō’ē ’āfata rorouira ato’a. Nō te hā’ono ’āu’a noa i te haruru pehe/hōho’a i ni’a ia Zoom, e ti’a iā ’outou ia ha’apāpū ē tē ’ohipa nei te fa’aro’ora’a a Zoom i te haruru pehe e haere mai nei nā roto mai i te rorouira, ’e i muri iho e ti’a iā ’outou ia tāmau i te fa’anahora’a Original Audio i ni’a ia Zoom.
+**’Aita.** ’Aita M³ e hā’ono otometi i te reo o te media i ni’a ia Zoom ’aore rā ia OBS Studio. E ’ohipa te rorouira hā’onora’a tātā’ura’a hōho’a mai te hō’ē ’āfata hōho’a rorouira ’aita tōna e haruru pehe, mai te hō’ē ’āfata rorouira ato’a. Nō te hā’ono otometi i te reo o te pehe ’aore rā o te video i ni’a ia Zoom, e ti’a ia ’oe ia ha’apāpū ē tē fa’aro’o nei Zoom i te reo e haere mai nā roto mai i te roro uira, ’e i muri iho e ti’a ia ’oe ia fa’atupu i te fa’anahora’a **Original Audio** i roto ia Zoom.
 
-Te mau parau faufa’a:
+**Te mau parau faufa’a:**
 
-- E ti’a iā ’outou ia tāmau i te Original Audio i te mau taime ato’a hou ’a ha’amata ai i te hō’ē putuputura’a Zoom
+- E ti’a ia ’oe ia fa’atupu i te Original Audio **i te mau taime ato’a** hou ’oe e ha’amata ai i te hō’ē putuputura’a Zoom
 - ’Aita teie fa’anahora’a e tū’ati nei i te M³ - e tupu ato’a teie fifi haruru pehe ’ia fāna’o ’outou i te tahi atu tātā’ura’a pāpāho ’e ’ia ’ore ’outou e fāna’o i te mau fa’anahora’a ’ōperea hōho’a ’e te haruru pehe a Zoom
 - E toru faufa’a ri’i o tō te fa’anahora’a Original Audio - i te rāve’a mātauhia, e ti’a ia tāmau i nā mea mātāmua e rua ’e ia tāmoti i te toru o te mea nō te hō’ē haruru pehe maita’i roa a’e
 - Mai te peu tē vai noa rā te fifi nō te parau ha’apararera’a reo, e tītauhia paha ’ia fa’a’ohipa ’oe i te mā’itira’a "Partager son ordinateur" a Zoom
 - E rāve’a ’ē atu, a hi’o paha nō te fa’a’ohipa i te tū’atira’a ia Zoom, nō te mea tē fa’a’ohipa ra te reira i te tū’oha’a vauvau parau tumu a Zoom.
 
-Nō te aha e mea faufa’a ai teie rāve’a?
-’E fa’ata’i te M³ i te pāpāho mā te haruru pehe i ni’a i tā ’outou rorouira, terā rā ’aita teie haruru pehe e hā’ono ’āu’a noa nei nā roto i te rorouira hā’onora’a tātā’ura’a hōho’a i ni’a ia Zoom ’ia fāna’o-ana-hia te OBS Studio. E fa’ati’a te fa’anahora’a Original Audio ia Zoom ia haru i te haruru pehe e tātā’ihia nei i ni’a i tā ’outou rorouira ’ia ’ōperea-ana-hia te hōho’a, mai te peu ē tē naho maita’i nei tā ’outou rorouira (perēra i te hi’ora’a: tē vai ra te hō’ē piti o te mātini haruru pehe i ni’a i te rorouira nō te tātā’i i te pāpāho, tā Zoom e fa’aro’o nei mai te hō’ē rorouira haru reo.)
+**Nō te aha e mea faufa’a ai teie rāve’a?**
+E ha’uti M³ i te media ma te reo i ni’a i tō ’oe roro uira, terā rā, ’aita teie reo e hā’onohia otometi nā roto i te video i ni’a ia Zoom ’ia fa’a’ohipahia te OBS Studio. E fa’ati’a te fa’anahora’a Original Audio ia Zoom ia haru i te haruru pehe e tātā’ihia nei i ni’a i tā ’outou rorouira ’ia ’ōperea-ana-hia te hōho’a, mai te peu ē tē naho maita’i nei tā ’outou rorouira (perēra i te hi’ora’a: tē vai ra te hō’ē piti o te mātini haruru pehe i ni’a i te rorouira nō te tātā’i i te pāpāho, tā Zoom e fa’aro’o nei mai te hō’ē rorouira haru reo.)
 
 ### :snail: Tē māmā nei te terera’a a te M³. E aha te rāve’a nō te ha’amaita’i i te terera’a o te mātini? {#performance-issues}
 
 ’A tāmata i teie mau rāve’a nō te ha’amaita’i i te terera’a:
 
-1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
-2. ’A piri i te tahi atu mau rorouira ’ohipa: ’A piri i te mau rorouira ’ohipa faufa’a ’ore
-3. Hi’opo’a i te vāhi vata o te ha’aputura’a parau: ’A ha’apāpū ē tē vai ra te vāhi vata nahu i ni’a i tā ’outou rorouira
-4. Fa’ahā’ha’i i te hōho’a: ’A fa’aha’ama’i i te fa’anahora’a teitei roa a’e o te hōho’a
+1. **E tōtautā i te mau tōta’a tōna’a hīmene i roto i te cache**: ’A tu’u nā mua i te mau video ato’a o te puta hīmene i roto i te cache, i roto i te mau fa’anahora’a
+2. **’A piri i te tahi atu mau rorouira ’ohipa**: ’A piri i te mau rorouira ’ohipa faufa’a ’ore
+3. **Hi’opo’a i te vāhi vata o te ha’aputura’a parau**: ’A ha’apāpū ē tē vai ra te vāhi vata nahu i ni’a i tā ’outou rorouira
+4. **Fa’ahā’ha’i i te hōho’a**: ’A fa’aha’ama’i i te fa’anahora’a teitei roa a’e o te hōho’a
 
 ### :speech_balloon: E tupu nei te fifi nō te reo. E aha te mea tā’u e hi’opo’a? {#faq-language-issues}
 
 ’A hi’opo’a i teie mau fa’anahora’a nō te reo:
 
-1. Reo o te Ha’ahua mātāmua: ’A hi’opo’a i te fa’anahora’a o tō ’outou reo fa’a’itera’a
-2. Reo o te Pāpāho: ’A hi’opo’a i te reo nō tā ’outou tōtōra’a pāpāho
-3. Te vai-roa-ra’a o te Reo: ’A ha’apāpū ē tē vai ra te reo o te pāpāho i ni’a i te tahua natirara mana a te Ite o Iehova
-4. Reo mono: ’A tāmata i te mā’iti i te hō’ē reo mono
+1. **Reo o te Ha’ahua mātāmua**: ’A hi’opo’a i te fa’anahora’a o tō ’outou reo fa’a’itera’a
+2. **Reo o te Pāpāho**: ’A hi’opo’a i te reo nō tā ’outou tōtōra’a pāpāho
+3. **Te vai-roa-ra’a o te Reo**: ’A ha’apāpū ē tē vai ra te reo o te pāpāho i ni’a i te tahua natirara mana a te Ite o Iehova
+4. **Reo mono**: ’A tāmata i te mā’iti i te hō’ē reo mono
 
 ## Tauturu e Feti’ara’a {#support-community}
 
@@ -298,7 +298,7 @@ Te fa’a’ohipa nei o M³ ia Crowdin nō te fa’atere i te mau hurira’a par
 
 ### :x: E nehenehe ānei ia’u ’ia pūpū i te hō’ē ō nō te ’ohipa? {#can-i-make-a-donation-to-the-project}
 
-Māuruuru i tō ’oe hina’aro ’ia turu i te ’ohipa nei! Inaha rā, ma te ’ā’au ’ia au i te Mataio 10:8, ’aita e fāri’i-hia nei te mau ō e ’aita roa e fāri’i-hia te reira i te ho’ē a’e taime. Ua hāmanihia teie tauihaa roro uira ma te here e ma te tahi taime tāhō’ē. ’A fārere maita’i! :tada:
+Māuruuru i tō ’oe hina’aro ’ia turu i te ’ohipa nei! Inaha rā, ma te ’ā’au ’ia au i te Mataio 10:8, **’aita** e fāri’ihia nei te mau ō, ’e ’aita roa e fāri’ihia te reira i te hō’ē a’e taime. Ua hāmanihia teie tauihaa roro uira ma te here e ma te tahi taime tāhō’ē. ’A fārere maita’i! :tada:
 
 :::tip :book: Mataio 10:8
 
@@ -312,29 +312,29 @@ Māuruuru i tō ’oe hina’aro ’ia turu i te ’ohipa nei! Inaha rā, ma te 
 
 Ua hāmanihia te M³ nō te ohipa i ni’a i te mau huru anairaa porotarama e rave rahi:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
-- Linux: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
+- **Windows**: Windows 10 ’e te mau neneira’a i muri mai (64-bit). Te version hope’a nō Windows 32-bit, o te v26.10.1 ïa, i ni’a i te [api tu’u-haere](download).
+- **macOS**: macOS 13 (Ventura) ’e te mau neneira’a i muri mai (Universal). Te version hope’a nō macOS 12 (Monterey), o te v26.10.1 ïa, i ni’a i te [api tu’u-haere](download).
+- **Linux**: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
 
 Teie te mau titaura’a nō ni’a i te matini nō M³:
 
-- Tei raro roa a’e: 4GB RAM, 6GB te vāhi tā’ati ’ore i te matini ta’i’i
-- Tei tauto’ohia: 8GB RAM, 15GB te vāhi tā’ati ’ore i te matini ta’i’i nō te ha’aputu-maitai-ra’a i te mau nota-ata
-- Te reni natirara: E titauhia te fārereira’a i te natirara nō te tāviri i te mau nota-ata
+- **Tei raro roa a’e**: 4GB RAM, 6GB te vāhi tā’ati ’ore i te matini ta’i’i
+- **Tei tauto’ohia**: 8GB RAM, 15GB te vāhi tā’ati ’ore i te matini ta’i’i nō te ha’aputu-maitai-ra’a i te mau nota-ata
+- **Te reni natirara**: E titauhia te fārereira’a i te natirara nō te tāviri i te mau nota-ata
 
 Ia au i te mau tuhaa e fa’a’ohipa-’oe, e titau ato’a te M³ i te tahi atu mau anairaa porotarama tei raro a’e:
 
-- Zoom: E titau-noa-hia mai te mea e fa’a’ohipa-’oe i te mau tuhaa tōtōā nō te Zoom
-- OBS Studio: E titau-noa-hia mai te mea e fa’a’ohipa-’oe i te mau tuhaa tōtōā nō te OBS
+- **Zoom**: E titau-noa-hia mai te mea e fa’a’ohipa-’oe i te mau tuhaa tōtōā nō te Zoom
+- **OBS Studio**: E titau-noa-hia mai te mea e fa’a’ohipa-’oe i te mau tuhaa tōtōā nō te OBS
 
 ### :floppy_disk: Ehia rahiraa vāhi i ni’a i te matini ta’i’i te fa’a’ohipahia e te M³? {#disk-space}
 
 Te rahiraa vāhi tei fa’a’ohipahia i ni’a i te matini ta’i’i, tei ni’a ïa i te:
 
-- Te maita’i o te nota-ata: E rahi a’e te vāhi e fa’a’ohipahia e te mau nota-ata maita’i roa
-- Te mau nota-ata i ha’aputu-maitai-hia: E ha’aputu-maitai-hia te mau reni nota-ata i ni’a i te matini
-- Ha’aputu-maitai-ra’a hau: E nehenehe te ha’aputu-maitai-ra’a hau e fa’arahi i te vāhi i fa’a’ohipahia
-- Te mau nota-ata i fa’ata’ahia: E fa’a’ohipa te mau tuhaa fa’ata’a-haere-noa i te vāhi hau
+- **Te maita’i o te nota-ata**: E rahi a’e te vāhi e fa’a’ohipahia e te mau nota-ata maita’i roa
+- **Te mau nota-ata i ha’aputu-maitai-hia**: E ha’aputu-maitai-hia te mau reni nota-ata i ni’a i te matini
+- **Ha’aputu-maitai-ra’a hau**: E nehenehe te ha’aputu-maitai-ra’a hau e fa’arahi i te vāhi i fa’a’ohipahia
+- **Te mau nota-ata i fa’ata’ahia**: E fa’a’ohipa te mau tuhaa fa’ata’a-haere-noa i te vāhi hau
 
 Te fa’a’ohipara’a matauhia e vai noa ïa i rotopū i te 2 e te 10GB, ia au i te mau fa’anahora’a e te huru o te fa’a’ohipara’a.
 
@@ -342,15 +342,15 @@ Te fa’a’ohipara’a matauhia e vai noa ïa i rotopū i te 2 e te 10GB, ia au
 
 'E! Ua fa’anahohia te M³ ma te mana’o i te paruru-maitai-ra’a e te fa’aturara’a i te parau nō te ta’ata iho:
 
-- Ha’aputu-ra’a i ni’a i te matini: Te mau ha’amāramaramara’a ato’a nō te putuputura’a, e ha’aputu-maitai-hia ïa i ni’a i tō ’oe roro uira
-- Tāvira-tītaura’a: E tāvirihia te mau nota-ata na roto roa mai i te reni natirara mana o te mau Ite no Iehova
-- Puna Matara: E matara te reni porotarama nō te hi’opo’ara’a e te ha’apāpūra’a
-- Te mau parau nō te hapa: E nehenehe te tahi mau ha’amāramaramara’a iti e ha’aputu-maitai-hia nō te fa’a’ite-ra’a i te mau hapa
+- **Ha’aputu-ra’a i ni’a i te matini**: Te mau ha’amāramaramara’a ato’a nō te putuputura’a, e ha’aputu-maitai-hia ïa i ni’a i tō ’oe roro uira
+- **Tāvira-tītaura’a**: E tāvirihia te mau nota-ata na roto roa mai i te reni natirara mana o te mau Ite no Iehova
+- **Puna Matara**: E matara te reni porotarama nō te hi’opo’ara’a e te ha’apāpūra’a
+- **Te mau parau nō te hapa**: E nehenehe te tahi mau ha’amāramaramara’a iti e ha’aputu-maitai-hia nō te fa’a’ite-ra’a i te mau hapa
 
 ### :arrows_clockwise: Ehia te taime i te M³ a hi’opo’a ai i te mau ha’amaita’ira’a? {#update-frequency}
 
 E hi’opo’a te M³ i te mau ha’amaita’ira’a:
 
-- Ha’amaita’ira’a o te fa’anahora’a: E hi’opo’a-haere-noa-hia te mau putu’a apī i te mau taime ato’a e matara ai te reni porotarama
-- Ha’amaita’ira’a o te nota-ata: E hi’opo’a-haere-noa-hia te mau nota-ata apī nō te putuputura’a i te mau taime ato’a e matara ai te reni porotarama
-- Ha’amaita’ira’a o te reo: E hi’opo’a-haere-noa-hia te mau reo apī ia au i te hina’aro
+- **Ha’amaita’ira’a o te fa’anahora’a**: E hi’opo’a-haere-noa-hia te mau putu’a apī i te mau taime ato’a e matara ai te reni porotarama
+- **Ha’amaita’ira’a o te nota-ata**: E hi’opo’a-haere-noa-hia te mau nota-ata apī nō te putuputura’a i te mau taime ato’a e matara ai te reni porotarama
+- **Ha’amaita’ira’a o te reo**: E hi’opo’a-haere-noa-hia te mau reo apī ia au i te hina’aro

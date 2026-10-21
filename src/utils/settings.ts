@@ -9,13 +9,8 @@ import type {
 import { settingsDefinitions } from 'src/constants/settings';
 import { syncMeetingScheduleManually } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  captureZoomMicTitle,
-  captureZoomShareButtonTitle,
-  captureZoomVideoTitle,
-  isZoomSetupNeeded,
-  learnZoomHandRaisedPhrase,
-} from 'src/helpers/zoom';
+import { resetFeatureNudgesForCurrentProfile } from 'src/helpers/feature-nudges';
+import { isZoomSetupNeeded } from 'src/helpers/zoom';
 import { getDateDiff, getSpecificWeekday, isInPast } from 'src/utils/date';
 
 const requiredRule: ValidationRule = (val: boolean | string) =>
@@ -64,8 +59,8 @@ export const getDateOptions = (options: SettingsItemOption[] | undefined) => {
   }
 };
 
-// Whether a setting is on, with the settings it depends on on too.
-const isSettingInEffect = (
+// Whether a setting is on (or set), with the settings it depends on on too.
+export const isSettingInEffect = (
   settings: Partial<SettingsValues>,
   settingId: keyof SettingsValues,
 ): boolean => {
@@ -84,13 +79,31 @@ export const getBlockingSettings = (
   settings: null | Partial<SettingsValues> | undefined,
   settingId: keyof SettingsValues,
 ): (keyof SettingsValues)[] => {
-  const { disableWhen, type } = settingsDefinitions[settingId] ?? {};
+  const { disableWhen } = settingsDefinitions[settingId] ?? {};
   if (!settings || !disableWhen) return [];
-  // A toggle that is on can always be turned off, even if both ended up on.
-  if (type === 'toggle' && settings[settingId]) return [];
+  // A setting that is on (or set, like a scene) can always be turned off
+  // (or cleared), even if both ended up on.
+  if (settings[settingId]) return [];
   const blockers = Array.isArray(disableWhen) ? disableWhen : [disableWhen];
   return blockers.filter((blocker) => isSettingInEffect(settings, blocker));
 };
+
+/**
+ * Why a setting is unavailable, one entry per blocking setting, with the
+ * i18n key that says what to do about it: a blocking toggle is turned off,
+ * a blocking value (like an OBS Studio scene) is cleared.
+ */
+export const getBlockingSettingReasons = (
+  settings: null | Partial<SettingsValues> | undefined,
+  settingId: keyof SettingsValues,
+) =>
+  getBlockingSettings(settings, settingId).map((setting) => ({
+    messageKey:
+      settingsDefinitions[setting]?.type === 'toggle'
+        ? 'setting-unavailable-while-enabled'
+        : 'setting-unavailable-while-set',
+    setting,
+  }));
 
 export const getRules = (
   rules: SettingsItemRule[] | undefined,
@@ -133,6 +146,8 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
         );
       } else if (action === 'openZoomSetupAssistant') {
         globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
+      } else if (action === 'resetFeatureNudges') {
+        resetFeatureNudgesForCurrentProfile();
       } else if (action === 'openZoomSetupAssistantIfNeeded') {
         // Turning the Zoom Meeting Manager on opens the assistant, unless
         // it was already set up (so finishing the assistant, which turns
@@ -140,18 +155,6 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
         if (isZoomSetupNeeded()) {
           globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
         }
-      } else if (action === 'zoomCaptureVideoOffTitle') {
-        void captureZoomVideoTitle('zoomVideoOffTitle');
-      } else if (action === 'zoomCaptureVideoOnTitle') {
-        void captureZoomVideoTitle('zoomVideoOnTitle');
-      } else if (action === 'zoomCaptureMicOffTitle') {
-        void captureZoomMicTitle('zoomMicOffTitle');
-      } else if (action === 'zoomCaptureMicOnTitle') {
-        void captureZoomMicTitle('zoomMicOnTitle');
-      } else if (action === 'zoomCaptureShareButtonTitle') {
-        void captureZoomShareButtonTitle();
-      } else if (action === 'zoomLearnHandRaised') {
-        void learnZoomHandRaisedPhrase();
       }
     } catch (error) {
       errorCatcher(error);

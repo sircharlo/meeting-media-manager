@@ -39,6 +39,9 @@ type PermissionHandler = (
   details?: { requestingUrl?: string },
 ) => void;
 
+const OWN = 'app://index.html';
+const TRUSTED = 'https://trusted.example/';
+
 const getPermissionHandler = async (): Promise<PermissionHandler> => {
   await import('../security');
   const onReady = appOn.mock.calls.find(([event]) => event === 'ready')?.[1];
@@ -79,45 +82,54 @@ describe('permission request handler', () => {
   });
 
   // Electron 45 requests screen/window/tab capture as `display-capture`
-  // rather than `media`; the media preview and website mirroring need it.
-  it('grants display-capture to our own pages', async () => {
-    const handler = await getPermissionHandler();
-    const callback = vi.fn();
+  // rather than `media`; the media preview and website mirroring need it,
+  // and only our own pages get it. MMM-V2-3ME: Electron asks for
+  // clipboard-sanitized-write even right after a click, so denying it broke
+  // navigator.clipboard.writeText() everywhere.
+  it.each([
+    { expected: true, permission: 'display-capture', trusted: false, url: OWN },
+    {
+      expected: false,
+      permission: 'display-capture',
+      trusted: true,
+      url: TRUSTED,
+    },
+    { expected: true, permission: 'media', trusted: true, url: TRUSTED },
+    {
+      expected: true,
+      permission: 'notifications',
+      trusted: true,
+      url: TRUSTED,
+    },
+    {
+      expected: true,
+      permission: 'clipboard-sanitized-write',
+      trusted: false,
+      url: OWN,
+    },
+    {
+      expected: true,
+      permission: 'clipboard-sanitized-write',
+      trusted: true,
+      url: TRUSTED,
+    },
+    {
+      expected: false,
+      permission: 'clipboard-sanitized-write',
+      trusted: false,
+      url: 'https://example.com/',
+    },
+    { expected: false, permission: 'clipboard-read', trusted: false, url: OWN },
+  ])(
+    'answers $permission from $url with $expected',
+    async ({ expected, permission, trusted, url }) => {
+      isTrustedNavigationTargetMock.mockReturnValue(trusted);
+      const handler = await getPermissionHandler();
+      const callback = vi.fn();
 
-    handler(
-      { getURL: () => 'app://index.html', id: 1 },
-      'display-capture',
-      callback,
-    );
+      handler({ getURL: () => url, id: 1 }, permission, callback);
 
-    expect(callback).toHaveBeenCalledWith(true);
-  });
-
-  it('denies display-capture to trusted remote sites', async () => {
-    isTrustedNavigationTargetMock.mockReturnValue(true);
-    const handler = await getPermissionHandler();
-    const callback = vi.fn();
-
-    handler(
-      { getURL: () => 'https://trusted.example/', id: 1 },
-      'display-capture',
-      callback,
-    );
-
-    expect(callback).toHaveBeenCalledWith(false);
-  });
-
-  it('still grants media and notifications to trusted remote sites', async () => {
-    isTrustedNavigationTargetMock.mockReturnValue(true);
-    const handler = await getPermissionHandler();
-    const media = vi.fn();
-    const notifications = vi.fn();
-    const webContents = { getURL: () => 'https://trusted.example/', id: 1 };
-
-    handler(webContents, 'media', media);
-    handler(webContents, 'notifications', notifications);
-
-    expect(media).toHaveBeenCalledWith(true);
-    expect(notifications).toHaveBeenCalledWith(true);
-  });
+      expect(callback).toHaveBeenCalledWith(expected);
+    },
+  );
 });

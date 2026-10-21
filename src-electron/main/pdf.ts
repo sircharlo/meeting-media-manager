@@ -4,11 +4,24 @@ import { BrowserWindow, dialog } from 'electron';
 import { writeFile } from 'node:fs/promises';
 import { captureElectronError } from 'src-electron/main/utils';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
-import { sanitizeFilename } from 'src/shared/vanilla';
+import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
+import { log, sanitizeFilename } from 'src/shared/vanilla';
 
 // Larger documents are not something M³ produces: a limit keeps a broken
 // caller from handing Chromium an enormous data: URL.
 const MAX_HTML_LENGTH = 4 * 1024 * 1024;
+
+// The file the user chose can't be written: a PDF viewer has the previous
+// copy open and locked (EBUSY, MMM-V2-3MB), or the file is read-only or in a
+// folder Windows protects, such as the Desktop under Controlled Folder Access
+// (EPERM/EACCES). Only the user can fix those, so they get told how instead
+// of the failure being reported.
+const UNWRITABLE_FILE_ERROR_CODES = new Set([
+  'EACCES',
+  'EBUSY',
+  'EPERM',
+  'EROFS',
+]);
 
 /**
  * Renders HTML to a PDF through a hidden Chromium window and saves it where
@@ -66,6 +79,10 @@ export async function exportHtmlToPdf(
     await writeFile(saveResult.filePath, pdf);
     return { canceled: false, filePath: saveResult.filePath };
   } catch (error) {
+    if (UNWRITABLE_FILE_ERROR_CODES.has(getFilesystemErrorCode(error) ?? '')) {
+      log('Could not write the PDF file', 'electron', 'warn', error);
+      return { canceled: false, error: 'file-not-writable' };
+    }
     captureElectronError(error, {
       contexts: { fn: { name: 'exportHtmlToPdf' } },
     });

@@ -577,7 +577,9 @@ export const settingsDefinitions: SettingsItems = {
     type: 'toggle',
   },
   zoomEnable: {
-    disableWhen: 'zoomMeetingManagerEnable',
+    // With a media scene, OBS Studio shows media in Zoom itself, so letting
+    // Zoom share the media window as well would show it twice.
+    disableWhen: ['obsMediaScene', 'zoomMeetingManagerEnable'],
     group: 'integrations',
     subgroup: 'zoomIntegration',
     type: 'toggle',
@@ -650,47 +652,48 @@ export const settingsDefinitions: SettingsItems = {
     type: 'toggle',
   },
   zoomVideoOffTitle: {
-    actions: ['zoomCaptureVideoOffTitle'],
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
+    hidden: true,
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
-    type: 'button',
+    type: 'text',
   },
   zoomVideoOnTitle: {
-    actions: ['zoomCaptureVideoOnTitle'],
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
+    hidden: true,
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
-    type: 'button',
+    type: 'text',
   },
   zoomMicOffTitle: {
-    actions: ['zoomCaptureMicOffTitle'],
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
+    hidden: true,
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
-    type: 'button',
+    type: 'text',
   },
   zoomMicOnTitle: {
-    actions: ['zoomCaptureMicOnTitle'],
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
+    hidden: true,
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
-    type: 'button',
+    type: 'text',
   },
   zoomShareButtonTitle: {
-    actions: ['zoomCaptureShareButtonTitle'],
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
+    hidden: true,
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
-    type: 'button',
+    type: 'text',
   },
   zoomMeetingManagerAutomateMediaSharing: {
     depends: 'zoomMeetingManagerEnable',
+    disableWhen: 'obsMediaScene',
     group: 'integrations',
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
@@ -711,12 +714,12 @@ export const settingsDefinitions: SettingsItems = {
     type: 'toggle',
   },
   zoomHandRaisedPhrase: {
-    actions: ['zoomLearnHandRaised'],
-    depends: ['zoomMeetingManagerEnable', 'zoomMeetingManagerHandAlert'],
+    depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
+    hidden: true,
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
-    type: 'button',
+    type: 'text',
   },
   zoomLowerHandTitle: {
     depends: 'zoomMeetingManagerEnable',
@@ -727,6 +730,56 @@ export const settingsDefinitions: SettingsItems = {
     type: 'text',
   },
   zoomAskToUnmuteTitle: {
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    hidden: true,
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'text',
+  },
+  zoomReactButtonTitle: {
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    hidden: true,
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'text',
+  },
+  // Learned from Zoom as M³ operates it, so its controls are found by name
+  // rather than by keyboard shortcuts the user may have changed.
+  zoomParticipantsButtonTitle: {
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    hidden: true,
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'text',
+  },
+  zoomMuteAllTitle: {
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    hidden: true,
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'text',
+  },
+  zoomJoinAudioTitle: {
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    hidden: true,
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'text',
+  },
+  zoomStopShareTitle: {
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    hidden: true,
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'text',
+  },
+  zoomLearnedVersion: {
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
     hidden: true,
@@ -764,6 +817,11 @@ export const settingsDefinitions: SettingsItems = {
   },
   obsMediaScene: {
     depends: ['obsEnable', 'obsPort', 'obsPassword'],
+    // Only the media scene conflicts with Zoom's media sharing (both would
+    // show the media in Zoom). The rest of the OBS Studio integration
+    // (camera scene, recording) and of the Zoom Meeting Manager still work
+    // together.
+    disableWhen: ['zoomEnable', 'zoomMeetingManagerAutomateMediaSharing'],
     group: 'integrations',
     list: 'obsAllScenes',
     subgroup: 'obsStudio',
@@ -972,6 +1030,13 @@ export const settingsDefinitions: SettingsItems = {
   },
 
   // Advanced
+  resetFeatureSuggestions: {
+    actions: ['resetFeatureNudges'],
+    buttonLabel: 'reset',
+    group: 'advanced',
+    subgroup: 'featureSuggestions',
+    type: 'button',
+  },
   baseUrl: {
     rules: ['notEmpty'],
     group: 'advanced',
@@ -1174,6 +1239,7 @@ export const defaultSettings: SettingsValues = {
   recordingStartShortcut: null,
   recordingStopShortcut: null,
   relinkCongregationButton: false,
+  resetFeatureSuggestions: null,
   reSyncMeetingScheduleButton: false,
   shortcutMediaNext: null,
   shortcutMediaPauseResume: null,
@@ -1212,6 +1278,8 @@ export const defaultSettings: SettingsValues = {
   zoomCancelAutomationShortcut: 'Ctrl+Alt+Escape',
   zoomEnable: false,
   zoomHandRaisedPhrase: null,
+  zoomJoinAudioTitle: null,
+  zoomLearnedVersion: null,
   zoomLowerHandTitle: null,
   zoomMeetingManagerAutoLaunchMeeting: false,
   zoomMeetingManagerAutomateMediaSharing: false,
@@ -1224,8 +1292,12 @@ export const defaultSettings: SettingsValues = {
   zoomMeetingManagerStartupCheck: true,
   zoomMicOffTitle: null,
   zoomMicOnTitle: null,
+  zoomMuteAllTitle: null,
+  zoomParticipantsButtonTitle: null,
+  zoomReactButtonTitle: null,
   zoomScreenShareShortcut: null,
   zoomShareButtonTitle: null,
+  zoomStopShareTitle: null,
   zoomVideoOffTitle: null,
   zoomVideoOnTitle: null,
 };

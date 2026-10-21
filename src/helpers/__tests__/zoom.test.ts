@@ -4,6 +4,9 @@ import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const currentSettings = {
+  zoomHandRaisedPhrase: null as null | string,
+  zoomJoinAudioTitle: null as null | string,
+  zoomLearnedVersion: null as null | string,
   zoomMeetingManagerAutoLaunchMeeting: false,
   zoomMeetingManagerAutomateMeetingAudioSettings: false,
   zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
@@ -11,21 +14,30 @@ const currentSettings = {
   zoomMeetingManagerMeetingId: '123 456' as null | string,
   zoomMicOffTitle: 'Unmute' as null | string,
   zoomMicOnTitle: 'Mute' as null | string,
+  zoomMuteAllTitle: null as null | string,
+  zoomParticipantsButtonTitle: null as null | string,
+  zoomReactButtonTitle: null as null | string,
   zoomShareButtonTitle: 'Share' as null | string,
+  zoomStopShareTitle: null as null | string,
   zoomVideoOffTitle: 'Start Video' as null | string,
   zoomVideoOnTitle: 'Stop Video' as null | string,
 };
 
-const { dateMocks, notifyMock, updateChecklistMock } = vi.hoisted(() => ({
-  dateMocks: {
-    getMeetingStartToday: vi.fn((): Date | null => null),
-    isMemorialDay: vi.fn(() => false),
-  },
-  notifyMock: vi.fn(),
-  updateChecklistMock: vi.fn(),
-}));
+const { dateMocks, notifyMock, sentryMocks, updateChecklistMock } = vi.hoisted(
+  () => ({
+    dateMocks: {
+      getMeetingStartToday: vi.fn((): Date | null => null),
+      isMemorialDay: vi.fn(() => false),
+    },
+    notifyMock: vi.fn(),
+    sentryMocks: { addBreadcrumb: vi.fn(), captureMessage: vi.fn() },
+    updateChecklistMock: vi.fn(),
+  }),
+);
 
 vi.mock('src/helpers/date', () => dateMocks);
+
+vi.mock('@sentry/vue', () => sentryMocks);
 
 vi.mock('stores/current-state', () => ({
   useCurrentStateStore: () => ({ currentSettings }),
@@ -160,16 +172,19 @@ describe('Zoom meeting automation', () => {
       offTitle: 'Unmute',
       on: true,
       onTitle: 'Mute',
+      titles: expect.any(Object),
       type: 'set-mic',
     });
     expect(zoomCommandMock).toHaveBeenCalledWith({
       offTitle: 'Start Video',
       on: true,
       onTitle: 'Stop Video',
+      titles: expect.any(Object),
       type: 'set-video',
     });
     expect(zoomCommandMock).toHaveBeenCalledWith({
       allowSelfUnmute: false,
+      titles: expect.any(Object),
       type: 'mute-all',
     });
   });
@@ -189,6 +204,7 @@ describe('Zoom meeting automation', () => {
     ]);
     expect(zoomCommandMock).toHaveBeenCalledWith({
       allowSelfUnmute: true,
+      titles: expect.any(Object),
       type: 'mute-all',
     });
   });
@@ -307,6 +323,7 @@ describe('Zoom media sharing', () => {
     expect(await startSharingMediaInZoom()).toBe(true);
     expect(zoomCommandMock).toHaveBeenCalledWith({
       shareButtonTitle: 'Share',
+      titles: expect.any(Object),
       type: 'start-share',
       windowTitle: MEDIA_WINDOW_TITLE,
     });
@@ -608,14 +625,233 @@ describe('Zoom setup assistant', () => {
     expect(currentSettings.zoomMicOffTitle).toBe('Unmute');
   });
 
+  it("learns raised hands through Zoom's Reactions button, remembering its name", async () => {
+    Object.assign(currentSettings, {
+      zoomHandRaisedPhrase: null,
+      zoomReactButtonTitle: 'React',
+    });
+    zoomCommandMock.mockResolvedValue({
+      ok: true,
+      phrase: 'Hand raised',
+      reactButtonTitle: 'Reactions',
+    });
+    const { learnZoomHandRaisedPhrase } = await import('../zoom');
+
+    await learnZoomHandRaisedPhrase();
+
+    expect(zoomCommandMock).toHaveBeenCalledWith({
+      reactButtonTitle: 'React',
+      titles: expect.any(Object),
+      type: 'learn-hand-raised',
+    });
+    expect(currentSettings).toMatchObject({
+      zoomHandRaisedPhrase: 'Hand raised',
+      zoomReactButtonTitle: 'Reactions',
+    });
+  });
+
+  it('keeps the Reactions button name when learning raised hands fails', async () => {
+    Object.assign(currentSettings, {
+      zoomHandRaisedPhrase: null,
+      zoomReactButtonTitle: 'React',
+    });
+    zoomCommandMock.mockResolvedValue({
+      error: 'reaction-panel-not-found',
+      ok: false,
+    });
+    const { learnZoomHandRaisedPhrase } = await import('../zoom');
+
+    await learnZoomHandRaisedPhrase();
+
+    expect(currentSettings).toMatchObject({
+      zoomHandRaisedPhrase: null,
+      zoomReactButtonTitle: 'React',
+    });
+  });
+
+  it('sends the names learned so far with every action and keeps what the helper learns', async () => {
+    Object.assign(currentSettings, {
+      zoomJoinAudioTitle: null,
+      zoomMuteAllTitle: null,
+      zoomParticipantsButtonTitle: 'Participants',
+      zoomStopShareTitle: null,
+    });
+    zoomCommandMock.mockResolvedValue({
+      diagnosis: { meeting: true },
+      learned: { joinAudio: 'Join audio', muteAll: 'Mute all' },
+      ok: true,
+    });
+    const { diagnoseZoom } = await import('../zoom');
+
+    await diagnoseZoom();
+
+    expect(zoomCommandMock).toHaveBeenCalledWith({
+      titles: {
+        joinAudio: null,
+        micOff: 'Unmute',
+        micOn: 'Mute',
+        muteAll: null,
+        participants: 'Participants',
+        stopShare: null,
+      },
+      type: 'diagnose',
+    });
+    expect(currentSettings).toMatchObject({
+      zoomJoinAudioTitle: 'Join audio',
+      zoomMuteAllTitle: 'Mute all',
+      zoomParticipantsButtonTitle: 'Participants',
+    });
+  });
+
+  it('keeps a Participants entry the user picked only once it opened the panel', async () => {
+    currentSettings.zoomParticipantsButtonTitle = null;
+    zoomCommandMock.mockResolvedValueOnce({
+      error: 'participants-button-not-found',
+      ok: false,
+    });
+    const { tryZoomParticipantsEntry } = await import('../zoom');
+
+    expect(await tryZoomParticipantsEntry('Enregistrer')).toBe(false);
+    expect(currentSettings.zoomParticipantsButtonTitle).toBeNull();
+
+    expect(await tryZoomParticipantsEntry('Participants')).toBe(true);
+    expect(zoomCommandMock).toHaveBeenLastCalledWith({
+      titles: expect.objectContaining({ participants: 'Participants' }),
+      type: 'participants',
+    });
+    expect(currentSettings.zoomParticipantsButtonTitle).toBe('Participants');
+  });
+
+  it('keeps a "Mute all" or "Stop share" pick only once Zoom confirmed it', async () => {
+    zoomCommandMock.mockImplementation(async (command) => {
+      if (command.type === 'panel-entries') {
+        return { entries: ['Invite', 'Mute all'], ok: true };
+      }
+      if (command.type === 'test-mute-all-entry') {
+        return { isMuteAll: command.title === 'Mute all', ok: true };
+      }
+      if (command.type === 'share-toolbar-entries') {
+        return { entries: ['Pause share', 'Stop share'], ok: true };
+      }
+      if (command.type === 'test-stop-share-entry') {
+        return { ok: true, stopped: command.title === 'Stop share' };
+      }
+      return { ok: true };
+    });
+    const {
+      getZoomPanelEntries,
+      getZoomShareToolbarEntries,
+      tryZoomMuteAllEntry,
+      tryZoomStopShareEntry,
+    } = await import('../zoom');
+
+    expect(await getZoomPanelEntries()).toEqual(['Invite', 'Mute all']);
+    expect(await tryZoomMuteAllEntry('Invite')).toBe(false);
+    expect(await tryZoomMuteAllEntry('Mute all')).toBe(true);
+    expect(await getZoomShareToolbarEntries()).toEqual([
+      'Pause share',
+      'Stop share',
+    ]);
+    expect(await tryZoomStopShareEntry('Pause share')).toBe(false);
+    expect(await tryZoomStopShareEntry('Stop share')).toBe(true);
+  });
+
+  it('leaves what Zoom showed on the Sentry trail when an action fails', async () => {
+    zoomCommandMock.mockResolvedValue({
+      error: 'participants-panel-not-opened',
+      ok: false,
+      snapshot: { toolbar: ['Mute, Alt+A'], zoomVersion: '7.2.1' },
+    });
+    const { muteAllZoomParticipants } = await import('../zoom');
+
+    await muteAllZoomParticipants(false);
+
+    await vi.waitFor(() =>
+      expect(sentryMocks.addBreadcrumb).toHaveBeenCalledWith(
+        expect.objectContaining({
+          category: 'zoom',
+          data: {
+            error: 'participants-panel-not-opened',
+            toolbar: ['Mute, Alt+A'],
+            zoomVersion: '7.2.1',
+          },
+          message: 'Zoom action failed: mute-all',
+        }),
+      ),
+    );
+  });
+
   it('joins computer audio for the microphone step without telling the checklist', async () => {
     const { joinZoomAudioForSetup } = await import('../zoom');
 
-    expect(await joinZoomAudioForSetup()).toBe(true);
+    expect(await joinZoomAudioForSetup()).toBe('joined');
 
     expect(commandTypes()).toEqual(['join-audio']);
     expect(updateChecklistMock).not.toHaveBeenCalled();
     expect(notifyMock).not.toHaveBeenCalled();
+  });
+
+  it("says when M³ can't tell whether computer audio is joined, and learns the microphone on the user's word", async () => {
+    zoomCommandMock.mockResolvedValueOnce({
+      audioStateUnknown: true,
+      changed: false,
+      ok: true,
+    });
+    const { joinZoomAudioForSetup, learnZoomMicTitles } =
+      await import('../zoom');
+
+    expect(await joinZoomAudioForSetup()).toBe('unknown');
+
+    const toggles = [
+      { after: 'Unmute', before: 'Mute', ok: true },
+      { after: 'Mute', before: 'Unmute', ok: true },
+    ];
+    zoomCommandMock.mockImplementation(
+      async () => toggles.shift() ?? { ok: false },
+    );
+    expect(await learnZoomMicTitles(true, true)).toEqual({ ok: true });
+    expect(zoomCommandMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ assumeAudioJoined: true, type: 'toggle-mic' }),
+    );
+    expect(currentSettings.zoomMicOnTitle).toBe('Mute');
+  });
+
+  it('notices Zoom changing (updated, or buttons no longer reading as learned) once each', async () => {
+    Object.assign(currentSettings, {
+      zoomLearnedVersion: '7.2.1',
+      zoomVideoOffTitle: 'Start Video',
+      zoomVideoOnTitle: 'Stop Video',
+    });
+    const changed = vi.fn();
+    globalThis.addEventListener('zoomChanged', changed);
+    const states = [
+      { found: true, sharing: false, zoomVersion: '7.2.1' },
+      { found: true, sharing: false, zoomVersion: '7.3.0' },
+      { found: true, sharing: false, zoomVersion: '7.3.0' },
+      { found: true, sharing: false, videoTitle: 'Stop Video' },
+      { found: true, sharing: false, videoTitle: 'Vidéo' },
+      { found: true, sharing: false, videoTitle: 'Vidéo' },
+    ];
+    zoomCommandMock.mockImplementation(async () => ({
+      meeting: states.shift(),
+      ok: true,
+    }));
+    const { getZoomMeetingState, rememberZoomVersion } =
+      await import('../zoom');
+
+    for (let i = 0; i < 6; i++) await getZoomMeetingState(); // NOSONAR: sequential, in order
+
+    expect(changed).toHaveBeenCalledTimes(2);
+    expect(changed.mock.calls.map(([e]) => (e as CustomEvent).detail)).toEqual([
+      { reason: 'version' },
+      { reason: 'names' },
+    ]);
+    globalThis.removeEventListener('zoomChanged', changed);
+
+    // A passing check keeps the version the names work with.
+    zoomState.meeting = { found: true, sharing: false, zoomVersion: '7.3.0' };
+    rememberZoomVersion();
+    expect(currentSettings.zoomLearnedVersion).toBe('7.3.0');
   });
 });
 

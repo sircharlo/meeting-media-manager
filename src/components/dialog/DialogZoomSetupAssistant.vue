@@ -137,14 +137,69 @@
               :status="check.status"
               :text="t(check.label)"
             />
-            <p
-              v-if="shortcutsChanged"
-              class="text-caption text-grey row no-wrap q-mt-sm"
-            >
-              <q-icon class="q-mr-xs q-mt-xs" name="mmm-info" size="14px" />
-              {{ t('zoom-setup-shortcuts-changed') }}
-            </p>
+            <!-- Zoom's Participants button couldn't be found: the user points M³ to it -->
+            <template v-if="hasParticipantsEntries">
+              <p class="q-mb-none q-mt-sm">
+                {{ t('zoom-setup-participants-not-found') }}
+              </p>
+              <EntryPicker
+                v-model="selectedParticipantsEntry"
+                :entries="participantsEntries"
+                more-first
+                :question="t('zoom-setup-participants-pick')"
+              />
+              <p
+                v-if="participantsEntryFailed"
+                class="text-caption text-negative q-mb-none"
+              >
+                {{ t('zoom-setup-participants-not-opened') }}
+              </p>
+            </template>
+            <!-- "Mute all" wasn't recognized (or the user isn't host): the user points M³ to it -->
+            <template v-if="muteAllEntries.length">
+              <p class="q-mb-none q-mt-sm">
+                {{ t('zoom-setup-mute-all-not-found') }}
+              </p>
+              <EntryPicker
+                v-model="selectedMuteAllEntry"
+                :groups="[
+                  {
+                    entries: muteAllEntries,
+                    label: 'zoom-setup-in-participants-panel',
+                  },
+                ]"
+                :question="t('zoom-setup-mute-all-pick')"
+              />
+              <p
+                v-if="muteAllEntryFailed"
+                class="text-caption text-negative q-mb-none"
+              >
+                {{ t('zoom-setup-mute-all-not-opened') }}
+              </p>
+            </template>
             <div class="row q-gutter-sm q-mt-sm">
+              <q-btn
+                v-if="hasParticipantsEntries"
+                class="btn-tonal"
+                color="primary"
+                :disable="!selectedParticipantsEntry || checking"
+                flat
+                :label="t('zoom-setup-share-try')"
+                :loading="checking"
+                no-caps
+                @click="tryParticipantsEntry"
+              />
+              <q-btn
+                v-else-if="muteAllEntries.length"
+                class="btn-tonal"
+                color="primary"
+                :disable="!selectedMuteAllEntry || checking"
+                flat
+                :label="t('zoom-setup-share-try')"
+                :loading="checking"
+                no-caps
+                @click="tryMuteAllEntry"
+              />
               <q-btn
                 class="btn-tonal"
                 color="primary"
@@ -152,7 +207,7 @@
                 flat
                 icon="mmm-refresh"
                 :label="t('zoom-setup-check-again')"
-                :loading="checking"
+                :loading="checking && !hasChecksPicker"
                 no-caps
                 @click="runChecks"
               />
@@ -203,15 +258,29 @@
             @learn="learnMic"
             @relearn="joinAudioForMic"
           >
-            <q-btn
+            <div
               v-if="micStatus === 'failed' && !micAudioJoined"
-              color="primary"
-              dense
-              flat
-              :label="t('try-again')"
-              no-caps
-              @click="joinAudioForMic"
-            />
+              class="row q-gutter-sm"
+            >
+              <q-btn
+                v-if="micAudioUnknown"
+                class="btn-tonal"
+                color="primary"
+                dense
+                flat
+                :label="t('zoom-setup-mic-audio-joined')"
+                no-caps
+                @click="assumeAudioJoined"
+              />
+              <q-btn
+                color="primary"
+                dense
+                flat
+                :label="t('try-again')"
+                no-caps
+                @click="joinAudioForMic"
+              />
+            </div>
           </ButtonStep>
 
           <!-- Raised hands: how Zoom marks them in the user's language -->
@@ -219,14 +288,26 @@
             <div class="text-h6 q-mb-sm">{{ t('zoom-setup-hand-title') }}</div>
             <p>{{ t('zoom-setup-hand-intro') }}</p>
             <StatusRow
-              v-if="handStatus !== 'pending'"
+              v-if="handStatus !== 'pending' && !handNeedsFirstPick"
               class="q-mb-sm"
               :status="handStatus"
               :text="handStatusText"
             />
+            <template v-if="hasHandEntries && handStatus !== 'passed'">
+              <p v-if="handNeedsFirstPick" class="q-mb-none">
+                {{ t('zoom-setup-react-not-found') }}
+              </p>
+              <!-- Asked for once Zoom has moved React into "More". -->
+              <EntryPicker
+                v-model="selectedHandEntry"
+                :entries="handEntries"
+                more-first
+                :question="t('zoom-setup-react-pick')"
+              />
+            </template>
             <div class="row q-gutter-sm q-mt-sm">
               <q-btn
-                v-if="handStatus !== 'passed'"
+                v-if="!hasHandEntries && handStatus !== 'passed'"
                 class="btn-tonal"
                 color="primary"
                 flat
@@ -235,6 +316,17 @@
                 :loading="handStatus === 'running'"
                 no-caps
                 @click="learnHand"
+              />
+              <q-btn
+                v-else-if="handStatus !== 'passed'"
+                class="btn-tonal"
+                color="primary"
+                :disable="!selectedHandEntry"
+                flat
+                :label="t('zoom-setup-share-try')"
+                :loading="handStatus === 'running'"
+                no-caps
+                @click="tryHandEntry"
               />
               <q-btn
                 v-else
@@ -269,27 +361,11 @@
               <p v-if="shareNeedsFirstPick" class="q-mb-none">
                 {{ t('zoom-setup-share-not-found') }}
               </p>
-              <div class="text-subtitle2 q-mt-md q-mb-xs">
-                {{ t('zoom-setup-share-pick') }}
-              </div>
-              <div class="zoom-setup__entries action-popup__scroll">
-                <template v-for="group in shareGroups" :key="group.label">
-                  <div class="text-caption text-grey q-mt-xs">
-                    {{ t(group.label) }}
-                  </div>
-                  <q-option-group
-                    v-model="selectedShareEntry"
-                    dense
-                    :options="
-                      group.entries.map((entry) => ({
-                        label: entry,
-                        value: entry,
-                      }))
-                    "
-                    type="radio"
-                  />
-                </template>
-              </div>
+              <EntryPicker
+                v-model="selectedShareEntry"
+                :entries="shareEntries"
+                :question="t('zoom-setup-share-pick')"
+              />
             </template>
             <div class="row q-gutter-sm q-mt-sm">
               <q-btn
@@ -359,6 +435,21 @@
                   @click="currentSettings.enableMusicButton = true"
                 />
               </div>
+              <div
+                v-if="obsShowsMedia"
+                class="row items-center no-wrap q-mt-sm text-caption text-warning"
+              >
+                <q-icon class="q-mr-xs" name="mmm-info" size="14px" />
+                <div class="col">{{ t('zoom-setup-obs-sharing-off') }}</div>
+                <q-btn
+                  color="primary"
+                  dense
+                  flat
+                  :label="t('zoom-setup-obs-switch')"
+                  no-caps
+                  @click="switchMediaSharingFromObs"
+                />
+              </div>
             </template>
           </div>
 
@@ -377,16 +468,52 @@
                   : t('zoom-setup-test-failed')
               "
             />
-            <q-btn
-              class="btn-tonal q-mt-md"
-              color="primary"
-              flat
-              icon="mmm-play"
-              :label="t('zoom-setup-test-run')"
-              :loading="testRunning"
-              no-caps
-              @click="runTest"
-            />
+            <!-- Sharing didn't stop: the user points M³ to the "Stop share" button -->
+            <template v-if="stopShareEntries.length">
+              <p class="q-mb-none q-mt-sm">
+                {{ t('zoom-setup-stop-share-not-found') }}
+              </p>
+              <EntryPicker
+                v-model="selectedStopShareEntry"
+                :groups="[
+                  {
+                    entries: stopShareEntries,
+                    label: 'zoom-setup-in-share-toolbar',
+                  },
+                ]"
+                :question="t('zoom-setup-stop-share-pick')"
+              />
+              <p
+                v-if="stopShareEntryFailed"
+                class="text-caption text-negative q-mb-none"
+              >
+                {{ t('zoom-setup-stop-share-not-opened') }}
+              </p>
+            </template>
+            <div class="row q-gutter-sm q-mt-md">
+              <q-btn
+                v-if="stopShareEntries.length"
+                class="btn-tonal"
+                color="primary"
+                :disable="!selectedStopShareEntry || testRunning"
+                flat
+                :label="t('zoom-setup-share-try')"
+                :loading="testRunning"
+                no-caps
+                @click="tryStopShareEntry"
+              />
+              <q-btn
+                class="btn-tonal"
+                color="primary"
+                :disable="testRunning"
+                flat
+                icon="mmm-play"
+                :label="t('zoom-setup-test-run')"
+                :loading="testRunning && !stopShareEntries.length"
+                no-caps
+                @click="runTest"
+              />
+            </div>
           </div>
 
           <!-- Done -->
@@ -456,6 +583,7 @@ import type { ZoomDiagnosis } from 'src/types';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ZoomSelfTestSteps from 'components/dialog/ZoomSelfTestSteps.vue';
 import ButtonStep from 'components/dialog/ZoomSetupButtonStep.vue';
+import EntryPicker from 'components/dialog/ZoomSetupEntryPicker.vue';
 import StatusRow from 'components/dialog/ZoomSetupStatusRow.vue';
 import { storeToRefs } from 'pinia';
 import {
@@ -465,20 +593,28 @@ import {
 import {
   diagnoseZoom,
   getZoomMeetingState,
+  getZoomPanelEntries,
   getZoomShareEntries,
+  getZoomShareToolbarEntries,
   getZoomTitlesFromSettings,
+  isZoomReactButtonMissing,
   joinZoomAudioForSetup,
   learnZoomHandRaisedPhrase,
   learnZoomMicTitles,
   learnZoomVideoTitles,
   prepareMediaWindowForZoomTest,
+  rememberZoomVersion,
   testZoomShareEntry,
+  tryZoomMuteAllEntry,
+  tryZoomParticipantsEntry,
+  tryZoomStopShareEntry,
   withoutZoomFeedback,
 } from 'src/helpers/zoom';
 import {
   runZoomSelfTest,
   type ZoomSelfTestStep,
 } from 'src/helpers/zoom-self-test';
+import { isSettingInEffect } from 'src/utils/settings';
 import { parseZoomMeetingId } from 'src/utils/zoom';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
@@ -606,21 +742,84 @@ const checksPassed = computed(
   () => !checking.value && checks.value.every((c) => c.status === 'passed'),
 );
 
-const shortcutsChanged = computed(
+// Zoom's Participants button is named in the user's Zoom language and is
+// sometimes kept in Zoom's "More" menu. When M³ can't find it, the user
+// picks it from Zoom's entries, as for Share; opening the panel by hand in
+// Zoom works too (the checks then learn the names from the open panel).
+const participantsEntries = ref<{ more: string[]; toolbar: string[] }>({
+  more: [],
+  toolbar: [],
+});
+const selectedParticipantsEntry = ref<null | string>(null);
+const participantsEntryFailed = ref(false);
+
+const hasParticipantsEntries = computed(
   () =>
-    !!diagnosis.value?.toolbar &&
-    (diagnosis.value.audioShortcutDefault === false ||
-      diagnosis.value.videoShortcutDefault === false),
+    participantsEntries.value.toolbar.length +
+      participantsEntries.value.more.length >
+    0,
+);
+
+// Likewise for "Mute all", the one host control: its name is learned from
+// Zoom's shortcut or its place in the panel, and when neither tells, the
+// user (if host) picks it from the buttons under the participants list.
+const muteAllEntries = ref<string[]>([]);
+const selectedMuteAllEntry = ref<null | string>(null);
+const muteAllEntryFailed = ref(false);
+
+const hasChecksPicker = computed(
+  () => hasParticipantsEntries.value || muteAllEntries.value.length > 0,
 );
 
 const runChecks = async () => {
   checking.value = true;
   try {
     diagnosis.value = (await diagnoseZoom()) ?? { meeting: false };
+    participantsEntries.value = diagnosis.value.participantsButtonMissing
+      ? await getZoomShareEntries()
+      : { more: [], toolbar: [] };
+    selectedParticipantsEntry.value = null;
+    participantsEntryFailed.value = false;
+    muteAllEntries.value = diagnosis.value.muteAllButtonMissing
+      ? await getZoomPanelEntries()
+      : [];
+    selectedMuteAllEntry.value = null;
+    muteAllEntryFailed.value = false;
   } finally {
     checking.value = false;
   }
 };
+
+/** Runs a pick's test with the checks shown as running; checks again if it worked. */
+const tryChecksEntry = async (
+  entry: null | string,
+  test: (entry: string) => Promise<boolean>,
+  failed: { value: boolean },
+) => {
+  if (!entry) return;
+  checking.value = true;
+  try {
+    failed.value = !(await test(entry));
+  } finally {
+    checking.value = false;
+  }
+  // The control is known now: the checks pass, and learn the rest.
+  if (!failed.value) await runChecks();
+};
+
+const tryParticipantsEntry = () =>
+  tryChecksEntry(
+    selectedParticipantsEntry.value,
+    tryZoomParticipantsEntry,
+    participantsEntryFailed,
+  );
+
+const tryMuteAllEntry = () =>
+  tryChecksEntry(
+    selectedMuteAllEntry.value,
+    tryZoomMuteAllEntry,
+    muteAllEntryFailed,
+  );
 
 // --- Video -----------------------------------------------------------------
 
@@ -647,11 +846,18 @@ const micChoices = computed(() =>
   MIC_CHOICES.map((choice) => ({ ...choice, label: t(choice.label) })),
 );
 
+// M³ can't tell "Join audio" from a microphone button without a keyboard
+// shortcut until it has learned the microphone's names: the user then says
+// whether computer audio is joined.
+const micAudioUnknown = ref(false);
+const micAssumeJoined = ref(false);
+
 const micStatusText = computed(() => {
   if (!micAudioJoined.value) {
-    return micStatus.value === 'failed'
-      ? t('zoom-setup-mic-join-failed')
-      : t('zoom-setup-mic-joining');
+    if (micStatus.value !== 'failed') return t('zoom-setup-mic-joining');
+    return micAudioUnknown.value
+      ? t('zoom-setup-mic-audio-unknown')
+      : t('zoom-setup-mic-join-failed');
   }
   return micStatus.value === 'failed'
     ? t('zoom-setup-mic-failed')
@@ -661,13 +867,23 @@ const micStatusText = computed(() => {
 const joinAudioForMic = async () => {
   micStatus.value = 'running';
   micAudioJoined.value = false;
-  micAudioJoined.value = await joinZoomAudioForSetup();
+  micAudioUnknown.value = false;
+  micAssumeJoined.value = false;
+  const outcome = await joinZoomAudioForSetup();
+  micAudioJoined.value = outcome === 'joined';
+  micAudioUnknown.value = outcome === 'unknown';
   micStatus.value = micAudioJoined.value ? 'pending' : 'failed';
+};
+
+const assumeAudioJoined = () => {
+  micAssumeJoined.value = true;
+  micAudioJoined.value = true;
+  micStatus.value = 'pending';
 };
 
 const learnMic = async (micIsOn: boolean) => {
   micStatus.value = 'running';
-  const result = await learnZoomMicTitles(micIsOn);
+  const result = await learnZoomMicTitles(micIsOn, micAssumeJoined.value);
   micStatus.value = result.ok ? 'passed' : 'failed';
 };
 
@@ -676,19 +892,69 @@ const learnMic = async (micIsOn: boolean) => {
 // How Zoom marks a raised hand (and lowers one) is only known in the user's
 // Zoom language: M³ raises and lowers the host's own hand to read it.
 const handStatus = ref<Status>('pending');
+// Its hand is raised from Zoom's React button. Should M³ not find it (named
+// in the user's language, and sometimes kept in "More"), the user picks it
+// from Zoom's entries, as for Share.
+const handReactMissing = ref(false);
+const handEntries = ref<{ more: string[]; toolbar: string[] }>({
+  more: [],
+  toolbar: [],
+});
+const selectedHandEntry = ref<null | string>(null);
+/** Whether the user has tried an entry from the list yet. */
+const handEntryTried = ref(false);
+
+const hasHandEntries = computed(
+  () => handEntries.value.toolbar.length + handEntries.value.more.length > 0,
+);
+
+/** Like shareNeedsFirstPick: an expected step, not an error. */
+const handNeedsFirstPick = computed(
+  () =>
+    handStatus.value === 'failed' &&
+    handReactMissing.value &&
+    !handEntryTried.value &&
+    hasHandEntries.value,
+);
 
 const handStatusText = computed(() => {
   if (handStatus.value === 'running') return t('zoom-setup-hand-learning');
-  if (handStatus.value === 'failed') return t('zoom-setup-hand-failed');
-  return t('zoom-setup-hand-done', {
-    phrase: currentSettings.value?.zoomHandRaisedPhrase ?? '',
-  });
+  if (handStatus.value === 'passed') {
+    return t('zoom-setup-hand-done', {
+      phrase: currentSettings.value?.zoomHandRaisedPhrase ?? '',
+    });
+  }
+  if (handReactMissing.value && hasHandEntries.value) {
+    return t('zoom-setup-react-not-opened');
+  }
+  return t('zoom-setup-hand-failed');
 });
 
-const learnHand = async () => {
+/** Learns raised hands through a React entry (the remembered one if none). */
+const runHandLearning = async (reactEntry?: string) => {
   handStatus.value = 'running';
-  const result = await withoutZoomFeedback(() => learnZoomHandRaisedPhrase());
+  const result = await withoutZoomFeedback(() =>
+    learnZoomHandRaisedPhrase(reactEntry),
+  );
+  handReactMissing.value = isZoomReactButtonMissing(result);
   handStatus.value = result.ok && result.phrase ? 'passed' : 'failed';
+};
+
+const learnHand = async () => {
+  await runHandLearning();
+  if (!handReactMissing.value) return;
+  handEntries.value = await getZoomShareEntries();
+  selectedHandEntry.value = null;
+  handEntryTried.value = false;
+};
+
+const tryHandEntry = async () => {
+  const entry = selectedHandEntry.value;
+  if (!entry) return;
+  handEntryTried.value = true;
+  await runHandLearning(entry);
+  // The list stays only while the entry picked wasn't React.
+  if (!handReactMissing.value) handEntries.value = { more: [], toolbar: [] };
 };
 
 // --- Share -----------------------------------------------------------------
@@ -705,20 +971,6 @@ const shareEntryTried = ref(false);
 
 const hasShareEntries = computed(
   () => shareEntries.value.toolbar.length + shareEntries.value.more.length > 0,
-);
-
-// Share is nearly always in Zoom's toolbar, so its entries come first.
-const shareGroups = computed(() =>
-  [
-    {
-      entries: shareEntries.value.toolbar,
-      label: 'zoom-setup-share-in-toolbar' as const,
-    },
-    {
-      entries: shareEntries.value.more,
-      label: 'zoom-setup-share-in-more' as const,
-    },
-  ].filter((group) => group.entries.length),
 );
 
 /**
@@ -804,6 +1056,13 @@ const tryShareEntry = async () => {
 
 // --- Automations -------------------------------------------------------------
 
+/** Whether OBS Studio has a media scene, so it shows the media in Zoom itself. */
+const obsShowsMedia = computed(
+  () =>
+    !!currentSettings.value &&
+    isSettingInEffect(currentSettings.value, 'obsMediaScene'),
+);
+
 const automations = computed(() => [
   {
     disabled: !currentSettings.value?.zoomMeetingManagerMeetingId,
@@ -818,7 +1077,9 @@ const automations = computed(() => [
     setting: 'zoomMeetingManagerAutomatePostMeetingAudioSettings' as const,
   },
   {
-    disabled: shareStatus.value !== 'passed',
+    // OBS Studio already shows the media in Zoom (see obsMediaScene's
+    // disableWhen)
+    disabled: shareStatus.value !== 'passed' || obsShowsMedia.value,
     setting: 'zoomMeetingManagerAutomateMediaSharing' as const,
   },
   {
@@ -827,15 +1088,41 @@ const automations = computed(() => [
   },
 ]);
 
+/**
+ * Lets Zoom share the media window instead of OBS Studio switching to its
+ * media scene: the two can't both be on, so this clears OBS Studio's media
+ * and image scenes. The rest of the OBS Studio integration (camera scene,
+ * recording) stays on.
+ */
+const switchMediaSharingFromObs = () => {
+  const settings = currentSettings.value;
+  if (!settings) return;
+  settings.obsMediaScene = null;
+  settings.obsImageScene = null;
+  if (shareStatus.value === 'passed') {
+    settings.zoomMeetingManagerAutomateMediaSharing = true;
+  }
+};
+
 // --- Test --------------------------------------------------------------------
 
 const testSteps = ref<ZoomSelfTestStep[]>([]);
 const testRunning = ref(false);
 const testOutcome = ref<'' | 'failed' | 'passed'>('');
 
+// When the test couldn't stop sharing (the "Stop share" button is named in
+// the user's Zoom language), Zoom is still sharing: the user picks the
+// button from Zoom's sharing toolbar, and the test runs again.
+const stopShareEntries = ref<string[]>([]);
+const selectedStopShareEntry = ref<null | string>(null);
+const stopShareEntryFailed = ref(false);
+
 const runTest = async () => {
   testRunning.value = true;
   testOutcome.value = '';
+  stopShareEntries.value = [];
+  selectedStopShareEntry.value = null;
+  stopShareEntryFailed.value = false;
   try {
     const steps = await runZoomSelfTest({
       onProgress: (progress) => {
@@ -848,9 +1135,28 @@ const runTest = async () => {
     testOutcome.value = steps.some((s) => s.status === 'failed')
       ? 'failed'
       : 'passed';
+    const stopFailed = steps.some(
+      (s) => s.id === 'share-stop' && s.status === 'failed',
+    );
+    if (stopFailed && (await getZoomMeetingState())?.sharing) {
+      stopShareEntries.value = await getZoomShareToolbarEntries();
+    }
   } finally {
     testRunning.value = false;
   }
+};
+
+const tryStopShareEntry = async () => {
+  const entry = selectedStopShareEntry.value;
+  if (!entry) return;
+  testRunning.value = true;
+  try {
+    stopShareEntryFailed.value = !(await tryZoomStopShareEntry(entry));
+  } finally {
+    testRunning.value = false;
+  }
+  // Sharing stopped through that button, now remembered: test it all again.
+  if (!stopShareEntryFailed.value) await runTest();
 };
 
 // --- Done --------------------------------------------------------------------
@@ -975,6 +1281,8 @@ const finish = () => {
   if (currentSettings.value) {
     currentSettings.value.zoomMeetingManagerEnable = true;
   }
+  // The names learned go with this Zoom version.
+  rememberZoomVersion();
   open.value = false;
 };
 
@@ -997,6 +1305,9 @@ const reset = () => {
   handStatus.value = currentSettings.value?.zoomHandRaisedPhrase
     ? 'passed'
     : 'pending';
+  handReactMissing.value = false;
+  handEntries.value = { more: [], toolbar: [] };
+  handEntryTried.value = false;
   shareStatus.value = 'pending';
   shareEntries.value = { more: [], toolbar: [] };
   shareEntryTried.value = false;
@@ -1040,11 +1351,6 @@ onBeforeUnmount(stopWatchingMeeting);
 .zoom-setup__body {
   max-height: min(560px, 70vh);
   min-height: 300px;
-  overflow: auto;
-}
-
-.zoom-setup__entries {
-  max-height: 180px;
   overflow: auto;
 }
 

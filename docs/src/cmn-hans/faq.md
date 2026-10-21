@@ -4,7 +4,7 @@
 
 ### :earth_americas: 此应用是否依赖外部网站、来源或“管理员”来下载出版物、聚会媒体或其他文档？ {#external-dependencies}
 
-**不。** 此应用程序的运作方式类似 JW Library。它直接从耶和华见证人官方网站及其内容分发网络下载出版物、媒体和其他内容。应用程序会自动判断需要下载哪些内容，以及先前下载的内容是否已经不是最新版本并需要重新下载。它直接从耶和华见证人的官方网站及其内容提供网络下载出版物、媒体和其他内容。应用程序自动决定需要下载的内容以及先前下载的内容不再是最新的，应该重新下载。
+**不。** 此应用程序的运作方式类似 JW Library。它直接从耶和华见证人官方网站及其内容分发网络下载出版物、媒体和其他内容。应用程序会自动判断需要下载哪些内容，以及先前下载的内容何时已经不是最新版本、需要重新下载。
 
 :::info 备注
 
@@ -14,7 +14,7 @@
 
 ### :thinking: 此应用是否违反耶和华见证人官方网站的使用条款？ {#terms-of-use}
 
-**不。** [耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许这种使用方式。以下是相关摘录（重要部分已标明）：以下是相关摘录（重要部分已标明）：
+**不。** [耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许这种使用方式。以下是相关摘录（重要部分已标明）：
 
 > 你不得：
 >
@@ -24,8 +24,8 @@
 
 M³ 支持 Windows、macOS 和 Linux：
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**：Windows 10 及更高版本（64 位）。适用于 32 位 Windows 的最后一个版本是 v26.10.1，可在[下载页面](download)获取。
+- **macOS**：macOS 13（Ventura）及更高版本（通用版）。适用于 macOS 12（Monterey）的最后一个版本是 v26.10.1，可在[下载页面](download)获取。
 - **Linux**：大多数现代 Linux 发行版（AppImage 格式）
 
 ### :globe_with_meridians: M³ 支持我的语言吗？ {#language-support}
@@ -64,11 +64,11 @@ M³ 会自动下载即将举行的聚会所需的媒体：
 2. 判断需要哪些媒体
 3. 按照所选语言从耶和华见证人官方网站下载媒体
 4. 按日期和聚会节目整理媒体
-5. 缓存文件，以便之后使用
+5. 缓存文件，以便离线使用
 
 ### :calendar: 可以为特定日期添加媒体吗？ {#specific-dates}
 
-是! **可以！** M³ 可以：
+是的！使用 M³，您可以：
 
 - 自动下载即将举行的聚会所需的媒体
 - 为任何日期手动添加自定义媒体
@@ -86,7 +86,7 @@ M³ 会自动下载即将举行的聚会所需的媒体：
 
 ### :speaker: 可以添加圣经录音吗？ {#audio-bible}
 
-是! **可以！** M³ 的圣经录音功能可以：
+是的！ M³ 的圣经录音功能可以让您：
 
 1. 选择圣经书卷和章
 2. 选择特定经文或经文范围
@@ -128,16 +128,16 @@ M³ 支持自定义以下快捷键：
 
 ### :stopwatch: M³ 有聚会计时器吗？ {#faq-meeting-timer}
 
-是！**有。** 启用后，M³ 可以显示一个单独的计时器窗口，为聚会节目参与者计时。计时器可以正计时或倒计时，也可以显示当前时间、聚会开始前的倒计时，并根据设置显示超时情况，或显示聚会整体是提前还是超时。它可以向上或向下计算，显示当前时间，显示会前倒计时。 并可选择说明加班或会议是否提前或晚于时间表。 Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
+有。启用后，M³ 可以显示一个单独的计时器窗口，为聚会节目参与者计时。计时器可以正计时或倒计时，显示当前时间和聚会开始前的倒计时，还可以根据设置显示超时情况，或显示聚会整体是提前还是落后于时间表。节目时长可以自由调整，可以为特别节目添加自定义部分，还可以通过操作图标（包括鼠标悬停时）或停靠在主窗口中的面板来控制计时器。
 
 计时器目前属于测试功能，只有在得到当地批准后才应启用。
 
 ### :video_camera: 如何设置 Zoom 集成？ {#zoom-setup}
 
-在设置中启用 Zoom 集成：
+要与 Zoom 集成：
 
 1. 在 M³ 设置中启用 Zoom 集成
-2. 在 Zoom 中设置“开始／停止屏幕共享”的快捷键，并确保该快捷键设为全局快捷键确保缩放设置中的快捷方式为“全局”。
+2. 在 M³ 中配置 Zoom 里设置的屏幕共享快捷键。确保该快捷键在 Zoom 设置中设为“全局”。
 3. 播放或停止媒体时，M³ 会自动触发 Zoom 开始或停止屏幕共享
 
 ## OBS Studio 集成 {#faq-obs-integration}
@@ -158,12 +158,12 @@ M³ 会根据以下因素自动切换 OBS Studio 场景：
 
 - 媒体类型，例如视频或图片
 - 已配置的场景
-- Settings like "Do not automatically share images"
+- “不要自动共享图片”等设置
 - 媒体播放结束后是否恢复之前使用的场景
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: “不要自动共享图片”设置有什么作用？ {#faq-postpone-images}
 
-This setting delays sharing images to OBS until you manually trigger them. 好处:
+此设置会延迟将图片共享到 OBS，直到您手动触发为止。这适用于以下情况：
 
 - 先向现场观众显示图片
 - 更灵活地控制演示时机
@@ -178,16 +178,16 @@ M³ 本身没有内置录制功能，但可以通过两种方式帮助控制录�
 
 ## 高级功能 {#faq-advanced-features}
 
-### :cloud: How does the shared folder work? {#faq-folder-monitoring}
+### :cloud: 共享文件夹如何工作？ {#faq-folder-monitoring}
 
-If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
+如果您将聚会用的文件保存在 Dropbox、OneDrive、iCloud Drive 或 Google Drive 等云存储应用中，M³ 可以自动将它们添加到对应的聚会：
 
-1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
-2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
-3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
-4. To add files for another day, create a folder for it, named the same way.
+1. 在云存储应用中选择一个文件夹，可以在设置向导中选择，也可以在 **设置** > **集成** > **共享文件夹** 中选择。最好使用一个专门用于此用途的新文件夹。
+2. M³ 会在其中为每个即将举行的聚会创建一个文件夹，并以聚会日期按“年-月-日”的格式命名（例如 `2026-03-25`）。
+3. 需要时，可以随时将照片、视频、音频文件或 JW Library 播放列表放入聚会的文件夹。这些文件会被添加到该聚会的媒体列表中，所有使用同一文件夹的电脑都是如此。
+4. 如需为其他日期添加文件，请为该日期创建一个按相同方式命名的文件夹。
 
-When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
+一周结束后，M³ 会删除该周带日期的文件夹及其中的文件，所有使用该共享文件夹的人都会受到影响。如需保留这些文件，请关闭 **删除过往聚会的文件夹**。
 
 ### :file_folder: 什么是媒体自动导出？ {#faq-media-export}
 
@@ -200,18 +200,18 @@ When a week is over, M³ deletes that week's dated folders and the files in them
 
 ### :family: 可以管理多个会众吗？ {#faq-multiple-congregations}
 
-是! **可以！** M³ 支持多个配置，可分别用于：
+是的！ M³ 支持多个配置，可分别用于：
 
 - 不同会众
 - 特别聚会或活动
 - 不同小组
 - 各自独立的设置和媒体
 
-也可以将配置设置导出为 JSON 文件，再导入到另一台计算机或另一个配置中。导入后会替换当前配置的设置。导入替换当前配置文件的设置。
+也可以将配置设置导出为 JSON 文件，再导入到另一台计算机或另一个配置中。导入后会替换当前配置的设置。
 
 ## 疑难解答 {#faq-troubleshooting}
 
-### :warning: 媒体无法下载，我该检查什么？ What should I check? {#faq-media-not-downloading}
+### :warning: 媒体无法下载。我该检查什么？ {#faq-media-not-downloading}
 
 请检查以下常见问题：
 
@@ -222,7 +222,7 @@ When a week is over, M³ deletes that week's dated folders and the files in them
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: OBS Studio 集成无法工作，我该检查什么？ {#faq-obs-not-working} 我应该进行什么验证？ {#faq-obs-not-working}
+### :video_camera: OBS Studio 集成无法工作。我应该进行什么验证？ {#faq-obs-not-working}
 
 请检查以下与 OBS Studio 有关的问题：
 
@@ -233,11 +233,11 @@ When a week is over, M³ deletes that week's dated folders and the files in them
 
 ### :speaker: 使用 OBS Studio 时，M³ 会自动把媒体声音发送到 Zoom 吗？ {#audio-to-zoom}
 
-**不会。** M³ 不会通过 OBS Studio 的视频流自动把媒体声音传送给 Zoom。视频流的工作方式类似一个没有声音的虚拟摄像头。视频流像虚拟摄像头一样是无声的，就像摄像头一样。如果希望 Zoom 能听到计算机播放的音乐或视频声音，需要正确配置计算机的音频，让 Zoom 能接收到该音频信号，并根据需要在 Zoom 中启用**原始音频（Original Audio）**。
+**不会。** M³ 不会自动把媒体声音发送到 Zoom 或 OBS Studio。视频流的工作方式类似一个没有声音的虚拟摄像头，就像网络摄像头一样。如果希望 Zoom 能听到计算机播放的音乐或视频声音，需要正确配置计算机的音频，让 Zoom 能接收到该音频信号，并根据需要在 Zoom 中启用**原始音频（Original Audio）**。
 
 **重要提示：**
 
-- 开始 Zoom 聚会后，需要确保“原始音频”已经启用
+- **每次**开始 Zoom 会议前，都必须启用“原始音频”
 - 这不是 M³ 本身造成的问题；如果不使用 Zoom 的原生屏幕和音频共享功能，其他播放器也可能需要类似的音频配置
 - “原始音频”设置有三个子选项——通常开启前两个，关闭第三个效果最佳
 - 如果仍然没有声音，可以考虑使用 Zoom 的“共享计算机声音”功能
@@ -246,16 +246,16 @@ When a week is over, M³ deletes that week's dated folders and the files in them
 **为什么需要这样做？**
 M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时，此音频不会通过视频流自动传输到 Zoom。“原始音频”设置允许 Zoom 在屏幕共享期间捕捉电脑上播放的音频（如果您的电脑配置正确，例如：电脑有第二个声卡用于媒体播放，Zoom 将其作为麦克风收听）。
 
-### :snail: M³ 运行缓慢，如何改善？ {#performance-issues} ，如何改善？ {#performance-issues}
+### :snail: M³ 运行缓慢。如何改善性能？ {#performance-issues}
 
 尝试以下性能优化：
 
-1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
+1. **缓存诗歌视频文件**：在设置中预先缓存所有诗歌视频
 2. **关闭不需要的程序**：释放计算机资源
 3. **检查磁盘空间**：确保有足够的可用磁盘空间
 4. **降低分辨率**：降低视频最高分辨率设置
 
-### :speech_balloon: 遇到语言相关问题，我该检查什么？ {#faq-language-issues} What should I check? {#faq-language-issues}
+### :speech_balloon: 遇到语言相关问题。我该检查什么？ {#faq-language-issues}
 
 请检查以下语言设置：
 
@@ -268,16 +268,16 @@ M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时�
 
 ### :radioactive: 如何报告问题？ {#how-do-i-report-an-issue}
 
-请在官方 GitHub 仓库[提交 Issue](https://github.com/sircharlo/meeting-media-manager/issues)，并尽量提供：请附上：
+请在官方 GitHub 仓库[提交 Issue](https://github.com/sircharlo/meeting-media-manager/issues)。请附上：
 
 - 问题的详细说明
 - 重现问题的步骤
 - 操作系统和 M³ 版本
 - 相关错误信息、日志和截图
 
-### :new: 如何提出新功能或改进建议？ {#how-can-i-request-a-new-feature-or-enhancement} :new: 如何提出新功能建议？ {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: 如何提出新功能或改进建议？ {#how-can-i-request-a-new-feature-or-enhancement}
 
-请在官方 GitHub 仓库[发起讨论](https://github.com/sircharlo/meeting-media-manager/discussions)，并说明：请说明：
+请在官方 GitHub 仓库[发起讨论](https://github.com/sircharlo/meeting-media-manager/discussions)。请说明：
 
 - 您希望看到的功能
 - 这个功能会怎样帮助一般用户
@@ -285,11 +285,11 @@ M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时�
 
 ### :handshake: 我想贡献代码，该怎么做？ {#how-can-i-contribute-some-code}
 
-请阅读官方 GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。欢迎提交代码和 Pull Request！我们欢迎代码贡献和 Pull Request！
+请阅读官方 GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。我们欢迎代码贡献和 Pull Request！
 
 ### :globe_with_meridians: 我可以帮助翻译吗？ {#translations}
 
-M³ 使用 Crowdin 管理翻译。你可以：您可以通过以下方式参与：
+M³ 使用 Crowdin 管理翻译。您可以通过以下方式参与：
 
 1. 前往 [Crowdin 项目](https://crowdin.com/project/meeting-media-manager)
 2. 选择你的语言
@@ -298,7 +298,7 @@ M³ 使用 Crowdin 管理翻译。你可以：您可以通过以下方式参与�
 
 ### :x: 可以向项目捐款吗？ {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+感谢你有意支持这个项目！不过，本着马太福音 10:8 的精神，本项目**不**接受捐款，将来也不会接受。这个应用程序是用爱心和一点空闲时间制作的。请尽情使用！ :tada:
 
 :::tip :book: 马太福音 10:8
 
@@ -312,11 +312,11 @@ Thank you for your interest in supporting the project! However, in the spirit of
 
 M³ 可以在多种操作系统上运行：
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
+- **Windows**：Windows 10 及更高版本（64 位）。适用于 32 位 Windows 的最后一个版本是 v26.10.1，可在[下载页面](download)获取。
+- **macOS**：macOS 13（Ventura）及更高版本（通用版）。适用于 macOS 12（Monterey）的最后一个版本是 v26.10.1，可在[下载页面](download)获取。
 - **Linux**：大多数现代Linux发行版（AppImage格式）
 
-:computer: M³ 的硬件和软件要求是什么？ {#hardware-and-software-requirements}
+M³ 的硬件要求如下：
 
 - **最低**：4 GB 内存，6 GB 可用磁盘空间
 - **推荐**：8 GB 内存，建议预留 15 GB 可用空间用于媒体缓存
@@ -340,7 +340,7 @@ M³ 可以在多种操作系统上运行：
 
 ### :shield: M³ 是否安全并重视隐私？ {#security-privacy}
 
-是! **是。** M³ 在设计时重视安全和隐私：
+是的！ M³ 在设计时就重视安全和隐私：
 
 - **本地存储**：聚会相关数据存储在你的计算机上
 - **直接下载**：媒体直接从耶和华见证人官方网站下载

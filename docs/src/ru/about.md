@@ -34,75 +34,75 @@ M³ - это идеальный инструмент для представле
 
 ## Каковы функции M³? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+M³ — это комплексное решение для работы с медиа, которое позволяет легко и автоматически загружать, синхронизировать, передавать и показывать все материалы для встреч. Вот что делает M³ таким мощным:
 
-### Core Media Management {#core-media-management}
+### Основные функции управления медиа {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **Автоматическая загрузка медиа**: Автоматически находит и загружает все медиа, необходимые для предстоящих встреч
+- **Поддержка многих языков**: Загружайте медиа на любом из сотен доступных языков
+- **Умное кэширование**: Интеллектуальная система кэширования, которая поддерживает медиа упорядоченными и актуальными
+- **Упорядочивание медиа**: Автоматически упорядочивает медиа по дате и разделу встречи
 
-### Media Presentation Features {#about-presentation-features}
+### Функции презентации медиа {#about-presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+Для **гибридных** и **очных** встреч собрания встроенный режим показа медиа предлагает:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Live preview and speed control**: Preview the audience display and optionally adjust audio or video playback speed
-- **Multi-monitor support**: Automatic external monitor detection and management
-- **Clean presentation**: Distraction-free media presentation interface
+- **Расширенное управление медиа**: Миниатюры медиа с возможностью масштабирования и панорамирования
+- **Настраиваемое время**: Задавайте собственное время начала и окончания воспроизведения медиа
+- **Управление воспроизведением**: Удобные кнопки паузы, воспроизведения и остановки с горячими клавишами
+- **Предпросмотр и управление скоростью**: Смотрите, что видят присутствующие, и при необходимости меняйте скорость воспроизведения аудио или видео
+- **Поддержка нескольких мониторов**: Автоматическое обнаружение внешних мониторов и управление ими
+- **Чистый показ**: Интерфейс показа медиа без отвлекающих элементов
 
-### Background Music {#about-background-music}
+### Фоновая музыка {#about-background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- **Умное воспроизведение**: Фоновая музыка, которая автоматически останавливается до начала встреч
+- **Перезапуск одним щелчком**: Возобновляйте фоновую музыку одним щелчком после встреч
+- **Управление громкостью**: Настраиваемая громкость фоновой музыки с плавным затуханием
 
-### Zoom Integration {#about-zoom-integration}
+### Интеграция с Zoom {#about-zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- **Автоматическая демонстрация экрана**: Автоматически начинайте и останавливайте демонстрацию экрана в Zoom при запуске или остановке медиа
 
-### OBS Studio Integration {#about-obs-integration}
+### Интеграция с OBS Studio {#about-obs-integration}
 
-- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
-- **Scene management**: Automatic switching between camera, media, and other scenes
-- **Recording controls**: Start and stop OBS recordings from M³ when enabled
+- **Автоматическое переключение сцен**: Бесшовная интеграция с OBS Studio для гибридных встреч
+- **Управление сценами**: Автоматическое переключение между камерой, медиа и другими сценами
+- **Управление записью**: Если эта функция включена, запускайте и останавливайте запись в OBS прямо из M³
 
-### Media Import and Management {#about-media-import}
+### Импорт и управление медиафайлами {#about-media-import}
 
-- **JWPUB files**: Import and manage JWPUB files with ease
-- **JWLPLAYLIST files**: Support for JW Library playlist files
-- **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Bible media**: Import Study Bible media, sign-language Bible media, and audio recordings of the New World Translation
-- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
+- **Файлы JWPUB**: Легко импортируйте файлы JWPUB и управляйте ими
+- **Файлы JWLPLAYLIST**: Поддержка файлов плейлистов JW Library
+- **Собственные медиафайлы**: Импорт собственных видео, изображений, аудиофайлов и файлов PDF
+- **Медиа из Библии**: Импорт медиа из учебного издания Библии, медиа из Библии на жестовом языке и аудиозаписей «Перевода нового мира»
+- **Публичные речи**: Медиа для публичных речей всегда под рукой благодаря импорту S-34
 
-### Advanced Features {#about-advanced-features}
+### Дополнительные возможности {#about-advanced-features}
 
-- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
-- **Media export**: Automatically export media to folders, organized by date
-- **Website presentation**: Present the official website on external monitors
-- **Meeting timer**: Optional timer window for timing meeting parts
-- **Meeting recording helpers**: Control OBS recording or an external recording application
-- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles, including profile settings import and export
+- **Общая папка**: Автоматически добавляйте медиа к встречам из папки, синхронизируемой через Dropbox, OneDrive, iCloud Drive или Google Drive
+- **Экспорт медиафайлов**: Автоматический экспорт медиафайлов в папки, упорядоченные по дате
+- **Показ веб-сайта**: Показывайте официальный веб-сайт на внешних мониторах
+- **Таймер встречи**: Дополнительное окно таймера для контроля времени частей встречи
+- **Помощники для записи встречи**: Управление записью в OBS или во внешней программе записи
+- **Горячие клавиши**: настраиваемые сочетания клавиш для множества функций
+- **Несколько профилей**: Управляйте разными собраниями или группами с помощью отдельных профилей, включая импорт и экспорт настроек профиля
 
 ## Работает ли M³ на моём языке? {#does-m3-work-in-my-language}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Да!** M³ полностью поддерживает работу на многих языках:
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+Медиа для встреч Свидетелей Иеговы можно автоматически загружать на любой из сотен языков, имеющихся на официальном веб-сайте Свидетелей Иеговы. Список доступных языков обновляется автоматически; вам нужно лишь выбрать нужный язык при настройке.
 
-### Interface Languages {#interface-languages}
+### Языки интерфейса {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+Сам интерфейс M³ переведен добровольцами на многие языки. Язык интерфейса M³ можно выбрать независимо от языка, на котором загружаются медиа. Это означает, что вы можете пользоваться M³ на удобном для вас языке, а медиа загружать на любом другом поддерживаемом языке.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+Подробнее о резервных языках и субтитрах см. в разделе [ЧаВо](faq#language-support).
 
-## System Requirements {#system-requirements}
+## Системные требования {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+Подробную информацию о поддерживаемых операционных системах и требованиях см. в ответах в [ЧаВо](faq#technical-questions).
 
 **Попробуйте M³ сегодня и убедитесь сами, на что оно способно! Представление мультимедиа во время встреч легче чем когда-либо.**
 

@@ -31,13 +31,23 @@ app.on('ready', () => {
         return callback(false);
       }
 
+      // Electron asks for clipboard-sanitized-write even when the copy follows
+      // a click, so denying it made every navigator.clipboard.writeText()
+      // fail with "Write permission denied" (MMM-V2-3ME: the timer remote's
+      // copy button). Sanitized writes are limited to text, HTML and PNG
+      // images, and only our own or trusted pages get this far.
+      const allowed: (typeof permission)[] = [
+        'clipboard-sanitized-write',
+        'media',
+        'notifications',
+      ];
       // Since Electron 45, capturing a screen, window or tab (getDisplayMedia,
       // or getUserMedia with chromeMediaSource) is requested as
       // `display-capture` instead of `media`. Only our own pages capture
       // (media preview, website mirroring), so trusted sites don't get it.
-      const allowed: (typeof permission)[] = isSelf(url)
-        ? ['display-capture', 'media', 'notifications']
-        : ['media', 'notifications'];
+      if (isSelf(url)) {
+        allowed.push('display-capture');
+      }
       if (allowed.includes(permission)) {
         callback(true);
       } else {
