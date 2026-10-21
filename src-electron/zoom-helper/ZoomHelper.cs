@@ -328,20 +328,21 @@ namespace M3.ZoomHelper
         // A trailing "(Ctrl+Alt+Shift+A)" style shortcut in a control name.
         // Key names are matched by shape only, since Zoom may translate them
         // (e.g. "Strg" for Ctrl in German).
-        static readonly Regex TrailingHotkey = new Regex(@"\((?:[^()\s+]+\+)+[^()\s+]+\)\s*$");
+        // Japanese Zoom writes it with full-width brackets, "（Alt+I）".
+        static readonly Regex TrailingHotkey = new Regex(@"[(（](?:[^()（）\s+]+\+)+[^()（）\s+]+[)）]\s*$");
         // Zoom names its menu separators "4 of 17" in every language.
         static readonly Regex MenuSeparator = new Regex(@"^\d+ of \d+$");
         // "More" menu entries end with a translated "row R, column C N of M ..."
         static readonly Regex GridPositionSuffix = new Regex(@"^(.*?)\s+\S+\s+\d+,\s*\S+\s+\d+\s+\d+\s+\S+\s+\d+(?:\s.*)?$");
-        static readonly Regex SectionHeader = new Regex(@"\(\d+\)");
+        static readonly Regex SectionHeader = new Regex(@"[(（]\d+[)）]");
         // The participants panel's heading, "Participants (3)" in every
-        // language, with its title apart.
-        static readonly Regex CountedTitle = new Regex(@"^(.*?)\s*\(\d+\)\s*$");
+        // language (full-width brackets in Japanese), with its title apart.
+        static readonly Regex CountedTitle = new Regex(@"^(.*?)\s*[(（]\d+[)）]\s*$");
         // Any keyboard shortcut ("Alt+A", "Ctrl+Alt+Shift+A", "Strg+Umschalt+S").
         static readonly Regex AnyHotkey = new Regex(@"(?<![\w+])[\p{L}]+(?:\+[\p{L}\p{N}]+)+(?![\w+])");
         // The Reactions button's trailing "(Ctrl+Shift+Y)", matched by shape
         // like TrailingHotkey.
-        static readonly Regex ReactHotkey = new Regex(@"\((?:[^()\s+]+\+){2}Y\)\s*$");
+        static readonly Regex ReactHotkey = new Regex(@"[(（](?:[^()（）\s+]+\+){2}Y[)）]\s*$");
 
         // Buttons whose tops are this close (in pixels) count as one row.
         const int RowTolerance = 8;
@@ -432,9 +433,18 @@ namespace M3.ZoomHelper
         }
 
         /// <summary>"Arrêter ma vidéo, Alt+V" -> "Arrêter ma vidéo".</summary>
+        // Zoom separates the pieces of a name with a comma: ",", or "、" and
+        // "，" in Japanese and Chinese.
+        static readonly char[] SegmentSeparators = { ',', '、', '，' };
+
+        static string[] SplitSegments(string name)
+        {
+            return (name ?? "").Split(SegmentSeparators);
+        }
+
         public static string FirstSegment(string name)
         {
-            var first = (name ?? "").Split(',')[0];
+            var first = SplitSegments(name)[0];
             return TrailingHotkey.Replace(first, "").Trim();
         }
 
@@ -1396,7 +1406,7 @@ namespace M3.ZoomHelper
             var rows = Uia.Descendants(list, Uia.ListItemType);
             var headers = new List<int>();
             for (int i = 0; i < rows.Count; i++)
-                if (SectionHeader.IsMatch(rows[i].Name.Split(',')[0])) headers.Add(i);
+                if (SectionHeader.IsMatch(SplitSegments(rows[i].Name)[0])) headers.Add(i);
             for (int i = 0; i < rows.Count; i++)
             {
                 if (headers.Contains(i)) continue;
@@ -1500,7 +1510,7 @@ namespace M3.ZoomHelper
         static List<string> Segments(string details)
         {
             var result = new List<string>();
-            foreach (var piece in (details ?? "").Split(','))
+            foreach (var piece in SplitSegments(details))
             {
                 var trimmed = piece.Trim();
                 if (trimmed.Length > 0) result.Add(trimmed);
@@ -1731,14 +1741,22 @@ namespace M3.ZoomHelper
             learnedTitle = FirstSegment(button.Name);
             Focus(window);
             // Invoke first (no mouse); a real click if Zoom takes the Invoke
-            // but shows nothing, as it sometimes does.
+            // but shows nothing, as it sometimes does. The button toggles the
+            // panel, so a click that follows a slow Invoke can close what had
+            // just opened: in that case, one more press.
             if (TryInvoke(button))
             {
-                var panel = WaitForWindow(ReactionPanelClass, 1500);
+                var panel = WaitForWindow(ReactionPanelClass, 3000);
                 if (panel != null) return panel;
             }
             Click(ReactButton(window, learnedTitle) ?? button);
             var opened = WaitForWindow(ReactionPanelClass, 4000);
+            if (opened == null)
+            {
+                var again = ReactButton(window, learnedTitle) ?? button;
+                Press(again);
+                opened = WaitForWindow(ReactionPanelClass, 3000);
+            }
             if (opened != null) return opened;
             // Only a button known by its shortcut is surely the Reactions one.
             if (!ReactHotkey.IsMatch(button.Name)) throw NotReactButton(before);
@@ -2019,8 +2037,8 @@ namespace M3.ZoomHelper
             return match.Success ? match.Groups[1].Value.Trim() : FirstSegment(item.Name);
         }
 
-        // A word that starts with a digit: "1", "1/12", Korean "1행" (row 1).
-        static readonly Regex NumberToken = new Regex(@"^\d");
+        // A word with a digit in it: "1", "1/12", Korean "1행", Japanese "行1".
+        static readonly Regex NumberToken = new Regex(@"\d");
 
         /// <summary>The "More" menu's entries by their titles. Zoom appends
         /// each entry's place to its name in the user's language and word
