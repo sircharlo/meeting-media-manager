@@ -4,7 +4,7 @@
 
 ### :earth_americas: 此应用是否依赖外部网站、来源或“管理员”来下载出版物、聚会媒体或其他文档？ {#external-dependencies}
 
-**不。** 此应用程序的运作方式类似 JW Library。它直接从耶和华见证人官方网站及其内容分发网络下载出版物、媒体和其他内容。应用程序会自动判断需要下载哪些内容，以及先前下载的内容是否已经不是最新版本并需要重新下载。它直接从耶和华见证人的官方网站及其内容提供网络下载出版物、媒体和其他内容。应用程序自动决定需要下载的内容以及先前下载的内容不再是最新的，应该重新下载。
+**不。** 此应用程序的运作方式类似 JW Library。它直接从耶和华见证人官方网站及其内容分发网络下载出版物、媒体和其他内容。应用程序会自动判断需要下载哪些内容，以及先前下载的内容何时已经不是最新版本、需要重新下载。
 
 :::info 备注
 
@@ -14,7 +14,7 @@
 
 ### :thinking: 此应用是否违反耶和华见证人官方网站的使用条款？ {#terms-of-use}
 
-**不。** [耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许这种使用方式。以下是相关摘录（重要部分已标明）：以下是相关摘录（重要部分已标明）：
+**不。** [耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许这种使用方式。以下是相关摘录（重要部分已标明）：
 
 > 你不得：
 >
@@ -64,7 +64,7 @@ M³ 会自动下载即将举行的聚会所需的媒体：
 2. 判断需要哪些媒体
 3. 按照所选语言从耶和华见证人官方网站下载媒体
 4. 按日期和聚会节目整理媒体
-5. 缓存文件，以便之后使用
+5. 缓存文件，以便离线使用
 
 ### :calendar: 可以为特定日期添加媒体吗？ {#specific-dates}
 
@@ -134,10 +134,10 @@ M³ 支持自定义以下快捷键：
 
 ### :video_camera: 如何设置 Zoom 集成？ {#zoom-setup}
 
-在设置中启用 Zoom 集成：
+要与 Zoom 集成：
 
 1. 在 M³ 设置中启用 Zoom 集成
-2. 在 Zoom 中设置“开始／停止屏幕共享”的快捷键，并确保该快捷键设为全局快捷键确保缩放设置中的快捷方式为“全局”。
+2. 在 M³ 中配置 Zoom 里设置的屏幕共享快捷键。确保该快捷键在 Zoom 设置中设为“全局”。
 3. 播放或停止媒体时，M³ 会自动触发 Zoom 开始或停止屏幕共享
 
 ## OBS Studio 集成 {#faq-obs-integration}
@@ -163,7 +163,7 @@ M³ 会根据以下因素自动切换 OBS Studio 场景：
 
 ### :pause_button: “不要自动共享图片”设置有什么作用？ {#faq-postpone-images}
 
-此设置会延迟将图片共享到 OBS，直到您手动触发为止。好处:
+此设置会延迟将图片共享到 OBS，直到您手动触发为止。这适用于以下情况：
 
 - 先向现场观众显示图片
 - 更灵活地控制演示时机
@@ -207,7 +207,7 @@ M³ 本身没有内置录制功能，但可以通过两种方式帮助控制录�
 - 不同小组
 - 各自独立的设置和媒体
 
-也可以将配置设置导出为 JSON 文件，再导入到另一台计算机或另一个配置中。导入后会替换当前配置的设置。导入替换当前配置文件的设置。
+也可以将配置设置导出为 JSON 文件，再导入到另一台计算机或另一个配置中。导入后会替换当前配置的设置。
 
 ## 疑难解答 {#faq-troubleshooting}
 
@@ -233,11 +233,11 @@ M³ 本身没有内置录制功能，但可以通过两种方式帮助控制录�
 
 ### :speaker: 使用 OBS Studio 时，M³ 会自动把媒体声音发送到 Zoom 吗？ {#audio-to-zoom}
 
-**不会。** M³ 不会通过 OBS Studio 的视频流自动把媒体声音传送给 Zoom。视频流的工作方式类似一个没有声音的虚拟摄像头。视频流像虚拟摄像头一样是无声的，就像摄像头一样。如果希望 Zoom 能听到计算机播放的音乐或视频声音，需要正确配置计算机的音频，让 Zoom 能接收到该音频信号，并根据需要在 Zoom 中启用**原始音频（Original Audio）**。
+**不会。** M³ 不会自动把媒体声音发送到 Zoom 或 OBS Studio。视频流的工作方式类似一个没有声音的虚拟摄像头，就像网络摄像头一样。如果希望 Zoom 能听到计算机播放的音乐或视频声音，需要正确配置计算机的音频，让 Zoom 能接收到该音频信号，并根据需要在 Zoom 中启用**原始音频（Original Audio）**。
 
 **重要提示：**
 
-- 开始 Zoom 聚会后，需要确保“原始音频”已经启用
+- **每次**开始 Zoom 会议前，都必须启用“原始音频”
 - 这不是 M³ 本身造成的问题；如果不使用 Zoom 的原生屏幕和音频共享功能，其他播放器也可能需要类似的音频配置
 - “原始音频”设置有三个子选项——通常开启前两个，关闭第三个效果最佳
 - 如果仍然没有声音，可以考虑使用 Zoom 的“共享计算机声音”功能
@@ -268,7 +268,7 @@ M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时�
 
 ### :radioactive: 如何报告问题？ {#how-do-i-report-an-issue}
 
-请在官方 GitHub 仓库[提交 Issue](https://github.com/sircharlo/meeting-media-manager/issues)，并尽量提供：请附上：
+请在官方 GitHub 仓库[提交 Issue](https://github.com/sircharlo/meeting-media-manager/issues)。请附上：
 
 - 问题的详细说明
 - 重现问题的步骤
@@ -277,7 +277,7 @@ M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时�
 
 ### :new: 如何提出新功能或改进建议？ {#how-can-i-request-a-new-feature-or-enhancement}
 
-请在官方 GitHub 仓库[发起讨论](https://github.com/sircharlo/meeting-media-manager/discussions)，并说明：请说明：
+请在官方 GitHub 仓库[发起讨论](https://github.com/sircharlo/meeting-media-manager/discussions)。请说明：
 
 - 您希望看到的功能
 - 这个功能会怎样帮助一般用户
@@ -285,11 +285,11 @@ M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时�
 
 ### :handshake: 我想贡献代码，该怎么做？ {#how-can-i-contribute-some-code}
 
-请阅读官方 GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。欢迎提交代码和 Pull Request！我们欢迎代码贡献和 Pull Request！
+请阅读官方 GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。我们欢迎代码贡献和 Pull Request！
 
 ### :globe_with_meridians: 我可以帮助翻译吗？ {#translations}
 
-M³ 使用 Crowdin 管理翻译。你可以：您可以通过以下方式参与：
+M³ 使用 Crowdin 管理翻译。您可以通过以下方式参与：
 
 1. 前往 [Crowdin 项目](https://crowdin.com/project/meeting-media-manager)
 2. 选择你的语言
@@ -298,7 +298,7 @@ M³ 使用 Crowdin 管理翻译。你可以：您可以通过以下方式参与�
 
 ### :x: 可以向项目捐款吗？ {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+感谢你有意支持这个项目！不过，本着马太福音 10:8 的精神，本项目**不**接受捐款，将来也不会接受。这个应用程序是用爱心和一点空闲时间制作的。请尽情使用！ :tada:
 
 :::tip :book: 马太福音 10:8
 
@@ -316,7 +316,7 @@ M³ 可以在多种操作系统上运行：
 - **macOS**：macOS 13（Ventura）及更高版本（通用版）。适用于 macOS 12（Monterey）的最后一个版本是 v26.10.1，可在[下载页面](download)获取。
 - **Linux**：大多数现代Linux发行版（AppImage格式）
 
-:computer: M³ 的硬件和软件要求是什么？ {#hardware-and-software-requirements}
+M³ 的硬件要求如下：
 
 - **最低**：4 GB 内存，6 GB 可用磁盘空间
 - **推荐**：8 GB 内存，建议预留 15 GB 可用空间用于媒体缓存
