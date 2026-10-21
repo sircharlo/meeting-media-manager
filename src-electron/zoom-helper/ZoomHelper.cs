@@ -2640,7 +2640,7 @@ namespace M3.ZoomHelper
             foreach (var entry in ZoomWindows())
             {
                 if (dialogs.Count >= SnapshotMaxWindows || elapsed.ElapsedMilliseconds > SnapshotWindowsBudgetMs) break;
-                if (Array.IndexOf(ZoomMainWindowClasses, entry.Value) >= 0) continue;
+                if (IsZoomMainWindow(entry.Value)) continue;
                 Native.Rect rect;
                 if (!Native.GetWindowRect(entry.Key, out rect)) continue;
                 var key = entry.Value + " " + (rect.Right - rect.Left) + "x" + (rect.Bottom - rect.Top);
@@ -2748,12 +2748,25 @@ namespace M3.ZoomHelper
         }
 
         // Zoom windows that are never dialogs to dismiss: the meeting, its
-        // mini view, sharing, Zoom's home window, its menus' shadows.
+        // mini view, sharing (the toolbar, the annotation layer and its
+        // button), Zoom's home window, its menus' shadows, its notification
+        // toasts (one shows as sharing starts and stays briefly after it
+        // stops).
         static readonly string[] ZoomMainWindowClasses =
         {
             MeetingWindowClass, FloatVideoClass, ShareToolbarClass, AnnotationLayerClass,
-            "ZPPTMainFrmWndClassEx", "ZPToolBarParentWndClass", "ZoomShadowFrameClass", "VideoFrameWndClass",
+            "ZPAnnotateEntryPointClass", "ZPPTMainFrmWndClassEx", "ZPToolBarParentWndClass",
+            "ZoomShadowFrameClass", "VideoFrameWndClass", "DsToast",
         };
+
+        /// <summary>Whether a window is one of Zoom's own rather than a dialog
+        /// or popup that may be in the way. Windows of a generic "ATL:" class
+        /// (named after a memory address, so it changes between runs) are
+        /// Zoom's too, such as the share preview.</summary>
+        static bool IsZoomMainWindow(string className)
+        {
+            return Array.IndexOf(ZoomMainWindowClasses, className) >= 0 || className.StartsWith("ATL:", StringComparison.Ordinal);
+        }
 
         /// <summary>The classes of Zoom's other visible windows: dialogs and
         /// popups that may be in the way (e.g. the invite dialog).</summary>
@@ -2761,7 +2774,7 @@ namespace M3.ZoomHelper
         {
             var classes = new List<object>();
             foreach (var className in ZoomWindows().Values)
-                if (Array.IndexOf(ZoomMainWindowClasses, className) < 0 && !classes.Contains(className)) classes.Add(className);
+                if (!IsZoomMainWindow(className) && !classes.Contains(className)) classes.Add(className);
             return classes;
         }
 
@@ -2774,7 +2787,7 @@ namespace M3.ZoomHelper
             var left = new List<object>();
             foreach (var entry in ZoomWindows())
             {
-                if (before.ContainsKey(entry.Key) || Array.IndexOf(ZoomMainWindowClasses, entry.Value) >= 0) continue;
+                if (before.ContainsKey(entry.Key) || IsZoomMainWindow(entry.Value)) continue;
                 var handle = entry.Key;
                 Native.BringToFront(handle);
                 Thread.Sleep(150);
