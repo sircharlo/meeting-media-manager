@@ -328,20 +328,21 @@ namespace M3.ZoomHelper
         // A trailing "(Ctrl+Alt+Shift+A)" style shortcut in a control name.
         // Key names are matched by shape only, since Zoom may translate them
         // (e.g. "Strg" for Ctrl in German).
-        static readonly Regex TrailingHotkey = new Regex(@"\((?:[^()\s+]+\+)+[^()\s+]+\)\s*$");
+        // Japanese Zoom writes it with full-width brackets, "（Alt+I）".
+        static readonly Regex TrailingHotkey = new Regex(@"[(（](?:[^()（）\s+]+\+)+[^()（）\s+]+[)）]\s*$");
         // Zoom names its menu separators "4 of 17" in every language.
         static readonly Regex MenuSeparator = new Regex(@"^\d+ of \d+$");
         // "More" menu entries end with a translated "row R, column C N of M ..."
         static readonly Regex GridPositionSuffix = new Regex(@"^(.*?)\s+\S+\s+\d+,\s*\S+\s+\d+\s+\d+\s+\S+\s+\d+(?:\s.*)?$");
-        static readonly Regex SectionHeader = new Regex(@"\(\d+\)");
+        static readonly Regex SectionHeader = new Regex(@"[(（]\d+[)）]");
         // The participants panel's heading, "Participants (3)" in every
-        // language, with its title apart.
-        static readonly Regex CountedTitle = new Regex(@"^(.*?)\s*\(\d+\)\s*$");
+        // language (full-width brackets in Japanese), with its title apart.
+        static readonly Regex CountedTitle = new Regex(@"^(.*?)\s*[(（]\d+[)）]\s*$");
         // Any keyboard shortcut ("Alt+A", "Ctrl+Alt+Shift+A", "Strg+Umschalt+S").
         static readonly Regex AnyHotkey = new Regex(@"(?<![\w+])[\p{L}]+(?:\+[\p{L}\p{N}]+)+(?![\w+])");
         // The Reactions button's trailing "(Ctrl+Shift+Y)", matched by shape
         // like TrailingHotkey.
-        static readonly Regex ReactHotkey = new Regex(@"\((?:[^()\s+]+\+){2}Y\)\s*$");
+        static readonly Regex ReactHotkey = new Regex(@"[(（](?:[^()（）\s+]+\+){2}Y[)）]\s*$");
 
         // Buttons whose tops are this close (in pixels) count as one row.
         const int RowTolerance = 8;
@@ -432,9 +433,18 @@ namespace M3.ZoomHelper
         }
 
         /// <summary>"Arrêter ma vidéo, Alt+V" -> "Arrêter ma vidéo".</summary>
+        // Zoom separates the pieces of a name with a comma: ",", or "、" and
+        // "，" in Japanese and Chinese.
+        static readonly char[] SegmentSeparators = { ',', '、', '，' };
+
+        static string[] SplitSegments(string name)
+        {
+            return (name ?? "").Split(SegmentSeparators);
+        }
+
         public static string FirstSegment(string name)
         {
-            var first = (name ?? "").Split(',')[0];
+            var first = SplitSegments(name)[0];
             return TrailingHotkey.Replace(first, "").Trim();
         }
 
@@ -664,11 +674,24 @@ namespace M3.ZoomHelper
 
         // --- Dialogs and menus -------------------------------------------------
 
-        static El LargestButton(El dialog)
+        /// <summary>A dialog's main action button: the tallest below the
+        /// title bar, the widest among equals. Not the largest by area: the
+        /// join-audio dialog's "Test speaker and microphone" link is a wide,
+        /// flat button that outgrows "Join with computer audio" in some
+        /// languages (Korean).</summary>
+        static El MainActionButton(El dialog)
         {
+            var top = dialog.Raw.CurrentBoundingRectangle.top;
             El best = null;
             foreach (var button in Uia.Descendants(dialog, Uia.ButtonType))
-                if (best == null || button.Area > best.Area) best = button;
+            {
+                if (button.Rect.top < top + 48) continue; // title bar: Close
+                var height = button.Rect.bottom - button.Rect.top;
+                var width = button.Rect.right - button.Rect.left;
+                var bestHeight = best == null ? -1 : best.Rect.bottom - best.Rect.top;
+                var bestWidth = best == null ? -1 : best.Rect.right - best.Rect.left;
+                if (height > bestHeight || (height == bestHeight && width > bestWidth)) best = button;
+            }
             return best;
         }
 
@@ -990,28 +1013,41 @@ namespace M3.ZoomHelper
             var nameBefore = FirstSegment(buttons[0].Name);
             Focus(window);
             Press(buttons[0]);
-            var dialog = WaitForWindow(JoinAudioDialogClass, state == AudioState.Unknown ? 2500 : 5000);
+            // Whichever comes first: Zoom's join-audio dialog, or (not knowing
+            // which button that was) the button changing its name.
+            El dialog = null;
+            var renamed = false;
+            WaitUntil(() =>
+            {
+                var dialogs = TopWindows(JoinAudioDialogClass, true);
+                if (dialogs.Count > 0)
+                {
+                    dialog = Uia.FromHandle(dialogs[0]);
+                    return true;
+                }
+                if (state != AudioState.Unknown) return false;
+                var latest = ToolbarButtons(window);
+                renamed = latest.Count > 0 && FirstSegment(latest[0].Name) != nameBefore;
+                return renamed;
+            }, 5000);
             if (dialog != null)
             {
-                var button = LargestButton(dialog);
+                var button = MainActionButton(dialog);
                 if (button == null) throw new ZoomActionError("join-audio-button-not-found");
                 Press(button);
                 Known.Learn("joinAudio", nameBefore);
             }
-            else if (state == AudioState.Unknown)
+            else if (renamed)
             {
+                // A two-state button: the microphone. Put it back.
                 var latest = ToolbarButtons(window);
-                var nameAfter = latest.Count > 0 ? FirstSegment(latest[0].Name) : nameBefore;
-                if (nameAfter != nameBefore)
+                if (latest.Count > 0) Press(latest[0]);
+                WaitUntil(() =>
                 {
-                    Press(latest[0]);
-                    WaitUntil(() =>
-                    {
-                        var now = ToolbarButtons(window);
-                        return now.Count > 0 && FirstSegment(now[0].Name) == nameBefore;
-                    }, 4000);
-                    return new Dictionary<string, object> { { "audioStateUnknown", true }, { "changed", false } };
-                }
+                    var now = ToolbarButtons(window);
+                    return now.Count > 0 && FirstSegment(now[0].Name) == nameBefore;
+                }, 4000);
+                return new Dictionary<string, object> { { "audioStateUnknown", true }, { "changed", false } };
             }
             if (!WaitUntil(() => AudioJoined(window), WaitTimeoutMs)) throw new ZoomActionError("audio-not-joined");
             return Changed(true);
@@ -1262,10 +1298,10 @@ namespace M3.ZoomHelper
             if (string.IsNullOrEmpty(Known.Participants)) return false;
             var grid = OpenMoreGrid(window);
             if (grid == null) return false;
-            foreach (var item in Uia.Descendants(grid, Uia.TabItemType))
+            El entry;
+            if (GridEntries(grid).TryGetValue(Known.Participants, out entry))
             {
-                if (GridEntryName(item) != Known.Participants) continue;
-                Press(item);
+                Press(entry);
                 return true;
             }
             Focus(window);
@@ -1370,7 +1406,7 @@ namespace M3.ZoomHelper
             var rows = Uia.Descendants(list, Uia.ListItemType);
             var headers = new List<int>();
             for (int i = 0; i < rows.Count; i++)
-                if (SectionHeader.IsMatch(rows[i].Name.Split(',')[0])) headers.Add(i);
+                if (SectionHeader.IsMatch(SplitSegments(rows[i].Name)[0])) headers.Add(i);
             for (int i = 0; i < rows.Count; i++)
             {
                 if (headers.Contains(i)) continue;
@@ -1474,7 +1510,7 @@ namespace M3.ZoomHelper
         static List<string> Segments(string details)
         {
             var result = new List<string>();
-            foreach (var piece in (details ?? "").Split(','))
+            foreach (var piece in SplitSegments(details))
             {
                 var trimmed = piece.Trim();
                 if (trimmed.Length > 0) result.Add(trimmed);
@@ -1684,9 +1720,8 @@ namespace M3.ZoomHelper
                 var grid = OpenMoreGrid(window);
                 if (grid != null)
                 {
-                    El entry = null;
-                    foreach (var item in Uia.Descendants(grid, Uia.TabItemType))
-                        if (GridEntryName(item) == reactTitle) entry = item;
+                    El entry;
+                    GridEntries(grid).TryGetValue(reactTitle, out entry);
                     if (entry == null)
                     {
                         Focus(window);
@@ -1706,14 +1741,22 @@ namespace M3.ZoomHelper
             learnedTitle = FirstSegment(button.Name);
             Focus(window);
             // Invoke first (no mouse); a real click if Zoom takes the Invoke
-            // but shows nothing, as it sometimes does.
+            // but shows nothing, as it sometimes does. The button toggles the
+            // panel, so a click that follows a slow Invoke can close what had
+            // just opened: in that case, one more press.
             if (TryInvoke(button))
             {
-                var panel = WaitForWindow(ReactionPanelClass, 1500);
+                var panel = WaitForWindow(ReactionPanelClass, 3000);
                 if (panel != null) return panel;
             }
             Click(ReactButton(window, learnedTitle) ?? button);
             var opened = WaitForWindow(ReactionPanelClass, 4000);
+            if (opened == null)
+            {
+                var again = ReactButton(window, learnedTitle) ?? button;
+                Press(again);
+                opened = WaitForWindow(ReactionPanelClass, 3000);
+            }
             if (opened != null) return opened;
             // Only a button known by its shortcut is surely the Reactions one.
             if (!ReactHotkey.IsMatch(button.Name)) throw NotReactButton(before);
@@ -1994,6 +2037,51 @@ namespace M3.ZoomHelper
             return match.Success ? match.Groups[1].Value.Trim() : FirstSegment(item.Name);
         }
 
+        // A word with a digit in it: "1", "1/12", Korean "1행", Japanese "行1".
+        static readonly Regex NumberToken = new Regex(@"\d");
+
+        /// <summary>The "More" menu's entries by their titles. Zoom appends
+        /// each entry's place to its name in the user's language and word
+        /// order: "Partager ligne 1, colonne 1 1 sur 12 épinglé" (French),
+        /// "공유 1행, 1열 1/12 고정됨" (Korean). The title is what comes
+        /// before the first number, less any word every entry has there
+        /// (French "ligne"), which belongs to the place, not the title.</summary>
+        static Dictionary<string, El> GridEntries(El grid)
+        {
+            var items = Uia.Descendants(grid, Uia.TabItemType);
+            var heads = new List<List<string>>();
+            foreach (var item in items)
+            {
+                var head = new List<string>();
+                foreach (var word in Regex.Split(item.Name, @"[\s,，、]+"))
+                {
+                    if (word.Length == 0) continue;
+                    if (NumberToken.IsMatch(word)) break;
+                    head.Add(word);
+                }
+                heads.Add(head);
+            }
+            // A last word shared by every entry (and never the whole title)
+            // is the row word.
+            string shared = null;
+            foreach (var head in heads)
+            {
+                if (head.Count < 2) { shared = null; break; }
+                var last = head[head.Count - 1];
+                if (shared == null) shared = last;
+                else if (shared != last) { shared = null; break; }
+            }
+            var entries = new Dictionary<string, El>();
+            for (int i = 0; i < items.Count; i++)
+            {
+                var head = heads[i];
+                if (shared != null) head.RemoveAt(head.Count - 1);
+                var title = head.Count > 0 ? string.Join(" ", head.ToArray()) : GridEntryName(items[i]);
+                if (!entries.ContainsKey(title)) entries[title] = items[i];
+            }
+            return entries;
+        }
+
         static El OpenMoreGrid(El window)
         {
             var menus = ToolbarMenus(window);
@@ -2033,11 +2121,8 @@ namespace M3.ZoomHelper
             var grid = OpenMoreGrid(window);
             if (grid != null)
             {
-                foreach (var item in Uia.Descendants(grid, Uia.TabItemType))
-                {
-                    var name = GridEntryName(item);
+                foreach (var name in GridEntries(grid).Keys)
                     if (name.Length > 0 && !entries.Contains(name) && !moreEntries.Contains(name)) moreEntries.Add(name);
-                }
                 Focus(window);
                 Escape();
             }
@@ -2067,13 +2152,11 @@ namespace M3.ZoomHelper
             var grid = OpenMoreGrid(window);
             if (grid != null)
             {
-                foreach (var item in Uia.Descendants(grid, Uia.TabItemType))
+                El entry;
+                if (GridEntries(grid).TryGetValue(wanted, out entry))
                 {
-                    if (GridEntryName(item) == wanted || item.Name.StartsWith(wanted, StringComparison.Ordinal))
-                    {
-                        Press(item);
-                        return;
-                    }
+                    Press(entry);
+                    return;
                 }
                 Focus(window);
                 Escape();
