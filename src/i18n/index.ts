@@ -20,10 +20,10 @@ import ko from './ko.json' with { type: 'json' };
 import ru from './ru.json' with { type: 'json' };
 
 // 99.5% translated as of 2026-10-21
-import uk from './uk.json' with { type: 'json' };
-
-// 99.3% translated as of 2026-10-21
 import sl from './sl.json' with { type: 'json' };
+
+// 99.5% translated as of 2026-10-21
+import uk from './uk.json' with { type: 'json' };
 
 // 99.2% translated as of 2026-10-21
 import fr from './fr.json' with { type: 'json' };
@@ -34,7 +34,7 @@ import hu from './hu.json' with { type: 'json' };
 // 99.1% translated as of 2026-10-21
 import et from './et.json' with { type: 'json' };
 
-// 98.9% translated as of 2026-10-21
+// 99.1% translated as of 2026-10-21
 import it from './it.json' with { type: 'json' };
 
 // 98.9% translated as of 2026-10-21
