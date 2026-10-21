@@ -14,12 +14,14 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 - 🛠️ **Platform Support**: M³ now requires a 64-bit version of Windows 10 or later, or macOS 13 (Ventura) or later. v26.10.1 is the last version that runs on 32-bit Windows and macOS 12 (Monterey), and it stays available from the download page.
 - 🛠️ **OBS Studio and Zoom**: An OBS Studio media scene can no longer be set while Zoom's media sharing is on ("Automate media sharing" in the Zoom Meeting Manager, or "Trigger Zoom screen sharing automatically"), and vice versa, since both would show the media in Zoom. The rest of the OBS Studio integration (camera scene, recording controls) and of the Zoom Meeting Manager still work together. The Zoom setup assistant offers to let Zoom share the media instead of OBS Studio's media scene, and the setup wizard turns Zoom's media sharing off once an OBS Studio media scene is chosen. Images also no longer switch OBS Studio to its image scene when no media scene is set, matching what Settings shows.
+- 🛠️ **Zoom Meeting Manager**: To learn how Zoom marks raised hands, M³ now raises and lowers your hand with the "Raise hand" button of Zoom's React menu, as you would yourself, instead of relying on Zoom's Alt+Y keyboard shortcut. It finds the React button whether Zoom shows it in the toolbar or has moved it into the "More" menu, and when it can't (Zoom names its buttons in your language), it asks you which one it is, as it already does for the Share button.
 
 ### 🐞 Bug Fixes
 
 - 🐞 **OBS Studio**: The setting that shows recording controls in the OBS Studio popup now has a proper name and explanation, instead of showing an internal identifier.
 - 🐞 **Meeting Timer**: When the timing report can't be saved because a file with the same name is open in another program, or the folder doesn't allow it, M³ now says what to do instead of only saying the report wasn't saved.
 - 🐞 **OBS Studio**: The warning shown when M³ can't get the list of OBS Studio scenes now names OBS Studio properly, instead of showing "obsStudio".
+- 🐞 **Zoom Meeting Manager**: Sharing the media window works again with the current version of Zoom. M³ said Zoom's share window didn't offer the media window even though it was plainly there, because Zoom now adds each window's position to its name in that list.
 
 ## v26.10.1
 

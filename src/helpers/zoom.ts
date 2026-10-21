@@ -397,10 +397,26 @@ export const askAllZoomParticipantsToUnmute = async () => {
 
 /**
  * Learns how Zoom marks a raised hand in the user's language, by raising
- * and lowering the host's own hand, and saves it to Settings.
+ * and lowering the host's own hand from Zoom's Reactions panel, and saves it
+ * to Settings. The Reactions button's name is remembered too: it's how the
+ * button is found once Zoom moves it into its "More" menu. `reactButtonTitle`
+ * is the React entry to try, the remembered one by default; when M³ can't
+ * find it, the result says so (see isZoomReactButtonMissing) and the user is
+ * asked to pick it.
  */
-export const learnZoomHandRaisedPhrase = async () => {
-  const result = await runCommand({ type: 'learn-hand-raised' });
+export const learnZoomHandRaisedPhrase = async (
+  reactButtonTitle = getSettings()?.zoomReactButtonTitle ?? null,
+) => {
+  const result = await runCommand({
+    reactButtonTitle,
+    type: 'learn-hand-raised',
+  });
+  if (
+    result.reactButtonTitle &&
+    getSettings()?.zoomReactButtonTitle !== result.reactButtonTitle
+  ) {
+    saveSetting('zoomReactButtonTitle', result.reactButtonTitle);
+  }
   if (result.ok && result.phrase) {
     saveSetting('zoomHandRaisedPhrase', result.phrase);
     if (!feedbackMuted) {
@@ -411,8 +427,33 @@ export const learnZoomHandRaisedPhrase = async () => {
         type: 'positive',
       });
     }
-  } else {
+  } else if (!isZoomReactButtonMissing(result)) {
     notifyFailure('zoom-settings', 'zoom-hand-learn-failed');
+  }
+  return result;
+};
+
+/** M³ couldn't find Zoom's React button, so the user should pick it. */
+export const isZoomReactButtonMissing = (result: ZoomCommandResult) =>
+  result.error === 'react-button-not-found';
+
+/**
+ * Learns raised hands from Settings or the Zoom popup. Should M³ not find
+ * Zoom's React button (named in the user's Zoom language, and sometimes
+ * kept in its "More" menu), it asks which entry it is, as it does for Share,
+ * until one works or the user cancels.
+ */
+export const learnZoomHandRaisedPhraseAskingForReact = async () => {
+  let result = await learnZoomHandRaisedPhrase();
+  let message = [
+    t('zoom-setup-react-not-found'),
+    t('zoom-setup-react-pick'),
+  ].join(' ');
+  while (isZoomReactButtonMissing(result)) {
+    const entry = await pickZoomEntry(message);
+    if (!entry) break;
+    result = await learnZoomHandRaisedPhrase(entry);
+    message = t('zoom-setup-react-not-opened');
   }
   return result;
 };
@@ -1006,25 +1047,37 @@ export const captureZoomMicTitle = (
 
 /** Lets the user pick which toolbar or "More" entry is Share. */
 export const captureZoomShareButtonTitle = async () => {
+  const entry = await pickZoomEntry(t('zoom-select-button-message'));
+  if (entry) saveSetting('zoomShareButtonTitle', entry);
+};
+
+/**
+ * Asks the user which of Zoom's toolbar or "More" entries is the one wanted
+ * (they're named in the user's Zoom language). Null if cancelled, or if
+ * Zoom's entries couldn't be read.
+ */
+const pickZoomEntry = async (message: string): Promise<null | string> => {
   const { more, toolbar } = await getZoomShareEntries();
   const entries = [...toolbar, ...more];
   if (entries.length === 0) {
     notifyFailure('zoom-settings', 'zoom-capture-failed');
-    return;
+    return null;
   }
 
-  Dialog.create({
-    cancel: true,
-    message: t('zoom-select-button-message'),
-    options: {
-      items: entries.map((entry) => ({ label: entry, value: entry })),
-      model: '',
-      type: 'radio',
-    },
-    persistent: true,
-    title: t('zoom-select-button'),
-  }).onOk((entry: string) => {
-    if (entry) saveSetting('zoomShareButtonTitle', entry);
+  return new Promise((resolve) => {
+    Dialog.create({
+      cancel: true,
+      message,
+      options: {
+        items: entries.map((entry) => ({ label: entry, value: entry })),
+        model: '',
+        type: 'radio',
+      },
+      persistent: true,
+      title: t('zoom-select-button'),
+    })
+      .onOk((entry: string) => resolve(entry || null))
+      .onCancel(() => resolve(null));
   });
 };
 

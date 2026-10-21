@@ -245,15 +245,17 @@ namespace M3.ZoomHelper
         const string MoreGridClass = "ZGridMultiLevelPopupWndClass";
         const string SharePickerClass = "ZPShareEntranceClass";
         const string ShareToolbarClass = "ZPFloatToolbarClass";
+        const string ReactionPanelClass = "ZPReactionWndClass";
         // Zoom's annotation layer, laid over whatever is being shared.
         const string AnnotationLayerClass = "ZoomAnnoWindowWndClass";
 
         const string HotkeyAudio = "Alt+A";
         const string HotkeyVideo = "Alt+V";
         const string HotkeyMuteAll = "Alt+M";
-        // Toolbar buttons that are clearly not Share, and in two cases must
-        // never be pressed to find out: End (Alt+Q) and Record (Alt+R).
-        static readonly string[] NotShareHotkeys = { "Alt+Q", "Alt+R", "Alt+H", "Alt+U", "Alt+I" };
+        // Toolbar buttons that are clearly neither Share nor React, and in two
+        // cases must never be pressed to find out: End (Alt+Q) and Record
+        // (Alt+R).
+        static readonly string[] OtherButtonHotkeys = { "Alt+Q", "Alt+R", "Alt+H", "Alt+U", "Alt+I" };
 
         // A trailing "(Ctrl+Alt+Shift+A)" style shortcut in a control name.
         // Key names are matched by shape only, since Zoom may translate them
@@ -266,6 +268,12 @@ namespace M3.ZoomHelper
         static readonly Regex SectionHeader = new Regex(@"\(\d+\)");
         // Any keyboard shortcut ("Alt+A", "Ctrl+Alt+Shift+A", "Strg+Umschalt+S").
         static readonly Regex AnyHotkey = new Regex(@"(?<![\w+])[\p{L}]+(?:\+[\p{L}\p{N}]+)+(?![\w+])");
+        // The Reactions button's trailing "(Ctrl+Shift+Y)", matched by shape
+        // like TrailingHotkey.
+        static readonly Regex ReactHotkey = new Regex(@"\((?:[^()\s+]+\+){2}Y\)\s*$");
+        // Zoom ends each share picker entry's name with its place in its
+        // group, in the user's language ("Media Player - M³, 7 of 10").
+        static readonly Regex ShareItemPosition = new Regex(@",\s*\d+\s+\S+\s+\d+$");
 
         // Buttons whose tops are this close (in pixels) count as one row.
         const int RowTolerance = 8;
@@ -1303,18 +1311,153 @@ namespace M3.ZoomHelper
             WaitUntil(() => TopWindows(MenuClass, true).Count == 0, 2000);
         }
 
+        // --- The host's own hand ----------------------------------------------------
+
+        static bool IsOtherButton(El button)
+        {
+            foreach (var hotkey in OtherButtonHotkeys)
+                if (HasHotkey(button.Name, hotkey)) return true;
+            return false;
+        }
+
+        /// <summary>The toolbar's Reactions button, known by its shortcut
+        /// (Ctrl+Shift+Y) or else by its name, learned earlier or picked by
+        /// the user (never one of the OtherButtonHotkeys buttons). Null while
+        /// Zoom keeps it in its "More" menu, as it does once the toolbar runs
+        /// out of room (the participants panel narrows it).</summary>
+        static El ReactButton(El window, string reactTitle)
+        {
+            var buttons = ToolbarButtons(window);
+            foreach (var button in buttons)
+                if (ReactHotkey.IsMatch(button.Name)) return button;
+            buttons.RemoveAll(IsOtherButton);
+            return ByName(buttons, reactTitle);
+        }
+
+        /// <summary>Opens Zoom's Reactions panel, the way sharing opens its
+        /// picker: through the toolbar's Reactions button, else its entry in
+        /// "More" (found by its name). From "More", Zoom only moves the button
+        /// onto the toolbar, so it's then pressed there. `learnedTitle` is the
+        /// button's name. When the button can't be found, or a button found by
+        /// name opens no Reactions panel, M³ asks the user which entry it is
+        /// (react-button-not-found), as it does for Share.</summary>
+        static El OpenReactionPanel(El window, string reactTitle, out string learnedTitle)
+        {
+            learnedTitle = reactTitle;
+            var open = TopWindows(ReactionPanelClass, true);
+            if (open.Count > 0) return Uia.FromHandle(open[0]);
+            var button = ReactButton(window, reactTitle);
+            if (button == null && !string.IsNullOrEmpty(reactTitle))
+            {
+                var grid = OpenMoreGrid(window);
+                if (grid != null)
+                {
+                    El entry = null;
+                    foreach (var item in Uia.Descendants(grid, Uia.TabItemType))
+                        if (GridEntryName(item) == reactTitle) entry = item;
+                    if (entry == null)
+                    {
+                        Focus(window);
+                        Escape();
+                    }
+                    else
+                    {
+                        Press(entry);
+                        var panel = WaitForWindow(ReactionPanelClass, 1500);
+                        if (panel != null) return panel;
+                        if (TopWindows(SharePickerClass, true).Count > 0) throw NotReactButton();
+                        button = WaitFor(() => ReactButton(window, reactTitle), found => found != null, 3000);
+                    }
+                }
+            }
+            if (button == null) throw new ZoomActionError("react-button-not-found");
+            learnedTitle = FirstSegment(button.Name);
+            Focus(window);
+            // Invoke first (no mouse); a real click if Zoom takes the Invoke
+            // but shows nothing, as it sometimes does.
+            if (TryInvoke(button))
+            {
+                var panel = WaitForWindow(ReactionPanelClass, 1500);
+                if (panel != null) return panel;
+            }
+            Click(ReactButton(window, learnedTitle) ?? button);
+            var opened = WaitForWindow(ReactionPanelClass, 4000);
+            if (opened != null) return opened;
+            // Only a button known by its shortcut is surely the Reactions one.
+            if (!ReactHotkey.IsMatch(button.Name)) throw NotReactButton();
+            throw new ZoomActionError("reaction-panel-not-found");
+        }
+
+        /// <summary>Gives up on an entry that turned out not to be React,
+        /// closing Zoom's share window should it have been Share.</summary>
+        static ZoomActionError NotReactButton()
+        {
+            var pickers = TopWindows(SharePickerClass, true);
+            if (pickers.Count > 0) CloseSharePicker(Uia.FromHandle(pickers[0]));
+            return new ZoomActionError("react-button-not-found");
+        }
+
+        /// <summary>The Reactions panel's "Raise hand" button ("Lower hand"
+        /// while the hand is up): the topmost of the buttons spanning the
+        /// panel. The one under it, "Be right back", turns off the host's
+        /// audio and video, so only the topmost is ever taken.</summary>
+        static El HandButton(El panel)
+        {
+            var area = panel.Raw.CurrentBoundingRectangle;
+            var width = area.right - area.left;
+            if (width < 100) return null; // still opening
+            El hand = null;
+            foreach (var button in Uia.Descendants(panel, Uia.ButtonType))
+            {
+                if (button.Rect.right - button.Rect.left < width * 0.6) continue;
+                if (hand == null || button.Rect.top < hand.Rect.top) hand = button;
+            }
+            return hand;
+        }
+
+        static void CloseReactionPanel(El panel)
+        {
+            // Zoom usually closes it once a button in it is pressed.
+            if (WaitUntil(() => TopWindows(ReactionPanelClass, true).Count == 0, 600)) return;
+            Focus(panel);
+            Escape();
+            WaitUntil(() => TopWindows(ReactionPanelClass, true).Count == 0, 2000);
+        }
+
+        /// <summary>Presses the Reactions panel's hand button and returns its
+        /// name, unless it's still named `notTitle` (what it said before the
+        /// hand went up: a button that didn't turn into "Lower hand" is no
+        /// hand button).</summary>
+        static string PressHandButton(El window, string reactTitle, string notTitle, out string learnedReactTitle)
+        {
+            var panel = OpenReactionPanel(window, reactTitle, out learnedReactTitle);
+            var hand = WaitFor(() => HandButton(panel), found => found != null, 2000);
+            var title = hand == null ? null : FirstSegment(hand.Name);
+            if (hand == null || title == notTitle)
+            {
+                CloseReactionPanel(panel);
+                throw new ZoomActionError("hand-button-not-found");
+            }
+            Press(hand);
+            CloseReactionPanel(panel);
+            return title;
+        }
+
         /// <summary>Learns how Zoom marks a raised hand in the user's language:
-        /// raises the host's own hand (Alt+Y), reads what Zoom added to the
-        /// host's row in the participants list, then lowers it again and makes
-        /// sure the words went away.</summary>
-        public static Dictionary<string, object> LearnHandRaised()
+        /// raises the host's own hand from the Reactions panel, reads what
+        /// Zoom added to the host's row in the participants list, then lowers
+        /// it again and makes sure the words went away.</summary>
+        public static Dictionary<string, object> LearnHandRaised(string reactTitle)
         {
             var window = RequireMeetingWindow();
+            // Looked for before the participants panel narrows the toolbar.
+            var react = ReactButton(window, reactTitle);
+            if (react != null) reactTitle = FirstSegment(react.Name);
             OpenParticipantsPanel(window);
             var before = MeetingRowDetails(window);
             if (before.Count == 0) throw new ZoomActionError("participants-not-found");
-            Focus(window);
-            AltKey('Y');
+            string learnedReactTitle;
+            var raiseTitle = PressHandButton(window, reactTitle, null, out learnedReactTitle);
             string phrase = null;
             string name = null;
             var raised = WaitUntil(() =>
@@ -1336,8 +1479,8 @@ namespace M3.ZoomHelper
             }, 5000);
             if (!raised) throw new ZoomActionError("hand-not-raised");
 
-            Focus(window);
-            AltKey('Y');
+            string ignored;
+            PressHandButton(window, learnedReactTitle, raiseTitle, out ignored);
             var lowered = WaitUntil(() =>
             {
                 string now;
@@ -1348,7 +1491,7 @@ namespace M3.ZoomHelper
             // The "Lower hand" button of other people's rows (the host's own
             // row names its hand button differently) is learned from the first
             // raised hand M3 acts on.
-            return new Dictionary<string, object> { { "phrase", phrase } };
+            return new Dictionary<string, object> { { "phrase", phrase }, { "reactButtonTitle", learnedReactTitle } };
         }
 
         /// <summary>Who in the meeting has their hand raised, going by the words
@@ -1536,9 +1679,10 @@ namespace M3.ZoomHelper
         }
 
         /// <summary>Toolbar buttons and "More" menu entries, for the user to pick
-        /// which one is Share (its name depends on their Zoom language). They
-        /// are kept apart because "More" entries don't show their shortcuts,
-        /// so dangerous ones like Record can't be left out there.</summary>
+        /// which one is Share, or React (their names depend on their Zoom
+        /// language). They are kept apart because "More" entries don't show
+        /// their shortcuts, so dangerous ones like Record can't be left out
+        /// there.</summary>
         public static Dictionary<string, object> ShareEntries()
         {
             var window = RequireMeetingWindow();
@@ -1549,10 +1693,7 @@ namespace M3.ZoomHelper
             // last is always End: offering it would invite ending the meeting.
             for (int i = 2; i < toolbar.Count - 1; i++)
             {
-                var isOther = false;
-                foreach (var hotkey in NotShareHotkeys)
-                    if (HasHotkey(toolbar[i].Name, hotkey)) isOther = true;
-                if (isOther) continue;
+                if (IsOtherButton(toolbar[i])) continue;
                 var name = FirstSegment(toolbar[i].Name);
                 if (name.Length > 0 && !entries.Contains(name)) entries.Add(name);
             }
@@ -1615,10 +1756,18 @@ namespace M3.ZoomHelper
         // entry is found by its exact title, and its position is read afresh
         // before every click.
 
+        /// <summary>The window title a share picker entry stands for: its name
+        /// without the place Zoom appends (once, so a title that itself ends
+        /// that way can't pass for another).</summary>
+        static string ShareItemTitle(El item)
+        {
+            return ShareItemPosition.Replace(item.Name, "");
+        }
+
         static El ShareItem(El picker, string windowTitle)
         {
             foreach (var item in Uia.Descendants(picker, Uia.ListItemType))
-                if (item.Name == windowTitle) return item;
+                if (ShareItemTitle(item) == windowTitle) return item;
             return null;
         }
 
@@ -1707,7 +1856,7 @@ namespace M3.ZoomHelper
                     if (pattern == null) continue;
                     reported = true;
                     if (pattern.CurrentIsSelected == 0) continue;
-                    if (item.Name != windowTitle) return false;
+                    if (ShareItemTitle(item) != windowTitle) return false;
                     selected = true;
                 }
                 catch (Exception) { }
@@ -1997,7 +2146,7 @@ namespace M3.ZoomHelper
                 case "ask-all-to-unmute": return AskAllToUnmute();
                 case "participants": return Participants();
                 case "admit": return Admit(GetStrings(request, "names"));
-                case "learn-hand-raised": return LearnHandRaised();
+                case "learn-hand-raised": return LearnHandRaised(GetString(request, "reactButtonTitle"));
                 case "raised-hands": return RaisedHands(GetString(request, "phrase"));
                 case "set-participant-mic":
                     return SetParticipantMic(GetString(request, "name"), GetBool(request, "on"), GetString(request, "micOnTitle"), GetString(request, "micOffTitle"), GetString(request, "lowerHandTitle"), GetString(request, "askToUnmuteTitle"), GetString(request, "phrase"));

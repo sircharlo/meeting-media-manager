@@ -4,6 +4,7 @@ import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const currentSettings = {
+  zoomHandRaisedPhrase: null as null | string,
   zoomMeetingManagerAutoLaunchMeeting: false,
   zoomMeetingManagerAutomateMeetingAudioSettings: false,
   zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
@@ -11,6 +12,7 @@ const currentSettings = {
   zoomMeetingManagerMeetingId: '123 456' as null | string,
   zoomMicOffTitle: 'Unmute' as null | string,
   zoomMicOnTitle: 'Mute' as null | string,
+  zoomReactButtonTitle: null as null | string,
   zoomShareButtonTitle: 'Share' as null | string,
   zoomVideoOffTitle: 'Start Video' as null | string,
   zoomVideoOnTitle: 'Stop Video' as null | string,
@@ -606,6 +608,102 @@ describe('Zoom setup assistant', () => {
     expect(commandTypes()).toEqual(['toggle-mic', 'toggle-mic']);
     expect(currentSettings.zoomMicOnTitle).toBe('Mute');
     expect(currentSettings.zoomMicOffTitle).toBe('Unmute');
+  });
+
+  it("learns raised hands through Zoom's Reactions button, remembering its name", async () => {
+    Object.assign(currentSettings, {
+      zoomHandRaisedPhrase: null,
+      zoomReactButtonTitle: 'React',
+    });
+    zoomCommandMock.mockResolvedValue({
+      ok: true,
+      phrase: 'Hand raised',
+      reactButtonTitle: 'Reactions',
+    });
+    const { learnZoomHandRaisedPhrase } = await import('../zoom');
+
+    await learnZoomHandRaisedPhrase();
+
+    expect(zoomCommandMock).toHaveBeenCalledWith({
+      reactButtonTitle: 'React',
+      type: 'learn-hand-raised',
+    });
+    expect(currentSettings).toMatchObject({
+      zoomHandRaisedPhrase: 'Hand raised',
+      zoomReactButtonTitle: 'Reactions',
+    });
+  });
+
+  it('keeps the Reactions button name when learning raised hands fails', async () => {
+    Object.assign(currentSettings, {
+      zoomHandRaisedPhrase: null,
+      zoomReactButtonTitle: 'React',
+    });
+    zoomCommandMock.mockResolvedValue({
+      error: 'reaction-panel-not-found',
+      ok: false,
+    });
+    const { learnZoomHandRaisedPhrase } = await import('../zoom');
+
+    await learnZoomHandRaisedPhrase();
+
+    expect(currentSettings).toMatchObject({
+      zoomHandRaisedPhrase: null,
+      zoomReactButtonTitle: 'React',
+    });
+  });
+
+  it("asks which entry is React when M³ can't find it, until one works or the user cancels", async () => {
+    Object.assign(currentSettings, {
+      zoomHandRaisedPhrase: null,
+      zoomReactButtonTitle: null,
+    });
+    const picks = ['Partager', 'Réagir'];
+    const { Dialog } = await import('quasar');
+    vi.mocked(Dialog.create).mockImplementation(() => {
+      const pick = picks.shift();
+      const chain = {
+        onCancel: vi.fn((cancel: () => void) => {
+          if (!pick) cancel();
+          return chain;
+        }),
+        onOk: vi.fn((ok: (entry: string) => void) => {
+          if (pick) ok(pick);
+          return chain;
+        }),
+      };
+      return chain as unknown as ReturnType<typeof Dialog.create>;
+    });
+    zoomCommandMock.mockImplementation(async (command) => {
+      if (command.type === 'share-entries') {
+        return { entries: ['Partager'], moreEntries: ['Réagir'], ok: true };
+      }
+      if (command.type === 'learn-hand-raised') {
+        return command.reactButtonTitle === 'Réagir'
+          ? { ok: true, phrase: 'Main levée', reactButtonTitle: 'Réagir' }
+          : { error: 'react-button-not-found', ok: false };
+      }
+      return { ok: true };
+    });
+    const { learnZoomHandRaisedPhraseAskingForReact } = await import('../zoom');
+
+    expect((await learnZoomHandRaisedPhraseAskingForReact()).ok).toBe(true);
+
+    expect(Dialog.create).toHaveBeenCalledTimes(2);
+    expect(currentSettings).toMatchObject({
+      zoomHandRaisedPhrase: 'Main levée',
+      zoomReactButtonTitle: 'Réagir',
+    });
+    // A missing React button is asked about, not reported as a failure.
+    expect(notifyMock).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'negative' }),
+    );
+
+    // Cancelling the question stops there.
+    currentSettings.zoomReactButtonTitle = 'Stale';
+    const result = await learnZoomHandRaisedPhraseAskingForReact();
+    expect(result.error).toBe('react-button-not-found');
+    expect(Dialog.create).toHaveBeenCalledTimes(3);
   });
 
   it('joins computer audio for the microphone step without telling the checklist', async () => {

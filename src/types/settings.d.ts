@@ -371,6 +371,7 @@ export interface SettingsValues {
   zoomMeetingManagerStartupCheck: boolean;
   zoomMicOffTitle: null | string;
   zoomMicOnTitle: null | string;
+  zoomReactButtonTitle: null | string;
   zoomScreenShareShortcut: null | string;
   zoomShareButtonTitle: null | string;
   zoomVideoOffTitle: null | string;

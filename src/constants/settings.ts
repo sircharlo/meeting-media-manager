@@ -737,6 +737,14 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomMeetingManager',
     type: 'text',
   },
+  zoomReactButtonTitle: {
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    hidden: true,
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'text',
+  },
   obsEnable: {
     actions: ['obsConnect'],
     group: 'integrations',
@@ -1240,6 +1248,7 @@ export const defaultSettings: SettingsValues = {
   zoomMeetingManagerStartupCheck: true,
   zoomMicOffTitle: null,
   zoomMicOnTitle: null,
+  zoomReactButtonTitle: null,
   zoomScreenShareShortcut: null,
   zoomShareButtonTitle: null,
   zoomVideoOffTitle: null,
