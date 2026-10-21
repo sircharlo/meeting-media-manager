@@ -1,5 +1,8 @@
 export const MEDIA_WINDOW_TITLE = 'Media Player - M³';
 
+/** The setup assistant's id in the dialog-state store. */
+export const ZOOM_SETUP_ASSISTANT_DIALOG_ID = 'zoom-setup-assistant';
+
 /**
  * What the `diagnose` command checks in Zoom, with i18n keys for each check
  * and for how to fix it (shown by the setup assistant and the startup check).

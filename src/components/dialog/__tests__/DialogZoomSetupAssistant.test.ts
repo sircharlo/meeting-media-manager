@@ -767,6 +767,8 @@ describe('DialogZoomSetupAssistant', () => {
 
     await testAndFinish();
     expect(zoomState.automationsPaused).toBe(false);
+    // Its test stands for today's check.
+    expect(zoomState.checkedCongregations).toContain(CONGREGATION_ID);
   });
 
   it('keeps the names it knows, and the automations paused, unless its test passed', async () => {
