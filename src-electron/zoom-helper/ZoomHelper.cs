@@ -235,6 +235,58 @@ namespace M3.ZoomHelper
         }
     }
 
+    /// <summary>Names of Zoom's controls in the user's language, as M3 has
+    /// learned them so far: sent with every request ("titles"), so controls
+    /// are found by name rather than by Zoom's shortcuts, which the user may
+    /// have changed. Whatever a request learns anew goes back in its reply
+    /// ("learned") for M3 to keep.</summary>
+    public static class Known
+    {
+        public static string MicOn;
+        public static string MicOff;
+        public static string JoinAudio;
+        public static string Participants;
+        public static string MuteAll;
+        public static string StopShare;
+        public static readonly Dictionary<string, object> Learned = new Dictionary<string, object>();
+
+        public static void Load(Dictionary<string, object> request)
+        {
+            Learned.Clear();
+            object value;
+            var titles = request.TryGetValue("titles", out value) ? value as Dictionary<string, object> : null;
+            MicOn = Get(titles, "micOn");
+            MicOff = Get(titles, "micOff");
+            JoinAudio = Get(titles, "joinAudio");
+            Participants = Get(titles, "participants");
+            MuteAll = Get(titles, "muteAll");
+            StopShare = Get(titles, "stopShare");
+        }
+
+        static string Get(Dictionary<string, object> titles, string key)
+        {
+            object value;
+            if (titles == null || !titles.TryGetValue(key, out value) || value == null) return null;
+            var title = Helper.FirstSegment(value.ToString());
+            return title.Length == 0 ? null : title;
+        }
+
+        /// <summary>Remembers a name just seen, when it's news.</summary>
+        public static void Learn(string key, string title)
+        {
+            if (string.IsNullOrEmpty(title)) return;
+            switch (key)
+            {
+                case "joinAudio": if (JoinAudio == title) return; JoinAudio = title; break;
+                case "participants": if (Participants == title) return; Participants = title; break;
+                case "muteAll": if (MuteAll == title) return; MuteAll = title; break;
+                case "stopShare": if (StopShare == title) return; StopShare = title; break;
+                default: return;
+            }
+            Learned[key] = title;
+        }
+    }
+
     public static class Helper
     {
         const string MeetingWindowClass = "ConfMultiTabContentWndClass";
@@ -249,9 +301,12 @@ namespace M3.ZoomHelper
         // Zoom's annotation layer, laid over whatever is being shared.
         const string AnnotationLayerClass = "ZoomAnnoWindowWndClass";
 
-        const string HotkeyAudio = "Alt+A";
+        // Zoom's default shortcuts. They only help find a control the first
+        // time: once a control's name (in the user's Zoom language) is
+        // learned, it's found by name, so changed shortcuts don't matter.
         const string HotkeyVideo = "Alt+V";
         const string HotkeyMuteAll = "Alt+M";
+        const string HotkeyParticipants = "Alt+U";
         // Toolbar buttons that are clearly neither Share nor React, and in two
         // cases must never be pressed to find out: End (Alt+Q) and Record
         // (Alt+R).
@@ -266,6 +321,9 @@ namespace M3.ZoomHelper
         // "More" menu entries end with a translated "row R, column C N of M ..."
         static readonly Regex GridPositionSuffix = new Regex(@"^(.*?)\s+\S+\s+\d+,\s*\S+\s+\d+\s+\d+\s+\S+\s+\d+(?:\s.*)?$");
         static readonly Regex SectionHeader = new Regex(@"\(\d+\)");
+        // The participants panel's heading, "Participants (3)" in every
+        // language, with its title apart.
+        static readonly Regex CountedTitle = new Regex(@"^(.*?)\s*\(\d+\)\s*$");
         // Any keyboard shortcut ("Alt+A", "Ctrl+Alt+Shift+A", "Strg+Umschalt+S").
         static readonly Regex AnyHotkey = new Regex(@"(?<![\w+])[\p{L}]+(?:\+[\p{L}\p{N}]+)+(?![\w+])");
         // The Reactions button's trailing "(Ctrl+Shift+Y)", matched by shape
@@ -761,19 +819,30 @@ namespace M3.ZoomHelper
             return Uia.Descendants(ControlPanel(window), Uia.MenuItemType);
         }
 
-        /// <summary>The microphone button. The toolbar always starts with it:
-        /// joined to computer audio, its name includes its keyboard shortcut
-        /// (Alt+A, or whatever the user chose instead); not joined, it's a
-        /// "Join audio" button without one (null here).</summary>
-        static El MicButton(El window)
-        {
-            var buttons = ToolbarButtons(window);
-            return buttons.Count > 0 && AnyHotkey.IsMatch(buttons[0].Name) ? buttons[0] : null;
-        }
-
+        /// <summary>Whether the host is joined to computer audio. The toolbar
+        /// always starts with the microphone button, or with "Join audio"
+        /// while not joined: told apart by their learned names, and failing
+        /// those by the keyboard shortcut Zoom shows in the microphone's name
+        /// (and not in "Join audio"'s), which also teaches the latter.</summary>
         static bool AudioJoined(El window)
         {
-            return MicButton(window) != null;
+            var buttons = ToolbarButtons(window);
+            if (buttons.Count == 0) return false;
+            var name = FirstSegment(buttons[0].Name);
+            if (name.Length > 0 && (name == Known.MicOn || name == Known.MicOff)) return true;
+            if (name.Length > 0 && name == Known.JoinAudio) return false;
+            var joined = AnyHotkey.IsMatch(buttons[0].Name);
+            if (!joined) Known.Learn("joinAudio", name);
+            return joined;
+        }
+
+        /// <summary>The microphone button, which only exists once joined to
+        /// computer audio (null otherwise).</summary>
+        static El MicButton(El window)
+        {
+            if (!AudioJoined(window)) return null;
+            var buttons = ToolbarButtons(window);
+            return buttons.Count > 0 ? buttons[0] : null;
         }
 
         /// <summary>The camera button: the one with Zoom's Alt+V shortcut, or,
@@ -822,7 +891,7 @@ namespace M3.ZoomHelper
                 { "found", true },
                 { "handle", window.Raw.CurrentNativeWindowHandle.ToInt64() },
                 { "micTitle", mic == null ? null : FirstSegment(mic.Name) },
-                { "participantsPanelOpen", MuteAllButton(window) != null },
+                { "participantsPanelOpen", ParticipantsPanelOpen(window) },
                 { "sharing", sharing },
                 { "title", window.Name },
                 { "toolbarVisible", toolbarVisible },
@@ -942,28 +1011,153 @@ namespace M3.ZoomHelper
 
         // --- Participants ----------------------------------------------------------
 
-        static El MuteAllButton(El window)
+        /// <summary>The participants panel's heading ("Participants (3)"): the
+        /// text with a count in brackets that isn't part of a list (waiting
+        /// room section headers are). Null while the panel is closed.</summary>
+        static El ParticipantsHeading(El window)
         {
-            foreach (var button in Uia.Descendants(window, Uia.ButtonType))
-                if (HasHotkey(button.Name, HotkeyMuteAll)) return button;
+            var lists = Uia.Descendants(window, Uia.ListType);
+            foreach (var text in Uia.Descendants(window, Uia.TextType))
+            {
+                if (!CountedTitle.IsMatch(text.Name)) continue;
+                var inList = false;
+                foreach (var list in lists) if (Contains(list.Rect, text)) inList = true;
+                if (!inList) return text;
+            }
             return null;
         }
 
-        static El OpenParticipantsPanel(El window)
+        /// <summary>The participants list: the first list under the panel's
+        /// heading (the chat panel, which also holds a list, opens below it).
+        /// Null while the panel is closed.</summary>
+        static El ParticipantsList(El window)
         {
-            var button = MuteAllButton(window);
-            if (button != null) return button;
+            var lists = Uia.Descendants(window, Uia.ListType);
+            if (lists.Count == 0) return null;
+            var heading = ParticipantsHeading(window);
+            if (heading == null) return lists[0];
+            lists.Sort((a, b) => a.Rect.top.CompareTo(b.Rect.top));
+            foreach (var list in lists)
+                if (list.Rect.top >= heading.Rect.top && list.Rect.right > heading.Rect.left && list.Rect.left < heading.Rect.right) return list;
+            return lists[0];
+        }
+
+        static bool ParticipantsPanelOpen(El window)
+        {
+            return ParticipantsHeading(window) != null || MuteAllButton(window) != null;
+        }
+
+        /// <summary>The "Mute all" button at the bottom of the participants
+        /// panel, which only the host and co-hosts have: by its learned name,
+        /// else by Zoom's Alt+M shortcut, else by its place, [Invite] [Mute
+        /// all] [More, a split button] under the participants list.</summary>
+        static El MuteAllButton(El window)
+        {
+            var buttons = Uia.Descendants(window, Uia.ButtonType);
+            var known = ByName(buttons, Known.MuteAll);
+            if (known != null) return known;
+            El found = null;
+            foreach (var button in buttons)
+                if (HasHotkey(button.Name, HotkeyMuteAll)) found = button;
+            if (found == null) found = MuteAllByLayout(window, buttons);
+            if (found != null) Known.Learn("muteAll", FirstSegment(found.Name));
+            return found;
+        }
+
+        static El MuteAllByLayout(El window, List<El> buttons)
+        {
+            var more = PanelMoreButton(window);
+            if (more == null) return null;
+            El nearest = null;
+            foreach (var button in buttons)
+            {
+                if (Math.Abs(button.Rect.top - more.Rect.top) > RowTolerance || button.Rect.left >= more.Rect.left) continue;
+                if (nearest == null || button.Rect.left > nearest.Rect.left) nearest = button;
+            }
+            return nearest;
+        }
+
+        /// <summary>The participants panel's own "More" button (host only):
+        /// the split button in the row under the participants list; the ones
+        /// in the rows belong to participants.</summary>
+        static El PanelMoreButton(El window)
+        {
+            var list = ParticipantsList(window);
+            if (list == null) return null;
+            foreach (var split in Uia.Descendants(window, Uia.SplitButtonType))
+                if (split.Rect.top >= list.Rect.bottom - RowTolerance && split.Rect.right > list.Rect.left && split.Rect.left < list.Rect.right) return split;
+            return null;
+        }
+
+        /// <summary>Presses the toolbar's Participants button: known by its
+        /// learned name or Zoom's Alt+U shortcut, in the toolbar or in "More"
+        /// (which opens the panel straight away). False if it's nowhere to
+        /// be found.</summary>
+        static bool PressParticipantsButton(El window)
+        {
+            var buttons = ToolbarButtons(window);
+            El button = null;
+            foreach (var candidate in buttons)
+                if (HasHotkey(candidate.Name, HotkeyParticipants)) button = candidate;
+            if (button == null) button = ByName(buttons, Known.Participants);
+            if (button != null)
+            {
+                Known.Learn("participants", FirstSegment(button.Name));
+                Focus(window);
+                Press(button);
+                return true;
+            }
+            if (string.IsNullOrEmpty(Known.Participants)) return false;
+            var grid = OpenMoreGrid(window);
+            if (grid == null) return false;
+            foreach (var item in Uia.Descendants(grid, Uia.TabItemType))
+            {
+                if (GridEntryName(item) != Known.Participants) continue;
+                Press(item);
+                return true;
+            }
             Focus(window);
-            AltKey('U');
-            button = WaitFor(() => MuteAllButton(window), found => found != null, 5000);
-            if (button == null) throw new ZoomActionError("participants-panel-not-opened");
-            return button;
+            Escape();
+            return false;
+        }
+
+        /// <summary>Remembers what the open participants panel shows: its
+        /// title (the Participants button's name, wherever Zoom keeps the
+        /// button) and the "Mute all" button's name.</summary>
+        static void LearnParticipantsNames(El window)
+        {
+            var heading = ParticipantsHeading(window);
+            if (heading != null) Known.Learn("participants", CountedTitle.Match(heading.Name).Groups[1].Value.Trim());
+            MuteAllButton(window);
+        }
+
+        /// <summary>Opens the participants panel, through its button (see
+        /// PressParticipantsButton) or else Zoom's Alt+U. When neither works,
+        /// M3 asks the user which entry it is (participants-button-not-found),
+        /// as it does for Share; a button that was found but opened no panel
+        /// is participants-panel-not-opened.</summary>
+        static void OpenParticipantsPanel(El window)
+        {
+            if (!ParticipantsPanelOpen(window))
+            {
+                var pressed = PressParticipantsButton(window);
+                if (!pressed)
+                {
+                    Focus(window);
+                    AltKey('U');
+                }
+                if (!WaitUntil(() => ParticipantsPanelOpen(window), 5000))
+                    throw new ZoomActionError(pressed ? "participants-panel-not-opened" : "participants-button-not-found");
+            }
+            LearnParticipantsNames(window);
         }
 
         public static Dictionary<string, object> MuteAll(bool allowSelfUnmute)
         {
             var window = RequireMeetingWindow();
-            var button = OpenParticipantsPanel(window);
+            OpenParticipantsPanel(window);
+            var button = MuteAllButton(window);
+            if (button == null) throw new ZoomActionError("mute-all-button-not-found");
             Focus(window);
             Press(button);
             var dialog = WaitForWindow(MuteAllDialogClass, 5000);
@@ -983,19 +1177,7 @@ namespace M3.ZoomHelper
         {
             var window = RequireMeetingWindow();
             OpenParticipantsPanel(window);
-            // The participants panel's "more" button is the first split button
-            // after the mute-everyone button.
-            El more = null;
-            bool afterMuteAll = false;
-            foreach (var control in Uia.Descendants(window))
-            {
-                if (control.ControlType == Uia.ButtonType && HasHotkey(control.Name, HotkeyMuteAll)) afterMuteAll = true;
-                else if (afterMuteAll && control.ControlType == Uia.SplitButtonType)
-                {
-                    more = control;
-                    break;
-                }
-            }
+            var more = PanelMoreButton(window);
             if (more == null) throw new ZoomActionError("participants-more-button-not-found");
             Focus(window);
             var menu = OpenMenuFrom(more, 4000);
@@ -1031,9 +1213,9 @@ namespace M3.ZoomHelper
         static List<Row> ParticipantRows(El window)
         {
             var result = new List<Row>();
-            var lists = Uia.Descendants(window, Uia.ListType);
-            if (lists.Count == 0) return result;
-            var rows = Uia.Descendants(lists[0], Uia.ListItemType);
+            var list = ParticipantsList(window);
+            if (list == null) return result;
+            var rows = Uia.Descendants(list, Uia.ListItemType);
             var headers = new List<int>();
             for (int i = 0; i < rows.Count; i++)
                 if (SectionHeader.IsMatch(rows[i].Name.Split(',')[0])) headers.Add(i);
@@ -1966,10 +2148,16 @@ namespace M3.ZoomHelper
         {
             var toolbars = TopWindows(ShareToolbarClass, true);
             if (toolbars.Count == 0) return Changed(false);
-            // "Stop share" is the last share-toolbar button that shows a shortcut.
-            El stop = null;
-            foreach (var button in Uia.Descendants(Uia.FromHandle(toolbars[0]), Uia.ButtonType))
-                if (TrailingHotkey.IsMatch(button.Name)) stop = button;
+            // "Stop share" is known by its learned name, else as the last
+            // share-toolbar button that shows a shortcut.
+            var buttons = Uia.Descendants(Uia.FromHandle(toolbars[0]), Uia.ButtonType);
+            var stop = ByName(buttons, Known.StopShare);
+            if (stop == null)
+            {
+                foreach (var button in buttons)
+                    if (TrailingHotkey.IsMatch(button.Name)) stop = button;
+                if (stop != null) Known.Learn("stopShare", FirstSegment(stop.Name));
+            }
             if (stop == null) throw new ZoomActionError("stop-share-button-not-found");
             Press(stop);
             if (!WaitUntil(() => !IsSharing(), WaitTimeoutMs)) throw new ZoomActionError("share-not-stopped");
@@ -1997,24 +2185,24 @@ namespace M3.ZoomHelper
             result["toolbar"] = toolbar != null && toolbar.Count > 0;
             if (toolbar == null || toolbar.Count == 0) return result;
 
-            var joined = AnyHotkey.IsMatch(toolbar[0].Name);
-            result["audioJoined"] = joined;
-            // Only knowable while joined: "Join audio" has no shortcut at all.
-            result["audioShortcutDefault"] = joined ? (object)HasHotkey(toolbar[0].Name, HotkeyAudio) : null;
+            result["audioJoined"] = AudioJoined(window);
             var video = VideoButton(window);
             result["videoButton"] = video != null;
-            result["videoShortcutDefault"] = video != null && HasHotkey(video.Name, HotkeyVideo);
             result["videoTitle"] = video == null ? null : FirstSegment(video.Name);
 
-            El muteAll = null;
+            // Opening the panel also learns the names to open it by next time.
             try
             {
-                muteAll = OpenParticipantsPanel(window);
+                OpenParticipantsPanel(window);
             }
-            catch (ZoomActionError) { }
-            result["participantsPanel"] = muteAll != null || Uia.Descendants(window, Uia.ListType).Count > 0;
+            catch (ZoomActionError error)
+            {
+                // The user can then point M3 to the Participants button.
+                result["participantsButtonMissing"] = error.Message == "participants-button-not-found";
+            }
+            result["participantsPanel"] = ParticipantsPanelOpen(window);
             // Only the host and co-hosts can mute everyone.
-            result["hostControls"] = muteAll != null;
+            result["hostControls"] = MuteAllButton(window) != null;
             return result;
         }
 
@@ -2113,9 +2301,17 @@ namespace M3.ZoomHelper
         /// bring Zoom forward along the way.</summary>
         public static Dictionary<string, object> Handle(Dictionary<string, object> request)
         {
+            Known.Load(request);
             var type = GetString(request, "type");
-            if (type == "ping" || (type == "meeting" && !GetBool(request, "reveal"))) return Run(type, request);
+            var reply = type == "ping" || (type == "meeting" && !GetBool(request, "reveal"))
+                ? Run(type, request)
+                : RunRestoringInput(type, request);
+            if (Known.Learned.Count > 0) reply["learned"] = new Dictionary<string, object>(Known.Learned);
+            return reply;
+        }
 
+        static Dictionary<string, object> RunRestoringInput(string type, Dictionary<string, object> request)
+        {
             Native.Point cursor;
             var hasCursor = Native.GetCursorPos(out cursor);
             var foreground = Native.GetForegroundWindow();

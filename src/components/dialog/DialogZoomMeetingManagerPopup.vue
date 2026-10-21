@@ -131,17 +131,15 @@
       >
         <q-icon color="primary" name="mmm-cog-sparkles" size="18px" />
         <div class="col text-caption">
-          {{ t('zoomHandRaisedPhrase-explain') }}
+          {{ t('zoom-hand-setup-needed') }}
         </div>
         <q-btn
           color="primary"
           dense
-          :disable="!meetingFound"
           flat
-          :label="t('zoom-hand-learn')"
-          :loading="learningHand"
+          :label="t('zoom-setup-open')"
           no-caps
-          @click="learnHand"
+          @click="openSetupAssistant"
         />
       </div>
       <template v-else>
@@ -280,7 +278,6 @@ import { storeToRefs } from 'pinia';
 import {
   getZoomMeetingState,
   isZoomSetupNeeded,
-  learnZoomHandRaisedPhraseAskingForReact,
   muteZoomParticipantAndLowerHand,
   runZoomMeetingSequence,
   runZoomPostMeetingSequence,
@@ -320,17 +317,7 @@ const { automationsPaused, checkRunning, pause } = storeToRefs(zoomState);
 
 const handAlert = useHandAlertStore();
 const { raisedHands } = storeToRefs(handAlert);
-const learningHand = ref(false);
 const busyParticipant = ref<null | string>(null);
-
-const learnHand = async () => {
-  learningHand.value = true;
-  try {
-    await learnZoomHandRaisedPhraseAskingForReact();
-  } finally {
-    learningHand.value = false;
-  }
-};
 
 const unmute = async (name: string) => {
   busyParticipant.value = `unmute:${name}`;

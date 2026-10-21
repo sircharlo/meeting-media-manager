@@ -555,7 +555,7 @@ Zoom offers no proper automation interface, so M³ drives the Zoom app through i
 
 #### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
 

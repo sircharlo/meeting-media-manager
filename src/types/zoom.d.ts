@@ -2,7 +2,174 @@
  * One complete Zoom action, performed by the UI Automation helper
  * (uia_helper.py) that the Zoom Meeting Manager runs alongside M³.
  */
-export type ZoomCommand =
+export type ZoomCommand = ZoomCommandBody & {
+  /** Names learned so far (see ZoomKnownTitles); added to every command. */
+  titles?: ZoomKnownTitles;
+};
+
+export interface ZoomCommandResult {
+  admitted?: string[];
+  /** `toggle-mic`/`toggle-video`: the button's name after switching. */
+  after?: string;
+  /** `set-participant-mic`: the "Ask to unmute" button's name, when first seen. */
+  askToUnmuteTitle?: null | string;
+  /** `toggle-mic`/`toggle-video`: the button's name before switching. */
+  before?: string;
+  /** `set-participant-mic`: what the row's microphone button said. */
+  buttonTitle?: string;
+  /** Whether the action changed anything (false: already in that state). */
+  changed?: boolean;
+  diagnosis?: ZoomDiagnosis;
+  /** The `ping` command's echo, to check the helper's text encoding. */
+  echo?: null | string;
+  /** `share-entries`: Share candidates from Zoom's toolbar. */
+  entries?: string[];
+  /** A short machine-readable reason, e.g. `meeting-not-found`. */
+  error?: string;
+  /** Names of Zoom's controls the action saw for the first time. */
+  learned?: ZoomKnownTitles;
+  /** `set-participant-mic`/`lower-participant-hand`: the "Lower hand" button's name, seen on that row. */
+  lowerHandTitle?: null | string;
+  meeting?: ZoomMeetingState;
+  /** `share-entries`: Share candidates from the toolbar's "More" menu. */
+  moreEntries?: string[];
+  ok: boolean;
+  /** `test-share-picker`: whether Zoom's share picker opened. */
+  opened?: boolean;
+  participants?: ZoomParticipantRow[];
+  /** `learn-hand-raised`: how Zoom marks a raised hand, in its language. */
+  phrase?: null | string;
+  /** `set-participant-mic`: whether the button was pressed at all. */
+  pressed?: boolean;
+  /** `raised-hands`: who in the meeting has their hand raised. */
+  raisedHands?: string[];
+  /** `learn-hand-raised`: the Reactions button's name, when seen. */
+  reactButtonTitle?: null | string;
+  title?: null | string;
+  version?: number;
+  /** `test-share-picker`: whether M³'s media window was offered. */
+  windowListed?: boolean;
+  /** `test-share-picker`: whether sharing would select M³'s media window. */
+  windowSelected?: boolean;
+}
+
+export type ZoomCommandType = ZoomCommand['type'];
+
+/** What the setup assistant checks in Zoom (the `diagnose` command). */
+export interface ZoomDiagnosis {
+  audioJoined?: boolean;
+  /** The mute-everyone button: only for the meeting's host and co-hosts. */
+  hostControls?: boolean;
+  meeting: boolean;
+  /** Whether the Participants button couldn't be found: the user can point M³ to it. */
+  participantsButtonMissing?: boolean;
+  participantsPanel?: boolean;
+  toolbar?: boolean;
+  videoButton?: boolean;
+  videoTitle?: null | string;
+}
+
+export interface ZoomHelperStartResult {
+  /** Technical detail for logs, e.g. a compiler error. */
+  detail?: string;
+  /**
+   * Why the helper couldn't start: `windows-only`, `powershell-not-found`,
+   * `powershell-restricted`, `helper-not-compiled`, `helper-start-timeout`,
+   * `helper-exited`.
+   */
+  error?: string;
+  ok: boolean;
+}
+
+/**
+ * Names of Zoom's controls in the user's Zoom language, as learned so far.
+ * Sent with every command, so the helper finds controls by name rather than
+ * by Zoom's keyboard shortcuts (which the user may have changed); what a
+ * command learns anew comes back in its result's `learned`.
+ */
+export interface ZoomKnownTitles {
+  /** The first toolbar button while not joined to computer audio. */
+  joinAudio?: null | string;
+  micOff?: null | string;
+  micOn?: null | string;
+  /** The participants panel's "Mute all" button. */
+  muteAll?: null | string;
+  /** The Participants button, in the toolbar or Zoom's "More" menu. */
+  participants?: null | string;
+  /** The share toolbar's "Stop share" button. */
+  stopShare?: null | string;
+}
+
+export interface ZoomMeetingState {
+  /** Unknown (null) while Zoom has its toolbar hidden. */
+  audioJoined?: boolean | null;
+  found: boolean;
+  handle?: number;
+  /**
+   * The microphone button's name, in the user's Zoom language (null until
+   * computer audio is joined, or while Zoom has its toolbar hidden).
+   */
+  micTitle?: null | string;
+  participantsPanelOpen?: boolean;
+  sharing: boolean;
+  title?: string;
+  /** Zoom hides its toolbar a few seconds after the mouse leaves it. */
+  toolbarVisible?: boolean;
+  /** The video button's name, in the user's Zoom language. */
+  videoTitle?: null | string;
+}
+
+export interface ZoomParticipantRow {
+  /** Everything Zoom says about the row, in the user's Zoom language. */
+  details: string;
+  name: string;
+  section: 'meeting' | 'waiting';
+}
+
+/** Test participants joined by scripts/zoom-live/participants.mjs. */
+export interface ZoomTestParticipant {
+  audioConnected?: boolean;
+  error?: string;
+  events: ZoomTestParticipantEvent[];
+  micMuted?: boolean | null;
+  name: string;
+  phase:
+    'blocked' | 'error' | 'in-meeting' | 'joining' | 'left' | 'waiting-room';
+  unmuteRequestPolicy?: 'accept' | 'ignore';
+}
+
+export type ZoomTestParticipantAction =
+  | 'accept-unmute-requests'
+  | 'ignore-unmute-requests'
+  | 'leave'
+  | 'mute'
+  | 'reset-events'
+  | 'try-unmute';
+
+export interface ZoomTestParticipantEvent {
+  at: number;
+  type:
+    | 'audio-rejoined'
+    | 'unmute-blocked'
+    | 'unmute-request-accepted'
+    | 'unmute-requested';
+}
+
+export type ZoomTestParticipantsRequest =
+  | { action: ZoomTestParticipantAction; index?: number; type: 'action' }
+  | { count: number; type: 'start' }
+  | { type: 'state' }
+  | { type: 'stop' };
+
+export interface ZoomTestParticipantsResponse {
+  error?: string;
+  /** The meeting the participants join (from .env.zoom-test). */
+  meetingId?: string;
+  ok: boolean;
+  participants?: ZoomTestParticipant[];
+}
+
+type ZoomCommandBody =
   | {
       /** The "Ask to unmute" button name once learned. */
       askToUnmuteTitle: null | string;
@@ -76,145 +243,3 @@ export type ZoomCommand =
   | { type: 'toggle-mic' }
   | { type: 'toggle-video' }
   | { type: 'video-title' };
-
-export interface ZoomCommandResult {
-  admitted?: string[];
-  /** `toggle-mic`/`toggle-video`: the button's name after switching. */
-  after?: string;
-  /** `set-participant-mic`: the "Ask to unmute" button's name, when first seen. */
-  askToUnmuteTitle?: null | string;
-  /** `toggle-mic`/`toggle-video`: the button's name before switching. */
-  before?: string;
-  /** `set-participant-mic`: what the row's microphone button said. */
-  buttonTitle?: string;
-  /** Whether the action changed anything (false: already in that state). */
-  changed?: boolean;
-  diagnosis?: ZoomDiagnosis;
-  /** The `ping` command's echo, to check the helper's text encoding. */
-  echo?: null | string;
-  /** `share-entries`: Share candidates from Zoom's toolbar. */
-  entries?: string[];
-  /** A short machine-readable reason, e.g. `meeting-not-found`. */
-  error?: string;
-  /** `set-participant-mic`/`lower-participant-hand`: the "Lower hand" button's name, seen on that row. */
-  lowerHandTitle?: null | string;
-  meeting?: ZoomMeetingState;
-  /** `share-entries`: Share candidates from the toolbar's "More" menu. */
-  moreEntries?: string[];
-  ok: boolean;
-  /** `test-share-picker`: whether Zoom's share picker opened. */
-  opened?: boolean;
-  participants?: ZoomParticipantRow[];
-  /** `learn-hand-raised`: how Zoom marks a raised hand, in its language. */
-  phrase?: null | string;
-  /** `set-participant-mic`: whether the button was pressed at all. */
-  pressed?: boolean;
-  /** `raised-hands`: who in the meeting has their hand raised. */
-  raisedHands?: string[];
-  /** `learn-hand-raised`: the Reactions button's name, when seen. */
-  reactButtonTitle?: null | string;
-  title?: null | string;
-  version?: number;
-  /** `test-share-picker`: whether M³'s media window was offered. */
-  windowListed?: boolean;
-  /** `test-share-picker`: whether sharing would select M³'s media window. */
-  windowSelected?: boolean;
-}
-
-export type ZoomCommandType = ZoomCommand['type'];
-
-/** What the setup assistant checks in Zoom (the `diagnose` command). */
-export interface ZoomDiagnosis {
-  audioJoined?: boolean;
-  /** Whether the microphone shortcut is Zoom's default (null: unknown). */
-  audioShortcutDefault?: boolean | null;
-  /** The mute-everyone button: only for the meeting's host and co-hosts. */
-  hostControls?: boolean;
-  meeting: boolean;
-  participantsPanel?: boolean;
-  toolbar?: boolean;
-  videoButton?: boolean;
-  videoShortcutDefault?: boolean;
-  videoTitle?: null | string;
-}
-
-export interface ZoomHelperStartResult {
-  /** Technical detail for logs, e.g. a compiler error. */
-  detail?: string;
-  /**
-   * Why the helper couldn't start: `windows-only`, `powershell-not-found`,
-   * `powershell-restricted`, `helper-not-compiled`, `helper-start-timeout`,
-   * `helper-exited`.
-   */
-  error?: string;
-  ok: boolean;
-}
-
-export interface ZoomMeetingState {
-  /** Unknown (null) while Zoom has its toolbar hidden. */
-  audioJoined?: boolean | null;
-  found: boolean;
-  handle?: number;
-  /**
-   * The microphone button's name, in the user's Zoom language (null until
-   * computer audio is joined, or while Zoom has its toolbar hidden).
-   */
-  micTitle?: null | string;
-  participantsPanelOpen?: boolean;
-  sharing: boolean;
-  title?: string;
-  /** Zoom hides its toolbar a few seconds after the mouse leaves it. */
-  toolbarVisible?: boolean;
-  /** The video button's name, in the user's Zoom language. */
-  videoTitle?: null | string;
-}
-
-export interface ZoomParticipantRow {
-  /** Everything Zoom says about the row, in the user's Zoom language. */
-  details: string;
-  name: string;
-  section: 'meeting' | 'waiting';
-}
-
-/** Test participants joined by scripts/zoom-live/participants.mjs. */
-export interface ZoomTestParticipant {
-  audioConnected?: boolean;
-  error?: string;
-  events: ZoomTestParticipantEvent[];
-  micMuted?: boolean | null;
-  name: string;
-  phase:
-    'blocked' | 'error' | 'in-meeting' | 'joining' | 'left' | 'waiting-room';
-  unmuteRequestPolicy?: 'accept' | 'ignore';
-}
-
-export type ZoomTestParticipantAction =
-  | 'accept-unmute-requests'
-  | 'ignore-unmute-requests'
-  | 'leave'
-  | 'mute'
-  | 'reset-events'
-  | 'try-unmute';
-
-export interface ZoomTestParticipantEvent {
-  at: number;
-  type:
-    | 'audio-rejoined'
-    | 'unmute-blocked'
-    | 'unmute-request-accepted'
-    | 'unmute-requested';
-}
-
-export type ZoomTestParticipantsRequest =
-  | { action: ZoomTestParticipantAction; index?: number; type: 'action' }
-  | { count: number; type: 'start' }
-  | { type: 'state' }
-  | { type: 'stop' };
-
-export interface ZoomTestParticipantsResponse {
-  error?: string;
-  /** The meeting the participants join (from .env.zoom-test). */
-  meetingId?: string;
-  ok: boolean;
-  participants?: ZoomTestParticipant[];
-}
