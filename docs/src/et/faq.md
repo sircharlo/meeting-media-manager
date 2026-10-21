@@ -4,7 +4,7 @@
 
 ### :earth_americas: Kas see rakendus kasutab väljaannete ja koosolekute meedia allalaadimiseks väliseid saite, allikaid või "kuraatoreid"? {#external-dependencies}
 
-\*\*Ei. See rakendus töötab sarnaselt JW Library rakendusele. Väljaanded ja meedia laetakse alla Jw. org ametlikult lehelt ja serveritest. Rakendus määrab automaatselt kindlaks, mida on vaja alla laadida ja millal varem alla laaditud sisu ei ole enam ajakohane ja tuleks uuesti alla laadida.
+**Ei.** See rakendus töötab sarnaselt JW Library rakendusele. Väljaanded ja meedia laetakse alla Jw. org ametlikult lehelt ja serveritest. Rakendus määrab automaatselt kindlaks, mida on vaja alla laadida ja millal varem alla laaditud sisu ei ole enam ajakohane ja tuleks uuesti alla laadida.
 
 :::info Märkus
 
@@ -14,7 +14,7 @@ Selle rakenduse lähtekood on kõigile kättesaadav, et uurida ja kontrollida, m
 
 ### :thinking: Kas see rakendus rikub Jehoova tunnistajate ametliku veebisaidi kasutustingimusi? {#terms-of-use}
 
-**Ei.** Jehoova tunnistajate ametliku veebisaidi [kasutustingimused] (https://www.jw.org/finder?docid=1011511&prefer=content) lubavad selgesõnaliselt sellist kasutamist, mida me teeme. Siin on väljavõte nendest mõtetest (tsiteeritult):
+**Ei.** Jehoova tunnistajate ametliku veebisaidi [kasutustingimused](https://www.jw.org/finder?docid=1011511&prefer=content) lubavad selgesõnaliselt sellist kasutamist, mida me teeme. Siin on väljavõte nendest mõtetest (tsiteeritult):
 
 > Te ei tohi:
 >

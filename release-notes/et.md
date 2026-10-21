@@ -4,48 +4,48 @@
 
 Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGELOG.md GitHubis.
 
-## UPCOMING VERSION
+## TULEVANE VERSIOON
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Feature Suggestions**: Now and then, M³ suggests a feature a profile isn't using yet, in a short "Did you know?" window that explains what it does. It shows at most one suggestion each time a profile is opened, never from 15 minutes before a meeting until it ends, and remembers each answer: "Remind me later" moves a suggestion to the back of the line, "No thanks" hides it for good, and "Stop suggesting features" turns them all off for the profile. A "No" in the setup wizard counts too, and the answers can be reset in Settings, under Advanced.
+- ✨ **Funktsioonisoovitused**: Aeg-ajalt soovitab M³ lühikeses aknas „Kas teadsid?” mõnda funktsiooni, mida profiil veel ei kasuta, ja selgitab, mida see teeb. See näitab iga kord, kui profiil avatakse, kõige rohkem ühte soovitust, mitte kunagi ajavahemikus 15 minutit enne koosolekut kuni selle lõpuni, ning jätab iga vastuse meelde: „Tuleta mulle hiljem meelde” viib soovituse järjekorra lõppu, „Ei, aitäh” peidab selle jäädavalt ja „Lõpeta funktsioonide soovitamine” lülitab profiili jaoks kõik soovitused välja. Arvesse läheb ka seadistusviisardis antud vastus „Ei” ning vastused saab lähtestada seadetes jaotises „Lisavalikud”.
 
 ## v26.10.1
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Zoom Meeting Manager (beta, Windows)**: A new integration that operates Zoom for you around each meeting. It can launch your congregation's Zoom meeting when background music starts before the meeting. When the music stops just before the meeting starts, it joins computer audio, unmutes the microphone, turns on the host video, and mutes everyone without letting them unmute. When music plays before or after a meeting, it does the reverse: it leaves computer audio, turns off the host video, and lets everyone unmute again (asking them to do so). It can also share the media window in Zoom automatically while media is being shown, making sure the media window is what gets shared and never anything else on your screen. A new Zoom button in the action island shows whether a Zoom meeting window was found and lets you run these steps manually. A setup assistant, offered when you turn the option on (the initial setup wizard now offers it on Windows instead of the keyboard-shortcut screen sharing) and available anytime from the Zoom button or Settings, checks your Zoom, learns the names of its microphone and camera buttons in your language, and tries every step with you. When M³ starts, it also checks that everything it automates in Zoom works, opening the meeting if needed on meeting days in the hour and a quarter before it starts (only looking, without pressing anything, if others are already in the meeting); if something doesn't, it tells you and pauses its Zoom automations until it's restarted or a new check passes, so nothing goes wrong during the meeting. This check is on by default and can be turned off in Settings. As each of these steps succeeds, the matching reminders in the before- and after-meeting checklists of the meeting quick actions are ticked off for you, marked as done automatically in Zoom. Since it can't be used together with the keyboard-shortcut screen sharing, Settings says so under whichever of the two is unavailable, naming the one to turn off. It works whatever language Zoom is in, and needs nothing installed beyond Zoom itself.
+- ✨ **Zoomi koosolekuhaldur (beeta, Windows)**: Uus integratsioon, mis juhib iga koosoleku eel ja järel Zoomi sinu eest. See saab käivitada sinu koguduse Zoomi koosoleku, kui enne koosolekut algab taustamuusika. Kui muusika vahetult enne koosoleku algust peatub, ühendab see arvuti heli, lülitab sisse mikrofoni ja korraldaja video ning vaigistab kõik, lubamata neil oma heli sisse lülitada. Kui muusika mängib enne või pärast koosolekut, teeb see vastupidist: katkestab arvuti heli ühenduse, lülitab korraldaja video välja ja lubab kõigil oma heli uuesti sisse lülitada (paludes neil seda teha). Samuti saab see meedia näitamise ajal meediaakent Zoomis automaatselt jagada, tagades, et jagatakse just meediaakent ja mitte kunagi midagi muud sinu ekraanilt. Tegevussaare uus Zoomi nupp näitab, kas Zoomi koosoleku aken leiti, ja võimaldab neid samme käsitsi käivitada. Seadistusabiline, mida pakutakse valiku sisselülitamisel (esialgne seadistusviisard pakub seda nüüd Windowsis kiirklahviga ekraani jagamise asemel) ja mis on igal ajal saadaval Zoomi nupu või seadete kaudu, kontrollib sinu Zoomi, õpib selgeks selle mikrofoni- ja kaameranuppude nimed sinu keeles ning proovib kõik sammud koos sinuga läbi. Kui M³ käivitub, kontrollib see ka, kas kõik, mida see Zoomis automatiseerib, töötab, avades koosolekupäevadel vajaduse korral koosoleku tunni ja veerandi jooksul enne selle algust (kui teised on juba koosolekul, ainult vaadates ja midagi vajutamata); kui miski ei tööta, annab see sulle teada ja peatab oma Zoomi automatiseeringud, kuni M³ taaskäivitatakse või uus kontroll õnnestub, et koosoleku ajal midagi valesti ei läheks. See kontroll on vaikimisi sisse lülitatud ja selle saab seadetes välja lülitada. Iga sellise sammu õnnestumisel märgitakse koosoleku kiirtoimingute koosolekueelses ja -järgses kontrollnimekirjas vastavad meeldetuletused sinu eest tehtuks märkega „Zoomis automaatselt tehtud”. Kuna seda ei saa kasutada koos kiirklahviga ekraani jagamisega, kuvatakse seadetes selle valiku all, mis pole saadaval, märkus, milline valik tuleb välja lülitada. See töötab olenemata Zoomi keelest ega vaja peale Zoomi enda midagi muud installida.
 
-- ✨ **Meeting Timer**: Custom parts can now be added on meeting days too, for Governing Body updates, special programs and anything else that isn't on the regular schedule. Each is timed like any other part, and its name and length can be changed from the timer popup or from the parts list.
+- ✨ **Koosoleku taimer**: Kohandatud osi saab nüüd lisada ka koosolekupäevadel – juhtiva kogu teadaannete, eriprogrammide ja kõige muu jaoks, mida tavapärases ajakavas pole. Igaüht neist ajastatakse nagu iga teist osa ning selle nime ja pikkust saab muuta taimeri hüpikaknas või osade loendis.
 
-- ✨ **Meeting Timer**: Quicker access to the timer. Hovering the timer button on the action island now shows the part being timed with Start, Pause, Stop and Next part buttons, without opening the popup (a setting, on by default). A new setting also keeps the whole parts list and the timer controls in a panel docked on the right side of the main window, always in view.
+- ✨ **Koosoleku taimer**: Kiirem juurdepääs taimerile. Kui viid hiirekursori tegevussaare taimerinupu kohale, näed nüüd ajastatavat osa ning nuppe Käivita, Paus, Peata ja Järgmine osa, ilma hüpikakent avamata (seade, mis on vaikimisi sisse lülitatud). Uus seade hoiab ka kogu osade loendi ja taimeri juhtnupud alati nähtaval põhiakna paremas servas olevas paneelis.
 
-- ✨ **Meeting Timer**: A new "Analog clock with time arc" countdown display shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a red wedge. It also works for the pre-meeting countdown and in count-up mode.
+- ✨ **Koosoleku taimer**: Uus tagasilugemise kuva „Analoogkell ajakaarega” näitab osale jäänud aega analoogkella sihverplaadil sektorina, alates minutiosutist kuni planeeritud lõpuni, nii et ühe pilguga näeb nii kellaaega kui ka seda, kui palju aega on jäänud. Ületatud aega näidatakse punase sektorina. See töötab ka koosolekueelse tagasilugemise ajal ja üleslugemise režiimis.
 
-- ✨ **Meeting Timer**: The pre-meeting countdown is now labelled "Meeting starts in", and the timer display shows the name of the part being timed, so "4:59" can no longer be mistaken for the time of day.
+- ✨ **Koosoleku taimer**: Koosolekueelse tagasilugemise silt on nüüd „Koosoleku alguseni” ja taimeri ekraanil näidatakse ajastatava osa nime, nii et „4:59” ei saa enam kellaajaga segi ajada.
 
-- ✨ **Meeting Timer**: Each day's recorded timings can be cleared in one go, after a confirmation, from the timer popup or the docked panel.
+- ✨ **Koosoleku taimer**: Iga päeva salvestatud ajad saab pärast kinnitust korraga kustutada taimeri hüpikaknas või põhiakna taimeripaneelis.
 
-- ✨ **Zoom Meeting Manager (beta, Windows)**: A new raised-hand helper. During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets the operator unmute that participant with one click, and, once they're done speaking, mute them again and lower their hand with another; the Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name, and M³ touches no one when two participants share a name. If the meeting timer is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and can be switched on by hand from the timer or Zoom popups. M³ learns how Zoom marks raised hands in your language with a single button (it raises and lowers your own hand), offered in the setup assistant as well.
+- ✨ **Zoomi koosolekuhaldur (beeta, Windows)**: Uus tõstetud käte abiline. Koosoleku ajal jälgib M³ Zoomi osalejate loendis tõstetud käsi. Kui keegi tõstab käe, saab operaator M³-s kuvatava teate abil selle osaleja heli ühe klõpsuga sisse lülitada ning, kui ta on rääkimise lõpetanud, teise klõpsuga tema heli uuesti vaigistada ja käe langetada; tegevussaare Zoomi nupp loetleb tõstetud käed samade nuppudega. Iga toiming suunatakse Zoomis just selle osaleja reale tema täpse nime järgi ja kui kahel osalejal on sama nimi, ei puuduta M³ kumbagi. Kui koosoleku taimer on lubatud, ilmub juhataja jaoks taimeri ekraanile ka suur käsi koos osaleja nimega ning seda saab ka käsitsi sisse lülitada taimeri või Zoomi hüpikaknast. M³ õpib ühe nupuga selgeks, kuidas Zoom sinu keeles tõstetud käsi märgib (see tõstab ja langetab sinu enda käe); seda pakutakse ka seadistusabilises.
 
-- ✨ **Meeting Timer**: A new, optional timer remote. When turned on, M³ serves a read-only copy of the timer display as a web page on the local network, so a tablet or phone at the lectern can show the speaker the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time (parts, pre-meeting countdown, clock, overtime colors, hand alert) and all the controls stay in M³. The addresses to open are shown in the timer popup, with a copy button.
+- ✨ **Koosoleku taimer**: Uus valikuline taimeri kaugkuva. Kui see on sisse lülitatud, pakub M³ kohalikus võrgus veebilehena taimeri ekraani koopiat, mida saab ainult vaadata, nii et kõnepuldi juures olev tahvelarvuti või telefon saab näidata kõnelejale järelejäänud aega, ilma et see oleks koguduse ekraanil või Zoomi jagamises. Leht järgib taimerit reaalajas (osad, koosolekueelne tagasilugemine, kell, ületatud aja värvid, käetõstmise märguanne) ning kõik juhtnupud jäävad M³-sse. Avatavad aadressid on näidatud taimeri hüpikaknas koos kopeerimisnupuga.
 
-- ✨ **Setup Wizard**: The setup wizard now asks whether you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive. If you do, it helps you choose a shared folder there and shows how it works: M³ creates a folder for each upcoming meeting, named with the meeting's date, and the files put in it are added to that meeting automatically, on every computer that uses the folder.
+- ✨ **Seadistusviisard**: Seadistusviisard küsib nüüd, kas hoiad koosolekute faile mõnes pilvesalvestuse rakenduses, näiteks Dropboxis, OneDrive'is, iCloud Drive'is või Google Drive'is. Kui jah, aitab see seal jagatud kausta valida ja näitab, kuidas see töötab: M³ loob iga eelseisva koosoleku jaoks kausta, mille nimeks on koosoleku kuupäev, ja sinna pandud failid lisatakse sellele koosolekule automaatselt igas arvutis, mis seda kausta kasutab.
 
 ## v26.9.0
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+- ✨ **Koosolekueelsed ja -järgsed kiirtoimingud**: Uus suurte nuppudega paneel aitab koosoleku eel ja vahetult pärast seda – reaalajas tagasilugemine, taustamuusika käivitamine ja peatamine ühe klõpsuga, salvestamise alustamine ja lõpetamine ning iga koguduse oma kontrollnimekiri, mis on jaotatud kategooriatesse ja mida saab muuta seadetes. Koosolekueelne paneel suletakse automaatselt, kui koosolek algab ja kontrollnimekiri on täidetud (või pärast lühikest ooteaega), ning selle saab alati ka käsitsi sulgeda.
 
 ## v26.8.0
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Kogu rakenduse ümberkujundus**: Ulatuslik visuaalne ja kasutuskogemuse värskendus dialoogiakendes, meedialistis/-pealkirjas, seadetes ja seadistusviisardis. Seadistusviisard on nüüd üles ehitatud nii, et igal ekraanil kuvatakse üks küsimus ning ekraani allosas on edenemisriba. All prompts were replaced with a consistent branded dialog, and PDF page-range selection (for publication and drag-and-drop imports) now uses a thumbnail-grid picker instead of a free-text prompt. Added a new Quick Start Guide tour after the Setup Wizard completes. Also includes refreshed card/header styling with dark-mode-aware shadows and several dark-mode contrast fixes (focused field labels, download-progress percentages).
-- ✨ **Settings Page**: Reworked into a two-pane layout, with a new global Preferences section for auto-update/beta-update toggles moved out of the About dialog (which is now purely informational).
-- ✨ **Add More Media Button**: Added a setting to choose exactly which meeting sections show the "add more media" shortcut button, along with a setting for a compact (icon-only) mode.
-- ✨ **Media List**: Items now show loading skeletons while being added instead of appearing empty, media groups show a hidden-item count in their badge (e.g. "9 items (2 hidden)"), children within a group can be reordered via drag-and-drop, and at very narrow window widths items collapse into compact, tooltip-carrying chips instead of crowding the row.
+- ✨ **Kogu rakenduse ümberkujundus**: Ulatuslik visuaalne ja kasutuskogemuse värskendus dialoogiakendes, meedialistis/-pealkirjas, seadetes ja seadistusviisardis. Seadistusviisard on nüüd üles ehitatud nii, et igal ekraanil kuvatakse üks küsimus ning ekraani allosas on edenemisriba. Kõik sisestusaknad asendati ühtse, rakenduse kujundusega dialoogiaknaga ning PDF-i lehekülgede vahemiku valimiseks (väljaannetest ja lohistamise teel importimisel) kasutatakse nüüd vaba teksti sisestamise asemel pisipiltide ruudustikuga valijat. Lisati uus kiirjuhendi ringkäik, mis algab pärast seadistusviisardi lõpetamist. Samuti on värskendatud kaartide ja päiste kujundust koos tumedat režiimi arvestavate varjudega ning parandatud mitut tumeda režiimi kontrastiprobleemi (aktiivsete väljade sildid, allalaadimise edenemise protsendid).
+- ✨ **Seadete leht**: Leht on ümber kujundatud kahepaneeliliseks ning sellel on uus jaotis „Globaalsed eelistused”, kuhu tõsteti automaatse uuendamise ja beetauuenduste lülitid dialoogiaknast „Sellest rakendusest” (mis on nüüd puhtalt informatiivne).
+- ✨ **Nupp „Lisa juurde meediafaile”**: Lisati seade, millega saab täpselt valida, millistes koosoleku jaotistes kuvatakse otseteenupp „Lisa juurde meediafaile”, ning seade nupu kompaktse (ainult ikooniga) režiimi jaoks.
+- ✨ **Meedialoend**: Lisatavad elemendid näitavad nüüd tühja ala asemel laadimise kohatäiteid, meediarühmade märgil näidatakse peidetud elementide arvu (nt „9 kirjet (2 peidetud)”), rühma sees olevaid elemente saab lohistades ümber järjestada ning väga kitsa akna korral muutuvad elemendid kompaktseteks kohtspikriga kiipideks, et rida ei oleks liiga täis.
 
 ## v26.7.7
 
@@ -168,7 +168,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 - ✨ **Kursori ülekanne teleriekraanile**: täiustatud veebisaidi akna kursori ülekanne, mis tagab hiirekursori parema nähtavuse teleriekraanil.
 - ✨ **Koosoleku salvestamine**: Lisatud uus koosoleku salvestamise funktsioon, millega saab juhtida välist salvestusrakendust.
 - ✨ **Saidi otsing**: Lisatud võimalus otsida saidil meediat või väljaandeid nutika otsingu abil.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
+- ✨ **Lihtne väljaannete käsitsi importimine**: Lisati võimalus importida hõlpsalt väljaandeid ametlikult veebisaidilt, näiteks ajakirju, raamatuid, kavasid ja kutseid.
 - ✨ **Viipekeele parandused**: Lisatud kinnitus enne viipekeele failide terviklikku esitamist ja tugi mitme klippi valimiseks, näiteks kui mitu lõiku tuleb järjest lugeda.
 - ✨ **Klipi navigeerimine**: Lisati klippide loendi elementidele kestuse kuvamine ja parandati klippide navigeerimist.
 - 🛠️ **Meedia kuvamine**: tagab, et meedia kuvatakse taasesituse alguses, isegi kui see oli varem peidetud.
@@ -268,48 +268,48 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
-- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
+- 🔄 **OBS-i taasühendamise katsed**: Lisati võimalus sundida OBS vajaduse korral käsitsi uuesti ühenduma.
+- 🗑 **Vanade kuupäevapõhiste ekspordikaustade automaatne kustutamine**: Aegunud kuupäevapõhised ekspordikaustad eemaldatakse automaatselt, et salvestusruum püsiks korras.
 
 ## 25.2.0
 
 ### ✨ Uued funktsioonid
 
-- 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
-- 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
-- 🔄 **Automatic Beta to Stable Downgrade**: Allow automatic downgrades from beta versions to stable releases when necessary.
-- 🌐 **Extract Latest MEPS Language Indexes**: Fetch the most recent MEPS language indexes directly from the official website, ensuring up-to-date language support.
+- 🌍 **Süsteemi keeleseadete kasutamine vaikimisi**: Rakendus tuvastab ja kasutab automaatselt süsteemi keeleseadeid, et kasutuskogemus oleks isikupärasem.
+- 🏷 **Siltide tugi eksporditud meedia jaoks**: Eksporditud meediafailidele lisatakse metaandmete sildid, et neid oleks lihtsam korrastada.
+- 🔄 **Automaatne üleminek beetaversioonilt stabiilsele**: Vajaduse korral saab beetaversioonilt automaatselt stabiilsele versioonile tagasi minna.
+- 🌐 **Uusimate MEPS-i keeleindeksite hankimine**: Uusimad MEPS-i keeleindeksid hangitakse otse ametlikult veebisaidilt, et keeletugi oleks alati ajakohane.
 
 ## 25.1.0
 
 ### ✨ Uued funktsioonid
 
-- 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
-- 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
-- 📚 **Group Media by Publication**: Group media from the same referred publication for a cleaner and more organized media overview.
-- 🎵 **Duplicate Song Warning**: Show a warning if songs are listed more than once in the media list for weekend meetings.
-- 🔄 **Future Schedule Planning**: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
+- 📅 **Varasemate kuupäevade avamine**: Võimaldab avada jooksva nädala varasemaid kuupäevi, mis on kasulik, kui koosolekupäev on nädala sees hilisemaks nihutatud.
+- 🛑 **Veabänner OBS Studio jaoks**: Kui OBS Studio pole koosolekupäeval ühendatud, kuvatakse veabänner, et kasutajad saaksid sellest kohe teada.
+- 📚 **Meedia rühmitamine väljaannete kaupa**: Samale viidatud väljaandele kuuluv meedia rühmitatakse kokku, et meedia ülevaade oleks selgem ja paremini korrastatud.
+- 🎵 **Hoiatus korduvate laulude kohta**: Kui nädalavahetuse koosoleku meedialoendis on mõni laul rohkem kui üks kord, kuvatakse hoiatus.
+- 🔄 **Tulevaste ajakavamuudatuste planeerimine**: Võimaldab planeerida koosolekute ajakava tulevasi muudatusi, mis on kasulik iga-aastaste ajakavamuudatuste puhul või siis, kui ringkonnaülevaataja külastab naaberkogudust.
 
 ## 24.11.0
 
 ### ✨ Uued funktsioonid
 
-- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
-- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
-- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
-- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
-- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
+- 🖥️ **Veebisaidi esitlemine macOS-is**: Veebisaidi esitlemine on nüüd macOS-is toetatud 🚀
+- ⌨️ **Taasesituse kiirklahvid**: Lisati kiirklahvid meedia taasesituse lõpetamiseks, pausile panemiseks ja jätkamiseks 🚀
+- 🌐 **Kohandatud meedia allalaadimise aadress**: Lisati võimalus määrata veebiaadress, kust meediat alla laaditakse 🚀
+- 🎬 **OBS-i kiire stseenivalija**: Lisati OBS Studio kiire stseenivalija ja uuendati põhjalikult seadetes oleva stseenivalija funktsionaalsust
+- 📖 **Rohkem dokumentatsiooni keeli**: Dokumentatsiooni veebisait toetab nüüd rohkem keeli
 
 ## 24.10.10
 
 ### ✨ Uued funktsioonid
 
-- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
-- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
-- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
+- ⌨️ **Meedias liikumise kiirklahvid**: Lisati kiirklahvid järgmisele/eelmisele meediaelemendile liikumiseks
+- 🖱️ **Meediaelemendi paremklõpsumenüü**: Lisati meediaelementidele paremklõpsumenüü, mille kaudu saab elemente peita ja ümber nimetada
+- ✂️ **Kärbitud JWL-i esitusloendite import**: Imporditud JWL-i esitusloendites arvestatakse nüüd videote kärbitud aegu
 
 ## 24.10.9
 
 ### ✨ Uued funktsioonid
 
-- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
+- 🗑️ **Päeva lisameedia kustutamine**: Lisati võimalus kustutada kõik valitud päevale käsitsi lisatud meediafailid

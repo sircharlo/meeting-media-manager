@@ -1,8 +1,8 @@
 # Руководство по настройкам {#settings-guide}
 
-Это всеобъемлющее руководство объясняет все параметры, доступные в M³, организованные по категориям. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Это всеобъемлющее руководство объясняет все параметры, доступные в M³, организованные по категориям. Разобравшись в этих настройках, вы сможете настроить M³ так, чтобы он идеально соответствовал потребностям вашего собрания.
 
-## General {#application-configuration}
+## Общие {#application-configuration}
 
 ### Язык приложения {#display-language}
 
@@ -10,819 +10,819 @@
 
 Выберите язык интерфейса M³. Это не зависит от языка, используемого для загрузки медиа файлов.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Варианты**: все доступные языки интерфейса (английский, испанский, французский и т. д.)
 
-**Default**: English
+**По умолчанию**: английский
 
-### Dark Mode {#dark-mode}
+### Темный режим {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Выбор темы оформления M³.
 
-**Options**:
+**Варианты**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Автоматически переключаться в зависимости от настроек системы
+- Всегда использовать темный режим
+- Всегда использовать светлый режим
 
-**Default**: Auto
+**По умолчанию**: автоматически
 
-### First Day of Week {#first-day-of-week}
+### Первый день недели {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Укажите, какой день считать первым днем недели в календаре.
 
-**Options**: Sunday through Saturday
+**Варианты**: с воскресенья по субботу
 
-**Default**: Sunday
+**По умолчанию**: воскресенье
 
-### Date Format {#date-format}
+### Формат даты {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Формат, используемый для отображения дат в приложении.
 
-**Example**: D MMMM YYYY
+**Пример**: D MMMM YYYY
 
-**Default**: D MMMM YYYY
+**По умолчанию**: D MMMM YYYY
 
-### Auto-Start at Login {#auto-start-at-login}
+### Автозапуск при входе в систему {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Автоматически запускать M³ при загрузке компьютера.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-## Congregation Meetings {#congregation-meetings}
+## Встречи собрания {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Название собрания {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+Название вашего собрания. Используется для упорядочивания и отображения.
 
-**Default**: Empty (must be set during setup)
+**По умолчанию**: пусто (нужно указать при настройке)
 
-### Meeting Language {#meeting-language}
+### Язык встреч {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+Основной язык для загрузки медиа. Он должен совпадать с языком, на котором проводятся встречи вашего собрания.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Варианты**: все языки, доступные на официальном сайте Свидетелей Иеговы
 
-**Default**: English (E)
+**По умолчанию**: английский (E)
 
-### Fallback Language {#fallback-language}
+### Вторичный язык {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Дополнительный язык, который используется, если медиа недоступны на основном языке.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Варианты**: все языки, доступные на официальном сайте Свидетелей Иеговы
 
-**Default**: None
+**По умолчанию**: нет
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### День встречи в будние дни {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+День недели, в который проводится ваша встреча в будние дни.
 
-**Options**: Sunday through Saturday
+**Варианты**: с воскресенья по субботу
 
-**Default**: None (must be set during setup)
+**По умолчанию**: нет (нужно указать при настройке)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Время встречи в будние дни {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+Время начала вашей встречи в будние дни.
 
-**Format**: HH:MM (24-hour format)
+**Формат**: ЧЧ:ММ (24-часовой формат)
 
-**Default**: None (must be set during setup)
+**По умолчанию**: нет (нужно указать при настройке)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### День встречи в выходные дни {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+День недели, в который проводится ваша встреча в выходные дни.
 
-**Options**: Sunday through Saturday
+**Варианты**: с воскресенья по субботу
 
-**Default**: None (must be set during setup)
+**По умолчанию**: нет (нужно указать при настройке)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Время встречи в выходные дни {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+Время начала вашей встречи в выходные дни.
 
-**Format**: HH:MM (24-hour format)
+**Формат**: ЧЧ:ММ (24-часовой формат)
 
-**Default**: None (must be set during setup)
+**По умолчанию**: нет (нужно указать при настройке)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Неделя посещения районного старейшины {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+Неделя следующего посещения районного старейшины.
 
-**Format**: MM/DD/YYYY
+**Формат**: ММ/ДД/ГГГГ
 
-**Default**: None
+**По умолчанию**: нет
 
-### Memorial Date {#memorial-date}
+### Дата Вечери {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration.
+Дата следующей Вечери воспоминания.
 
-**Format**: MM/DD/YYYY
+**Формат**: ММ/ДД/ГГГГ
 
-**Default**: Automatically retrieved periodically
+**По умолчанию**: периодически определяется автоматически
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Изменения в расписании встреч {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Эти настройки позволяют задать временные изменения в расписании встреч:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Дата изменения**: когда изменение вступает в силу
+- **Разовое изменение**: является ли изменение постоянным или временным
+- **Новый день встречи в будние дни**: день, в который теперь будет проводиться встреча в будние дни
+- **Новое время встречи в будние дни**: время, в которое теперь будет начинаться встреча в будние дни
+- **Новый день встречи в выходные дни**: день, в который теперь будет проводиться встреча в выходные дни
+- **Новое время встречи в выходные дни**: время, в которое теперь будет начинаться встреча в выходные дни
 
-### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
+### Автоматическое обновление расписания встреч {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
+Если этот параметр включен, M³ периодически проверяет на официальном сайте Свидетелей Иеговы изменения дней и времени встреч и автоматически обновляет текущий профиль.
 
-This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
+Это работает только для профилей, добавленных с помощью поиска собраний, если название собрания в них не изменялось вручную. Если синхронизация была отключена из-за изменения названия собрания, нажмите **Включить синхронизацию расписания**, чтобы снова связать профиль.
 
-#### Enable Schedule Sync {#relink-congregation}
+#### Включить синхронизацию расписания {#relink-congregation}
 
 <!-- **Setting**: `relinkCongregationButton` -->
 
-Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+Снова связывает текущий профиль с поиском собраний, чтобы возобновилось автоматическое обновление дней и времени встреч. Эта кнопка показывается, только если название собрания было изменено вручную, ведь именно это и разрывает связь.
 
-#### Refresh Meeting Schedule {#refresh-meeting-schedule}
+#### Обновить расписание встреч {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Manually synchronize the current and future meeting schedule with the information from the official website.
+Вручную синхронизировать текущее и будущее расписание встреч с информацией с официального сайта.
 
-## Media & Playback {#media-retrieval-and-playback}
+## Медиа и воспроизведение {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Ограниченное подключение к Интернету {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+Включите этот параметр, если у вас ограниченный объем трафика, чтобы сократить расход данных.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-### Media Display {#media-display-button}
+### Воспроизведение медиа {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Включить функцию показа медиа. Это необходимо для показа медиа на втором мониторе.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Enable Media Preview {#enable-media-preview}
+#### Включить предпросмотр медиа {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Show a live preview of the media window while an image or video is being displayed.
+Показывать предпросмотр окна мультимедиа в реальном времени, пока показывается изображение или видео.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Запускать воспроизведение на паузе {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+Запускать видео на паузе в начале воспроизведения.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-### Background Music {#settings-guide-background-music}
+### Фоновая музыка {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Включить музыку {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Включить фоновую музыку.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-#### Auto-Start Music {#auto-start-music}
+#### Автозапуск музыки {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+Автоматически запускать фоновую музыку при запуске M³, если это уместно.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Остановка музыки перед встречей {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+За сколько секунд до начала встречи останавливать фоновую музыку.
 
-**Range**: 0-300 seconds
+**Диапазон**: 0-300 секунд
 
-**Default**: 60 seconds
+**По умолчанию**: 60 секунд
 
-#### Music Volume {#music-volume}
+#### Громкость музыки {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+Уровень громкости фоновой музыки (1-100%).
 
-**Default**: 100%
+**По умолчанию**: 100%
 
-### Playback and Download Options {#media-display}
+### Параметры воспроизведения и загрузки {#media-display}
 
 <!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
 these control the media window's playback behavior and which downloaded media is
 filtered out, as distinct from the "Media Display" section above (which is about
 whether the media window feature is enabled at all). -->
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Включить плавные переходы окна мультимедиа {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Включить плавное появление и исчезновение при показе или скрытии окна мультимедиа.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-#### Enable Playback Speed Control {#enable-playback-speed-control}
+#### Включить управление скоростью воспроизведения {#enable-playback-speed-control}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
-Allow audio and video playback speed to be adjusted from the media item's context menu.
+Разрешить менять скорость воспроизведения аудио и видео в контекстном меню медиафайла.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Hide Media Logo {#hide-media-logo}
+#### Скрыть логотип в окне мультимедиа {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Скрыть логотип в окне мультимедиа.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Максимальное разрешение {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+Максимальное разрешение для загружаемых медиафайлов.
 
-**Options**: 240p, 360p, 480p, 720p, 1080p
+**Варианты**: 240p, 360p, 480p, 720p, 1080p
 
-**Default**: 720p
+**По умолчанию**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### Включать печатные медиа {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+Включать в загрузку медиа из печатных изданий.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Исключить сноски {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+По возможности не загружать изображения из сносок.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+#### Исключить дополнительные видео для изучения «Сторожевой башни» {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
-Exclude additional videos that are referenced in Watchtower Study paragraphs.
+Исключить дополнительные видео, на которые есть ссылки в абзацах статьи для изучения «Сторожевой башни».
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+#### Исключить видео во время части «Изучение Библии в собрании» {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+Выберите публикации, видео из которых не должны показываться во время части «Изучение Библии в собрании». Поиск по названию или обозначению публикации.
 
-**Default**: Walk Courageously With God (`wcg`)
+**По умолчанию**: книга «Walk Courageously With God» (`wcg`)
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Исключить медиа из брошюры «Развивай навыки» {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Не загружать медиа из брошюры «Развивай навыки» (th).
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-### Subtitles {#subtitles}
+### Субтитры {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Включить субтитры {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Включить поддержку субтитров для воспроизведения медиа.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Subtitle Language {#subtitle-language}
+#### Язык субтитров {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Язык субтитров (может отличаться от языка медиа).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Варианты**: все языки, доступные на официальном сайте Свидетелей Иеговы
 
-**Default**: None
+**По умолчанию**: нет
 
-### Cache Management {#cache-management}
+### Управление кэшем {#cache-management}
 
-#### Cache Songbook Video Files {#enable-extra-cache}
+#### Кэшировать видеофайлы песенника {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
+Заранее кэшировать все видео из песенника для лучшей производительности. Обратите внимание, что при этом увеличивается размер кэша медиа.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Cache Folder {#cache-folder}
+#### Папка кэша {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Собственное расположение для хранения кэшированных медиафайлов.
 
-**Default**: System default location
+**По умолчанию**: стандартное системное расположение
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Включить автоочистку кэша {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+Автоматически удалять старые файлы из кэша, чтобы экономить место на диске.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-### Pinyin Song Titles {#pinyin-song-titles}
+### Названия песен с пиньинем {#pinyin-song-titles}
 
-#### Prefer Pinyin Songs {#enable-pinyin-songs}
+#### Предпочитать песни с пиньинем {#enable-pinyin-songs}
 
 <!-- **Setting**: `enablePinyinSongs` -->
 
-When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+Если в папке песен с пиньинем найдена версия песни для встречи с пиньинем, использовать ее вместо обычной песни.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Pinyin Song Folder {#pinyin-song-folder}
+#### Папка песен с пиньинем {#pinyin-song-folder}
 
 <!-- **Setting**: `pinyinSongFolder` -->
 
-Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+Папка с видеозаписями песен с пиньинем (например, `sjjm_s-Pi_CHS_066_r720P.mp4`). Если найден файл с пиньинем, соответствующий номеру песни для встречи, он будет воспроизводиться вместо обычной песни.
 
-**Default**: Empty
+**По умолчанию**: пусто
 
-### Media Export {#settings-guide-media-export}
+### Экспорт медиа {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Включить автоэкспорт медиа {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+Автоматически экспортировать медиафайлы в указанную папку.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Media Export Folder {#media-export-folder}
+#### Папка для экспорта медиа {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Путь к папке, в которую будут автоматически экспортироваться медиафайлы.
 
-**Default**: Empty
+**По умолчанию**: пусто
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Конвертировать файлы в MP4 {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Настройка**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Преобразовывать экспортированные медиафайлы в формат MP4 для лучшей совместимости.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-### Shared Folder (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
+### Общая папка (Dropbox, OneDrive, iCloud Drive, Google Drive) {#settings-guide-folder-monitoring}
 
-These settings are in the **Integrations** category.
+Эти настройки находятся в категории **Интеграции**.
 
-M³ can add media to your meetings from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive. This is useful when others prepare media for their parts and share it with you, or when M³ is used on more than one computer. A folder on this computer or on your network works too.
+M³ может добавлять медиа к вашим встречам из папки, которую синхронизирует приложение облачного хранилища, например Dropbox, OneDrive, iCloud Drive или Google Drive. Это удобно, когда другие готовят медиа для своих частей и делятся ими с вами или когда M³ используется на нескольких компьютерах. Подойдет и папка на этом компьютере или в вашей сети.
 
-M³ creates a folder inside the shared folder for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`). Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. Чтобы добавить файлы для другого дня, создайте для него папку с названием в том же формате. Anything else in the shared folder is ignored.
+M³ создает в общей папке папку для каждой предстоящей встречи с датой встречи в названии в формате год-месяц-день (например, `2026-03-25`). Помещайте фотографии, видео, аудиофайлы или плейлисты JW Library в папку встречи, и они автоматически добавятся в список медиа этой встречи. Чтобы добавить файлы для другого дня, создайте для него папку с названием в том же формате. Все остальное в общей папке игнорируется.
 
 :::tip Подсказка
 
-Create a new folder used only for this, such as "Meeting media", and set it to always stay on this computer in your cloud storage app (often called "available offline"), so the files are ready before the meeting starts.
+Создайте новую папку только для этого, например «Медиа для встреч», и в приложении облачного хранилища настройте, чтобы она всегда хранилась на этом компьютере (часто это называется «доступно офлайн»): тогда файлы будут готовы до начала встречи.
 
 :::
 
-#### Add Media From a Shared Folder {#enable-folder-watcher}
+#### Добавлять медиа из общей папки {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Add the files put in the shared folder to the right meeting automatically.
+Автоматически добавлять файлы, помещенные в общую папку, к нужной встрече.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Shared Folder {#folder-to-watch}
+#### Общая папка {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder to add media from. The setup wizard offers to set it up for you.
+Папка, из которой добавляются медиа. Мастер настройки предложит настроить ее за вас.
 
-**Default**: Empty
+**По умолчанию**: пусто
 
-#### Delete Past Meeting Folders {#delete-past-watched-folders}
+#### Удалять папки прошедших встреч {#delete-past-watched-folders}
 
 <!-- **Setting**: `deletePastWatchedFolders` -->
 
-When a week is over, delete that week's dated folders, along with the files in them, to keep the shared folder tidy. Since the folder is shared, they're also deleted for everyone else who uses it. Turn this off to keep them.
+Когда неделя заканчивается, удалять папки этой недели с датами вместе с файлами в них, чтобы в общей папке был порядок. Поскольку папка общая, они удаляются и у всех остальных, кто ею пользуется. Отключите этот параметр, чтобы сохранить их.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-## Meeting Timer {#meeting-timer}
+## Таймер встречи {#meeting-timer}
 
-### Enable Meeting Timer {#enable-meeting-timer}
+### Включить таймер встречи {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+Включить отдельное окно таймера для отсчета времени частей встречи. Это бета-функция, и ее следует включать, только если это одобрено на местном уровне.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-### Timer Window Behavior {#timer-window-behavior}
+### Поведение окна таймера {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+Укажите, открывается ли окно таймера автоматически, ведут ли таймеры выступающих по умолчанию прямой или обратный отсчет, используют ли часы 12- или 24-часовой формат и показывается ли текущее значение таймера на кнопке таймера на панели действий.
 
-### Quick Access to the Timer {#timer-quick-access}
+### Быстрый доступ к таймеру {#timer-quick-access}
 
 <!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
 
-Choose how the timer is reached from the main window:
+Выберите, как получать доступ к таймеру из главного окна:
 
-- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
-- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+- **Быстрое управление при наведении на кнопку таймера**: при наведении курсора на кнопку таймера на панели действий показывается часть, время которой отсчитывается, с кнопками для запуска, паузы, остановки и перехода к следующей части, без открытия полного всплывающего окна таймера. Включено по умолчанию.
+- **Показывать панель таймера в главном окне**: весь список частей встречи и элементы управления таймером находятся на панели, закрепленной в правой части главного окна, и всегда на виду. Полное всплывающее окно по-прежнему доступно на панели действий для настроек окна и экрана.
 
-### Timer Remote {#timer-remote}
+### Удаленный таймер {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
 
-When turned on, M³ serves a read-only copy of the timer display as a web page on your local network, for a tablet or phone at the lectern: the speaker sees the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time, including the pre-meeting countdown, the clock, overtime colors and the hand alert, and all the controls stay in M³.
+Если эта функция включена, M³ показывает копию экрана таймера (только для просмотра) как веб-страницу в локальной сети для планшета или телефона на трибуне: докладчик видит оставшееся время, но оно не появляется на экране собрания или в демонстрации Zoom. Страница отображает таймер в реальном времени, включая обратный отсчет до встречи, часы, цвета превышения времени и сигнал поднятой руки, а все элементы управления остаются в M³.
 
-The addresses to open on the device are listed in the timer popup, with a copy button. Change the port only if another program already uses it. Note that anyone on the same network can open the page while this is on; it shows nothing but the timer.
+Адреса, которые нужно открыть на устройстве, перечислены во всплывающем окне таймера вместе с кнопкой копирования. Меняйте порт, только если его уже использует другая программа. Обратите внимание, что, пока эта функция включена, страницу может открыть любой в той же сети; на ней показывается только таймер.
 
-**Default**: `false`, port `8787`
+**По умолчанию**: `false`, порт `8787`
 
-### Timer Display Formats {#timer-display-formats}
+### Форматы отображения таймера {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+Выберите аналоговый или цифровой формат отображения для текущего времени и таймеров обратного отсчета. Индикатор предупреждения при обратном отсчете может в последнюю минуту постепенно окрашивать аналоговое кольцо обратного отсчета в предупреждающий цвет.
 
-The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
+Формат обратного отсчета **Аналоговые часы с дугой времени** показывает оставшееся время части в виде сектора на циферблате аналоговых часов — от минутной стрелки до запланированного окончания, так что одного взгляда достаточно, чтобы увидеть и текущее время, и сколько осталось. Превышение времени показывается вторым сектором цвета превышения. Этот формат также применяется к обратному отсчету до встречи и работает в режиме прямого отсчета.
 
-### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+### Обратный отсчет до встречи и соблюдение расписания {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+Показывать обратный отсчет до начала запланированных встреч и при желании показывать, опережает ли встреча расписание или отстает от него. Обратный отсчет до встречи показывается только на экране таймера, а не в основном окне мультимедиа.
 
-### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+### Внешний вид таймера и превышение времени {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
-Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
+Настройте размер и цвета текста таймера, а также индикаторы превышения времени, например другие цвета, мигание и показ только величины превышения в режиме прямого отсчета.
 
-## Integrations {#integrations}
+## Интеграции {#integrations}
 
-This category also holds the [shared folder](#settings-guide-folder-monitoring) settings, for adding media from Dropbox, OneDrive, iCloud Drive or Google Drive.
+В этой категории также находятся настройки [общей папки](#settings-guide-folder-monitoring) для добавления медиа из Dropbox, OneDrive, iCloud Drive или Google Drive.
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Интеграция с Zoom {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Включить Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Включить функции интеграции с конференциями Zoom.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Горячая клавиша для демонстрации экрана {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+Сочетание клавиш для запуска демонстрации экрана в Zoom.
 
-**Default**: None
+**По умолчанию**: нет
 
-#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+#### Автофокус на окне мультимедиа {#zoom-auto-focus-media-window}
 
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
-Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+Автоматически выводить окно мультимедиа на передний план после начала демонстрации экрана в Zoom. Обычно это не требуется, но может помочь на некоторых компьютерах, если окно мультимедиа регулярно теряет фокус после начала демонстрации экрана.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-### Zoom Meeting Manager {#zoom-meeting-manager}
+### Менеджер конференций Zoom {#zoom-meeting-manager}
 
-The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+Менеджер конференций Zoom (бета-версия, только для Windows) управляет за вас настольным приложением Zoom до, во время и после каждой встречи. Его помощник настройки, который предлагается при включении, шаг за шагом поможет настроить каждое автоматическое действие.
 
-#### While M³ Operates Zoom {#zoom-meeting-manager-overlay}
+#### Когда M³ управляет Zoom {#zoom-meeting-manager-overlay}
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom offers no proper automation interface, so M³ drives the Zoom app through its accessibility interface, which works without the mouse for nearly everything (the participants list, its menus, the Share window). A few actions can still have to move the mouse or the focused window for a moment, for example to bring Zoom's auto-hidden toolbar back. Whenever that happens, M³ covers its own window with a "M³ is operating Zoom" notice naming what is going on, with a **Cancel this automation** button. The same notice shows during the setup assistant's checks and the self-test. A global keyboard shortcut (default `Ctrl+Alt+Escape`), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Cancelling stops M³ at once; Zoom may then be left part-way, so check it.
+У Zoom нет полноценного интерфейса для автоматизации, поэтому M³ управляет приложением Zoom через его интерфейс специальных возможностей, который почти для всего обходится без мыши (список участников, его меню, окно демонстрации). Некоторым действиям все же приходится на мгновение перемещать мышь или активное окно, например чтобы вернуть автоматически скрываемую панель инструментов Zoom. В таких случаях M³ закрывает свое окно уведомлением «M³ управляет Zoom», в котором указано, что происходит, и есть кнопка **Отменить это действие**. Такое же уведомление показывается во время проверок помощника настройки и самотестирования. Глобальное сочетание клавиш (по умолчанию `Ctrl+Alt+Escape`), которое активно, только пока выполняется автоматическое действие, отменяет его откуда угодно, даже если Zoom в фокусе. Отмена сразу останавливает M³; при этом Zoom может остаться в промежуточном состоянии, поэтому проверьте его.
 
-**Default**: `Ctrl+Alt+Escape`
+**По умолчанию**: `Ctrl+Alt+Escape`
 
-#### Raised-Hand Helper {#zoom-meeting-manager-hand-alert}
+#### Помощник для поднятых рук {#zoom-meeting-manager-hand-alert}
 
 <!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
 
-During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you **unmute** that participant with one click, and, once they are done speaking, **mute them again and lower their hand** with another. The Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name; if two participants share a name, M³ touches neither.
+Во время встречи M³ следит за поднятыми руками в списке участников Zoom. Когда кто-то поднимает руку, уведомление в M³ позволяет одним нажатием **включить звук** этому участнику, а когда он закончит говорить, еще одним нажатием **снова выключить ему звук и опустить руку**. Кнопка Zoom на панели действий показывает список поднятых рук с теми же кнопками. Каждое действие выполняется в строке именно этого участника в Zoom, по его точному имени; если у двух участников одинаковые имена, M³ не трогает ни одного из них.
 
-If the [meeting timer](#meeting-timer) is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and a **Hand alert** button in the timer and Zoom popups shows it by hand. This part needs the timer display; the notifications and buttons work without it.
+Если [таймер встречи](#meeting-timer) включен, для председателя на экране таймера также появляется большая рука с именем участника, а кнопка **Сигнал поднятой руки** во всплывающих окнах таймера и Zoom позволяет показать ее вручную. Для этого нужен экран таймера; уведомления и кнопки работают и без него.
 
-Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list and which menu entry lowers it, then lowers it again. The setup assistant offers this step too.
+Zoom отмечает поднятые руки на своем языке, поэтому M³ сначала нужно определить, как именно: открыв конференцию в Zoom, нажмите **Определить, как Zoom отмечает поднятые руки**. M³ поднимает вашу руку, считывает, как Zoom отмечает ее в списке участников и какой пункт меню ее опускает, а затем снова опускает руку. Этот шаг предлагает и помощник настройки.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### Интеграция с OBS Studio {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### Включить OBS {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Включить интеграцию с OBS Studio для автоматического переключения сцен.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-:::warning Important Note
+:::warning Важное примечание
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Требуется настройка звука**: интеграция с OBS Studio отвечает только за демонстрацию экрана. При использовании OBS Studio звук медиа из M³ **не передается автоматически** участникам Zoom. Чтобы участники встречи слышали медиа, нужно настроить в Zoom оригинальный звук или использовать «Совместно использовать звук компьютера». Подробные инструкции по настройке звука см. в [руководстве пользователя](/user-guide#audio-configuration).
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Примечание**: интеграция с Zoom использует встроенную демонстрацию экрана Zoom, которая справляется со звуком лучше, чем интеграция с OBS Studio.
 
 :::
 
-#### OBS Port {#obs-port}
+#### Порт OBS {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+Номер порта для подключения к OBS Studio WebSocket.
 
-**Default**: None
+**По умолчанию**: нет
 
-#### OBS Password {#obs-password}
+#### Пароль OBS {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+Пароль для соединения с OBS Studio WebSocket.
 
-**Default**: None
+**По умолчанию**: нет
 
-#### OBS Scenes {#obs-scenes}
+#### Сцены OBS {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Укажите, какие сцены OBS использовать для разных целей:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Сцена камеры**: сцена с изображением камеры или трибуны
+- **Сцена медиа**: сцена для показа медиа
+- **Сцена изображений**: сцена для показа изображений (например, сцена «картинка в картинке», где видны и медиа, и докладчик)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### Дополнительные настройки OBS {#obs-advanced-options}
 
-- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
-- **Recording Controls**: Show controls that start and stop OBS recording from M³
+- **Отключить автоматическую демонстрацию изображений**: откладывать показ изображений в OBS, пока вы не запустите его вручную
+- **Быстрое переключение**: включить быстрое включение и выключение интеграции с OBS
+- **Переключение сцены после медиа**: автоматически возвращаться к предыдущей сцене после медиа
+- **Запоминание предыдущей сцены**: запоминать и восстанавливать предыдущую сцену
+- **Скрытие значков**: скрыть значки OBS в интерфейсе
+- **Управление записью**: показывать элементы управления, которые запускают и останавливают запись OBS из M³
 
-:::warning Important Note
+:::warning Важное примечание
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Требуется настройка звука**: интеграция с OBS Studio отвечает только за переключение видео и сцен. Звук медиа из M³ **не передается автоматически** в Zoom или OBS. Видеопоток работает как виртуальная камера без звука, точно так же как веб-камера. Чтобы участники встречи слышали медиа, нужно настроить в Zoom оригинальный звук или использовать «Совместно использовать звук компьютера». Подробные инструкции по настройке звука см. в [руководстве пользователя](/user-guide#audio-configuration).
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Альтернатива**: попробуйте вместо этого использовать интеграцию с Zoom — она использует встроенную демонстрацию экрана Zoom, которая лучше справляется со звуком.
 
 :::
 
-### Custom Events {#custom-events}
+### Пользовательские события {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Включить пользовательские события {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Включить настраиваемые горячие клавиши, которые срабатывают при определенном событии (например, когда медиа воспроизводится, ставится на паузу или останавливается).
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Горячие клавиши для пользовательских событий {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Горячая клавиша при воспроизведении медиа {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+Горячая клавиша, которая срабатывает, когда начинается воспроизведение медиа.
 
-**Default**: None
+**По умолчанию**: нет
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Горячая клавиша при паузе медиа {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+Горячая клавиша, которая срабатывает, когда медиа ставится на паузу.
 
-**Default**: None
+**По умолчанию**: нет
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Горячая клавиша при остановке медиа {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+Горячая клавиша, которая срабатывает, когда воспроизведение медиа останавливается.
 
-**Default**: None
+**По умолчанию**: нет
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Горячая клавиша для завершающей песни {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Горячая клавиша, которая срабатывает при воспроизведении завершающей песни встречи.
 
-**Default**: None
+**По умолчанию**: нет
 
-### Meeting Recordings {#meeting-recordings}
+### Записи встреч {#meeting-recordings}
 
-#### Enable External Recording App Integration {#enable-external-recording-app-integration}
+#### Включить интеграцию с внешним приложением для записи {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
+Разрешить M³ управлять отдельным приложением для записи с помощью горячих клавиш. M³ при этом ничего не записывает сам, а отправляет заданные горячие клавиши, когда вы нажимаете **Начать запись** или **Остановить запись** во всплывающем окне «Записи встреч».
 
-This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
+Этот параметр скрыт, если включены элементы управления записью OBS. Если вы используете OBS Studio, вместо этого используйте элементы управления записью OBS в интеграции с OBS.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
+#### Горячие клавиши и папка для записи {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
+Укажите горячую клавишу для начала записи, необязательную горячую клавишу для остановки записи и папку, в которую внешнее приложение сохраняет записи. Если горячая клавиша для остановки не задана, M³ использует горячую клавишу для начала записи. Если папка указана, M³ показывает кнопку для ее открытия.
 
-## Interface & Shortcuts {#interface-shortcuts}
+## Интерфейс и горячие клавиши {#interface-shortcuts}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Горячие клавиши {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Включить горячие клавиши {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Включить настраиваемые горячие клавиши для управления медиа.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Горячие клавиши для управления медиа {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Настройте горячие клавиши для воспроизведения медиа:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Окно мультимедиа**: открыть/закрыть окно мультимедиа
+- **Предыдущий медиафайл**: перейти к предыдущему медиафайлу
+- **Следующий медиафайл**: перейти к следующему медиафайлу
+- **Пауза/продолжение**: приостановить или возобновить воспроизведение медиа
+- **Остановка медиа**: остановить воспроизведение медиа
+- **Переключение музыки**: включить или выключить фоновую музыку
 
-### Add More Media Button {#add-more-media-button}
+### Кнопка «Добавить ещё мультимедиа» {#add-more-media-button}
 
-#### Sections with an Add Media Button {#add-media-button-sections}
+#### Разделы с кнопкой «Добавить ещё мультимедиа» {#add-media-button-sections}
 
 <!-- **Setting**: `addMediaButtonSections` -->
 
-Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
+Выберите, в каких разделах встречи будет своя кнопка для добавления собственных медиа, в дополнение к кнопке «Добавить медиа» на верхней панели инструментов, которая всегда работает для всех разделов.
 
-**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
+**По умолчанию**: «Публичная речь», «Христианская жизнь», «Посещение районного старейшины» и пользовательские разделы
 
-#### Compact Add Media Button {#compact-add-media-button}
+#### Компактный режим кнопки «Добавить медиа» {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
-Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
+Показывать только значок кнопки «Добавить ещё мультимедиа»/«Добавить песню» в заголовках разделов. Если выключено, при достаточном месте рядом со значком отображается и текст.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-### Media Drag Handle {#media-drag-handle}
+### Маркер перетаскивания медиа {#media-drag-handle}
 
-#### Show Drag Handle {#show-media-drag-handle}
+#### Показывать маркер перетаскивания {#show-media-drag-handle}
 
 <!-- **Setting**: `showMediaDragHandle` -->
 
-Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
+Показывать на каждом медиафайле небольшой маркер, за который его можно перетащить, чтобы изменить порядок. Порядок медиафайлов всегда можно изменить, перетаскивая их за любое место; этот параметр влияет только на то, показывается ли сам значок маркера.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
+### Быстрые действия до и после встречи {#before-after-meeting-quick-actions}
 
-#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
+#### Показывать быстрые действия для встреч {#enable-meeting-quick-actions}
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
-Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
+Показывать панели перед встречей и после нее с полезными элементами управления (фоновая музыка, запись) и настраиваемым контрольным списком для каждой.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
+Категории и задачи контрольных списков для обеих панелей — перед встречей и после нее — настраиваются в этом же разделе настроек: добавляйте, переименовывайте, меняйте порядок или удаляйте категории и задачи так, как нужно вашему собранию.
 
-## Advanced {#advanced-settings}
+## Дополнительно {#advanced-settings}
 
-### Profile Settings Transfer {#profile-settings-transfer}
+### Перенос настроек профиля {#profile-settings-transfer}
 
-Export the current profile's settings to a JSON file or import a previously exported profile settings file. При импорте текущие настройки профиля заменяются.
+Экспортировать текущие настройки профиля в файл JSON или импортировать ранее экспортированный файл настроек профиля. При импорте текущие настройки профиля заменяются.
 
-### Danger Zone {#danger-zone}
+### Опасная зона {#danger-zone}
 
 :::warning Внимание
 
-These settings should only be changed if you understand their implications.
+Меняйте эти настройки, только если понимаете, к чему это приведет.
 
 :::
 
-#### Base URL {#base-url}
+#### Базовый URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+Базовый домен, используемый для загрузки публикаций и мультимедиа.
 
-**Default**: `jw.org`
+**По умолчанию**: `jw.org`
 
-#### Disable Hardware Acceleration {#disable-hardware-acceleration}
+#### Отключить аппаратное ускорение {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
+Отключить аппаратное ускорение после перезапуска M³. Это может помочь при графических сбоях или аварийном завершении работы на некоторых системах, но в остальных случаях не рекомендуется.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
+#### Скрыть напоминание об аппаратном ускорении {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
+Скрыть напоминание о том, что аппаратное ускорение нужно снова включить, после того как оно было отключено вручную.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Отключить загрузку медиа {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Полностью отключить автоматическую загрузку медиа. Используйте это только в профилях для особых мероприятий или других нестандартных конфигураций.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Советы по оптимальной конфигурации {#configuration-tips}
 
-### For New Users {#new-users}
+### Для новых пользователей {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Turn on "Enable media playback" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Начните с мастера настройки, чтобы задать основные параметры
+2. Включите параметр «Включить воспроизведение медиа», чтобы получить доступ к функциям показа медиа
+3. Точно настройте расписание встреч
+4. Настройте интеграцию с OBS, если у вас проводятся гибридные встречи
 
-### For Advanced Users {#advanced-users}
+### Для продвинутых пользователей {#advanced-users}
 
-1. Use a shared folder to add media from cloud storage, such as Dropbox or OneDrive
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Используйте общую папку, чтобы добавлять медиа из облачного хранилища, например Dropbox или OneDrive
+2. Включите автоэкспорт медиа для резервного копирования
+3. Настройте горячие клавиши для эффективной работы
+4. Настройте интеграцию с Zoom для автоматической демонстрации экрана
 
-### Performance Optimization {#performance-optimization}
+### Оптимизация производительности {#performance-optimization}
 
-1. Cache songbook video files for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Кэшируйте видеофайлы песенника для лучшей производительности
+2. Выберите максимальное разрешение, подходящее для ваших задач
+3. Настройте автоочистку кэша, чтобы экономить место на диске
+4. Если трафик ограничен, включите настройку ограниченного подключения
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Устранение неполадок {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Если медиа не загружаются, проверьте настройки расписания встреч
+- Если интеграция с OBS не работает, проверьте настройки порта и пароля
+- Если программа работает медленно, попробуйте включить дополнительное кэширование или уменьшить разрешение
+- Если возникают проблемы с языком, проверьте настройки языка интерфейса и языка медиа
+- Если участники Zoom не слышат звук медиа, настройте в Zoom оригинальный звук или используйте «Совместно использовать звук компьютера»
+- **Совет**: для более простой работы со звуком попробуйте использовать интеграцию с Zoom вместо OBS Studio

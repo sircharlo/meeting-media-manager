@@ -82,7 +82,7 @@ E hōro’a te ta’o’o rorouira i te mau taviri fa’atere ato’a:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
+- **Fa’arahi/Fa’ane’e** - ’A tāpe’a i te Ctrl ’aore rā te Shift ’e ’a fa’ati’a i te huira o te ’iore, ’aore rā ’a ’ōmi i ni’a i te touchpad, nō te fa’arahi, ’e i muri iho ’a tāhuti nō te fa’ane’e (nō te mau hōho’a)
 - Fa’a’ite-ātea i te ha’amata-ra’a - Ia fa’a’ohipahia, a fa’a’ite i te hō’ē fa’a’ite-ātea o te ha’amāramarama o te rāve’a ha’ata’i nō te feiā mata’ita’i i roto i te tauihaa matamua
 - Tere o te fa’ata’i-ra’a - Ia fa’a’ohipahia i roto i te mau fa’anahora’a, a fa’atano i te tere o te haruharu ’e te hōho’a mai roto mai i te tāpura fa’anahora’a o te rāve’a ha’ata’i
 
@@ -103,8 +103,8 @@ E hōro’a te ta’o’o rorouira i te mau taviri fa’atere ato’a:
 
 Nō te mau hoho’a e te mau video:
 
-- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
-- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
+- **Fa’arahi/Fa’ana’ina’i** - ’A tāpe’a i te Ctrl ’aore rā te Shift ’e ’a fa’ati’a i te huira o te ’iore, ’a ’ōmi i ni’a i te touchpad, ’aore rā ’a fa’a’ohipa i te mau pitopito fa’arahi i ni’a i te hōho’a iti
+- **Fa’ane’e** - ’Ia fa’arahihia, ’a pata ’e ’a tāhuti i te hōho’a iti nō te fa’ane’e i te hōho’a (’a tāhuti i te toe’a o te reni nō te taui i te vaira’a o te tuha’a)
 - Fa’aho’i i te rahira’a tumu - ’Ia tu’i i te reira nō te fa’aho’i i te rahira’a hōho’a i tō na huru mātāmua
 
 #### Mau rāve’a poto nō te tāpapa-matini {#user-guide-keyboard-shortcuts}
@@ -149,25 +149,25 @@ Ia fa’a’ohipahia te hora nō te amuira’a, e nehenehe te M³ e fa’a’ite
 
 E tuha’a fa’anahora’a fa’a’ite-ātea ā teie, ’e ’ia fa’a’ohipahia nōa ’ia fa’atia-hia mai e te mau ti’a nō te vāhi.
 
-#### Meeting Parts {#user-guide-timer-parts}
+#### Te mau tuha’a o te putuputura’a {#user-guide-timer-parts}
 
-The timer popup on the action island lists the parts of the selected day's meeting. For midweek meetings, choose how many Apply Yourself to the Field Ministry and Living as Christians parts there are; the section's minutes are shared out evenly, and each part can then be adjusted freely with the **+** and **−** buttons or by clicking the part. Any part can be set to any number of minutes, including 0 to skip it. A warning icon points out sections whose parts don't add up to the time allotted to them, but never changes anything on its own.
+Tē fa’aite nei te ha’amāramarama iti o te fa’atere-hora i ni’a i te motu ha’atere i te mau tuha’a o te putuputura’a o te mahana i mā’itihia. Nō te mau putuputura’a i rotopū i te hepetoma, ’a mā’iti e hia tuha’a tō "A rave maite i ta oe taviniraa" ’e tō "Orara’a Kerisetiano"; e tufahia ti’a te mau minuti o te tuha’a rahi, ’e i muri iho e nehenehe e taui ti’amā i te tuha’a tā’itahi nā roto i te mau pitopito **+** ’e **−** ’aore rā mā te pata i ni’a i te tuha’a. E nehenehe e fa’ata’a i te tuha’a tā’itahi i te mau minuti ato’a, ’oia ato’a te 0 nō te vaiiho i te reira. E fa’aite te hō’ē tāpa’o fa’aara i te mau tuha’a rahi ’aita tō rātou mau tuha’a e tū’ati ra i te taime i fa’ata’ahia nō rātou, ’aita rā ’oia e taui iho noa i te tahi mea.
 
-**Custom parts** can be added on any day, for Governing Body updates, special programs or anything else that isn't on the regular schedule. On days without a meeting, the timer starts with one custom part per custom media section.
+E nehenehe e ’āmui i te **mau tuha’a ta’a ’ē** i te mau mahana ato’a, nō te mau parau ’āpī a te Tino Aratai, te mau porotarama ta’a ’ē ’aore rā te tahi atu mea ’aita i roto i te porotarama mātau. I te mau mahana ’aita e putuputura’a, e ha’amata te fa’atere-hora ma te hō’ē tuha’a ta’a ’ē nō te tuha’a media ta’a ’ē tā’itahi.
 
-Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
+E vaiihohia te numera o te mau tuha’a, te mau roara’a i tauihia, te mau tuha’a ta’a ’ē ’e te mau taime i tāpa’ohia i te mahana tā’itahi, nō reira e vai noa te reira noa atu e ha’amata fa’ahou ia M³, ’e e’ita roa te mau taime o te hō’ē putuputura’a e ’āmui i tō te tahi atu. E nehenehe e fa’a’ore i te mau taime i tāpa’ohia o te hō’ē mahana i te hō’ē noa taime nā roto i **A faa'āpī faahou i te mau tāpura taime atoa no teie mahana**, ’e e nehenehe e hā’ono i te hō’ē tāpura taime PDF i te mau taime ato’a.
 
-#### Hand Alert {#user-guide-timer-hand-alert}
+#### Tapao rima {#user-guide-timer-hand-alert}
 
-A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+E fa’aite te pitopito **Tapao rima** i roto i te ha’amāramarama iti o te fa’atere-hora i te hō’ē rima rahi i ni’a i te tapura hora, nō te fa’aara i te ti’a’au, ei hi’ora’a ’ia fa’ateitei te hō’ē ta’ata i ni’a ia Zoom i tōna rima. Nā roto i te [Tauturu nō te mau rima i fa’ateiteihia o te Fa’atere Putuputura’a Zoom](/settings-guide#zoom-meeting-manager-hand-alert), e fa’aite otometi M³ i te reira ’e te i’oa o te ta’ata i te mau taime ato’a e fa’ateitei ai te hō’ē ta’ata i tōna rima i roto ia Zoom, ’e e vaiiho ia ’oe ’ia fa’amatara i tōna reo, ’e i muri iho ’ia tāpe’a i tōna reo ’e ’ia tu’u i tōna rima i raro, hō’ē noa patara’a nō te tahi ’e te tahi.
 
-#### Timer on a Tablet {#user-guide-timer-remote}
+#### Te fa’atere-hora i ni’a i te hō’ē tablet {#user-guide-timer-remote}
 
-The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³.
+Tē hōro’a te [Haapa'oraa taime mai te ātea](/settings-guide#timer-remote), ’ia hina’arohia, i te hō’ē hōho’a ta’io-noa o te tapura hora mai te hō’ē ’api itenati i ni’a i tō ’oe reni itenati nō te fare. ’A ’iriti i te vāhi e fa’aitehia i roto i te ha’amāramarama iti o te fa’atere-hora i roto i te porotarama itenati o te hō’ē tablet ’aore rā te hō’ē niuniu i te ’amura’i ’ōrero, ’e e ’ite te ’ōrero ana’e i te taime e toe ra, ’area te mau fa’aterera’a ato’a e vai noa i roto ia M³.
 
-#### Quick Access {#user-guide-timer-quick-access}
+#### Fa’a’ohipara’a vitiviti {#user-guide-timer-quick-access}
 
-Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).
+’Ia tu’u ’oe i te ’iore i ni’a i te pitopito fa’atere-hora i ni’a i te motu ha’atere, e fa’aitehia te tuha’a e fāitohia ra, ’e te mau pitopito ’A ha’amata, ’A fa’ataime, ’A fa’aoti ’e Tuhaa i mua nei. E nehenehe ato’a te hō’ē fa’anahora’a e tāpiri i te hō’ē ’api fa’atere-hora i te pae ’atau o te ha’amāramarama matamua, ma te tāpura tā’āto’a o te mau tuha’a ’e te mau pitopito fa’atere-hora, e ’itehia noa. ’A hi’o i te [Arata’i nō te mau fa’anahora’a](/settings-guide#timer-quick-access).
 
 ## Hīmene i muri i te hōho’a {#user-guide-background-music}
 
@@ -214,12 +214,12 @@ E taui noa te M³ i te mau teata nō te OBS i te roara’a o te mau fa’a’ite
 
 ### Te mau rave’a pa’ari nō te OBS {#advanced-obs}
 
-#### Do Not Automatically Share Images {#user-guide-postpone-images}
+#### ’Eiaha e ’ōpere noa i te mau hōho’a {#user-guide-postpone-images}
 
 Ha’amā’iti i teie maitira’a nō te fa’ata’a i te tu’ura’a atu i te mau hōho’a i ni’a i te OBS ’ia tae i te taime e fa’a’ohipahia ai e ’outou iho:
 
-1. Enable "Do not automatically share images" in OBS settings
-2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. E mea faufa’a teie nō te fa’a’ite mātāmua i te mau hōho’a i te feiā e fa’aro’o tūtū atu i mua.
+1. ’A fa’atupu i te "’Eiaha e ’ōpere noa i te mau hōho’a" i roto i te mau fa’anahora’a OBS
+2. E ’ōperehia te mau hōho’a ’ia pata ana’e ’oe i te pitopito **’A fa’a’ite i te hōho’a nō te mau ta’ata ’āmui i ni’a ia Zoom** i ni’a i te hōho’a e fa’aitehia ra. E mea faufa’a teie nō te fa’a’ite mātāmua i te mau hōho’a i te feiā e fa’aro’o tūtū atu i mua.
 
 #### Te huru o te tauira’a i te mau teata {#user-guide-scene-switching}
 
@@ -285,7 +285,7 @@ Te mau raveraa maita’i a’e:
 
 1. Te tapera’a mai i te mau parau - ’A fa’a’ohipa i te tāpa’o "import" nō te tāmā’iti i te mau video, te mau hoho’a, ’aore rā te mau parau ta’o
 2. Te tu’u-tāmata-ra’a - ’A tu’u hō’ē noa i te mau parau na ni’a i te M³
-3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
+3. **Pu'e 'ite tufahia** - ’A ’āmui otometi i te media mai roto mai i te hō’ē fā’ari parau e tū’ati-noa-hia e Dropbox, OneDrive, iCloud Drive ’aore rā Google Drive
 4. Te mau parau JWPUB ’e te mau tāpura pehe - ’A tapea mai i te mau parau nene’i ’e te mau tāpura pehe
 5. Te mau rāve’a ha’amāramaramara’a nō te ’ōrerora’a parau (S-34 / S-34mp) - ’A tapea mai i te mau rāve’a nō te ’ōrerora’a parau nā roto i te mau parau JWPUB S-34 ’aore rā S-34mp
 6. Te mau Video mai te reni matamua - A imi i te mau video e a tu’u atu i ni’a i te mahana i mā’itihia
@@ -312,17 +312,17 @@ Te tapea-mai-ra’a i te mau rīti’o o te mau tuha’a Bibilia:
 
 E nehenehe te mau fa’anahora’a o te mau ’ite-mata tāta’itahi e tono-hia atu i roto i te ho’ē pu’e parau JSON mai roto mai i te Fa’anahora’a. Te ’imi-ra’a mai i te ho’ē pu’e parau nō te mau fa’anahora’a, e mono ïa i te mau fa’anahora’a o te ’ite-mata e fa’a’ohipa-hia ra i teie taime, e mea faufa’a roa râ teie nō te fa’atere-ra’a i te ho’ē fa’anahora’a i ni’a i te tahi atu roro uira aore rā nō te fa’aho’i-ra’a i te ho’ē fa’anahora’a i te huru maita’i i matauhia.
 
-## Shared Folder and Export {#user-guide-folder-monitoring}
+## Pu'e 'ite tufahia ’e te hā’ono-i-rāpae {#user-guide-folder-monitoring}
 
-### Setting Up a Shared Folder {#folder-monitoring-setup}
+### Fa’anahora’a i te hō’ē pu'e 'ite tufahia {#folder-monitoring-setup}
 
-Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
+’A ’āmui i te media mai roto mai i te hō’ē fā’ari parau e tū’ati-noa-hia e te hō’ē porotarama vaira’a nā ni’a i te itenati, mai ia Dropbox, OneDrive, iCloud Drive ’aore rā Google Drive:
 
-1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
-2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
-3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
-4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
-5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
+1. **’A fa’atupu** - ’A pāhono "’Ē" ’ia ani te tauturu fa’aineinera’a nō ni’a i te mau porotarama vaira’a nā ni’a i te itenati, ’aore rā ’a haere i **Te mau fa’anahora’a** > **Te mau tū’atira’a fa’anahora’a** > **Pu'e 'ite tufahia** ’e ’a fa’atupu i **A amui mai i te mau hōho'a pehe fāro'o no roto mai i te hoê pu'e 'ite tufahia**
+2. **’A mā’iti i te fā’ari parau** - ’A mā’iti i te hō’ē fā’ari parau i roto i tā ’oe porotarama vaira’a, e mea maita’i a’e te hō’ē ’āpī nō teie ana’e ohipa
+3. **Te mau fā’ari parau ma te mahana** - E hāmani M³ i roto i te reira i te hō’ē fā’ari parau nō te putuputura’a tā’itahi e tae mai, ma te i’oa o te mahana o te putuputura’a i pāpa’ihia mai teie te huru: matahiti-’āva’e-mahana (ei hi’ora’a, `2026-03-25`)
+4. **’A ’āmui i te mau dosie** - ’A tu’u i te mau hōho’a, te mau video, te mau dosie reo ’aore rā te mau tāpura ha’uti JW Library i roto i te fā’ari parau o te hō’ē putuputura’a, ’e e ’āmui otometihia te reira i roto i te tāpura media o taua putuputura’a ra. Nō te tahi atu mahana, ’a hāmani i te hō’ē fā’ari parau ma te i’oa i pāpa’ihia mai te reira ato’a te huru
+5. **Te mau fā’ari parau tahito** - ’Ia oti te hō’ē hepetoma, e fa’a’ore M³ i te mau fā’ari parau o taua hepetoma ra ’e tō rātou mau dosie, nō te feiā ato’a e fa’a’ohipa ra i te pu'e 'ite tufahia. ’A tāpū i **A faaore i te mau pu'e 'ite o te mau taro'oraa i ma'iri** nō te vaiiho i te reira
 
 ### Te fa’anahora’a i te mau rāve’a ha’amāramaramara’a {#user-guide-media-export}
 
@@ -402,7 +402,7 @@ Te fa’anahora’a i te mau rāve’a pāpa’i-’āpee ta’a ’ē nō te �
 - ’Aita e ta’i i roto i te Zoom: ’A fa’a’ohipa i te Original Audio (Ta’i tumu) i roto i te mau fa’anahora’a nō te Zoom e nā mua atu i te mau putuputura'a ato’a
 - Te ta’i maita’i ’ore: ’A hi’o i te toru o te ’api-hōho’a nō te Original Audio (e piti na mua ’a tu’uhia, te toru ’a fa’aore)
 - Te ta’i tei ’ore i te ’ohipa i muri a’e i te fa’ahoura’a: ’A fa’a’ohipa fa’ahou i te Original Audio (Ta’i tumu) nō te mau putuputura'a Zoom ’āpī ato’a
-- Te ta’i tei ’ore i te ’ohipa i muri a’e i te fa’ahoura’a: ’A fa’a’ohipa fa’ahou i te Original Audio (Ta’i tumu) nō te mau putuputura'a Zoom ’āpī ato’a
+- **Rāve’a ’ē atu**: ’A fa’a’ohipa i te mā’itira’a "Share Computer Sound" i roto i te ’ōpere-’api a Zoom
 
 #### Te mau fifi nō te fa’aotira’a {#user-guide-performance-issues}
 

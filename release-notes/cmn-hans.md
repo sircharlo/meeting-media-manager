@@ -8,29 +8,29 @@
 
 ### ✨ 新功能
 
-- ✨ **Feature Suggestions**: Now and then, M³ suggests a feature a profile isn't using yet, in a short "Did you know?" window that explains what it does. It shows at most one suggestion each time a profile is opened, never from 15 minutes before a meeting until it ends, and remembers each answer: "Remind me later" moves a suggestion to the back of the line, "No thanks" hides it for good, and "Stop suggesting features" turns them all off for the profile. A "No" in the setup wizard counts too, and the answers can be reset in Settings, under Advanced.
+- ✨ **功能建议**：M³ 会不时在简短的“你知道吗？”窗口中，建议某个配置尚未使用的功能，并说明该功能的作用。每次打开配置时最多只显示一项建议，从聚会开始前 15 分钟到聚会结束期间绝不会显示，并且会记住每次的回答：“稍后提醒”会将该建议移到队列末尾，“不用了，谢谢”会永久隐藏该建议，“停止功能建议”则会为该配置关闭所有建议。在初始设置向导中回答“否”也会计入，这些回答可以在“设置”的“高级”部分重置。
 
 ## v26.10.1
 
 ### ✨ 新功能
 
-- ✨ **Zoom Meeting Manager (beta, Windows)**: A new integration that operates Zoom for you around each meeting. It can launch your congregation's Zoom meeting when background music starts before the meeting. When the music stops just before the meeting starts, it joins computer audio, unmutes the microphone, turns on the host video, and mutes everyone without letting them unmute. When music plays before or after a meeting, it does the reverse: it leaves computer audio, turns off the host video, and lets everyone unmute again (asking them to do so). It can also share the media window in Zoom automatically while media is being shown, making sure the media window is what gets shared and never anything else on your screen. A new Zoom button in the action island shows whether a Zoom meeting window was found and lets you run these steps manually. A setup assistant, offered when you turn the option on (the initial setup wizard now offers it on Windows instead of the keyboard-shortcut screen sharing) and available anytime from the Zoom button or Settings, checks your Zoom, learns the names of its microphone and camera buttons in your language, and tries every step with you. When M³ starts, it also checks that everything it automates in Zoom works, opening the meeting if needed on meeting days in the hour and a quarter before it starts (only looking, without pressing anything, if others are already in the meeting); if something doesn't, it tells you and pauses its Zoom automations until it's restarted or a new check passes, so nothing goes wrong during the meeting. This check is on by default and can be turned off in Settings. As each of these steps succeeds, the matching reminders in the before- and after-meeting checklists of the meeting quick actions are ticked off for you, marked as done automatically in Zoom. Since it can't be used together with the keyboard-shortcut screen sharing, Settings says so under whichever of the two is unavailable, naming the one to turn off. It works whatever language Zoom is in, and needs nothing installed beyond Zoom itself.
+- ✨ **Zoom 会议管理器（测试版，Windows）**：新增集成功能，可在每次聚会前后为您操作 Zoom。聚会前开始播放背景音乐时，它可以启动您会众的 Zoom 会议。聚会即将开始、音乐停止时，它会加入电脑音频、解除麦克风静音、开启主持人视频，并将所有人静音，且不允许其自行解除静音。聚会前后播放音乐时，它会执行相反的操作：离开电脑音频、关闭主持人视频，并允许所有人再次自行解除静音（同时请求他们解除静音）。显示媒体时，它还可以自动在 Zoom 中共享媒体窗口，并确保共享的是媒体窗口，绝不会是屏幕上的其他内容。操作图标中新增了 Zoom 按钮，可以显示是否已检测到 Zoom 会议窗口，并让您手动执行这些步骤。开启此选项时会提供设置助手（在 Windows 上，初始设置向导现在会提供此功能，取代使用键盘快捷键的屏幕共享），您也可以随时通过 Zoom 按钮或“设置”打开它；设置助手会检查您的 Zoom，识别您所用语言中麦克风和摄像头按钮的名称，并与您一起测试每个步骤。 M³ 启动时，还会检查它在 Zoom 中执行的所有自动操作是否都能正常运行；在聚会日的聚会开始前一小时十五分钟内，必要时会先打开会议（如果已有其他人在会议中，则只查看，不按任何按钮）；如果有任何一项无法正常运行，M³ 会通知您，并暂停 Zoom 自动操作，直到 M³ 重新启动或再次检查通过为止，以免聚会期间出现问题。此检查默认开启，可以在“设置”中关闭。每个步骤成功完成后，“聚会快速操作”中聚会前和聚会后检查清单里的相应提醒事项会自动为您勾选，并标记为“已在 Zoom 中自动完成”。由于此功能不能与使用键盘快捷键的屏幕共享同时使用，“设置”会在两者中不可用的那一项下方加以说明，并指出需要关闭哪一项。无论 Zoom 使用哪种语言，它都能正常运作，而且除了 Zoom 本身之外，无需安装任何其他软件。
 
-- ✨ **Meeting Timer**: Custom parts can now be added on meeting days too, for Governing Body updates, special programs and anything else that isn't on the regular schedule. Each is timed like any other part, and its name and length can be changed from the timer popup or from the parts list.
+- ✨ **聚会计时器**：现在在聚会日也可以添加自定义计时部分，用于中央长老团的最新消息、特别节目以及常规安排以外的其他内容。每个自定义部分都会像其他节目一样计时，其名称和时长可以在计时器弹出窗口或节目列表中更改。
 
-- ✨ **Meeting Timer**: Quicker access to the timer. Hovering the timer button on the action island now shows the part being timed with Start, Pause, Stop and Next part buttons, without opening the popup (a setting, on by default). A new setting also keeps the whole parts list and the timer controls in a panel docked on the right side of the main window, always in view.
+- ✨ **聚会计时器**：可以更快速地访问计时器。现在将鼠标悬停在操作图标中的计时器按钮上，就会显示正在计时的节目，以及“开始”“暂停”“停止”和“下一个节目”按钮，无需打开弹出窗口（此为设置项，默认开启）。另外还新增一项设置，可以将完整的节目列表和计时器控制固定在主窗口右侧的面板中，始终可见。
 
-- ✨ **Meeting Timer**: A new "Analog clock with time arc" countdown display shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a red wedge. It also works for the pre-meeting countdown and in count-up mode.
+- ✨ **聚会计时器**：新增“带时间弧的模拟时钟”倒计时显示格式，会在模拟时钟表盘上以扇形显示节目的剩余时间，从分针一直到计划结束时间，一眼就能同时看到当前时间和剩余时间。超时部分会显示为红色扇形。此格式也适用于聚会开始前的倒计时和正计时模式。
 
-- ✨ **Meeting Timer**: The pre-meeting countdown is now labelled "Meeting starts in", and the timer display shows the name of the part being timed, so "4:59" can no longer be mistaken for the time of day.
+- ✨ **聚会计时器**：聚会开始前的倒计时现在标有“距离聚会开始还有”，计时器显示也会显示正在计时的节目名称，因此“4:59”不会再被误认为是当前时间。
 
-- ✨ **Meeting Timer**: Each day's recorded timings can be cleared in one go, after a confirmation, from the timer popup or the docked panel.
+- ✨ **聚会计时器**：现在可以在计时器弹出窗口或固定面板中，一次清除某一天已记录的所有计时（需先确认）。
 
-- ✨ **Zoom Meeting Manager (beta, Windows)**: A new raised-hand helper. During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets the operator unmute that participant with one click, and, once they're done speaking, mute them again and lower their hand with another; the Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name, and M³ touches no one when two participants share a name. If the meeting timer is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and can be switched on by hand from the timer or Zoom popups. M³ learns how Zoom marks raised hands in your language with a single button (it raises and lowers your own hand), offered in the setup assistant as well.
+- ✨ **Zoom 会议管理器（测试版，Windows）**：新增举手助手。聚会期间，M³ 会留意 Zoom 参与者列表中的举手情况。有人举手时，操作员可以通过 M³ 中的通知一键为该参与者解除静音，在对方讲完后，再一键将其重新静音并放下举手；操作图标中的 Zoom 按钮也会列出举手的参与者，并提供相同的按钮。每项操作都会根据确切的名字，作用于该参与者在 Zoom 中自己的那一行；如果两位参与者同名，M³ 不会对任何人进行操作。如果启用了聚会计时器，计时器显示上还会为主席显示一只带有参与者名字的大手，也可以在计时器或 Zoom 弹出窗口中手动开启。只需点击一个按钮，M³ 就会识别 Zoom 在您所用语言中标示举手的方式（它会举起并放下您自己的手），设置助手中也提供这一步骤。
 
-- ✨ **Meeting Timer**: A new, optional timer remote. When turned on, M³ serves a read-only copy of the timer display as a web page on the local network, so a tablet or phone at the lectern can show the speaker the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time (parts, pre-meeting countdown, clock, overtime colors, hand alert) and all the controls stay in M³. The addresses to open are shown in the timer popup, with a copy button.
+- ✨ **聚会计时器**：新增可选的远程计时器。开启后，M³ 会在本地网络上以网页形式提供计时器显示的只读副本，讲台上的平板电脑或手机就能向讲者显示剩余时间，而这些时间不会显示在会众看到的屏幕上或 Zoom 共享画面中。该网页会实时跟随计时器（节目、聚会开始前的倒计时、时钟、超时颜色、举手提示），所有控制仍保留在 M³ 中。要打开的地址会显示在计时器弹出窗口中，并附有复制按钮。
 
-- ✨ **Setup Wizard**: The setup wizard now asks whether you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive. If you do, it helps you choose a shared folder there and shows how it works: M³ creates a folder for each upcoming meeting, named with the meeting's date, and the files put in it are added to that meeting automatically, on every computer that uses the folder.
+- ✨ **初始设置向导**：初始设置向导现在会询问您是否在 Dropbox、OneDrive、iCloud Drive 或 Google Drive 等云端存储应用程序中存放聚会文件。如果是，它会帮助您在其中选择一个共享文件夹，并说明其运作方式：M³ 会为每个即将举行的聚会创建一个以聚会日期命名的文件夹，放入其中的文件会在每台使用该文件夹的计算机上自动添加到该聚会。
 
 ## v26.9.0
 
@@ -168,7 +168,7 @@
 - ✨ **电视显示鼠标覆盖层**：改善网站窗口中的鼠标指针覆盖效果，在电视屏幕上更容易看到鼠标指针。
 - ✨ **聚会录制**：新增聚会录制控制功能，可以控制外部录制应用程序。
 - ✨ **网站内搜索**：新增智能搜索功能，可以在网站中查找媒体或出版物。
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
+- ✨ **轻松手动导入出版物**：新增功能，可以轻松从官方网站导入出版物，例如杂志、书籍、节目表和邀请卡。
 - ✨ **手语功能改进**：播放完整手语文件前会要求确认，并支持选择多个片段，例如连续播放多个经文片段。
 - ✨ **片段导航**：片段列表现在会显示时长，并改善了片段导航。
 - 🛠️ **媒体显示**：开始播放媒体时，即使媒体窗口之前被隐藏，也会自动显示。
