@@ -339,6 +339,9 @@ namespace M3.ZoomHelper
         const string SharePickerClass = "ZPShareEntranceClass";
         const string ShareToolbarClass = "ZPFloatToolbarClass";
         const string ReactionPanelClass = "ZPReactionWndClass";
+        // A panel popped out of the meeting window ("Open in new window"),
+        // such as the participants panel, which Zoom then keeps opening there.
+        const string PoppedOutPanelClass = "ZPlistPopupContainerWndClass";
         // The video thumbnail Zoom shows in place of the meeting window in
         // its mini view.
         const string FloatVideoClass = "ZPFloatVideoWndClass";
@@ -1373,11 +1376,32 @@ namespace M3.ZoomHelper
 
         // --- Participants ----------------------------------------------------------
 
+        /// <summary>Where the participants panel is: in the meeting window, or
+        /// in a window of its own once the host popped it out (Zoom's "Open
+        /// in new window"). That window is titled like the panel's heading
+        /// ("Participants (15)") and holds the same list and buttons.</summary>
+        static El PanelHost(El window)
+        {
+            foreach (var handle in TopWindows(PoppedOutPanelClass, true))
+            {
+                try
+                {
+                    var popped = Uia.FromHandle(handle);
+                    if (CountedTitle.IsMatch(popped.Name) && Uia.Descendants(popped, Uia.ListType).Count > 0) return popped;
+                }
+                catch (Exception) { } // the window went away
+            }
+            return window;
+        }
+
         /// <summary>The participants panel's heading ("Participants (3)"): the
         /// text with a count in brackets that isn't part of a list (waiting
-        /// room section headers are). Null while the panel is closed.</summary>
+        /// room section headers are), or the title of the panel's own window
+        /// once popped out. Null while the panel is closed.</summary>
         static El ParticipantsHeading(El window)
         {
+            var host = PanelHost(window);
+            if (host != window) return host;
             var lists = Uia.Descendants(window, Uia.ListType);
             foreach (var text in Uia.Descendants(window, Uia.TextType))
             {
@@ -1390,12 +1414,15 @@ namespace M3.ZoomHelper
         }
 
         /// <summary>The participants list: the first list under the panel's
-        /// heading (the chat panel, which also holds a list, opens below it).
-        /// Null while the panel is closed.</summary>
+        /// heading (the chat panel, which also holds a list, opens below it),
+        /// or the popped-out panel's list. Null while the panel is
+        /// closed.</summary>
         static El ParticipantsList(El window)
         {
-            var lists = Uia.Descendants(window, Uia.ListType);
+            var host = PanelHost(window);
+            var lists = Uia.Descendants(host, Uia.ListType);
             if (lists.Count == 0) return null;
+            if (host != window) return lists[0];
             var heading = ParticipantsHeading(window);
             if (heading == null) return lists[0];
             lists.Sort((a, b) => a.Rect.top.CompareTo(b.Rect.top));
@@ -1415,7 +1442,7 @@ namespace M3.ZoomHelper
         /// all] [More, a split button] under the participants list.</summary>
         static El MuteAllButton(El window)
         {
-            var buttons = Uia.Descendants(window, Uia.ButtonType);
+            var buttons = Uia.Descendants(PanelHost(window), Uia.ButtonType);
             var known = ByName(buttons, Known.MuteAll);
             if (known != null) return known;
             El found = null;
@@ -1433,7 +1460,7 @@ namespace M3.ZoomHelper
             var row = new List<El>();
             var list = ParticipantsList(window);
             if (list == null) return row;
-            foreach (var button in Named(Uia.Descendants(window, Uia.ButtonType)))
+            foreach (var button in Named(Uia.Descendants(PanelHost(window), Uia.ButtonType)))
                 if (button.Rect.top >= list.Rect.bottom - RowTolerance && button.Rect.right > list.Rect.left && button.Rect.left < list.Rect.right) row.Add(button);
             row.Sort((a, b) => a.Rect.left.CompareTo(b.Rect.left));
             return row;
@@ -1499,7 +1526,7 @@ namespace M3.ZoomHelper
         {
             var list = ParticipantsList(window);
             if (list == null) return null;
-            foreach (var split in Uia.Descendants(window, Uia.SplitButtonType))
+            foreach (var split in Uia.Descendants(PanelHost(window), Uia.SplitButtonType))
                 if (split.Rect.top >= list.Rect.bottom - RowTolerance && split.Rect.right > list.Rect.left && split.Rect.left < list.Rect.right) return split;
             return null;
         }
@@ -1675,13 +1702,13 @@ namespace M3.ZoomHelper
         /// to admit"). The key is only pressed once the row surely has the
         /// focus, so it can't reach anything else. False if it wasn't
         /// pressed.</summary>
-        static bool AdmitByKeyboard(El window, Row row)
+        static bool AdmitByKeyboard(El panel, Row row)
         {
             if (!TrySelect(row.Element)) return false;
             if (!WaitUntil(() => HasKeyboardFocus(row.Element), 1000))
             {
                 // Zoom didn't come forward by itself.
-                Focus(window);
+                Focus(panel);
                 if (!HasKeyboardFocus(row.Element)) return false;
             }
             TapKey(Native.VkSpace);
@@ -1701,7 +1728,8 @@ namespace M3.ZoomHelper
                 if (row.Section == "waiting" && (names.Count == 0 || names.Contains(row.Name)) && !waiting.Contains(row.Name))
                     waiting.Add(row.Name);
             var admitted = new List<object>();
-            var handle = window.Raw.CurrentNativeWindowHandle;
+            var panel = PanelHost(window);
+            var handle = panel.Raw.CurrentNativeWindowHandle;
             foreach (var name in waiting)
             {
                 var current = name;
@@ -1713,11 +1741,11 @@ namespace M3.ZoomHelper
                 // Only if neither works is the row really hovered.
                 var unhovered = Named(Uia.Descendants(row.Element, Uia.ButtonType));
                 var pressed = unhovered.Count > 0 && TryInvoke(unhovered[0]);
-                if (!pressed && AdmitByKeyboard(window, row))
+                if (!pressed && AdmitByKeyboard(panel, row))
                     pressed = WaitUntil(() => WaitingRow(window, current) == null, 3000);
                 if (!pressed)
                 {
-                    Focus(window);
+                    Focus(panel);
                     Func<bool> pressAdmit = () =>
                     {
                         Hover(row.Element);
@@ -1813,8 +1841,9 @@ namespace M3.ZoomHelper
             if (buttons != null) return action(buttons);
 
             hovered = true;
-            var handle = window.Raw.CurrentNativeWindowHandle;
-            Focus(window);
+            var panel = PanelHost(window);
+            var handle = panel.Raw.CurrentNativeWindowHandle;
+            Focus(panel);
             Func<T> run = () =>
             {
                 Hover(row.Element);
@@ -2979,13 +3008,13 @@ namespace M3.ZoomHelper
         }
 
         // Zoom windows that are never dialogs to dismiss: the meeting, its
-        // mini view, sharing (the toolbar, the annotation layer and its
-        // button), Zoom's home window, its menus' shadows, its notification
-        // toasts (one shows as sharing starts and stays briefly after it
-        // stops).
+        // mini view, its popped-out panels (such as the participants list),
+        // sharing (the toolbar, the annotation layer and its button), Zoom's
+        // home window, its menus' shadows, its notification toasts (one shows
+        // as sharing starts and stays briefly after it stops).
         static readonly string[] ZoomMainWindowClasses =
         {
-            MeetingWindowClass, FloatVideoClass, ShareToolbarClass, AnnotationLayerClass,
+            MeetingWindowClass, FloatVideoClass, PoppedOutPanelClass, ShareToolbarClass, AnnotationLayerClass,
             "ZPAnnotateEntryPointClass", "ZPPTMainFrmWndClassEx", "ZPToolBarParentWndClass",
             "ZoomShadowFrameClass", "VideoFrameWndClass", "DsToast",
         };
