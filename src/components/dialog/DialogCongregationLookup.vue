@@ -162,7 +162,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -232,10 +232,10 @@ const hasConfiguredCongregationInfo = computed(() => {
 });
 
 const applyCongregation = async (congregation: CongregationSuggestion) => {
-  try {
-    if (!currentSettings.value) return;
+  if (!currentSettings.value) return;
 
-    currentState.lookupInProgress = true;
+  currentState.lookupInProgress = true;
+  try {
     const response = await fetchMeetingLocations(congregation.congregationGuid);
     const selectedLocation = response?.items?.find((location) =>
       location.congregationMeetings.some(
@@ -305,8 +305,14 @@ const applyCongregation = async (congregation: CongregationSuggestion) => {
         },
       },
     });
+  } finally {
+    // Only once Vue's watchers have run: MainLayout tells the official name
+    // written above from a rename by hand by this flag, and taking it for
+    // one would turn the schedule sync just enabled off again (linking a
+    // profile used to take two tries).
+    await nextTick();
+    currentState.lookupInProgress = false;
   }
-  currentState.lookupInProgress = false;
   dismissPopup();
 };
 

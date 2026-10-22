@@ -1,3 +1,5 @@
+import type { SettingsValues } from 'src/types';
+
 import { storeToRefs } from 'pinia';
 import {
   fetchCongregationSuggestions,
@@ -37,74 +39,12 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
     }
 
     lookupInProgress.value = true;
-
-    for (const id of Object.keys(congregations.value)) {
-      log(
-        `ℹ️ [autoEnrollMeetingSync] Checking "${id}"...`,
-        'migrations',
-        'log',
-      );
-
-      const congregationSettings = congregations.value?.[id];
-
-      if (!congregationSettings) {
-        log(
-          `ℹ️ [autoEnrollMeetingSync] No settings for "${id}". Skipping.`,
-          'migrations',
-          'log',
-        );
-        continue;
-      }
-
-      if (!congregationSettings.congregationNameModified) {
-        log(
-          `ℹ️ [autoEnrollMeetingSync] "${id}" is not modified. Skipping.`,
-          'migrations',
-          'log',
-        );
-        continue;
-      }
-
-      if (!congregationSettings.congregationName) {
-        log(
-          `ℹ️ [autoEnrollMeetingSync] No name for "${id}". Skipping.`,
-          'migrations',
-          'log',
-        );
-        continue;
-      }
-
-      const congregationName = congregationSettings.congregationName;
-
-      const suggestions = await fetchCongregationSuggestions(congregationName); // NOSONAR: sequential - one JW.org lookup at a time
-      const exactSuggestion = suggestions.find(
-        (suggestion) =>
-          suggestion.name.toLowerCase() === congregationName.toLowerCase(),
-      );
-      if (!exactSuggestion) continue;
-      const { congregationGuid } = exactSuggestion;
-      const response = await fetchMeetingLocations(congregationGuid); // NOSONAR: sequential - one JW.org lookup at a time
-
-      const exactMatch = response?.items?.some((item) =>
-        item.congregationMeetings.some(
-          (meeting) => meeting.name === congregationName,
-        ),
-      );
-
-      if (exactMatch) {
-        log(
-          '✅ [autoEnrollMeetingSync] Exact match found. Enabling sync.',
-          'migrations',
-          'log',
-        );
-        congregationSettings.congregationNameModified = false;
-      } else {
-        log(
-          'ℹ️ [autoEnrollMeetingSync] No exact match. Keeping manual settings.',
-          'migrations',
-          'log',
-        );
-      }
+    try {
+      await enrollCongregations(congregations.value);
+    } finally {
+      // Also after a successful run: left on, it would hide renames by hand
+      // for the rest of the session (see MainLayout's name watcher).
+      lookupInProgress.value = false;
     }
 
     return true;
@@ -114,6 +54,75 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
     });
   }
 
-  lookupInProgress.value = false;
   return online.value; // Retry later if offline, otherwise mark migration as done
+};
+
+/** Enables the schedule sync of each profile named exactly as on JW.org. */
+const enrollCongregations = async (
+  congregations: Partial<Record<string, SettingsValues>>,
+) => {
+  for (const id of Object.keys(congregations)) {
+    log(`ℹ️ [autoEnrollMeetingSync] Checking "${id}"...`, 'migrations', 'log');
+
+    const congregationSettings = congregations[id];
+
+    if (!congregationSettings) {
+      log(
+        `ℹ️ [autoEnrollMeetingSync] No settings for "${id}". Skipping.`,
+        'migrations',
+        'log',
+      );
+      continue;
+    }
+
+    if (!congregationSettings.congregationNameModified) {
+      log(
+        `ℹ️ [autoEnrollMeetingSync] "${id}" is not modified. Skipping.`,
+        'migrations',
+        'log',
+      );
+      continue;
+    }
+
+    if (!congregationSettings.congregationName) {
+      log(
+        `ℹ️ [autoEnrollMeetingSync] No name for "${id}". Skipping.`,
+        'migrations',
+        'log',
+      );
+      continue;
+    }
+
+    const congregationName = congregationSettings.congregationName;
+
+    const suggestions = await fetchCongregationSuggestions(congregationName); // NOSONAR: sequential - one JW.org lookup at a time
+    const exactSuggestion = suggestions.find(
+      (suggestion) =>
+        suggestion.name.toLowerCase() === congregationName.toLowerCase(),
+    );
+    if (!exactSuggestion) continue;
+    const { congregationGuid } = exactSuggestion;
+    const response = await fetchMeetingLocations(congregationGuid); // NOSONAR: sequential - one JW.org lookup at a time
+
+    const exactMatch = response?.items?.some((item) =>
+      item.congregationMeetings.some(
+        (meeting) => meeting.name === congregationName,
+      ),
+    );
+
+    if (exactMatch) {
+      log(
+        '✅ [autoEnrollMeetingSync] Exact match found. Enabling sync.',
+        'migrations',
+        'log',
+      );
+      congregationSettings.congregationNameModified = false;
+    } else {
+      log(
+        'ℹ️ [autoEnrollMeetingSync] No exact match. Keeping manual settings.',
+        'migrations',
+        'log',
+      );
+    }
+  }
 };
