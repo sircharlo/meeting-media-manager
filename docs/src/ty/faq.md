@@ -126,7 +126,7 @@ Teie te mau rāve’a nō te hīmene aratō:
 - Te fa’atere-ano’i-’ō’oā o te pūai reo
 - Te taime fa’ata’ara’a-tāpū-muri e nehenehe e fa’ahuru ’ē
 
-### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³? {#faq-meeting-timer}
+### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³?  {#faq-meeting-timer}
 
 E. Ia ha’amā-hia, e nehenehe te M³ e fa’a’ite i te ho’ē ha’amaramarama taime taa ’ē nō te faito i te taime o te feiā e paraparau ra. E nehenehe te reira e taio i ni’a aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te taime fa’ataime nō te putuputura’a, e mai te peu e hina’aro ’oe, e fa’a’ite i te taime hau aore rā mai te peu e te mua ra te putuputura’a aore rā te muri ra i ni’a i te porotarama. E nehenehe e taui noa i te roara’a o te mau tuha’a, e nehenehe e ’āmui i te mau tuha’a ta’a ’ē nō te mau porotarama ta’a ’ē, ’e e nehenehe e fa’atere i te fa’atere-hora nā ni’a i te motu ha’atere (noa atu ’ia tu’uhia te ’iore i ni’a iho) ’aore rā nā roto i te hō’ē ’api i tāpirihia i roto i te ha’amāramarama matamua.
 
@@ -169,7 +169,7 @@ E fa’ataere teie fa’anahora’a i te ’ōperera’a i te mau hōho’a i ni
 - Te fā’fa’ahiahia o te rāve’a nō te fa’atere pāpū i te taime
 - Te ’ape’ara’a i te tauira’a tiri vitiviti roa
 
-### :record_button: E nehenehe anei te M³ e haruharu i te putuputura’a? {#faq-recordings}
+### :record_button: E nehenehe anei te M³ e haruharu i te putuputura’a?  {#faq-recordings}
 
 Aita te M³ e fa’a’ohipa ra i te ho’ē matini haruharu-reo o roto, tera rā, e nehenehe te reira e tauturu i te fa’atere-ra’a i te haruharu-reo nā roto e piti huru:
 
