@@ -549,13 +549,13 @@ De Zoom-vergaderbeheerder (bèta, alleen Windows) bedient de Zoom-desktopapp voo
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom biedt geen echte interface voor automatisering, dus M³ bestuurt de Zoom-app via de toegankelijkheidsinterface, die voor bijna alles zonder muis werkt (de deelnemerslijst, de menu's daarvan, het venster voor delen). Voor een paar acties moet M³ soms nog even de muis bewegen of een ander venster de focus geven, bijvoorbeeld om de automatisch verborgen werkbalk van Zoom terug te halen. Wanneer dat gebeurt, bedekt M³ zijn eigen venster met de melding "M³ bedient Zoom", waarin staat wat er gebeurt, met een knop **Deze automatisering annuleren**. Dezelfde melding verschijnt tijdens de controles van de configuratieassistent en tijdens de zelftest. Een globale sneltoets (standaard `Ctrl+Alt+Escape`), die alleen actief is terwijl een automatisering loopt, annuleert die vanaf elke plek, zelfs als Zoom de focus heeft. Annuleren stopt M³ meteen; Zoom kan dan half afgehandeld achterblijven, dus controleer Zoom even.
+Zoom biedt geen echte interface voor automatisering, dus M³ bestuurt de Zoom-app via de toegankelijkheidsinterface, die werkt zonder de muis te bewegen, ook terwijl Zoom zijn werkbalk verbergt. Zoom haalt zijn venster wel even naar voren wanneer M³ op de knoppen ervan drukt, en de muis beweegt alleen als laatste redmiddel, als Zoom op geen enkele andere manier reageert. Telkens wanneer M³ Zoom bedient, bedekt het zijn eigen venster met de melding "M³ bedient Zoom", waarin staat wat er gebeurt, met een knop **Deze automatisering annuleren**. Dezelfde melding verschijnt tijdens de controles van de configuratieassistent en tijdens de zelftest. Een globale sneltoets (standaard `Ctrl+Alt+Escape`), die alleen actief is terwijl een automatisering loopt, annuleert die vanaf elke plek, zelfs als Zoom de focus heeft. Annuleren stopt M³ meteen; Zoom kan dan half afgehandeld achterblijven, dus controleer Zoom even.
 
 **Standaard**: `Ctrl+Alt+Escape`
 
 #### Hulp bij opgestoken handen {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Tijdens een vergadering houdt M³ de deelnemerslijst van Zoom in de gaten voor opgestoken handen. Als iemand de hand opsteekt, kun je via een melding in M³ met één klik **het dempen van die deelnemer opheffen**, en als die klaar is met spreken, met nog een klik **de deelnemer weer dempen en de hand laten zakken**. De Zoom-knop op de actiebalk toont de opgestoken handen met dezelfde knoppen. Elke actie gaat naar de eigen rij van die deelnemer in Zoom, op basis van de exacte naam; als twee deelnemers dezelfde naam hebben, doet M³ bij geen van beiden iets.
 
