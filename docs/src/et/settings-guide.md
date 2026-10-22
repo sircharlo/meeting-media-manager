@@ -549,13 +549,13 @@ Zoomi koosolekuhaldur (beeta, ainult Windows) juhib sinu eest iga koosoleku eel 
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom ei paku korralikku automatiseerimisliidest, seega juhib M³ Zoomi rakendust selle hõlbustusliidese kaudu, mis töötab peaaegu kõige puhul ilma hiireta (osalejate loend, selle menüüd, jagamisaken). Mõned toimingud võivad siiski hetkeks hiirt või fookuses olevat akent liigutada, näiteks et Zoomi automaatselt peidetud tööriistariba tagasi tuua. Kui see juhtub, katab M³ oma akna teatega „M³ juhib Zoomi“, mis nimetab käimasoleva toimingu, ja nupuga **Tühista see automatiseeritud toiming**. Sama teadet näidatakse ka seadistusabilise kontrollide ja enesetesti ajal. Üldine kiirklahv (vaikimisi `Ctrl+Alt+Escape`), mis on aktiivne ainult automatiseeritud toimingu ajal, tühistab selle ükskõik kust, isegi kui fookus on Zoomil. Tühistamine peatab M³ kohe; Zoom võib seejärel jääda pooleli, seega kontrolli seda.
+Zoom ei paku korralikku automatiseerimisliidest, seega juhib M³ Zoomi rakendust selle hõlbustusliidese kaudu, mis töötab hiirt liigutamata, isegi siis, kui Zoom on oma tööriistariba peitnud. Zoom toob siiski oma akna hetkeks esiplaanile, kui M³ selle nuppe vajutab, ja hiir liigub ainult viimase abinõuna, kui Zoom ei reageeri ühelegi muule viisile. Alati, kui M³ Zoomi juhib, katab see oma akna teatega „M³ juhib Zoomi“, mis nimetab käimasoleva toimingu, ja nupuga **Tühista see automatiseeritud toiming**. Sama teadet näidatakse ka seadistusabilise kontrollide ja enesetesti ajal. Üldine kiirklahv (vaikimisi `Ctrl+Alt+Escape`), mis on aktiivne ainult automatiseeritud toimingu ajal, tühistab selle ükskõik kust, isegi kui fookus on Zoomil. Tühistamine peatab M³ kohe; Zoom võib seejärel jääda pooleli, seega kontrolli seda.
 
 **Vaikimisi**: `Ctrl+Alt+Escape`
 
 #### Tõstetud käte abiline {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Koosoleku ajal jälgib M³ Zoomi osalejate loendis tõstetud käsi. Kui keegi tõstab käe, saad M³ teate kaudu ühe klõpsuga selle osaleja **mikrofoni sisse lülitada** ja pärast tema rääkimist teise klõpsuga **ta uuesti vaigistada ja käe langetada**. Tegevussaare Zoomi nupp loetleb tõstetud käed samade nuppudega. Iga toiming läheb Zoomis selle osaleja enda reale tema täpse nime järgi; kui kahel osalejal on sama nimi, ei puutu M³ kumbagi.
 
