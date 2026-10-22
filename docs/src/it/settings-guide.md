@@ -549,13 +549,13 @@ Zoom Meeting Manager (beta, solo Windows) gestisce l'app desktop di Zoom al post
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom non offre un'interfaccia di automazione adeguata, quindi M³ controlla l'app Zoom tramite la sua interfaccia di accessibilità, che funziona senza mouse per quasi tutto (l'elenco dei partecipanti, i suoi menu, la finestra Condividi). Alcune azioni potrebbero comunque dover spostare per un momento il mouse o la finestra attiva, ad esempio per far ricomparire la barra degli strumenti di Zoom, che si nasconde automaticamente. Ogni volta che ciò accade, M³ copre la propria finestra con un avviso "M³ sta gestendo Zoom" che indica cosa sta succedendo, con un pulsante **Annulla questa automazione**. Lo stesso avviso viene mostrato durante i controlli dell'assistente di configurazione e durante l'autotest. Una scorciatoia da tastiera globale (predefinita `Ctrl+Alt+Escape`), attiva solo mentre un'automazione è in esecuzione, la annulla da qualsiasi punto, anche quando Zoom è in primo piano. L'annullamento ferma M³ immediatamente; Zoom potrebbe quindi restare a metà operazione, perciò controllalo.
+Zoom non offre un'interfaccia di automazione adeguata, quindi M³ controlla l'app Zoom tramite la sua interfaccia di accessibilità, che funziona senza spostare il mouse, anche quando Zoom nasconde la sua barra degli strumenti. Zoom porta comunque in primo piano la propria finestra per un momento quando M³ ne preme i pulsanti, e il mouse si sposta solo come ultima risorsa, se Zoom non risponde in nessun altro modo. Ogni volta che M³ gestisce Zoom, copre la propria finestra con un avviso "M³ sta gestendo Zoom" che indica cosa sta succedendo, con un pulsante **Annulla questa automazione**. Lo stesso avviso viene mostrato durante i controlli dell'assistente di configurazione e durante l'autotest. Una scorciatoia da tastiera globale (predefinita `Ctrl+Alt+Escape`), attiva solo mentre un'automazione è in esecuzione, la annulla da qualsiasi punto, anche quando Zoom è in primo piano. L'annullamento ferma M³ immediatamente; Zoom potrebbe quindi restare a metà operazione, perciò controllalo.
 
 **Predefinito**: `Ctrl+Alt+Escape`
 
 #### Assistente mani alzate {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Durante un'adunanza, M³ controlla l'elenco dei partecipanti di Zoom per individuare le mani alzate. Quando qualcuno alza la mano, una notifica in M³ ti permette di **riattivare l'audio** di quel partecipante con un clic e, quando ha finito di parlare, di **disattivargli di nuovo l'audio e abbassargli la mano** con un altro clic. Il pulsante Zoom nell'isola di azione elenca le mani alzate con gli stessi pulsanti. Ogni azione viene eseguita sulla riga di quel partecipante in Zoom, in base al suo nome esatto; se due partecipanti hanno lo stesso nome, M³ non interviene su nessuno dei due.
 

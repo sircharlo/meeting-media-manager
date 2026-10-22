@@ -549,13 +549,13 @@ Le gestionnaire de réunions Zoom (bêta, Windows uniquement) pilote l'applicati
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom n'offre pas de véritable interface d'automatisation ; M³ pilote donc l'application Zoom par l'intermédiaire de son interface d'accessibilité, qui permet de presque tout faire sans la souris (la liste des participants, ses menus, la fenêtre de partage). Certaines actions peuvent toutefois nécessiter de déplacer la souris ou de changer la fenêtre au premier plan pendant un instant, par exemple pour faire réapparaître la barre d'outils de Zoom lorsqu'elle s'est masquée automatiquement. Chaque fois que cela se produit, M³ recouvre sa propre fenêtre d'un message « M³ pilote Zoom » qui indique l'action en cours, accompagné d'un bouton **Annuler cette automatisation**. Le même message s'affiche pendant les vérifications de l'assistant de configuration et pendant l'autotest. Un raccourci clavier global (par défaut `Ctrl+Alt+Escape`), actif uniquement pendant l'exécution d'une automatisation, permet de l'annuler depuis n'importe quelle application, même lorsque Zoom est au premier plan. L'annulation arrête immédiatement M³ ; Zoom risque alors d'être resté dans un état intermédiaire, pensez donc à le vérifier.
+Zoom n'offre pas de véritable interface d'automatisation ; M³ pilote donc l'application Zoom par l'intermédiaire de son interface d'accessibilité, qui fonctionne sans déplacer la souris, même lorsque Zoom masque sa barre d'outils. Zoom fait tout de même passer sa fenêtre au premier plan pendant un instant lorsque M³ appuie sur ses boutons, et la souris ne bouge qu'en dernier recours, si Zoom ne réagit à aucun autre moyen. Chaque fois que M³ pilote Zoom, il recouvre sa propre fenêtre d'un message « M³ pilote Zoom » qui indique l'action en cours, accompagné d'un bouton **Annuler cette automatisation**. Le même message s'affiche pendant les vérifications de l'assistant de configuration et pendant l'autotest. Un raccourci clavier global (par défaut `Ctrl+Alt+Escape`), actif uniquement pendant l'exécution d'une automatisation, permet de l'annuler depuis n'importe quelle application, même lorsque Zoom est au premier plan. L'annulation arrête immédiatement M³ ; Zoom risque alors d'être resté dans un état intermédiaire, pensez donc à le vérifier.
 
 **Par défaut** : `Ctrl+Alt+Escape`
 
 #### Gestion des mains levées {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Pendant une réunion, M³ surveille la liste des participants de Zoom pour repérer les mains levées. Lorsqu'une personne lève la main, une notification dans M³ vous permet de **réactiver le micro** de ce participant en un clic, puis, une fois son intervention terminée, de **couper de nouveau son micro et baisser sa main** d'un autre clic. Le bouton Zoom de l'îlot d'actions affiche la liste des mains levées, avec les mêmes boutons. Chaque action s'applique à la ligne de ce participant dans Zoom, identifiée par son nom exact ; si deux participants portent le même nom, M³ ne touche à aucun des deux.
 
