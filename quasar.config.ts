@@ -94,6 +94,16 @@ export default defineConfig((ctx) => {
         version,
       },
       extendViteConf(viteConf) {
+        if (ctx.dev) {
+          // Routes load pages and layouts through template-literal imports,
+          // which Vite's dependency scanner can't follow. Without these
+          // entries, a dependency used only by a page that isn't open at
+          // startup (e.g. @vueuse/router in SettingsPage) is discovered on
+          // first navigation, and Vite then fully reloads every window.
+          viteConf.optimizeDeps = mergeConfig(viteConf.optimizeDeps ?? {}, {
+            entries: ['src/layouts/**/*.vue', 'src/pages/**/*.vue'],
+          });
+        }
         if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
           viteConf.build = mergeConfig(viteConf.build ?? {}, {
             sourcemap: true,
