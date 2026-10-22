@@ -1,6 +1,7 @@
 import type { ZoomDiagnosis, ZoomMeetingState } from 'src/types';
 
 import { createPinia, setActivePinia } from 'pinia';
+import { useDialogStateStore } from 'stores/dialog-state';
 import { useZoomStateStore } from 'stores/zoom-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -170,6 +171,20 @@ describe('Zoom startup check', () => {
     expect(await runZoomStartupCheck()).toBe('skipped');
     // Asked for, it runs again.
     expect(await runZoomStartupCheck({ manual: true })).toBe('passed');
+  });
+
+  it("stays out of the setup assistant's way while it is open", async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    useDialogStateStore().openDialog(
+      'zoom-setup-assistant',
+      'DialogZoomSetupAssistant',
+    );
+
+    expect(await runZoomStartupCheck({ manual: true })).toBe('skipped');
+    expect(zoom.runZoomSelfTest).not.toHaveBeenCalled();
+    expect(zoom.withZoomRun).not.toHaveBeenCalled();
+    // Today's check is still to do.
+    expect(useZoomStateStore().checkedCongregations).toEqual([]);
   });
 
   it('leaves Zoom alone on days without a meeting', async () => {

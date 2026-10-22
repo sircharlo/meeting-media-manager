@@ -1,7 +1,7 @@
 <template>
   <BaseDialog
     v-model="open"
-    dialog-id="zoom-setup-assistant"
+    :dialog-id="ZOOM_SETUP_ASSISTANT_DIALOG_ID"
     no-backdrop-dismiss
     @hide="stopWatchingMeeting"
   >
@@ -592,6 +592,7 @@ import { storeToRefs } from 'pinia';
 import {
   getZoomHelperErrorMessageKey,
   ZOOM_DIAGNOSIS_CHECKS,
+  ZOOM_SETUP_ASSISTANT_DIALOG_ID,
 } from 'src/constants/zoom';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
@@ -1295,13 +1296,18 @@ const finish = () => {
   // The names learned go with this Zoom version.
   rememberZoomVersion();
   // Its checks and test cover everything the startup check tries, so once
-  // both passed, automations a failed check paused can run again.
+  // both passed, automations a failed check paused can run again, and
+  // today's check is done.
+  const congregationId = currentState.currentCongregation;
   if (
     zoomState.automationsPaused &&
     checksPassed.value &&
     testOutcome.value === 'passed'
   ) {
     zoomState.resumeAutomations();
+    if (!zoomState.checkedCongregations.includes(congregationId)) {
+      zoomState.checkedCongregations.push(congregationId);
+    }
     createTemporaryNotification({
       group: 'zoom-check',
       message: t('zoom-check-passed'),
