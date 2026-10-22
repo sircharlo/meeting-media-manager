@@ -47,7 +47,6 @@
           ref="captureVideo"
           autoplay
           class="media-preview-content"
-          :class="{ 'media-preview-content--source': showCanvasOverlay }"
           disableRemotePlayback
           draggable="false"
           muted
@@ -78,7 +77,7 @@
             v-else
             ref="previewVideo"
             class="media-preview-content"
-            :class="{ 'media-preview-content--source': showCanvasOverlay }"
+            :class="{ 'media-preview-content--source': isCanvasMode }"
             disableRemotePlayback
             draggable="false"
             muted
@@ -91,14 +90,12 @@
           />
         </template>
         <!--
-          Shared between capture and canvas modes - whichever source video is
-          currently active (captureVideo or previewVideo, see
-          activeVideoElement) feeds this same canvas. Kept as a single
-          sibling element outside both branches above so switching between
-          capture and canvas/video doesn't need its own remount logic.
+          Canvas mode draws previewVideo's frames here. Capture mode doesn't
+          need it: its frames already arrive at the preview's own size (see
+          getCaptureBounds), so its <video> above shows them as they are.
         -->
         <canvas
-          v-if="showCanvasOverlay"
+          v-if="isCanvasMode"
           ref="previewCanvas"
           class="media-preview-content"
           draggable="false"
@@ -157,7 +154,6 @@ import { useCurrentStateStore } from 'stores/current-state';
 import {
   computed,
   nextTick,
-  onMounted,
   onUnmounted,
   ref,
   useTemplateRef,
@@ -207,19 +203,6 @@ if (isDev) {
 const previewMode = ref<PreviewMode>(initialPreviewMode);
 const isCaptureMode = computed(() => previewMode.value === 'capture');
 const isCanvasMode = computed(() => previewMode.value === 'canvas');
-// Capture mode draws through the canvas too (with the same high-quality
-// smoothing as canvas mode) rather than showing its raw <video> directly -
-// a live capture stream scaled way down by the compositor otherwise looks
-// noticeably more aliased than an explicit smoothed downscale. 'video' mode
-// stays the one truly raw, unsmoothed path - the cheapest possible fallback
-// for a machine where even the smoothing pass is too much.
-const showCanvasOverlay = computed(
-  () =>
-    (isCaptureMode.value && !captureCanvasDisabled.value) || isCanvasMode.value,
-);
-const activeVideoElement = computed(() =>
-  isCaptureMode.value ? captureVideo.value : previewVideo.value,
-);
 const collapsedBottom = ref<number | undefined>();
 const collapsedRight = ref<number | undefined>();
 const collapsedWidth = ref<number | undefined>();
@@ -295,28 +278,72 @@ const reportPreviewError = (error: unknown, name: string) => {
 };
 
 let activeCaptureStream: MediaStream | undefined;
-// The size cap the active stream was acquired with - see
-// getCaptureSizeBounds and reacquireCaptureForViewport.
+// The size cap the active stream was acquired with - see getCaptureBounds
+// and refreshCaptureSize.
 let activeCaptureBounds: CaptureSizeBounds | undefined;
 let captureAttempted = false;
 let captureUnavailable = false;
+// Bumped by every acquisition and every stop, so an acquisition that's
+// still pending when a newer one or a stop comes along drops its stream.
+let captureRequest = 0;
 
-const stopCaptureStream = () => {
+// keepLastFrame: a paused <video> keeps showing its last frame once its
+// stream stops, where a playing one goes black - for the moment until a new
+// stream's first frame, or while the preview fades out.
+const releaseCaptureStream = (keepLastFrame = false) => {
+  if (keepLastFrame) captureVideo.value?.pause();
   stopMediaStreamTracks(activeCaptureStream);
   activeCaptureStream = undefined;
   activeCaptureBounds = undefined;
-  if (captureVideo.value) captureVideo.value.srcObject = null;
+  if (captureVideo.value && !keepLastFrame) captureVideo.value.srcObject = null;
 };
 
-// The preview (collapsed or in its zoomed modal) never shows more than the
-// main window's own viewport, so that's the most the captured frames ever
-// need to be - in device pixels, so a HiDPI preview stays sharp.
-const getViewportCaptureSizeBounds = () =>
-  getCaptureSizeBounds(
-    globalThis.innerWidth,
-    globalThis.innerHeight,
-    globalThis.devicePixelRatio || 1,
+const stopCaptureStream = (keepLastFrame = false) => {
+  captureRequest++;
+  releaseCaptureStream(keepLastFrame);
+};
+
+// The 30 frames a second nearly all media has, without following a 60 fps
+// fade or animation in the media window frame for frame.
+const CAPTURE_MAX_FRAME_RATE = 30;
+
+// The preview box's size in CSS px, from the same rules as its CSS
+// (.media-preview and .media-preview--fullscreen) rather than measured: the
+// box takes a quarter second to animate between the two, and the capture
+// should be sized for where it's going.
+const getPreviewBoxSize = () => {
+  const { innerHeight, innerWidth } = globalThis;
+  let width: number;
+  if (modalOpen.value) {
+    width = Math.min(innerWidth * 0.9, innerHeight * 0.9 * (16 / 9));
+  } else {
+    const cssDefaultWidth =
+      innerWidth < 600
+        ? Math.min(innerWidth * 0.44, 220)
+        : Math.min(innerWidth * 0.28, 320);
+    width = clampCollapsedWidth(collapsedWidth.value ?? cssDefaultWidth);
+  }
+  return { height: width * (9 / 16), width };
+};
+
+// Frames as big as the preview box shows them (in device px, so a HiDPI
+// preview stays sharp), but never bigger than the media window itself:
+// asking for more makes Chromium render the media window at up to twice its
+// size for as long as the capture runs. Chromium scales the frames down at
+// the source, so they reach the capture <video> at about the size it shows
+// them, with nothing left to scale here.
+const getCaptureBounds = async () => {
+  const box = getPreviewBoxSize();
+  const dpr = globalThis.devicePixelRatio || 1;
+  const mediaWindow = await globalThis.electronApi.getMediaWindowCaptureSize();
+  const cap = (value: number, limit?: number) =>
+    limit ? Math.min(value, limit) : value;
+
+  return getCaptureSizeBounds(
+    cap(box.width * dpr, mediaWindow?.width),
+    cap(box.height * dpr, mediaWindow?.height),
   );
+};
 
 // Electron's window-capture constraint form predates the standard
 // MediaStreamConstraints shape (no mandatory/chromeMediaSource* in DOM lib
@@ -326,13 +353,38 @@ const getViewportCaptureSizeBounds = () =>
 // WebContents.getMediaSourceId's own docs, the id it returns is only valid
 // with a 'tab' source and only for 10 seconds, so it must be redeemed
 // immediately (never cached/reused across attempts).
-const acquireCaptureStream = async (): Promise<boolean> => {
+//
+// Chromium answers a capture of a window that's already being captured with
+// that running capture, at its size and frame rate, whatever the new one
+// asks for (seen with Electron 44). So capture tasks run one at a time (see
+// queueCaptureTask), and each acquisition stops the running capture before
+// asking for its own.
+//
+// Resolves true once the capture has started, or if a newer acquisition, a
+// stop or the preview going out of view made it moot - false only if it
+// couldn't start.
+let captureQueue = Promise.resolve(true);
+const queueCaptureTask = (task: () => Promise<boolean>) => {
+  captureQueue = captureQueue.then(task);
+  return captureQueue;
+};
+
+const acquireCaptureStream = (): Promise<boolean> => {
+  const request = ++captureRequest;
+  return queueCaptureTask(() => startCaptureStream(request));
+};
+
+const startCaptureStream = async (request: number): Promise<boolean> => {
   try {
+    if (request !== captureRequest) return true;
+    // Before the source id, so its 10 seconds go to the capture alone.
+    const bounds = await getCaptureBounds();
     const sourceId =
       await globalThis.electronApi.getMediaWindowCaptureSourceId();
     if (!sourceId) return false;
+    if (request !== captureRequest) return true;
 
-    const bounds = getViewportCaptureSizeBounds();
+    releaseCaptureStream(true);
     const stream = await navigator.mediaDevices.getUserMedia({
       // No audio - the preview is muted regardless (matches the canvas/video
       // fallback modes), and requesting it would just be one more thing
@@ -349,18 +401,21 @@ const acquireCaptureStream = async (): Promise<boolean> => {
           // window letterboxed inside it, black bars and all. Both are
           // explained on getCaptureSizeBounds.
           ...bounds,
+          maxFrameRate: CAPTURE_MAX_FRAME_RATE,
         },
       },
     } as unknown as MediaStreamConstraints);
 
-    stopCaptureStream();
+    // Nothing should be capturing once a newer acquisition or a stop has
+    // come along, or while there's no preview to show it in.
+    if (request !== captureRequest || !showPreview.value) {
+      stopMediaStreamTracks(stream);
+      return true;
+    }
+
     activeCaptureStream = stream;
     activeCaptureBounds = bounds;
     if (captureVideo.value) captureVideo.value.srcObject = stream;
-    // Give smoothing a fresh chance on every newly-acquired stream, rather
-    // than carrying a disable decision forward from a previous stream/mode.
-    captureCanvasDisabled.value = false;
-    recentSlowCaptureDraws.value = [];
 
     const track = stream.getVideoTracks()[0];
     if (track) {
@@ -395,17 +450,18 @@ const acquireCaptureStream = async (): Promise<boolean> => {
     // not a bug (MMM-V2-3K6/3JW/3JN). Anything else is still reported.
     if (!isExpectedMediaAccessError(error)) {
       errorCatcher(error, {
-        contexts: { fn: { name: 'MediaPreview.acquireCaptureStream' } },
+        contexts: { fn: { name: 'MediaPreview.startCaptureStream' } },
       });
     }
     return false;
   }
 };
 
-// Automatic (production-only) capture attempt. Runs once per session unless
-// the capture stream later ends and needs retrying (see acquireCaptureStream's
-// track.onended above) - once obtained, the same stream mirrors whatever the
-// media window shows next, so there's no need to re-attempt per media item.
+// Automatic (production-only) check that capture works. Runs once per
+// session unless the capture stream later ends and needs retrying (see
+// acquireCaptureStream's track.onended above). From then on, the showPreview
+// watcher stops the capture whenever the preview goes out of view and starts
+// it again when it comes back (see resumeCapture).
 const maybeAttemptCapture = () => {
   if (
     isDev ||
@@ -422,6 +478,18 @@ const maybeAttemptCapture = () => {
     } else {
       captureUnavailable = true;
     }
+  });
+};
+
+// Restarts the capture when the preview comes back into view. In production,
+// a capture that won't start again drops back to canvas mode for the rest of
+// the session, rather than leaving the preview black.
+const resumeCapture = () => {
+  void acquireCaptureStream().then((ok) => {
+    if (ok || isDev || !isCaptureMode.value) return;
+    stopCaptureStream();
+    captureUnavailable = true;
+    previewMode.value = 'canvas';
   });
 };
 
@@ -444,64 +512,11 @@ let videoFrameCallbackHandle: number | undefined;
 let animationFrameHandle: number | undefined;
 let canvasResizeObserver: ResizeObserver | undefined;
 // The element a scheduled frame loop is actually bound to - tracked
-// separately from activeVideoElement (which can change reactively the
-// instant previewMode changes) so cancelFrameLoop always cancels against the
-// element that actually registered the callback, not whichever element mode
-// switching has made "current" by the time cleanup runs.
+// separately from previewVideo (which changes reactively the instant the
+// element remounts) so cancelFrameLoop always cancels against the element
+// that actually registered the callback, not whichever element is "current"
+// by the time cleanup runs.
 let frameLoopSourceElement: HTMLVideoElement | undefined;
-
-// Capture mode's canvas-smoothing safety net. Canvas mode's own drift-based
-// downgrade (disablePreviewForPerformance below) doesn't apply here - there's
-// no seek/sync concept for a live mirror - so this measures the actual
-// drawImage() cost directly instead. Only disables the smoothing pass, not
-// capture mode itself: capture without smoothing is still strictly cheaper
-// than falling back to canvas/video (both of which re-decode the file), so
-// there's never a reason to abandon capture over this specifically.
-const CAPTURE_DRAW_BUDGET_MS = 8;
-const CAPTURE_SLOW_DRAWS_BEFORE_DISABLE = 5;
-const CAPTURE_SLOW_DRAW_WINDOW_SECONDS = 10;
-const recentSlowCaptureDraws = ref<number[]>([]);
-const captureCanvasDisabled = ref(false);
-// Smoothing gets a fresh chance on every new capture stream, so a machine
-// that's too slow for it trips this again and again in one session. It's a
-// harmless downgrade (the preview keeps working), so one report per session
-// is plenty to see how many machines hit it (MMM-V2-3HZ). MediaPreview is
-// mounted once, in MainLayout, for the app's lifetime.
-let slowCaptureDrawsReported = false;
-
-const registerSlowCaptureDraw = () => {
-  const now = Date.now();
-  const windowStart = now - CAPTURE_SLOW_DRAW_WINDOW_SECONDS * 1000;
-  recentSlowCaptureDraws.value = [
-    ...recentSlowCaptureDraws.value.filter(
-      (timestamp) => timestamp > windowStart,
-    ),
-    now,
-  ];
-
-  if (
-    recentSlowCaptureDraws.value.length >= CAPTURE_SLOW_DRAWS_BEFORE_DISABLE
-  ) {
-    captureCanvasDisabled.value = true;
-    recentSlowCaptureDraws.value = [];
-
-    log(
-      `Disabling capture-mode canvas smoothing after ${CAPTURE_SLOW_DRAWS_BEFORE_DISABLE} slow draws within ${CAPTURE_SLOW_DRAW_WINDOW_SECONDS}s`,
-      'mediaPreview',
-      'warn',
-    );
-    if (slowCaptureDrawsReported) return;
-    slowCaptureDrawsReported = true;
-    errorCatcher(
-      new Error(
-        'Capture-mode canvas smoothing disabled after repeated slow draws',
-      ),
-      {
-        contexts: { fn: { name: 'MediaPreview.registerSlowCaptureDraw' } },
-      },
-    );
-  }
-};
 
 const cancelFrameLoop = () => {
   const element = frameLoopSourceElement;
@@ -541,10 +556,9 @@ const resizeCanvasToDisplaySize = () => {
 
 // Fit the frame into the canvas the way object-fit: contain would, rather
 // than stretching it over the canvas' full 16:9 box - the source's shape
-// isn't guaranteed to match it (a 4:3 video file in canvas mode; in capture
-// mode, whatever shape the media window currently has, e.g. fullscreen on a
-// 16:10 display). A mismatch then shows up as the same letterboxing the
-// media window itself does, not as a squashed picture.
+// isn't guaranteed to match it (a 4:3 video file, say). A mismatch then
+// shows up as the same letterboxing the media window itself does, not as a
+// squashed picture.
 //
 // Memoized on its only inputs: the arithmetic is nothing next to drawImage
 // itself, but those inputs only change on a resize or a media swap, so
@@ -583,7 +597,7 @@ const getFrameFit = (element: HTMLVideoElement, canvas: HTMLCanvasElement) => {
 };
 
 const drawCurrentFrame = () => {
-  const element = frameLoopSourceElement ?? activeVideoElement.value;
+  const element = frameLoopSourceElement ?? previewVideo.value;
   const canvas = previewCanvas.value;
   if (!element || !canvas || !element.videoWidth || !element.videoHeight) {
     return;
@@ -607,19 +621,12 @@ const drawCurrentFrame = () => {
     context.clearRect(0, 0, canvas.width, canvas.height);
   }
 
-  const drawStart = performance.now();
   context.drawImage(element, rect.x, rect.y, rect.width, rect.height);
-  if (
-    isCaptureMode.value &&
-    performance.now() - drawStart > CAPTURE_DRAW_BUDGET_MS
-  ) {
-    registerSlowCaptureDraw();
-  }
 };
 
 const scheduleFrameLoop = () => {
-  const element = activeVideoElement.value;
-  if (!showCanvasOverlay.value || !element) return;
+  const element = previewVideo.value;
+  if (!isCanvasMode.value || !element) return;
 
   frameLoopSourceElement = element;
   if ('requestVideoFrameCallback' in element) {
@@ -1257,6 +1264,7 @@ useEventListener(globalThis, 'pointerup', () => {
   if (resizeStart.value) {
     suppressNextClick.value = resizeMoved.value;
     resizeStart.value = undefined;
+    if (resizeMoved.value) void refreshCaptureSize();
     return;
   }
 
@@ -1266,40 +1274,37 @@ useEventListener(globalThis, 'pointerup', () => {
   dragStart.value = undefined;
 });
 
-// The capture size cap is derived from the main window's viewport at
-// acquisition time (see getViewportCaptureSizeBounds). A window that has
-// since grown a lot would show a soft, upscaled preview - and one that
-// shrank keeps paying for pixels it can't show - so re-acquire after a
-// substantial change. Not on every resize tick: a new stream isn't free, and
-// the current one keeps running until its replacement is in hand, so nothing
-// goes black in between.
+// The capture's size is set for the preview as it was when the stream
+// started (see getCaptureBounds). Once the preview is zoomed in or out,
+// resized by hand, or resized a lot along with the main window, a new
+// stream fits better: a preview that grew would show soft, upscaled frames,
+// and one that shrank keeps paying for pixels it can't show. Not for every
+// small change: a new stream isn't free, and the preview holds still on its
+// last frame until the new stream's first one. Queued like an acquisition,
+// so it compares against the stream the ones before it left running
+// (zooming in and straight back out ends up with the collapsed size).
 const CAPTURE_REACQUIRE_RATIO = 1.25;
 const ratio = (a: number, b: number) => Math.max(a, b) / Math.min(a, b);
-const reacquireCaptureForViewport = () => {
-  if (!activeCaptureStream || !activeCaptureBounds || !isCaptureMode.value) {
-    return;
-  }
+const refreshCaptureSize = () =>
+  queueCaptureTask(async () => {
+    const current = activeCaptureBounds;
+    if (!current) return true;
+    const next = await getCaptureBounds();
+    if (
+      activeCaptureBounds !== current ||
+      (ratio(next.maxWidth, current.maxWidth) < CAPTURE_REACQUIRE_RATIO &&
+        ratio(next.maxHeight, current.maxHeight) < CAPTURE_REACQUIRE_RATIO)
+    ) {
+      return true;
+    }
 
-  const next = getViewportCaptureSizeBounds();
-  if (
-    ratio(next.maxWidth, activeCaptureBounds.maxWidth) <
-      CAPTURE_REACQUIRE_RATIO &&
-    ratio(next.maxHeight, activeCaptureBounds.maxHeight) <
-      CAPTURE_REACQUIRE_RATIO
-  ) {
-    return;
-  }
-
-  void acquireCaptureStream();
-};
-const debouncedReacquireCaptureForViewport = useDebounceFn(
-  reacquireCaptureForViewport,
-  500,
-);
+    return startCaptureStream(++captureRequest);
+  });
+const debouncedRefreshCaptureSize = useDebounceFn(refreshCaptureSize, 500);
 
 useEventListener(globalThis, 'resize', () => {
   void debouncedNormalizeCollapsedPreviewAfterResize();
-  void debouncedReacquireCaptureForViewport();
+  void debouncedRefreshCaptureSize();
 });
 
 useEventListener(
@@ -1350,10 +1355,21 @@ watch(
     closeModalWhenHidden();
     if (visible) {
       void syncVideos();
+      if (isCaptureMode.value && !activeCaptureStream) resumeCapture();
+    } else {
+      // Nothing to show it in, so stop capturing (the capture stays the
+      // preview mode) instead of having the media window's every frame
+      // copied for nothing until the next media item. The last frame stays
+      // up while the preview fades out.
+      stopCaptureStream(true);
     }
   },
   { immediate: true },
 );
+
+watch(modalOpen, () => {
+  void refreshCaptureSize();
+});
 
 watch(
   () => [
@@ -1390,12 +1406,7 @@ watch(currentUrl, () => {
 });
 
 watch(
-  () =>
-    [
-      showCanvasOverlay.value,
-      activeVideoElement.value,
-      previewCanvas.value,
-    ] as const,
+  () => [isCanvasMode.value, previewVideo.value, previewCanvas.value] as const,
   ([overlayActive, element, canvas]) => {
     cancelFrameLoop();
     canvasResizeObserver?.disconnect();
@@ -1422,7 +1433,9 @@ watch(captureVideo, (element) => {
 });
 
 // Production builds only - dev builds are manual-only via the on-screen
-// toggle (see toggleRenderMode/onMounted below).
+// toggle (see toggleRenderMode), or start in capture mode if that's what
+// was last picked, in which case the showPreview watcher above starts the
+// capture once there's a preview to show.
 watch(
   () => previewEnabled.value,
   (enabled) => {
@@ -1430,16 +1443,6 @@ watch(
   },
   { immediate: true },
 );
-
-onMounted(() => {
-  // Covers a dev session that starts already opted into capture mode from a
-  // previous run's localStorage value - the automatic-attempt watch above
-  // deliberately skips dev entirely, so this is the only path that acquires
-  // the stream in that case.
-  if (isDev && previewMode.value === 'capture') {
-    void acquireCaptureStream();
-  }
-});
 </script>
 
 <style scoped>

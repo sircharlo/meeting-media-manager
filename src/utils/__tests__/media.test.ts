@@ -297,7 +297,7 @@ describe('Media Utilities', () => {
       return violations;
     };
 
-    it('caps at the viewport in device pixels', () => {
+    it('caps at the given size in device pixels', () => {
       const bounds = getCaptureSizeBounds(1200, 800, 1.5);
       expect(bounds).toMatchObject({ maxHeight: 1200, maxWidth: 1800 });
       expect(sizeFollowingViolations(bounds)).toEqual([]);
@@ -329,7 +329,7 @@ describe('Media Utilities', () => {
       });
     });
 
-    it('nudges a square viewport so the max aspect never matches the 2x2 min', () => {
+    it('nudges a square box so the max aspect never matches the 2x2 min', () => {
       for (const [width, height] of [
         [1000, 1000],
         [1005, 1000],
@@ -345,7 +345,7 @@ describe('Media Utilities', () => {
       }
     });
 
-    it('stays size-following for landscape and portrait viewports alike', () => {
+    it('stays size-following for landscape and portrait boxes alike', () => {
       for (const [width, height] of [
         [3440, 1440],
         [1920, 1200],

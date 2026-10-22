@@ -23,6 +23,7 @@ import {
   ipcMain,
   type IpcMainEvent,
   type IpcMainInvokeEvent,
+  screen,
   shell,
   systemPreferences,
 } from 'electron';
@@ -512,6 +513,19 @@ handleIpcInvoke('getMediaWindowCaptureSourceId', (e) => {
   const media = mediaWindowInfo.mediaWindow;
   if (!media || media.isDestroyed()) return null;
   return media.webContents.getMediaSourceId(e.sender);
+});
+// The media window's size in device pixels: the most a capture of it should
+// ask for. A capture asking for more makes Chromium render the media window
+// itself at up to twice its size for as long as the capture runs.
+handleIpcInvoke('getMediaWindowCaptureSize', () => {
+  const media = mediaWindowInfo.mediaWindow;
+  if (!media || media.isDestroyed()) return null;
+  const [width = 0, height = 0] = media.getContentSize();
+  const { scaleFactor } = screen.getDisplayMatching(media.getBounds());
+  return {
+    height: Math.round(height * scaleFactor),
+    width: Math.round(width * scaleFactor),
+  };
 });
 handleIpcInvoke('closeSqliteConnection', async (_e, dbPath: string) =>
   closeConnection(dbPath),

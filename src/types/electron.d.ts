@@ -171,6 +171,15 @@ export interface ElectronApi {
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
   getLowDiskSpaceStatus: () => Promise<boolean>;
   /**
+   * The media window's size in device pixels: the most a capture of it
+   * should ask for (see getMediaWindowCaptureSourceId). Null if there's no
+   * media window.
+   */
+  getMediaWindowCaptureSize: () => Promise<null | {
+    height: number;
+    width: number;
+  }>;
+  /**
    * Returns a capture-source id (via webContents.getMediaSourceId) scoped to
    * the calling renderer, for mirroring the media window's live composited
    * output into a preview instead of re-decoding the same file a second
@@ -510,6 +519,7 @@ export type ElectronIpcInvokeKey =
   | 'getBetaUpdatesPath'
   | 'getLocales'
   | 'getLowDiskSpaceStatus'
+  | 'getMediaWindowCaptureSize'
   | 'getMediaWindowCaptureSourceId'
   | 'getScreenAccessStatus'
   | 'getSharedDataPath'
