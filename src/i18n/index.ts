@@ -1,4 +1,5 @@
 /* eslint-disable perfectionist/sort-imports */
+import type { MessageSchema } from 'boot/i18n';
 import { enabled, locales } from 'src/constants/locales';
 
 export const localeOptions = locales.filter((locale) =>
@@ -78,3 +79,17 @@ export default {
   ty,
   uk,
 };
+
+// Dev only: nothing else accepts hot updates of the locale JSON files, so
+// editing a string would make Vite fully reload every window. Swap the edited
+// messages into the running i18n instance instead.
+if (import.meta.hot) {
+  import.meta.hot.accept(async (updated) => {
+    if (!updated) return;
+    const { i18n } = await import('boot/i18n');
+    const updatedMessages = updated.default as Record<string, MessageSchema>;
+    for (const [locale, localeMessages] of Object.entries(updatedMessages)) {
+      i18n.global.setLocaleMessage(locale, localeMessages);
+    }
+  });
+}
