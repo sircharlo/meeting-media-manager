@@ -549,13 +549,13 @@ O Gerenciador de Reuniões do Zoom (beta, somente Windows) opera o aplicativo de
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-O Zoom não oferece uma interface de automação adequada, por isso o M³ controla o aplicativo do Zoom pela interface de acessibilidade dele, que funciona sem o mouse para quase tudo (a lista de participantes, os menus dela, a janela de compartilhamento). Algumas ações ainda podem precisar mover o mouse ou mudar a janela em foco por um instante, por exemplo para trazer de volta a barra de ferramentas do Zoom que se oculta automaticamente. Sempre que isso acontece, o M³ cobre a própria janela com o aviso "O M³ está controlando o Zoom", que informa o que está acontecendo, com um botão **Cancelar esta automação**. O mesmo aviso aparece durante as verificações do assistente de configuração e durante o autoteste. Um atalho de teclado global (padrão `Ctrl+Alt+Escape`), ativo somente enquanto uma automação está em andamento, cancela a automação de qualquer lugar, mesmo quando o Zoom está em foco. O cancelamento interrompe o M³ na hora; o Zoom pode ficar no meio do processo, por isso verifique-o.
+O Zoom não oferece uma interface de automação adequada, por isso o M³ controla o aplicativo do Zoom pela interface de acessibilidade dele, que funciona sem mover o mouse, mesmo quando o Zoom oculta a barra de ferramentas. Ainda assim, o Zoom traz a janela dele para a frente por um instante quando o M³ pressiona os botões dele, e o mouse só se move como último recurso, caso o Zoom não responda de nenhuma outra forma. Sempre que o M³ controla o Zoom, ele cobre a própria janela com o aviso "O M³ está controlando o Zoom", que informa o que está acontecendo, com um botão **Cancelar esta automação**. O mesmo aviso aparece durante as verificações do assistente de configuração e durante o autoteste. Um atalho de teclado global (padrão `Ctrl+Alt+Escape`), ativo somente enquanto uma automação está em andamento, cancela a automação de qualquer lugar, mesmo quando o Zoom está em foco. O cancelamento interrompe o M³ na hora; o Zoom pode ficar no meio do processo, por isso verifique-o.
 
 **Padrão**: `Ctrl+Alt+Escape`
 
 #### Assistente de mãos levantadas {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Durante uma reunião, o M³ observa a lista de participantes do Zoom em busca de mãos levantadas. Quando alguém levanta a mão, uma notificação no M³ permite **ativar o áudio** desse participante com um clique e, quando ele terminar de falar, **desativar o áudio de novo e abaixar a mão** com outro clique. O botão do Zoom na barra de ações lista as mãos levantadas com os mesmos botões. Cada ação é feita na linha desse participante no Zoom, pelo nome exato; se dois participantes tiverem o mesmo nome, o M³ não mexe em nenhum dos dois.
 
