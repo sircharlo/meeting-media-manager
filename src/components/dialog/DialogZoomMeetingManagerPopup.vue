@@ -143,6 +143,25 @@
       </div>
     </template>
 
+    <!-- Puts the windows back where the setup assistant's layout says -->
+    <div v-if="zoomLayout.enabled" class="q-px-md q-pt-sm">
+      <q-btn
+        class="full-width"
+        color="primary"
+        :disable="!meetingFound || arrangingWindows"
+        icon="mmm-window"
+        :label="t('zoom-layout-arrange')"
+        :loading="arrangingWindows"
+        no-caps
+        outline
+        @click="arrangeWindows"
+      >
+        <q-tooltip :delay="500">{{
+          t('zoom-layout-arrange-explain')
+        }}</q-tooltip>
+      </q-btn>
+    </div>
+
     <template v-if="currentSettings?.zoomMeetingManagerHandAlert">
       <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
         {{ t('zoom-raised-hands') }}
@@ -297,6 +316,7 @@ import type { ZoomMeetingState } from 'src/types';
 import ZoomSelfTestPanel from 'components/dialog/ZoomSelfTestPanel.vue';
 import ActionPopup from 'components/ui/ActionPopup.vue';
 import { storeToRefs } from 'pinia';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   getZoomMeetingState,
   isZoomSetupNeeded,
@@ -305,7 +325,9 @@ import {
   runZoomPostMeetingSequence,
   unmuteZoomParticipant,
 } from 'src/helpers/zoom';
+import { arrangeZoomWindows } from 'src/helpers/zoom-layout';
 import { runZoomStartupCheck } from 'src/helpers/zoom-startup-check';
+import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useHandAlertStore } from 'stores/hand-alert';
 import { useZoomStateStore } from 'stores/zoom-state';
@@ -366,6 +388,25 @@ const pausedProblems = computed(() =>
 
 const testAgain = () => {
   void runZoomStartupCheck({ manual: true });
+};
+
+const zoomLayout = useAppSettingsStore().zoomLayout;
+const arrangingWindows = ref(false);
+
+const arrangeWindows = async () => {
+  arrangingWindows.value = true;
+  try {
+    if (!(await arrangeZoomWindows())) {
+      createTemporaryNotification({
+        group: 'zoom-layout',
+        icon: 'mmm-warning',
+        message: t('zoom-layout-arrange-failed'),
+        type: 'warning',
+      });
+    }
+  } finally {
+    arrangingWindows.value = false;
+  }
 };
 
 let mainWindowPollingInterval: ReturnType<typeof setInterval> | undefined;

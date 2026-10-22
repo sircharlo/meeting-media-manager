@@ -143,7 +143,9 @@ const accept = () => {
   if (action?.type === 'settings') {
     void router.push(`/settings/${action.setting}`);
   } else if (action?.type === 'event') {
-    globalThis.dispatchEvent(new CustomEvent(action.event));
+    globalThis.dispatchEvent(
+      new CustomEvent(action.event, { detail: action.detail }),
+    );
   }
 };
 

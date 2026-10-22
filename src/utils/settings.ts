@@ -146,6 +146,12 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
         );
       } else if (action === 'openZoomSetupAssistant') {
         globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
+      } else if (action === 'openZoomWindowLayout') {
+        globalThis.dispatchEvent(
+          new CustomEvent('openZoomSetupAssistant', {
+            detail: { step: 'layout' },
+          }),
+        );
       } else if (action === 'resetFeatureNudges') {
         resetFeatureNudgesForCurrentProfile();
       } else if (action === 'openZoomSetupAssistantIfNeeded') {

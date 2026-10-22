@@ -136,6 +136,7 @@ import {
   stopZoomHelper,
 } from 'src-electron/main/zoom-helper-manager';
 import { isZoomCommand } from 'src-electron/main/zoom-helper-process';
+import { getZoomLayoutTargets } from 'src-electron/main/zoom-layout';
 import { handleZoomTestParticipants } from 'src-electron/main/zoom-test-participants';
 
 const { openExternal } = shell;
@@ -635,6 +636,12 @@ handleIpcInvoke('zoomCommand', async (_e, command: unknown) => {
   }
   return runZoomHelperCommand(command);
 });
+
+handleIpcInvoke('getZoomLayoutTargets', (_e, preferences: unknown) =>
+  preferences && typeof preferences === 'object'
+    ? getZoomLayoutTargets(preferences)
+    : null,
+);
 
 handleIpcInvoke(
   'zoomTestParticipants',

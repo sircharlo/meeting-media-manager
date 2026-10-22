@@ -6,6 +6,7 @@ import type {
   ZoomDiagnosis,
   ZoomFailureSnapshot,
   ZoomKnownTitles,
+  ZoomLayoutTargets,
   ZoomMeetingState,
 } from 'src/types';
 
@@ -82,11 +83,18 @@ const SILENT_COMMANDS = new Set<ZoomCommandType>([
   'participants',
   'ping',
   'raised-hands',
+  // Presses one share toolbar button while M³'s media is being shared: the
+  // overlay would cover M³ just then.
+  'share-participants',
+  'window-layout',
 ]);
 
+// Placing windows moves no mouse and takes no focus, unless Zoom and M³ are
+// snapped with Windows' own snapping, which types Win+Left/Right for real.
 const isSilentCommand = (command: ZoomCommand) =>
   SILENT_COMMANDS.has(command.type) ||
-  (command.type === 'meeting' && !command.reveal);
+  (command.type === 'meeting' && !command.reveal) ||
+  (command.type === 'place-windows' && !command.snap);
 
 /** What the overlay says about a single Zoom action, by its type. */
 const COMMAND_STEP_KEYS: Partial<Record<ZoomCommandType, string>> = {
@@ -99,6 +107,7 @@ const COMMAND_STEP_KEYS: Partial<Record<ZoomCommandType, string>> = {
   'lower-participant-hand': 'zoom-run-lower-hand',
   meeting: 'zoom-self-test-step-meeting',
   'mute-all': 'zoom-self-test-step-mute-all-unlocked',
+  'place-windows': 'zoom-run-arrange-windows',
   'set-mic': 'zoom-run-host-mic',
   'set-participant-mic': 'zoom-run-participant-mic',
   'set-video': 'zoom-run-host-video',
@@ -755,6 +764,9 @@ export const runWhileHoldingZoomAutomations = async <T>(
   }
 };
 
+/** Whether a check of the Zoom Meeting Manager is using Zoom right now. */
+export const isZoomCheckInProgress = () => !!zoomCheckInProgress;
+
 /**
  * Whether the automations may act now: once any check in progress is done,
  * unless a failed check paused them.
@@ -1046,6 +1058,52 @@ export const automateZoomMediaSharing = async (start: boolean) => {
     if (mediaShareStarting === starting) mediaShareStarting = null;
   }
 };
+
+// --- Window layout ---------------------------------------------------------
+
+/**
+ * Where Zoom's meeting windows are, and whether the user is moving one
+ * (only reads: nothing on screen changes). Null if the helper couldn't
+ * tell.
+ */
+export const getZoomWindowLayout = async () => {
+  const result = await runCommand({ type: 'window-layout' });
+  return result.ok ? (result.layout ?? null) : null;
+};
+
+/**
+ * Puts Zoom's meeting windows (and M³'s main window, unless `zoomOnly`)
+ * where the layout's targets say; with `participantsOnly`, only Zoom's
+ * participants list, at Zoom's spot (while sharing hides the meeting).
+ * Resolves to where each one ended up, or null if that failed (no meeting
+ * window, say).
+ */
+export const placeZoomWindows = async (
+  targets: ZoomLayoutTargets,
+  { participantsOnly = false, zoomOnly = false } = {},
+) => {
+  const result = await runCommand(
+    participantsOnly
+      ? { participants: targets.zoom, type: 'place-windows' }
+      : {
+          m3: zoomOnly ? undefined : targets.m3,
+          m3Handle: zoomOnly ? undefined : targets.m3Handle,
+          second: targets.second,
+          snap: zoomOnly ? null : targets.snap,
+          type: 'place-windows',
+          zoom: targets.zoom,
+        },
+  );
+  return result.ok ? (result.placed ?? null) : null;
+};
+
+/**
+ * While sharing, opens Zoom's participants list in a window of its own
+ * (Zoom hides its meeting window, list included). Resolves to whether it
+ * shows.
+ */
+export const openZoomParticipantsWhileSharing = async () =>
+  (await runCommand({ type: 'share-participants' })).ok;
 
 // --- Setup assistant -------------------------------------------------------
 

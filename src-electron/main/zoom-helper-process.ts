@@ -34,11 +34,13 @@ const COMMAND_TYPES = new Set<ZoomCommandType>([
   'panel-entries',
   'participants',
   'ping',
+  'place-windows',
   'raised-hands',
   'set-mic',
   'set-participant-mic',
   'set-video',
   'share-entries',
+  'share-participants',
   'share-toolbar-entries',
   'start-share',
   'stop-share',
@@ -48,6 +50,7 @@ const COMMAND_TYPES = new Set<ZoomCommandType>([
   'toggle-mic',
   'toggle-video',
   'video-title',
+  'window-layout',
 ]);
 
 export const isZoomCommand = (value: unknown): value is ZoomCommand =>
