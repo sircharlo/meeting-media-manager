@@ -306,8 +306,20 @@ const failedOnChangedNames = (failures: ZoomActionFailure[]) =>
   failures.some(({ error }) => UNRECOGNIZED_TITLE.test(error ?? '')) ||
   zoomNamesChanged(useZoomStateStore().meeting);
 
+// Closes the last failed check's notification, which stays until closed.
+let dismissFailedCheckNotice: (() => void) | undefined;
+
+/**
+ * Closes the notification of a failed check, if it's still showing: the
+ * setup assistant, which it may offer, does so as it opens.
+ */
+export const dismissFailedZoomCheckNotice = () => {
+  dismissFailedCheckNotice?.();
+  dismissFailedCheckNotice = undefined;
+};
+
 const notifyFailedCheck = (problems: string[], namesChanged: boolean) => {
-  createTemporaryNotification({
+  dismissFailedCheckNotice = createTemporaryNotification({
     actions: [
       namesChanged
         ? {
