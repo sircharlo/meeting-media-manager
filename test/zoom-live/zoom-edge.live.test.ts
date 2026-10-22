@@ -1,5 +1,5 @@
 import type { ChildProcess } from 'node:child_process';
-import type { ZoomMeetingState } from 'src/types';
+import type { ZoomCommand, ZoomMeetingState } from 'src/types';
 
 import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -28,6 +28,7 @@ import {
   restoreWindow,
   setCursor,
   toggleZoomAlwaysShowControls,
+  watchCursor,
 } from './windows';
 
 // The situations a real computer throws at the Zoom helper beyond the happy
@@ -103,7 +104,7 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
     helper.stop();
   });
 
-  it('finds the meeting while Zoom has hidden its toolbar, without touching the screen', async () => {
+  it('reads the meeting while Zoom has hidden its toolbar, without touching the screen', async () => {
     await waitForHiddenToolbar();
     const cursor = getCursor();
     const foreground = getForegroundWindow();
@@ -111,21 +112,61 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
     const state = await meeting();
 
     expect(state.found).toBe(true);
+    // Read through the toolbar's own window, which stays hidden.
     expect(state.toolbarVisible).toBe(false);
-    // Unknown rather than guessed while the toolbar is hidden.
-    expect(state.audioJoined).toBeNull();
+    expect(typeof state.audioJoined).toBe('boolean');
+    expect(state.videoTitle).toBeTruthy();
     expect(getCursor()).toEqual(cursor);
     expect(getForegroundWindow()).toBe(foreground);
   });
 
-  it('reads the meeting through a hidden toolbar when asked to', async () => {
+  it('reads the meeting when asked to reveal it, still leaving the toolbar hidden', async () => {
     await waitForHiddenToolbar();
+    const cursor = getCursor();
 
     const state = await meeting(true);
 
-    expect(state.toolbarVisible).toBe(true);
+    expect(state.toolbarVisible).toBe(false);
     expect(typeof state.audioJoined).toBe('boolean');
     expect(state.videoTitle).toBeTruthy();
+    expect(getCursor()).toEqual(cursor);
+  });
+
+  it("runs the startup check's actions without ever moving the mouse", async () => {
+    await waitForHiddenToolbar();
+    const watch = await watchCursor();
+    let positions: string[];
+    try {
+      const commands: ZoomCommand[] = [
+        { reveal: true, type: 'meeting' },
+        { type: 'leave-audio' },
+        { type: 'join-audio' },
+        { type: 'share-entries' },
+        { type: 'diagnose' },
+      ];
+      if (titles.videoOnTitle && titles.videoOffTitle) {
+        commands.push(videoCommand(false), videoCommand(true));
+      }
+      if (titles.shareButtonTitle) {
+        commands.push(
+          {
+            shareButtonTitle: titles.shareButtonTitle,
+            type: 'start-share',
+            windowTitle: MEDIA_WINDOW_TITLE,
+          },
+          { type: 'stop-share' },
+        );
+      }
+      for (const command of commands) {
+        expect(await helper.request(command), command.type).toMatchObject({
+          ok: true,
+        });
+      }
+    } finally {
+      positions = watch.stop();
+    }
+
+    expect(positions, 'every position the mouse took').toHaveLength(1);
   });
 
   it('leaves and rejoins computer audio starting from a hidden toolbar', async () => {
