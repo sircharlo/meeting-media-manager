@@ -618,6 +618,7 @@ import {
   runZoomSelfTest,
   type ZoomSelfTestStep,
 } from 'src/helpers/zoom-self-test';
+import { dismissFailedZoomCheckNotice } from 'src/helpers/zoom-startup-check';
 import { isSettingInEffect } from 'src/utils/settings';
 import { parseZoomMeetingId } from 'src/utils/zoom';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -1312,6 +1313,9 @@ const finish = () => {
 };
 
 const reset = () => {
+  // A failed check's notification would stay on top of the assistant, which
+  // is there to fix what it reports (the Zoom popup also offers it).
+  dismissFailedZoomCheckNotice();
   step.value = 'welcome';
   relearning.value = zoomState.relearnNeeded;
   const learned = (...titles: (null | string | undefined)[]) =>

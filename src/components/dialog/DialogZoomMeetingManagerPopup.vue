@@ -51,9 +51,10 @@
           {{ t('zoom-check-running') }}
         </div>
       </div>
+      <!-- Its explanation is long: the button goes under it, not beside it. -->
       <div
         v-else-if="automationsPaused"
-        class="action-popup__banner action-popup__banner--negative"
+        class="action-popup__banner action-popup__banner--negative zoom-popup__banner--stacked"
       >
         <q-icon color="negative" name="mmm-error" size="18px" />
         <div class="col text-caption">
@@ -66,25 +67,27 @@
               t('zoom-automations-paused-failed', { problems: pausedProblems })
             }}
           </div>
+          <q-btn
+            v-if="relearnNeeded"
+            class="zoom-popup__banner-action"
+            color="primary"
+            dense
+            flat
+            :label="t('zoom-setup-open')"
+            no-caps
+            @click="openSetupAssistant"
+          />
+          <q-btn
+            v-else
+            class="zoom-popup__banner-action"
+            color="primary"
+            dense
+            flat
+            :label="t('zoom-check-test-again')"
+            no-caps
+            @click="testAgain"
+          />
         </div>
-        <q-btn
-          v-if="relearnNeeded"
-          color="primary"
-          dense
-          flat
-          :label="t('zoom-setup-open')"
-          no-caps
-          @click="openSetupAssistant"
-        />
-        <q-btn
-          v-else
-          color="primary"
-          dense
-          flat
-          :label="t('zoom-check-test-again')"
-          no-caps
-          @click="testAgain"
-        />
       </div>
     </template>
 
@@ -466,5 +469,15 @@ onBeforeUnmount(() => {
 .zoom-helper-logs__line {
   overflow-wrap: anywhere;
   padding: 0.1em 0;
+}
+
+/* A banner whose button goes under its text: the icon stays by the first line. */
+.zoom-popup__banner--stacked {
+  align-items: flex-start;
+}
+
+/* Under the banner's text, its label lined up with it. */
+.zoom-popup__banner-action {
+  margin: 4px 0 0 -6px;
 }
 </style>

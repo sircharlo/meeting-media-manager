@@ -66,6 +66,11 @@ vi.mock('src/helpers/mediaPlayback', () => ({
   toggleMediaWindowVisibility: vi.fn(),
 }));
 
+const startupCheck = vi.hoisted(() => ({
+  dismissFailedZoomCheckNotice: vi.fn(),
+}));
+vi.mock('src/helpers/zoom-startup-check', () => startupCheck);
+
 installQuasarPlugin();
 installPinia({ stubActions: false });
 
@@ -213,6 +218,12 @@ afterEach(() => {
 });
 
 describe('DialogZoomSetupAssistant', () => {
+  it("closes a failed check's notification as it opens", async () => {
+    await mountAssistant();
+
+    expect(startupCheck.dismissFailedZoomCheckNotice).toHaveBeenCalledOnce();
+  });
+
   it('waits for the Zoom helper, and explains why it could not start', async () => {
     vi.mocked(globalThis.electronApi.startZoomHelper).mockResolvedValueOnce({
       error: 'powershell-restricted',

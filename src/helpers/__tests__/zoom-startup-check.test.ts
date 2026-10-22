@@ -500,4 +500,17 @@ describe('Zoom startup check', () => {
       'zoom-check-problem-helper',
     ]);
   });
+
+  it("lets the setup assistant close a failed check's notification", async () => {
+    const { dismissFailedZoomCheckNotice, runZoomStartupCheck } =
+      await import('../zoom-startup-check');
+    const dismiss = vi.fn();
+    zoom.notify.mockReturnValueOnce(dismiss);
+    zoom.getZoomMeetingState.mockResolvedValue(null);
+
+    expect(await runZoomStartupCheck()).toBe('failed');
+    dismissFailedZoomCheckNotice();
+    dismissFailedZoomCheckNotice();
+    expect(dismiss).toHaveBeenCalledOnce();
+  });
 });

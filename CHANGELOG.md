@@ -28,6 +28,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Zoom Meeting Manager**: Stopping M³'s Zoom check (with its Cancel button, Esc or the cancel shortcut) no longer pauses the Zoom automations over problems that weren't real: every step the check never got to was counted as failed. A stopped check now leaves things as they were.
 - 🐞 **Zoom Meeting Manager**: Sharing the media window works again with the current version of Zoom. M³ said Zoom's share window didn't offer the media window even though it was plainly there, because Zoom now adds each window's position to its name in that list.
 - 🐞 **Zoom Meeting Manager**: When M³ runs as a portable app from a folder nested deep inside others, the Zoom Meeting Manager now starts. Its helper couldn't save a file it generates that deep (Windows PowerShell can't), and now keeps it in a shorter folder instead.
+- 🐞 **Zoom Meeting Manager**: In the Zoom popup, the notice that Zoom automations are paused now uses the popup's full width, with its button underneath, instead of squeezing its explanation into a narrow column. The notification of a failed Zoom check now closes when the setup assistant opens, instead of staying on top of it.
 - 🐞 **Meeting Timer**: The copy button next to the timer remote's addresses, in the timer popup, now copies the address instead of failing with an error.
 
 ## v26.10.1
