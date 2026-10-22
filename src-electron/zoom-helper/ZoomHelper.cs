@@ -3011,12 +3011,14 @@ namespace M3.ZoomHelper
         // mini view, its popped-out panels (such as the participants list),
         // sharing (the toolbar, the annotation layer and its button), Zoom's
         // home window, its menus' shadows, its notification toasts (one shows
-        // as sharing starts and stays briefly after it stops).
+        // as sharing starts and stays briefly after it stops) and its corner
+        // notices (the "talking while muted" prompt, and the "note taking is
+        // now available" notice that closes itself after 30 seconds).
         static readonly string[] ZoomMainWindowClasses =
         {
             MeetingWindowClass, FloatVideoClass, PoppedOutPanelClass, ShareToolbarClass, AnnotationLayerClass,
             "ZPAnnotateEntryPointClass", "ZPPTMainFrmWndClassEx", "ZPToolBarParentWndClass",
-            "ZoomShadowFrameClass", "VideoFrameWndClass", "DsToast",
+            "ZoomShadowFrameClass", "VideoFrameWndClass", "DsToast", "CVoiceActivityDetectedDlgCls",
         };
 
         /// <summary>Whether a window is one of Zoom's own rather than a dialog
