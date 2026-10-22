@@ -9,19 +9,19 @@ hero:
   actions:
     - theme: brand
       text: 다운로드
-      link: /ko/download
+      link: /download
     - theme: brand
       text: 소개
-      link: /ko/about
+      link: /about
     - theme: brand
       text: 사용자 가이드
-      link: /ko/user-guide
+      link: /user-guide
     - theme: brand
       text: 설정 가이드
-      link: /ko/settings-guide
+      link: /settings-guide
     - theme: brand
       text: 자주 묻는 질문
-      link: /ko/faq
+      link: /faq
 features:
   - icon: 🚀
     title: 자동 미디어 관리
