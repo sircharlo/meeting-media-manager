@@ -34,6 +34,10 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Zoom Meeting Manager**: In the Zoom popup, the notice that Zoom automations are paused now uses the popup's full width, with its button underneath, instead of squeezing its explanation into a narrow column. The notification of a failed Zoom check now closes when the setup assistant opens, instead of staying on top of it.
 - 🐞 **Meeting Timer**: The copy button next to the timer remote's addresses, in the timer popup, now copies the address instead of failing with an error.
 
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Raised the `brace-expansion` (to 1.1.21 and 2.1.7) and `undici` (to 8.11.2) versions pinned in the app's own dependency tree, which the packaging tools and the native-module build use. Each pin was once the fixed release; newer advisories had since made them the vulnerable ones.
+
 ## v26.10.1
 
 ### ✨ New Features
