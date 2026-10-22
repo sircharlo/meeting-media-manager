@@ -84,6 +84,7 @@ export const electronApi: ElectronApi = {
   getLowDiskSpaceStatus: function () {
     throw new Error('Function not implemented.');
   },
+  getMediaWindowCaptureSize: async () => null,
   getMediaWindowCaptureSourceId: function () {
     throw new Error('Function not implemented.');
   },
