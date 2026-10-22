@@ -11,7 +11,12 @@
  *      compiler rejects at runtime (Sentry MMM-V2-3H6).
  *   2. Docs heading anchors (`{#slug}`) drifting away from the English
  *      source, which breaks cross-language links and fails the VitePress
- *      build on duplicate explicit anchors.
+ *      build on duplicate explicit anchors. Crowdin splits most headings in
+ *      two: the title and a hidden anchor-only `{#slug}` string. The
+ *      export puts the source's space between them, so the anchor-only
+ *      string's translation must be the bare anchor (a leading space
+ *      doubles it), and the title's translation must not carry an anchor
+ *      of its own (zh-CN's did, doubling the anchor itself).
  *   3. `link:` frontmatter values in each locale's docs index.md (the
  *      `hero.actions[].link` fields - Download/About/User Guide/Settings
  *      Guide/FAQ). These *are* real, individually addressable Crowdin
@@ -26,11 +31,14 @@
  *      (src/constants/locales.ts's list, minus the orphaned bzs/cmn-hant/zh
  *      folders that the app no longer ships), creating the translation via
  *      POST when none exists yet and patching it via PATCH when a stale one
- *      does. docs:lint still doesn't gate on this class (config.mts's
- *      transformPageData hook recomputes the link at build time regardless
- *      of frontmatter), but docs/utils/__tests__/locales.test.ts's
- *      "should have correct links" test reads the raw frontmatter directly
- *      and does fail on it - that's the CI check this class actually fixes.
+ *      does - and approving it, since the project exports approved
+ *      translations only (an unapproved link, however correct, still
+ *      exports as the English path). docs:lint still doesn't gate on this
+ *      class (config.mts's transformPageData hook recomputes the link at
+ *      build time regardless of frontmatter), but
+ *      docs/utils/__tests__/locales.test.ts's "should have correct links"
+ *      test reads the raw frontmatter directly and does fail on it - that's
+ *      the CI check this class actually fixes.
  *   4. Release-notes version headers (`## v26.7.0` in release-notes/en.md).
  *      These must stay byte-identical to the source, but translators keep
  *      localizing them - French scrambles (`## 7.0 v26.0`), Spanish drops
@@ -110,6 +118,11 @@ const TYPOGRAPHIC_QUOTES = '‚‘’‛“”„‟';
 const HERO_ACTION_LINK_CONTEXT =
   /^CXPath: \/\/yaml\/hero\/actions\[\d+\]\/link$/;
 
+// Matches a docs heading string's Crowdin context, e.g.
+// "CXPath: //heading[23]/content" - shared by both halves of a heading that
+// Crowdin splits into its title and a hidden anchor-only `{#slug}` string.
+const HEADING_CONTENT_CONTEXT = /^CXPath: \/\/heading\[\d+\]\/content$/;
+
 // docs/src folders that aren't part of the app's active language list
 // (src/constants/locales.ts). Excluded so class 3 never guesses a folder
 // name for a language Crowdin isn't actually exporting there. `bzs` still
@@ -129,17 +142,29 @@ const DOCS_LANGUAGE_ID_OVERRIDES = { 'cmn-hans': 'zh-CN' };
 // `(?!#)` keeps `### ...` subsection headers out.
 const VERSION_HEADER_PATTERN = /^##(?!#)\s+v?\d+\.\d+\.\d+/;
 
-function computeAnchorFix(enText, translationText, usedAnchors) {
-  if (!isHeadingString(enText)) return null;
-
-  const expected = getTrailingHeadingAnchors(enText).anchors.at(-1);
-  if (!expected) return null;
+function computeAnchorFix(
+  enText,
+  translationText,
+  usedAnchors,
+  isHeadingContent = false,
+) {
+  const { anchors, start } = getTrailingHeadingAnchors(enText);
+  const expected = anchors.at(-1);
+  if (!expected) {
+    return isHeadingContent ? computeStrayAnchorFix(translationText) : null;
+  }
 
   const seen = usedAnchors.get(expected) ?? 0;
   usedAnchors.set(expected, seen + 1);
   const anchor = seen === 0 ? expected : `${expected}-${seen + 1}`;
 
-  const fixed = replaceHeadingAnchor(translationText, anchor);
+  // An anchor-only source is the hidden `{#slug}` half of a heading Crowdin
+  // split in two: any text translated before the anchor would repeat the
+  // title, which the other half already exports.
+  const fixed =
+    start === 0
+      ? `{#${anchor}}`
+      : replaceHeadingAnchor(translationText, anchor);
   return fixed === translationText ? null : { kind: 'anchor', text: fixed };
 }
 
@@ -260,6 +285,20 @@ function computeLinkTargetFix(source, translation, validKeys) {
 }
 
 /**
+ * The title half of a heading Crowdin split from its hidden `{#slug}` string
+ * has no anchor in the source, so an anchor in its translation doubles the
+ * heading's anchor on export (zh-CN's `## 标题？ {#slug} {#slug}`). Returns the
+ * translation without it, or null when there is none - or nothing but it,
+ * which is left for translators.
+ */
+function computeStrayAnchorFix(translationText) {
+  const { anchors, start } = getTrailingHeadingAnchors(translationText);
+  if (anchors.length === 0) return null;
+  const text = translationText.slice(0, start).trimEnd();
+  return text ? { kind: 'anchor', text } : null;
+}
+
+/**
  * Release-notes version headers must stay byte-identical to the English
  * source - they are machine-read version tags, not prose. Returns a fix
  * resetting the translation to the source, or null when there is nothing to
@@ -276,12 +315,19 @@ function computeVersionHeaderFix(source, translation) {
 
 /**
  * collectReplaceOps fixer for class 2 (docs heading anchors). `usedAnchors`
- * carries the anchors already seen earlier in the same file.
+ * carries the anchors already seen earlier in the same file;
+ * `headingContentIds` are the file's heading strings (see
+ * HEADING_CONTENT_CONTEXT).
  */
-function docsAnchorFix(item, sources, usedAnchors) {
+function docsAnchorFix(item, { headingContentIds, sources, usedAnchors }) {
   if (typeof item.text !== 'string') return null;
   const source = sources.get(item.stringId) ?? '';
-  return computeAnchorFix(source, item.text, usedAnchors);
+  return computeAnchorFix(
+    source,
+    item.text,
+    usedAnchors,
+    headingContentIds.has(item.stringId),
+  );
 }
 
 /**
@@ -290,13 +336,6 @@ function docsAnchorFix(item, sources, usedAnchors) {
  */
 function isDocsIndexFile(filePath) {
   return filePath.endsWith('/index.md');
-}
-
-function isHeadingString(text) {
-  return (
-    /^[ \t]*#{1,6}[ \t]+\S/.test(text) ||
-    getTrailingHeadingAnchors(text).anchors.length > 0
-  );
 }
 
 /**
@@ -394,6 +433,39 @@ const CORRUPTION_SIGNATURES = [
 ];
 
 /**
+ * Commits one language's class 2+3 repairs of a docs file: the edits, then
+ * the new translations, then the approvals of the existing links and of the
+ * links just created.
+ */
+async function applyDocsFixes(ctx, { approvals, creates, ops }, label) {
+  if (ops.length > 0) {
+    await patchTranslations(ctx, ops, label);
+  }
+  const createdIds =
+    creates.length > 0 ? await createTranslations(ctx, creates, label) : [];
+  const toApprove = [...approvals, ...createdIds];
+  if (toApprove.length > 0) {
+    await approveTranslations(ctx, toApprove, label);
+  }
+}
+
+async function approveTranslations(ctx, translationIds, label) {
+  // Like adding a translation, approving one has no batch endpoint (POST
+  // /projects/{id}/approvals takes one translationId per call).
+  const approvalsPath = `/projects/${ctx.projectId}/approvals`;
+  for (const translationId of translationIds) {
+    const options = { body: { translationId }, method: 'POST' };
+    try {
+      await crowdinRequest(ctx.baseUrl, ctx.token, approvalsPath, options); // NOSONAR: sequential - rate-limited API
+    } catch (error) {
+      ctx.failures.push(
+        `${label} (approve translation ${translationId}): ${error.message}`,
+      );
+    }
+  }
+}
+
+/**
  * Maps each of the project's target languages that has an active docs
  * locale folder (see loadActiveDocsLocales) to that folder.
  */
@@ -421,18 +493,23 @@ function buildDocsLocaleFolderMap(project) {
  * Class 3 for one language of a docs file: every hero-action `link:` string
  * whose translation isn't the localized path (see computeDocsLinkFix) becomes
  * a `replace` op on the stale translation, or a create when there is no
- * translation yet. Only runs for languages that resolved to an active docs
- * locale folder (see loadActiveDocsLocales/resolveDocsLanguageId) - anything
- * else (an orphaned or docs-less target language) is left alone.
+ * translation yet. The project exports approved translations only, so an
+ * existing link missing from `approvedIds` is approved too, even when its
+ * text is right (it would export as the English path), and a created one is
+ * approved once it exists (see repairDocsFile). Only runs for languages that
+ * resolved to an active docs locale folder (see
+ * loadActiveDocsLocales/resolveDocsLanguageId) - anything else (an orphaned
+ * or docs-less target language) is left alone.
  */
 function collectHeroLinkFixes(
   ctx,
   translations,
-  { file, heroLinkStrings, language, localeFolder, sources },
+  { approvedIds, file, heroLinkStrings, language, localeFolder, sources },
 ) {
+  const approvals = [];
   const ops = [];
   const creates = [];
-  if (!localeFolder) return { creates, ops };
+  if (!localeFolder) return { approvals, creates, ops };
 
   const translationByStringId = new Map(
     translations.map((t) => [t.stringId, t]),
@@ -440,11 +517,22 @@ function collectHeroLinkFixes(
   for (const heroString of heroLinkStrings) {
     const sourceText = sources.get(heroString.id);
     const existing = translationByStringId.get(heroString.id);
+    const label = `${file.normalizedPath} (${language}, string ${heroString.id})`;
+    const localizedPath = computeDocsLinkFix(
+      sourceText,
+      undefined,
+      localeFolder,
+    );
+    if (localizedPath && existing && !approvedIds.has(existing.translationId)) {
+      ctx.totals.docsLinkApprovals += 1;
+      if (ctx.verbose) ctx.log(`[docs-link] ${label}: approve`);
+      approvals.push(existing.translationId);
+    }
+
     const fix = computeDocsLinkFix(sourceText, existing?.text, localeFolder);
     if (fix === null) continue;
 
     ctx.totals.docsLinks += 1;
-    const label = `${file.normalizedPath} (${language}, string ${heroString.id})`;
     if (ctx.verbose) {
       ctx.log(
         `[docs-link] ${label}: ${JSON.stringify(existing?.text ?? '(untranslated)')} -> ${JSON.stringify(fix)}`,
@@ -457,6 +545,7 @@ function collectHeroLinkFixes(
         value: { text: fix },
       });
     } else {
+      ctx.totals.docsLinkApprovals += 1;
       creates.push({
         languageId: language,
         stringId: heroString.id,
@@ -464,7 +553,7 @@ function collectHeroLinkFixes(
       });
     }
   }
-  return { creates, ops };
+  return { approvals, creates, ops };
 }
 
 /**
@@ -500,22 +589,33 @@ function collectReplaceOps(
   return ops;
 }
 
+/**
+ * Adds `creates` and returns the new translations' ids (only the ones that
+ * were actually created).
+ */
 async function createTranslations(ctx, creates, label) {
   // Unlike editing, adding a brand-new translation has no batch endpoint
   // (POST /projects/{id}/translations takes one {stringId, languageId,
   // text} object per call) - so these go one at a time, same failure
   // handling as patchTranslations' per-op retry path.
   const translationsPath = `/projects/${ctx.projectId}/translations`;
+  const addTranslation = (body) =>
+    crowdinRequest(ctx.baseUrl, ctx.token, translationsPath, {
+      body,
+      method: 'POST',
+    });
+  const createdIds = [];
   for (const create of creates) {
-    const options = { body: create, method: 'POST' };
     try {
-      await crowdinRequest(ctx.baseUrl, ctx.token, translationsPath, options); // NOSONAR: sequential - rate-limited API
+      const response = await addTranslation(create); // NOSONAR: sequential - rate-limited API
+      createdIds.push(response.data.id);
     } catch (error) {
       ctx.failures.push(
         `${label} (string ${create.stringId}): ${error.message}`,
       );
     }
   }
+  return createdIds;
 }
 
 async function deleteTmSegment(ctx, tmId, segmentId, label) {
@@ -556,6 +656,19 @@ function getFailedPatchIndices(body) {
 
 function isCorruptedSegment(text) {
   return CORRUPTION_SIGNATURES.some((signature) => signature.test(text));
+}
+
+/**
+ * The ids of one language's approved translations in a file - the only ones
+ * the project exports.
+ */
+async function listApprovedTranslationIds(ctx, language, fileId) {
+  const approvals = await listAll(
+    ctx.baseUrl,
+    ctx.token,
+    `/projects/${ctx.projectId}/approvals?fileId=${fileId}&languageId=${encodeURIComponent(language)}`,
+  );
+  return new Set(approvals.map((approval) => approval.translationId));
 }
 
 function listFileTranslations(ctx, language, fileId) {
@@ -712,13 +825,17 @@ future Crowdin PRs come out clean:
 
   1. vue-i18n linked-message syntax (@:{'key'}) mangled by typographic
      quotes or stray whitespace - in src/i18n/*.json translations.
-  2. Docs heading anchors ({#slug}) drifted away from the English source.
+  2. Docs heading anchors ({#slug}) drifted away from the English source,
+     including a space before a hidden anchor-only string's {#slug} and an
+     anchor added to a heading title's translation (both double up on
+     export).
   3. Docs hero-action link: frontmatter (docs/src/en/index.md's Download/
      About/User Guide/Settings Guide/FAQ buttons) - these are real Crowdin
      strings that no language has ever had an actual translation for, so
      every export falls back to the literal English path. Sets the real
      /{locale}/{slug} translation for each active docs locale, creating it
-     when missing and patching it when stale.
+     when missing and patching it when stale, and approves it (only
+     approved translations are exported).
   4. Release-notes version headers (## v26.7.0) localized by translators
      (scrambled, truncated, or re-punctuated) - reset to the English source
      so the About dialog's "What's New" carousel keeps those releases.
@@ -801,6 +918,12 @@ async function repairDocsFile(ctx, file) {
     strings.map((string, index) => [string.id, index]),
   );
 
+  const headingContentIds = new Set(
+    strings
+      .filter((string) => HEADING_CONTENT_CONTEXT.test(string.context ?? ''))
+      .map((string) => string.id),
+  );
+
   // Class 3: docs hero-action link: frontmatter (see computeDocsLinkFix).
   const heroLinkStrings = isDocsIndexFile(file.normalizedPath)
     ? strings.filter((string) =>
@@ -829,7 +952,8 @@ async function repairDocsFile(ctx, file) {
     // Class 2: heading anchors.
     const usedAnchors = new Map();
     const anchorOps = collectReplaceOps(ctx, translations, {
-      computeFix: (item) => docsAnchorFix(item, sources, usedAnchors),
+      computeFix: (item) =>
+        docsAnchorFix(item, { headingContentIds, sources, usedAnchors }),
       file,
       language,
       tag: 'anchor',
@@ -837,7 +961,12 @@ async function repairDocsFile(ctx, file) {
     });
 
     // Class 3: docs hero-action link: frontmatter.
+    const approvedIds =
+      heroLinkStrings.length > 0 && localeFolder
+        ? await listApprovedTranslationIds(ctx, language, file.id) // NOSONAR: sequential - rate-limited API
+        : new Set();
     const heroLinkFixes = collectHeroLinkFixes(ctx, translations, {
+      approvedIds,
       file,
       heroLinkStrings,
       language,
@@ -845,14 +974,13 @@ async function repairDocsFile(ctx, file) {
       sources,
     });
 
-    const ops = [...anchorOps, ...heroLinkFixes.ops];
-    const { creates } = heroLinkFixes;
-    const fileLabel = `${file.normalizedPath} (${language})`;
-    if (ctx.apply && ops.length > 0) {
-      await patchTranslations(ctx, ops, fileLabel); // NOSONAR: sequential - rate-limited API
-    }
-    if (ctx.apply && creates.length > 0) {
-      await createTranslations(ctx, creates, fileLabel); // NOSONAR: sequential - rate-limited API
+    if (ctx.apply) {
+      const fixes = {
+        ...heroLinkFixes,
+        ops: [...anchorOps, ...heroLinkFixes.ops],
+      };
+      const label = `${file.normalizedPath} (${language})`;
+      await applyDocsFixes(ctx, fixes, label); // NOSONAR: sequential - rate-limited API
     }
   }
 }
@@ -1011,6 +1139,7 @@ async function run() {
     token,
     totals: {
       anchors: 0,
+      docsLinkApprovals: 0,
       docsLinks: 0,
       linked: 0,
       links: 0,
@@ -1057,8 +1186,23 @@ async function run() {
     ctx.failures.push(`translation-memory purge: ${error.message}`);
   }
 
-  const { anchors, docsLinks, linked, links, segments, versions } = ctx.totals;
-  const total = anchors + docsLinks + linked + links + segments + versions;
+  const {
+    anchors,
+    docsLinkApprovals,
+    docsLinks,
+    linked,
+    links,
+    segments,
+    versions,
+  } = ctx.totals;
+  const total =
+    anchors +
+    docsLinkApprovals +
+    docsLinks +
+    linked +
+    links +
+    segments +
+    versions;
   ctx.log('');
   ctx.log(
     `Done. ${ctx.apply ? 'Applied' : 'Found (dry run - rerun with --apply to commit)'}:`,
@@ -1066,6 +1210,7 @@ async function run() {
   ctx.log(`  linked-syntax repairs:   ${linked}`);
   ctx.log(`  heading-anchor fixes:    ${anchors}`);
   ctx.log(`  docs link: fixes:        ${docsLinks}`);
+  ctx.log(`  docs link: approvals:    ${docsLinkApprovals}`);
   ctx.log(`  version-header repairs:  ${versions}`);
   ctx.log(`  link/param target fixes: ${links}`);
   ctx.log(`  corrupted TM segments:   ${segments}`);
@@ -1143,6 +1288,20 @@ function runSelfTest() {
       return true;
     }
   };
+  // Class 3 for French, with one hero link (string 1, source `/faq`).
+  const heroLinkFixes = (translations, approvedIds = new Set()) =>
+    collectHeroLinkFixes(
+      { totals: { docsLinkApprovals: 0, docsLinks: 0 }, verbose: false },
+      translations,
+      {
+        approvedIds,
+        file: { normalizedPath: 'master/docs/src/en/index.md' },
+        heroLinkStrings: [{ id: 1 }],
+        language: 'fr',
+        localeFolder: 'fr',
+        sources: new Map([[1, '/faq']]),
+      },
+    );
 
   const cases = [
     // Linked-message repairs (real samples from commit 535970092).
@@ -1196,6 +1355,50 @@ function runSelfTest() {
       computeAnchorFix('## A {#x}', '## B {#x}', new Map()),
       null,
     ],
+    [
+      'anchor-only translation loses its leading space',
+      computeAnchorFix('{#media-download}', ' {#media-download}', new Map()),
+      { kind: 'anchor', text: '{#media-download}' },
+    ],
+    [
+      'anchor-only translation drops a repeated title',
+      computeAnchorFix(
+        '{#why-choose-m3}',
+        '为什么选择M3？ {#why-choose-m3}',
+        new Map(),
+      ),
+      { kind: 'anchor', text: '{#why-choose-m3}' },
+    ],
+    [
+      'bare anchor-only translation left alone',
+      computeAnchorFix('{#x}', '{#x}', new Map()),
+      null,
+    ],
+    [
+      'anchor stripped from a heading title translation',
+      computeAnchorFix(
+        'Why choose M³?',
+        '为什么选择 M³？ {#why-choose-m3}',
+        new Map(),
+        true,
+      ),
+      { kind: 'anchor', text: '为什么选择 M³？' },
+    ],
+    [
+      'heading title translation without anchor left alone',
+      computeAnchorFix('Why choose M³?', '为什么选择 M³？', new Map(), true),
+      null,
+    ],
+    [
+      'anchor-only heading title translation left for translators',
+      computeAnchorFix('Why choose M³?', '{#why-choose-m3}', new Map(), true),
+      null,
+    ],
+    [
+      'anchor in a non-heading translation left alone',
+      computeAnchorFix('Why choose M³?', 'Pourquoi ? {#x}', new Map()),
+      null,
+    ],
 
     // Docs index.md detection drives the class-3 hero-link repair.
     [
@@ -1234,6 +1437,37 @@ function runSelfTest() {
       'docs link non-path source ignored',
       computeDocsLinkFix('Download', undefined, 'es'),
       null,
+    ],
+    [
+      'docs link correct but unapproved gets approved',
+      heroLinkFixes([{ stringId: 1, text: '/fr/faq', translationId: 10 }]),
+      { approvals: [10], creates: [], ops: [] },
+    ],
+    [
+      'docs link correct and approved left alone',
+      heroLinkFixes(
+        [{ stringId: 1, text: '/fr/faq', translationId: 10 }],
+        new Set([10]),
+      ),
+      { approvals: [], creates: [], ops: [] },
+    ],
+    [
+      'docs link stale and unapproved gets patched and approved',
+      heroLinkFixes([{ stringId: 1, text: '/faq', translationId: 10 }]),
+      {
+        approvals: [10],
+        creates: [],
+        ops: [{ op: 'replace', path: '/10', value: { text: '/fr/faq' } }],
+      },
+    ],
+    [
+      'docs link untranslated gets created (approved once it exists)',
+      heroLinkFixes([]),
+      {
+        approvals: [],
+        creates: [{ languageId: 'fr', stringId: 1, text: '/fr/faq' }],
+        ops: [],
+      },
     ],
 
     // Docs locale folder -> Crowdin language id resolution (class 3).

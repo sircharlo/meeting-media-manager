@@ -9,7 +9,8 @@ name: Crowdin auto-repair
 # (Download/About/User Guide/Settings Guide/FAQ) are real Crowdin strings
 # that simply never had a translation set for any language, so every export
 # fell back to the literal English path - this sweep sets the real
-# /{locale}/{slug} translation directly.
+# /{locale}/{slug} translation directly, and approves it (the project
+# exports approved translations only).
 #
 # A Crowdin webhook was considered for near-instant repair, but Crowdin's
 # custom webhook payload only accepts its own event variables as keys, so it
