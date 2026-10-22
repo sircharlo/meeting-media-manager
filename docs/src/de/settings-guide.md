@@ -549,13 +549,13 @@ Der Zoom Meeting Manager (Beta, nur Windows) bedient die Zoom-Desktop-App rund u
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom bietet keine richtige Automatisierungsschnittstelle, daher steuert M³ die Zoom-App über ihre Barrierefreiheitsschnittstelle, die fast alles ohne Maus erledigen kann (die Teilnehmerliste, ihre Menüs, das Freigabefenster). Einige wenige Aktionen müssen trotzdem kurz die Maus bewegen oder den Fensterfokus wechseln, zum Beispiel um die automatisch ausgeblendete Symbolleiste von Zoom wieder einzublenden. In diesen Fällen überdeckt M³ sein eigenes Fenster mit dem Hinweis "M³ bedient Zoom", der angibt, was gerade geschieht, und eine Schaltfläche **Diese Automatisierung abbrechen** enthält. Derselbe Hinweis erscheint auch während der Prüfungen der Einrichtungshilfe und beim Selbsttest. Ein globales Tastenkürzel (Standard: `Ctrl+Alt+Escape`), das nur während einer laufenden Automatisierung aktiv ist, bricht diese von überall aus ab, selbst wenn Zoom den Fokus hat. Ein Abbruch stoppt M³ sofort; Zoom kann dabei auf halbem Weg stehen bleiben, überprüfen Sie es daher.
+Zoom bietet keine richtige Automatisierungsschnittstelle, daher steuert M³ die Zoom-App über ihre Barrierefreiheitsschnittstelle, die ohne Mausbewegung auskommt, selbst wenn Zoom seine Symbolleiste ausblendet. Zoom holt sein Fenster trotzdem kurz in den Vordergrund, wenn M³ seine Schaltflächen betätigt, und die Maus bewegt sich nur als letzter Ausweg, falls Zoom auf keinen anderen Weg reagiert. Immer wenn M³ Zoom bedient, überdeckt es sein eigenes Fenster mit dem Hinweis "M³ bedient Zoom", der angibt, was gerade geschieht, und eine Schaltfläche **Diese Automatisierung abbrechen** enthält. Derselbe Hinweis erscheint auch während der Prüfungen der Einrichtungshilfe und beim Selbsttest. Ein globales Tastenkürzel (Standard: `Ctrl+Alt+Escape`), das nur während einer laufenden Automatisierung aktiv ist, bricht diese von überall aus ab, selbst wenn Zoom den Fokus hat. Ein Abbruch stoppt M³ sofort; Zoom kann dabei auf halbem Weg stehen bleiben, überprüfen Sie es daher.
 
 **Standard**: `Ctrl+Alt+Escape`
 
 #### Helfer für erhobene Hände {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Während einer Zusammenkunft achtet M³ in der Teilnehmerliste von Zoom auf erhobene Hände. Wenn jemand die Hand hebt, können Sie über eine Benachrichtigung in M³ mit einem Klick für diesen Teilnehmer **die Stummschaltung aufheben** und ihn, sobald er fertig gesprochen hat, mit einem weiteren Klick **wieder stummschalten und seine Hand senken**. Die Zoom-Schaltfläche auf der Aktionsinsel listet die erhobenen Hände mit denselben Schaltflächen auf. Jede Aktion wirkt anhand des genauen Namens auf die Zeile genau dieses Teilnehmers in Zoom; haben zwei Teilnehmer denselben Namen, lässt M³ beide unberührt.
 

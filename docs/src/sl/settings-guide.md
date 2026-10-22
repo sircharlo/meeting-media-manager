@@ -549,13 +549,13 @@ Upravljalnik Zoom shodov (beta, samo za Windows) upravlja namizno aplikacijo Zoo
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom ne ponuja ustreznega vmesnika za avtomatizacijo, zato M³ upravlja aplikacijo Zoom prek njenega dostopnostnega vmesnika, ki za skoraj vse deluje brez miške (seznam udeležencev, njegovi meniji, okno za deljenje). Nekatera dejanja pa lahko še vedno za trenutek premaknejo miško ali aktivno okno, na primer za prikaz samodejno skrite Zoomove orodne vrstice. Kadar se to zgodi, M³ prekrije svoje okno z obvestilom »M³ upravlja Zoom«, ki pove, kaj se dogaja, in ponudi gumb »Prekliči to avtomatizacijo«. Enako obvestilo se prikaže med preverjanji nastavitvenega pomočnika in med samopreizkusom. Globalna tipkovna bližnjica (privzeto Ctrl+Alt+Escape), ki je aktivna samo med avtomatizacijo, jo prekliče od koder koli, tudi ko je Zoom v ospredju. Preklic takoj ustavi M³; Zoom lahko zato ostane v vmesnem stanju, zato ga preveri.
+Zoom ne ponuja ustreznega vmesnika za avtomatizacijo, zato M³ upravlja aplikacijo Zoom prek njenega dostopnostnega vmesnika, ki deluje brez premikanja miške, tudi ko Zoom skrije svojo orodno vrstico. Ko M³ pritisne njegove gumbe, Zoom vseeno za trenutek postavi svoje okno v ospredje, miška pa se premakne le v skrajnem primeru, če se Zoom ne odzove na noben drug način. Kadar M³ upravlja Zoom, prekrije svoje okno z obvestilom »M³ upravlja Zoom«, ki pove, kaj se dogaja, in ponudi gumb »Prekliči to avtomatizacijo«. Enako obvestilo se prikaže med preverjanji nastavitvenega pomočnika in med samopreizkusom. Globalna tipkovna bližnjica (privzeto Ctrl+Alt+Escape), ki je aktivna samo med avtomatizacijo, jo prekliče od koder koli, tudi ko je Zoom v ospredju. Preklic takoj ustavi M³; Zoom lahko zato ostane v vmesnem stanju, zato ga preveri.
 
 **Privzeto**: Ctrl+Alt+Escape
 
 #### Pomočnik za dvignjene roke {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Med shodom M³ spremlja Zoomov seznam udeležencev in išče dvignjene roke. Ko nekdo dvigne roko, te M³ z obvestilom opozori, da lahko tega udeleženca z enim klikom povabiš, naj si vklopi mikrofon, in ko neha govoriti, ga z drugim klikom znova utišaš ter spustiš njegovo roko. Gumb za Zoom na orodni vrstici prikazuje dvignjene roke z enakimi gumbi. Vsako dejanje se izvede v vrstici tega udeleženca v Zoomu, po njegovem natančnem imenu; če imata dva udeleženca enako ime, se M³ ne dotakne nobenega.
 
