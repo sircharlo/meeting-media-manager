@@ -549,13 +549,13 @@ A Zoom-értekezletkezelő (béta, csak Windowson) minden összejövetelnél Ön 
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-A Zoom nem kínál megfelelő automatizálási felületet, ezért az M³ az akadálymentesítési felületén keresztül vezérli a Zoom alkalmazást, ami szinte mindenhez egér nélkül működik (a résztvevőlista, annak menüi, a Share ablak). Néhány műveletnek azonban egy pillanatra mégis mozgatnia kell az egeret vagy a fókuszban lévő ablakot, például ahhoz, hogy visszahozza a Zoom automatikusan elrejtett eszköztárát. Ilyenkor az M³ a saját ablakát egy „Az M³ vezérli a Zoomot” értesítéssel takarja le, amely megnevezi, mi történik, és **Az automatizálás megszakítása** gombot is tartalmazza. Ugyanez az értesítés jelenik meg a beállítási segéd ellenőrzései és az öntesztelés közben is. Egy globális billentyűparancs (alapértelmezés szerint `Ctrl+Alt+Escape`), amely csak egy automatizálás futása közben aktív, bárhonnan megszakítja azt, akkor is, ha a Zoom van fókuszban. A megszakítás azonnal leállítja az M³ műveletét; a Zoom ilyenkor félkész állapotban maradhat, ezért ellenőrizze.
+A Zoom nem kínál megfelelő automatizálási felületet, ezért az M³ az akadálymentesítési felületén keresztül vezérli a Zoom alkalmazást, ami az egér mozgatása nélkül működik, még akkor is, ha a Zoom elrejti az eszköztárát. A Zoom ugyanakkor egy pillanatra előtérbe hozza az ablakát, amikor az M³ megnyomja a gombjait, az egér pedig csak végső esetben mozdul meg, ha a Zoom semmilyen más módra nem reagál. Amikor az M³ vezérli a Zoomot, a saját ablakát egy „Az M³ vezérli a Zoomot” értesítéssel takarja le, amely megnevezi, mi történik, és **Az automatizálás megszakítása** gombot is tartalmazza. Ugyanez az értesítés jelenik meg a beállítási segéd ellenőrzései és az öntesztelés közben is. Egy globális billentyűparancs (alapértelmezés szerint `Ctrl+Alt+Escape`), amely csak egy automatizálás futása közben aktív, bárhonnan megszakítja azt, akkor is, ha a Zoom van fókuszban. A megszakítás azonnal leállítja az M³ műveletét; a Zoom ilyenkor félkész állapotban maradhat, ezért ellenőrizze.
 
 **Alapértelmezett**: `Ctrl+Alt+Escape`
 
 #### Kézfelemelés-segéd {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Az összejövetel alatt az M³ figyeli a Zoom résztvevőlistáján a felemelt kezeket. Amikor valaki felemeli a kezét, az M³ értesítésében egy kattintással **feloldhatja a résztvevő némítását**, majd amikor befejezte a hozzászólást, egy újabb kattintással **ismét némíthatja, és leengedheti a kezét**. A műveleti panel Zoom-gombja ugyanezekkel a gombokkal sorolja fel a felemelt kezeket. Minden művelet az adott résztvevő saját sorára vonatkozik a Zoomban, a pontos neve alapján; ha két résztvevőnek ugyanaz a neve, az M³ egyikükhöz sem nyúl.
 
