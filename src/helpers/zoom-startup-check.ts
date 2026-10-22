@@ -1,7 +1,10 @@
 import type { ZoomDiagnosis } from 'src/types';
 
 import { i18n } from 'boot/i18n';
-import { ZOOM_DIAGNOSIS_CHECKS } from 'src/constants/zoom';
+import {
+  ZOOM_DIAGNOSIS_CHECKS,
+  ZOOM_SETUP_ASSISTANT_DIALOG_ID,
+} from 'src/constants/zoom';
 import { getMeetingStartToday } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -28,6 +31,7 @@ import {
 } from 'src/helpers/zoom-self-test';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useDialogStateStore } from 'stores/dialog-state';
 import { AUTO_START_WINDOW_HOURS } from 'stores/music';
 import { useZoomStateStore } from 'stores/zoom-state';
 
@@ -302,8 +306,20 @@ const failedOnChangedNames = (failures: ZoomActionFailure[]) =>
   failures.some(({ error }) => UNRECOGNIZED_TITLE.test(error ?? '')) ||
   zoomNamesChanged(useZoomStateStore().meeting);
 
+// Closes the last failed check's notification, which stays until closed.
+let dismissFailedCheckNotice: (() => void) | undefined;
+
+/**
+ * Closes the notification of a failed check, if it's still showing: the
+ * setup assistant, which it may offer, does so as it opens.
+ */
+export const dismissFailedZoomCheckNotice = () => {
+  dismissFailedCheckNotice?.();
+  dismissFailedCheckNotice = undefined;
+};
+
 const notifyFailedCheck = (problems: string[], namesChanged: boolean) => {
-  createTemporaryNotification({
+  dismissFailedCheckNotice = createTemporaryNotification({
     actions: [
       namesChanged
         ? {
@@ -384,6 +400,12 @@ export const runZoomStartupCheck = async ({
   const settings = currentState.currentSettings;
   if (!congregationId || !settings?.zoomMeetingManagerEnable) return 'skipped';
   if (isZoomSetupNeeded() || zoomState.checkRunning) return 'skipped';
+  // The setup assistant operates Zoom and tests everything itself, and its
+  // names are half learned on the way (which also makes Zoom look changed):
+  // a check now would get in its way. Today's check is still to do.
+  if (useDialogStateStore().isDialogOpen(ZOOM_SETUP_ASSISTANT_DIALOG_ID)) {
+    return 'skipped';
+  }
   if (!manual) {
     if (!settings.zoomMeetingManagerStartupCheck) return 'skipped';
     if (zoomState.checkedCongregations.includes(congregationId)) {
