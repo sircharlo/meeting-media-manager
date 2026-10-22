@@ -1,4 +1,5 @@
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
+import { createInterface } from 'node:readline';
 
 // Small Windows controls for the live edge-case tests (mouse position,
 // focused window, moving and minimizing windows), through Windows
@@ -68,6 +69,47 @@ export const getCursor = () => {
 
 export const setCursor = (x: number, y: number) => {
   run(`[void][M3Win]::SetCursorPos(${x}, ${y})`);
+};
+
+/**
+ * Notes every position the mouse takes (sampled every 20 ms by a PowerShell
+ * of its own) until `stop`, which returns them: whether anything moved the
+ * mouse meanwhile, even if it was put back.
+ */
+export const watchCursor = async () => {
+  const child = spawn(
+    'powershell.exe',
+    [
+      '-NoProfile',
+      '-NonInteractive',
+      '-Command',
+      `${NATIVE}
+$last = ''
+while ($true) {
+  $p = New-Object M3Win+POINT
+  [void][M3Win]::GetCursorPos([ref]$p)
+  $now = "$($p.X),$($p.Y)"
+  if ($now -ne $last) { [Console]::Out.WriteLine($now); $last = $now }
+  Start-Sleep -Milliseconds 20
+}`,
+    ],
+    { windowsHide: true },
+  );
+  const positions: string[] = [];
+  // Watching once the first position comes in.
+  await new Promise<void>((resolve, reject) => {
+    child.once('error', reject);
+    createInterface({ input: child.stdout }).on('line', (line) => {
+      positions.push(line.trim());
+      resolve();
+    });
+  });
+  return {
+    stop: () => {
+      child.kill();
+      return [...positions];
+    },
+  };
 };
 
 export const getForegroundWindow = () =>

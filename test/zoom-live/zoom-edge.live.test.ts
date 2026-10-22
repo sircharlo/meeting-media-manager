@@ -1,5 +1,5 @@
 import type { ChildProcess } from 'node:child_process';
-import type { ZoomMeetingState } from 'src/types';
+import type { ZoomCommand, ZoomMeetingState } from 'src/types';
 
 import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -28,6 +28,7 @@ import {
   restoreWindow,
   setCursor,
   toggleZoomAlwaysShowControls,
+  watchCursor,
 } from './windows';
 
 // The situations a real computer throws at the Zoom helper beyond the happy
@@ -103,7 +104,7 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
     helper.stop();
   });
 
-  it('finds the meeting while Zoom has hidden its toolbar, without touching the screen', async () => {
+  it('reads the meeting while Zoom has hidden its toolbar, without touching the screen', async () => {
     await waitForHiddenToolbar();
     const cursor = getCursor();
     const foreground = getForegroundWindow();
@@ -111,33 +112,36 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
     const state = await meeting();
 
     expect(state.found).toBe(true);
+    // Read through the toolbar's own window, which stays hidden.
     expect(state.toolbarVisible).toBe(false);
-    // Unknown rather than guessed while the toolbar is hidden.
-    expect(state.audioJoined).toBeNull();
+    expect(typeof state.audioJoined).toBe('boolean');
+    expect(state.videoTitle).toBeTruthy();
     expect(getCursor()).toEqual(cursor);
     expect(getForegroundWindow()).toBe(foreground);
   });
 
-  it('reads the meeting through a hidden toolbar when asked to', async () => {
+  it('reads the meeting when asked to reveal it, still leaving the toolbar hidden', async () => {
     await waitForHiddenToolbar();
+    const cursor = getCursor();
 
     const state = await meeting(true);
 
-    expect(state.toolbarVisible).toBe(true);
+    expect(state.toolbarVisible).toBe(false);
     expect(typeof state.audioJoined).toBe('boolean');
     expect(state.videoTitle).toBeTruthy();
+    expect(getCursor()).toEqual(cursor);
   });
 
   it('leaves and rejoins computer audio starting from a hidden toolbar', async () => {
     await waitForHiddenToolbar();
-    expect(await helper.request({ type: 'leave-audio' })).toEqual({
+    expect(await helper.request({ type: 'leave-audio' })).toMatchObject({
       changed: true,
       ok: true,
     });
     expect((await meeting(true)).audioJoined).toBe(false);
 
     await waitForHiddenToolbar();
-    expect(await helper.request({ type: 'join-audio' })).toEqual({
+    expect(await helper.request({ type: 'join-audio' })).toMatchObject({
       changed: true,
       ok: true,
     });
@@ -164,7 +168,8 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
     print(`    toolbar: ${toolbar.join(' | ')}`);
     print(`    more: ${more.join(' | ')}`);
 
-    expect(toolbar.length).toBeGreaterThan(0);
+    // A narrow meeting window can leave every candidate in "More".
+    expect(toolbar.length + more.length).toBeGreaterThan(0);
     expect(toolbar.filter((entry) => more.includes(entry))).toEqual([]);
     if (titles.shareButtonTitle) {
       expect([...toolbar, ...more]).toContain(titles.shareButtonTitle);
@@ -208,7 +213,7 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
           type: 'start-share',
           windowTitle: MEDIA_WINDOW_TITLE,
         }),
-      ).toEqual({ changed: true, ok: true });
+      ).toMatchObject({ changed: true, ok: true });
 
       // Checked apart from the helper: Zoom lays its annotation layer over
       // whatever it shares.
@@ -259,13 +264,13 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
     expect(isMinimized(meetingHandle)).toBe(true);
     expect((await meeting()).found).toBe(true);
 
-    expect(await helper.request({ type: 'leave-audio' })).toEqual({
+    expect(await helper.request({ type: 'leave-audio' })).toMatchObject({
       changed: true,
       ok: true,
     });
     minimizeWindow(meetingHandle);
     await sleep(1000);
-    expect(await helper.request({ type: 'join-audio' })).toEqual({
+    expect(await helper.request({ type: 'join-audio' })).toMatchObject({
       changed: true,
       ok: true,
     });
@@ -274,17 +279,17 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
 
   it('reports nothing to do when Zoom is already in the requested state', async () => {
     await helper.request({ type: 'join-audio' });
-    expect(await helper.request({ type: 'join-audio' })).toEqual({
+    expect(await helper.request({ type: 'join-audio' })).toMatchObject({
       changed: false,
       ok: true,
     });
-    expect(await helper.request({ type: 'stop-share' })).toEqual({
+    expect(await helper.request({ type: 'stop-share' })).toMatchObject({
       changed: false,
       ok: true,
     });
     if (titles.videoOnTitle && titles.videoOffTitle) {
       await helper.request(videoCommand(true));
-      expect(await helper.request(videoCommand(true))).toEqual({
+      expect(await helper.request(videoCommand(true))).toMatchObject({
         changed: false,
         ok: true,
       });
@@ -312,7 +317,7 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
 
     print(`    mute everyone, alone: ${JSON.stringify(result)}`);
     expect(Date.now() - startedAt).toBeLessThan(20_000);
-    expect(result).toEqual({ changed: true, ok: true });
+    expect(result).toMatchObject({ changed: true, ok: true });
   });
 
   it('shares the media window and stops, on every monitor', async () => {
@@ -333,19 +338,58 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
         type: 'start-share',
         windowTitle: 'Media Player - M³',
       });
-      expect(started, `start sharing on ${screen.name}`).toEqual({
+      expect(started, `start sharing on ${screen.name}`).toMatchObject({
         changed: true,
         ok: true,
       });
       expect((await meeting()).sharing).toBe(true);
 
       const stopped = await helper.request({ type: 'stop-share' });
-      expect(stopped, `stop sharing on ${screen.name}`).toEqual({
+      expect(stopped, `stop sharing on ${screen.name}`).toMatchObject({
         changed: true,
         ok: true,
       });
       await sleep(1000);
       expect((await meeting()).sharing).toBe(false);
     }
+  });
+
+  // Last: diagnose leaves the participants panel open, which narrows Zoom's
+  // toolbar (Share and React then move into "More").
+  it("runs the startup check's actions without ever moving the mouse", async () => {
+    await waitForHiddenToolbar();
+    const watch = await watchCursor();
+    let positions: string[];
+    try {
+      const commands: ZoomCommand[] = [
+        { reveal: true, type: 'meeting' },
+        { type: 'leave-audio' },
+        { type: 'join-audio' },
+        { type: 'share-entries' },
+        { type: 'diagnose' },
+      ];
+      if (titles.videoOnTitle && titles.videoOffTitle) {
+        commands.push(videoCommand(false), videoCommand(true));
+      }
+      if (titles.shareButtonTitle) {
+        commands.push(
+          {
+            shareButtonTitle: titles.shareButtonTitle,
+            type: 'start-share',
+            windowTitle: MEDIA_WINDOW_TITLE,
+          },
+          { type: 'stop-share' },
+        );
+      }
+      for (const command of commands) {
+        expect(await helper.request(command), command.type).toMatchObject({
+          ok: true,
+        });
+      }
+    } finally {
+      positions = watch.stop();
+    }
+
+    expect(positions, 'every position the mouse took').toHaveLength(1);
   });
 });

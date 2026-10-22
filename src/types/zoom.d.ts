@@ -143,7 +143,7 @@ export interface ZoomKnownTitles {
 }
 
 export interface ZoomMeetingState {
-  /** Unknown (null) while Zoom has its toolbar hidden. */
+  /** Unknown (null) when Zoom's toolbar can't be read (in its mini view). */
   audioJoined?: boolean | null;
   /** Classes of Zoom's other open windows: dialogs that may be in the way. */
   dialogs?: string[];
@@ -151,7 +151,7 @@ export interface ZoomMeetingState {
   handle?: number;
   /**
    * The microphone button's name, in the user's Zoom language (null until
-   * computer audio is joined, or while Zoom has its toolbar hidden).
+   * computer audio is joined, or when Zoom's toolbar can't be read).
    */
   micTitle?: null | string;
   /** Zoom's mini view: a thumbnail in place of the meeting window (actions bring it back). */
@@ -159,7 +159,10 @@ export interface ZoomMeetingState {
   participantsPanelOpen?: boolean;
   sharing: boolean;
   title?: string;
-  /** Zoom hides its toolbar a few seconds after the mouse leaves it. */
+  /**
+   * Whether Zoom shows its toolbar, which it hides a few seconds after the
+   * mouse leaves it (M³ reads it either way).
+   */
   toolbarVisible?: boolean;
   /** The video button's name, in the user's Zoom language. */
   videoTitle?: null | string;
@@ -281,9 +284,9 @@ type ZoomCommandBody =
   | { type: 'ask-all-to-unmute' }
   | { type: 'diagnose' }
   /**
-   * `reveal` brings Zoom's auto-hidden toolbar back (moving the mouse over
-   * the meeting) to read the audio and video states; without it, nothing
-   * on screen changes.
+   * `reveal` brings the meeting window back from Zoom's mini view to read
+   * the audio and video states (Zoom's toolbar is read even while hidden);
+   * without it, nothing on screen changes.
    */
   | { type: 'join-audio' }
   | { type: 'leave-audio' }

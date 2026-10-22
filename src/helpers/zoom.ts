@@ -75,8 +75,9 @@ export const getZoomTitlesFromSettings = (): ZoomTitles => {
 // --- Runs: telling the user, and letting them stop it ------------------------
 
 // Zoom actions that only read (no mouse, no focus): they never show the
-// "M³ is operating Zoom" overlay. Everything else may move the mouse (hover-
-// only buttons, menus, bringing Zoom's toolbar back) or the focus.
+// "M³ is operating Zoom" overlay. Everything else presses Zoom's controls,
+// which brings Zoom forward for a moment, and may, as a last resort when
+// Zoom ignores the quieter ways, move the mouse.
 const SILENT_COMMANDS = new Set<ZoomCommandType>([
   'participants',
   'ping',
@@ -352,9 +353,9 @@ const updateChecklist = (state: ZoomChecklistState) => {
 };
 
 /**
- * The Zoom meeting's state. With `reveal`, Zoom's auto-hidden toolbar is
- * brought back (moving the mouse over the meeting) so the audio and video
- * states can be read; without it, nothing on screen changes.
+ * The Zoom meeting's state. With `reveal`, the meeting window is brought back
+ * from Zoom's mini view so the audio and video states can be read; without
+ * it, nothing on screen changes.
  */
 export const getZoomMeetingState = async (
   reveal = false,
@@ -379,8 +380,8 @@ let noticedVideoTitle: null | string = null;
 /**
  * Whether Zoom's buttons no longer read as M³ learned them: the camera
  * button reads as neither of its learned names (after a change of Zoom's
- * language, or a Zoom update). False when that can't be told, e.g. with
- * Zoom's toolbar hidden.
+ * language, or a Zoom update). False when that can't be told, e.g. in
+ * Zoom's mini view.
  */
 export const zoomNamesChanged = (meeting: null | ZoomMeetingState) => {
   const settings = getSettings();
