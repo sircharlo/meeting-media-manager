@@ -31,11 +31,13 @@ export function getTrailingHeadingAnchors(line) {
 
 /**
  * The heading line with its trailing anchors (and the whitespace before
- * them) replaced by a single `{#anchor}`.
+ * them) replaced by a single `{#anchor}`. A line holding nothing but anchors
+ * (the hidden `{#slug}` string Crowdin splits off a heading) becomes the bare
+ * `{#anchor}`: the export already puts the source's space before it.
  */
 export function replaceHeadingAnchor(line, anchor) {
-  const withoutAnchors = line.slice(0, getTrailingHeadingAnchors(line).start);
-  return `${withoutAnchors.trimEnd()} {#${anchor}}`;
+  const text = line.slice(0, getTrailingHeadingAnchors(line).start).trimEnd();
+  return text ? `${text} {#${anchor}}` : `{#${anchor}}`;
 }
 
 function isValidAnchor(anchor) {
