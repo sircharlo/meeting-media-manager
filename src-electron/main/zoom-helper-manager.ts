@@ -47,11 +47,26 @@ const getZoomHelperScriptPath = () =>
     ? getDevRepoPath('src-electron/zoom-helper/zoom-helper.ps1')
     : join(process.resourcesPath, 'zoom-helper', 'zoom-helper.ps1');
 
+// The helper caches a file about 70 characters deeper than its cache folder,
+// and Windows PowerShell can't write a path past 260 characters: from a
+// folder longer than this (a portable M³ deep in folders, say), it fails to
+// start (helper-not-compiled).
+const MAX_CACHE_DIR_LENGTH = 180;
+
+/**
+ * Where the helper caches what it generates: in M³'s own folder, or, when
+ * that's too deep for it, its default folder (%LOCALAPPDATA%\M3\zoom-helper).
+ */
+const getCacheDir = () => {
+  const dir = join(app.getPath('userData'), 'zoom-helper');
+  return dir.length <= MAX_CACHE_DIR_LENGTH ? dir : undefined;
+};
+
 let helper: null | ZoomHelperProcess = null;
 
 const getHelper = () => {
   helper ??= new ZoomHelperProcess({
-    cacheDir: join(app.getPath('userData'), 'zoom-helper'),
+    cacheDir: getCacheDir(),
     onExit: (code) => {
       logToWindow(
         mainWindowInfo.mainWindow,
