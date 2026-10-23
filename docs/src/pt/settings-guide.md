@@ -549,13 +549,13 @@ O Gerenciador de Reuniões do Zoom (beta, somente Windows) opera o aplicativo de
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-O Zoom não oferece uma interface de automação adequada, por isso o M³ controla o aplicativo do Zoom pela interface de acessibilidade dele, que funciona sem o mouse para quase tudo (a lista de participantes, os menus dela, a janela de compartilhamento). Algumas ações ainda podem precisar mover o mouse ou mudar a janela em foco por um instante, por exemplo para trazer de volta a barra de ferramentas do Zoom que se oculta automaticamente. Sempre que isso acontece, o M³ cobre a própria janela com o aviso "O M³ está controlando o Zoom", que informa o que está acontecendo, com um botão **Cancelar esta automação**. O mesmo aviso aparece durante as verificações do assistente de configuração e durante o autoteste. Um atalho de teclado global (padrão `Ctrl+Alt+Escape`), ativo somente enquanto uma automação está em andamento, cancela a automação de qualquer lugar, mesmo quando o Zoom está em foco. O cancelamento interrompe o M³ na hora; o Zoom pode ficar no meio do processo, por isso verifique-o.
+O Zoom não oferece uma interface de automação adequada, por isso o M³ controla o aplicativo do Zoom pela interface de acessibilidade dele, que funciona sem mover o mouse, mesmo quando o Zoom oculta a barra de ferramentas. Ainda assim, o Zoom traz a janela dele para a frente por um instante quando o M³ pressiona os botões dele, e o mouse só se move como último recurso, caso o Zoom não responda de nenhuma outra forma. Sempre que o M³ controla o Zoom, ele cobre a própria janela com o aviso "O M³ está controlando o Zoom", que informa o que está acontecendo, com um botão **Cancelar esta automação**. O mesmo aviso aparece durante as verificações do assistente de configuração e durante o autoteste. Um atalho de teclado global (padrão `Ctrl+Alt+Escape`), ativo somente enquanto uma automação está em andamento, cancela a automação de qualquer lugar, mesmo quando o Zoom está em foco. O cancelamento interrompe o M³ na hora; o Zoom pode ficar no meio do processo, por isso verifique-o.
 
 **Padrão**: `Ctrl+Alt+Escape`
 
 #### Assistente de mãos levantadas {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Durante uma reunião, o M³ observa a lista de participantes do Zoom em busca de mãos levantadas. Quando alguém levanta a mão, uma notificação no M³ permite **ativar o áudio** desse participante com um clique e, quando ele terminar de falar, **desativar o áudio de novo e abaixar a mão** com outro clique. O botão do Zoom na barra de ações lista as mãos levantadas com os mesmos botões. Cada ação é feita na linha desse participante no Zoom, pelo nome exato; se dois participantes tiverem o mesmo nome, o M³ não mexe em nenhum dos dois.
 
@@ -564,6 +564,27 @@ Se o [temporizador da reunião](#meeting-timer) estiver ativado, uma mão grande
 O Zoom marca as mãos levantadas no idioma em que está configurado, por isso primeiro o M³ precisa aprender como: com sua reunião aberta no Zoom, clique em **Aprender como o Zoom marca as mãos levantadas**. O M³ levanta sua própria mão, lê como o Zoom a marca na lista de participantes e qual item do menu a abaixa, e depois a abaixa novamente. O assistente de configuração também oferece essa etapa.
 
 **Padrão**: `false`
+
+#### Layout das janelas {#zoom-meeting-manager-window-layout}
+
+<!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
+
+O M³ pode colocar a janela da reunião do Zoom, e também a própria janela principal dele, onde você quiser nas suas telas. O assistente de configuração pergunta onde em duas etapas, que o botão **Escolher o layout** aqui abre de novo a qualquer momento:
+
+1. Em um mapa das suas telas, organizadas como estão, escolha a tela para a reunião do Zoom. A tela que a janela de mídia ocupa nunca aparece como opção. Se a tela do Zoom não for a tela em que o M³ está, escolha se o Zoom fica com ela só para si ou a divide com o M³ (nesse caso, o M³ também vai para lá).
+2. Em um desenho dessa tela no formato real, arraste o divisor para dividi-la entre o M³ e o Zoom. Ele se encaixa nas proporções mais comuns (metade, um terço, um quarto e assim por diante); segure `Alt` para arrastá-lo livremente. O divisor nunca deixa uma janela menor do que o tamanho mínimo dela: o Zoom precisa de mais espaço enquanto a lista de participantes dele está aberta. Em uma tela na vertical, as duas janelas ficam uma em cima da outra.
+
+Assim que a reunião abre, o M³ abre a lista de participantes do Zoom se você pediu, depois coloca as duas janelas no lugar. A partir daí, ele mantém o Zoom onde deve ficar: quando o Zoom move ou redimensiona a janela dele sozinho, depois de um compartilhamento de tela ou quando a lista de participantes abre ou fecha, o M³ o coloca de volta. Se você mesmo mover ou redimensionar o Zoom, o M³ o deixa onde você o colocou até a próxima reunião. Sempre que o M³ move o Zoom por conta própria, uma notificação avisa, com dois botões caso isso atrapalhe: **Deixar o Zoom como está** interrompe isso até o M³ ser reiniciado, e **Desativar** desativa o layout das janelas até você ativá-lo de novo aqui. Quando telas são conectadas ou removidas, o M³ organiza as janelas de novo; se a tela do Zoom não estiver mais lá, o Zoom divide a tela do M³ e o M³ avisa você.
+
+Enquanto o Zoom compartilha a janela de mídia, ele oculta a própria janela da reunião, incluindo a lista de participantes. Com **Mostrar a lista de participantes durante o compartilhamento** ativado, o M³ abre a lista de participantes do Zoom em uma janela separada, no lugar do Zoom, para que você continue vendo quem levanta a mão para comentar. Se você a fechar, ela fica fechada até o próximo compartilhamento; o Zoom a fecha sozinho quando o compartilhamento termina, e a janela da reunião volta ao lugar.
+
+Com a opção **Meeting window view** do Zoom definida como **Dual window** (**Use dual monitors** em versões mais antigas do Zoom), o Zoom abre uma segunda janela (que mostra a tela compartilhada ou quem está falando). O M³ a coloca em tela cheia na tela da janela de mídia, atrás da janela de mídia: oculte a janela de mídia para vê-la, por exemplo, para ver os participantes.
+
+Quando **Ajustar com o Windows** está ativado, o M³ ajusta as duas janelas lado a lado com o próprio recurso de ajuste do Windows, como se você as tivesse arrastado para as bordas da tela, então arrastar a borda entre elas redimensiona as duas. Para isso, o M³ traz cada janela para a frente por um instante.
+
+O botão **Organizar janelas** no pop-up do Zoom coloca tudo de volta no lugar a qualquer momento. O layout das janelas é salvo por computador, já que depende das telas dele.
+
+**Padrão**: desativado
 
 ### Integração com o OBS Studio {#settings-guide-obs-integration}
 

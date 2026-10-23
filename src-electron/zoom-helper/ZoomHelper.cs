@@ -20,12 +20,17 @@
 //   settings (the microphone and video buttons in each state, the Share
 //   entry).
 //
-// Controls are pressed through UI Automation patterns (Invoke, Toggle),
-// which don't move the user's mouse, falling back to a real click for the
-// few Zoom controls that don't support them. It uses the native COM UI
-// Automation API (through an interop assembly zoom-helper.ps1 generates from
-// Windows' own UIAutomationCore.dll): the managed System.Windows.Automation
-// API is over ten times slower on Zoom's windows.
+// Controls are pressed without moving the user's mouse: through UI
+// Automation (Invoke, Toggle, or a control's default action), or else
+// through mouse and key messages sent to Zoom's own windows, which Zoom's
+// popups take. A real click is the last resort, for a control Zoom answers
+// none of those ways. Zoom still brings itself forward when its buttons
+// are pressed, so each request gives the focus back afterwards.
+//
+// It uses the native COM UI Automation API (through an interop assembly
+// zoom-helper.ps1 generates from Windows' own UIAutomationCore.dll): the
+// managed System.Windows.Automation API is over ten times slower on Zoom's
+// windows.
 
 using System;
 using System.Collections.Generic;
@@ -90,6 +95,17 @@ namespace M3.ZoomHelper
         [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint processId);
         [DllImport("user32.dll")] public static extern bool AttachThreadInput(uint attach, uint attachTo, bool doAttach);
         [DllImport("kernel32.dll")] public static extern uint GetCurrentThreadId();
+        [DllImport("user32.dll")] public static extern bool IsZoomed(IntPtr hwnd);
+        [DllImport("user32.dll")] public static extern bool IsWindow(IntPtr hwnd);
+        [DllImport("user32.dll")] public static extern short GetAsyncKeyState(int key);
+        [DllImport("user32.dll")] public static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint flags);
+        [DllImport("user32.dll")] public static extern IntPtr MonitorFromRect(ref Rect rect, uint flags);
+        [DllImport("user32.dll")] public static extern bool GetMonitorInfo(IntPtr monitor, ref MonitorInfo info);
+        [DllImport("user32.dll")] public static extern bool GetWindowPlacement(IntPtr hwnd, ref WindowPlacement placement);
+        [DllImport("user32.dll")] public static extern bool SetWindowPlacement(IntPtr hwnd, ref WindowPlacement placement);
+        [DllImport("dwmapi.dll")] public static extern int DwmGetWindowAttribute(IntPtr hwnd, int attribute, out Rect value, int size);
+        // Windows 10 2004 and later only (see IsArranged).
+        [DllImport("user32.dll")] public static extern bool IsWindowArranged(IntPtr hwnd);
 
         /// <summary>Brings a window to the front. Windows only lets the
         /// foreground app hand focus over, so this briefly shares the
@@ -118,7 +134,17 @@ namespace M3.ZoomHelper
         [DllImport("user32.dll")] public static extern bool PostMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
         [DllImport("user32.dll")] public static extern IntPtr SendMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
         [DllImport("user32.dll")] public static extern bool ScreenToClient(IntPtr hwnd, ref Point point);
+        [DllImport("user32.dll")] public static extern bool EnumChildWindows(IntPtr parent, EnumWindowsProc callback, IntPtr lParam);
+        [DllImport("user32.dll")] public static extern IntPtr ChildWindowFromPointEx(IntPtr parent, Point point, uint flags);
+        public const uint WmKeyDown = 0x0100;
+        public const uint WmKeyUp = 0x0101;
         public const uint WmMouseMove = 0x0200;
+        public const uint WmLButtonDown = 0x0201;
+        public const uint WmLButtonUp = 0x0202;
+        public const uint WmMouseWheel = 0x020A;
+        public const int MkLButton = 0x0001;
+        public const uint CwpSkipInvisible = 0x0001;
+        public const uint CwpSkipTransparent = 0x0004;
         [DllImport("user32.dll")] public static extern bool GetCursorPos(out Point point);
 
         [StructLayout(LayoutKind.Sequential)]
@@ -136,11 +162,45 @@ namespace M3.ZoomHelper
             public int Right;
             public int Bottom;
         }
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MonitorInfo
+        {
+            public int Size;
+            public Rect Monitor;
+            public Rect Work;
+            public uint Flags;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WindowPlacement
+        {
+            public int Length;
+            public int Flags;
+            public int ShowCommand;
+            public Point MinPosition;
+            public Point MaxPosition;
+            public Rect Normal;
+        }
         [DllImport("user32.dll")] public static extern void mouse_event(uint flags, int dx, int dy, uint data, UIntPtr extra);
         [DllImport("user32.dll")] public static extern void keybd_event(byte vk, byte scan, uint flags, UIntPtr extra);
 
         public static readonly IntPtr DpiAwarenessPerMonitorV2 = new IntPtr(-4);
+        // SW_SHOWNOACTIVATE: restores a minimized or maximized window without
+        // activating it. (SwShowNoActivate below is SW_SHOWNA.)
+        public const int SwRestoreNoActivate = 4;
+        public const int SwShowNormal = 1;
+        public const int SwShowNoActivate = 8;
         public const int SwRestore = 9;
+        public const uint SwpNoZOrder = 0x0004;
+        public const int DwmwaExtendedFrameBounds = 9;
+        public const uint MonitorDefaultToNearest = 2;
+        public const uint KeyExtended = 0x0001;
+        public const byte VkShift = 0x10;
+        public const byte VkControl = 0x11;
+        public const byte VkLeftWindows = 0x5B;
+        public const byte VkRightWindows = 0x5C;
+        public const byte VkLeft = 0x25;
+        public const byte VkRight = 0x27;
         public const uint MouseLeftDown = 0x0002;
         public const uint MouseLeftUp = 0x0004;
         public const uint MouseWheel = 0x0800;
@@ -156,6 +216,7 @@ namespace M3.ZoomHelper
         public const uint KeyUp = 0x0002;
         public const byte VkMenu = 0x12; // Alt
         public const byte VkEscape = 0x1B;
+        public const byte VkSpace = 0x20;
     }
 
     public static class Uia
@@ -174,6 +235,7 @@ namespace M3.ZoomHelper
         public const int TextType = 50020;
         public const int SplitButtonType = 50031;
         public const int InvokePattern = 10000;
+        public const int LegacyIAccessiblePattern = 10018;
         public const int ScrollItemPattern = 10017;
         public const int SelectionItemPattern = 10010;
         public const int TogglePattern = 10015;
@@ -198,9 +260,22 @@ namespace M3.ZoomHelper
 
         public static List<El> Descendants(El root, int controlType)
         {
-            var condition = controlType == 0
+            return FindAll(root, controlType == 0
                 ? Automation.CreateTrueCondition()
-                : Automation.CreatePropertyCondition(ControlTypeProperty, controlType);
+                : Automation.CreatePropertyCondition(ControlTypeProperty, controlType));
+        }
+
+        /// <summary>The descendants of any of these control types.</summary>
+        public static List<El> Descendants(El root, int[] controlTypes)
+        {
+            var condition = Automation.CreatePropertyCondition(ControlTypeProperty, controlTypes[0]);
+            for (int i = 1; i < controlTypes.Length; i++)
+                condition = Automation.CreateOrCondition(condition, Automation.CreatePropertyCondition(ControlTypeProperty, controlTypes[i]));
+            return FindAll(root, condition);
+        }
+
+        static List<El> FindAll(El root, IUIAutomationCondition condition)
+        {
             var result = new List<El>();
             IUIAutomationElementArray found;
             try
@@ -297,6 +372,104 @@ namespace M3.ZoomHelper
         }
     }
 
+    /// <summary>Notices the user moving or resizing one of Zoom's windows
+    /// themselves (by its title bar or borders, including Windows' snapping
+    /// by mouse), by window class: Windows reports those, and only those, as
+    /// move/size loops, never a program's own moves. M3 then leaves the
+    /// window where the user put it rather than putting it back (see
+    /// src/helpers/zoom-layout.ts). The hook needs a message loop, so it runs
+    /// on a thread of its own, started by the first window-layout request.</summary>
+    public static class MoveWatch
+    {
+        delegate void WinEventProc(IntPtr hook, uint eventType, IntPtr hwnd, int objectId, int childId, uint thread, uint time);
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct Message
+        {
+            public IntPtr Window;
+            public uint Id;
+            public IntPtr WParam;
+            public IntPtr LParam;
+            public uint Time;
+            public int X;
+            public int Y;
+        }
+
+        [DllImport("user32.dll")] static extern IntPtr SetWinEventHook(uint min, uint max, IntPtr module, WinEventProc proc, uint processId, uint threadId, uint flags);
+        [DllImport("user32.dll")] static extern int GetMessage(out Message message, IntPtr window, uint min, uint max);
+        [DllImport("user32.dll")] static extern bool TranslateMessage(ref Message message);
+        [DllImport("user32.dll")] static extern IntPtr DispatchMessage(ref Message message);
+
+        const uint EventMoveSizeStart = 0x000A;
+        const uint EventMoveSizeEnd = 0x000B;
+        const uint OutOfContext = 0x0000;
+        const uint SkipOwnProcess = 0x0002;
+
+        // Kept here so the delegate outlives the native hook.
+        static WinEventProc callback;
+        static int started;
+        // By window class: being moved now, and when it was last.
+        static readonly Dictionary<string, bool> moving = new Dictionary<string, bool>();
+        static readonly Dictionary<string, long> lastEndTicks = new Dictionary<string, long>();
+
+        public static void Start(params string[] classNames)
+        {
+            if (Interlocked.Exchange(ref started, 1) == 1) return;
+            var watched = new HashSet<string>(classNames);
+            var thread = new Thread(() => Loop(watched));
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        static void Loop(HashSet<string> watched)
+        {
+            callback = (hook, eventType, hwnd, objectId, childId, thread, time) =>
+            {
+                if (objectId != 0 || hwnd == IntPtr.Zero) return; // the window itself
+                var buffer = new StringBuilder(256);
+                Native.GetClassName(hwnd, buffer, buffer.Capacity);
+                var className = buffer.ToString();
+                if (!watched.Contains(className)) return;
+                lock (moving)
+                {
+                    moving[className] = eventType == EventMoveSizeStart;
+                    if (eventType == EventMoveSizeEnd) lastEndTicks[className] = DateTime.UtcNow.Ticks;
+                }
+            };
+            SetWinEventHook(EventMoveSizeStart, EventMoveSizeEnd, IntPtr.Zero, callback, 0, 0, OutOfContext | SkipOwnProcess);
+            Message message;
+            while (GetMessage(out message, IntPtr.Zero, 0, 0) > 0)
+            {
+                TranslateMessage(ref message);
+                DispatchMessage(ref message);
+            }
+        }
+
+        /// <summary>Whether the user is moving or resizing a window of the
+        /// class right now.</summary>
+        public static bool Moving(string className)
+        {
+            lock (moving)
+            {
+                bool value;
+                return moving.TryGetValue(className, out value) && value;
+            }
+        }
+
+        /// <summary>How long ago the user last finished moving or resizing a
+        /// window of the class, in milliseconds; null if they haven't since
+        /// the helper started.</summary>
+        public static object MillisecondsSinceMove(string className)
+        {
+            lock (moving)
+            {
+                long ticks;
+                if (!lastEndTicks.TryGetValue(className, out ticks)) return null;
+                return (long)TimeSpan.FromTicks(DateTime.UtcNow.Ticks - ticks).TotalMilliseconds;
+            }
+        }
+    }
+
     public static class Helper
     {
         const string MeetingWindowClass = "ConfMultiTabContentWndClass";
@@ -308,6 +481,9 @@ namespace M3.ZoomHelper
         const string SharePickerClass = "ZPShareEntranceClass";
         const string ShareToolbarClass = "ZPFloatToolbarClass";
         const string ReactionPanelClass = "ZPReactionWndClass";
+        // A panel popped out of the meeting window ("Open in new window"),
+        // such as the participants panel, which Zoom then keeps opening there.
+        const string PoppedOutPanelClass = "ZPlistPopupContainerWndClass";
         // The video thumbnail Zoom shows in place of the meeting window in
         // its mini view.
         const string FloatVideoClass = "ZPFloatVideoWndClass";
@@ -389,6 +565,13 @@ namespace M3.ZoomHelper
             return found;
         }
 
+        static string ClassOf(IntPtr handle)
+        {
+            var buffer = new StringBuilder(256);
+            Native.GetClassName(handle, buffer, buffer.Capacity);
+            return buffer.ToString();
+        }
+
         static List<IntPtr> TopWindowsTitled(string title)
         {
             var found = new List<IntPtr>();
@@ -464,6 +647,19 @@ namespace M3.ZoomHelper
 
         // --- Input ------------------------------------------------------------
 
+        // Whether this request moved the mouse (only ever as a last resort),
+        // so it's put back afterwards (see RunRestoringInput).
+        static bool cursorMoved;
+
+        static void MoveCursor(int x, int y)
+        {
+            cursorMoved = true;
+            Native.SetCursorPos(x, y);
+        }
+
+        /// <summary>Brings a window forward, un-minimizing it: for real key
+        /// presses and the last-resort mouse paths. Zoom's controls are
+        /// otherwise pressed without the focus.</summary>
         static void Focus(El window)
         {
             var handle = window.Raw.CurrentNativeWindowHandle;
@@ -479,8 +675,9 @@ namespace M3.ZoomHelper
             Thread.Sleep(200);
         }
 
-        /// <summary>The top-level window an element belongs to.</summary>
-        static IntPtr TopWindowOf(El element)
+        /// <summary>The window an element is drawn in: the nearest one up its
+        /// tree (a child window, such as Zoom's toolbar).</summary>
+        static IntPtr OwnWindowOf(El element)
         {
             try
             {
@@ -489,12 +686,19 @@ namespace M3.ZoomHelper
                 for (int depth = 0; current != null && depth < 30; depth++)
                 {
                     var handle = current.CurrentNativeWindowHandle;
-                    if (handle != IntPtr.Zero) return Native.GetAncestor(handle, Native.GaRoot);
+                    if (handle != IntPtr.Zero) return handle;
                     current = walker.GetParentElement(current);
                 }
             }
             catch (Exception) { }
             return IntPtr.Zero;
+        }
+
+        /// <summary>The top-level window an element belongs to.</summary>
+        static IntPtr TopWindowOf(El element)
+        {
+            var own = OwnWindowOf(element);
+            return own == IntPtr.Zero ? IntPtr.Zero : Native.GetAncestor(own, Native.GaRoot);
         }
 
         /// <summary>Whether the window itself shows at the point, rather than
@@ -528,14 +732,23 @@ namespace M3.ZoomHelper
 
         static void ClickAt(int x, int y)
         {
-            Native.SetCursorPos(x, y);
+            MoveCursor(x, y);
             Thread.Sleep(50);
             Native.mouse_event(Native.MouseLeftDown, 0, 0, 0, UIntPtr.Zero);
             Native.mouse_event(Native.MouseLeftUp, 0, 0, 0, UIntPtr.Zero);
         }
 
+        /// <summary>A real click: the last resort.</summary>
         static void Click(El element)
         {
+            // A control read from Zoom's hidden toolbar (see ControlPanel) is
+            // only there to click once the toolbar shows.
+            var own = OwnWindowOf(element);
+            if (own != IntPtr.Zero && !Native.IsWindowVisible(own) && ClassOf(own) == ControlPanelClass)
+            {
+                Native.ShowWindow(own, Native.SwShowNoActivate);
+                Thread.Sleep(150);
+            }
             var window = TopWindowOf(element);
             if (window == IntPtr.Zero || ShowsAt(window, element.CenterX, element.CenterY))
             {
@@ -552,22 +765,59 @@ namespace M3.ZoomHelper
 
         static void Hover(El element)
         {
-            Native.SetCursorPos(element.CenterX, element.CenterY);
+            MoveCursor(element.CenterX, element.CenterY);
         }
 
+        // Real key presses go to whatever has the focus: Zoom must have been
+        // brought forward. Never post Alt to Zoom instead: posted Alt key
+        // messages upset its tracking of a lone Alt, which toggles its
+        // "Always show meeting controls" setting.
         static void AltKey(char key)
         {
             byte vk = (byte)char.ToUpperInvariant(key);
             Native.keybd_event(Native.VkMenu, 0, 0, UIntPtr.Zero);
+            TapKey(vk);
+            Native.keybd_event(Native.VkMenu, 0, Native.KeyUp, UIntPtr.Zero);
+        }
+
+        static void TapKey(byte vk)
+        {
             Native.keybd_event(vk, 0, 0, UIntPtr.Zero);
             Native.keybd_event(vk, 0, Native.KeyUp, UIntPtr.Zero);
-            Native.keybd_event(Native.VkMenu, 0, Native.KeyUp, UIntPtr.Zero);
         }
 
         static void Escape()
         {
-            Native.keybd_event(Native.VkEscape, 0, 0, UIntPtr.Zero);
-            Native.keybd_event(Native.VkEscape, 0, Native.KeyUp, UIntPtr.Zero);
+            TapKey(Native.VkEscape);
+        }
+
+        /// <summary>Escape sent to a window, without the focus: Zoom's popups,
+        /// menus and dialogs take it (the meeting window itself doesn't).</summary>
+        static void PostEscape(IntPtr handle)
+        {
+            // lParam: one press of the key with scan code 1 (Escape), then its release.
+            Native.PostMessage(handle, Native.WmKeyDown, new IntPtr(Native.VkEscape), new IntPtr(0x00010001));
+            Native.PostMessage(handle, Native.WmKeyUp, new IntPtr(Native.VkEscape), new IntPtr(unchecked((int)0xC0010001)));
+        }
+
+        /// <summary>Closes one of Zoom's popups or dialogs with Escape: sent to
+        /// it, and only if that didn't close it, typed with the window
+        /// brought forward. False if it's still open.</summary>
+        static bool CloseWithEscape(IntPtr handle)
+        {
+            PostEscape(handle);
+            if (WaitUntil(() => !Native.IsWindowVisible(handle), 1500)) return true;
+            Native.BringToFront(handle);
+            Thread.Sleep(150);
+            Escape();
+            return WaitUntil(() => !Native.IsWindowVisible(handle), 1500);
+        }
+
+        /// <summary>Closes every open window of a class (Zoom's menus, its
+        /// "More" menu) with Escape.</summary>
+        static void CloseAll(string className)
+        {
+            foreach (var handle in TopWindows(className, true)) CloseWithEscape(handle);
         }
 
         /// <summary>Invokes a control without moving the mouse. False if Zoom
@@ -584,6 +834,37 @@ namespace M3.ZoomHelper
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        /// <summary>Carries out a control's default action without moving the
+        /// mouse: what the entries of Zoom's "More" menu support instead of
+        /// Invoke. False if Zoom doesn't support it there (or turns it
+        /// down).</summary>
+        static bool TryDefaultAction(El element)
+        {
+            try
+            {
+                var pattern = element.Raw.GetCurrentPattern(Uia.LegacyIAccessiblePattern) as IUIAutomationLegacyIAccessiblePattern;
+                if (pattern == null) return false;
+                pattern.DoDefaultAction();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        static bool HasKeyboardFocus(El element)
+        {
+            try
+            {
+                return element.Raw.CurrentHasKeyboardFocus != 0;
+            }
+            catch (Exception)
+            {
+                return false; // the element went away
             }
         }
 
@@ -620,15 +901,78 @@ namespace M3.ZoomHelper
             }
         }
 
-        /// <summary>Tells a window the mouse moved over a point, without moving
-        /// it: a posted WM_MOUSEMOVE to the window under that point.</summary>
-        static void PostMouseMove(IntPtr window, int x, int y)
+        // Mouse messages sent straight to one of Zoom's windows, without
+        // moving the mouse. Zoom's popups (its "More" menu, the share window
+        // and toolbar, the mini view) act on them; the meeting window itself
+        // only follows the real mouse.
+
+        /// <summary>Zoom's innermost visible window at a screen point, inside
+        /// one of its top-level windows: the one that handles the mouse
+        /// there.</summary>
+        static IntPtr ChildWindowAt(IntPtr top, int x, int y)
         {
-            var under = Native.WindowFromPoint(new Native.Point { X = x, Y = y });
-            var target = under == IntPtr.Zero ? window : under;
+            var current = top;
+            for (int depth = 0; depth < 10; depth++)
+            {
+                var client = new Native.Point { X = x, Y = y };
+                Native.ScreenToClient(current, ref client);
+                var child = Native.ChildWindowFromPointEx(current, client, Native.CwpSkipInvisible | Native.CwpSkipTransparent);
+                if (child == IntPtr.Zero || child == current) break;
+                current = child;
+            }
+            return current;
+        }
+
+        /// <summary>A screen point as a mouse message's lParam for a window.</summary>
+        static IntPtr ClientPoint(IntPtr window, int x, int y)
+        {
             var client = new Native.Point { X = x, Y = y };
-            Native.ScreenToClient(target, ref client);
-            Native.PostMessage(target, Native.WmMouseMove, IntPtr.Zero, new IntPtr(((client.Y & 0xFFFF) << 16) | (client.X & 0xFFFF)));
+            Native.ScreenToClient(window, ref client);
+            return new IntPtr(((client.Y & 0xFFFF) << 16) | (client.X & 0xFFFF));
+        }
+
+        /// <summary>Tells one of Zoom's windows the mouse is over a point, as
+        /// hovering it would.</summary>
+        static void PostHover(IntPtr top, int x, int y)
+        {
+            var target = ChildWindowAt(top, x, y);
+            for (int i = 0; i < 3; i++)
+            {
+                Native.PostMessage(target, Native.WmMouseMove, IntPtr.Zero, ClientPoint(target, x + i, y + i));
+                Thread.Sleep(40);
+            }
+        }
+
+        /// <summary>A click sent to the window a control is drawn in, at its
+        /// middle. False if it can't be sent: the control has no place on
+        /// screen, or its window went away.</summary>
+        static bool TryPostClick(El element)
+        {
+            var top = TopWindowOf(element);
+            if (top == IntPtr.Zero || element.Area == 0) return false;
+            try
+            {
+                if (element.Raw.CurrentIsOffscreen != 0) return false;
+            }
+            catch (Exception)
+            {
+                return false; // the element went away
+            }
+            var target = ChildWindowAt(top, element.CenterX, element.CenterY);
+            var point = ClientPoint(target, element.CenterX, element.CenterY);
+            if (!Native.PostMessage(target, Native.WmMouseMove, IntPtr.Zero, point)) return false;
+            Thread.Sleep(50);
+            Native.PostMessage(target, Native.WmLButtonDown, new IntPtr(Native.MkLButton), point);
+            Thread.Sleep(30);
+            return Native.PostMessage(target, Native.WmLButtonUp, IntPtr.Zero, point);
+        }
+
+        /// <summary>A turn of the mouse wheel sent to a window, over a screen
+        /// point (wheel messages carry screen coordinates).</summary>
+        static void PostWheel(IntPtr window, int x, int y, int delta)
+        {
+            var wParam = new IntPtr(unchecked((int)((uint)(delta & 0xFFFF) << 16)));
+            Native.PostMessage(window, Native.WmMouseWheel, wParam, new IntPtr(((y & 0xFFFF) << 16) | (x & 0xFFFF)));
         }
 
         /// <summary>Opens the menu behind a control: through Invoke first (no
@@ -645,14 +989,16 @@ namespace M3.ZoomHelper
             return WaitForWindow(MenuClass, timeoutMs);
         }
 
-        /// <summary>Invokes a control without moving the mouse, or clicks it if
-        /// Zoom doesn't support Invoke on it.</summary>
+        /// <summary>Presses a control without moving the mouse: Invoke, else
+        /// its default action (the "More" menu's entries), else a click sent
+        /// to its window ("Stop share", the mini view's buttons, which turn
+        /// both down). A real click only if none of those can be done.</summary>
         static void Press(El element)
         {
             // Zoom turns some Invoke calls down (COMException, or
-            // InvalidOperationException through the interop): a real click
-            // still works there.
-            if (!TryInvoke(element)) Click(element);
+            // InvalidOperationException through the interop).
+            if (TryInvoke(element) || TryDefaultAction(element) || TryPostClick(element)) return;
+            Click(element);
         }
 
         static bool SetChecked(El checkbox, bool isChecked)
@@ -667,7 +1013,7 @@ namespace M3.ZoomHelper
             }
             catch (Exception)
             {
-                Click(checkbox);
+                Press(checkbox);
             }
             return true;
         }
@@ -739,34 +1085,25 @@ namespace M3.ZoomHelper
 
         // --- Meeting window ------------------------------------------------------
 
-        /// <summary>The meeting window. Zoom hides its toolbar a few seconds after
-        /// the mouse stops moving over it, and a hidden toolbar vanishes from UI
-        /// Automation too, so the window is recognized without it: it's the
-        /// visible meeting-class window (Zoom keeps a hidden spare), preferring
-        /// one whose toolbar is showing.</summary>
+        /// <summary>The meeting window: the visible meeting-class window (Zoom
+        /// keeps a hidden spare) that holds the toolbar. Zoom hides its toolbar
+        /// a few seconds after the mouse stops moving over it, and a hidden
+        /// toolbar vanishes from UI Automation too, but it stays a child window
+        /// of the meeting's (see MeetingWindowHandles). With Zoom's "Use dual
+        /// monitors" on, the other one, often the bigger, is its second window.
+        /// A minimized meeting window still counts (Focus brings it back).</summary>
         static El FindMeetingWindow()
         {
-            El largest = null;
-            El minimized = null;
-            foreach (var handle in TopWindows(MeetingWindowClass, true))
+            foreach (var handle in MeetingWindowHandles())
             {
                 try
                 {
                     var window = Uia.FromHandle(handle);
-                    // A minimized window has no size on screen, but it's still
-                    // the meeting (and Focus brings it back).
-                    if (Native.IsIconic(handle))
-                    {
-                        if (minimized == null) minimized = window;
-                        continue;
-                    }
-                    if (Uia.FirstByClass(window, ControlPanelClass) != null) return window;
-                    if (largest == null || window.Area > largest.Area) largest = window;
+                    if (window.Area > 0 || Native.IsIconic(handle)) return window;
                 }
-                catch (Exception) { }
+                catch (Exception) { } // gone meanwhile
             }
-            if (largest != null && largest.Area > 0) return largest;
-            return minimized;
+            return null;
         }
 
         /// <summary>Zoom's mini view: the meeting window is hidden behind a
@@ -780,8 +1117,10 @@ namespace M3.ZoomHelper
         /// <summary>Brings the meeting window back from Zoom's mini view:
         /// the thumbnail shows its controls while hovered, the last of which
         /// (after Hide video, microphone, camera and Share) shows the full
-        /// meeting window. Only the mouse is moved, and Handle puts it
-        /// back.</summary>
+        /// meeting window. The thumbnail is told the mouse is over it and that
+        /// button is sent a click (it turns Invoke down); only if that doesn't
+        /// bring the meeting back is the mouse really moved there, which
+        /// Handle undoes.</summary>
         static El ExitMiniView()
         {
             var floats = TopWindows(FloatVideoClass, true);
@@ -789,12 +1128,22 @@ namespace M3.ZoomHelper
             var handle = floats[0];
             Native.Rect rect;
             if (!Native.GetWindowRect(handle, out rect)) return null;
-            Native.SetCursorPos((rect.Left + rect.Right) / 2, (rect.Top + rect.Bottom) / 2);
+            var x = (rect.Left + rect.Right) / 2;
+            var y = (rect.Top + rect.Bottom) / 2;
             var thumbnail = Uia.FromHandle(handle);
-            var show = WaitFor(() => LastControlRowButton(thumbnail), found => found != null, 2000);
-            if (show == null) return null;
-            Press(show);
-            return WaitFor(FindMeetingWindow, found => found != null, 4000);
+            for (int attempt = 0; attempt < 2; attempt++)
+            {
+                var quiet = attempt == 0;
+                if (quiet) PostHover(handle, x, y);
+                else MoveCursor(x, y);
+                var show = WaitFor(() => LastControlRowButton(thumbnail), found => found != null, 2000);
+                if (show == null) continue;
+                if (quiet) Press(show);
+                else Click(show);
+                var window = WaitFor(FindMeetingWindow, found => found != null, 4000);
+                if (window != null) return window;
+            }
+            return null;
         }
 
         /// <summary>The rightmost button of the thumbnail's control row (its
@@ -814,43 +1163,61 @@ namespace M3.ZoomHelper
         {
             var window = FindMeetingWindow() ?? ExitMiniView();
             if (window == null) throw new ZoomActionError("meeting-not-found");
-            return window;
+            // Zoom's controls are pressed without the focus, but a minimized
+            // meeting window is brought back first.
+            var handle = window.Raw.CurrentNativeWindowHandle;
+            if (!Native.IsIconic(handle)) return window;
+            Focus(window);
+            return Uia.FromHandle(handle);
         }
 
-        /// <summary>The meeting toolbar, brought back into view if Zoom hid it:
-        /// Zoom shows it again when the mouse moves over the meeting.</summary>
+        /// <summary>The meeting toolbar's own window, whether Zoom shows it or
+        /// not. Zoom hides the toolbar a few seconds after the mouse stops
+        /// moving over the meeting, and a hidden toolbar vanishes from the
+        /// meeting's UI Automation tree; but it's a child window of the
+        /// meeting, which still exposes its buttons (and their Invoke)
+        /// through its handle. Null if it can't be read that way.</summary>
+        static El ToolbarWindow(El window)
+        {
+            var found = IntPtr.Zero;
+            Native.EnumChildWindows(window.Raw.CurrentNativeWindowHandle, delegate (IntPtr hwnd, IntPtr lParam)
+            {
+                if (ClassOf(hwnd) != ControlPanelClass) return true;
+                found = hwnd;
+                return false;
+            }, IntPtr.Zero);
+            if (found == IntPtr.Zero) return null;
+            try
+            {
+                var toolbar = Uia.FromHandle(found);
+                return Uia.Descendants(toolbar, Uia.ButtonType).Count > 0 ? toolbar : null;
+            }
+            catch (Exception)
+            {
+                return null; // the window went away
+            }
+        }
+
+        /// <summary>The meeting toolbar, read as it is, shown or hidden (see
+        /// ToolbarWindow). Only if it can't be read that way is it brought
+        /// back into view the way Zoom expects, by moving the mouse over the
+        /// meeting.</summary>
         static El ControlPanel(El window)
         {
-            var panel = Uia.FirstByClass(window, ControlPanelClass);
+            var panel = Uia.FirstByClass(window, ControlPanelClass) ?? ToolbarWindow(window);
             if (panel != null) return panel;
             Focus(window);
             var handle = window.Raw.CurrentNativeWindowHandle;
-            // First without moving the mouse: tell Zoom the mouse moved over
-            // the meeting. Only if that doesn't bring the toolbar back is the
-            // cursor really moved.
-            panel = WaitFor(() =>
-            {
-                var bounds = window.Raw.CurrentBoundingRectangle;
-                var x = (bounds.left + bounds.right) / 2;
-                var y = (bounds.top + bounds.bottom) / 2;
-                for (int i = 0; i < 4; i++)
-                {
-                    PostMouseMove(handle, x + i * 5, y + i * 5);
-                    Thread.Sleep(40);
-                }
-                return Uia.FirstByClass(window, ControlPanelClass);
-            }, found => found != null, 1200);
-            if (panel != null) return panel;
             Func<El> reveal = () => WaitFor(() =>
             {
                 // Read afresh: Focus may just have restored a minimized window,
                 // whose earlier position was off-screen.
                 Native.Point point;
                 VisiblePoint(handle, window.Raw.CurrentBoundingRectangle, out point);
-                Native.SetCursorPos(point.X, point.Y);
+                MoveCursor(point.X, point.Y);
                 Thread.Sleep(50);
                 var nudge = ShowsAt(handle, point.X + 20, point.Y + 20) ? 20 : -20;
-                Native.SetCursorPos(point.X + nudge, point.Y + nudge);
+                MoveCursor(point.X + nudge, point.Y + nudge);
                 return Uia.FirstByClass(window, ControlPanelClass);
             }, found => found != null, 3000);
             Native.Point visible;
@@ -945,9 +1312,11 @@ namespace M3.ZoomHelper
             return TopWindows(ShareToolbarClass, true).Count > 0;
         }
 
-        /// <summary>What's going on in Zoom. Without `reveal`, it never moves the
-        /// mouse or focus (M³ polls it), so with Zoom's toolbar hidden the
-        /// audio and video states are unknown (null).</summary>
+        /// <summary>What's going on in Zoom. Without `reveal`, it never changes
+        /// anything on screen (M³ polls it): it reads the toolbar even while
+        /// Zoom hides it (see ToolbarWindow), but leaves the mini view as it
+        /// is, so the audio and video states are unknown (null) there.
+        /// `toolbarVisible` tells whether Zoom shows its toolbar.</summary>
         static Dictionary<string, object> MeetingState(bool reveal)
         {
             var sharing = IsSharing();
@@ -962,20 +1331,21 @@ namespace M3.ZoomHelper
                 return new Dictionary<string, object> { { "found", sharing || miniView }, { "miniView", miniView }, { "sharing", sharing } };
             }
             var toolbarVisible = Uia.FirstByClass(window, ControlPanelClass) != null;
-            if (!toolbarVisible && reveal)
+            var toolbarRead = toolbarVisible || ToolbarWindow(window) != null;
+            if (!toolbarRead && reveal)
             {
                 try
                 {
                     ControlPanel(window);
-                    toolbarVisible = true;
+                    toolbarVisible = toolbarRead = true;
                 }
                 catch (ZoomActionError) { }
             }
-            El mic = toolbarVisible ? MicButton(window) : null;
-            El video = toolbarVisible ? VideoButton(window) : null;
+            El mic = toolbarRead ? MicButton(window) : null;
+            El video = toolbarRead ? VideoButton(window) : null;
             return new Dictionary<string, object>
             {
-                { "audioJoined", toolbarVisible ? (object)(mic != null) : null },
+                { "audioJoined", toolbarRead ? (object)(mic != null) : null },
                 { "dialogs", ZoomDialogClasses() },
                 { "zoomVersion", CachedZoomVersion() },
                 { "found", true },
@@ -1011,7 +1381,6 @@ namespace M3.ZoomHelper
             var buttons = ToolbarButtons(window);
             if (buttons.Count == 0) throw new ZoomActionError("join-audio-button-not-found");
             var nameBefore = FirstSegment(buttons[0].Name);
-            Focus(window);
             Press(buttons[0]);
             // Whichever comes first: Zoom's join-audio dialog, or (not knowing
             // which button that was) the button changing its name.
@@ -1060,7 +1429,6 @@ namespace M3.ZoomHelper
             // The arrow next to the microphone button is the toolbar's first menu.
             var menus = ToolbarMenus(window);
             if (menus.Count == 0) throw new ZoomActionError("audio-menu-not-found");
-            Focus(window);
             Press(menus[0]);
             var menu = WaitForWindow(MenuClass, 4000);
             if (menu == null)
@@ -1084,7 +1452,7 @@ namespace M3.ZoomHelper
         /// in the state named `on ? onTitle : offTitle`, telling its states
         /// apart by the names captured in M³'s settings. `what` ("mic",
         /// "video") starts the error names.</summary>
-        static Dictionary<string, object> SetButtonState(El window, Func<El> find, string what, bool on, string onTitle, string offTitle)
+        static Dictionary<string, object> SetButtonState(Func<El> find, string what, bool on, string onTitle, string offTitle)
         {
             var button = find();
             if (button == null) throw new ZoomActionError(what + "-button-not-found");
@@ -1094,7 +1462,6 @@ namespace M3.ZoomHelper
             if (onTitle.Length == 0 || offTitle.Length == 0) throw new ZoomActionError(what + "-titles-not-captured");
             if (current != onTitle && current != offTitle) throw new ZoomActionError(what + "-title-unrecognized:" + current);
             if ((current == onTitle) == on) return Changed(false);
-            Focus(window);
             Press(button);
             var wanted = on ? onTitle : offTitle;
             var done = WaitUntil(() =>
@@ -1109,7 +1476,7 @@ namespace M3.ZoomHelper
         public static Dictionary<string, object> SetVideo(bool on, string onTitle, string offTitle)
         {
             var window = RequireMeetingWindow();
-            return SetButtonState(window, () => VideoButton(window), "video", on, onTitle, offTitle);
+            return SetButtonState(() => VideoButton(window), "video", on, onTitle, offTitle);
         }
 
         /// <summary>Unmutes or mutes the host's microphone, which only exists
@@ -1118,7 +1485,7 @@ namespace M3.ZoomHelper
         {
             var window = RequireMeetingWindow();
             if (!AudioJoined(window)) throw new ZoomActionError("audio-not-joined");
-            return SetButtonState(window, () => MicButton(window), "mic", on, onTitle, offTitle);
+            return SetButtonState(() => MicButton(window), "mic", on, onTitle, offTitle);
         }
 
         static Dictionary<string, object> ButtonTitle(El button, string what)
@@ -1142,11 +1509,32 @@ namespace M3.ZoomHelper
 
         // --- Participants ----------------------------------------------------------
 
+        /// <summary>Where the participants panel is: in the meeting window, or
+        /// in a window of its own once the host popped it out (Zoom's "Open
+        /// in new window"). That window is titled like the panel's heading
+        /// ("Participants (15)") and holds the same list and buttons.</summary>
+        static El PanelHost(El window)
+        {
+            foreach (var handle in TopWindows(PoppedOutPanelClass, true))
+            {
+                try
+                {
+                    var popped = Uia.FromHandle(handle);
+                    if (CountedTitle.IsMatch(popped.Name) && Uia.Descendants(popped, Uia.ListType).Count > 0) return popped;
+                }
+                catch (Exception) { } // the window went away
+            }
+            return window;
+        }
+
         /// <summary>The participants panel's heading ("Participants (3)"): the
         /// text with a count in brackets that isn't part of a list (waiting
-        /// room section headers are). Null while the panel is closed.</summary>
+        /// room section headers are), or the title of the panel's own window
+        /// once popped out. Null while the panel is closed.</summary>
         static El ParticipantsHeading(El window)
         {
+            var host = PanelHost(window);
+            if (host != window) return host;
             var lists = Uia.Descendants(window, Uia.ListType);
             foreach (var text in Uia.Descendants(window, Uia.TextType))
             {
@@ -1159,12 +1547,15 @@ namespace M3.ZoomHelper
         }
 
         /// <summary>The participants list: the first list under the panel's
-        /// heading (the chat panel, which also holds a list, opens below it).
-        /// Null while the panel is closed.</summary>
+        /// heading (the chat panel, which also holds a list, opens below it),
+        /// or the popped-out panel's list. Null while the panel is
+        /// closed.</summary>
         static El ParticipantsList(El window)
         {
-            var lists = Uia.Descendants(window, Uia.ListType);
+            var host = PanelHost(window);
+            var lists = Uia.Descendants(host, Uia.ListType);
             if (lists.Count == 0) return null;
+            if (host != window) return lists[0];
             var heading = ParticipantsHeading(window);
             if (heading == null) return lists[0];
             lists.Sort((a, b) => a.Rect.top.CompareTo(b.Rect.top));
@@ -1184,7 +1575,7 @@ namespace M3.ZoomHelper
         /// all] [More, a split button] under the participants list.</summary>
         static El MuteAllButton(El window)
         {
-            var buttons = Uia.Descendants(window, Uia.ButtonType);
+            var buttons = Uia.Descendants(PanelHost(window), Uia.ButtonType);
             var known = ByName(buttons, Known.MuteAll);
             if (known != null) return known;
             El found = null;
@@ -1202,7 +1593,7 @@ namespace M3.ZoomHelper
             var row = new List<El>();
             var list = ParticipantsList(window);
             if (list == null) return row;
-            foreach (var button in Named(Uia.Descendants(window, Uia.ButtonType)))
+            foreach (var button in Named(Uia.Descendants(PanelHost(window), Uia.ButtonType)))
                 if (button.Rect.top >= list.Rect.bottom - RowTolerance && button.Rect.right > list.Rect.left && button.Rect.left < list.Rect.right) row.Add(button);
             row.Sort((a, b) => a.Rect.left.CompareTo(b.Rect.left));
             return row;
@@ -1234,7 +1625,6 @@ namespace M3.ZoomHelper
             var button = ByName(PanelRowButtons(window), FirstSegment(title ?? ""));
             if (button == null) throw new ZoomActionError("mute-all-entry-not-found");
             var before = ZoomWindows();
-            Focus(window);
             Press(button);
             var dialog = WaitForWindow(MuteAllDialogClass, 4000);
             if (dialog == null)
@@ -1244,10 +1634,7 @@ namespace M3.ZoomHelper
             var buttons = ActionRowButtons(dialog);
             if (buttons.Count > 0) Press(buttons[buttons.Count - 1]); // No, to the right of Yes
             if (!WaitUntil(() => TopWindows(MuteAllDialogClass, true).Count == 0, 4000))
-            {
-                Focus(dialog);
-                Escape();
-            }
+                CloseWithEscape(dialog.Raw.CurrentNativeWindowHandle);
             Known.Learn("muteAll", FirstSegment(button.Name));
             return new Dictionary<string, object> { { "isMuteAll", true } };
         }
@@ -1272,7 +1659,7 @@ namespace M3.ZoomHelper
         {
             var list = ParticipantsList(window);
             if (list == null) return null;
-            foreach (var split in Uia.Descendants(window, Uia.SplitButtonType))
+            foreach (var split in Uia.Descendants(PanelHost(window), Uia.SplitButtonType))
                 if (split.Rect.top >= list.Rect.bottom - RowTolerance && split.Rect.right > list.Rect.left && split.Rect.left < list.Rect.right) return split;
             return null;
         }
@@ -1291,7 +1678,6 @@ namespace M3.ZoomHelper
             if (button != null)
             {
                 Known.Learn("participants", FirstSegment(button.Name));
-                Focus(window);
                 Press(button);
                 return true;
             }
@@ -1304,8 +1690,7 @@ namespace M3.ZoomHelper
                 Press(entry);
                 return true;
             }
-            Focus(window);
-            Escape();
+            CloseAll(MoreGridClass);
             return false;
         }
 
@@ -1346,7 +1731,6 @@ namespace M3.ZoomHelper
             OpenParticipantsPanel(window);
             var button = MuteAllButton(window);
             if (button == null) throw new ZoomActionError("mute-all-button-not-found");
-            Focus(window);
             Press(button);
             var dialog = WaitForWindow(MuteAllDialogClass, 5000);
             if (dialog == null) throw new ZoomActionError("mute-all-dialog-not-found");
@@ -1367,7 +1751,6 @@ namespace M3.ZoomHelper
             OpenParticipantsPanel(window);
             var more = PanelMoreButton(window);
             if (more == null) throw new ZoomActionError("participants-more-button-not-found");
-            Focus(window);
             var menu = OpenMenuFrom(more, 4000);
             if (menu == null) throw new ZoomActionError("participants-menu-not-found");
             // "Ask all to unmute" heads the menu's first group, joined by
@@ -1379,8 +1762,7 @@ namespace M3.ZoomHelper
             var first = groups.Count == 0 ? null : groups[0];
             if (first == null || first.Count < 1 || first.Count > 2 || IsToggleItem(first[0]))
             {
-                Focus(window);
-                Escape();
+                CloseAll(MenuClass);
                 throw new ZoomActionError("ask-to-unmute-item-not-found");
             }
             Press(first[0]);
@@ -1447,6 +1829,25 @@ namespace M3.ZoomHelper
             return null;
         }
 
+        /// <summary>Admits a waiting participant without the mouse: selecting
+        /// their row gives it the keyboard focus (Zoom comes forward), and
+        /// Space then admits them, as the row's name says ("..., press Space
+        /// to admit"). The key is only pressed once the row surely has the
+        /// focus, so it can't reach anything else. False if it wasn't
+        /// pressed.</summary>
+        static bool AdmitByKeyboard(El panel, Row row)
+        {
+            if (!TrySelect(row.Element)) return false;
+            if (!WaitUntil(() => HasKeyboardFocus(row.Element), 1000))
+            {
+                // Zoom didn't come forward by itself.
+                Focus(panel);
+                if (!HasKeyboardFocus(row.Element)) return false;
+            }
+            TapKey(Native.VkSpace);
+            return true;
+        }
+
         /// <summary>Admits waiting participants by name (everyone waiting, if no
         /// names). Each waiting row reveals its "Admit" button only while
         /// hovered, and the list reshuffles after every admission, so rows are
@@ -1460,19 +1861,24 @@ namespace M3.ZoomHelper
                 if (row.Section == "waiting" && (names.Count == 0 || names.Contains(row.Name)) && !waiting.Contains(row.Name))
                     waiting.Add(row.Name);
             var admitted = new List<object>();
-            var handle = window.Raw.CurrentNativeWindowHandle;
+            var panel = PanelHost(window);
+            var handle = panel.Raw.CurrentNativeWindowHandle;
             foreach (var name in waiting)
             {
                 var current = name;
                 var row = WaitingRow(window, current);
                 if (row == null) continue;
-                // Zoom only paints the Admit button while the row is hovered,
-                // but exposes it all the time: no mouse needed, usually.
+                // Zoom only paints the Admit button while the row is hovered;
+                // some versions expose it all the time (no mouse needed). Zoom
+                // 7 doesn't, but takes Space on the row (see AdmitByKeyboard).
+                // Only if neither works is the row really hovered.
                 var unhovered = Named(Uia.Descendants(row.Element, Uia.ButtonType));
                 var pressed = unhovered.Count > 0 && TryInvoke(unhovered[0]);
+                if (!pressed && AdmitByKeyboard(panel, row))
+                    pressed = WaitUntil(() => WaitingRow(window, current) == null, 3000);
                 if (!pressed)
                 {
-                    Focus(window);
+                    Focus(panel);
                     Func<bool> pressAdmit = () =>
                     {
                         Hover(row.Element);
@@ -1568,8 +1974,9 @@ namespace M3.ZoomHelper
             if (buttons != null) return action(buttons);
 
             hovered = true;
-            var handle = window.Raw.CurrentNativeWindowHandle;
-            Focus(window);
+            var panel = PanelHost(window);
+            var handle = panel.Raw.CurrentNativeWindowHandle;
+            Focus(panel);
             Func<T> run = () =>
             {
                 Hover(row.Element);
@@ -1671,11 +2078,9 @@ namespace M3.ZoomHelper
             return names;
         }
 
-        static void CloseMenu(El window)
+        static void CloseMenu()
         {
-            Focus(window);
-            Escape();
-            WaitUntil(() => TopWindows(MenuClass, true).Count == 0, 2000);
+            CloseAll(MenuClass);
         }
 
         // --- The host's own hand ----------------------------------------------------
@@ -1724,8 +2129,7 @@ namespace M3.ZoomHelper
                     GridEntries(grid).TryGetValue(reactTitle, out entry);
                     if (entry == null)
                     {
-                        Focus(window);
-                        Escape();
+                        CloseAll(MoreGridClass);
                     }
                     else
                     {
@@ -1739,7 +2143,6 @@ namespace M3.ZoomHelper
             }
             if (button == null) throw new ZoomActionError("react-button-not-found");
             learnedTitle = FirstSegment(button.Name);
-            Focus(window);
             // Invoke first (no mouse); a real click if Zoom takes the Invoke
             // but shows nothing, as it sometimes does. The button toggles the
             // panel, so a click that follows a slow Invoke can close what had
@@ -1795,9 +2198,7 @@ namespace M3.ZoomHelper
         {
             // Zoom usually closes it once a button in it is pressed.
             if (WaitUntil(() => TopWindows(ReactionPanelClass, true).Count == 0, 600)) return;
-            Focus(panel);
-            Escape();
-            WaitUntil(() => TopWindows(ReactionPanelClass, true).Count == 0, 2000);
+            CloseWithEscape(panel.Raw.CurrentNativeWindowHandle);
         }
 
         /// <summary>Presses the Reactions panel's hand button and returns its
@@ -2014,7 +2415,7 @@ namespace M3.ZoomHelper
                 {
                     foreach (var item in Uia.Descendants(menu, Uia.MenuItemType))
                         menuItems.Add(new Dictionary<string, object> { { "name", item.Name }, { "type", item.ControlType } });
-                    CloseMenu(window);
+                    CloseMenu();
                 }
             }
             catch (ZoomActionError error) { menuError = error.Message; }
@@ -2086,7 +2487,6 @@ namespace M3.ZoomHelper
         {
             var menus = ToolbarMenus(window);
             if (menus.Count == 0) return null;
-            Focus(window);
             // "More" is the toolbar's last menu; it opens a grid, not a menu.
             // Invoke first (no mouse); a real click if Zoom shows nothing.
             var moreButton = menus[menus.Count - 1];
@@ -2123,8 +2523,7 @@ namespace M3.ZoomHelper
             {
                 foreach (var name in GridEntries(grid).Keys)
                     if (name.Length > 0 && !entries.Contains(name) && !moreEntries.Contains(name)) moreEntries.Add(name);
-                Focus(window);
-                Escape();
+                CloseAll(MoreGridClass);
             }
             return new Dictionary<string, object> { { "entries", entries }, { "moreEntries", moreEntries } };
         }
@@ -2144,7 +2543,6 @@ namespace M3.ZoomHelper
             {
                 if (FirstSegment(button.Name) == wanted)
                 {
-                    Focus(window);
                     Press(button);
                     return;
                 }
@@ -2158,8 +2556,7 @@ namespace M3.ZoomHelper
                     Press(entry);
                     return;
                 }
-                Focus(window);
-                Escape();
+                CloseAll(MoreGridClass);
             }
             throw new ZoomActionError("share-button-not-found");
         }
@@ -2238,7 +2635,8 @@ namespace M3.ZoomHelper
 
         /// <summary>Scrolls the picker until its entry for the window can be
         /// clicked: through UI Automation where the entry supports it, else by
-        /// turning the mouse wheel over the picker.</summary>
+        /// sending the picker turns of the mouse wheel, and only if it ignores
+        /// those, with the real wheel.</summary>
         static El ScrollShareItemIntoReach(El picker, string windowTitle)
         {
             var item = ShareItem(picker, windowTitle);
@@ -2254,9 +2652,14 @@ namespace M3.ZoomHelper
                 }
                 var area = picker.Raw.CurrentBoundingRectangle;
                 var middle = (area.top + area.bottom) / 2;
-                Native.SetCursorPos(item.CenterX, middle);
-                Thread.Sleep(50);
                 var delta = item.CenterY > middle ? -Native.WheelDelta : Native.WheelDelta;
+                var top = item.Rect.top;
+                PostWheel(picker.Raw.CurrentNativeWindowHandle, item.CenterX, middle, delta);
+                Thread.Sleep(300);
+                item = ShareItem(picker, windowTitle);
+                if (item == null || item.Rect.top != top) continue;
+                MoveCursor(item.CenterX, middle);
+                Thread.Sleep(50);
                 Native.mouse_event(Native.MouseWheel, 0, 0, unchecked((uint)delta), UIntPtr.Zero);
                 Thread.Sleep(300);
                 item = ShareItem(picker, windowTitle);
@@ -2302,9 +2705,11 @@ namespace M3.ZoomHelper
             {
                 var item = ScrollShareItemIntoReach(picker, windowTitle);
                 if (item == null) return "window-to-share-not-selected";
-                // Without the mouse where Zoom allows it (selecting the entry
-                // through UI Automation), a real click otherwise.
-                if (!TrySelect(item) && !TryInvoke(item)) Click(item);
+                // Without the mouse: selecting the entry through UI Automation
+                // where Zoom allows it, else sending the picker a click on it
+                // (which Zoom takes); a real click for the last attempt.
+                var last = attempt == 2;
+                if (!TrySelect(item) && !TryInvoke(item) && (last || !TryPostClick(item))) Click(item);
                 if (WaitUntil(() => IsOnlyShareSelection(picker, windowTitle), 1500)) return null;
             }
             return "window-to-share-not-selected";
@@ -2334,9 +2739,7 @@ namespace M3.ZoomHelper
 
         static void CloseSharePicker(El picker)
         {
-            Focus(picker);
-            Escape();
-            if (!WaitUntil(() => TopWindows(SharePickerClass, true).Count == 0, 3000))
+            if (!CloseWithEscape(picker.Raw.CurrentNativeWindowHandle))
             {
                 // Its title bar's close button, as a fallback.
                 var buttons = Uia.Descendants(picker, Uia.ButtonType);
@@ -2396,7 +2799,10 @@ namespace M3.ZoomHelper
                 if (stop != null) Known.Learn("stopShare", FirstSegment(stop.Name));
             }
             if (stop == null) throw new ZoomActionError("stop-share-button-not-found");
+            // It turns Invoke down, but takes a click sent to it; a real
+            // click if sharing goes on all the same.
             Press(stop);
+            if (!WaitUntil(() => !IsSharing(), 2500) && IsSharing()) Click(stop);
             if (!WaitUntil(() => !IsSharing(), WaitTimeoutMs)) throw new ZoomActionError("share-not-stopped");
             return Changed(true);
         }
@@ -2485,12 +2891,11 @@ namespace M3.ZoomHelper
         /// camera) once and reports its name before and after, so the setup
         /// assistant can learn both names (they're only shown in the user's
         /// Zoom language).</summary>
-        static Dictionary<string, object> ToggleButton(El window, Func<El> find, string what)
+        static Dictionary<string, object> ToggleButton(Func<El> find, string what)
         {
             var button = find();
             if (button == null) throw new ZoomActionError(what + "-button-not-found");
             var before = FirstSegment(button.Name);
-            Focus(window);
             Press(button);
             string after = null;
             var changed = WaitUntil(() =>
@@ -2507,7 +2912,7 @@ namespace M3.ZoomHelper
         {
             var window = RequireMeetingWindow();
             ControlPanel(window);
-            return ToggleButton(window, () => VideoButton(window), "video");
+            return ToggleButton(() => VideoButton(window), "video");
         }
 
         /// <summary>`assumeAudioJoined`: the user said computer audio is
@@ -2518,14 +2923,14 @@ namespace M3.ZoomHelper
             ControlPanel(window);
             if (assumeAudioJoined && GetAudioState(window) == AudioState.Unknown)
             {
-                return ToggleButton(window, () =>
+                return ToggleButton(() =>
                 {
                     var buttons = ToolbarButtons(window);
                     return buttons.Count > 0 ? buttons[0] : null;
                 }, "mic");
             }
             if (!AudioJoined(window)) throw new ZoomActionError("audio-not-joined");
-            return ToggleButton(window, () => MicButton(window), "mic");
+            return ToggleButton(() => MicButton(window), "mic");
         }
 
         /// <summary>Opens Zoom's share picker the way sharing would, checks that
@@ -2558,13 +2963,331 @@ namespace M3.ZoomHelper
             };
         }
 
+        // --- Window layout -------------------------------------------------------------
+        //
+        // M3 can put Zoom's meeting window, and its own, where the user chose in
+        // the setup assistant, and keep Zoom there (src/helpers/zoom-layout.ts
+        // decides when). Plain Win32 only: no UI Automation, and no focus or
+        // input unless asked to snap with Windows. Rectangles are in physical
+        // pixels (this process is per-monitor DPI aware) and stand for what's
+        // visible of a window: Windows puts an invisible resize border around
+        // most windows (7 pixels at 100 % scaling, left, right and bottom),
+        // which placing a window allows for.
+
+        /// <summary>Zoom's visible meeting windows: the meeting itself first
+        /// (the one with the toolbar, not minimized, else the biggest), then,
+        /// with Zoom's "Use dual monitors" on, its second window (the shared
+        /// screen or the speaker). Win32 only, for the frequent layout checks;
+        /// actions go by FindMeetingWindow.</summary>
+        static List<IntPtr> MeetingWindowHandles()
+        {
+            var handles = TopWindows(MeetingWindowClass, true);
+            var scores = new Dictionary<IntPtr, long>();
+            foreach (var handle in handles)
+            {
+                var frame = VisibleFrame(handle);
+                long area = Math.Max(0, frame.Right - frame.Left) * (long)Math.Max(0, frame.Bottom - frame.Top);
+                long score = Native.IsIconic(handle) ? 0 : area;
+                if (HasChildWindow(handle, ControlPanelClass)) score += 1L << 40;
+                scores[handle] = score;
+            }
+            handles.Sort((a, b) => scores[b].CompareTo(scores[a]));
+            return handles;
+        }
+
+        static bool HasChildWindow(IntPtr parent, string className)
+        {
+            var found = false;
+            Native.EnumChildWindows(parent, delegate (IntPtr hwnd, IntPtr lParam)
+            {
+                if (ClassOf(hwnd) != className) return true;
+                found = true;
+                return false;
+            }, IntPtr.Zero);
+            return found;
+        }
+
+        /// <summary>What's visible of a window: its bounds without the
+        /// invisible resize border.</summary>
+        static Native.Rect VisibleFrame(IntPtr handle)
+        {
+            Native.Rect frame;
+            if (Native.DwmGetWindowAttribute(handle, Native.DwmwaExtendedFrameBounds, out frame, Marshal.SizeOf(typeof(Native.Rect))) == 0)
+                return frame;
+            Native.GetWindowRect(handle, out frame);
+            return frame;
+        }
+
+        static bool SameRect(Native.Rect a, Native.Rect b, int tolerance)
+        {
+            return Math.Abs(a.Left - b.Left) <= tolerance && Math.Abs(a.Top - b.Top) <= tolerance &&
+                Math.Abs(a.Right - b.Right) <= tolerance && Math.Abs(a.Bottom - b.Bottom) <= tolerance;
+        }
+
+        static Dictionary<string, object> RectReply(Native.Rect rect)
+        {
+            return new Dictionary<string, object>
+            {
+                { "height", rect.Bottom - rect.Top }, { "width", rect.Right - rect.Left }, { "x", rect.Left }, { "y", rect.Top },
+            };
+        }
+
+        static Native.Rect? GetRect(Dictionary<string, object> request, string key)
+        {
+            object value;
+            var rect = request.TryGetValue(key, out value) ? value as Dictionary<string, object> : null;
+            if (rect == null) return null;
+            try
+            {
+                int x = ToInt(rect["x"]), y = ToInt(rect["y"]), width = ToInt(rect["width"]), height = ToInt(rect["height"]);
+                if (width <= 0 || height <= 0) return null;
+                return new Native.Rect { Left = x, Top = y, Right = x + width, Bottom = y + height };
+            }
+            catch (Exception)
+            {
+                throw new ZoomActionError("invalid-request");
+            }
+        }
+
+        static int ToInt(object value)
+        {
+            return (int)Math.Round(Convert.ToDouble(value));
+        }
+
+        static bool arrangedUnsupported;
+
+        /// <summary>Whether Windows counts the window as snapped. False where
+        /// Windows can't tell (before Windows 10 2004).</summary>
+        static bool IsArranged(IntPtr handle)
+        {
+            if (arrangedUnsupported) return false;
+            try
+            {
+                return Native.IsWindowArranged(handle);
+            }
+            catch (EntryPointNotFoundException)
+            {
+                arrangedUnsupported = true;
+                return false;
+            }
+        }
+
+        static Native.MonitorInfo? MonitorOf(IntPtr handle)
+        {
+            var info = new Native.MonitorInfo { Size = Marshal.SizeOf(typeof(Native.MonitorInfo)) };
+            var monitor = Native.MonitorFromWindow(handle, Native.MonitorDefaultToNearest);
+            if (monitor == IntPtr.Zero || !Native.GetMonitorInfo(monitor, ref info)) return null;
+            return info;
+        }
+
+        /// <summary>A target M3 worked out in Electron's units and converted,
+        /// set right on the edges of the screen it's on: an edge within a few
+        /// pixels of the work area's (or the whole screen's) becomes it. At
+        /// 125 % scaling, for one, the conversion leaves it a pixel or two
+        /// under the taskbar.</summary>
+        static Native.Rect? FitToScreen(Native.Rect? requested)
+        {
+            if (!requested.HasValue) return null;
+            var target = requested.Value;
+            const int tolerance = 3;
+            var info = new Native.MonitorInfo { Size = Marshal.SizeOf(typeof(Native.MonitorInfo)) };
+            var monitor = Native.MonitorFromRect(ref target, Native.MonitorDefaultToNearest);
+            if (monitor == IntPtr.Zero || !Native.GetMonitorInfo(monitor, ref info)) return target;
+            foreach (var area in new[] { info.Work, info.Monitor })
+            {
+                if (Math.Abs(target.Left - area.Left) <= tolerance) target.Left = area.Left;
+                if (Math.Abs(target.Top - area.Top) <= tolerance) target.Top = area.Top;
+                if (Math.Abs(target.Right - area.Right) <= tolerance) target.Right = area.Right;
+                if (Math.Abs(target.Bottom - area.Bottom) <= tolerance) target.Bottom = area.Bottom;
+            }
+            return target;
+        }
+
+        static Dictionary<string, object> LayoutState(IntPtr handle)
+        {
+            var frame = VisibleFrame(handle);
+            var monitor = MonitorOf(handle);
+            return new Dictionary<string, object>
+            {
+                { "arranged", IsArranged(handle) },
+                { "frame", RectReply(frame) },
+                // Covering the whole screen, taskbar included: Zoom's own full
+                // screen (or M3 put it there: Zoom's second window).
+                { "fullScreen", monitor.HasValue && SameRect(frame, monitor.Value.Monitor, 1) },
+                { "handle", handle.ToInt64() },
+                { "maximized", Native.IsZoomed(handle) },
+                { "minimized", Native.IsIconic(handle) },
+            };
+        }
+
+        /// <summary>Where Zoom's meeting windows are (see
+        /// MeetingWindowHandles), and whether the user is moving one or last
+        /// did how long ago (see MoveWatch). Reads only: M3 polls it.</summary>
+        static Dictionary<string, object> WindowLayout()
+        {
+            MoveWatch.Start(MeetingWindowClass, PoppedOutPanelClass);
+            var handles = MeetingWindowHandles();
+            var lists = TopWindows(PoppedOutPanelClass, true);
+            var layout = new Dictionary<string, object>
+            {
+                { "meeting", handles.Count > 0 ? LayoutState(handles[0]) : null },
+                { "miniView", InMiniView() },
+                // The participants list in a window of its own: while sharing
+                // (see ShareParticipants), or for good once popped out.
+                { "participants", lists.Count > 0 ? LayoutState(lists[0]) : null },
+                { "second", handles.Count > 1 ? LayoutState(handles[1]) : null },
+                { "sharing", IsSharing() },
+                { "userMovedListMsAgo", MoveWatch.MillisecondsSinceMove(PoppedOutPanelClass) },
+                { "userMovedMsAgo", MoveWatch.MillisecondsSinceMove(MeetingWindowClass) },
+                { "userMoving", MoveWatch.Moving(MeetingWindowClass) || MoveWatch.Moving(PoppedOutPanelClass) },
+            };
+            return new Dictionary<string, object> { { "layout", layout } };
+        }
+
+        /// <summary>Puts what's visible of a window at a rectangle, without the
+        /// focus: restored first if minimized or maximized. The invisible
+        /// border depends on the screen's scaling, so it's measured again once
+        /// the window is on its new screen, which then gets placed again.
+        /// Returns where the window ended up: Zoom keeps a minimum size.
+        /// With `raise`, it's also brought in front of the other windows
+        /// (still without the focus), so a window already on that screen
+        /// doesn't hide it; topmost ones, like M3's media window, stay in
+        /// front.</summary>
+        static Native.Rect PlaceWindow(IntPtr handle, Native.Rect target, bool raise = false)
+        {
+            if (Native.IsIconic(handle) || Native.IsZoomed(handle))
+            {
+                Native.ShowWindow(handle, Native.SwRestoreNoActivate);
+                Thread.Sleep(250); // let the restore animation finish
+            }
+            var frame = VisibleFrame(handle);
+            for (int attempt = 0; attempt < 3 && !SameRect(frame, target, 1); attempt++)
+            {
+                Native.Rect bounds;
+                Native.GetWindowRect(handle, out bounds);
+                int left = frame.Left - bounds.Left, top = frame.Top - bounds.Top;
+                int right = bounds.Right - frame.Right, bottom = bounds.Bottom - frame.Bottom;
+                Native.SetWindowPos(handle, IntPtr.Zero, target.Left - left, target.Top - top,
+                    target.Right - target.Left + left + right, target.Bottom - target.Top + top + bottom,
+                    Native.SwpNoZOrder | Native.SwpNoActivate);
+                Thread.Sleep(100);
+                var placed = VisibleFrame(handle);
+                // Unchanged: the window holds on to its minimum size.
+                var stuck = SameRect(placed, frame, 0);
+                frame = placed;
+                if (stuck) break;
+            }
+            if (raise) Native.SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, Native.SwpNoMove | Native.SwpNoSize | Native.SwpNoActivate);
+            return frame;
+        }
+
+        static bool ModifierHeld()
+        {
+            foreach (var key in new[] { Native.VkShift, Native.VkControl, Native.VkMenu, Native.VkLeftWindows, Native.VkRightWindows })
+                if ((Native.GetAsyncKeyState(key) & 0x8000) != 0) return true;
+            return false;
+        }
+
+        /// <summary>Snaps a window to the left or right half of its screen
+        /// with Windows' own snapping (Win+Left or Win+Right), as if the user
+        /// had: Windows then treats it as snapped (dragging the border it
+        /// shares with a snapped neighbour resizes both). The keys are typed
+        /// for real, so only with the window really in front and no modifier
+        /// key held, which would otherwise send them to another window or
+        /// combine them with the user's own (Win+L locks the computer). The
+        /// window is first put at its target, unsnapped: Win+Right on a window
+        /// already snapped right sends it to the next screen. False if it
+        /// didn't snap.</summary>
+        static bool SnapWithWindows(IntPtr handle, Native.Rect target, bool left)
+        {
+            if (IsArranged(handle))
+            {
+                // Setting a window's placement back unsnaps it.
+                var placement = new Native.WindowPlacement { Length = Marshal.SizeOf(typeof(Native.WindowPlacement)) };
+                Native.GetWindowPlacement(handle, ref placement);
+                placement.ShowCommand = Native.SwRestoreNoActivate;
+                Native.SetWindowPlacement(handle, ref placement);
+            }
+            PlaceWindow(handle, target);
+            Native.BringToFront(handle);
+            Thread.Sleep(150);
+            if (Native.GetForegroundWindow() != handle || ModifierHeld()) return false;
+            var arrow = left ? Native.VkLeft : Native.VkRight;
+            Native.keybd_event(Native.VkLeftWindows, 0, Native.KeyExtended, UIntPtr.Zero);
+            Native.keybd_event(arrow, 0, Native.KeyExtended, UIntPtr.Zero);
+            Native.keybd_event(arrow, 0, Native.KeyExtended | Native.KeyUp, UIntPtr.Zero);
+            Native.keybd_event(Native.VkLeftWindows, 0, Native.KeyExtended | Native.KeyUp, UIntPtr.Zero);
+            return WaitUntil(() => IsArranged(handle), 1500);
+        }
+
+        /// <summary>Puts Zoom's meeting window, its second window (with Zoom's
+        /// "Use dual monitors" on), its participants list in a window of its
+        /// own (while sharing) and M3's main window where M3 worked out (each
+        /// optional), first snapping Zoom and M3 side by side with Windows
+        /// when asked ("zoom-left" or "zoom-right"; the exact sizes are set
+        /// afterwards, which keeps them snapped). Replies with where each
+        /// window ended up, and whether Windows snapped them.</summary>
+        public static Dictionary<string, object> PlaceWindows(Dictionary<string, object> request)
+        {
+            var zoomTarget = FitToScreen(GetRect(request, "zoom"));
+            var secondTarget = FitToScreen(GetRect(request, "second"));
+            var listTarget = FitToScreen(GetRect(request, "participants"));
+            var m3Target = FitToScreen(GetRect(request, "m3"));
+            object handleValue;
+            var m3 = m3Target.HasValue && request.TryGetValue("m3Handle", out handleValue) && handleValue != null
+                ? new IntPtr(Convert.ToInt64(handleValue))
+                : IntPtr.Zero;
+            if (m3 != IntPtr.Zero && !Native.IsWindow(m3)) m3 = IntPtr.Zero;
+            var snap = GetString(request, "snap");
+
+            var handles = MeetingWindowHandles();
+            var lists = TopWindows(PoppedOutPanelClass, true);
+            if (handles.Count == 0 && (zoomTarget.HasValue || lists.Count == 0)) throw new ZoomActionError("meeting-not-found");
+
+            var snapped = false;
+            if ((snap == "zoom-left" || snap == "zoom-right") && zoomTarget.HasValue && m3 != IntPtr.Zero)
+            {
+                var zoomLeft = snap == "zoom-left";
+                snapped = SnapWithWindows(handles[0], zoomTarget.Value, zoomLeft) &&
+                    SnapWithWindows(m3, m3Target.Value, !zoomLeft);
+            }
+            var placed = new Dictionary<string, object> { { "snapped", snapped } };
+            if (zoomTarget.HasValue) placed["zoom"] = RectReply(PlaceWindow(handles[0], zoomTarget.Value, true));
+            if (m3 != IntPtr.Zero) placed["m3"] = RectReply(PlaceWindow(m3, m3Target.Value, true));
+            if (secondTarget.HasValue && handles.Count > 1) placed["second"] = RectReply(PlaceWindow(handles[1], secondTarget.Value));
+            if (listTarget.HasValue && lists.Count > 0) placed["participants"] = RectReply(PlaceWindow(lists[0], listTarget.Value, true));
+            return new Dictionary<string, object> { { "placed", placed } };
+        }
+
+        /// <summary>While sharing, Zoom hides its meeting window, participants
+        /// list included (and showing it again by hand only shows it blank):
+        /// this opens the list in a window of its own instead, through the
+        /// share toolbar's Participants button, known by Zoom's Alt+U or the
+        /// name learned for the toolbar's. Zoom closes that window once
+        /// sharing stops. Replies whether it was opened (false: already open).</summary>
+        public static Dictionary<string, object> ShareParticipants()
+        {
+            if (TopWindows(PoppedOutPanelClass, true).Count > 0) return Changed(false);
+            var buttons = ShareToolbarButtons();
+            El button = null;
+            foreach (var candidate in buttons)
+                if (HasHotkey(candidate.Name, HotkeyParticipants)) button = candidate;
+            if (button == null) button = ByName(buttons, Known.Participants);
+            if (button == null) throw new ZoomActionError("participants-button-not-found");
+            Press(button);
+            if (WaitForWindow(PoppedOutPanelClass, 4000) == null) throw new ZoomActionError("participants-panel-not-opened");
+            return Changed(true);
+        }
+
         // --- Diagnostics ---------------------------------------------------------------
 
         /// <summary>What Zoom showed when an action failed, for M3's error
         /// reports: Zoom's version, its visible windows' classes, the names
-        /// of its toolbar and participants panel buttons, and the names M3
-        /// knows. Nothing personal: no window titles, no participant rows.
-        /// Reads only, without moving the mouse or focus.</summary>
+        /// of its toolbar and participants panel buttons, those of its other
+        /// windows (dialogs in the way) and of the share toolbar, and the
+        /// names M3 knows. Nothing personal: no window titles, no participant
+        /// rows, nothing in a list. Reads only, without moving the mouse or
+        /// focus.</summary>
         public static Dictionary<string, object> Snapshot()
         {
             var snapshot = new Dictionary<string, object>();
@@ -2572,13 +3295,17 @@ namespace M3.ZoomHelper
             {
                 snapshot["zoomVersion"] = ZoomVersion();
                 snapshot["windows"] = ZoomWindowClasses();
-                snapshot["sharing"] = IsSharing();
+                snapshot["dialogs"] = DialogControlNames();
+                var sharing = IsSharing();
+                snapshot["sharing"] = sharing;
+                if (sharing) snapshot["shareToolbar"] = ShareToolbarControlNames();
                 snapshot["titles"] = Known.Titles();
                 var window = FindMeetingWindow();
                 snapshot["meeting"] = window != null;
                 if (window == null) return snapshot;
                 var panel = Uia.FirstByClass(window, ControlPanelClass);
                 snapshot["toolbarVisible"] = panel != null;
+                if (panel == null) panel = ToolbarWindow(window);
                 if (panel != null)
                 {
                     snapshot["toolbar"] = Names(Uia.Descendants(panel, Uia.ButtonType));
@@ -2598,6 +3325,69 @@ namespace M3.ZoomHelper
         {
             var names = new List<object>();
             foreach (var element in elements) if (element.Name.Length > 0) names.Add(element.Name);
+            return names;
+        }
+
+        // A snapshot stays small and quick whatever Zoom has open.
+        const int SnapshotMaxWindows = 8;
+        const int SnapshotMaxNames = 25;
+        const int SnapshotMaxNameLength = 120;
+        const int SnapshotWindowsBudgetMs = 1500;
+
+        static readonly int[] SnapshotControlTypes =
+        {
+            Uia.ButtonType, Uia.CheckBoxType, Uia.MenuItemType, Uia.TabItemType, Uia.SplitButtonType,
+        };
+
+        /// <summary>Zoom's other visible windows (dialogs and popups that may
+        /// be in the way), keyed by class and size, with their controls'
+        /// names (see ControlNames).</summary>
+        static Dictionary<string, object> DialogControlNames()
+        {
+            var dialogs = new Dictionary<string, object>();
+            var elapsed = System.Diagnostics.Stopwatch.StartNew();
+            foreach (var entry in ZoomWindows())
+            {
+                if (dialogs.Count >= SnapshotMaxWindows || elapsed.ElapsedMilliseconds > SnapshotWindowsBudgetMs) break;
+                if (IsZoomMainWindow(entry.Value)) continue;
+                Native.Rect rect;
+                if (!Native.GetWindowRect(entry.Key, out rect)) continue;
+                var key = entry.Value + " " + (rect.Right - rect.Left) + "x" + (rect.Bottom - rect.Top);
+                var unique = key;
+                for (int n = 2; dialogs.ContainsKey(unique); n++) unique = key + " #" + n;
+                dialogs[unique] = ControlNames(entry.Key);
+            }
+            return dialogs;
+        }
+
+        static List<object> ShareToolbarControlNames()
+        {
+            var toolbars = TopWindows(ShareToolbarClass, true);
+            return toolbars.Count == 0 ? new List<object>() : ControlNames(toolbars[0]);
+        }
+
+        /// <summary>The names of a window's buttons, menu entries, checkboxes
+        /// and tabs, capped. None inside a list: Zoom lists people, chat
+        /// messages and the windows offered for sharing.</summary>
+        static List<object> ControlNames(IntPtr handle)
+        {
+            var names = new List<object>();
+            try
+            {
+                var window = Uia.FromHandle(handle);
+                var lists = Uia.Descendants(window, Uia.ListType);
+                foreach (var element in Uia.Descendants(window, SnapshotControlTypes))
+                {
+                    if (names.Count >= SnapshotMaxNames) break;
+                    if (element.Name.Length == 0) continue;
+                    if (lists.Exists(list => Contains(list.Rect, element))) continue;
+                    var name = element.Name.Length > SnapshotMaxNameLength
+                        ? element.Name.Substring(0, SnapshotMaxNameLength) + "..."
+                        : element.Name;
+                    if (!names.Contains(name)) names.Add(name);
+                }
+            }
+            catch (Exception) { } // the window went away
             return names;
         }
 
@@ -2667,12 +3457,27 @@ namespace M3.ZoomHelper
         }
 
         // Zoom windows that are never dialogs to dismiss: the meeting, its
-        // mini view, sharing, Zoom's home window, its menus' shadows.
+        // mini view, its popped-out panels (such as the participants list),
+        // sharing (the toolbar, the annotation layer and its button), Zoom's
+        // home window, its menus' shadows, its notification toasts (one shows
+        // as sharing starts and stays briefly after it stops) and its corner
+        // notices (the "talking while muted" prompt, and the "note taking is
+        // now available" notice that closes itself after 30 seconds).
         static readonly string[] ZoomMainWindowClasses =
         {
-            MeetingWindowClass, FloatVideoClass, ShareToolbarClass, AnnotationLayerClass,
-            "ZPPTMainFrmWndClassEx", "ZPToolBarParentWndClass", "ZoomShadowFrameClass", "VideoFrameWndClass",
+            MeetingWindowClass, FloatVideoClass, PoppedOutPanelClass, ShareToolbarClass, AnnotationLayerClass,
+            "ZPAnnotateEntryPointClass", "ZPPTMainFrmWndClassEx", "ZPToolBarParentWndClass",
+            "ZoomShadowFrameClass", "VideoFrameWndClass", "DsToast", "CVoiceActivityDetectedDlgCls",
         };
+
+        /// <summary>Whether a window is one of Zoom's own rather than a dialog
+        /// or popup that may be in the way. Windows of a generic "ATL:" class
+        /// (named after a memory address, so it changes between runs) are
+        /// Zoom's too, such as the share preview.</summary>
+        static bool IsZoomMainWindow(string className)
+        {
+            return Array.IndexOf(ZoomMainWindowClasses, className) >= 0 || className.StartsWith("ATL:", StringComparison.Ordinal);
+        }
 
         /// <summary>The classes of Zoom's other visible windows: dialogs and
         /// popups that may be in the way (e.g. the invite dialog).</summary>
@@ -2680,7 +3485,7 @@ namespace M3.ZoomHelper
         {
             var classes = new List<object>();
             foreach (var className in ZoomWindows().Values)
-                if (Array.IndexOf(ZoomMainWindowClasses, className) < 0 && !classes.Contains(className)) classes.Add(className);
+                if (!IsZoomMainWindow(className) && !classes.Contains(className)) classes.Add(className);
             return classes;
         }
 
@@ -2693,12 +3498,9 @@ namespace M3.ZoomHelper
             var left = new List<object>();
             foreach (var entry in ZoomWindows())
             {
-                if (before.ContainsKey(entry.Key) || Array.IndexOf(ZoomMainWindowClasses, entry.Value) >= 0) continue;
+                if (before.ContainsKey(entry.Key) || IsZoomMainWindow(entry.Value)) continue;
                 var handle = entry.Key;
-                Native.BringToFront(handle);
-                Thread.Sleep(150);
-                Escape();
-                if (WaitUntil(() => !Native.IsWindowVisible(handle), 1500)) continue;
+                if (CloseWithEscape(handle)) continue;
                 var close = TitleBarCloseButton(handle);
                 if (close != null)
                 {
@@ -2748,14 +3550,15 @@ namespace M3.ZoomHelper
             return result;
         }
 
-        /// <summary>Runs a command, then puts the mouse cursor and the focused
-        /// window back the way the user had them: the actions click, hover and
-        /// bring Zoom forward along the way.</summary>
+        /// <summary>Runs a command, then gives the focus back to the window
+        /// that had it: Zoom brings itself forward when its controls are
+        /// pressed. The mouse is put back too, should a last resort have moved
+        /// it (only then: the user may have moved it meanwhile).</summary>
         public static Dictionary<string, object> Handle(Dictionary<string, object> request)
         {
             Known.Load(request);
             var type = GetString(request, "type");
-            var reply = type == "ping" || (type == "meeting" && !GetBool(request, "reveal"))
+            var reply = type == "ping" || type == "window-layout" || (type == "meeting" && !GetBool(request, "reveal"))
                 ? Run(type, request)
                 : RunRestoringInput(type, request);
             if (Known.Learned.Count > 0) reply["learned"] = new Dictionary<string, object>(Known.Learned);
@@ -2767,13 +3570,14 @@ namespace M3.ZoomHelper
             Native.Point cursor;
             var hasCursor = Native.GetCursorPos(out cursor);
             var foreground = Native.GetForegroundWindow();
+            cursorMoved = false;
             try
             {
                 return Run(type, request);
             }
             finally
             {
-                if (hasCursor) Native.SetCursorPos(cursor.X, cursor.Y);
+                if (hasCursor && cursorMoved) Native.SetCursorPos(cursor.X, cursor.Y);
                 if (foreground != IntPtr.Zero) Native.BringToFront(foreground);
             }
         }
@@ -2819,6 +3623,9 @@ namespace M3.ZoomHelper
                 case "toggle-mic": return ToggleMic(GetBool(request, "assumeAudioJoined"));
                 case "test-share-picker":
                     return TestSharePicker(GetString(request, "windowTitle") ?? "", GetString(request, "shareButtonTitle"));
+                case "window-layout": return WindowLayout();
+                case "place-windows": return PlaceWindows(request);
+                case "share-participants": return ShareParticipants();
                 default: throw new ZoomActionError("unknown-command");
             }
         }

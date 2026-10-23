@@ -2,8 +2,7 @@ import { flushPromises, mount, type VueWrapper } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
-import { errorCatcher } from 'src/helpers/error-catcher';
-import { getCaptureSizeBounds } from 'src/utils/media';
+import { type CaptureSizeBounds, getCaptureSizeBounds } from 'src/utils/media';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -300,6 +299,47 @@ describe('MediaPreview capture mode (dev toggle)', () => {
     return { getUserMedia, stream };
   };
 
+  // The `mandatory` constraints of a getUserMedia call (the last by default).
+  const getMandatory = (getUserMedia: ReturnType<typeof vi.fn>, call = -1) =>
+    (
+      getUserMedia.mock.calls.at(call)?.[0] as
+        | undefined
+        | {
+            video: {
+              mandatory: CaptureSizeBounds & {
+                chromeMediaSource: string;
+                chromeMediaSourceId: string;
+                maxFrameRate: number;
+              };
+            };
+          }
+    )?.video.mandatory;
+
+  // The zoomed-in preview's box: 90% of the window, 16:9 (see the
+  // .media-preview--fullscreen CSS).
+  const getZoomedInBounds = (
+    viewportWidth = globalThis.innerWidth,
+    viewportHeight = globalThis.innerHeight,
+  ) => {
+    const width = Math.min(
+      viewportWidth * 0.9,
+      viewportHeight * 0.9 * (16 / 9),
+    );
+    return getCaptureSizeBounds(
+      width,
+      width * (9 / 16),
+      globalThis.devicePixelRatio || 1,
+    );
+  };
+
+  const startCapture = async () => {
+    const wrapper = mountPreview();
+    await nextTick();
+    await wrapper.get('.media-preview-mode-toggle').trigger('click');
+    await flushPromises();
+    return wrapper;
+  };
+
   beforeEach(() => {
     localStorage.removeItem('mediaPreviewRenderMode');
     vi.restoreAllMocks();
@@ -332,54 +372,195 @@ describe('MediaPreview capture mode (dev toggle)', () => {
     expect(wrapper.get('.media-preview-mode-toggle').text()).toBe('video');
   });
 
-  it('attaches the captured stream to the hidden source video and draws it through the smoothed canvas', async () => {
+  it('shows the captured stream as it is, sized for the collapsed preview at up to 30 frames a second', async () => {
     localStorage.setItem('mediaPreviewRenderMode', 'video');
     const { getUserMedia, stream } = mockCaptureSuccess();
     seedStores();
 
-    const wrapper = mountPreview();
-    await nextTick();
-    await wrapper.get('.media-preview-mode-toggle').trigger('click');
-    await flushPromises();
+    const wrapper = await startCapture();
 
-    expect(getUserMedia).toHaveBeenCalledWith(
-      expect.objectContaining({
-        video: expect.objectContaining({
-          mandatory: expect.objectContaining({
-            chromeMediaSource: 'tab',
-            chromeMediaSourceId: 'media-window-source-1',
-          }),
-        }),
-      }),
-    );
-    // The size bounds cap the captured frames at the main window's viewport
-    // (the most the preview can ever show) and keep Chromium off its
-    // tab-capture default of a fixed frame sized from the largest dimensions
-    // across all displays, which letterboxes the media window with black
-    // bars baked into every frame. The bounds' own invariants are covered
-    // by getCaptureSizeBounds' unit tests; here, just that the request
-    // carries them, derived from this window.
-    expect(getUserMedia.mock.calls[0]?.[0]).toEqual(
-      expect.objectContaining({
-        video: expect.objectContaining({
-          mandatory: expect.objectContaining(
-            getCaptureSizeBounds(
-              globalThis.innerWidth,
-              globalThis.innerHeight,
-              globalThis.devicePixelRatio || 1,
-            ),
-          ),
-        }),
-      }),
+    expect(getMandatory(getUserMedia)).toMatchObject({
+      chromeMediaSource: 'tab',
+      chromeMediaSourceId: 'media-window-source-1',
+      maxFrameRate: 30,
+      // The bounds also keep Chromium off its tab-capture default of a
+      // fixed frame sized from the largest dimensions across all displays,
+      // which letterboxes the media window with black bars baked into every
+      // frame. Their own invariants are covered by getCaptureSizeBounds'
+      // unit tests.
+      minHeight: 2,
+      minWidth: 2,
+    });
+    // No bigger than the collapsed preview can be (520 CSS px wide), rather
+    // than the whole window.
+    expect(getMandatory(getUserMedia)?.maxWidth).toBeLessThanOrEqual(
+      520 * (globalThis.devicePixelRatio || 1),
     );
     const captureVideo = wrapper.get('video').element as HTMLVideoElement;
     expect(captureVideo.srcObject).toBe(stream);
-    // The raw capture <video> is the hidden frame source; the canvas is what's
-    // actually shown, matching canvas mode's existing antialiasing.
+    // The frames already arrive at the preview's size, so the capture
+    // <video> is what's shown, with no canvas redrawing it.
     expect(
       captureVideo.classList.contains('media-preview-content--source'),
-    ).toBe(true);
-    expect(wrapper.find('canvas').exists()).toBe(true);
+    ).toBe(false);
+    expect(wrapper.find('canvas').exists()).toBe(false);
+  });
+
+  it('re-acquires at the zoomed-in size while the preview is zoomed in, and back', async () => {
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    const { getUserMedia } = mockCaptureSuccess();
+    seedStores();
+
+    const wrapper = await startCapture();
+    expect(getUserMedia).toHaveBeenCalledTimes(1);
+    const collapsed = getMandatory(getUserMedia);
+
+    await wrapper.get('.media-preview').trigger('click');
+    await flushPromises();
+    expect(getUserMedia).toHaveBeenCalledTimes(2);
+    expect(getMandatory(getUserMedia)).toMatchObject({
+      ...getZoomedInBounds(),
+      maxFrameRate: 30,
+    });
+
+    await wrapper.get('.media-preview').trigger('click');
+    await flushPromises();
+    expect(getUserMedia).toHaveBeenCalledTimes(3);
+    expect(getMandatory(getUserMedia)).toEqual(collapsed);
+  });
+
+  it('stops the running capture before asking for another, one request at a time', async () => {
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    const { getUserMedia, stream } = mockCaptureSuccess();
+    seedStores();
+
+    const wrapper = await startCapture();
+    const collapsed = getMandatory(getUserMedia);
+    const captureVideo = wrapper.get('video').element as HTMLVideoElement;
+    const pause = vi.spyOn(captureVideo, 'pause');
+
+    // Chromium answers a capture of a window that's already being captured
+    // with that running capture, at its size, whatever the new one asks for.
+    // So: how many captures are running at each request?
+    const handedOut = [stream];
+    const runningAtRequest: number[] = [];
+    const pending: ((stream: MediaStream) => void)[] = [];
+    getUserMedia.mockImplementation(() => {
+      runningAtRequest.push(
+        handedOut.filter((s) => s.getVideoTracks()[0]?.readyState === 'live')
+          .length,
+      );
+      return new Promise<MediaStream>((resolve) => {
+        pending.push((next) => {
+          handedOut.push(next);
+          resolve(next);
+        });
+      });
+    });
+
+    // Zoomed in: the running capture stops first, its last frame held
+    // (a paused <video>) rather than cleared to black.
+    await wrapper.get('.media-preview').trigger('click');
+    await flushPromises();
+    expect(runningAtRequest).toEqual([0]);
+    expect(pause).toHaveBeenCalled();
+    expect(captureVideo.srcObject).toBe(stream);
+
+    // Straight back out, while that request is still pending: the next one
+    // waits for it.
+    await wrapper.get('.media-preview').trigger('click');
+    await flushPromises();
+    expect(pending).toHaveLength(1);
+
+    pending.shift()?.(createCaptureStream());
+    await flushPromises();
+    expect(runningAtRequest).toEqual([0, 0]);
+    expect(getMandatory(getUserMedia)).toEqual(collapsed);
+
+    const last = createCaptureStream();
+    pending.shift()?.(last);
+    await flushPromises();
+    expect(captureVideo.srcObject).toBe(last);
+  });
+
+  it('never asks for frames bigger than the media window itself', async () => {
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    const { getUserMedia } = mockCaptureSuccess();
+    vi.spyOn(
+      globalThis.electronApi,
+      'getMediaWindowCaptureSize',
+    ).mockResolvedValue({ height: 360, width: 640 });
+    seedStores();
+
+    const wrapper = await startCapture();
+    await wrapper.get('.media-preview').trigger('click');
+    await flushPromises();
+
+    // The zoomed-in preview is bigger than that, but asking for more than
+    // the media window's size makes Chromium render the media window itself
+    // bigger for as long as the capture runs.
+    expect(getZoomedInBounds().maxWidth).toBeGreaterThan(640);
+    expect(getMandatory(getUserMedia)).toMatchObject(
+      getCaptureSizeBounds(640, 360),
+    );
+  });
+
+  it('stops capturing while the preview is hidden and starts again when it comes back', async () => {
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    const { getUserMedia, stream } = mockCaptureSuccess();
+    const currentState = seedStores();
+
+    const wrapper = await startCapture();
+    expect(stream.getVideoTracks()[0]?.readyState).toBe('live');
+
+    // The media item ends: nothing to preview, so nothing to capture.
+    currentState.mediaPlaying = { ...currentState.mediaPlaying, url: '' };
+    await flushPromises();
+    expect(wrapper.find('video').exists()).toBe(false);
+    expect(stream.getVideoTracks()[0]?.readyState).toBe('ended');
+
+    // The next one starts: capturing again, still in capture mode.
+    const nextStream = createCaptureStream();
+    getUserMedia.mockResolvedValueOnce(nextStream);
+    currentState.mediaPlaying = {
+      ...currentState.mediaPlaying,
+      url: VIDEO_URL,
+    };
+    await flushPromises();
+    expect(getUserMedia).toHaveBeenCalledTimes(2);
+    const captureVideo = wrapper.get('video').element as HTMLVideoElement;
+    expect(captureVideo.srcObject).toBe(nextStream);
+    expect(wrapper.get('.media-preview-mode-toggle').text()).toBe('capture');
+  });
+
+  it('drops a capture that finishes starting after the preview has gone', async () => {
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    const { getUserMedia } = mockCaptureSuccess();
+    let finishStarting: (stream: MediaStream) => void = () => undefined;
+    getUserMedia.mockImplementationOnce(
+      () =>
+        new Promise<MediaStream>((resolve) => {
+          finishStarting = resolve;
+        }),
+    );
+    const currentState = seedStores();
+
+    await startCapture();
+    currentState.mediaPlaying = { ...currentState.mediaPlaying, url: '' };
+    await flushPromises();
+
+    const lateStream = createCaptureStream();
+    finishStarting(lateStream);
+    await flushPromises();
+    expect(lateStream.getVideoTracks()[0]?.readyState).toBe('ended');
+
+    // And it doesn't count as running: the preview coming back starts one.
+    currentState.mediaPlaying = {
+      ...currentState.mediaPlaying,
+      url: VIDEO_URL,
+    };
+    await flushPromises();
+    expect(getUserMedia).toHaveBeenCalledTimes(2);
   });
 
   it('shows progress in capture mode from mediaPlaying.duration, not a local video element', async () => {
@@ -470,76 +651,7 @@ describe('MediaPreview capture mode (dev toggle)', () => {
     expect(wrapper.get('.media-preview-mode-toggle').text()).toBe('capture');
   });
 
-  it('reports disabled capture smoothing to Sentry only once per session', async () => {
-    vi.mocked(errorCatcher).mockClear();
-    localStorage.setItem('mediaPreviewRenderMode', 'video');
-    mockCaptureSuccess();
-    seedStores();
-
-    // Drive the capture frame loop by hand: every frame callback draws once
-    // and queues the next, and every draw takes 10ms, over the 8ms budget.
-    const frameCallbacks: (() => void)[] = [];
-    const videoPrototype = HTMLVideoElement.prototype as unknown as Record<
-      string,
-      unknown
-    >;
-    const stubbed = [
-      'cancelVideoFrameCallback',
-      'requestVideoFrameCallback',
-      'videoHeight',
-      'videoWidth',
-    ];
-    Object.defineProperties(videoPrototype, {
-      cancelVideoFrameCallback: { configurable: true, value: vi.fn() },
-      requestVideoFrameCallback: {
-        configurable: true,
-        value: (callback: () => void) => frameCallbacks.push(callback),
-      },
-      videoHeight: { configurable: true, get: () => 1080 },
-      videoWidth: { configurable: true, get: () => 1920 },
-    });
-    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
-      clearRect: vi.fn(),
-      drawImage: vi.fn(),
-    } as unknown as CanvasRenderingContext2D);
-    let now = 0;
-    vi.spyOn(performance, 'now').mockImplementation(() => (now += 10));
-
-    const runSlowDraws = async () => {
-      for (let i = 0; i < 5; i++) {
-        frameCallbacks.pop()?.();
-        await nextTick();
-      }
-    };
-
-    try {
-      const wrapper = mountPreview();
-      await nextTick();
-      await wrapper.get('.media-preview-mode-toggle').trigger('click');
-      await flushPromises();
-
-      await runSlowDraws();
-      expect(wrapper.find('canvas').exists()).toBe(false);
-      expect(errorCatcher).toHaveBeenCalledTimes(1);
-
-      // Back into capture mode: a fresh stream gives smoothing another
-      // chance, and this machine trips it again - without a second report.
-      // capture -> canvas -> video -> capture
-      for (let i = 0; i < 3; i++) {
-        await wrapper.get('.media-preview-mode-toggle').trigger('click');
-        await flushPromises();
-      }
-      expect(wrapper.find('canvas').exists()).toBe(true);
-
-      await runSlowDraws();
-      expect(wrapper.find('canvas').exists()).toBe(false);
-      expect(errorCatcher).toHaveBeenCalledTimes(1);
-    } finally {
-      for (const key of stubbed) Reflect.deleteProperty(videoPrototype, key);
-    }
-  });
-
-  it('re-acquires the stream with a new size cap only after the main window changes size substantially', async () => {
+  it("re-acquires the zoomed-in preview's stream only after the main window changes size substantially", async () => {
     vi.useFakeTimers();
     const original = {
       height: globalThis.innerHeight,
@@ -567,11 +679,10 @@ describe('MediaPreview capture mode (dev toggle)', () => {
       const { getUserMedia } = mockCaptureSuccess();
       seedStores();
 
-      const wrapper = mountPreview();
-      await nextTick();
-      await wrapper.get('.media-preview-mode-toggle').trigger('click');
+      const wrapper = await startCapture();
+      await wrapper.get('.media-preview').trigger('click');
       await flushPromises();
-      expect(getUserMedia).toHaveBeenCalledTimes(1);
+      expect(getUserMedia).toHaveBeenCalledTimes(2);
 
       // A small nudge isn't worth a new stream...
       setViewport(
@@ -579,25 +690,16 @@ describe('MediaPreview capture mode (dev toggle)', () => {
         Math.round(original.height * 1.1),
       );
       await resize();
-      expect(getUserMedia).toHaveBeenCalledTimes(1);
+      expect(getUserMedia).toHaveBeenCalledTimes(2);
 
-      // ...doubling is, and the new request is capped at the new viewport.
+      // ...doubling is, and the new request fits the new zoomed-in box.
       setViewport(original.width * 2, original.height * 2);
       await resize();
-      expect(getUserMedia).toHaveBeenCalledTimes(2);
-      expect(getUserMedia.mock.calls[1]?.[0]).toEqual(
-        expect.objectContaining({
-          video: expect.objectContaining({
-            mandatory: expect.objectContaining(
-              getCaptureSizeBounds(
-                original.width * 2,
-                original.height * 2,
-                globalThis.devicePixelRatio || 1,
-              ),
-            ),
-          }),
-        }),
-      );
+      expect(getUserMedia).toHaveBeenCalledTimes(3);
+      expect(getMandatory(getUserMedia)).toMatchObject({
+        ...getZoomedInBounds(original.width * 2, original.height * 2),
+        maxFrameRate: 30,
+      });
     } finally {
       setViewport(original.width, original.height);
       vi.useRealTimers();
@@ -611,8 +713,7 @@ describe('MediaPreview canvas frame geometry', () => {
     vi.restoreAllMocks();
   });
 
-  // Shared by canvas and capture modes (both draw through drawCurrentFrame);
-  // canvas mode while paused is the one path that draws synchronously from a
+  // Canvas mode while paused is the one path that draws synchronously from a
   // template event, so it's the one driven here.
   it('draws a frame whose shape differs from the canvas centered with its aspect ratio kept, not stretched', async () => {
     localStorage.setItem('mediaPreviewRenderMode', 'canvas');

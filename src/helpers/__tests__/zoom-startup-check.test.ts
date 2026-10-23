@@ -1,9 +1,11 @@
 import type { ZoomDiagnosis, ZoomMeetingState } from 'src/types';
 
 import { createPinia, setActivePinia } from 'pinia';
+import { useDialogStateStore } from 'stores/dialog-state';
 import { useZoomStateStore } from 'stores/zoom-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { ZoomActionFailure } from '../zoom';
 import type { ZoomSelfTestStep } from '../zoom-self-test';
 
 const currentState = vi.hoisted(() => ({
@@ -28,8 +30,10 @@ const zoom = vi.hoisted(() => ({
   notify: vi.fn(),
   rememberZoomVersion: vi.fn(),
   runZoomSelfTest: vi.fn<() => Promise<ZoomSelfTestStep[]>>(),
+  takeZoomActionFailures: vi.fn<() => ZoomActionFailure[]>(),
   testZoomShareEntry: vi.fn(),
   withZoomRun: vi.fn(<T>(_label: string, run: () => Promise<T>) => run()),
+  zoomNamesChanged: vi.fn(() => false),
 }));
 
 vi.mock('stores/current-state', () => ({
@@ -49,9 +53,11 @@ vi.mock('src/helpers/zoom', () => ({
   prepareMediaWindowForZoomTest: vi.fn(),
   rememberZoomVersion: zoom.rememberZoomVersion,
   runWhileHoldingZoomAutomations: <T>(check: () => Promise<T>) => check(),
+  takeZoomActionFailures: zoom.takeZoomActionFailures,
   testZoomShareEntry: zoom.testZoomShareEntry,
   withZoomRun: zoom.withZoomRun,
   ZOOM_CHANGED_EVENT: 'zoomChanged',
+  zoomNamesChanged: zoom.zoomNamesChanged,
 }));
 
 vi.mock('src/helpers/zoom-self-test', async (importOriginal) => ({
@@ -112,7 +118,11 @@ const passed = (...ids: ZoomSelfTestStep['id'][]): ZoomSelfTestStep[] =>
 const notification = () =>
   zoom.notify.mock.lastCall?.[0] as
     | undefined
-    | { actions?: { handler?: () => void; label?: string }[]; type: string };
+    | {
+        actions?: { handler?: () => void; label?: string }[];
+        caption?: string;
+        type: string;
+      };
 
 beforeEach(() => {
   setActivePinia(createPinia());
@@ -131,6 +141,8 @@ beforeEach(() => {
   meetingStartsIn(30 * MINUTE);
   zoom.isZoomSetupNeeded.mockReturnValue(false);
   zoom.runZoomSelfTest.mockImplementation(async () => passed('meeting'));
+  zoom.takeZoomActionFailures.mockReturnValue([]);
+  zoom.zoomNamesChanged.mockReturnValue(false);
   zoom.testZoomShareEntry.mockResolvedValue({
     opened: true,
     windowListed: true,
@@ -159,6 +171,20 @@ describe('Zoom startup check', () => {
     expect(await runZoomStartupCheck()).toBe('skipped');
     // Asked for, it runs again.
     expect(await runZoomStartupCheck({ manual: true })).toBe('passed');
+  });
+
+  it("stays out of the setup assistant's way while it is open", async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    useDialogStateStore().openDialog(
+      'zoom-setup-assistant',
+      'DialogZoomSetupAssistant',
+    );
+
+    expect(await runZoomStartupCheck({ manual: true })).toBe('skipped');
+    expect(zoom.runZoomSelfTest).not.toHaveBeenCalled();
+    expect(zoom.withZoomRun).not.toHaveBeenCalled();
+    // Today's check is still to do.
+    expect(useZoomStateStore().checkedCongregations).toEqual([]);
   });
 
   it('leaves Zoom alone on days without a meeting', async () => {
@@ -284,6 +310,7 @@ describe('Zoom startup check', () => {
     expect(await outcome).toBe('failed');
     expect(useZoomStateStore().pause).toEqual({
       congregationId: 'cong-1',
+      namesChanged: false,
       problems: ['zoom-check-problem-meeting'],
     });
     expect(notification()?.type).toBe('negative');
@@ -322,15 +349,44 @@ describe('Zoom startup check', () => {
       ...ALL_FOUND,
       hostControls: false,
     });
+    zoom.takeZoomActionFailures
+      // Before the check: an earlier failure, left out of its report.
+      .mockReturnValueOnce([
+        { action: 'raised-hands', error: 'helper-stopped' },
+      ])
+      .mockReturnValueOnce([
+        {
+          action: 'set-video',
+          error: 'video-not-changed',
+          snapshot: {
+            dialogs: { 'CVoiceActivityDetectedDlgCls 400x120': ['Unmute'] },
+            toolbar: ['Start my video, Alt+V'],
+            zoomVersion: '7.2.1',
+          },
+        },
+      ]);
 
     expect(await runZoomStartupCheck()).toBe('failed');
     const zoomState = useZoomStateStore();
     expect(zoomState.automationsPaused).toBe(true);
-    // Reported to Sentry, grouped by what failed.
+    // Reported to Sentry, grouped by what failed, with what Zoom showed.
     await vi.waitFor(() =>
       expect(sentry.captureMessage).toHaveBeenCalledWith(
         'Zoom check failed: automations paused',
         expect.objectContaining({
+          extra: {
+            dialogs: { 'CVoiceActivityDetectedDlgCls 400x120': ['Unmute'] },
+            failedActions: ['set-video: video-not-changed'],
+            failedSteps: ['video-off: Video button reads "x"'],
+            namesChanged: false,
+            problems: [
+              'zoom-self-test-step-video-off',
+              'zoom-setup-check-host',
+            ],
+            snapshotAction: 'set-video',
+            toolbar: ['Start my video, Alt+V'],
+            zoomVersion: '7.2.1',
+          },
           fingerprint: [
             'zoom-check-failed',
             'zoom-self-test-step-video-off',
@@ -353,6 +409,46 @@ describe('Zoom startup check', () => {
     expect(notification()?.type).toBe('positive');
   });
 
+  it.each([
+    [
+      'an action found a button named otherwise',
+      () => {
+        zoom.takeZoomActionFailures.mockReturnValue([
+          { action: 'set-mic', error: 'mic-title-unrecognized:Mute' },
+        ]);
+      },
+    ],
+    [
+      'the camera button reads otherwise',
+      () => {
+        zoom.zoomNamesChanged.mockReturnValue(true);
+      },
+    ],
+  ])(
+    "offers the setup assistant instead of testing again when Zoom's names changed: %s",
+    async (_cause, arrange) => {
+      const { runZoomStartupCheck } = await import('../zoom-startup-check');
+      arrange();
+      zoom.runZoomSelfTest.mockResolvedValueOnce([
+        { id: 'meeting', status: 'passed' },
+        { detail: 'Mute the microphone', id: 'mic-off', status: 'failed' },
+      ]);
+      const dispatch = vi.spyOn(globalThis, 'dispatchEvent');
+
+      expect(await runZoomStartupCheck()).toBe('failed');
+      expect(useZoomStateStore().pause?.namesChanged).toBe(true);
+      expect(notification()?.caption).toContain(
+        "Zoom's language was changed or Zoom was updated",
+      );
+      const action = notification()?.actions?.find((a) => a.handler);
+      expect(action?.label).toBe('Open setup assistant');
+      action?.handler?.();
+      expect(dispatch).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'openZoomSetupAssistant' }),
+      );
+    },
+  );
+
   it('only looks, without pressing anything, when others are in the meeting', async () => {
     const { runZoomStartupCheck } = await import('../zoom-startup-check');
     zoom.countZoomMeetingParticipants.mockResolvedValue(4);
@@ -367,6 +463,38 @@ describe('Zoom startup check', () => {
     expect(useZoomStateStore().pause?.problems).toEqual([
       'zoom-self-test-step-share-start',
     ]);
+    await vi.waitFor(() =>
+      expect(sentry.captureMessage).toHaveBeenCalledWith(
+        'Zoom check failed: automations paused',
+        expect.objectContaining({
+          extra: expect.objectContaining({
+            failedSteps: [
+              'share-picker: {"opened":true,"windowListed":true,"windowSelected":false}',
+            ],
+          }),
+        }),
+      ),
+    );
+  });
+
+  it('changes nothing when the user stops the check', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    const zoomState = useZoomStateStore();
+    zoom.runZoomSelfTest.mockImplementationOnce(async () => {
+      // Stopped, then force-ended: the steps left all fail.
+      zoomState.beginRun('zoom-run-self-test');
+      zoomState.requestCancel();
+      zoomState.abortRun();
+      return [
+        { id: 'meeting', status: 'passed' },
+        { detail: 'Join audio: cancelled', id: 'join-audio', status: 'failed' },
+      ];
+    });
+
+    expect(await runZoomStartupCheck()).toBe('cancelled');
+    expect(zoomState.pause).toBeNull();
+    expect(zoom.notify).not.toHaveBeenCalled();
+    expect(sentry.captureMessage).not.toHaveBeenCalled();
   });
 
   it("doesn't show the media window to check sharing while others are in", async () => {
@@ -386,5 +514,18 @@ describe('Zoom startup check', () => {
     expect(useZoomStateStore().pause?.problems).toEqual([
       'zoom-check-problem-helper',
     ]);
+  });
+
+  it("lets the setup assistant close a failed check's notification", async () => {
+    const { dismissFailedZoomCheckNotice, runZoomStartupCheck } =
+      await import('../zoom-startup-check');
+    const dismiss = vi.fn();
+    zoom.notify.mockReturnValueOnce(dismiss);
+    zoom.getZoomMeetingState.mockResolvedValue(null);
+
+    expect(await runZoomStartupCheck()).toBe('failed');
+    dismissFailedZoomCheckNotice();
+    dismissFailedZoomCheckNotice();
+    expect(dismiss).toHaveBeenCalledOnce();
   });
 });

@@ -109,6 +109,7 @@ const electronApi: ElectronApi = {
   getLocales: () => invoke('getLocales'),
   getLocalPathFromFileObject: (fo) => getPathFromFileObject(fo),
   getLowDiskSpaceStatus: () => invoke('getLowDiskSpaceStatus'),
+  getMediaWindowCaptureSize: () => invoke('getMediaWindowCaptureSize'),
   getMediaWindowCaptureSourceId: () => invoke('getMediaWindowCaptureSourceId'),
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getSharedDataPath: () => invoke('getSharedDataPath'),
@@ -117,6 +118,8 @@ const electronApi: ElectronApi = {
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
   getZipEntries: (p) => invoke('getZipEntries', p),
+  getZoomLayoutTargets: (preferences, screens) =>
+    invoke('getZoomLayoutTargets', preferences, screens),
   hideFileOnWindows,
   inferExtension,
   isDemoMode: IS_DEMO_MODE,

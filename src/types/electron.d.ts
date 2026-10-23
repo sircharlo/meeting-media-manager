@@ -13,6 +13,9 @@ import type {
   ZoomCommand,
   ZoomCommandResult,
   ZoomHelperStartResult,
+  ZoomLayoutPreferences,
+  ZoomLayoutScreens,
+  ZoomLayoutTargets,
   ZoomTestParticipantsRequest,
   ZoomTestParticipantsResponse,
 } from 'src/types/zoom';
@@ -171,6 +174,15 @@ export interface ElectronApi {
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
   getLowDiskSpaceStatus: () => Promise<boolean>;
   /**
+   * The media window's size in device pixels: the most a capture of it
+   * should ask for (see getMediaWindowCaptureSourceId). Null if there's no
+   * media window.
+   */
+  getMediaWindowCaptureSize: () => Promise<null | {
+    height: number;
+    width: number;
+  }>;
+  /**
    * Returns a capture-source id (via webContents.getMediaSourceId) scoped to
    * the calling renderer, for mirroring the media window's live composited
    * output into a preview instead of re-decoding the same file a second
@@ -196,6 +208,14 @@ export interface ElectronApi {
    */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   getZipEntries: (zipPath: string) => Promise<Record<string, number>>;
+  /**
+   * Where the Zoom window layout puts Zoom's meeting windows and M³'s main
+   * window on the screens connected now (Windows only, else null).
+   */
+  getZoomLayoutTargets: (
+    preferences: ZoomLayoutPreferences,
+    screens?: ZoomLayoutScreens,
+  ) => Promise<null | ZoomLayoutTargets>;
   hideFileOnWindows: (filePath: string) => Promise<void>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   /** `true` when the app was launched with `M3_DEMO_MODE` set, for automated screenshotting. */
@@ -510,6 +530,7 @@ export type ElectronIpcInvokeKey =
   | 'getBetaUpdatesPath'
   | 'getLocales'
   | 'getLowDiskSpaceStatus'
+  | 'getMediaWindowCaptureSize'
   | 'getMediaWindowCaptureSourceId'
   | 'getScreenAccessStatus'
   | 'getSharedDataPath'
@@ -517,6 +538,7 @@ export type ElectronIpcInvokeKey =
   | 'getUpdatesDisabledPath'
   | 'getUserDataPath'
   | 'getZipEntries'
+  | 'getZoomLayoutTargets'
   | 'isDownloadComplete'
   | 'isDownloadErrorExpected'
   | 'isOnline'
@@ -624,6 +646,8 @@ export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
 
 export interface ExtractNestedZipEntryOptions {
   innerEntryName?: string;
+  /** With innerEntryNameSuffix, the entry must match both. */
+  innerEntryNamePrefix?: string;
   innerEntryNameSuffix?: string;
   maxEntrySize?: number;
   maxTotalSize?: number;

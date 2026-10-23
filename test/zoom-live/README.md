@@ -17,7 +17,7 @@ desktop app on your computer:
   window is out of sight in it and partly covered by an always-on-top
   window (decoy windows, checking that the media window, and nothing else,
   gets shared), and side effects the helper must
-  not have (moving the mouse for good, keeping focus, changing a Zoom
+  not have (moving the mouse at all, keeping focus, changing a Zoom
   setting).
 
 It never runs in CI or in `yarn test:unit`. The same checks are available in
@@ -57,10 +57,11 @@ ZOOM_TEST_SHARE_BUTTON_TITLE=Share
 yarn test:zoom-live
 ```
 
-Don't use the mouse or keyboard while it runs (about 3-5 minutes): Zoom only
-reacts to some controls through real clicks, and focus changes close its
-menus. The test starts the meeting if it isn't open, opens a stand-in
-"Media Player - M³" window to share, and the participants leave at the end.
+Don't use the mouse or keyboard while it runs (about 3-5 minutes): one test
+checks that the mouse never moves, admitting someone from the waiting room
+takes a key press, and focus changes close Zoom's menus. The test starts the
+meeting if it isn't open, opens a stand-in "Media Player - M³" window to
+share, and the participants leave at the end.
 
 Pieces you can also run on their own:
 

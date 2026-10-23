@@ -92,6 +92,37 @@ describe('TimerPage - clock-face arc warning colour', () => {
   });
 });
 
+describe('TimerPage - analog countdown', () => {
+  const mountCountdown = async (
+    timerCountdownDisplay: TimerData['timerCountdownDisplay'],
+  ) => {
+    const { default: TimerPage } = await import('../TimerPage.vue');
+    wrapper = mount(TimerPage);
+    timerData.value = runningPart({
+      mode: 'countdown',
+      time: '04:30',
+      timerCountdownDisplay,
+      timerCountdownTargetSeconds: 300,
+    });
+    await nextTick();
+    await nextTick();
+    return wrapper;
+  };
+
+  it('shows the time inside the ring on its own', async () => {
+    const page = await mountCountdown('analog');
+    expect(page.find('.analog-countdown__inner').text()).toBe('04:30');
+    expect(page.find('.digital-display').exists()).toBe(false);
+  });
+
+  it('shows the time once, beside the ring, with the digital display', async () => {
+    const page = await mountCountdown('analog-digital');
+    expect(page.find('.analog-countdown').exists()).toBe(true);
+    expect(page.find('.analog-countdown__inner').exists()).toBe(false);
+    expect(page.find('.digital-display').text()).toBe('04:30');
+  });
+});
+
 describe('TimerPage - hand alert', () => {
   it('announces a raised hand in an <output> status region, with the names', async () => {
     const { default: TimerPage } = await import('../TimerPage.vue');

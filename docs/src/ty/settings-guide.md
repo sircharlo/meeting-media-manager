@@ -549,13 +549,13 @@ E fa’ahoro te Fa’atere Putuputura’a Zoom (beta, Windows ana’e) i te poro
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-’Aita Zoom e hōro’a nei i te hō’ē rāve’a tano nō te ohipa otometi, nō reira e fa’ahoro M³ i te porotarama Zoom nā roto i tōna rāve’a nō te feiā hapa tino, e ha’a ’aita e ’iore nō te rahira’a o te mau mea (te tāpura o te feiā i putuputu mai, tōna mau tāpura, te ha’amāramarama ’Ōpere). E nehenehe noa te tahi mau ohipa e fa’ane’e i te ’iore ’aore rā te ha’amāramarama e ha’a ra nō te hō’ē taime poto, ei hi’ora’a nō te fa’aho’i mai i te tāpura pitopito a Zoom tei huna-noa-hia. I te mau taime ato’a e tupu ai te reira, e tāpo’i M³ i tōna iho ha’amāramarama i te hō’ē fa’aarara’a "Te fa’ahoro nei M³ ia Zoom" e fa’aite ra i te ohipa e ravehia ra, ma te hō’ē pitopito **’A fa’aru’e i teie ohipa otometi**. E fa’aitehia ato’a taua fa’aarara’a ra i te taime o te mau hi’opo’ara’a a te tauturu fa’aineinera’a ’e o te tāmatara’a iho. Te hō’ē pā’atā papāmāha nō te mau vāhi ato’a (mātauhia `Ctrl+Alt+Escape`), e ha’a ana’e ’a ha’a ai te hō’ē ohipa otometi, e fa’aru’e i te reira nō hea mai ato’a, noa atu ē o Zoom te ha’amāramarama e ha’a ra. Nā te fa’aru’era’a e fa’aea ’oi’oi ia M³; peneia’e ’aita te ohipa i ’oti roa i roto ia Zoom, nō reira ’a hi’opo’a i te reira.
+’Aita Zoom e hōro’a nei i te hō’ē rāve’a tano nō te ohipa otometi, nō reira e fa’ahoro M³ i te porotarama Zoom nā roto i tōna rāve’a nō te feiā hapa tino, e ha’a ’aita e fa’ane’e i te ’iore, noa atu ā e huna Zoom i tōna tāpura pitopito. Noa atu rā, e fa’aite mai Zoom i tōna ha’amāramarama i mua roa nō te hō’ē taime poto ia fa’a’ohipa M³ i tōna mau pitopito, ’e e fa’ane’e noa te ’iore ei rāve’a hope’a, mai te mea ’aita Zoom e pāhono i te tahi atu mau rāve’a. I te mau taime ato’a e fa’ahoro ai M³ ia Zoom, e tāpo’i ’oia i tōna iho ha’amāramarama i te hō’ē fa’aarara’a "Te fa’ahoro nei M³ ia Zoom" e fa’aite ra i te ohipa e ravehia ra, ma te hō’ē pitopito **’A fa’aru’e i teie ohipa otometi**. E fa’aitehia ato’a taua fa’aarara’a ra i te taime o te mau hi’opo’ara’a a te tauturu fa’aineinera’a ’e o te tāmatara’a iho. Te hō’ē pā’atā papāmāha nō te mau vāhi ato’a (mātauhia `Ctrl+Alt+Escape`), e ha’a ana’e ’a ha’a ai te hō’ē ohipa otometi, e fa’aru’e i te reira nō hea mai ato’a, noa atu ē o Zoom te ha’amāramarama e ha’a ra. Nā te fa’aru’era’a e fa’aea ’oi’oi ia M³; peneia’e ’aita te ohipa i ’oti roa i roto ia Zoom, nō reira ’a hi’opo’a i te reira.
 
 **Fa’anahora’a tumu**: `Ctrl+Alt+Escape`
 
 #### Tauturu nō te mau rima i fa’ateiteihia {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 I te roara’a o te hō’ē putuputura’a, e hi’o M³ i te tāpura o te feiā i putuputu mai a Zoom nō te ’ite i te mau rima i fa’ateiteihia. ’Ia fa’ateitei te hō’ē ta’ata i tōna rima, e vaiiho te hō’ē fa’aarara’a i roto ia M³ ia ’oe ’ia **fa’amatara i tōna reo** nā roto i hō’ē noa patara’a, ’e ’ia oti ’oia i te paraparau, ’ia **tāpe’a fa’ahou i tōna reo ’e ’ia tu’u i tōna rima i raro** nā roto i te tahi atu patara’a. E fa’aite ato’a te pitopito Zoom i ni’a i te motu ha’atere i te mau rima i fa’ateiteihia ma te mau pitopito ato’a. E tae te ohipa tā’itahi i te reni iho o taua ta’ata ra i roto ia Zoom, nā roto i tōna i’oa mau; mai te peu e hō’ē ā i’oa tō e piti ta’ata, e’ita M³ e fāfā i te hō’ē o rāua.
 
@@ -564,6 +564,27 @@ Mai te peu ’ua fa’atupuhia te [fa’atere-hora nō te putuputura’a](#meeti
 E tāpa’o Zoom i te mau rima i fa’ateiteihia i tōna iho reo, nō reira e tītau na mua M³ i te ha’api’i e nāfea: ’ia vai matara tō ’oe putuputura’a i roto ia Zoom, ’a pata i **’A ha’api’i e nāfea Zoom e tāpa’o ai i te mau rima i fa’ateiteihia**. E fa’ateitei M³ i tō ’oe iho rima, e tai’o e nāfea Zoom e tāpa’o ai i te reira i roto i te tāpura o te feiā i putuputu mai ’e o tei hea te mea i roto i te tāpura e tu’u i te reira i raro, ’e e tu’u fa’ahou i te reira i raro. E hōro’a ato’a te tauturu fa’aineinera’a i teie ta’ahira’a.
 
 **Fa’anahora’a tumu**: `false`
+
+#### Tu’ura’a ha’amāramarama {#zoom-meeting-manager-window-layout}
+
+<!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
+
+E nehenehe tā M³ e tu’u i te ha’amāramarama putuputura’a a Zoom, ’e tōna iho ha’amāramarama rahi, i te vāhi tā ’oe e hina’aro i ni’a i tō ’oe mau paruai. E ui te tauturu fa’aineinera’a i te vāhi nā roto i nā ’ē’a e piti, ’e e ’iriti fa’ahou te pitopito **Mā’iti i te tu’ura’a** i ’ō nei i te reira i te mau taime ato’a:
+
+1. I ni’a i te hō’ē hōho’a o tō ’oe mau paruai mai tō rātou fa’anahora’a mau, ’a mā’iti i te paruai nō te putuputura’a Zoom. ’Eita roa te paruai tā te ha’amāramarama media e fa’a’ī e pūpūhia. Mai te peu ē e ’ere te paruai o Zoom i te paruai i reira o M³, ’a mā’iti mai te peu e nā Zoom ana’e te reira ’aore rā e fa’a’ohipa ’āmui ’oia i te reira ’e o M³ (e haere ato’a ïa M³ i reira).
+2. I ni’a i te hō’ē hōho’a o terā paruai i tōna huru mau, ’a hutihuti i te rēni fa’ata’a nō te ’ōpere i te reira i rotopū iā M³ ’e iā Zoom. E tītau te reira i te mau tuha’a mātauhia (te ’āfa, te tuha’a toru, te tuha’a maha, ’e ’ē atu ā); ’a ’ōmino noa i `Alt` nō te hutihuti ti’amā i te reira. ’Eita roa te rēni fa’ata’a e fa’ana’ina’i i te hō’ē ha’amāramarama i raro a’e i tōna rahi iti roa a’e: e hina’aro Zoom i te vāhi rahi a’e ’ia matara tōna tāpura o te feiā i putuputu mai. I ni’a i te hō’ē paruai ti’a, e tu’uhia nā ha’amāramarama e piti te tahi i ni’a a’e i te tahi.
+
+I te taime iho e ’iriti ai te putuputura’a, e ’iriti M³ i te tāpura o te feiā i putuputu mai a Zoom mai te peu ua ani ’oe, ’e i muri iho e tu’u i nā ha’amāramarama e piti i tō rāua vāhi. Mai reira atu, e vaiho ’oia iā Zoom i tōna vāhi: ’ia fa’ane’e ’aore rā ’ia taui Zoom iāna iho i te rahi o tōna ha’amāramarama, i muri a’e i te ’ōpere-’api ’aore rā ’ia ’iriti ’aore rā ’ia ’ōpani tōna tāpura o te feiā i putuputu mai, e fa’aho’i M³ iāna. Mai te peu e fa’ane’e ’aore rā e taui ’oe iho i te rahi o Zoom, e vaiho M³ iāna i te vāhi tā ’oe i tu’u e tae roa i te putuputura’a i muri iho. I te mau taime ato’a e fa’ane’e ai M³ iā Zoom nā roto i tōna iho mana’o, e fa’a’ite te hō’ē fa’aarara’a i te reira, ma te piti pitopito mai te peu e ha’afifi te reira: e fa’aea **Vaiho noa iā Zoom** i te reira e tae roa ’ia ha’amata fa’ahou M³, ’e e fa’aore **Fa’aore** i te tu’ura’a ha’amāramarama e tae roa ’ia fa’atupu fa’ahou ’oe i te reira i ’ō nei. ’Ia ta’amuhia ’aore rā ’ia ’īritihia te mau paruai, e fa’anaho fa’ahou M³ i te mau ha’amāramarama; mai te peu ē ’aita fa’ahou te paruai o Zoom i reira, e fa’a’ohipa ’āmui Zoom i te paruai o M³ ’e e fa’a’ite M³ i te reira iā ’oe.
+
+I te taime e ’ōpere ai Zoom i te ha’amāramarama media, e huna ’oia i tōna iho ha’amāramarama putuputura’a, ’e te tāpura o te feiā i putuputu mai ato’a. ’Ia fa’atupuhia **Fa’aite i te tāpura o te feiā i putuputu mai i te taime ’ōpere**, e ’iriti M³ i te tāpura o te feiā i putuputu mai a Zoom i roto i te hō’ē ha’amāramarama ta’a ’ē, i te vāhi o Zoom, ’ia ’ite noa ’oe ē o vai tei fa’ateitei i tōna rima nō te pāhono. Mai te peu e ’ōpani ’oe i te reira, e vai ’ōpani noa te reira e tae roa i te ’ōpere i muri iho; e ’ōpani Zoom iāna iho i te reira ’ia fa’aea te ’ōpere, ’e e ho’i mai tōna ha’amāramarama putuputura’a i tōna vāhi.
+
+’Ia fa’anahohia te fa’anahora’a **Meeting window view** a Zoom i ni’a i te **Dual window** (**Use dual monitors** i roto i te mau huru tahito o Zoom), e ’iriti Zoom i te piti o te ha’amāramarama (e fa’aite i te paruai e ’ōperehia ra ’aore rā i te ta’ata e paraparau ra). E tu’u M³ i te reira i ni’a i te paruai ta’ato’a o te ha’amāramarama media, i muri mai i te ha’amāramarama media: ’a huna i te ha’amāramarama media nō te ’ite i te reira, mai te peu nō te hi’o i te feiā i putuputu mai.
+
+’Ia fa’atupuhia **Tu’u pīha’i iho rāua nā roto iā Windows**, e tu’u M³ i nā ha’amāramarama e piti pīha’i iho te tahi i te tahi nā roto i te rāve’a iho a Windows, mai te mea ra ē ua hutihuti ’oe iā rāua i te hiti o te paruai, nō reira ’ia hutihuti ’oe i te ’ōti’a i rotopū iā rāua, e taui te rahi o nā mea e piti. Nō te reira, e fa’ari’i M³ i te ha’amāramarama tāta’itahi i mua nā te hō’ē taime poto.
+
+E fa’aho’i te pitopito **Fa’anaho i te mau ha’amāramarama** i roto i te ha’amāramarama iti a Zoom i te mau mea ato’a i tō rātou vāhi i te mau taime ato’a. E vaiho-ta’a-’ē-hia te tu’ura’a ha’amāramarama nō te roro uira tāta’itahi, nō te mea tei ni’a te reira i tōna mau paruai.
+
+**Fa’anahora’a tumu**: ’aita i fa’atupuhia
 
 ### Tāpirira’a OBS Studio {#settings-guide-obs-integration}
 

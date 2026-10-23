@@ -1,8 +1,9 @@
 <template>
   <!-- Shown over the whole main window while M³ drives the Zoom app: its
-       actions move the mouse and focus for a moment, and this says so, names
-       what is going on, and offers a way out (a button here, and a global
-       shortcut that works even while Zoom has the focus). -->
+       actions move the focus (and, as a last resort, the mouse) for a
+       moment, and this says so, names what is going on, and offers a way
+       out (a button here, and a global shortcut that works even while Zoom
+       has the focus). -->
   <BaseDialog
     v-model="open"
     dialog-id="zoom-automation-overlay"

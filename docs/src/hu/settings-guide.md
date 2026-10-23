@@ -549,13 +549,13 @@ A Zoom-értekezletkezelő (béta, csak Windowson) minden összejövetelnél Ön 
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-A Zoom nem kínál megfelelő automatizálási felületet, ezért az M³ az akadálymentesítési felületén keresztül vezérli a Zoom alkalmazást, ami szinte mindenhez egér nélkül működik (a résztvevőlista, annak menüi, a Share ablak). Néhány műveletnek azonban egy pillanatra mégis mozgatnia kell az egeret vagy a fókuszban lévő ablakot, például ahhoz, hogy visszahozza a Zoom automatikusan elrejtett eszköztárát. Ilyenkor az M³ a saját ablakát egy „Az M³ vezérli a Zoomot” értesítéssel takarja le, amely megnevezi, mi történik, és **Az automatizálás megszakítása** gombot is tartalmazza. Ugyanez az értesítés jelenik meg a beállítási segéd ellenőrzései és az öntesztelés közben is. Egy globális billentyűparancs (alapértelmezés szerint `Ctrl+Alt+Escape`), amely csak egy automatizálás futása közben aktív, bárhonnan megszakítja azt, akkor is, ha a Zoom van fókuszban. A megszakítás azonnal leállítja az M³ műveletét; a Zoom ilyenkor félkész állapotban maradhat, ezért ellenőrizze.
+A Zoom nem kínál megfelelő automatizálási felületet, ezért az M³ az akadálymentesítési felületén keresztül vezérli a Zoom alkalmazást, ami az egér mozgatása nélkül működik, még akkor is, ha a Zoom elrejti az eszköztárát. A Zoom ugyanakkor egy pillanatra előtérbe hozza az ablakát, amikor az M³ megnyomja a gombjait, az egér pedig csak végső esetben mozdul meg, ha a Zoom semmilyen más módra nem reagál. Amikor az M³ vezérli a Zoomot, a saját ablakát egy „Az M³ vezérli a Zoomot” értesítéssel takarja le, amely megnevezi, mi történik, és **Az automatizálás megszakítása** gombot is tartalmazza. Ugyanez az értesítés jelenik meg a beállítási segéd ellenőrzései és az öntesztelés közben is. Egy globális billentyűparancs (alapértelmezés szerint `Ctrl+Alt+Escape`), amely csak egy automatizálás futása közben aktív, bárhonnan megszakítja azt, akkor is, ha a Zoom van fókuszban. A megszakítás azonnal leállítja az M³ műveletét; a Zoom ilyenkor félkész állapotban maradhat, ezért ellenőrizze.
 
 **Alapértelmezett**: `Ctrl+Alt+Escape`
 
 #### Kézfelemelés-segéd {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Az összejövetel alatt az M³ figyeli a Zoom résztvevőlistáján a felemelt kezeket. Amikor valaki felemeli a kezét, az M³ értesítésében egy kattintással **feloldhatja a résztvevő némítását**, majd amikor befejezte a hozzászólást, egy újabb kattintással **ismét némíthatja, és leengedheti a kezét**. A műveleti panel Zoom-gombja ugyanezekkel a gombokkal sorolja fel a felemelt kezeket. Minden művelet az adott résztvevő saját sorára vonatkozik a Zoomban, a pontos neve alapján; ha két résztvevőnek ugyanaz a neve, az M³ egyikükhöz sem nyúl.
 
@@ -564,6 +564,27 @@ Ha az [összejöveteli időzítő](#meeting-timer) engedélyezve van, az elnök 
 A Zoom a saját nyelvén jelöli a felemelt kezeket, ezért az M³-nak először meg kell tanulnia, hogyan: miközben az értekezlet meg van nyitva a Zoomban, kattintson az **Annak betanítása, hogyan jelöli a Zoom a felemelt kezeket** gombra. Az M³ felemeli az Ön kezét, kiolvassa, hogyan jelöli ezt a Zoom a résztvevőlistában, és melyik menüpont engedi le, majd újra leengedi. A beállítási segéd is felkínálja ezt a lépést.
 
 **Alapértelmezett**: `false`
+
+#### Ablakelrendezés {#zoom-meeting-manager-window-layout}
+
+<!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
+
+Az M³ oda teheti a Zoom értekezletablakát és a saját főablakát a képernyőin, ahová szeretné. A beállítási segéd két lépésben kérdezi meg, hová, és ezeket az itteni **Elrendezés kiválasztása** gomb bármikor újra megnyitja:
+
+1. A képernyők elhelyezkedését mutató térképen válassza ki a Zoom-értekezlet képernyőjét. A médiaablak által kitöltött képernyő soha nem választható. Ha a Zoom képernyője nem az, amelyen az M³ van, válassza ki, hogy a Zoom egymagában van-e rajta, vagy osztozik rajta az M³-mal (ilyenkor az M³ is oda kerül).
+2. A képernyő valódi alakú rajzán húzza el az elválasztót, hogy felossza a képernyőt az M³ és a Zoom között. Az elválasztó a szokásos arányokhoz igazodik (fél, harmad, negyed és így tovább); szabad húzáshoz tartsa lenyomva az `Alt` billentyűt. Az elválasztó soha nem tesz egy ablakot kisebbé a legkisebb méreténél: a Zoomnak több hely kell, amíg a résztvevőlistája nyitva van. Álló helyzetű képernyőn a két ablak egymás alá kerül.
+
+Amint az értekezlet megnyílik, az M³ megnyitja a Zoom résztvevőlistáját, ha ezt kérte, majd mindkét ablakot a helyére teszi. Attól kezdve a helyén tartja a Zoomot: amikor a Zoom magától elmozdítja vagy átméretezi az ablakát, képernyőmegosztás után vagy amikor a résztvevőlistája megnyílik vagy bezárul, az M³ visszahelyezi. Ha Ön mozgatja el vagy méretezi át a Zoomot, az M³ a következő összejövetelig ott hagyja, ahová tette. Valahányszor az M³ magától mozgatja el a Zoomot, egy értesítés jelzi ezt, két gombbal arra az esetre, ha ez zavarna: **A Zoom békén hagyása** az M³ újraindításáig leállítja, a **Kikapcsolás** pedig kikapcsolja az ablakelrendezést, amíg itt újra be nem kapcsolja. Amikor képernyőket csatlakoztatnak vagy eltávolítanak, az M³ újra elrendezi az ablakokat; ha a Zoom képernyője már nincs ott, a Zoom az M³ képernyőjén osztozik, és az M³ ezt jelzi Önnek.
+
+Amíg a Zoom megosztja a médiaablakot, elrejti a saját értekezletablakát, a résztvevőlistával együtt. Ha **A résztvevőlista megjelenítése megosztás közben** be van kapcsolva, az M³ ilyenkor a Zoom résztvevőlistáját egy külön ablakban nyitja meg, a Zoom helyén, így továbbra is látja, ki emeli fel a kezét, hogy hozzászóljon. Ha bezárja, a következő megosztásig zárva marad; a Zoom magától bezárja, amikor a megosztás leáll, és az értekezletablaka visszakerül a helyére.
+
+Ha a Zoomban a **Meeting window view** beállítás értéke **Dual window** (a Zoom régebbi verzióiban **Use dual monitors**), a Zoom megnyit egy második ablakot (amely a megosztott képernyőt vagy az előadót mutatja). Az M³ teljes képernyőre teszi a médiaablak képernyőjén, a médiaablak mögé: rejtse el a médiaablakot, hogy megjelenjen, például hogy lássa a résztvevőket.
+
+Ha az **Illesztés a Windows-zal** be van kapcsolva, az M³ a Windows saját illesztésével egymás mellé illeszti a két ablakot, mintha a képernyő széleihez húzta volna őket, így a köztük lévő határ húzása mindkettőt átméretezi. Ehhez az M³ egy pillanatra előtérbe hozza mindkét ablakot.
+
+A Zoom felugró ablakában lévő **Ablakok elrendezése** gomb bármikor mindent visszahelyez. Az ablakelrendezés számítógépenként tárolódik, mivel a számítógép képernyőitől függ.
+
+**Alapértelmezett**: ki
 
 ### OBS Studio-integráció {#settings-guide-obs-integration}
 

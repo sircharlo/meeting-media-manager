@@ -549,13 +549,13 @@ Zoom Meeting Manager (beta, solo Windows) maneja por ti la aplicación de escrit
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom no ofrece una interfaz de automatización adecuada, por lo que M³ controla la aplicación de Zoom mediante su interfaz de accesibilidad, la cual funciona sin el ratón para casi todo (la lista de participantes, sus menús, la ventana de compartir). Aun así, algunas acciones pueden requerir mover el ratón o la ventana activa por un instante, por ejemplo, para recuperar la barra de herramientas autooculta de Zoom. Siempre que ocurre eso, M³ cubre su propia ventana con un aviso que dice "M³ está controlando Zoom", indicando lo que está sucediendo y con un botón **Cancelar esta automatización**. El mismo aviso se muestra durante las comprobaciones del asistente de configuración y la autoprueba. Un atajo de teclado global (por defecto `Ctrl+Alt+Escape`), activo solo mientras se ejecuta una automatización, la cancela desde cualquier lugar, incluso mientras Zoom esté en primer plano. Cancelar detiene M³ de inmediato; Zoom podría quedar a medias, así que revísalo.
+Zoom no ofrece una interfaz de automatización adecuada, por lo que M³ controla la aplicación de Zoom mediante su interfaz de accesibilidad, la cual funciona sin mover el ratón, incluso mientras Zoom oculta su barra de herramientas. Aun así, Zoom trae su ventana al frente por un instante cuando M³ pulsa sus botones, y el ratón solo se mueve como último recurso, si Zoom no responde a ninguna otra forma. Siempre que M³ controla Zoom, cubre su propia ventana con un aviso que dice "M³ está controlando Zoom", indicando lo que está sucediendo y con un botón **Cancelar esta automatización**. El mismo aviso se muestra durante las comprobaciones del asistente de configuración y la autoprueba. Un atajo de teclado global (por defecto `Ctrl+Alt+Escape`), activo solo mientras se ejecuta una automatización, la cancela desde cualquier lugar, incluso mientras Zoom esté en primer plano. Cancelar detiene M³ de inmediato; Zoom podría quedar a medias, así que revísalo.
 
 **Por defecto**: `Ctrl+Alt+Escape`
 
 #### Ayudante para manos levantadas {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Durante la reunión, M³ revisa la lista de participantes de Zoom en busca de manos levantadas. Cuando alguien levanta la mano, una notificación en M³ te permite **activar el micrófono** de ese participante con un clic y, una vez que termine de hablar, **volver a silenciarlo y bajarle la mano** con otro clic. El botón de Zoom en la isla de acciones muestra las manos levantadas con los mismos botones. Cada acción se dirige a la fila propia de ese participante en Zoom por su nombre exacto; si dos participantes comparten el mismo nombre, M³ no toca a ninguno.
 
@@ -564,6 +564,27 @@ Si el [cronómetro de la reunión](#meeting-timer) está activado, también apar
 Zoom marca las manos levantadas en su propio idioma, así que M³ necesita primero aprender cómo: con la reunión abierta en Zoom, haz clic en **Aprender cómo marca Zoom las manos levantadas**. M³ levanta tu propia mano, lee cómo la marca Zoom en la lista de participantes y qué opción del menú la baja, y luego vuelve a bajarla. El asistente de configuración también ofrece este paso.
 
 **Predeterminado**: `false`
+
+#### Disposición de ventanas {#zoom-meeting-manager-window-layout}
+
+<!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
+
+M³ puede colocar la ventana de la reunión de Zoom, y también su propia ventana principal, donde quieras en tus pantallas. El asistente de configuración te pregunta dónde en dos pasos, que el botón **Elegir la disposición** de aquí vuelve a abrir en cualquier momento:
+
+1. En un mapa de tus pantallas tal como están colocadas, elige la pantalla para la reunión de Zoom. La pantalla que ocupa la ventana de multimedia nunca aparece como opción. Si la pantalla de Zoom no es la de M³, elige si Zoom la tiene para él solo o la comparte con M³ (entonces M³ también se mueve allí).
+2. En un dibujo de esa pantalla con su forma real, arrastra el divisor para repartirla entre M³ y Zoom. Se ajusta a las proporciones habituales (la mitad, un tercio, un cuarto, etc.); mantén pulsada la tecla `Alt` para arrastrarlo libremente. El divisor nunca deja una ventana por debajo de su tamaño mínimo: Zoom necesita más espacio mientras su lista de participantes está abierta. En una pantalla vertical, las dos ventanas se colocan una encima de la otra.
+
+En cuanto se abre la reunión, M³ abre la lista de participantes de Zoom si se lo pediste y luego coloca las dos ventanas. A partir de entonces, mantiene Zoom en su sitio: cuando Zoom mueve o cambia el tamaño de su ventana por sí solo, después de compartir pantalla o al abrirse o cerrarse su lista de participantes, M³ lo vuelve a poner en su sitio. Si mueves Zoom o cambias su tamaño tú mismo, M³ lo deja donde lo pusiste hasta la próxima reunión. Cada vez que M³ mueve Zoom por su cuenta, una notificación te lo indica, con dos botones por si eso estorba: **Dejar Zoom como está** lo detiene hasta que M³ se reinicie, y **Desactivar** desactiva la disposición de ventanas hasta que vuelvas a activarla aquí. Cuando se conectan o se desconectan pantallas, M³ vuelve a organizar las ventanas; si la pantalla de Zoom ya no está, Zoom comparte la pantalla de M³ y M³ te lo indica.
+
+Mientras Zoom comparte la ventana de multimedia, oculta su propia ventana de la reunión, incluida la lista de participantes. Con **Mostrar la lista de participantes al compartir** activada, M³ abre entonces la lista de participantes de Zoom en una ventana aparte, en el lugar de Zoom, para que sigas viendo quién levanta la mano para comentar. Si la cierras, se queda cerrada hasta la próxima vez que se comparta; Zoom la cierra por sí solo cuando se deja de compartir, y su ventana de la reunión vuelve a su sitio.
+
+Cuando la opción **Meeting window view** de Zoom está en **Dual window** (**Use dual monitors** en versiones anteriores de Zoom), Zoom abre una segunda ventana (que muestra la pantalla compartida o al orador). M³ la pone en pantalla completa en la pantalla de la ventana de multimedia, detrás de la ventana de multimedia: oculta la ventana de multimedia para verla, por ejemplo, para ver a los participantes.
+
+Cuando **Ajustarlas con Windows** está activado, M³ ajusta las dos ventanas una al lado de la otra con la función de ajuste del propio Windows, como si las hubieras arrastrado a los bordes de la pantalla, así que al arrastrar el borde que las separa se cambia el tamaño de las dos. Para ello, M³ pone cada ventana en primer plano un momento.
+
+El botón **Organizar ventanas** de la ventana emergente de Zoom vuelve a poner todo en su sitio en cualquier momento. La disposición de ventanas se guarda por computadora, ya que depende de sus pantallas.
+
+**Predeterminado**: desactivado
 
 ### Integración con OBS Studio {#settings-guide-obs-integration}
 

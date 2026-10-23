@@ -549,13 +549,13 @@ Upravljalnik Zoom shodov (beta, samo za Windows) upravlja namizno aplikacijo Zoo
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom ne ponuja ustreznega vmesnika za avtomatizacijo, zato M³ upravlja aplikacijo Zoom prek njenega dostopnostnega vmesnika, ki za skoraj vse deluje brez miške (seznam udeležencev, njegovi meniji, okno za deljenje). Nekatera dejanja pa lahko še vedno za trenutek premaknejo miško ali aktivno okno, na primer za prikaz samodejno skrite Zoomove orodne vrstice. Kadar se to zgodi, M³ prekrije svoje okno z obvestilom »M³ upravlja Zoom«, ki pove, kaj se dogaja, in ponudi gumb »Prekliči to avtomatizacijo«. Enako obvestilo se prikaže med preverjanji nastavitvenega pomočnika in med samopreizkusom. Globalna tipkovna bližnjica (privzeto Ctrl+Alt+Escape), ki je aktivna samo med avtomatizacijo, jo prekliče od koder koli, tudi ko je Zoom v ospredju. Preklic takoj ustavi M³; Zoom lahko zato ostane v vmesnem stanju, zato ga preveri.
+Zoom ne ponuja ustreznega vmesnika za avtomatizacijo, zato M³ upravlja aplikacijo Zoom prek njenega dostopnostnega vmesnika, ki deluje brez premikanja miške, tudi ko Zoom skrije svojo orodno vrstico. Ko M³ pritisne njegove gumbe, Zoom vseeno za trenutek postavi svoje okno v ospredje, miška pa se premakne le v skrajnem primeru, če se Zoom ne odzove na noben drug način. Kadar M³ upravlja Zoom, prekrije svoje okno z obvestilom »M³ upravlja Zoom«, ki pove, kaj se dogaja, in ponudi gumb »Prekliči to avtomatizacijo«. Enako obvestilo se prikaže med preverjanji nastavitvenega pomočnika in med samopreizkusom. Globalna tipkovna bližnjica (privzeto Ctrl+Alt+Escape), ki je aktivna samo med avtomatizacijo, jo prekliče od koder koli, tudi ko je Zoom v ospredju. Preklic takoj ustavi M³; Zoom lahko zato ostane v vmesnem stanju, zato ga preveri.
 
 **Privzeto**: Ctrl+Alt+Escape
 
 #### Pomočnik za dvignjene roke {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Med shodom M³ spremlja Zoomov seznam udeležencev in išče dvignjene roke. Ko nekdo dvigne roko, te M³ z obvestilom opozori, da lahko tega udeleženca z enim klikom povabiš, naj si vklopi mikrofon, in ko neha govoriti, ga z drugim klikom znova utišaš ter spustiš njegovo roko. Gumb za Zoom na orodni vrstici prikazuje dvignjene roke z enakimi gumbi. Vsako dejanje se izvede v vrstici tega udeleženca v Zoomu, po njegovem natančnem imenu; če imata dva udeleženca enako ime, se M³ ne dotakne nobenega.
 
@@ -564,6 +564,27 @@ Med shodom M³ spremlja Zoomov seznam udeležencev in išče dvignjene roke. Ko 
 Zoom označuje dvignjene roke v svojem jeziku, zato se mora M³ najprej naučiti, kako: ko je vaš shod odprt v Zoomu, klikni »Nauči se, kako Zoom označuje dvignjene roke«. M³ dvigne tvojo roko, prebere, kako jo Zoom označi na seznamu udeležencev in kateri meni jo spusti, nato pa jo spusti. Ta korak ponudi tudi nastavitveni pomočnik.
 
 **Privzeto**: `false`
+
+#### Postavitev oken {#zoom-meeting-manager-window-layout}
+
+<!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
+
+M³ lahko okno Zoom shoda in svoje glavno okno postavi na tvojih zaslonih, kamor želiš. Pomočnik za nastavitev te v dveh korakih vpraša, kam, gumb **Izberi postavitev** tukaj pa ju kadar koli znova odpre:
+
+1. Na zemljevidu svojih zaslonov, razporejenih tako, kot so, izberi zaslon za Zoom shod. Zaslon, ki ga zapolnjuje multimedijsko okno, ni nikoli na voljo. Če zaslon za Zoom ni tisti, na katerem je M³, izberi, ali je Zoom na njem sam ali si ga deli z M³ (M³ se potem tudi premakne tja).
+2. Na risbi tega zaslona v njegovi resnični obliki povleci ločilnik, da zaslon razdeliš med M³ in Zoom. Ločilnik se zaskoči pri običajnih razmerjih (polovica, tretjina, četrtina in tako naprej); da ga vlečeš prosto, drži tipko `Alt`. Ločilnik nikoli ne naredi okna manjšega od njegove najmanjše velikosti: Zoom potrebuje več prostora, medtem ko je njegov seznam udeležencev odprt. Na pokončnem zaslonu sta okni ena nad drugim.
+
+Takoj ko se shod odpre, M³ odpre Zoomov seznam udeležencev, če si to želel, nato pa obe okni postavi na njuno mesto. Od takrat drži Zoom tam, kamor spada: ko Zoom sam od sebe premakne svoje okno ali mu spremeni velikost, po deljenju zaslona ali ko se njegov seznam udeležencev odpre ali zapre, ga M³ vrne na mesto. Če Zoom premakneš ali mu spremeniš velikost sam, ga M³ pusti tam, kamor si ga postavil, do naslednjega shoda. Vsakič ko M³ sam od sebe premakne Zoom, te o tem obvesti obvestilo z dvema gumboma za primer, da bi to motilo: **Pusti Zoom pri miru** to ustavi do ponovnega zagona M³, **Izklopi** pa izklopi postavitev oken, dokler je tukaj znova ne vklopiš. Ko priključiš ali odstraniš zaslone, M³ znova razporedi okna; če zaslona za Zoom ni več, si Zoom deli zaslon z M³ in M³ te o tem obvesti.
+
+Medtem ko Zoom deli multimedijsko okno, skrije svoje okno shoda, skupaj s seznamom udeležencev. Ko je vklopljena možnost **Prikaži seznam udeležencev med deljenjem**, M³ takrat odpre Zoomov seznam udeležencev v ločenem oknu, na mestu Zooma, da še naprej vidiš, kdo dviguje roko za komentar. Če ga zapreš, ostane zaprt do naslednjega deljenja; Zoom ga sam zapre, ko se deljenje konča, in njegovo okno shoda se vrne na mesto.
+
+Ko je v Zoomu nastavitev **Meeting window view** nastavljena na **Dual window** (v starejših različicah Zooma **Use dual monitors**), Zoom odpre drugo okno (ki prikazuje deljeni zaslon ali govornika). M³ ga prikaže čez cel zaslon na zaslonu multimedijskega okna, za multimedijskim oknom: skrij multimedijsko okno, da ga vidiš, na primer zato, da vidiš udeležence.
+
+Ko je vklopljena možnost **Pripni ju z Windowsom**, M³ obe okni pripne drugo ob drugo z Windowsovim lastnim pripenjanjem, kot če bi ju povlekel do robov zaslona, tako da vlečenje meje med njima spremeni velikost obeh. Za to M³ vsako okno za trenutek prikaže v ospredju.
+
+Gumb **Razporedi okna** v Zoomovem pojavnem oknu kadar koli vse vrne na mesto. Postavitev oken je shranjena za vsak računalnik posebej, saj je odvisna od njegovih zaslonov.
+
+**Privzeto**: izklopljeno
 
 ### Združevanje s programom OBS Studio {#settings-guide-obs-integration}
 

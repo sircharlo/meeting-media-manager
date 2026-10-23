@@ -4,7 +4,9 @@ import type {
   ZoomCommandResult,
   ZoomCommandType,
   ZoomDiagnosis,
+  ZoomFailureSnapshot,
   ZoomKnownTitles,
+  ZoomLayoutTargets,
   ZoomMeetingState,
 } from 'src/types';
 
@@ -74,17 +76,25 @@ export const getZoomTitlesFromSettings = (): ZoomTitles => {
 // --- Runs: telling the user, and letting them stop it ------------------------
 
 // Zoom actions that only read (no mouse, no focus): they never show the
-// "M³ is operating Zoom" overlay. Everything else may move the mouse (hover-
-// only buttons, menus, bringing Zoom's toolbar back) or the focus.
+// "M³ is operating Zoom" overlay. Everything else presses Zoom's controls,
+// which brings Zoom forward for a moment, and may, as a last resort when
+// Zoom ignores the quieter ways, move the mouse.
 const SILENT_COMMANDS = new Set<ZoomCommandType>([
   'participants',
   'ping',
   'raised-hands',
+  // Presses one share toolbar button while M³'s media is being shared: the
+  // overlay would cover M³ just then.
+  'share-participants',
+  'window-layout',
 ]);
 
+// Placing windows moves no mouse and takes no focus, unless Zoom and M³ are
+// snapped with Windows' own snapping, which types Win+Left/Right for real.
 const isSilentCommand = (command: ZoomCommand) =>
   SILENT_COMMANDS.has(command.type) ||
-  (command.type === 'meeting' && !command.reveal);
+  (command.type === 'meeting' && !command.reveal) ||
+  (command.type === 'place-windows' && !command.snap);
 
 /** What the overlay says about a single Zoom action, by its type. */
 const COMMAND_STEP_KEYS: Partial<Record<ZoomCommandType, string>> = {
@@ -97,6 +107,7 @@ const COMMAND_STEP_KEYS: Partial<Record<ZoomCommandType, string>> = {
   'lower-participant-hand': 'zoom-run-lower-hand',
   meeting: 'zoom-self-test-step-meeting',
   'mute-all': 'zoom-self-test-step-mute-all-unlocked',
+  'place-windows': 'zoom-run-arrange-windows',
   'set-mic': 'zoom-run-host-mic',
   'set-participant-mic': 'zoom-run-participant-mic',
   'set-video': 'zoom-run-host-video',
@@ -245,6 +256,31 @@ const leaveFailureBreadcrumb = async (
   }
 };
 
+/** A Zoom action that failed, with what Zoom showed then. */
+export interface ZoomActionFailure {
+  action: ZoomCommandType;
+  error?: string;
+  snapshot?: ZoomFailureSnapshot;
+}
+
+// The latest failed actions, for the startup check to report along with its
+// own results, rather than leaving them to the breadcrumbs alone, which later
+// ones push out.
+const MAX_KEPT_FAILURES = 20;
+const actionFailures: ZoomActionFailure[] = [];
+
+const keepFailure = (action: ZoomCommandType, result: ZoomCommandResult) => {
+  actionFailures.push({
+    action,
+    error: result.error,
+    snapshot: result.snapshot,
+  });
+  if (actionFailures.length > MAX_KEPT_FAILURES) actionFailures.shift();
+};
+
+/** The Zoom actions that failed since the last call, oldest first. */
+export const takeZoomActionFailures = () => actionFailures.splice(0);
+
 const sendCommand = async (
   command: ZoomCommand,
 ): Promise<ZoomCommandResult> => {
@@ -256,6 +292,7 @@ const sendCommand = async (
     rememberLearnedTitles(result.learned);
     if (!result.ok) {
       log(`Zoom action failed: ${command.type}`, 'zoom', 'warn', result);
+      keepFailure(command.type, result);
       void leaveFailureBreadcrumb(command.type, result);
     }
     return result;
@@ -325,9 +362,9 @@ const updateChecklist = (state: ZoomChecklistState) => {
 };
 
 /**
- * The Zoom meeting's state. With `reveal`, Zoom's auto-hidden toolbar is
- * brought back (moving the mouse over the meeting) so the audio and video
- * states can be read; without it, nothing on screen changes.
+ * The Zoom meeting's state. With `reveal`, the meeting window is brought back
+ * from Zoom's mini view so the audio and video states can be read; without
+ * it, nothing on screen changes.
  */
 export const getZoomMeetingState = async (
   reveal = false,
@@ -350,6 +387,24 @@ let noticedZoomVersion: null | string = null;
 let noticedVideoTitle: null | string = null;
 
 /**
+ * Whether Zoom's buttons no longer read as M³ learned them: the camera
+ * button reads as neither of its learned names (after a change of Zoom's
+ * language, or a Zoom update). False when that can't be told, e.g. in
+ * Zoom's mini view.
+ */
+export const zoomNamesChanged = (meeting: null | ZoomMeetingState) => {
+  const settings = getSettings();
+  const videoTitle = meeting?.videoTitle;
+  return (
+    !!videoTitle &&
+    !!settings?.zoomVideoOnTitle &&
+    !!settings.zoomVideoOffTitle &&
+    videoTitle !== settings.zoomVideoOnTitle &&
+    videoTitle !== settings.zoomVideoOffTitle
+  );
+};
+
+/**
  * Zoom was updated since the learned names last passed a check, or its
  * buttons no longer read as learned (its language was changed, say): worth
  * checking everything again before the meeting, which the startup check
@@ -369,15 +424,10 @@ const noticeZoomChanges = (meeting: null | ZoomMeetingState) => {
     noticedZoomVersion = zoomVersion;
     reason = 'version';
   }
-  const { videoTitle } = meeting;
-  const { zoomVideoOffTitle, zoomVideoOnTitle } = settings;
+  const videoTitle = meeting.videoTitle ?? null;
   if (
     !reason &&
-    videoTitle &&
-    zoomVideoOnTitle &&
-    zoomVideoOffTitle &&
-    videoTitle !== zoomVideoOnTitle &&
-    videoTitle !== zoomVideoOffTitle &&
+    zoomNamesChanged(meeting) &&
     noticedVideoTitle !== videoTitle
   ) {
     noticedVideoTitle = videoTitle;
@@ -714,6 +764,9 @@ export const runWhileHoldingZoomAutomations = async <T>(
   }
 };
 
+/** Whether a check of the Zoom Meeting Manager is using Zoom right now. */
+export const isZoomCheckInProgress = () => !!zoomCheckInProgress;
+
 /**
  * Whether the automations may act now: once any check in progress is done,
  * unless a failed check paused them.
@@ -785,22 +838,29 @@ export const runZoomMeetingSequence = (
   ]);
 
 /** Leaves computer audio, turns off the host video, and lets everyone unmute
- * again, asking them to. */
+ * again, asking them to unless that's turned off: Zoom unmutes straight away
+ * whoever agreed beforehand to be unmuted by the host. */
 export const runZoomPostMeetingSequence = (
   titles: ZoomTitles = getZoomTitlesFromSettings(),
-) =>
-  runSequence(
+  askAllToUnmute = getSettings()?.zoomMeetingManagerPostMeetingAskToUnmute ??
+    true,
+) => {
+  const steps: [string, () => Promise<ZoomCommandResult>][] = [
+    ['leave-audio', leaveZoomAudio],
+    ['video-off', () => setZoomHostVideo(false, titles)],
+    // Zoom only offers "allow participants to unmute themselves" in the
+    // mute-everyone dialog, so muting everyone is how it gets turned back on.
+    ['mute-all', () => muteAllZoomParticipants(true)],
+  ];
+  if (askAllToUnmute) {
+    steps.push(['ask-all-to-unmute', askAllZoomParticipantsToUnmute]);
+  }
+  return runSequence(
     'Zoom before/after-meeting settings',
     'zoom-run-post-meeting-sequence',
-    [
-      ['leave-audio', leaveZoomAudio],
-      ['video-off', () => setZoomHostVideo(false, titles)],
-      // Zoom only offers "allow participants to unmute themselves" in the
-      // mute-everyone dialog, so muting everyone is how it gets turned back on.
-      ['mute-all', () => muteAllZoomParticipants(true)],
-      ['ask-all-to-unmute', askAllZoomParticipantsToUnmute],
-    ],
+    steps,
   );
+};
 
 /**
  * Applies the in-meeting Zoom settings, if enabled.
@@ -1005,6 +1065,52 @@ export const automateZoomMediaSharing = async (start: boolean) => {
     if (mediaShareStarting === starting) mediaShareStarting = null;
   }
 };
+
+// --- Window layout ---------------------------------------------------------
+
+/**
+ * Where Zoom's meeting windows are, and whether the user is moving one
+ * (only reads: nothing on screen changes). Null if the helper couldn't
+ * tell.
+ */
+export const getZoomWindowLayout = async () => {
+  const result = await runCommand({ type: 'window-layout' });
+  return result.ok ? (result.layout ?? null) : null;
+};
+
+/**
+ * Puts Zoom's meeting window (and M³'s main window, unless `zoomOnly`, and
+ * Zoom's second window, with `withSecond`) where the layout's targets say;
+ * with `participantsOnly`, only Zoom's participants list, at Zoom's spot
+ * (while sharing hides the meeting). Resolves to where each one ended up,
+ * or null if that failed (no meeting window, say).
+ */
+export const placeZoomWindows = async (
+  targets: ZoomLayoutTargets,
+  { participantsOnly = false, withSecond = false, zoomOnly = false } = {},
+) => {
+  const result = await runCommand(
+    participantsOnly
+      ? { participants: targets.zoom, type: 'place-windows' }
+      : {
+          m3: zoomOnly ? undefined : targets.m3,
+          m3Handle: zoomOnly ? undefined : targets.m3Handle,
+          second: withSecond ? targets.second : undefined,
+          snap: zoomOnly ? null : targets.snap,
+          type: 'place-windows',
+          zoom: targets.zoom,
+        },
+  );
+  return result.ok ? (result.placed ?? null) : null;
+};
+
+/**
+ * While sharing, opens Zoom's participants list in a window of its own
+ * (Zoom hides its meeting window, list included). Resolves to whether it
+ * shows.
+ */
+export const openZoomParticipantsWhileSharing = async () =>
+  (await runCommand({ type: 'share-participants' })).ok;
 
 // --- Setup assistant -------------------------------------------------------
 

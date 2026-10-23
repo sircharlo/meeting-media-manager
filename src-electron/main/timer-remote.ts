@@ -70,6 +70,8 @@ const PAGE_HTML = `<!doctype html>
 
 const PAGE_CSS = `
 html, body { height: 100%; margin: 0; }
+/* The classes below set display, which would otherwise beat the hidden attribute. */
+[hidden] { display: none !important; }
 body { background: #000; color: #fff; font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-user-select: none; user-select: none; overflow: hidden; }
 .display { align-items: center; display: flex; flex-direction: column; gap: 2vh; height: 100%; justify-content: center; position: relative; transition: background-color 700ms ease, color 700ms ease; }
 .label { font-size: clamp(1rem, 4vw, 3rem); font-weight: 600; letter-spacing: 0.04em; max-width: 94vw; opacity: 0.85; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }

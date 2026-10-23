@@ -183,6 +183,7 @@ import {
 import DOMPurify from 'dompurify';
 import { useQuasar } from 'quasar';
 import { MEDIA_STOP_FADE_DURATION_SECONDS } from 'src/constants/media';
+import { createAudioOutputRecovery } from 'src/helpers/audio-output-recovery';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   getJwIconFromKeyword,
@@ -229,6 +230,10 @@ $q.iconMapFn = mmmIconMapFn;
 // itself is garbage-collected) so handleMediaError can tell that apart from
 // a genuine mid-playback failure.
 const elementsBeingCleanedUp = new WeakSet<HTMLMediaElement>();
+
+// Resumes playback when the audio output fails mid-playback (see
+// handleMediaError).
+const audioOutputRecovery = createAudioOutputRecovery();
 
 /**
  * Robustly cleans up a media element to prevent renderer crashes.
@@ -743,6 +748,28 @@ const handleMediaError = (layer: 1 | 2) => {
   // it must not be treated as end-of-media either.
   if (!layerRef.value.url) return;
 
+  // The audio output failed, not the file (MMM-V2-3MH): the media playing
+  // now is loaded again and carries on where it was (see playMedia).
+  const recovery =
+    element === currentMediaElement.value
+      ? audioOutputRecovery.recover(element)
+      : null;
+  if (recovery) {
+    errorCatcher(new Error('Media audio output failed: playback resumed'), {
+      contexts: {
+        fn: {
+          ...recovery,
+          layer,
+          name: 'handleMediaError',
+          url: layerRef.value.url,
+        },
+      },
+      fingerprint: ['media-audio-output-recovered'],
+      level: 'warning',
+    });
+    return;
+  }
+
   const errorMessage = element.error?.message || 'Media playback error'; // NOSONAR: '' means no message
   errorCatcher(new Error(errorMessage), {
     contexts: {
@@ -892,11 +919,16 @@ const playMedia = () => {
       }
     };
 
-    currentMediaElement.value.currentTime = customMin.value;
+    // Loaded again after its audio output failed: where it was, not from
+    // the start.
+    const resumeAt = audioOutputRecovery.takeResumeTime(
+      currentMediaElement.value,
+    );
+    currentMediaElement.value.currentTime = resumeAt ?? customMin.value;
     if (playbackRateData.value) {
       currentMediaElement.value.playbackRate = playbackRateData.value;
     }
-    if (slideshowAudioElement.value) {
+    if (slideshowAudioElement.value && resumeAt === null) {
       slideshowAudioElement.value.currentTime = 0;
     }
     playMediaElement();

@@ -14,7 +14,10 @@
     />
 
     <DialogCongregationSwitcher />
-    <DialogZoomSetupAssistant v-model="zoomSetupAssistantOpen" />
+    <DialogZoomSetupAssistant
+      v-model="zoomSetupAssistantOpen"
+      :start-step="zoomSetupAssistantStep"
+    />
     <DialogZoomAutomationOverlay />
     <DialogFeatureNudge />
 
@@ -160,6 +163,7 @@ import {
   startHandAlertDisplaySync,
   syncZoomHandAlertWatcher,
 } from 'src/helpers/zoom-hand-alert';
+import { syncZoomLayoutWatcher } from 'src/helpers/zoom-layout';
 import {
   scheduleZoomStartupCheck,
   watchZoomChanges,
@@ -347,9 +351,14 @@ const getMacosFolderPermissionTargets = () => {
 const macosPermissionPromptOpen = ref(false);
 
 // Opened from Settings, the Zoom popup, or by turning the Zoom Meeting
-// Manager on (see the openZoomSetupAssistant settings actions).
+// Manager on (see the openZoomSetupAssistant settings actions); a feature
+// suggestion opens it at its window layout step.
 const zoomSetupAssistantOpen = ref(false);
-useEventListener(globalThis, 'openZoomSetupAssistant', () => {
+const zoomSetupAssistantStep = ref<'layout' | undefined>();
+useEventListener(globalThis, 'openZoomSetupAssistant', (event: Event) => {
+  const { detail } = event as CustomEvent<undefined | { step?: string }>;
+  zoomSetupAssistantStep.value =
+    detail?.step === 'layout' ? 'layout' : undefined;
   zoomSetupAssistantOpen.value = true;
 });
 const macosPermissionPromptTarget = ref<MacosFolderPermissionTarget | null>(
@@ -1794,6 +1803,18 @@ watchImmediate(
   () => {
     startHandAlertDisplaySync();
     syncZoomHandAlertWatcher();
+  },
+);
+
+// Keep Zoom's meeting window (and M³'s) where the window layout says.
+watchImmediate(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.zoomMeetingManagerEnable,
+    appSettings.zoomLayout.enabled,
+  ],
+  () => {
+    syncZoomLayoutWatcher();
   },
 );
 

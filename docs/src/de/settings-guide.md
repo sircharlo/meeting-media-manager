@@ -549,13 +549,13 @@ Der Zoom Meeting Manager (Beta, nur Windows) bedient die Zoom-Desktop-App rund u
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom bietet keine richtige Automatisierungsschnittstelle, daher steuert M³ die Zoom-App über ihre Barrierefreiheitsschnittstelle, die fast alles ohne Maus erledigen kann (die Teilnehmerliste, ihre Menüs, das Freigabefenster). Einige wenige Aktionen müssen trotzdem kurz die Maus bewegen oder den Fensterfokus wechseln, zum Beispiel um die automatisch ausgeblendete Symbolleiste von Zoom wieder einzublenden. In diesen Fällen überdeckt M³ sein eigenes Fenster mit dem Hinweis "M³ bedient Zoom", der angibt, was gerade geschieht, und eine Schaltfläche **Diese Automatisierung abbrechen** enthält. Derselbe Hinweis erscheint auch während der Prüfungen der Einrichtungshilfe und beim Selbsttest. Ein globales Tastenkürzel (Standard: `Ctrl+Alt+Escape`), das nur während einer laufenden Automatisierung aktiv ist, bricht diese von überall aus ab, selbst wenn Zoom den Fokus hat. Ein Abbruch stoppt M³ sofort; Zoom kann dabei auf halbem Weg stehen bleiben, überprüfen Sie es daher.
+Zoom bietet keine richtige Automatisierungsschnittstelle, daher steuert M³ die Zoom-App über ihre Barrierefreiheitsschnittstelle, die ohne Mausbewegung auskommt, selbst wenn Zoom seine Symbolleiste ausblendet. Zoom holt sein Fenster trotzdem kurz in den Vordergrund, wenn M³ seine Schaltflächen betätigt, und die Maus bewegt sich nur als letzter Ausweg, falls Zoom auf keinen anderen Weg reagiert. Immer wenn M³ Zoom bedient, überdeckt es sein eigenes Fenster mit dem Hinweis "M³ bedient Zoom", der angibt, was gerade geschieht, und eine Schaltfläche **Diese Automatisierung abbrechen** enthält. Derselbe Hinweis erscheint auch während der Prüfungen der Einrichtungshilfe und beim Selbsttest. Ein globales Tastenkürzel (Standard: `Ctrl+Alt+Escape`), das nur während einer laufenden Automatisierung aktiv ist, bricht diese von überall aus ab, selbst wenn Zoom den Fokus hat. Ein Abbruch stoppt M³ sofort; Zoom kann dabei auf halbem Weg stehen bleiben, überprüfen Sie es daher.
 
 **Standard**: `Ctrl+Alt+Escape`
 
 #### Helfer für erhobene Hände {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Während einer Zusammenkunft achtet M³ in der Teilnehmerliste von Zoom auf erhobene Hände. Wenn jemand die Hand hebt, können Sie über eine Benachrichtigung in M³ mit einem Klick für diesen Teilnehmer **die Stummschaltung aufheben** und ihn, sobald er fertig gesprochen hat, mit einem weiteren Klick **wieder stummschalten und seine Hand senken**. Die Zoom-Schaltfläche auf der Aktionsinsel listet die erhobenen Hände mit denselben Schaltflächen auf. Jede Aktion wirkt anhand des genauen Namens auf die Zeile genau dieses Teilnehmers in Zoom; haben zwei Teilnehmer denselben Namen, lässt M³ beide unberührt.
 
@@ -564,6 +564,27 @@ Ist der [Zusammenkunfts-Timer](#meeting-timer) aktiviert, erscheint für den Vor
 Zoom kennzeichnet erhobene Hände in der jeweils eingestellten Sprache, deshalb muss M³ zuerst lernen, wie das aussieht: Öffnen Sie Ihre Zusammenkunft in Zoom und klicken Sie auf **Lernen, wie Zoom erhobene Hände kennzeichnet**. M³ hebt Ihre eigene Hand, liest aus, wie Zoom sie in der Teilnehmerliste kennzeichnet und mit welchem Menüeintrag sie gesenkt wird, und senkt sie dann wieder. Auch der Einrichtungsassistent bietet diesen Schritt an.
 
 **Standard**: `false`
+
+#### Fensteranordnung {#zoom-meeting-manager-window-layout}
+
+<!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
+
+M³ kann das Zoom-Meetingfenster und sein eigenes Hauptfenster dort auf Ihren Bildschirmen platzieren, wo Sie sie haben möchten. Der Einrichtungsassistent fragt in zwei Schritten, wo, und die Schaltfläche **Anordnung wählen** hier öffnet sie jederzeit erneut:
+
+1. Wählen Sie auf einer Karte Ihrer Bildschirme, so wie sie angeordnet sind, den Bildschirm für das Zoom-Meeting aus. Der Bildschirm, den das Medienfenster ausfüllt, steht nie zur Auswahl. Ist der Bildschirm für Zoom nicht der, auf dem M³ ist, wählen Sie, ob Zoom ihn für sich allein hat oder sich mit M³ teilt (M³ wechselt dann ebenfalls dorthin).
+2. Ziehen Sie auf einer Zeichnung dieses Bildschirms in seiner tatsächlichen Form den Trenner, um ihn zwischen M³ und Zoom aufzuteilen. Er rastet bei den üblichen Anteilen ein (die Hälfte, ein Drittel, ein Viertel usw.); halten Sie `Alt` gedrückt, um ihn frei zu ziehen. Der Trenner macht kein Fenster kleiner als dessen Mindestgröße: Zoom braucht mehr Platz, solange seine Teilnehmerliste geöffnet ist. Auf einem Bildschirm im Hochformat werden die beiden Fenster übereinander angeordnet.
+
+Sobald das Zoom-Meeting geöffnet ist, öffnet M³ auf Wunsch die Teilnehmerliste von Zoom und setzt dann beide Fenster an ihren Platz. Von da an hält es Zoom an seinem Platz: Wenn Zoom sein Fenster von selbst verschiebt oder seine Größe ändert, nach einer Bildschirmfreigabe oder wenn die Teilnehmerliste geöffnet oder geschlossen wird, setzt M³ es zurück. Wenn Sie Zoom selbst verschieben oder seine Größe ändern, lässt M³ es bis zur nächsten Zusammenkunft dort, wo Sie es hingesetzt haben. Jedes Mal, wenn M³ Zoom von sich aus verschiebt, weist eine Benachrichtigung darauf hin, mit zwei Schaltflächen, falls das stört: **Zoom in Ruhe lassen** beendet es, bis M³ neu gestartet wird, und **Ausschalten** schaltet die Fensteranordnung aus, bis Sie sie hier wieder einschalten. Wenn Bildschirme angeschlossen oder entfernt werden, ordnet M³ die Fenster erneut an; ist der Bildschirm für Zoom nicht mehr da, teilt sich Zoom den Bildschirm von M³, und M³ weist Sie darauf hin.
+
+Während Zoom das Medienfenster freigibt, blendet es sein eigenes Meetingfenster aus, einschließlich der Teilnehmerliste. Ist **Teilnehmerliste während der Freigabe anzeigen** eingeschaltet, öffnet M³ dann die Teilnehmerliste von Zoom in einem eigenen Fenster an der Stelle von Zoom, damit Sie weiterhin sehen, wer sich zu einem Kommentar meldet. Wenn Sie sie schließen, bleibt sie bis zur nächsten Freigabe geschlossen; Zoom schließt sie von selbst, wenn die Freigabe endet, und sein Meetingfenster kehrt an seinen Platz zurück.
+
+Ist in Zoom **Meeting window view** auf **Dual window** gestellt (**Use dual monitors** in älteren Zoom-Versionen), öffnet Zoom ein zweites Fenster (mit dem freigegebenen Bildschirm oder dem Sprecher). M³ zeigt es im Vollbild auf dem Bildschirm des Medienfensters an, hinter dem Medienfenster: Blenden Sie das Medienfenster aus, um es zu sehen, zum Beispiel um die Teilnehmer zu sehen.
+
+Ist **Mit Windows andocken** eingeschaltet, dockt M³ die beiden Fenster mit der Andock-Funktion von Windows nebeneinander an, als hätten Sie sie an die Bildschirmränder gezogen, sodass beim Ziehen des Randes zwischen ihnen beide ihre Größe ändern. Dazu holt M³ jedes Fenster kurz in den Vordergrund.
+
+Die Schaltfläche **Fenster anordnen** im Zoom-Popup setzt jederzeit alles wieder an seinen Platz. Die Fensteranordnung wird pro Computer gespeichert, da sie von dessen Bildschirmen abhängt.
+
+**Standard**: aus
 
 ### OBS Studio-Integration {#settings-guide-obs-integration}
 

@@ -245,7 +245,7 @@ const CAPTURE_CEILING = { height: 2160, width: 3840 };
 
 /**
  * Legacy (`mandatory`) size bounds for a Chromium `chromeMediaSource: 'tab'`
- * capture of the media window, sized to the viewport that will display the
+ * capture of the media window, sized to the box that will display the
  * captured frames (CSS px, scaled by `devicePixelRatio`).
  *
  * Two things ride on these bounds:
@@ -253,9 +253,9 @@ const CAPTURE_CEILING = { height: 2160, width: 3840 };
  * 1. Cost. Chromium scales the source down to fit inside the max, aspect
  *    preserved, at the source (GPU-side, before frames cross to the
  *    renderer), and delivers it as-is when it already fits. Capping at the
- *    displaying viewport means a 1080p/4K media window isn't captured,
- *    transferred and redrawn at full size for a preview that can never show
- *    more than that viewport.
+ *    displaying box means a 1080p/4K media window isn't captured and
+ *    transferred at full size for a preview that can never show more than
+ *    that box.
  * 2. Shape. For 'tab' sources specifically, Chromium's legacy-constraint
  *    parser (media_stream_constraints_util_video_content.cc) defaults to a
  *    FIXED_RESOLUTION policy whose fixed frame is the largest width and the
@@ -265,30 +265,22 @@ const CAPTURE_CEILING = { height: 2160, width: 3840 };
  *    considers explicit bounds when every min is > 1, and only picks the
  *    size-following ANY_WITHIN_LIMIT policy when they are neither a fixed
  *    size (min == max) nor a fixed aspect ratio (its check: floor(100*w/h)
- *    equal for min and max). The 2x2 min and the square-viewport nudge
- *    below keep both conditions true for any viewport.
+ *    equal for min and max). The 2x2 min and the square-box nudge below
+ *    keep both conditions true for any box.
  */
 export const getCaptureSizeBounds = (
-  viewportWidth: number,
-  viewportHeight: number,
+  width: number,
+  height: number,
   devicePixelRatio = 1,
 ): CaptureSizeBounds => {
   const dpr = devicePixelRatio > 0 ? devicePixelRatio : 1;
   const scale = (value: number, floor: number, ceiling: number) =>
     Math.min(ceiling, Math.max(floor, Math.round((value || 0) * dpr)));
 
-  let maxWidth = scale(
-    viewportWidth,
-    CAPTURE_FLOOR.width,
-    CAPTURE_CEILING.width,
-  );
-  const maxHeight = scale(
-    viewportHeight,
-    CAPTURE_FLOOR.height,
-    CAPTURE_CEILING.height,
-  );
+  let maxWidth = scale(width, CAPTURE_FLOOR.width, CAPTURE_CEILING.width);
+  const maxHeight = scale(height, CAPTURE_FLOOR.height, CAPTURE_CEILING.height);
 
-  // A (near-)square viewport would give the max the same approximate aspect
+  // A (near-)square box would give the max the same approximate aspect
   // as the 2x2 min, which Chromium reads as a fixed-aspect request (and
   // letterboxes accordingly). Widen it by 1% - a cap, so harmless.
   if (Math.floor((100 * maxWidth) / maxHeight) === 100) {

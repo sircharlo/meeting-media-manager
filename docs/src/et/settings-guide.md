@@ -549,13 +549,13 @@ Zoomi koosolekuhaldur (beeta, ainult Windows) juhib sinu eest iga koosoleku eel 
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom ei paku korralikku automatiseerimisliidest, seega juhib M³ Zoomi rakendust selle hõlbustusliidese kaudu, mis töötab peaaegu kõige puhul ilma hiireta (osalejate loend, selle menüüd, jagamisaken). Mõned toimingud võivad siiski hetkeks hiirt või fookuses olevat akent liigutada, näiteks et Zoomi automaatselt peidetud tööriistariba tagasi tuua. Kui see juhtub, katab M³ oma akna teatega „M³ juhib Zoomi“, mis nimetab käimasoleva toimingu, ja nupuga **Tühista see automatiseeritud toiming**. Sama teadet näidatakse ka seadistusabilise kontrollide ja enesetesti ajal. Üldine kiirklahv (vaikimisi `Ctrl+Alt+Escape`), mis on aktiivne ainult automatiseeritud toimingu ajal, tühistab selle ükskõik kust, isegi kui fookus on Zoomil. Tühistamine peatab M³ kohe; Zoom võib seejärel jääda pooleli, seega kontrolli seda.
+Zoom ei paku korralikku automatiseerimisliidest, seega juhib M³ Zoomi rakendust selle hõlbustusliidese kaudu, mis töötab hiirt liigutamata, isegi siis, kui Zoom on oma tööriistariba peitnud. Zoom toob siiski oma akna hetkeks esiplaanile, kui M³ selle nuppe vajutab, ja hiir liigub ainult viimase abinõuna, kui Zoom ei reageeri ühelegi muule viisile. Alati, kui M³ Zoomi juhib, katab see oma akna teatega „M³ juhib Zoomi“, mis nimetab käimasoleva toimingu, ja nupuga **Tühista see automatiseeritud toiming**. Sama teadet näidatakse ka seadistusabilise kontrollide ja enesetesti ajal. Üldine kiirklahv (vaikimisi `Ctrl+Alt+Escape`), mis on aktiivne ainult automatiseeritud toimingu ajal, tühistab selle ükskõik kust, isegi kui fookus on Zoomil. Tühistamine peatab M³ kohe; Zoom võib seejärel jääda pooleli, seega kontrolli seda.
 
 **Vaikimisi**: `Ctrl+Alt+Escape`
 
 #### Tõstetud käte abiline {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Koosoleku ajal jälgib M³ Zoomi osalejate loendis tõstetud käsi. Kui keegi tõstab käe, saad M³ teate kaudu ühe klõpsuga selle osaleja **mikrofoni sisse lülitada** ja pärast tema rääkimist teise klõpsuga **ta uuesti vaigistada ja käe langetada**. Tegevussaare Zoomi nupp loetleb tõstetud käed samade nuppudega. Iga toiming läheb Zoomis selle osaleja enda reale tema täpse nime järgi; kui kahel osalejal on sama nimi, ei puutu M³ kumbagi.
 
@@ -564,6 +564,27 @@ Kui [koosoleku taimer](#meeting-timer) on sisse lülitatud, ilmub juhataja jaoks
 Zoom märgib tõstetud käsi oma keeles, seega peab M³ esmalt selgeks õppima, kuidas: kui sinu koosolek on Zoomis avatud, klõpsa **Õpi selgeks, kuidas Zoom tõstetud käsi märgib**. M³ tõstab sinu enda käe, loeb, kuidas Zoom seda osalejate loendis märgib ja milline menüükäsk selle langetab, ning langetab selle siis uuesti. Seda sammu pakub ka seadistusabiline.
 
 **Vaikimisi**: `väljas`
+
+#### Akende paigutus {#zoom-meeting-manager-window-layout}
+
+<!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
+
+M³ saab panna Zoomi koosolekuakna ja oma peaakna sinu ekraanidel sinna, kuhu soovid. Seadistusabiline küsib kahe sammuga, kuhu, ja siinne nupp **Vali paigutus** avab need igal ajal uuesti:
+
+1. Vali oma ekraanide kaardil, kus ekraanid on paigutatud nii nagu tegelikult, Zoomi koosoleku ekraan. Ekraani, mida täidab meediaaken, ei pakuta kunagi. Kui Zoomi ekraan pole see, millel on M³, vali, kas Zoom on sellel üksi või jagab seda M³-ga (siis liigub sinna ka M³).
+2. Lohista selle ekraani tegelikku kuju näitaval joonisel eraldajat, et jagada ekraan M³ ja Zoomi vahel. See kinnitub tavapärastele suhetele (pool, kolmandik, veerand ja nii edasi); vabalt lohistamiseks hoia all klahvi `Alt`. Eraldaja ei tee ühtegi akent väiksemaks kui selle väikseim suurus: Zoom vajab rohkem ruumi, kui selle osalejate loend on avatud. Püstpaigutusega ekraanil on kaks akent teineteise kohal.
+
+Kohe kui koosolek avaneb, avab M³ Zoomi osalejate loendi, kui seda palusid, ja paneb seejärel mõlemad aknad paika. Sellest hetkest hoiab see Zoomi oma kohal: kui Zoom ise oma akent liigutab või selle suurust muudab, pärast ekraani jagamist või kui osalejate loend avaneb või sulgub, paneb M³ selle tagasi. Kui liigutad Zoomi ise või muudad selle suurust, jätab M³ selle kuni järgmise koosolekuni sinna, kuhu selle panid. Iga kord, kui M³ Zoomi omal algatusel liigutab, annab teavitus sellest teada, kahe nupuga juhuks, kui see segab: **Jäta Zoom rahule** peatab selle kuni M³ taaskäivitumiseni ja **Lülita välja** lülitab akende paigutuse välja, kuni selle siin uuesti sisse lülitad. Kui ekraane ühendatakse või eemaldatakse, paigutab M³ aknad uuesti; kui Zoomi ekraani enam pole, jagab Zoom ekraani M³-ga ja M³ annab sulle sellest teada.
+
+Kui Zoom jagab meediaakent, peidab see oma koosolekuakna koos osalejate loendiga. Kui **Näita jagamise ajal osalejate loendit** on sisse lülitatud, avab M³ siis Zoomi osalejate loendi eraldi aknas Zoomi asemel, et näeksid ikka, kes tõstab kommenteerimiseks käe. Kui selle sulged, jääb see suletuks kuni järgmise jagamiseni; Zoom sulgeb selle ise, kui jagamine lõpeb, ja selle koosolekuaken tuleb tagasi oma kohale.
+
+Kui Zoomi seade **Meeting window view** on väärtusel **Dual window** (Zoomi vanemates versioonides **Use dual monitors**), avab Zoom teise akna (mis näitab jagatud ekraani või kõnelejat). M³ paneb selle täisekraanil meediaakna ekraanile, meediaakna taha: peida meediaaken, et seda näha, näiteks osalejate nägemiseks.
+
+Kui **Paiguta Windowsi abil kõrvuti** on sisse lülitatud, paigutab M³ kaks akent Windowsi enda kinnitamisfunktsiooniga kõrvuti, nagu oleksid lohistanud need ekraani servadesse, seega muudab nendevahelise piiri lohistamine mõlema suurust. Selleks toob M³ iga akna hetkeks esiplaanile.
+
+Zoomi hüpikakna nupp **Paiguta aknad** paneb igal ajal kõik tagasi paika. Akende paigutus salvestatakse iga arvuti jaoks eraldi, kuna see sõltub selle ekraanidest.
+
+**Vaikimisi**: väljas
 
 ### Koostöö OBS Studioga {#settings-guide-obs-integration}
 

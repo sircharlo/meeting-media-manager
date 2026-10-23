@@ -72,6 +72,23 @@ export const FEATURE_NUDGES: FeatureNudge[] = [
     title: 'feature-nudge-zoom-title',
   },
   {
+    acceptLabel: 'feature-nudge-set-it-up',
+    action: {
+      detail: { step: 'layout' },
+      event: 'openZoomSetupAssistant',
+      type: 'event',
+    },
+    beta: true,
+    getBody: () => 'feature-nudge-zoom-window-layout-body',
+    icon: 'mmm-window',
+    id: 'zoom-window-layout',
+    isEligible: (context) =>
+      context.platform === 'win32' &&
+      context.settings.zoomMeetingManagerEnable &&
+      !context.zoomLayoutEnabled,
+    title: 'feature-nudge-zoom-window-layout-title',
+  },
+  {
     acceptLabel: 'feature-nudge-show-me',
     action: { setting: 'enableFolderWatcher', type: 'settings' },
     getBody: () => 'feature-nudge-shared-folder-body',

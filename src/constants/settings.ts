@@ -615,6 +615,17 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomMeetingManager',
     type: 'button',
   },
+  // Kept per computer (it's about its screens), so no value of its own here:
+  // the button opens the setup assistant's window layout steps.
+  zoomMeetingManagerWindowLayout: {
+    actions: ['openZoomWindowLayout'],
+    buttonLabel: 'zoom-layout-open',
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'button',
+  },
   zoomMeetingManagerMeetingId: {
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
@@ -646,6 +657,16 @@ export const settingsDefinitions: SettingsItems = {
   },
   zoomMeetingManagerAutomatePostMeetingAudioSettings: {
     depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'toggle',
+  },
+  zoomMeetingManagerPostMeetingAskToUnmute: {
+    depends: [
+      'zoomMeetingManagerEnable',
+      'zoomMeetingManagerAutomatePostMeetingAudioSettings',
+    ],
     group: 'integrations',
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
@@ -1288,8 +1309,10 @@ export const defaultSettings: SettingsValues = {
   zoomMeetingManagerEnable: false,
   zoomMeetingManagerHandAlert: false,
   zoomMeetingManagerMeetingId: null,
+  zoomMeetingManagerPostMeetingAskToUnmute: true,
   zoomMeetingManagerSetupAssistant: null,
   zoomMeetingManagerStartupCheck: true,
+  zoomMeetingManagerWindowLayout: null,
   zoomMicOffTitle: null,
   zoomMicOnTitle: null,
   zoomMuteAllTitle: null,

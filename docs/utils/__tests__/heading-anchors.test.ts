@@ -39,4 +39,11 @@ describe('replaceHeadingAnchor', () => {
   it('adds an anchor without keeping trailing whitespace', () => {
     expect(replaceHeadingAnchor('## Titre   ', 'new')).toBe('## Titre {#new}');
   });
+
+  it.each([
+    ['a bare anchor', '{#old}'],
+    ['an anchor after a space', ' {#new}'],
+  ])('leaves no space before the anchor of %s', (_label, line) => {
+    expect(replaceHeadingAnchor(line, 'new')).toBe('{#new}');
+  });
 });

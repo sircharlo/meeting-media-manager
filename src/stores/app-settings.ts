@@ -1,8 +1,9 @@
-import type { ScreenPreferences } from 'src/types';
+import type { ScreenPreferences, ZoomLayoutPreferences } from 'src/types';
 
 import { defineStore } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { MIGRATION_REGISTRY } from 'src/migrations';
+import { DEFAULT_ZOOM_LAYOUT } from 'src/shared/zoom-layout';
 
 interface Store {
   displayCameraId: null | string;
@@ -10,6 +11,8 @@ interface Store {
   screenPreferences: ScreenPreferences;
   timerPreferences: ScreenPreferences;
   yeartextPreviewDismissed: Record<number, boolean>;
+  /** How the Zoom Meeting Manager arranges M³ and Zoom on this computer's screens. */
+  zoomLayout: ZoomLayoutPreferences;
 }
 
 export const useAppSettingsStore = defineStore('app-settings', {
@@ -61,5 +64,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
     screenPreferences: { preferredScreenNumber: 0, preferWindowed: false },
     timerPreferences: { preferredScreenNumber: 0, preferWindowed: true },
     yeartextPreviewDismissed: {},
+    zoomLayout: { ...DEFAULT_ZOOM_LAYOUT },
   }),
 });

@@ -549,13 +549,13 @@ De Zoom-vergaderbeheerder (bèta, alleen Windows) bedient de Zoom-desktopapp voo
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom biedt geen echte interface voor automatisering, dus M³ bestuurt de Zoom-app via de toegankelijkheidsinterface, die voor bijna alles zonder muis werkt (de deelnemerslijst, de menu's daarvan, het venster voor delen). Voor een paar acties moet M³ soms nog even de muis bewegen of een ander venster de focus geven, bijvoorbeeld om de automatisch verborgen werkbalk van Zoom terug te halen. Wanneer dat gebeurt, bedekt M³ zijn eigen venster met de melding "M³ bedient Zoom", waarin staat wat er gebeurt, met een knop **Deze automatisering annuleren**. Dezelfde melding verschijnt tijdens de controles van de configuratieassistent en tijdens de zelftest. Een globale sneltoets (standaard `Ctrl+Alt+Escape`), die alleen actief is terwijl een automatisering loopt, annuleert die vanaf elke plek, zelfs als Zoom de focus heeft. Annuleren stopt M³ meteen; Zoom kan dan half afgehandeld achterblijven, dus controleer Zoom even.
+Zoom biedt geen echte interface voor automatisering, dus M³ bestuurt de Zoom-app via de toegankelijkheidsinterface, die werkt zonder de muis te bewegen, ook terwijl Zoom zijn werkbalk verbergt. Zoom haalt zijn venster wel even naar voren wanneer M³ op de knoppen ervan drukt, en de muis beweegt alleen als laatste redmiddel, als Zoom op geen enkele andere manier reageert. Telkens wanneer M³ Zoom bedient, bedekt het zijn eigen venster met de melding "M³ bedient Zoom", waarin staat wat er gebeurt, met een knop **Deze automatisering annuleren**. Dezelfde melding verschijnt tijdens de controles van de configuratieassistent en tijdens de zelftest. Een globale sneltoets (standaard `Ctrl+Alt+Escape`), die alleen actief is terwijl een automatisering loopt, annuleert die vanaf elke plek, zelfs als Zoom de focus heeft. Annuleren stopt M³ meteen; Zoom kan dan half afgehandeld achterblijven, dus controleer Zoom even.
 
 **Standaard**: `Ctrl+Alt+Escape`
 
 #### Hulp bij opgestoken handen {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Tijdens een vergadering houdt M³ de deelnemerslijst van Zoom in de gaten voor opgestoken handen. Als iemand de hand opsteekt, kun je via een melding in M³ met één klik **het dempen van die deelnemer opheffen**, en als die klaar is met spreken, met nog een klik **de deelnemer weer dempen en de hand laten zakken**. De Zoom-knop op de actiebalk toont de opgestoken handen met dezelfde knoppen. Elke actie gaat naar de eigen rij van die deelnemer in Zoom, op basis van de exacte naam; als twee deelnemers dezelfde naam hebben, doet M³ bij geen van beiden iets.
 
@@ -564,6 +564,27 @@ Als de [vergadertimer](#meeting-timer) is ingeschakeld, verschijnt er voor de vo
 Zoom geeft opgestoken handen aan in zijn eigen taal, dus M³ moet eerst leren hoe: klik, terwijl je vergadering in Zoom geopend is, op **Leren hoe Zoom opgestoken handen aangeeft**. M³ steekt je eigen hand op, leest hoe Zoom die in de deelnemerslijst aangeeft en met welk menu-item de hand weer omlaag gaat, en laat de hand daarna weer zakken. De configuratieassistent biedt deze stap ook aan.
 
 **Standaard**: `false`
+
+#### Vensterindeling {#zoom-meeting-manager-window-layout}
+
+<!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
+
+M³ kan het vergadervenster van Zoom, en zijn eigen hoofdvenster, op je schermen neerzetten waar jij ze wilt. De configuratieassistent vraagt waar in twee stappen, die de knop **Indeling kiezen** hier op elk moment weer opent:
+
+1. Kies op een kaart van je schermen, zoals ze zijn geplaatst, het scherm voor de Zoom-vergadering. Het scherm dat het mediavenster vult, staat er nooit tussen. Als het scherm van Zoom niet het scherm is waarop M³ staat, kies dan of Zoom het voor zichzelf heeft of het deelt met M³ (M³ gaat dan ook daarheen).
+2. Versleep op een tekening van dat scherm in zijn echte vorm de scheidingslijn om het te verdelen tussen M³ en Zoom. Die springt naar de gebruikelijke verhoudingen (de helft, een derde, een kwart enzovoort); houd `Alt` ingedrukt om hem vrij te verslepen. De scheidingslijn maakt een venster nooit kleiner dan het kan zijn: Zoom heeft meer ruimte nodig zolang de deelnemerslijst open is. Op een staand scherm komen de twee vensters boven elkaar.
+
+Zodra de vergadering opent, opent M³ de deelnemerslijst van Zoom als je daarom hebt gevraagd, en zet daarna beide vensters op hun plek. Vanaf dan houdt het Zoom op zijn plek: als Zoom zijn venster uit zichzelf verplaatst of van grootte verandert, na schermdeling of als de deelnemerslijst opent of sluit, zet M³ het terug. Als je Zoom zelf verplaatst of van grootte verandert, laat M³ het tot de volgende vergadering waar je het neerzet. Elke keer dat M³ Zoom uit zichzelf verplaatst, laat een melding dat weten, met twee knoppen voor als dat in de weg zit: **Zoom met rust laten** stopt het tot M³ opnieuw start, en **Uitschakelen** schakelt de vensterindeling uit tot je die hier weer inschakelt. Als er schermen worden aangesloten of verwijderd, schikt M³ de vensters opnieuw; als het scherm van Zoom er niet meer is, deelt Zoom het scherm van M³ en laat M³ je dat weten.
+
+Terwijl Zoom het mediavenster deelt, verbergt het zijn eigen vergadervenster, met de deelnemerslijst erbij. Met **Deelnemerslijst tonen tijdens het delen** aan opent M³ dan de deelnemerslijst van Zoom in een eigen venster, op de plek van Zoom, zodat je blijft zien wie de hand opsteekt om commentaar te geven. Als je die sluit, blijft die dicht tot de volgende keer delen; Zoom sluit die zelf als het delen stopt, en het vergadervenster komt terug op zijn plek.
+
+Als **Meeting window view** in Zoom op **Dual window** staat (**Use dual monitors** in oudere versies van Zoom), opent Zoom een tweede venster (met het gedeelde scherm of de spreker). M³ zet het schermvullend op het scherm van het mediavenster, achter het mediavenster: verberg het mediavenster om het te tonen, bijvoorbeeld om de deelnemers te zien.
+
+Als **Uitlijnen met Windows** aan staat, lijnt M³ de twee vensters naast elkaar uit met de uitlijnfunctie van Windows zelf, alsof je ze naar de randen van het scherm hebt gesleept, zodat ze allebei van grootte veranderen als je de rand tussen ze versleept. Daarvoor haalt M³ elk venster even naar voren.
+
+De knop **Vensters schikken** in het Zoom-pop-upvenster zet op elk moment alles terug op zijn plek. De vensterindeling wordt per computer bewaard, omdat die van de schermen afhangt.
+
+**Standaard**: uit
 
 ### OBS Studio-integratie {#settings-guide-obs-integration}
 

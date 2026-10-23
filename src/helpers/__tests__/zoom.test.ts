@@ -12,6 +12,7 @@ const currentSettings = {
   zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
   zoomMeetingManagerEnable: true,
   zoomMeetingManagerMeetingId: '123 456' as null | string,
+  zoomMeetingManagerPostMeetingAskToUnmute: true,
   zoomMicOffTitle: 'Unmute' as null | string,
   zoomMicOnTitle: 'Mute' as null | string,
   zoomMuteAllTitle: null as null | string,
@@ -128,6 +129,7 @@ beforeEach(() => {
     zoomMeetingManagerAutoLaunchMeeting: false,
     zoomMeetingManagerAutomateMeetingAudioSettings: false,
     zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
+    zoomMeetingManagerPostMeetingAskToUnmute: true,
     zoomMicOffTitle: 'Unmute',
     zoomMicOnTitle: 'Mute',
     zoomVideoOffTitle: 'Start Video',
@@ -207,6 +209,38 @@ describe('Zoom meeting automation', () => {
       titles: expect.any(Object),
       type: 'mute-all',
     });
+  });
+
+  it('lets everyone unmute without asking them to, when that is turned off', async () => {
+    currentSettings.zoomMeetingManagerAutomatePostMeetingAudioSettings = true;
+    currentSettings.zoomMeetingManagerPostMeetingAskToUnmute = false;
+    const { automateZoomPostMeetingSettings } = await import('../zoom');
+
+    await automateZoomPostMeetingSettings();
+
+    expect(commandTypes()).toEqual([
+      'meeting',
+      'leave-audio',
+      'set-video',
+      'mute-all',
+    ]);
+    expect(zoomCommandMock).toHaveBeenCalledWith({
+      allowSelfUnmute: true,
+      titles: expect.any(Object),
+      type: 'mute-all',
+    });
+    expect(updateChecklistMock).not.toHaveBeenCalledWith({
+      participantsMuted: false,
+    });
+  });
+
+  it('asks everyone to unmute when told to, whatever the setting', async () => {
+    currentSettings.zoomMeetingManagerPostMeetingAskToUnmute = false;
+    const { runZoomPostMeetingSequence } = await import('../zoom');
+
+    await runZoomPostMeetingSequence(undefined, true);
+
+    expect(commandTypes()).toContain('ask-all-to-unmute');
   });
 
   it('does nothing when the matching setting is off', async () => {
@@ -781,6 +815,33 @@ describe('Zoom setup assistant', () => {
     );
   });
 
+  it('keeps the latest failed actions for the startup check to report', async () => {
+    zoomCommandMock.mockResolvedValue({
+      error: 'participants-panel-not-opened',
+      ok: false,
+      snapshot: { toolbar: ['Mute, Alt+A'] },
+    });
+    const {
+      getZoomMeetingState,
+      muteAllZoomParticipants,
+      takeZoomActionFailures,
+    } = await import('../zoom');
+
+    await muteAllZoomParticipants(false);
+
+    expect(takeZoomActionFailures()).toContainEqual({
+      action: 'mute-all',
+      error: 'participants-panel-not-opened',
+      snapshot: { toolbar: ['Mute, Alt+A'] },
+    });
+    // Taken: the next report starts afresh.
+    expect(takeZoomActionFailures()).toEqual([]);
+
+    // Only the latest ones are kept.
+    for (let i = 0; i < 25; i++) await getZoomMeetingState(); // NOSONAR: sequential - one failure each
+    expect(takeZoomActionFailures()).toHaveLength(20);
+  });
+
   it('joins computer audio for the microphone step without telling the checklist', async () => {
     const { joinZoomAudioForSetup } = await import('../zoom');
 
@@ -853,6 +914,23 @@ describe('Zoom setup assistant', () => {
     rememberZoomVersion();
     expect(currentSettings.zoomLearnedVersion).toBe('7.3.0');
   });
+
+  it.each([
+    ['Start my video', true],
+    ['Start Video', false],
+    ['Stop Video', false],
+    // Zoom's toolbar hidden: can't be told.
+    [null, false],
+  ])(
+    'tells whether the camera button reading "%s" means Zoom\'s names changed',
+    async (videoTitle, changed) => {
+      const { zoomNamesChanged } = await import('../zoom');
+
+      expect(
+        zoomNamesChanged({ found: true, sharing: false, videoTitle }),
+      ).toBe(changed);
+    },
+  );
 });
 
 describe('stopping Zoom sharing after media', () => {

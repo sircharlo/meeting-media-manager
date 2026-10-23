@@ -7,6 +7,7 @@ import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useZoomStateStore } from 'stores/zoom-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import DialogZoomSetupAssistant from '../DialogZoomSetupAssistant.vue';
@@ -64,6 +65,11 @@ vi.mock('src/helpers/zoom-self-test', async (importOriginal) => ({
 vi.mock('src/helpers/mediaPlayback', () => ({
   toggleMediaWindowVisibility: vi.fn(),
 }));
+
+const startupCheck = vi.hoisted(() => ({
+  dismissFailedZoomCheckNotice: vi.fn(),
+}));
+vi.mock('src/helpers/zoom-startup-check', () => startupCheck);
 
 installQuasarPlugin();
 installPinia({ stubActions: false });
@@ -149,6 +155,26 @@ const learnButtons = async () => {
   await click('Continue');
 };
 
+/** From the Share step: checks sharing, runs the test and finishes. */
+const testAndFinish = async () => {
+  await click('Check sharing');
+  await click('Continue'); // sharing
+  await click('Continue'); // automations
+  await click('Continue'); // window layout (left as it is)
+  await click('Run the test');
+  await click('Continue');
+  await click('Finish');
+};
+
+// Names learned in French, before Zoom's language was changed.
+const FRENCH_NAMES = {
+  zoomHandRaisedPhrase: 'Main levée',
+  zoomMicOffTitle: 'Rétablir le son',
+  zoomMicOnTitle: 'Couper le son',
+  zoomVideoOffTitle: 'Démarrer ma vidéo',
+  zoomVideoOnTitle: 'Arrêter ma vidéo',
+};
+
 beforeEach(() => {
   vi.clearAllMocks();
   vi.spyOn(globalThis.electronApi, 'startZoomHelper').mockResolvedValue({
@@ -193,6 +219,12 @@ afterEach(() => {
 });
 
 describe('DialogZoomSetupAssistant', () => {
+  it("closes a failed check's notification as it opens", async () => {
+    await mountAssistant();
+
+    expect(startupCheck.dismissFailedZoomCheckNotice).toHaveBeenCalledOnce();
+  });
+
   it('waits for the Zoom helper, and explains why it could not start', async () => {
     vi.mocked(globalThis.electronApi.startZoomHelper).mockResolvedValueOnce({
       error: 'powershell-restricted',
@@ -461,6 +493,7 @@ describe('DialogZoomSetupAssistant', () => {
     await click('Check sharing');
     await click('Continue'); // share
     await click('Continue'); // automations
+    await click('Continue'); // window layout
 
     await click('Run the test');
     await vi.waitFor(() =>
@@ -662,6 +695,7 @@ describe('DialogZoomSetupAssistant', () => {
     expect(settings().enableMusicButton).toBe(true);
 
     await click('Continue');
+    await click('Continue'); // window layout
     await click('Run the test');
     expect(zoom.runZoomSelfTest).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -727,6 +761,49 @@ describe('DialogZoomSetupAssistant', () => {
 
     expect(settings().zoomMeetingManagerAutomateMediaSharing).toBe(true);
     expect(text()).not.toContain("Zoom can't share the media window");
+  });
+
+  it("learns every name again when Zoom's names changed, then resumes the paused automations", async () => {
+    const zoomState = useZoomStateStore();
+    zoomState.pauseAutomations(CONGREGATION_ID, ['x'], true);
+    await mountAssistant(FRENCH_NAMES);
+
+    expect(text()).toContain("Zoom's language was changed or Zoom was updated");
+    await reachVideoStep();
+    // Asked again, rather than shown as done with the old names.
+    expect(isDisabled(button('Continue'))).toBe(true);
+    await learnButtons();
+    expect(settings()).toMatchObject({
+      zoomHandRaisedPhrase: 'Hand raised',
+      zoomMicOnTitle: 'Mute',
+      zoomVideoOnTitle: 'Stop Video',
+    });
+
+    await testAndFinish();
+    expect(zoomState.automationsPaused).toBe(false);
+    // Its test stands for today's check.
+    expect(zoomState.checkedCongregations).toContain(CONGREGATION_ID);
+  });
+
+  it('keeps the names it knows, and the automations paused, unless its test passed', async () => {
+    const zoomState = useZoomStateStore();
+    zoomState.pauseAutomations(CONGREGATION_ID, ['x']);
+    zoom.runZoomSelfTest.mockResolvedValue([
+      { id: 'video-off', status: 'failed' },
+    ]);
+    await mountAssistant(FRENCH_NAMES);
+
+    expect(text()).not.toContain("Zoom's language was changed");
+    await reachVideoStep();
+    // Already learned: shown as done.
+    expect(isDisabled(button('Continue'))).toBe(false);
+    await click('Continue'); // camera
+    await click('Continue'); // microphone
+    await click('Continue'); // raised hands
+    expect(settings().zoomVideoOnTitle).toBe('Arrêter ma vidéo');
+
+    await testAndFinish();
+    expect(zoomState.automationsPaused).toBe(true);
   });
 
   it('lets optional steps be skipped', async () => {

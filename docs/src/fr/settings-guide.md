@@ -549,13 +549,13 @@ Le gestionnaire de réunions Zoom (bêta, Windows uniquement) pilote l'applicati
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom n'offre pas de véritable interface d'automatisation ; M³ pilote donc l'application Zoom par l'intermédiaire de son interface d'accessibilité, qui permet de presque tout faire sans la souris (la liste des participants, ses menus, la fenêtre de partage). Certaines actions peuvent toutefois nécessiter de déplacer la souris ou de changer la fenêtre au premier plan pendant un instant, par exemple pour faire réapparaître la barre d'outils de Zoom lorsqu'elle s'est masquée automatiquement. Chaque fois que cela se produit, M³ recouvre sa propre fenêtre d'un message « M³ pilote Zoom » qui indique l'action en cours, accompagné d'un bouton **Annuler cette automatisation**. Le même message s'affiche pendant les vérifications de l'assistant de configuration et pendant l'autotest. Un raccourci clavier global (par défaut `Ctrl+Alt+Escape`), actif uniquement pendant l'exécution d'une automatisation, permet de l'annuler depuis n'importe quelle application, même lorsque Zoom est au premier plan. L'annulation arrête immédiatement M³ ; Zoom risque alors d'être resté dans un état intermédiaire, pensez donc à le vérifier.
+Zoom n'offre pas de véritable interface d'automatisation ; M³ pilote donc l'application Zoom par l'intermédiaire de son interface d'accessibilité, qui fonctionne sans déplacer la souris, même lorsque Zoom masque sa barre d'outils. Zoom fait tout de même passer sa fenêtre au premier plan pendant un instant lorsque M³ appuie sur ses boutons, et la souris ne bouge qu'en dernier recours, si Zoom ne réagit à aucun autre moyen. Chaque fois que M³ pilote Zoom, il recouvre sa propre fenêtre d'un message « M³ pilote Zoom » qui indique l'action en cours, accompagné d'un bouton **Annuler cette automatisation**. Le même message s'affiche pendant les vérifications de l'assistant de configuration et pendant l'autotest. Un raccourci clavier global (par défaut `Ctrl+Alt+Escape`), actif uniquement pendant l'exécution d'une automatisation, permet de l'annuler depuis n'importe quelle application, même lorsque Zoom est au premier plan. L'annulation arrête immédiatement M³ ; Zoom risque alors d'être resté dans un état intermédiaire, pensez donc à le vérifier.
 
 **Par défaut** : `Ctrl+Alt+Escape`
 
 #### Gestion des mains levées {#zoom-meeting-manager-hand-alert}
 
-<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+<!-- **Settings**: `zoomMeetingManagerHandAlert` -->
 
 Pendant une réunion, M³ surveille la liste des participants de Zoom pour repérer les mains levées. Lorsqu'une personne lève la main, une notification dans M³ vous permet de **réactiver le micro** de ce participant en un clic, puis, une fois son intervention terminée, de **couper de nouveau son micro et baisser sa main** d'un autre clic. Le bouton Zoom de l'îlot d'actions affiche la liste des mains levées, avec les mêmes boutons. Chaque action s'applique à la ligne de ce participant dans Zoom, identifiée par son nom exact ; si deux participants portent le même nom, M³ ne touche à aucun des deux.
 
@@ -564,6 +564,27 @@ Si le [minuteur de réunion](#meeting-timer) est activé, une grande main accomp
 Zoom signale les mains levées dans sa propre langue ; M³ doit donc d'abord apprendre comment il le fait : lorsque votre réunion est ouverte dans Zoom, cliquez sur **Apprendre comment Zoom signale les mains levées**. M³ lève votre propre main, repère comment Zoom la signale dans la liste des participants et quelle entrée de menu permet de la baisser, puis la baisse. L'assistant de configuration propose également cette étape.
 
 **Par défaut** : `faux`
+
+#### Disposition des fenêtres {#zoom-meeting-manager-window-layout}
+
+<!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
+
+M³ peut placer la fenêtre de réunion de Zoom, ainsi que sa propre fenêtre principale, où vous le souhaitez sur vos écrans. L'assistant de configuration vous demande où en deux étapes, que le bouton **Choisir la disposition** ici rouvre à tout moment :
+
+1. Sur une carte de vos écrans tels qu'ils sont disposés, choisissez l'écran de la réunion Zoom. L'écran qu'occupe la fenêtre multimédia n'est jamais proposé. Si l'écran de Zoom n'est pas celui où se trouve M³, choisissez si Zoom l'a pour lui seul ou le partage avec M³ (M³ s'y déplace alors aussi).
+2. Sur un dessin de cet écran à sa forme réelle, faites glisser le séparateur pour le partager entre M³ et Zoom. Il s'aligne sur les proportions habituelles (une moitié, un tiers, un quart, etc.) ; maintenez `Alt` enfoncée pour le faire glisser librement. Le séparateur ne rend jamais une fenêtre plus petite que sa taille minimale : Zoom a besoin de plus de place quand sa liste des participants est ouverte. Sur un écran en mode portrait, les deux fenêtres se placent l'une au-dessus de l'autre.
+
+Dès l'ouverture de la réunion, M³ ouvre la liste des participants de Zoom si vous le lui avez demandé, puis met les deux fenêtres en place. À partir de là, il garde Zoom à sa place : quand Zoom déplace ou redimensionne sa fenêtre tout seul, après un partage d'écran ou quand sa liste des participants s'ouvre ou se ferme, M³ le remet en place. Si vous déplacez ou redimensionnez Zoom vous-même, M³ le laisse là où vous l'avez mis jusqu'à la prochaine réunion. Chaque fois que M³ déplace Zoom de lui-même, une notification le signale, avec deux boutons au cas où cela gênerait : **Laisser Zoom tranquille** l'arrête jusqu'au redémarrage de M³, et **Désactiver** désactive la disposition des fenêtres jusqu'à ce que vous la réactiviez ici. Quand des écrans sont branchés ou débranchés, M³ dispose de nouveau les fenêtres ; si l'écran de Zoom n'est plus là, Zoom partage l'écran de M³ et M³ vous le signale.
+
+Pendant que Zoom partage la fenêtre multimédia, il masque sa propre fenêtre de réunion, liste des participants comprise. Avec **Afficher la liste des participants pendant le partage** activé, M³ ouvre alors la liste des participants de Zoom dans une fenêtre à part, à la place de Zoom, pour que vous voyiez toujours qui lève la main pour commenter. Si vous la fermez, elle reste fermée jusqu'au prochain partage ; Zoom la ferme de lui-même quand le partage s'arrête, et sa fenêtre de réunion revient en place.
+
+Quand l'option **Meeting window view** de Zoom est réglée sur **Dual window** (**Use dual monitors** dans les anciennes versions de Zoom), Zoom ouvre une deuxième fenêtre (qui montre l'écran partagé ou l'orateur). M³ la met en plein écran sur l'écran de la fenêtre multimédia, derrière la fenêtre multimédia : masquez la fenêtre multimédia pour l'afficher, par exemple pour voir les participants.
+
+Quand **Les ancrer avec Windows** est activé, M³ ancre les deux fenêtres côte à côte avec l'ancrage de Windows lui-même, comme si vous les aviez fait glisser vers les bords de l'écran : faire glisser la bordure entre elles redimensionne donc les deux. Pour cela, M³ met chaque fenêtre au premier plan un court instant.
+
+Le bouton **Disposer les fenêtres** dans la fenêtre contextuelle de Zoom remet tout en place à tout moment. La disposition des fenêtres est enregistrée pour chaque ordinateur, puisqu'elle dépend de ses écrans.
+
+**Par défaut** : désactivé
 
 ### Intégration OBS Studio {#settings-guide-obs-integration}
 

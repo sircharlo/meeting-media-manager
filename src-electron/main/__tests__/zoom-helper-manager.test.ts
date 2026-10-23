@@ -3,10 +3,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   appPath: 'C:/m3/resources/app.asar',
   existsSync: vi.fn<(path: string) => boolean>(),
+  helperOptions: null as null | { cacheDir?: string },
   isDev: false,
   logToWindow: vi.fn(),
   request: vi.fn(async () => ({ ok: true })),
   start: vi.fn(async () => ({ ok: true })),
+  userData: 'C:/m3/user-data',
 }));
 
 vi.mock('node:fs', () => ({ existsSync: mocks.existsSync }));
@@ -14,7 +16,7 @@ vi.mock('node:fs', () => ({ existsSync: mocks.existsSync }));
 vi.mock('electron', () => ({
   app: {
     getAppPath: vi.fn(() => mocks.appPath),
-    getPath: vi.fn(() => 'C:/m3/user-data'),
+    getPath: vi.fn(() => mocks.userData),
   },
 }));
 
@@ -38,6 +40,9 @@ vi.mock('src-electron/main/zoom-helper-process', () => ({
     request = mocks.request;
     start = mocks.start;
     stop = vi.fn();
+    constructor(options: { cacheDir?: string }) {
+      mocks.helperOptions = options;
+    }
   },
 }));
 
@@ -46,7 +51,9 @@ describe('Zoom helper manager', () => {
     vi.clearAllMocks();
     vi.resetModules();
     mocks.appPath = 'C:/m3/resources/app.asar';
+    mocks.helperOptions = null;
     mocks.isDev = false;
+    mocks.userData = 'C:/m3/user-data';
     // Only Electron sets it: where packaged builds keep resources/zoom-helper.
     Object.defineProperty(process, 'resourcesPath', {
       configurable: true,
@@ -84,6 +91,22 @@ describe('Zoom helper manager', () => {
       ok: true,
     });
     expect(mocks.request).toHaveBeenCalledWith({ type: 'meeting' });
+  });
+
+  it.each([
+    ['in M³’s own folder', 'C:/m3/user-data', 'C:/m3/user-data/zoom-helper'],
+    [
+      'in its default folder when M³’s is too deep for Windows PowerShell',
+      `C:/portable/${'folder/'.repeat(25)}Meeting Media Manager - User Data`,
+      undefined,
+    ],
+  ])('keeps its cache %s', async (_where, userData, cacheDir) => {
+    mocks.existsSync.mockReturnValue(true);
+    mocks.userData = userData;
+    const { startZoomHelper } = await import('../zoom-helper-manager');
+
+    await startZoomHelper();
+    expect(mocks.helperOptions?.cacheDir).toBe(cacheDir);
   });
 
   it('finds the helper in the repository under `yarn dev`', async () => {

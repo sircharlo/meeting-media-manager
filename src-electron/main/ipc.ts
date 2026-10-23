@@ -14,6 +14,7 @@ import type {
   SettingsValues,
   UnzipOptions,
   UrlVariables,
+  ZoomLayoutScreens,
   ZoomTestParticipantsRequest,
 } from 'src/types';
 
@@ -23,6 +24,7 @@ import {
   ipcMain,
   type IpcMainEvent,
   type IpcMainInvokeEvent,
+  screen,
   shell,
   systemPreferences,
 } from 'electron';
@@ -135,6 +137,7 @@ import {
   stopZoomHelper,
 } from 'src-electron/main/zoom-helper-manager';
 import { isZoomCommand } from 'src-electron/main/zoom-helper-process';
+import { getZoomLayoutTargets } from 'src-electron/main/zoom-layout';
 import { handleZoomTestParticipants } from 'src-electron/main/zoom-test-participants';
 
 const { openExternal } = shell;
@@ -513,6 +516,19 @@ handleIpcInvoke('getMediaWindowCaptureSourceId', (e) => {
   if (!media || media.isDestroyed()) return null;
   return media.webContents.getMediaSourceId(e.sender);
 });
+// The media window's size in device pixels: the most a capture of it should
+// ask for. A capture asking for more makes Chromium render the media window
+// itself at up to twice its size for as long as the capture runs.
+handleIpcInvoke('getMediaWindowCaptureSize', () => {
+  const media = mediaWindowInfo.mediaWindow;
+  if (!media || media.isDestroyed()) return null;
+  const [width = 0, height = 0] = media.getContentSize();
+  const { scaleFactor } = screen.getDisplayMatching(media.getBounds());
+  return {
+    height: Math.round(height * scaleFactor),
+    width: Math.round(width * scaleFactor),
+  };
+});
 handleIpcInvoke('closeSqliteConnection', async (_e, dbPath: string) =>
   closeConnection(dbPath),
 );
@@ -621,6 +637,14 @@ handleIpcInvoke('zoomCommand', async (_e, command: unknown) => {
   }
   return runZoomHelperCommand(command);
 });
+
+handleIpcInvoke(
+  'getZoomLayoutTargets',
+  (_e, preferences: unknown, screens?: ZoomLayoutScreens) =>
+    preferences && typeof preferences === 'object'
+      ? getZoomLayoutTargets(preferences, screens)
+      : null,
+);
 
 handleIpcInvoke(
   'zoomTestParticipants',

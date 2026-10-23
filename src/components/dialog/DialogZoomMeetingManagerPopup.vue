@@ -51,29 +51,43 @@
           {{ t('zoom-check-running') }}
         </div>
       </div>
+      <!-- Its explanation is long: the button goes under it, not beside it. -->
       <div
         v-else-if="automationsPaused"
-        class="action-popup__banner action-popup__banner--negative"
+        class="action-popup__banner action-popup__banner--negative zoom-popup__banner--stacked"
       >
         <q-icon color="negative" name="mmm-error" size="18px" />
         <div class="col text-caption">
           <div class="text-weight-medium">
             {{ t('zoom-automations-paused') }}
           </div>
-          <div>
+          <div v-if="relearnNeeded">{{ t('zoom-check-names-changed') }}</div>
+          <div v-else>
             {{
               t('zoom-automations-paused-failed', { problems: pausedProblems })
             }}
           </div>
+          <q-btn
+            v-if="relearnNeeded"
+            class="zoom-popup__banner-action"
+            color="primary"
+            dense
+            flat
+            :label="t('zoom-setup-open')"
+            no-caps
+            @click="openSetupAssistant"
+          />
+          <q-btn
+            v-else
+            class="zoom-popup__banner-action"
+            color="primary"
+            dense
+            flat
+            :label="t('zoom-check-test-again')"
+            no-caps
+            @click="testAgain"
+          />
         </div>
-        <q-btn
-          color="primary"
-          dense
-          flat
-          :label="t('zoom-check-test-again')"
-          no-caps
-          @click="testAgain"
-        />
       </div>
     </template>
 
@@ -128,6 +142,25 @@
         </div>
       </div>
     </template>
+
+    <!-- Puts the windows back where the setup assistant's layout says -->
+    <div v-if="zoomLayout.enabled" class="q-px-md q-pt-sm">
+      <q-btn
+        class="full-width"
+        color="primary"
+        :disable="!meetingFound || arrangingWindows"
+        icon="mmm-window"
+        :label="t('zoom-layout-arrange')"
+        :loading="arrangingWindows"
+        no-caps
+        outline
+        @click="arrangeWindows"
+      >
+        <q-tooltip :delay="500">{{
+          t('zoom-layout-arrange-explain')
+        }}</q-tooltip>
+      </q-btn>
+    </div>
 
     <template v-if="currentSettings?.zoomMeetingManagerHandAlert">
       <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
@@ -283,6 +316,7 @@ import type { ZoomMeetingState } from 'src/types';
 import ZoomSelfTestPanel from 'components/dialog/ZoomSelfTestPanel.vue';
 import ActionPopup from 'components/ui/ActionPopup.vue';
 import { storeToRefs } from 'pinia';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   getZoomMeetingState,
   isZoomSetupNeeded,
@@ -291,7 +325,9 @@ import {
   runZoomPostMeetingSequence,
   unmuteZoomParticipant,
 } from 'src/helpers/zoom';
+import { arrangeZoomWindows } from 'src/helpers/zoom-layout';
 import { runZoomStartupCheck } from 'src/helpers/zoom-startup-check';
+import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useHandAlertStore } from 'stores/hand-alert';
 import { useZoomStateStore } from 'stores/zoom-state';
@@ -321,7 +357,8 @@ const currentState = useCurrentStateStore();
 const { currentSettings, zoomHelperLogs } = storeToRefs(currentState);
 
 const zoomState = useZoomStateStore();
-const { automationsPaused, checkRunning, pause } = storeToRefs(zoomState);
+const { automationsPaused, checkRunning, pause, relearnNeeded } =
+  storeToRefs(zoomState);
 
 const handAlert = useHandAlertStore();
 const { raisedHands } = storeToRefs(handAlert);
@@ -351,6 +388,25 @@ const pausedProblems = computed(() =>
 
 const testAgain = () => {
   void runZoomStartupCheck({ manual: true });
+};
+
+const zoomLayout = useAppSettingsStore().zoomLayout;
+const arrangingWindows = ref(false);
+
+const arrangeWindows = async () => {
+  arrangingWindows.value = true;
+  try {
+    if (!(await arrangeZoomWindows())) {
+      createTemporaryNotification({
+        group: 'zoom-layout',
+        icon: 'mmm-warning',
+        message: t('zoom-layout-arrange-failed'),
+        type: 'warning',
+      });
+    }
+  } finally {
+    arrangingWindows.value = false;
+  }
 };
 
 let mainWindowPollingInterval: ReturnType<typeof setInterval> | undefined;
@@ -454,5 +510,15 @@ onBeforeUnmount(() => {
 .zoom-helper-logs__line {
   overflow-wrap: anywhere;
   padding: 0.1em 0;
+}
+
+/* A banner whose button goes under its text: the icon stays by the first line. */
+.zoom-popup__banner--stacked {
+  align-items: flex-start;
+}
+
+/* Under the banner's text, its label lined up with it. */
+.zoom-popup__banner-action {
+  margin: 4px 0 0 -6px;
 }
 </style>
