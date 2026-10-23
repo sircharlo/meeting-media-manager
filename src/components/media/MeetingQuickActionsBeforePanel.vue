@@ -144,7 +144,7 @@ const confirmDismissBefore = () => {
 
 const music = useMusicStore();
 const { musicPlaying, musicState, timeUntilMusicStops } = storeToRefs(music);
-const { formatClockTime, playMusic, stopMusic } = music;
+const { formatClockTime, requestMusicStart, stopMusic } = music;
 
 const recording = useRecordingStore();
 const { canStartRecording, canStopRecording, isRecording, togglePending } =
@@ -203,7 +203,7 @@ const onMusicClick = () => {
   if (musicPlaying.value) {
     stopMusic(true);
   } else {
-    void playMusic('quick-action');
+    requestMusicStart('quick-action');
   }
 };
 </script>

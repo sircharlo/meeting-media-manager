@@ -2,7 +2,10 @@ import type { DateInfo } from 'src/types';
 
 import { createPinia, setActivePinia } from 'pinia';
 import { defaultSettings } from 'src/constants/settings';
-import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
+import {
+  getMeetingStartToday,
+  getTodaysMeetingStartDateTime,
+} from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import {
@@ -15,6 +18,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as DateHelpers from '../date';
 
 import {
+  getMusicStartMeetingConflict,
   getTodaysChecklistMode,
   getTodaysScheduledMeetingEndDateTime,
   predictLastSongEndDateTime,
@@ -25,6 +29,7 @@ vi.mock('src/helpers/date', async (importOriginal) => {
   const actual = await importOriginal<typeof DateHelpers>();
   return {
     ...actual,
+    getMeetingStartToday: vi.fn(),
     getTodaysMeetingStartDateTime: vi.fn(),
   };
 });
@@ -234,6 +239,59 @@ describe('predictLastSongEndDateTime with several visible items', () => {
     expect(predict(meeting(), { currentPosition: 90 })).toBe(
       NOW + (120 + 200) * 1000,
     );
+  });
+});
+
+describe('getMusicStartMeetingConflict', () => {
+  const start = new Date(2026, 7, 21, 19, 0, 0, 0);
+  const STOP_BUFFER_SECONDS = 60;
+  const minutesIn = (minutes: number) =>
+    new Date(start.getTime() + minutes * 60 * 1000);
+  const conflictAt = (minutes: number, lastSongEndedAt: null | number = null) =>
+    getMusicStartMeetingConflict(
+      minutesIn(minutes),
+      STOP_BUFFER_SECONDS,
+      lastSongEndedAt,
+    );
+
+  beforeEach(() => {
+    vi.mocked(getMeetingStartToday).mockReturnValue(start);
+  });
+
+  afterEach(() => {
+    vi.mocked(getMeetingStartToday).mockReset();
+  });
+
+  it('never stands in the way on a day without a meeting', () => {
+    vi.mocked(getMeetingStartToday).mockReturnValue(null);
+
+    expect(conflictAt(30)).toBeNull();
+  });
+
+  it('lets music start before it is due to stop for the meeting', () => {
+    expect(conflictAt(-1.5)).toBeNull();
+  });
+
+  it('refuses in the last moments before the meeting, when music stops anyway', () => {
+    expect(conflictAt(-1)).toBe('final-approach');
+    expect(conflictAt(-0.1)).toBe('final-approach');
+  });
+
+  it('asks during the meeting until a minute after its last song ended', () => {
+    const songEndedAt = minutesIn(100).getTime();
+
+    expect(conflictAt(0)).toBe('meeting');
+    expect(conflictAt(100.9, songEndedAt)).toBe('meeting');
+    expect(conflictAt(101, songEndedAt)).toBeNull();
+  });
+
+  it('ignores a last song that ended before the meeting (a test run)', () => {
+    expect(conflictAt(30, minutesIn(-20).getTime())).toBe('meeting');
+  });
+
+  it('without a last song, asks until half an hour after the scheduled end', () => {
+    expect(conflictAt(105 + 29)).toBe('meeting');
+    expect(conflictAt(105 + 30)).toBeNull();
   });
 });
 

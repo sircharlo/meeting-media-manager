@@ -26,6 +26,8 @@ import {
 import { getDemoSongLibrary } from 'src/helpers/demo-mode';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
+import { getMusicStartMeetingConflict } from 'src/helpers/meeting-quick-actions';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   autoLaunchZoomMeetingIfNeeded,
   automateZoomMeetingSettings,
@@ -36,6 +38,7 @@ import { sleep } from 'src/utils/general';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useDemoModeStore } from 'stores/demo-mode';
+import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
 import { computed, ref, watch } from 'vue';
 
 export interface BackgroundMusicAction {
@@ -89,6 +92,7 @@ export const useMusicStore = defineStore('music', () => {
   const t = i18n.global.t;
   const currentState = useCurrentStateStore();
   const demoMode = useDemoModeStore();
+  const quickActions = useMeetingQuickActionsStore();
   const {
     currentCongregation,
     currentSettings,
@@ -171,6 +175,9 @@ export const useMusicStore = defineStore('music', () => {
   const musicAlreadyStoppedManually = ref(false);
 
   const musicState = ref<MusicState>('');
+  // A start the user asked for, waiting for them to confirm it (its reason,
+  // for the logs) since the meeting may not be over yet.
+  const pendingMusicStart = ref<null | string>(null);
 
   const musicPlayingTitle = ref('');
   const songList = ref<SongItem[]>([]);
@@ -260,6 +267,16 @@ export const useMusicStore = defineStore('music', () => {
       timeUntil <= AUTO_START_WINDOW_HOURS * 3600
     );
   });
+
+  // What keeps playMusic() from starting anything at all.
+  const musicStartBlocked = computed(
+    () =>
+      !currentSettings.value?.enableMusicButton ||
+      musicPlaying.value ||
+      mediaIsActivelyPlaying.value ||
+      musicState.value === 'music.starting' ||
+      musicState.value === 'music.stopping',
+  );
 
   const shouldAutoStop = computed(() => {
     if (!musicPlaying.value && musicState.value !== 'music.starting')
@@ -447,13 +464,7 @@ export const useMusicStore = defineStore('music', () => {
         musicPlaying: musicPlaying.value,
       });
 
-      if (
-        !currentSettings.value?.enableMusicButton ||
-        musicPlaying.value ||
-        mediaIsActivelyPlaying.value ||
-        musicState.value === 'music.starting' ||
-        musicState.value === 'music.stopping'
-      ) {
+      if (musicStartBlocked.value) {
         logMusicStartTiming('playback conditions not met', 'debug', {
           enableMusicButton: currentSettings.value?.enableMusicButton,
           mediaIsActivelyPlaying: mediaIsActivelyPlaying.value,
@@ -658,6 +669,98 @@ export const useMusicStore = defineStore('music', () => {
     }
   }
 
+  /**
+   * Starts background music for the user (a button, the shortcut, a
+   * notification) - straight away, unless that would cut into today's
+   * meeting, since starting music also runs the before/after-meeting Zoom
+   * settings. In the last moments before the meeting music is stopped anyway,
+   * so the user is only told why it doesn't start; from the meeting's start
+   * until a minute after its last song, they're asked to confirm first.
+   */
+  const requestMusicStart = (reason: string) => {
+    if (musicStartBlocked.value) {
+      log('Music start request ignored', 'backgroundMusic', 'debug', {
+        musicState: musicState.value,
+        reason,
+      });
+      return;
+    }
+    const conflict = getMusicStartMeetingConflict(
+      getClockDate(),
+      MEETING_STOP_BUFFER_SECONDS.value,
+      quickActions.getTodaysLastSongEndedAt(),
+    );
+    if (conflict === 'final-approach') {
+      log(
+        'Music start refused: meeting about to start',
+        'backgroundMusic',
+        'info',
+        {
+          reason,
+        },
+      );
+      createTemporaryNotification({
+        caption: t('background-music-meeting-about-to-start-explain'),
+        group: 'background-music-start-guard',
+        message: t('background-music-meeting-about-to-start'),
+        type: 'warning',
+      });
+      return;
+    }
+    if (conflict === 'meeting') {
+      log('Music start waiting for confirmation', 'backgroundMusic', 'info', {
+        reason,
+      });
+      pendingMusicStart.value = reason;
+      return;
+    }
+    void playMusic(reason);
+  };
+
+  const confirmPendingMusicStart = () => {
+    const reason = pendingMusicStart.value;
+    pendingMusicStart.value = null;
+    if (reason !== null) void playMusic(reason);
+  };
+
+  const cancelPendingMusicStart = () => {
+    pendingMusicStart.value = null;
+  };
+
+  let dismissMusicAfterMeetingPrompt: (() => void) | undefined;
+
+  /**
+   * Once today's last song has ended, offers to start background music when
+   * the concluding prayer is over - unless the after-meeting panel, which has
+   * a button for that, is showing.
+   */
+  const offerMusicAfterLastSong = () => {
+    if (!isMeetingToday.value || !isMeetingStartTimeInPast.value) return;
+    if (musicStartBlocked.value) return;
+    if (
+      currentSettings.value?.enableMeetingQuickActions &&
+      !quickActions.dismissedAfterPanel
+    ) {
+      return;
+    }
+    dismissMusicAfterMeetingPrompt?.();
+    dismissMusicAfterMeetingPrompt = createTemporaryNotification({
+      actions: [
+        {
+          color: 'white',
+          handler: () => requestMusicStart('after-meeting-prompt'),
+          label: t('quick-actions-play-music'),
+        },
+        { color: 'white', icon: 'close', round: true },
+      ],
+      group: 'background-music-after-meeting-prompt',
+      icon: 'mmm-music-note',
+      message: t('background-music-after-meeting-prompt'),
+      timeout: 0,
+      type: 'info',
+    });
+  };
+
   async function handleMusicEnded() {
     if (
       !musicPlayer.value ||
@@ -766,8 +869,12 @@ export const useMusicStore = defineStore('music', () => {
       if (musicPlaying.value) {
         stopMusic();
       } else {
-        log('Music started manually', 'backgroundMusic', 'info');
-        void playMusic('manual-shortcut');
+        log('Music start requested manually', 'backgroundMusic', 'info');
+        requestMusicStart('manual-shortcut');
+        // The shortcut works from any app: bring M³ forward to ask.
+        if (pendingMusicStart.value !== null) {
+          globalThis.electronApi.focusMainWindow();
+        }
       }
     } catch (error) {
       errorCatcher(error);
@@ -797,7 +904,7 @@ export const useMusicStore = defineStore('music', () => {
       if (action?.action === 'stop') {
         stopMusic(true, action.fadeSeconds ?? MEDIA_STOP_FADE_DURATION_SECONDS);
       } else if (action?.action === 'start') {
-        void playMusic(action.reason ?? 'external');
+        requestMusicStart(action.reason ?? 'external');
       }
     },
   );
@@ -828,6 +935,8 @@ export const useMusicStore = defineStore('music', () => {
     () => musicPlaying.value && duration.value > 0,
     () => {
       musicState.value = 'music.playing';
+      dismissMusicAfterMeetingPrompt?.();
+      dismissMusicAfterMeetingPrompt = undefined;
       void autoLaunchZoomMeetingIfNeeded(timeUntilMeeting.value);
       void automateZoomPostMeetingSettings();
     },
@@ -925,6 +1034,8 @@ export const useMusicStore = defineStore('music', () => {
 
   return {
     autoStartDateTime,
+    cancelPendingMusicStart,
+    confirmPendingMusicStart,
     currentSongRemainingTime,
     displayStatusText,
     duration,
@@ -938,7 +1049,10 @@ export const useMusicStore = defineStore('music', () => {
     musicPlayingTitle,
     musicState,
     musicStopDateTime,
+    offerMusicAfterLastSong,
+    pendingMusicStart,
     playMusic,
+    requestMusicStart,
     shouldShowMeetingCountdown,
     songList,
     stopMusic,

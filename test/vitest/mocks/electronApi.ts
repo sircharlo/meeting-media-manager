@@ -68,6 +68,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   fileUrlToPath,
+  focusMainWindow: () => undefined,
   focusMediaWindow: function () {
     throw new Error('Function not implemented.');
   },

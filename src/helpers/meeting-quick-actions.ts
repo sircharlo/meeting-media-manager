@@ -1,6 +1,9 @@
 import type { DateInfo, MediaItem, SettingsValues } from 'src/types';
 
-import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
+import {
+  getMeetingStartToday,
+  getTodaysMeetingStartDateTime,
+} from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { MEETING_SCHEDULED_DURATION_MINUTES } from 'src/helpers/meeting-parts';
 import { getVisibleMeetingItems } from 'src/utils/media';
@@ -171,6 +174,44 @@ export const getTodaysScheduledMeetingEndDateTime = (
     });
     return null;
   }
+};
+
+// Background music started this long after the last song ended is taken to
+// be meant: the concluding prayer is over by then.
+const MUSIC_AFTER_LAST_SONG_GRACE_MS = 60 * 1000;
+// With no last song seen ending, the meeting may still be on until this long
+// after its scheduled end.
+const MEETING_OVERRUN_MARGIN_MS = 30 * 60 * 1000;
+
+/**
+ * Whether background music starting at `now` would cut into today's meeting:
+ * 'final-approach' in the last seconds before it starts, when music is
+ * stopped anyway; 'meeting' from its start until a minute after its last song
+ * ended (or, if that wasn't seen, until a while after its scheduled end);
+ * null otherwise. A last song that ended before the meeting started (a test
+ * run) doesn't count.
+ */
+export const getMusicStartMeetingConflict = (
+  now: Date,
+  stopBufferSeconds: number,
+  lastSongEndedAt: null | number,
+): 'final-approach' | 'meeting' | null => {
+  const start = getMeetingStartToday(now)?.getTime();
+  if (!start) return null;
+  const time = now.getTime();
+  if (time < start - stopBufferSeconds * 1000) return null;
+  if (time < start) return 'final-approach';
+  const songEnded =
+    lastSongEndedAt !== null && lastSongEndedAt >= start
+      ? lastSongEndedAt
+      : null;
+  const until =
+    songEnded === null
+      ? start +
+        MEETING_SCHEDULED_DURATION_MINUTES * 60 * 1000 +
+        MEETING_OVERRUN_MARGIN_MS
+      : songEnded + MUSIC_AFTER_LAST_SONG_GRACE_MS;
+  return time < until ? 'meeting' : null;
 };
 
 /**
