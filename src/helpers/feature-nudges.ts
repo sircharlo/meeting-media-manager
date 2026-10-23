@@ -12,6 +12,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { getRendererPlatform } from 'src/helpers/fs';
 import { MEETING_SCHEDULED_DURATION_MINUTES } from 'src/helpers/meeting-parts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { useAppSettingsStore } from 'stores/app-settings';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
@@ -91,6 +92,7 @@ export const getFeatureNudgeContext = async (
     platform: getRendererPlatform(),
     screenCount: screens.length,
     settings,
+    zoomLayoutEnabled: useAppSettingsStore().zoomLayout.enabled,
   };
 };
 

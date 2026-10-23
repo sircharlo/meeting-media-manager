@@ -18,7 +18,7 @@
             {{
               t('zoom-setup-step-count', {
                 current: stepIndex + 1,
-                total: STEPS.length,
+                total: shownSteps.length,
               })
             }}
           </div>
@@ -30,7 +30,7 @@
       <div class="zoom-setup__progress q-mx-md">
         <div
           class="zoom-setup__progress-fill"
-          :style="{ width: `${((stepIndex + 1) / STEPS.length) * 100}%` }"
+          :style="{ width: `${((stepIndex + 1) / shownSteps.length) * 100}%` }"
         />
       </div>
 
@@ -456,6 +456,38 @@
             </template>
           </div>
 
+          <!-- Where Zoom's meeting window goes (and M³'s) -->
+          <div v-else-if="step === 'layout'" key="layout">
+            <div class="text-h6 q-mb-sm">
+              {{ t('zoom-setup-layout-title') }}
+            </div>
+            <p>{{ t('zoom-setup-layout-intro') }}</p>
+            <LayoutScreens :screens="layoutScreens" />
+          </div>
+
+          <!-- How M³ and Zoom share Zoom's screen -->
+          <div v-else-if="step === 'layout-split'" key="layout-split">
+            <div class="text-h6 q-mb-sm">
+              {{
+                t(
+                  layoutAlone
+                    ? 'zoom-setup-layout-alone-title'
+                    : 'zoom-setup-layout-split-title',
+                )
+              }}
+            </div>
+            <p>
+              {{
+                t(
+                  layoutAlone
+                    ? 'zoom-setup-layout-alone-intro'
+                    : 'zoom-setup-layout-split-intro',
+                )
+              }}
+            </p>
+            <LayoutSplit :screens="layoutScreens" />
+          </div>
+
           <!-- A host-only run of the real actions -->
           <div v-else-if="step === 'test'" key="test">
             <div class="text-h6 q-mb-sm">{{ t('zoom-setup-test-title') }}</div>
@@ -561,11 +593,11 @@
           @click="goNext"
         />
         <q-btn
-          v-if="step === 'done'"
+          v-if="step === 'done' || lastLayoutStep"
           color="primary"
           :label="t('zoom-setup-finish')"
           unelevated
-          @click="finish"
+          @click="lastLayoutStep ? (open = false) : finish()"
         />
         <q-btn
           v-else
@@ -581,12 +613,14 @@
 </template>
 
 <script setup lang="ts">
-import type { ZoomDiagnosis } from 'src/types';
+import type { Display, ZoomDiagnosis } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ZoomSelfTestSteps from 'components/dialog/ZoomSelfTestSteps.vue';
 import ButtonStep from 'components/dialog/ZoomSetupButtonStep.vue';
 import EntryPicker from 'components/dialog/ZoomSetupEntryPicker.vue';
+import LayoutScreens from 'components/dialog/ZoomSetupLayoutScreens.vue';
+import LayoutSplit from 'components/dialog/ZoomSetupLayoutSplit.vue';
 import StatusRow from 'components/dialog/ZoomSetupStatusRow.vue';
 import { storeToRefs } from 'pinia';
 import {
@@ -594,6 +628,7 @@ import {
   ZOOM_DIAGNOSIS_CHECKS,
   ZOOM_SETUP_ASSISTANT_DIALOG_ID,
 } from 'src/constants/zoom';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   diagnoseZoom,
@@ -615,6 +650,7 @@ import {
   tryZoomStopShareEntry,
   withoutZoomFeedback,
 } from 'src/helpers/zoom';
+import { findZoomScreen, suggestZoomLayout } from 'src/helpers/zoom-layout';
 import {
   runZoomSelfTest,
   type ZoomSelfTestStep,
@@ -622,6 +658,7 @@ import {
 import { dismissFailedZoomCheckNotice } from 'src/helpers/zoom-startup-check';
 import { isSettingInEffect } from 'src/utils/settings';
 import { parseZoomMeetingId } from 'src/utils/zoom';
+import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useZoomStateStore } from 'stores/zoom-state';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
@@ -638,6 +675,8 @@ const STEPS = [
   'hand',
   'share',
   'automations',
+  'layout',
+  'layout-split',
   'test',
   'done',
 ] as const;
@@ -677,6 +716,11 @@ const USER_TEST_STEPS = [
 
 const MEETING_POLL_MS = 2000;
 
+const props = defineProps<{
+  /** Opens at this step rather than the welcome (from a feature suggestion). */
+  startStep?: 'layout';
+}>();
+
 const open = defineModel<boolean>({ default: false });
 
 const { t } = useI18n();
@@ -690,7 +734,25 @@ const step = ref<Step>('welcome');
 // learned (Zoom's language was changed, or Zoom was updated): every name is
 // learned again, and the old ones stay until a new one replaces them.
 const relearning = ref(false);
-const stepIndex = computed(() => STEPS.indexOf(step.value));
+
+const zoomLayout = useAppSettingsStore().zoomLayout;
+
+// Opened for the window layout alone (from Settings, or a feature
+// suggestion): just its two steps.
+const LAYOUT_STEPS = ['layout', 'layout-split'] as const;
+const layoutOnly = computed(() => props.startStep === 'layout');
+
+// How M³ and Zoom share a screen only matters if M³ arranges them.
+const isStepShown = (candidate: Step) =>
+  candidate !== 'layout-split' || zoomLayout.enabled;
+
+const shownSteps = computed(() =>
+  (layoutOnly.value ? LAYOUT_STEPS : STEPS).filter(isStepShown),
+);
+const stepIndex = computed(() => shownSteps.value.indexOf(step.value));
+const lastLayoutStep = computed(
+  () => layoutOnly.value && stepIndex.value === shownSteps.value.length - 1,
+);
 
 // --- Welcome: the helper ---------------------------------------------------
 
@@ -1117,6 +1179,42 @@ const switchMediaSharingFromObs = () => {
   }
 };
 
+// --- Window layout -------------------------------------------------------------
+
+const layoutScreens = ref<Display[]>([]);
+
+const loadLayoutScreens = async () => {
+  try {
+    layoutScreens.value = await globalThis.electronApi.getAllScreens();
+  } catch (error) {
+    errorCatcher(error, { contexts: { fn: { name: 'loadLayoutScreens' } } });
+  }
+};
+
+/** With nothing chosen yet, suggests a screen for Zoom (its own with 3+). */
+const suggestLayout = async () => {
+  await loadLayoutScreens();
+  if (zoomLayout.display || zoomLayout.enabled) return;
+  Object.assign(zoomLayout, suggestZoomLayout(layoutScreens.value));
+};
+
+/** Zoom on a screen of its own (not M³'s), as chosen. */
+const layoutAlone = computed(() => {
+  const screen = findZoomScreen(layoutScreens.value, zoomLayout);
+  return !!screen && !screen.mainWindow && zoomLayout.alone;
+});
+
+// Screens connected or removed while the layout steps show.
+const onScreensChanged = () => {
+  if (step.value === 'layout' || step.value === 'layout-split') {
+    void loadLayoutScreens();
+  }
+};
+globalThis.addEventListener('screen-trigger-update', onScreensChanged);
+onBeforeUnmount(() => {
+  globalThis.removeEventListener('screen-trigger-update', onScreensChanged);
+});
+
 // --- Test --------------------------------------------------------------------
 
 const testSteps = ref<ZoomSelfTestStep[]>([]);
@@ -1208,6 +1306,14 @@ const summary = computed(() => {
       status: enabledCount ? 'passed' : 'pending',
       text: t('zoom-setup-summary-automations', { count: enabledCount }),
     },
+    {
+      status: zoomLayout.enabled ? 'passed' : 'pending',
+      text: t(
+        zoomLayout.enabled
+          ? 'zoom-setup-summary-layout'
+          : 'zoom-setup-summary-no-layout',
+      ),
+    },
   ] as { status: Status; text: string }[];
 });
 
@@ -1278,15 +1384,17 @@ const enterStep = (next: Step) => {
   if (next === 'meeting') watchMeeting();
   if (next === 'checks') void runChecks();
   if (next === 'mic' && micStatus.value !== 'passed') void joinAudioForMic();
+  if (next === 'layout') void suggestLayout();
+  if (next === 'layout-split') void loadLayoutScreens();
 };
 
 const goNext = () => {
-  const next = STEPS[stepIndex.value + 1];
+  const next = shownSteps.value[stepIndex.value + 1];
   if (next) enterStep(next);
 };
 
 const goBack = () => {
-  const previous = STEPS[stepIndex.value - 1];
+  const previous = shownSteps.value[stepIndex.value - 1];
   if (previous) enterStep(previous);
 };
 
@@ -1354,6 +1462,7 @@ const reset = () => {
   testSteps.value = [];
   testOutcome.value = '';
   void startHelper();
+  if (props.startStep) enterStep(props.startStep);
 };
 
 watch(

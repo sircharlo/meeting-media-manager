@@ -13,6 +13,9 @@ import type {
   ZoomCommand,
   ZoomCommandResult,
   ZoomHelperStartResult,
+  ZoomLayoutPreferences,
+  ZoomLayoutScreens,
+  ZoomLayoutTargets,
   ZoomTestParticipantsRequest,
   ZoomTestParticipantsResponse,
 } from 'src/types/zoom';
@@ -205,6 +208,14 @@ export interface ElectronApi {
    */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   getZipEntries: (zipPath: string) => Promise<Record<string, number>>;
+  /**
+   * Where the Zoom window layout puts Zoom's meeting windows and M³'s main
+   * window on the screens connected now (Windows only, else null).
+   */
+  getZoomLayoutTargets: (
+    preferences: ZoomLayoutPreferences,
+    screens?: ZoomLayoutScreens,
+  ) => Promise<null | ZoomLayoutTargets>;
   hideFileOnWindows: (filePath: string) => Promise<void>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   /** `true` when the app was launched with `M3_DEMO_MODE` set, for automated screenshotting. */
@@ -527,6 +538,7 @@ export type ElectronIpcInvokeKey =
   | 'getUpdatesDisabledPath'
   | 'getUserDataPath'
   | 'getZipEntries'
+  | 'getZoomLayoutTargets'
   | 'isDownloadComplete'
   | 'isDownloadErrorExpected'
   | 'isOnline'

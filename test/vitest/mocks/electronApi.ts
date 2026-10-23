@@ -105,6 +105,7 @@ export const electronApi: ElectronApi = {
   getZipEntries: function () {
     throw new Error('Function not implemented.');
   },
+  getZoomLayoutTargets: async () => null,
   hideFileOnWindows: async () => undefined,
   inferExtension: async function (filename, filetype) {
     throw new Error('Function not implemented.');

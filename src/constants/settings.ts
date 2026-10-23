@@ -615,6 +615,17 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomMeetingManager',
     type: 'button',
   },
+  // Kept per computer (it's about its screens), so no value of its own here:
+  // the button opens the setup assistant's window layout steps.
+  zoomMeetingManagerWindowLayout: {
+    actions: ['openZoomWindowLayout'],
+    buttonLabel: 'zoom-layout-open',
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'button',
+  },
   zoomMeetingManagerMeetingId: {
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
@@ -1290,6 +1301,7 @@ export const defaultSettings: SettingsValues = {
   zoomMeetingManagerMeetingId: null,
   zoomMeetingManagerSetupAssistant: null,
   zoomMeetingManagerStartupCheck: true,
+  zoomMeetingManagerWindowLayout: null,
   zoomMicOffTitle: null,
   zoomMicOnTitle: null,
   zoomMuteAllTitle: null,

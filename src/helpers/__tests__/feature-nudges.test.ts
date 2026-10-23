@@ -40,6 +40,7 @@ const context = (
   online: true,
   platform: 'win32',
   screenCount: 2,
+  zoomLayoutEnabled: false,
   ...overrides,
   settings: { ...defaultSettings, enableMediaDisplayButton: true, ...settings },
 });
@@ -183,6 +184,7 @@ describe('FEATURE_NUDGES', () => {
     expect(FEATURE_NUDGES.map((n) => n.id)).toEqual([
       'schedule-sync',
       'zoom',
+      'zoom-window-layout',
       'shared-folder',
       'meeting-timer',
       'songbook-videos',
@@ -268,6 +270,23 @@ describe('FEATURE_NUDGES', () => {
       expect(eligible('zoom', { obsSceneCount: null }, obsWithMediaScene)).toBe(
         false,
       );
+    });
+
+    it('suggests the window layout once Zoom is managed, at its step of the setup assistant', () => {
+      const managed = { zoomMeetingManagerEnable: true };
+      expect(eligible('zoom-window-layout', {}, managed)).toBe(true);
+      expect(eligible('zoom-window-layout')).toBe(false);
+      expect(
+        eligible('zoom-window-layout', { zoomLayoutEnabled: true }, managed),
+      ).toBe(false);
+      expect(
+        eligible('zoom-window-layout', { platform: 'darwin' }, managed),
+      ).toBe(false);
+      expect(nudge('zoom-window-layout').action).toEqual({
+        detail: { step: 'layout' },
+        event: 'openZoomSetupAssistant',
+        type: 'event',
+      });
     });
   });
 

@@ -158,6 +158,7 @@ export type SettingsItemAction =
   | 'openCongregationLookup'
   | 'openZoomSetupAssistant'
   | 'openZoomSetupAssistantIfNeeded'
+  | 'openZoomWindowLayout'
   | 'resetFeatureNudges'
   | 'setBackgroundMusicVolume'
   | 'syncMeetingSchedule';
@@ -366,6 +367,8 @@ export interface SettingsValues {
   /** No value: the setting is the button opening the setup assistant. */
   zoomMeetingManagerSetupAssistant: null;
   zoomMeetingManagerStartupCheck: boolean;
+  /** Button: opens the setup assistant's window layout steps (kept per computer). */
+  zoomMeetingManagerWindowLayout: null;
   zoomMicOffTitle: null | string;
   zoomMicOnTitle: null | string;
   zoomMuteAllTitle: null | string;

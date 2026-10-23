@@ -160,6 +160,7 @@ const testAndFinish = async () => {
   await click('Check sharing');
   await click('Continue'); // sharing
   await click('Continue'); // automations
+  await click('Continue'); // window layout (left as it is)
   await click('Run the test');
   await click('Continue');
   await click('Finish');
@@ -492,6 +493,7 @@ describe('DialogZoomSetupAssistant', () => {
     await click('Check sharing');
     await click('Continue'); // share
     await click('Continue'); // automations
+    await click('Continue'); // window layout
 
     await click('Run the test');
     await vi.waitFor(() =>
@@ -693,6 +695,7 @@ describe('DialogZoomSetupAssistant', () => {
     expect(settings().enableMusicButton).toBe(true);
 
     await click('Continue');
+    await click('Continue'); // window layout
     await click('Run the test');
     expect(zoom.runZoomSelfTest).toHaveBeenCalledWith(
       expect.objectContaining({

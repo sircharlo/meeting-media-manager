@@ -16,8 +16,8 @@ export interface FeatureNudge {
 
 /** What accepting a suggestion does. */
 export type FeatureNudgeAction =
-  /** Dispatches a global event, e.g. to open a setup assistant. */
-  | { event: string; type: 'event' }
+  /** Dispatches a global event, e.g. to open a setup assistant (at a step). */
+  | { detail?: Record<string, unknown>; event: string; type: 'event' }
   /** Opens Settings at this setting, highlighted (`/settings/<setting>`). */
   | { setting: keyof SettingsValues; type: 'settings' };
 
@@ -32,6 +32,8 @@ export interface FeatureNudgeContext {
   platform: NodeJS.Platform;
   screenCount: number;
   settings: SettingsValues;
+  /** Whether M³ arranges its window and Zoom's (set per computer). */
+  zoomLayoutEnabled: boolean;
 }
 
 /** A feature the "Did you know?" dialog can suggest (see constants/feature-nudges). */
@@ -42,7 +44,8 @@ export type FeatureNudgeId =
   | 'schedule-sync'
   | 'shared-folder'
   | 'songbook-videos'
-  | 'zoom';
+  | 'zoom'
+  | 'zoom-window-layout';
 
 /** A profile's answers to feature suggestions, persisted per congregation. */
 export interface FeatureNudgeProfileState {
