@@ -59,4 +59,7 @@ export const listen = (
   return () => ipcRenderer.off(channel, wrappedCallback);
 };
 
-export const removeAllIpcListeners = ipcRenderer.removeAllListeners;
+// Called through ipcRenderer: taken off it, removeAllListeners runs without
+// `this` and throws (MMM-V2-3MP), so MainLayout's listeners were never removed.
+export const removeAllIpcListeners = (channel: ElectronIpcListenKey) =>
+  ipcRenderer.removeAllListeners(channel);
