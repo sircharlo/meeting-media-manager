@@ -565,26 +565,26 @@ A Zoom a saját nyelvén jelöli a felemelt kezeket, ezért az M³-nak először
 
 **Alapértelmezett**: `false`
 
-#### Window Layout {#zoom-meeting-manager-window-layout}
+#### Ablakelrendezés {#zoom-meeting-manager-window-layout}
 
 <!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
 
-M³ can put Zoom's meeting window, and its own main window, where you want them on your screens. The setup assistant asks where in two steps, which the **Choose the layout** button here opens again at any time:
+Az M³ oda teheti a Zoom értekezletablakát és a saját főablakát a képernyőin, ahová szeretné. A beállítási segéd két lépésben kérdezi meg, hová, és ezeket az itteni **Elrendezés kiválasztása** gomb bármikor újra megnyitja:
 
-1. On a map of your screens as they are arranged, pick the screen for Zoom's meeting. The screen the media window fills is never offered. If Zoom's screen isn't the one M³ is on, choose whether Zoom has it to itself or shares it with M³ (M³ then moves there too).
-2. On a drawing of that screen at its real shape, drag the divider to share it between M³ and Zoom. It clicks onto the usual proportions (a half, a third, a quarter and so on); hold `Alt` to drag it freely. The divider never leaves a window smaller than it can be: Zoom needs more room while its participants list is open. On a portrait screen, the two windows go one above the other.
+1. A képernyők elhelyezkedését mutató térképen válassza ki a Zoom-értekezlet képernyőjét. A médiaablak által kitöltött képernyő soha nem választható. Ha a Zoom képernyője nem az, amelyen az M³ van, válassza ki, hogy a Zoom egymagában van-e rajta, vagy osztozik rajta az M³-mal (ilyenkor az M³ is oda kerül).
+2. A képernyő valódi alakú rajzán húzza el az elválasztót, hogy felossza a képernyőt az M³ és a Zoom között. Az elválasztó a szokásos arányokhoz igazodik (fél, harmad, negyed és így tovább); szabad húzáshoz tartsa lenyomva az `Alt` billentyűt. Az elválasztó soha nem tesz egy ablakot kisebbé a legkisebb méreténél: a Zoomnak több hely kell, amíg a résztvevőlistája nyitva van. Álló helyzetű képernyőn a két ablak egymás alá kerül.
 
-As soon as the meeting opens, M³ opens Zoom's participants list if you asked it to, then puts both windows in place. From then on, it keeps Zoom where it belongs: when Zoom moves or resizes its window by itself, after screen sharing or as its participants list opens or closes, M³ puts it back. If you move or resize Zoom yourself, M³ leaves it where you put it until the next meeting. Each time M³ moves Zoom by itself, a notification says so, with two buttons should that get in the way: **Leave Zoom alone** stops it until M³ restarts, and **Turn off** turns the window layout off until you turn it back on here. When screens are connected or removed, M³ arranges the windows again; if Zoom's screen is no longer there, Zoom shares M³'s screen and M³ tells you so.
+Amint az értekezlet megnyílik, az M³ megnyitja a Zoom résztvevőlistáját, ha ezt kérte, majd mindkét ablakot a helyére teszi. Attól kezdve a helyén tartja a Zoomot: amikor a Zoom magától elmozdítja vagy átméretezi az ablakát, képernyőmegosztás után vagy amikor a résztvevőlistája megnyílik vagy bezárul, az M³ visszahelyezi. Ha Ön mozgatja el vagy méretezi át a Zoomot, az M³ a következő összejövetelig ott hagyja, ahová tette. Valahányszor az M³ magától mozgatja el a Zoomot, egy értesítés jelzi ezt, két gombbal arra az esetre, ha ez zavarna: **A Zoom békén hagyása** az M³ újraindításáig leállítja, a **Kikapcsolás** pedig kikapcsolja az ablakelrendezést, amíg itt újra be nem kapcsolja. Amikor képernyőket csatlakoztatnak vagy eltávolítanak, az M³ újra elrendezi az ablakokat; ha a Zoom képernyője már nincs ott, a Zoom az M³ képernyőjén osztozik, és az M³ ezt jelzi Önnek.
 
-While Zoom shares the media window, it hides its own meeting window, participants list included. With **Show the participants list while sharing** on, M³ then opens Zoom's participants list in a window of its own, in Zoom's place, so you still see who raises a hand to comment. If you close it, it stays closed until the next share; Zoom closes it by itself when sharing stops, and its meeting window comes back in place.
+Amíg a Zoom megosztja a médiaablakot, elrejti a saját értekezletablakát, a résztvevőlistával együtt. Ha **A résztvevőlista megjelenítése megosztás közben** be van kapcsolva, az M³ ilyenkor a Zoom résztvevőlistáját egy külön ablakban nyitja meg, a Zoom helyén, így továbbra is látja, ki emeli fel a kezét, hogy hozzászóljon. Ha bezárja, a következő megosztásig zárva marad; a Zoom magától bezárja, amikor a megosztás leáll, és az értekezletablaka visszakerül a helyére.
 
-With Zoom's **Use dual monitors** setting on, Zoom opens a second window (showing the shared screen or the speaker). M³ puts it full screen on the media window's screen, behind the media window: hide the media window to show it, for example to see the participants.
+Ha a Zoomban a **Meeting window view** beállítás értéke **Dual window** (a Zoom régebbi verzióiban **Use dual monitors**), a Zoom megnyit egy második ablakot (amely a megosztott képernyőt vagy az előadót mutatja). Az M³ teljes képernyőre teszi a médiaablak képernyőjén, a médiaablak mögé: rejtse el a médiaablakot, hogy megjelenjen, például hogy lássa a résztvevőket.
 
-When **Snap them with Windows** is on, M³ snaps the two windows side by side with Windows' own snapping, as if you had dragged them to the edges of the screen, so dragging the border between them resizes both. To do so, M³ brings each window forward for a moment.
+Ha az **Illesztés a Windows-zal** be van kapcsolva, az M³ a Windows saját illesztésével egymás mellé illeszti a két ablakot, mintha a képernyő széleihez húzta volna őket, így a köztük lévő határ húzása mindkettőt átméretezi. Ehhez az M³ egy pillanatra előtérbe hozza mindkét ablakot.
 
-The **Arrange windows** button in the Zoom popup puts everything back in place at any time. The window layout is kept per computer, since it depends on its screens.
+A Zoom felugró ablakában lévő **Ablakok elrendezése** gomb bármikor mindent visszahelyez. Az ablakelrendezés számítógépenként tárolódik, mivel a számítógép képernyőitől függ.
 
-**Default**: off
+**Alapértelmezett**: ki
 
 ### OBS Studio-integráció {#settings-guide-obs-integration}
 
