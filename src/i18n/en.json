@@ -1187,7 +1187,7 @@
   "zoom-setup-layout-arrange-now": "Arrange now",
   "zoom-setup-layout-arranged": "M³ arranged the windows.",
   "zoom-setup-layout-divider": "M³'s share of the screen",
-  "zoom-setup-layout-dual-monitors": "With Zoom's \"Use dual monitors\" setting on, M³ puts Zoom's second window full screen on {display}, behind the media window: hide the media window to see it.",
+  "zoom-setup-layout-dual-monitors": "With Zoom's \"Meeting window view\" set to \"Dual window\" (\"Use dual monitors\" in older versions of Zoom), M³ puts Zoom's second window full screen on {display}, behind the media window: hide the media window to see it.",
   "zoom-setup-layout-during-meeting": "During the meeting",
   "zoom-setup-layout-intro": "M³ can put Zoom's meeting window, and its own window, in place when the meeting starts, then keep Zoom there.",
   "zoom-setup-layout-keep": "Put Zoom back if it moves",
