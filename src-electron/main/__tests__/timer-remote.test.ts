@@ -111,6 +111,19 @@ describe('timer remote', () => {
     expect(event).toMatchObject({ running: true, time: '04:59' });
   });
 
+  it('keeps hidden elements hidden, the hand alert included', async () => {
+    const { startTimerRemote } = await import('../timer-remote');
+    const port = await freePort();
+    await startTimerRemote(port);
+
+    const page = await get(port, '/');
+    expect(page.body).toMatch(/<div id="hand" class="hand" hidden>/);
+    // .hand sets display: flex, which beats the browser's own [hidden] rule.
+    const css = (await get(port, '/app.css')).body;
+    expect(css).toMatch(/\.hand \{[^}]*display: flex/);
+    expect(css).toMatch(/\[hidden\] \{ display: none !important; \}/);
+  });
+
   it('reports a port already in use', async () => {
     const { startTimerRemote } = await import('../timer-remote');
     const port = await freePort();
