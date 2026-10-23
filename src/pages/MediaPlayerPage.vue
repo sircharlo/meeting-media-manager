@@ -190,6 +190,15 @@ import {
   loadYeartextFont,
   setElementFont,
 } from 'src/helpers/fonts';
+import {
+  IDENTITY_ZOOM_PAN,
+  isZoomPanSpringAtRest,
+  restingZoomPanSpring,
+  stepZoomPanSpring,
+  zoomPanFromBroadcast,
+  zoomPanToCss,
+  type ZoomPanTransform,
+} from 'src/helpers/media-window-zoom-pan';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { sleep } from 'src/utils/general';
@@ -415,13 +424,76 @@ const handleImageLoad = (layer: 1 | 2) => {
   // zoom/pan broadcast arrives.
   const imageElem = document.getElementById(`mediaImage${layer}`);
   if (!imageElem) return;
-  imageElem.style.transition = 'none';
-  imageElem.style.transform = '';
+  if (imageElem === zoomPanElement) {
+    snapZoomPan(imageElem, IDENTITY_ZOOM_PAN);
+  } else {
+    imageElem.style.transform = '';
+  }
 };
 
-let lastZoomPanTime = 0;
-const transitionDurationSeconds = 2.5;
+// The image's zoom and pan follow the main window's thumbnail on a spring
+// (see media-window-zoom-pan.ts), stepped once a frame, rather than on a CSS
+// transition: a transition restarts from a standstill on every update, so
+// the steady stream of them a drag or a pinch sends moves in pulses, and it
+// can't zoom about a fixed point.
+let zoomPanElement: HTMLElement | null = null;
+let zoomPanTarget: ZoomPanTransform = { ...IDENTITY_ZOOM_PAN };
+let zoomPanSpring = restingZoomPanSpring(IDENTITY_ZOOM_PAN);
+let zoomPanFrame: null | number = null;
+let zoomPanFrameTime = 0;
 const skipZoomPanAnimation = ref(false);
+
+const renderZoomPan = () => {
+  if (!zoomPanElement) return;
+  zoomPanElement.style.transform = zoomPanToCss(zoomPanSpring.current);
+};
+
+const stopZoomPanAnimation = () => {
+  if (zoomPanFrame !== null) cancelAnimationFrame(zoomPanFrame);
+  zoomPanFrame = null;
+  // On its own layer only while it moves: once it stops, it's drawn again at
+  // its final size, so a zoomed-in image ends up sharp.
+  if (zoomPanElement) zoomPanElement.style.willChange = '';
+};
+
+const snapZoomPan = (imageElem: HTMLElement, target: ZoomPanTransform) => {
+  stopZoomPanAnimation();
+  zoomPanElement = imageElem;
+  zoomPanTarget = target;
+  zoomPanSpring = restingZoomPanSpring(target);
+  renderZoomPan();
+};
+
+const animateZoomPan = (time: number) => {
+  zoomPanSpring = stepZoomPanSpring(
+    zoomPanSpring,
+    zoomPanTarget,
+    (time - zoomPanFrameTime) / 1000,
+  );
+  zoomPanFrameTime = time;
+  renderZoomPan();
+  if (isZoomPanSpringAtRest(zoomPanSpring, zoomPanTarget)) {
+    stopZoomPanAnimation();
+    return;
+  }
+  zoomPanFrame = requestAnimationFrame(animateZoomPan);
+};
+
+const easeZoomPanTo = (imageElem: HTMLElement, target: ZoomPanTransform) => {
+  // A layer this hasn't moved yet shows its image unzoomed (see
+  // handleImageLoad), so that's where its spring starts.
+  if (imageElem !== zoomPanElement) {
+    snapZoomPan(imageElem, IDENTITY_ZOOM_PAN);
+  }
+  zoomPanTarget = target;
+  // A running animation picks up the new target on its next frame.
+  if (zoomPanFrame !== null || isZoomPanSpringAtRest(zoomPanSpring, target)) {
+    return;
+  }
+  imageElem.style.willChange = 'transform';
+  zoomPanFrameTime = performance.now();
+  zoomPanFrame = requestAnimationFrame(animateZoomPan);
+};
 
 const applyZoomPanState = (zoomPanState: Record<string, number>) => {
   try {
@@ -435,38 +507,16 @@ const applyZoomPanState = (zoomPanState: Record<string, number>) => {
 
     if (!imageElem) return;
 
-    const width = imageElem.clientWidth || 0;
-    const height = imageElem.clientHeight || 0;
-
-    if (width > 0 && height > 0) {
-      // Apply zoom and pan using CSS transforms for smooth animation
-      const scale = zoomPanState.scale ?? 1;
-      const x = (zoomPanState.x || 0) * width; // NOSONAR: NaN falls back to 0
-      const y = (zoomPanState.y || 0) * height; // NOSONAR: NaN falls back to 0
-
-      if (skipZoomPanAnimation.value) {
-        // Apply instantly without animation
-        imageElem.style.transition = 'none';
-        imageElem.style.transform = `scale(${scale}) translate(${x}px, ${y}px)`;
-        skipZoomPanAnimation.value = false;
-      } else {
-        const now = Date.now();
-        // If we are interrupting an active transition (less than 2s since last update),
-        // use ease-out to avoid the "slow start" jaggedness.
-        // Otherwise use standard ease for a smooth start from rest.
-        const isInterrupted =
-          now - lastZoomPanTime < transitionDurationSeconds * 1000;
-        const easing = isInterrupted ? 'ease-out' : 'ease';
-
-        // Use CSS transforms for smooth animation
-        imageElem.style.transition = `transform ${transitionDurationSeconds}s ${easing}`;
-        imageElem.style.transform = `scale(${scale}) translate(${x}px, ${y}px)`;
-
-        lastZoomPanTime = now;
-      }
+    const target = zoomPanFromBroadcast(zoomPanState);
+    if (skipZoomPanAnimation.value) {
+      // Apply instantly without animation
+      skipZoomPanAnimation.value = false;
+      snapZoomPan(imageElem, target);
+      return;
     }
+    easeZoomPanTo(imageElem, target);
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { fn: { name: 'applyZoomPanState' } } });
   }
 };
 
@@ -1498,15 +1548,10 @@ watch(
   },
 );
 
+// Not logged: a drag or a pinch sends one of these every frame.
 watchDeep(
   () => zoomPanState.value,
   (newZoomPanState) => {
-    log(
-      '🎬 [zoomPanState] New zoom/pan state:',
-      'mediaPlayer',
-      'log',
-      newZoomPanState,
-    );
     applyZoomPanState(newZoomPanState);
   },
 );
@@ -1654,6 +1699,7 @@ onBeforeUnmount(() => {
   cleanupMediaElement(mediaElement1.value);
   cleanupMediaElement(mediaElement2.value);
   cleanupMediaElement(cameraElement.value);
+  stopZoomPanAnimation();
 });
 </script>
 
