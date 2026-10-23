@@ -419,6 +419,22 @@ function shouldMoveWindowedToFullscreen(
   return { shouldMove: true, targetDisplayNr: alternativeScreen };
 }
 
+/**
+ * Un-maximizes the media window before it goes full screen: on Windows, a
+ * maximized window put full screen only fills its screen's work area, so
+ * the taskbar stays in view. (Seen with a media window restored maximized
+ * from its saved state.)
+ */
+function unmaximizeBeforeFullscreen(mediaWindow: BrowserWindow) {
+  if (!mediaWindow.isMaximized()) return;
+  log(
+    '[applyFullscreen] Un-maximizing before entering fullscreen',
+    'electronWindow',
+    'debug',
+  );
+  mediaWindow.unmaximize();
+}
+
 // =============================================================================
 // HELPER FUNCTIONS - Window State Management
 // =============================================================================
@@ -740,6 +756,7 @@ export const __testables = {
   shouldKeepWindowedWithoutExplicitTarget,
   shouldMoveWindowedToFullscreen,
   shouldSkipSingleScreenReposition,
+  unmaximizeBeforeFullscreen,
   validateAndAdjustTarget,
 };
 
@@ -1156,6 +1173,7 @@ const setWindowPosition = (
           'debug',
           normalizedBounds,
         );
+        unmaximizeBeforeFullscreen(mediaWindowInfo.mediaWindow);
         mediaWindowInfo.mediaWindow.setBounds(normalizedBounds);
 
         // Wait for the fullscreen animation to complete on ALL platforms.
