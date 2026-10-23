@@ -662,6 +662,16 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomMeetingManager',
     type: 'toggle',
   },
+  zoomMeetingManagerPostMeetingAskToUnmute: {
+    depends: [
+      'zoomMeetingManagerEnable',
+      'zoomMeetingManagerAutomatePostMeetingAudioSettings',
+    ],
+    group: 'integrations',
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'toggle',
+  },
   zoomVideoOffTitle: {
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
@@ -1299,6 +1309,7 @@ export const defaultSettings: SettingsValues = {
   zoomMeetingManagerEnable: false,
   zoomMeetingManagerHandAlert: false,
   zoomMeetingManagerMeetingId: null,
+  zoomMeetingManagerPostMeetingAskToUnmute: true,
   zoomMeetingManagerSetupAssistant: null,
   zoomMeetingManagerStartupCheck: true,
   zoomMeetingManagerWindowLayout: null,

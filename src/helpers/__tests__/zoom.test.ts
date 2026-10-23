@@ -12,6 +12,7 @@ const currentSettings = {
   zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
   zoomMeetingManagerEnable: true,
   zoomMeetingManagerMeetingId: '123 456' as null | string,
+  zoomMeetingManagerPostMeetingAskToUnmute: true,
   zoomMicOffTitle: 'Unmute' as null | string,
   zoomMicOnTitle: 'Mute' as null | string,
   zoomMuteAllTitle: null as null | string,
@@ -128,6 +129,7 @@ beforeEach(() => {
     zoomMeetingManagerAutoLaunchMeeting: false,
     zoomMeetingManagerAutomateMeetingAudioSettings: false,
     zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
+    zoomMeetingManagerPostMeetingAskToUnmute: true,
     zoomMicOffTitle: 'Unmute',
     zoomMicOnTitle: 'Mute',
     zoomVideoOffTitle: 'Start Video',
@@ -207,6 +209,38 @@ describe('Zoom meeting automation', () => {
       titles: expect.any(Object),
       type: 'mute-all',
     });
+  });
+
+  it('lets everyone unmute without asking them to, when that is turned off', async () => {
+    currentSettings.zoomMeetingManagerAutomatePostMeetingAudioSettings = true;
+    currentSettings.zoomMeetingManagerPostMeetingAskToUnmute = false;
+    const { automateZoomPostMeetingSettings } = await import('../zoom');
+
+    await automateZoomPostMeetingSettings();
+
+    expect(commandTypes()).toEqual([
+      'meeting',
+      'leave-audio',
+      'set-video',
+      'mute-all',
+    ]);
+    expect(zoomCommandMock).toHaveBeenCalledWith({
+      allowSelfUnmute: true,
+      titles: expect.any(Object),
+      type: 'mute-all',
+    });
+    expect(updateChecklistMock).not.toHaveBeenCalledWith({
+      participantsMuted: false,
+    });
+  });
+
+  it('asks everyone to unmute when told to, whatever the setting', async () => {
+    currentSettings.zoomMeetingManagerPostMeetingAskToUnmute = false;
+    const { runZoomPostMeetingSequence } = await import('../zoom');
+
+    await runZoomPostMeetingSequence(undefined, true);
+
+    expect(commandTypes()).toContain('ask-all-to-unmute');
   });
 
   it('does nothing when the matching setting is off', async () => {

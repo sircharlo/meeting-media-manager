@@ -838,22 +838,29 @@ export const runZoomMeetingSequence = (
   ]);
 
 /** Leaves computer audio, turns off the host video, and lets everyone unmute
- * again, asking them to. */
+ * again, asking them to unless that's turned off: Zoom unmutes straight away
+ * whoever agreed beforehand to be unmuted by the host. */
 export const runZoomPostMeetingSequence = (
   titles: ZoomTitles = getZoomTitlesFromSettings(),
-) =>
-  runSequence(
+  askAllToUnmute = getSettings()?.zoomMeetingManagerPostMeetingAskToUnmute ??
+    true,
+) => {
+  const steps: [string, () => Promise<ZoomCommandResult>][] = [
+    ['leave-audio', leaveZoomAudio],
+    ['video-off', () => setZoomHostVideo(false, titles)],
+    // Zoom only offers "allow participants to unmute themselves" in the
+    // mute-everyone dialog, so muting everyone is how it gets turned back on.
+    ['mute-all', () => muteAllZoomParticipants(true)],
+  ];
+  if (askAllToUnmute) {
+    steps.push(['ask-all-to-unmute', askAllZoomParticipantsToUnmute]);
+  }
+  return runSequence(
     'Zoom before/after-meeting settings',
     'zoom-run-post-meeting-sequence',
-    [
-      ['leave-audio', leaveZoomAudio],
-      ['video-off', () => setZoomHostVideo(false, titles)],
-      // Zoom only offers "allow participants to unmute themselves" in the
-      // mute-everyone dialog, so muting everyone is how it gets turned back on.
-      ['mute-all', () => muteAllZoomParticipants(true)],
-      ['ask-all-to-unmute', askAllZoomParticipantsToUnmute],
-    ],
+    steps,
   );
+};
 
 /**
  * Applies the in-meeting Zoom settings, if enabled.
