@@ -78,17 +78,26 @@
               class="zoom-layout-preview__tick"
               :style="edge(layout.m3First ? point : 1 - point)"
             />
-            <div
+            <!-- The divider: this input for the keyboard and screen readers,
+                 the handle drawn next to it for the mouse -->
+            <input
+              ref="dividerInput"
               :aria-label="t('zoom-setup-layout-divider')"
-              aria-valuemax="100"
-              aria-valuemin="0"
-              :aria-valuenow="Math.round(share * 100)"
+              :aria-orientation="range.vertical ? 'vertical' : 'horizontal'"
               :aria-valuetext="`M³ ${percent(share)}, Zoom ${percent(1 - share)}`"
-              class="zoom-layout-preview__divider"
-              role="slider"
-              :style="edge(layout.m3First ? share : 1 - share)"
-              tabindex="0"
+              class="zoom-layout-preview__divider-input"
+              :max="dividerBounds.max"
+              :min="dividerBounds.min"
+              step="1"
+              type="range"
+              :value="Math.round(dividerAt * 100)"
+              @input="onInput"
               @keydown="onKey"
+            />
+            <div
+              aria-hidden="true"
+              class="zoom-layout-preview__divider"
+              :style="edge(dividerAt)"
               @lostpointercapture="dragging = false"
               @pointerdown="startDrag"
               @pointermove="drag"
@@ -246,6 +255,17 @@ const taskbarShare = computed(() => 1 - workShare.value);
 const m3At = computed(() => (layout.m3First ? 0 : 1 - share.value));
 const zoomAt = computed(() => (layout.m3First ? share.value : 0));
 
+// The divider's position from the left (or the top), and where it can go,
+// in whole percent.
+const dividerAt = computed(() =>
+  layout.m3First ? share.value : 1 - share.value,
+);
+const dividerBounds = computed(() => {
+  const { max, min } = range.value;
+  const [from, to] = layout.m3First ? [min, max] : [1 - max, 1 - min];
+  return { max: Math.round(to * 100), min: Math.round(from * 100) };
+});
+
 /** The real size of a window taking part of the work area. */
 const sizeOf = (part: number) => {
   const area = screen.value?.workArea ?? { height: 1080, width: 1920 };
@@ -286,11 +306,13 @@ const snapPoints = computed(() =>
 // --- Dragging the divider ------------------------------------------------------
 
 const workArea = useTemplateRef<HTMLElement>('workArea');
+const dividerInput = useTemplateRef<HTMLInputElement>('dividerInput');
 const dragging = ref(false);
 
 const startDrag = (event: PointerEvent) => {
   (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
   dragging.value = true;
+  dividerInput.value?.focus({ preventScroll: true });
   event.preventDefault();
 };
 
@@ -328,6 +350,16 @@ const onKey = (event: KeyboardEvent) => {
     return;
   }
   event.preventDefault();
+};
+
+// A value set some other way, such as by a screen reader.
+const onInput = (event: Event) => {
+  const position = Number((event.target as HTMLInputElement).value) / 100;
+  layout.m3Share = snapM3Share(
+    layout.m3First ? position : 1 - position,
+    range.value,
+    true,
+  );
 };
 
 // --- Options and trying it --------------------------------------------------------
@@ -487,7 +519,17 @@ watch(
   width: 2px;
 }
 
-.zoom-layout-preview__divider:focus-visible {
+.zoom-layout-preview__divider-input {
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 1px;
+}
+
+.zoom-layout-preview__divider-input:focus-visible
+  + .zoom-layout-preview__divider {
   outline: 2px solid var(--q-primary);
   outline-offset: 2px;
 }
