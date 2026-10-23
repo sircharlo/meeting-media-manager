@@ -1370,13 +1370,6 @@ describe('jw-media helpers', () => {
         'JWLibrary_15.9.54.0_scale-100.msix': 1,
         [msix]: 1,
       },
-      [`${dir}/${msix}`]: {
-        'Assets/Logo.png': 1,
-        'Data/mepsunit.db': 1,
-        'JWLibrary.dll': 1,
-        'JWLibrary.exe': 1,
-        'JWLibrary.exe.config': 1,
-      },
       [zipPath]: {
         'Add-AppDevPackage.ps1': 1,
         [bundle]: 1,
@@ -1403,6 +1396,9 @@ describe('jw-media helpers', () => {
           opts?: { includes?: string[] },
         ) => (opts?.includes ?? []).map((path) => ({ path })),
       );
+      extractNestedZipEntryMock.mockResolvedValue({
+        path: `${dir}/Data/mepsunit.db`,
+      });
       executeQueryMock.mockResolvedValue([
         { LanguageId: 0, PrimaryIetfCode: 'EN', Symbol: 'E' },
       ]);
@@ -1413,18 +1409,23 @@ describe('jw-media helpers', () => {
       });
     });
 
-    it('extracts only the one entry needed from each archive level', async () => {
+    it('extracts only the bundle, then reads the database from its x64 msix in place', async () => {
       const { extractMepsUnitDb } = await import('../jw-media');
 
       await expect(extractMepsUnitDb(zipPath)).resolves.toBe(
         `${dir}/Data/mepsunit.db`,
       );
 
+      // MMM-V2-3MN: the msix itself is never written out.
       expect(unzipMock.mock.calls).toEqual([
         [zipPath, dir, { includes: [bundle] }],
-        [`${dir}/${bundle}`, dir, { includes: [msix] }],
-        [`${dir}/${msix}`, dir, { includes: ['Data/mepsunit.db'] }],
       ]);
+      expect(extractNestedZipEntryMock).toHaveBeenCalledWith(
+        `${dir}/${bundle}`,
+        msix,
+        dir,
+        { innerEntryNamePrefix: 'Data/', innerEntryNameSuffix: '.db' },
+      );
     });
 
     it('stops without extracting anything when an archive lacks the expected entry', async () => {
@@ -1433,6 +1434,7 @@ describe('jw-media helpers', () => {
 
       await expect(extractMepsUnitDb(zipPath)).resolves.toBeUndefined();
       expect(unzipMock).not.toHaveBeenCalled();
+      expect(extractNestedZipEntryMock).not.toHaveBeenCalled();
     });
 
     describe('getJwMepsInfo', () => {
@@ -1537,6 +1539,28 @@ describe('jw-media helpers', () => {
                 jwlbZipPath: zipPath,
                 name: 'getJwMepsInfo',
               },
+            },
+          },
+        );
+      });
+
+      it('names the bundle when its msix could not be read', async () => {
+        const gone = new Error(
+          "Error invoking remote method 'extractNestedZipEntry': Error: ENOENT",
+        );
+        extractNestedZipEntryMock.mockRejectedValueOnce(gone);
+        statMock.mockResolvedValue({ size: 258967366 });
+        const { getJwMepsInfo } = await import('../jw-media');
+
+        await getJwMepsInfo();
+
+        expect(errorCatcherMock).toHaveBeenCalledWith(
+          expect.objectContaining({ cause: gone }),
+          {
+            contexts: {
+              fn: expect.objectContaining({
+                archivePath: `${dir}/${bundle}`,
+              }),
             },
           },
         );

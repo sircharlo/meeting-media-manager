@@ -37,6 +37,8 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Zoom Meeting Manager**: When M³ runs as a portable app from a folder nested deep inside others, the Zoom Meeting Manager now starts. Its helper couldn't save a file it generates that deep (Windows PowerShell can't), and now keeps it in a shorter folder instead.
 - 🐞 **Zoom Meeting Manager**: In the Zoom popup, the notice that Zoom automations are paused now uses the popup's full width, with its button underneath, instead of squeezing its explanation into a narrow column. The notification of a failed Zoom check now closes when the setup assistant opens, instead of staying on top of it.
 - 🐞 **Media Window**: The media window covers the whole screen again, taskbar included. If it had been left maximized at some point, M³ remembered that and, from then on, made it full screen only within the space above the taskbar.
+- 🐞 **Startup**: Refreshing JW Library's list of languages no longer writes out a 128 MB part of the JW Library installer: M³ now reads the list straight out of the installer it downloaded. This fixes the refresh failing when antivirus software removed that part as soon as it was written, and saves that much writing to disk on each refresh.
+- 🐞 **Stability**: Fixed an error each time M³'s main screen was closed and set up again, which rarely happens. It also left that screen's handlers for keyboard shortcuts, downloads and other events in place, so they could then react twice.
 - 🐞 **Meeting Timer**: The copy button next to the timer remote's addresses, in the timer popup, now copies the address instead of failing with an error.
 
 ### 🔧 Chores

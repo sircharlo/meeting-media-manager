@@ -210,12 +210,12 @@ function buildUrl(url: string, params?: URLSearchParams) {
 // Publication symbols confirmed to have no media in any format via the
 // JW.org mediator API (empty result, not a fetch/parse issue) - a 400 from
 // GETPUBMEDIALINKS for these is the server correctly reporting "nothing to
-// return", not a client bug. Both 'ewt' (MMM-V2-3FK) and 'cew'
+// return", not a client bug. 'ewt' (MMM-V2-3FK), 'cew' and 'iut'
 // (MMM-V2-3KJ) are referenced by the Pioneer Service School media playlist
 // (pssmp) JWPUB and return 400 for every language and format, with an
 // empty mediator entry - school-only items with no public media. Add
 // symbols here individually rather than guessing at a broader pattern.
-const IGNORED_400_PUB_SYMBOLS = new Set(['cew', 'ewt']);
+const IGNORED_400_PUB_SYMBOLS = new Set(['cew', 'ewt', 'iut']);
 
 export async function shouldReportCaughtError(error: unknown, online: boolean) {
   if (!online) return false;

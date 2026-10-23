@@ -17,6 +17,7 @@ const watchMock = vi.fn();
 const sendToWindowMock = vi.fn();
 const yauzlOpenMock = vi.fn();
 const yauzlFromBufferPromiseMock = vi.fn();
+const yauzlFromRandomAccessReaderPromiseMock = vi.fn();
 const createReadStreamMock = vi.fn();
 const createWriteStreamMock = vi.fn(() => ({ on: vi.fn() }));
 const pipelineMock = vi.fn(() => Promise.resolve());
@@ -115,13 +116,17 @@ vi.mock('upath', () => {
   };
 });
 
-vi.mock('yauzl', () => ({
+vi.mock('yauzl', async () => ({
   default: {
     fromBufferPromise: yauzlFromBufferPromiseMock,
+    fromRandomAccessReaderPromise: yauzlFromRandomAccessReaderPromiseMock,
     openPromise: yauzlOpenMock,
   },
   fromBufferPromise: yauzlFromBufferPromiseMock,
+  fromRandomAccessReaderPromise: yauzlFromRandomAccessReaderPromiseMock,
   openPromise: yauzlOpenMock,
+  // Like the real one, which the in-place reader extends.
+  RandomAccessReader: (await import('node:events')).EventEmitter,
 }));
 
 const makeDirent = (name: string, isDirectory = false) => ({
@@ -1018,6 +1023,78 @@ describe('extractNestedZipEntry', () => {
     expect(yauzlFromBufferPromiseMock).toHaveBeenCalledWith(
       Buffer.from('data'),
     );
+  });
+
+  it('reads a zip stored uncompressed in another one in place, under the usual unzip limits', async () => {
+    // JW Library's msixbundle stores each msix uncompressed (MMM-V2-3MN): its
+    // database is read without writing the 128 MB msix out, or loading it.
+    const bundle = '/tmp/jwlb_E/JWLibrary.msixbundle';
+    statMock.mockResolvedValue({ isDirectory: () => false, size: 1000 });
+    const msixEntry = {
+      compressedSize: 500,
+      compressionMethod: 0,
+      fileName: 'JWLibrary_x64.msix',
+      isEncrypted: () => false,
+      uncompressedSize: 500,
+    };
+    const readLocalFileHeaderPromise = vi.fn(async () => ({
+      fileDataStart: 120,
+    }));
+    yauzlOpenMock.mockResolvedValue({
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield { ...msixEntry, compressionMethod: 8, fileName: 'other.msix' };
+        yield msixEntry;
+      },
+      readLocalFileHeaderPromise,
+    });
+    const innerEntries = [
+      // Over the in-memory limits on its own, like the msix's 120 MB+ dll.
+      {
+        compressedSize: 100e6,
+        fileName: 'JWLibrary.dll',
+        uncompressedSize: 260e6,
+      },
+      { compressedSize: 1, fileName: 'Assets/cache.db', uncompressedSize: 1 },
+      { compressedSize: 1, fileName: 'Data/mepsunit.db', uncompressedSize: 1 },
+    ];
+    const innerZipfile = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield* innerEntries;
+      },
+      openReadStreamPromise: vi.fn(async () => ({ on: vi.fn() })),
+    };
+    yauzlFromRandomAccessReaderPromiseMock.mockResolvedValue(innerZipfile);
+    pipelineMock.mockResolvedValue(undefined);
+
+    const { extractNestedZipEntry } = await import('../fs');
+
+    await expect(
+      extractNestedZipEntry(bundle, 'JWLibrary_x64.msix', '/tmp/out', {
+        innerEntryNamePrefix: 'Data/',
+        innerEntryNameSuffix: '.db',
+      }),
+    ).resolves.toEqual({ path: '/tmp/out/Data/mepsunit.db' });
+
+    expect(readLocalFileHeaderPromise).toHaveBeenCalledWith(msixEntry, {
+      minimal: true,
+    });
+    expect(yauzlFromBufferPromiseMock).not.toHaveBeenCalled();
+    expect(innerZipfile.openReadStreamPromise).toHaveBeenCalledTimes(1);
+    expect(innerZipfile.openReadStreamPromise).toHaveBeenCalledWith(
+      innerEntries[2],
+    );
+
+    // The reader handed to yauzl reads the msix's own bytes in the bundle.
+    const [reader, size] = yauzlFromRandomAccessReaderPromiseMock.mock
+      .calls[0] as [{ _readStreamForRange: (s: number, e: number) => unknown }, number];
+    expect(size).toBe(500);
+    reader._readStreamForRange(0, 22);
+    expect(createReadStreamMock).toHaveBeenCalledWith(bundle, {
+      end: 141,
+      start: 120,
+    });
   });
 });
 
