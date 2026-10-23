@@ -106,6 +106,23 @@ describe('window-media placement helpers', () => {
     });
   });
 
+  it('un-maximizes the media window before it goes full screen, so it covers the taskbar', async () => {
+    const { __testables } = await import('../window/window-media');
+    const unmaximize = vi.fn();
+
+    __testables.unmaximizeBeforeFullscreen({
+      isMaximized: () => true,
+      unmaximize,
+    } as never);
+    expect(unmaximize).toHaveBeenCalledTimes(1);
+
+    __testables.unmaximizeBeforeFullscreen({
+      isMaximized: () => false,
+      unmaximize,
+    } as never);
+    expect(unmaximize).toHaveBeenCalledTimes(1);
+  });
+
   it('moves a windowed media window to another display when multiple screens exist', async () => {
     const { __testables } = await import('../window/window-media');
 
