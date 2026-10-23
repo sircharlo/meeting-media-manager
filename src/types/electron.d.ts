@@ -646,6 +646,8 @@ export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
 
 export interface ExtractNestedZipEntryOptions {
   innerEntryName?: string;
+  /** With innerEntryNameSuffix, the entry must match both. */
+  innerEntryNamePrefix?: string;
   innerEntryNameSuffix?: string;
   maxEntrySize?: number;
   maxTotalSize?: number;

@@ -47,7 +47,9 @@ import { basename, dirname, join, resolve, toUnix } from 'upath';
 import {
   type Entry,
   fromBufferPromise,
+  fromRandomAccessReaderPromise,
   openPromise,
+  RandomAccessReader,
   type ZipFile,
 } from 'yauzl';
 
@@ -1750,6 +1752,92 @@ const readDirectoryEntriesIntoMemory = async (
   return entries;
 };
 
+/**
+ * Opens a zip that sits uncompressed inside another file, in place: yauzl
+ * reads only the byte range it needs (the central directory, then the
+ * entries extracted), so the inner zip is neither written out nor loaded
+ * into memory.
+ */
+const openZipInFileRange = (path: string, start: number, size: number) => {
+  const reader = new (class extends RandomAccessReader {
+    override _readStreamForRange(from: number, to: number) {
+      // createReadStream's end is inclusive; yauzl's is not.
+      return createReadStream(path, { end: start + to - 1, start: start + from });
+    }
+  })();
+  return fromRandomAccessReaderPromise(reader, size);
+};
+
+/**
+ * Opens a zip entry that is itself a zip in place, when it's stored
+ * uncompressed (as an msixbundle stores its msix packages). Undefined when
+ * the entry is compressed, or not there.
+ */
+const openStoredZipEntryInPlace = async (
+  input: string,
+  outerEntryName: string,
+) => {
+  const { size } = await stat(input);
+  const zipfile = await openZipFileForEntries(input, size);
+  try {
+    for await (const entry of zipfile.eachEntry()) {
+      if (entry.fileName !== outerEntryName) continue;
+      if (entry.compressionMethod !== 0 || entry.isEncrypted()) return;
+      const { fileDataStart } = await zipfile.readLocalFileHeaderPromise(
+        entry,
+        { minimal: true },
+      );
+      return await openZipInFileRange(
+        input,
+        fileDataStart,
+        entry.compressedSize,
+      );
+    }
+    return undefined;
+  } catch (error) {
+    captureZipErrorOnce(error, {
+      args: { input, outerEntryName },
+      name: 'extractNestedZipEntry in place',
+    });
+    throw error;
+  } finally {
+    zipfile.close();
+  }
+};
+
+const readOuterZipEntry = async (
+  input: string,
+  outerEntryName: string,
+  isDirectory: boolean,
+  limits: { maxEntrySize: number; maxTotalSize: number },
+) => {
+  const [outerEntry] = isDirectory
+    ? await readDirectoryEntriesIntoMemory(input, [outerEntryName], limits)
+    : await readZipEntriesIntoMemory(input, [outerEntryName], limits);
+  if (!outerEntry) {
+    throw new Error(`Zip entry not found: ${outerEntryName}`);
+  }
+  return openZipBuffer(outerEntry.data);
+};
+
+const matchesNestedEntry = (
+  entry: Entry,
+  opts: ExtractNestedZipEntryOptions,
+) => {
+  if (opts.innerEntryName) return entry.fileName === opts.innerEntryName;
+  if (!opts.innerEntryNamePrefix && !opts.innerEntryNameSuffix) return false;
+  return (
+    entry.fileName.startsWith(opts.innerEntryNamePrefix ?? '') &&
+    entry.fileName.endsWith(opts.innerEntryNameSuffix ?? '')
+  );
+};
+
+/**
+ * Extracts one entry of a zip held in an entry of another zip, without
+ * extracting the inner zip itself. Stored uncompressed, the inner zip is
+ * read in place (see openStoredZipEntryInPlace), under the usual unzip
+ * limits; otherwise it's read into memory first, under the in-memory ones.
+ */
 export async function extractNestedZipEntry(
   input: string,
   outerEntryName: string,
@@ -1759,43 +1847,30 @@ export async function extractNestedZipEntry(
   const maxEntrySize = opts.maxEntrySize ?? MAX_IN_MEMORY_ZIP_ENTRY_SIZE;
   const maxTotalSize = opts.maxTotalSize ?? MAX_IN_MEMORY_ZIP_TOTAL_SIZE;
   const inputStats = await stat(input).catch(() => undefined);
-  const [outerEntry] = inputStats?.isDirectory?.()
-    ? await readDirectoryEntriesIntoMemory(input, [outerEntryName], {
-        maxEntrySize,
-        maxTotalSize,
-      })
-    : await readZipEntriesIntoMemory(input, [outerEntryName], {
-        maxEntrySize,
-        maxTotalSize,
-      });
+  const isDirectory = !!inputStats?.isDirectory?.();
 
-  if (!outerEntry) {
-    throw new Error(`Zip entry not found: ${outerEntryName}`);
-  }
-
-  const innerZipfile = await openZipBuffer(outerEntry.data);
+  const inPlaceZipfile = isDirectory
+    ? undefined
+    : await openStoredZipEntryInPlace(input, outerEntryName);
+  const innerZipfile =
+    inPlaceZipfile ??
+    (await readOuterZipEntry(input, outerEntryName, isDirectory, {
+      maxEntrySize,
+      maxTotalSize,
+    }));
+  const limits = inPlaceZipfile ? {} : { maxEntrySize, maxTotalSize };
   const guardState: ZipGuardState = {
     fileCount: 0,
     totalUncompressedSize: 0,
-  };
-  const matchesRequestedEntry = (entry: Entry) => {
-    if (opts.innerEntryName) return entry.fileName === opts.innerEntryName;
-    if (opts.innerEntryNameSuffix) {
-      return entry.fileName.endsWith(opts.innerEntryNameSuffix);
-    }
-    return false;
   };
 
   try {
     for await (const entry of innerZipfile.eachEntry()) {
       try {
-        const guardError = getZipEntryGuardError(entry, guardState, {
-          maxEntrySize,
-          maxTotalSize,
-        });
+        const guardError = getZipEntryGuardError(entry, guardState, limits);
         if (guardError) throw guardError;
 
-        if (entry.fileName.endsWith('/') || !matchesRequestedEntry(entry)) {
+        if (entry.fileName.endsWith('/') || !matchesNestedEntry(entry, opts)) {
           continue;
         }
 

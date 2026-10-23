@@ -5110,17 +5110,44 @@ const extractMatchingZipEntry = async (
 };
 
 /**
+ * Extracts the database from the x64 msix in JW Library's msixbundle without
+ * extracting the msix itself: the bundle stores it uncompressed, so it's read
+ * in place (see extractNestedZipEntry). A freshly written 128 MB msix was
+ * removed, most likely by antivirus software, before it could be read
+ * (MMM-V2-3MN).
+ */
+const extractMsixDatabase = async (msixbundle: string, outputDir: string) => {
+  try {
+    const msix = Object.keys(await getZipEntries(msixbundle)).find((name) =>
+      name.endsWith('_x64.msix'),
+    );
+    if (!msix) return undefined;
+    const { path } = await extractNestedZipEntry(msixbundle, msix, outputDir, {
+      innerEntryNamePrefix: 'Data/',
+      innerEntryNameSuffix: '.db',
+    });
+    return path;
+  } catch (error) {
+    throw new ArchiveReadError(
+      msixbundle,
+      await getPathDiagnostic(msixbundle),
+      error,
+    );
+  }
+};
+
+/**
  * Extracts JW Library's language database from its downloaded zip.
  *
  * The zip holds an msixbundle, which holds one msix per CPU architecture, and
  * the database is the one file needed from the x64 msix. Each of those archives
  * holds far more than that (installer scripts, every architecture's build, the
  * app's executables and its 120 MB+ dll), so each level is listed first and
- * only the one entry needed from it is extracted. Extracting everything wrote
- * about 1 GB per run, and antivirus software locking the freshly written
- * executables made it fail (MMM-V2-3KZ). Listing the archive just extracted,
- * rather than searching the folder, also keeps an msixbundle left over from an
- * older JW Library version from being picked instead of the current one.
+ * only what's needed from it is read. Extracting everything wrote about 1 GB
+ * per run, and antivirus software locking the freshly written executables made
+ * it fail (MMM-V2-3KZ). Listing the archive just extracted, rather than
+ * searching the folder, also keeps an msixbundle left over from an older JW
+ * Library version from being picked instead of the current one.
  *
  * @param jwlbZipPath The downloaded JW Library zip.
  * @returns The extracted database, if every level had the expected entry.
@@ -5131,15 +5158,7 @@ export const extractMepsUnitDb = async (jwlbZipPath: string) => {
     name.endsWith('.msixbundle'),
   );
   if (!msixbundle) return undefined;
-  const msix = await extractMatchingZipEntry(msixbundle, dir, (name) =>
-    name.endsWith('_x64.msix'),
-  );
-  if (!msix) return undefined;
-  return extractMatchingZipEntry(
-    msix,
-    dir,
-    (name) => name.startsWith('Data/') && name.endsWith('.db'),
-  );
+  return extractMsixDatabase(msixbundle, dir);
 };
 
 /**
