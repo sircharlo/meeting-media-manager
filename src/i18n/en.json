@@ -1328,6 +1328,8 @@
   "zoomMeetingManagerHandAlert-explain": "During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets you unmute that participant with one click, and later mute them again and lower their hand. The Zoom button on the action island lists the raised hands too. If the meeting timer is enabled, a large hand with the participant's name also appears on the timer display for the chairman. M³ first needs to learn how Zoom marks raised hands in your language, with the button below.",
   "zoomMeetingManagerMeetingId": "Zoom meeting ID",
   "zoomMeetingManagerMeetingId-explain": "Meeting ID that will be used when launching Zoom Meeting Manager.",
+  "zoomMeetingManagerPostMeetingAskToUnmute": "Also ask everyone to unmute",
+  "zoomMeetingManagerPostMeetingAskToUnmute-explain": "After letting everyone unmute, M³ also presses Zoom's \"Ask all to unmute\" button. Participants who agreed beforehand to be unmuted by the host are then unmuted right away. Turn this off to leave everyone muted, free to unmute themselves when they're ready.",
   "zoomMeetingManagerSetupAssistant": "Setup assistant",
   "zoomMeetingManagerSetupAssistant-explain": "Walks you through connecting M³ to Zoom, checks that everything works, and lets you choose what M³ does for you.",
   "zoomMeetingManagerStartupCheck": "Check Zoom when M³ starts",

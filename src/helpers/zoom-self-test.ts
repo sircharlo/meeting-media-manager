@@ -380,7 +380,8 @@ const runSteps = async (
         await participants.act('reset-events');
         await participants.act('accept-unmute-requests');
       }
-      const result = await runZoomPostMeetingSequence(titles);
+      // Asking everyone to unmute is what this checks, whatever the setting.
+      const result = await runZoomPostMeetingSequence(titles, true);
       if (!result.ok) fail(`Failed steps: ${result.failedSteps.join(', ')}`);
       await expectHostAudio(false);
       if (titles.videoOffTitle) await expectHostVideo(titles.videoOffTitle);
