@@ -1762,7 +1762,10 @@ const openZipInFileRange = (path: string, start: number, size: number) => {
   const reader = new (class extends RandomAccessReader {
     override _readStreamForRange(from: number, to: number) {
       // createReadStream's end is inclusive; yauzl's is not.
-      return createReadStream(path, { end: start + to - 1, start: start + from });
+      return createReadStream(path, {
+        end: start + to - 1,
+        start: start + from,
+      });
     }
   })();
   return fromRandomAccessReaderPromise(reader, size);
@@ -2103,6 +2106,7 @@ export function watchFolder(folderPath: string) {
     filesystemWatch(folderPath, {
       atomic: false,
       awaitWriteFinish: true,
+      backend: pathIsPossiblyNetwork ? 'polling' : 'auto',
       ignored: (fp: string, stats?: Stats) => {
         try {
           if (toUnix(folderPath) === fp) return false; // Don't ignore the root folder itself
@@ -2122,8 +2126,7 @@ export function watchFolder(folderPath: string) {
         }
       },
       ignorePermissionErrors: true,
-      interval: pathIsPossiblyNetwork ? WATCH_POLL_INTERVAL_MS : undefined,
-      usePolling: pathIsPossiblyNetwork,
+      pollingInterval: WATCH_POLL_INTERVAL_MS, // Only used by the polling backend
     })
       .on('error', (error: unknown) => {
         const context = {
