@@ -14,6 +14,7 @@ import type {
   SettingsValues,
   UnzipOptions,
   UrlVariables,
+  ZoomLayoutScreens,
   ZoomTestParticipantsRequest,
 } from 'src/types';
 
@@ -637,10 +638,12 @@ handleIpcInvoke('zoomCommand', async (_e, command: unknown) => {
   return runZoomHelperCommand(command);
 });
 
-handleIpcInvoke('getZoomLayoutTargets', (_e, preferences: unknown) =>
-  preferences && typeof preferences === 'object'
-    ? getZoomLayoutTargets(preferences)
-    : null,
+handleIpcInvoke(
+  'getZoomLayoutTargets',
+  (_e, preferences: unknown, screens?: ZoomLayoutScreens) =>
+    preferences && typeof preferences === 'object'
+      ? getZoomLayoutTargets(preferences, screens)
+      : null,
 );
 
 handleIpcInvoke(

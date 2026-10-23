@@ -14,6 +14,7 @@ import type {
   ZoomCommandResult,
   ZoomHelperStartResult,
   ZoomLayoutPreferences,
+  ZoomLayoutScreens,
   ZoomLayoutTargets,
   ZoomTestParticipantsRequest,
   ZoomTestParticipantsResponse,
@@ -213,6 +214,7 @@ export interface ElectronApi {
    */
   getZoomLayoutTargets: (
     preferences: ZoomLayoutPreferences,
+    screens?: ZoomLayoutScreens,
   ) => Promise<null | ZoomLayoutTargets>;
   hideFileOnWindows: (filePath: string) => Promise<void>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;

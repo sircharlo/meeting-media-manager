@@ -45,7 +45,11 @@ const {
     vi.fn<
       (
         targets: ZoomLayoutTargets,
-        options?: { participantsOnly?: boolean; zoomOnly?: boolean },
+        options?: {
+          participantsOnly?: boolean;
+          withSecond?: boolean;
+          zoomOnly?: boolean;
+        },
       ) => Promise<null | ZoomPlacedWindows>
     >(),
 }));
@@ -104,6 +108,12 @@ const layout = (
 
 const getZoomLayoutTargets = vi.fn<() => Promise<null | ZoomLayoutTargets>>();
 
+// M³ on one screen, its media window full screen on another.
+const SCREENS = [
+  { bounds: frame(0, 1920), id: 1, mainWindow: true },
+  { bounds: frame(1920, 1920), id: 2, mediaWindow: true },
+] as Display[];
+
 /** One look at Zoom's windows, letting any wait in it run out. */
 const look = async (seen: ZoomWindowLayout) => {
   const following = __testables.follow(seen);
@@ -133,6 +143,7 @@ beforeEach(() => {
   placeZoomWindows.mockResolvedValue({ snapped: false, zoom: PLACED_ZOOM });
   vi.stubGlobal('electronApi', {
     ...globalThis.electronApi,
+    getAllScreens: async () => SCREENS,
     getZoomLayoutTargets,
   });
 });
@@ -163,12 +174,16 @@ describe('following Zoom’s windows', () => {
 
     await look(layout({ frame: frame(100) }));
     expect(countZoomMeetingParticipants).toHaveBeenCalledTimes(1);
+    // Zoom's second window too: placed once, when the meeting is arranged.
     expect(placeZoomWindows).toHaveBeenCalledWith(TARGETS, {
+      withSecond: true,
       zoomOnly: false,
     });
     // The main process got the preferences as a plain object.
     expect(getZoomLayoutTargets).toHaveBeenCalledWith(
       expect.objectContaining({ enabled: true, m3Share: 0.4 }),
+      // The media window's screen, as M³ is set up (full screen there).
+      { media: 2, presentation: [2] },
     );
   });
 
@@ -192,7 +207,23 @@ describe('following Zoom’s windows', () => {
     await look(layout({ frame: narrower }));
     expect(placeZoomWindows).not.toHaveBeenCalled();
     await look(layout({ frame: narrower }));
-    expect(placeZoomWindows).toHaveBeenCalledWith(TARGETS, { zoomOnly: true });
+    expect(placeZoomWindows).toHaveBeenCalledWith(TARGETS, {
+      withSecond: false,
+      zoomOnly: true,
+    });
+  });
+
+  it('never puts Zoom’s second window back once placed', async () => {
+    const second = window({ frame: frame(1920, 1920), handle: 8 });
+    await look(layout({}, { second }));
+    await look(layout({}, { second }));
+    placeZoomWindows.mockClear();
+
+    // The second window moved, the meeting window didn't: nothing to do.
+    const moved = { second: window({ frame: frame(0), handle: 8 }) };
+    await look(layout({ frame: PLACED_ZOOM }, moved));
+    await look(layout({ frame: PLACED_ZOOM }, moved));
+    expect(placeZoomWindows).not.toHaveBeenCalled();
   });
 
   it('leaves Zoom where the user moved it until the next meeting', async () => {
@@ -232,7 +263,10 @@ describe('following Zoom’s windows', () => {
     // Back where Zoom likes, not where it was placed.
     await look(layout({ frame: frame(0) }));
     await look(layout({ frame: frame(0) }));
-    expect(placeZoomWindows).toHaveBeenCalledWith(TARGETS, { zoomOnly: true });
+    expect(placeZoomWindows).toHaveBeenCalledWith(TARGETS, {
+      withSecond: false,
+      zoomOnly: true,
+    });
     expect(countZoomMeetingParticipants).toHaveBeenCalledTimes(1);
   });
 
@@ -267,7 +301,9 @@ describe('following Zoom’s windows', () => {
     globalThis.dispatchEvent(new CustomEvent('screen-trigger-update'));
     await vi.advanceTimersByTimeAsync(LAYOUT_POLL_INTERVAL_MS);
     expect(placeZoomWindows).toHaveBeenCalledTimes(2);
+    // M³ too, but Zoom's second window stays where it was placed.
     expect(placeZoomWindows).toHaveBeenLastCalledWith(TARGETS, {
+      withSecond: false,
       zoomOnly: false,
     });
   });

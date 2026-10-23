@@ -24,6 +24,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🐞 Bug Fixes
 
+- 🐞 **Zoom Meeting Manager**: With Zoom's "Dual window" view (Zoom's "Use dual monitors" setting), M³ could take Zoom's second window, the one showing the shared screen or the speaker, for the meeting window when it was the bigger of the two, and then fail to read raised hands or to press Zoom's buttons. M³ now always finds the window that has Zoom's toolbar.
 - 🐞 **Congregation Profiles**: "Enable schedule sync" now works the first time. When the profile's name differed from the congregation's official one, picking the congregation applied its name and schedule but then turned the sync off again right away, so it took a second try (and only that one showed the confirmation).
 - 🐞 **Media Playback**: When the computer's sound output fails in the middle of a video or song, for example because a display, projector, speaker or headset was unplugged or changed, M³ now picks up where it was instead of stopping it. If the sound keeps failing, M³ stops after a couple of tries, as before.
 - 🐞 **OBS Studio**: The setting that shows recording controls in the OBS Studio popup now has a proper name and explanation, instead of showing an internal identifier.

@@ -1,6 +1,7 @@
 import type {
   Display,
   ZoomLayoutPreferences,
+  ZoomLayoutScreens,
   ZoomLayoutTargets,
   ZoomScreenRect,
 } from 'src/types';
@@ -88,14 +89,23 @@ const mainWindowHandle = (): number | undefined => {
  * (or the timer's); its second window goes over the media window's screen,
  * full screen, so hiding the media window shows it. Null when nothing can
  * be worked out (no screens, or not on Windows).
+ *
+ * `screens` names the media window's and the timer's screens as M³ is set
+ * up (the renderer knows whether they're to be full screen); without it,
+ * they're told by the windows filling their screens right now.
  */
 export const getZoomLayoutTargets = (
   preferences: Partial<ZoomLayoutPreferences>,
+  screens?: ZoomLayoutScreens,
 ): null | ZoomLayoutTargets => {
   if (PLATFORM !== 'win32') return null;
   const prefs = { ...DEFAULT_ZOOM_LAYOUT, ...preferences };
   const displays = getAllScreens();
-  const usable = displays.filter((d) => !isPresentationScreen(d, displays));
+  const taken = (d: Display) =>
+    screens
+      ? screens.presentation.includes(d.id)
+      : isPresentationScreen(d, displays);
+  const usable = displays.filter((d) => !taken(d));
   const m3Display = displays.find((d) => d.mainWindow) ?? displays[0];
   if (!m3Display || !usable.length) return null;
   const m3Usable = usable.includes(m3Display) ? m3Display : usable[0];
@@ -138,7 +148,9 @@ export const getZoomLayoutTargets = (
     }
   }
 
-  const mediaDisplay = displays.find((d) => isMediaScreen(d, displays));
+  const mediaDisplay = screens
+    ? displays.find((d) => d.id === screens.media)
+    : displays.find((d) => isMediaScreen(d, displays));
   if (mediaDisplay) targets.second = toPhysical(mediaDisplay.bounds);
   return targets;
 };

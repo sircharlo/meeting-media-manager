@@ -175,6 +175,20 @@ describe('getZoomLayoutTargets', () => {
     expect(targets?.second).toBeUndefined();
   });
 
+  it('goes by the screens M³ is set up to fill with its media window, when given', () => {
+    // Windowed right now, but set to show full screen on the right screen.
+    mediaWindowInfo.mediaWindow = windowFilling(rect(3500, 400, 800, 450), false);
+    const targets = getZoomLayoutTargets(prefs({ display: onScreen(RIGHT) }), {
+      media: RIGHT.id,
+      presentation: [RIGHT.id],
+    });
+    expect(targets).toMatchObject({
+      displayId: 2,
+      fallback: true,
+      second: RIGHT.bounds,
+    });
+  });
+
   it('places in physical pixels', () => {
     dipToScreenRect.mockImplementation((_window, r) => ({
       height: r.height * 2,

@@ -185,6 +185,16 @@ export interface ZoomLayoutPreferences {
 }
 
 /**
+ * The screens M³'s presentation windows take, as M³ is set up (by Electron
+ * display id): never Zoom's nor M³'s; Zoom's second window goes over the
+ * media window's.
+ */
+export interface ZoomLayoutScreens {
+  media: null | number;
+  presentation: number[];
+}
+
+/**
  * Where the windows go, worked out by the main process from the layout
  * preferences and the screens connected now (physical pixels).
  */

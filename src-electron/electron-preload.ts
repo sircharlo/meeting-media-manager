@@ -118,8 +118,8 @@ const electronApi: ElectronApi = {
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
   getZipEntries: (p) => invoke('getZipEntries', p),
-  getZoomLayoutTargets: (preferences) =>
-    invoke('getZoomLayoutTargets', preferences),
+  getZoomLayoutTargets: (preferences, screens) =>
+    invoke('getZoomLayoutTargets', preferences, screens),
   hideFileOnWindows,
   inferExtension,
   isDemoMode: IS_DEMO_MODE,

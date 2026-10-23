@@ -1072,15 +1072,15 @@ export const getZoomWindowLayout = async () => {
 };
 
 /**
- * Puts Zoom's meeting windows (and M³'s main window, unless `zoomOnly`)
- * where the layout's targets say; with `participantsOnly`, only Zoom's
- * participants list, at Zoom's spot (while sharing hides the meeting).
- * Resolves to where each one ended up, or null if that failed (no meeting
- * window, say).
+ * Puts Zoom's meeting window (and M³'s main window, unless `zoomOnly`, and
+ * Zoom's second window, with `withSecond`) where the layout's targets say;
+ * with `participantsOnly`, only Zoom's participants list, at Zoom's spot
+ * (while sharing hides the meeting). Resolves to where each one ended up,
+ * or null if that failed (no meeting window, say).
  */
 export const placeZoomWindows = async (
   targets: ZoomLayoutTargets,
-  { participantsOnly = false, zoomOnly = false } = {},
+  { participantsOnly = false, withSecond = false, zoomOnly = false } = {},
 ) => {
   const result = await runCommand(
     participantsOnly
@@ -1088,7 +1088,7 @@ export const placeZoomWindows = async (
       : {
           m3: zoomOnly ? undefined : targets.m3,
           m3Handle: zoomOnly ? undefined : targets.m3Handle,
-          second: targets.second,
+          second: withSecond ? targets.second : undefined,
           snap: zoomOnly ? null : targets.snap,
           type: 'place-windows',
           zoom: targets.zoom,

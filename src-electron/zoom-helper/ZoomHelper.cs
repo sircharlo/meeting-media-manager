@@ -99,6 +99,7 @@ namespace M3.ZoomHelper
         [DllImport("user32.dll")] public static extern bool IsWindow(IntPtr hwnd);
         [DllImport("user32.dll")] public static extern short GetAsyncKeyState(int key);
         [DllImport("user32.dll")] public static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint flags);
+        [DllImport("user32.dll")] public static extern IntPtr MonitorFromRect(ref Rect rect, uint flags);
         [DllImport("user32.dll")] public static extern bool GetMonitorInfo(IntPtr monitor, ref MonitorInfo info);
         [DllImport("user32.dll")] public static extern bool GetWindowPlacement(IntPtr hwnd, ref WindowPlacement placement);
         [DllImport("user32.dll")] public static extern bool SetWindowPlacement(IntPtr hwnd, ref WindowPlacement placement);
@@ -1084,34 +1085,25 @@ namespace M3.ZoomHelper
 
         // --- Meeting window ------------------------------------------------------
 
-        /// <summary>The meeting window. Zoom hides its toolbar a few seconds after
-        /// the mouse stops moving over it, and a hidden toolbar vanishes from UI
-        /// Automation too, so the window is recognized without it: it's the
-        /// visible meeting-class window (Zoom keeps a hidden spare), preferring
-        /// one whose toolbar is showing.</summary>
+        /// <summary>The meeting window: the visible meeting-class window (Zoom
+        /// keeps a hidden spare) that holds the toolbar. Zoom hides its toolbar
+        /// a few seconds after the mouse stops moving over it, and a hidden
+        /// toolbar vanishes from UI Automation too, but it stays a child window
+        /// of the meeting's (see MeetingWindowHandles). With Zoom's "Use dual
+        /// monitors" on, the other one, often the bigger, is its second window.
+        /// A minimized meeting window still counts (Focus brings it back).</summary>
         static El FindMeetingWindow()
         {
-            El largest = null;
-            El minimized = null;
-            foreach (var handle in TopWindows(MeetingWindowClass, true))
+            foreach (var handle in MeetingWindowHandles())
             {
                 try
                 {
                     var window = Uia.FromHandle(handle);
-                    // A minimized window has no size on screen, but it's still
-                    // the meeting (and Focus brings it back).
-                    if (Native.IsIconic(handle))
-                    {
-                        if (minimized == null) minimized = window;
-                        continue;
-                    }
-                    if (Uia.FirstByClass(window, ControlPanelClass) != null) return window;
-                    if (largest == null || window.Area > largest.Area) largest = window;
+                    if (window.Area > 0 || Native.IsIconic(handle)) return window;
                 }
-                catch (Exception) { }
+                catch (Exception) { } // gone meanwhile
             }
-            if (largest != null && largest.Area > 0) return largest;
-            return minimized;
+            return null;
         }
 
         /// <summary>Zoom's mini view: the meeting window is hidden behind a
@@ -3088,6 +3080,29 @@ namespace M3.ZoomHelper
             return info;
         }
 
+        /// <summary>A target M3 worked out in Electron's units and converted,
+        /// set right on the edges of the screen it's on: an edge within a few
+        /// pixels of the work area's (or the whole screen's) becomes it. At
+        /// 125 % scaling, for one, the conversion leaves it a pixel or two
+        /// under the taskbar.</summary>
+        static Native.Rect? FitToScreen(Native.Rect? requested)
+        {
+            if (!requested.HasValue) return null;
+            var target = requested.Value;
+            const int tolerance = 3;
+            var info = new Native.MonitorInfo { Size = Marshal.SizeOf(typeof(Native.MonitorInfo)) };
+            var monitor = Native.MonitorFromRect(ref target, Native.MonitorDefaultToNearest);
+            if (monitor == IntPtr.Zero || !Native.GetMonitorInfo(monitor, ref info)) return target;
+            foreach (var area in new[] { info.Work, info.Monitor })
+            {
+                if (Math.Abs(target.Left - area.Left) <= tolerance) target.Left = area.Left;
+                if (Math.Abs(target.Top - area.Top) <= tolerance) target.Top = area.Top;
+                if (Math.Abs(target.Right - area.Right) <= tolerance) target.Right = area.Right;
+                if (Math.Abs(target.Bottom - area.Bottom) <= tolerance) target.Bottom = area.Bottom;
+            }
+            return target;
+        }
+
         static Dictionary<string, object> LayoutState(IntPtr handle)
         {
             var frame = VisibleFrame(handle);
@@ -3133,8 +3148,12 @@ namespace M3.ZoomHelper
         /// focus: restored first if minimized or maximized. The invisible
         /// border depends on the screen's scaling, so it's measured again once
         /// the window is on its new screen, which then gets placed again.
-        /// Returns where the window ended up: Zoom keeps a minimum size.</summary>
-        static Native.Rect PlaceWindow(IntPtr handle, Native.Rect target)
+        /// Returns where the window ended up: Zoom keeps a minimum size.
+        /// With `raise`, it's also brought in front of the other windows
+        /// (still without the focus), so a window already on that screen
+        /// doesn't hide it; topmost ones, like M3's media window, stay in
+        /// front.</summary>
+        static Native.Rect PlaceWindow(IntPtr handle, Native.Rect target, bool raise = false)
         {
             if (Native.IsIconic(handle) || Native.IsZoomed(handle))
             {
@@ -3158,6 +3177,7 @@ namespace M3.ZoomHelper
                 frame = placed;
                 if (stuck) break;
             }
+            if (raise) Native.SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, Native.SwpNoMove | Native.SwpNoSize | Native.SwpNoActivate);
             return frame;
         }
 
@@ -3209,10 +3229,10 @@ namespace M3.ZoomHelper
         /// window ended up, and whether Windows snapped them.</summary>
         public static Dictionary<string, object> PlaceWindows(Dictionary<string, object> request)
         {
-            var zoomTarget = GetRect(request, "zoom");
-            var secondTarget = GetRect(request, "second");
-            var listTarget = GetRect(request, "participants");
-            var m3Target = GetRect(request, "m3");
+            var zoomTarget = FitToScreen(GetRect(request, "zoom"));
+            var secondTarget = FitToScreen(GetRect(request, "second"));
+            var listTarget = FitToScreen(GetRect(request, "participants"));
+            var m3Target = FitToScreen(GetRect(request, "m3"));
             object handleValue;
             var m3 = m3Target.HasValue && request.TryGetValue("m3Handle", out handleValue) && handleValue != null
                 ? new IntPtr(Convert.ToInt64(handleValue))
@@ -3232,10 +3252,10 @@ namespace M3.ZoomHelper
                     SnapWithWindows(m3, m3Target.Value, !zoomLeft);
             }
             var placed = new Dictionary<string, object> { { "snapped", snapped } };
-            if (zoomTarget.HasValue) placed["zoom"] = RectReply(PlaceWindow(handles[0], zoomTarget.Value));
-            if (m3 != IntPtr.Zero) placed["m3"] = RectReply(PlaceWindow(m3, m3Target.Value));
+            if (zoomTarget.HasValue) placed["zoom"] = RectReply(PlaceWindow(handles[0], zoomTarget.Value, true));
+            if (m3 != IntPtr.Zero) placed["m3"] = RectReply(PlaceWindow(m3, m3Target.Value, true));
             if (secondTarget.HasValue && handles.Count > 1) placed["second"] = RectReply(PlaceWindow(handles[1], secondTarget.Value));
-            if (listTarget.HasValue && lists.Count > 0) placed["participants"] = RectReply(PlaceWindow(lists[0], listTarget.Value));
+            if (listTarget.HasValue && lists.Count > 0) placed["participants"] = RectReply(PlaceWindow(lists[0], listTarget.Value, true));
             return new Dictionary<string, object> { { "placed", placed } };
         }
 

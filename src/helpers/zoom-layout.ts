@@ -1,6 +1,7 @@
 import type {
   Display,
   ZoomLayoutPreferences,
+  ZoomLayoutScreens,
   ZoomScreenRect,
   ZoomWindowLayout,
   ZoomWindowState,
@@ -47,12 +48,16 @@ const PARTICIPANTS_SETTLE_MS = 1500;
 /** How long to wait before trying again when the windows couldn't be placed. */
 const RETRY_AFTER_FAILURE_MS = 30_000;
 
-/** The meeting being kept in place: from when it opens until it closes. */
+/**
+ * The meeting being kept in place: from when it opens until it closes. Only
+ * Zoom's meeting window is kept in place: its second window (with Zoom's
+ * "Use dual monitors" on, behind the media window) is placed once, then
+ * left alone.
+ */
 interface Session {
   /** When M³ last placed Zoom, to tell the user's moves since. */
   placedAt: number;
-  /** Where Zoom's windows ended up, to notice them moving. */
-  second?: ZoomScreenRect;
+  /** Where Zoom's meeting window ended up, to notice it moving. */
   zoom?: ZoomScreenRect;
 }
 
@@ -166,6 +171,27 @@ const plainPreferences = (): ZoomLayoutPreferences => {
   };
 };
 
+/**
+ * The screens M³'s media window and timer take, as M³ is set up (the same
+ * rule as the setup assistant's map), for the main process to keep Zoom off
+ * them and put Zoom's second window over the media window's.
+ */
+const presentationScreens = async (): Promise<ZoomLayoutScreens> => {
+  const screens = await globalThis.electronApi.getAllScreens();
+  const taken = screens.filter((d) => isPresentationScreen(d, screens));
+  return {
+    media: taken.find((d) => d.mediaWindow)?.id ?? null,
+    presentation: taken.map((d) => d.id),
+  };
+};
+
+/** Where the windows go now, worked out by the main process. */
+const layoutTargets = async () =>
+  globalThis.electronApi.getZoomLayoutTargets(
+    plainPreferences(),
+    await presentationScreens(),
+  );
+
 const noticeFallback = () => {
   if (fallbackNoticed) return;
   fallbackNoticed = true;
@@ -223,18 +249,29 @@ const noticeMove = (messageKey: string) => {
 };
 
 /**
- * Puts Zoom's meeting windows where the layout says, and M³'s main window
- * too unless `zoomOnly`. Resolves to whether they could be placed (not with
- * no meeting window, say). `movedFrom` is where Zoom was when M³ moved it by
- * itself: the user is then told, if it really moved.
+ * Puts Zoom's meeting window where the layout says, and M³'s main window
+ * too unless `zoomOnly`, and Zoom's second window unless `withSecond` is
+ * false (by default, only along with M³'s: when a meeting is first arranged,
+ * or by hand). Resolves to whether they could be placed (not with no meeting
+ * window, say). `movedFrom` is where Zoom was when M³ moved it by itself:
+ * the user is then told, if it really moved.
  */
 export const arrangeZoomWindows = async ({
   movedFrom,
+  withSecond,
   zoomOnly = false,
-}: { movedFrom?: ZoomScreenRect; zoomOnly?: boolean } = {}) => {
-  const targets =
-    await globalThis.electronApi.getZoomLayoutTargets(plainPreferences());
-  const placed = targets ? await placeZoomWindows(targets, { zoomOnly }) : null;
+}: {
+  movedFrom?: ZoomScreenRect;
+  withSecond?: boolean;
+  zoomOnly?: boolean;
+} = {}) => {
+  const targets = await layoutTargets();
+  const placed = targets
+    ? await placeZoomWindows(targets, {
+        withSecond: withSecond ?? !zoomOnly,
+        zoomOnly,
+      })
+    : null;
   if (!placed) {
     retryAt = Date.now() + RETRY_AFTER_FAILURE_MS;
     return false;
@@ -242,11 +279,7 @@ export const arrangeZoomWindows = async ({
   if (targets?.fallback) noticeFallback();
   retryAt = 0;
   screensChanged = false;
-  session = {
-    placedAt: Date.now(),
-    second: placed.second,
-    zoom: placed.zoom,
-  };
+  session = { placedAt: Date.now(), zoom: placed.zoom };
   userAdjusted = false;
   lastSeen = null;
   log('Zoom layout: windows arranged', 'zoom', 'info', { placed, zoomOnly });
@@ -320,8 +353,7 @@ const followShare = async (layout: ZoomWindowLayout) => {
     return;
   }
   if (!settled(list.frame)) return;
-  const targets =
-    await globalThis.electronApi.getZoomLayoutTargets(plainPreferences());
+  const targets = await layoutTargets();
   const placed = targets
     ? await placeZoomWindows(targets, { participantsOnly: true })
     : null;
@@ -366,23 +398,15 @@ const movedByUser = (layout: ZoomWindowLayout, placedAt: number) => {
  * moving (its participants list opening, say). After a change of screens,
  * the whole layout is worked out and placed again.
  */
-const keepInPlace = async (
-  layout: ZoomWindowLayout,
-  meeting: ZoomWindowState,
-  placed: Session,
-) => {
+const keepInPlace = async (meeting: ZoomWindowState, placed: Session) => {
   if (screensChanged) {
     screensChanged = false;
     log('Zoom layout: screens changed, arranging again', 'zoom', 'info');
-    await arrangeZoomWindows({ movedFrom: meeting.frame });
+    await arrangeZoomWindows({ movedFrom: meeting.frame, withSecond: false });
     return;
   }
   if (!useAppSettingsStore().zoomLayout.keepInPlace) return;
-  const secondMoved =
-    !!placed.second &&
-    !!layout.second &&
-    !sameScreenRect(layout.second.frame, placed.second);
-  if (sameScreenRect(meeting.frame, placed.zoom) && !secondMoved) {
+  if (sameScreenRect(meeting.frame, placed.zoom)) {
     lastSeen = null;
     return;
   }
@@ -419,7 +443,7 @@ const follow = async (layout: ZoomWindowLayout) => {
 
   if (!session) await arrangeNewMeeting(meeting);
   else if (!movedByUser(layout, session.placedAt)) {
-    await keepInPlace(layout, meeting, session);
+    await keepInPlace(meeting, session);
   }
   return true;
 };
