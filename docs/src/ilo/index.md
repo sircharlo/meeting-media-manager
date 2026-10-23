@@ -9,19 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Download
-      link: /download
+      link: /ilo/download
     - theme: brand
       text: About
       link: /ilo/about
     - theme: brand
       text: User Guide
-      link: /user-guide
+      link: /ilo/user-guide
     - theme: brand
       text: Settings Guide
-      link: /settings-guide
+      link: /ilo/settings-guide
     - theme: brand
       text: FAQ
-      link: /faq
+      link: /ilo/faq
 features:
   - icon: 🚀
     title: Automatic Media Management
