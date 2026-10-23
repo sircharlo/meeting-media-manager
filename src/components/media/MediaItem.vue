@@ -1393,7 +1393,7 @@ import {
   triggerZoomScreenShare,
 } from 'src/helpers/zoom';
 import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
-import { log, throttleWithTrailing, uuid } from 'src/shared/vanilla';
+import { log, uuid } from 'src/shared/vanilla';
 import { isFileUrl } from 'src/utils/fs';
 import {
   getFileNameMaskFromPubMediaId,
@@ -3024,14 +3024,20 @@ const calculatedPan = computed(() => {
   };
 });
 
-const updateZoomPan = throttleWithTrailing(
-  (values: [number, number, number]) => {
-    const [newZoom] = values;
-    mediaPlaying.value.zoom = newZoom ?? 1;
+// Passed on to the media window at most once a frame, with the latest zoom
+// and pan: it eases toward each one on a spring (see MediaPlayerPage.vue), so
+// a steady stream of them is what keeps its motion smooth and close behind
+// the thumbnail.
+let zoomPanUpdateFrame: null | number = null;
+const updateZoomPan = () => {
+  if (zoomPanUpdateFrame !== null) return;
+  zoomPanUpdateFrame = requestAnimationFrame(() => {
+    zoomPanUpdateFrame = null;
+    if (!isCurrentlyPlaying.value) return;
+    mediaPlaying.value.zoom = mediaZoom.value;
     mediaPlaying.value.pan = calculatedPan.value;
-  },
-  300,
-);
+  });
+};
 
 const mediaImage = useTemplateRef<QImg>('mediaImage');
 const randomId = ref('mediaImage-' + uuid());
@@ -3183,13 +3189,13 @@ const mediaElapsed = computed({
 
 watch(
   () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
-  (newValues) => {
+  () => {
     saveThumbnailZoomPan(props.media.uniqueId, {
       pan: mediaPan.value,
       zoom: mediaZoom.value,
     });
     if (!isCurrentlyPlaying.value) return;
-    updateZoomPan(newValues as [number, number, number]);
+    updateZoomPan();
   },
 );
 
