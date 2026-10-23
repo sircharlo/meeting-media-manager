@@ -111,7 +111,9 @@
               />
               <circle class="analog-countdown__dot" cx="94" cy="50" r="6" />
             </svg>
-            <div class="analog-countdown__inner">
+            <!-- With the digital display beside it, the ring is a gauge
+                 only: the time shows once, in the larger digits. -->
+            <div v-if="!isCombinedDisplay" class="analog-countdown__inner">
               {{ displayTime }}
             </div>
           </div>
@@ -313,14 +315,18 @@ const timerTextSize = computed(() => timerData.value?.timerTextSize || '10vw'); 
 const fittedDigitalFontSize = computed(() => {
   const characterCount = Math.max(digitalDisplayTime.value.length, 1);
   const characterWidthRatio = 0.62;
-  const maxFontSize = `calc(94vw / ${characterCount * characterWidthRatio})`;
+  // Beside the dial, the digits get the width it leaves them.
+  const availableWidth = isCombinedDisplay.value
+    ? '(94vw - var(--dial-size) - var(--main-gap))'
+    : '94vw';
+  const maxFontSize = `calc(${availableWidth} / ${characterCount * characterWidthRatio})`;
 
   return `min(${timerTextSize.value}, ${maxFontSize})`;
 });
 
 const digitalTextStyles = computed(() => ({
   fontSize: isCombinedDisplay.value
-    ? `min(${fittedDigitalFontSize.value}, 14vh)`
+    ? `min(${fittedDigitalFontSize.value}, 40vh)`
     : fittedDigitalFontSize.value,
   fontVariantNumeric: 'tabular-nums',
   fontWeight: 'bold',
@@ -734,6 +740,7 @@ watch(isClockArcDisplay, (showing) => {
 }
 
 .timer-display {
+  --main-gap: clamp(24px, 5vw, 80px);
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -744,8 +751,13 @@ watch(isClockArcDisplay, (showing) => {
 .timer-display__main {
   align-items: center;
   display: flex;
-  gap: clamp(24px, 5vw, 80px);
+  gap: var(--main-gap);
   justify-content: center;
+}
+
+/* Analog and digital: a smaller dial, leaving room for large digits beside it */
+.timer-display--combined {
+  --dial-size: min(56vh, 40vw);
 }
 
 .timer-display--combined .timer-display__main {
@@ -785,6 +797,11 @@ watch(isClockArcDisplay, (showing) => {
 .timer-display--labelled .analog-clock,
 .timer-display--labelled .analog-countdown {
   height: min(56vh, 62vw);
+}
+
+.timer-display--combined .analog-clock,
+.timer-display--combined .analog-countdown {
+  height: var(--dial-size);
 }
 
 .analog-clock__arc {
