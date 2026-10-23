@@ -565,26 +565,26 @@ Zoom отмечает поднятые руки на своем языке, по
 
 **По умолчанию**: `false`
 
-#### Window Layout {#zoom-meeting-manager-window-layout}
+#### Расположение окон {#zoom-meeting-manager-window-layout}
 
 <!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
 
-M³ can put Zoom's meeting window, and its own main window, where you want them on your screens. The setup assistant asks where in two steps, which the **Choose the layout** button here opens again at any time:
+M³ может поставить окно конференции Zoom и свое главное окно туда, куда вам нужно на ваших экранах. Помощник настройки спрашивает, куда именно, в два шага, которые кнопка **Выбрать расположение** здесь снова открывает в любое время:
 
-1. On a map of your screens as they are arranged, pick the screen for Zoom's meeting. The screen the media window fills is never offered. If Zoom's screen isn't the one M³ is on, choose whether Zoom has it to itself or shares it with M³ (M³ then moves there too).
-2. On a drawing of that screen at its real shape, drag the divider to share it between M³ and Zoom. It clicks onto the usual proportions (a half, a third, a quarter and so on); hold `Alt` to drag it freely. The divider never leaves a window smaller than it can be: Zoom needs more room while its participants list is open. On a portrait screen, the two windows go one above the other.
+1. На схеме ваших экранов, расположенных так, как они стоят, выберите экран для конференции Zoom. Экран, который занимает окно мультимедиа, для выбора не предлагается. Если экран Zoom — не тот, на котором находится M³, выберите, будет ли Zoom занимать его один или делить с M³ (тогда M³ тоже переходит туда).
+2. На рисунке этого экрана в его настоящих пропорциях перетащите разделитель, чтобы разделить экран между M³ и Zoom. Разделитель притягивается к привычным пропорциям (половина, треть, четверть и так далее); чтобы перетаскивать его свободно, удерживайте `Alt`. Разделитель никогда не делает окно меньше его минимального размера: Zoom нужно больше места, пока открыт его список участников. На вертикальном экране два окна располагаются одно над другим.
 
-As soon as the meeting opens, M³ opens Zoom's participants list if you asked it to, then puts both windows in place. From then on, it keeps Zoom where it belongs: when Zoom moves or resizes its window by itself, after screen sharing or as its participants list opens or closes, M³ puts it back. If you move or resize Zoom yourself, M³ leaves it where you put it until the next meeting. Each time M³ moves Zoom by itself, a notification says so, with two buttons should that get in the way: **Leave Zoom alone** stops it until M³ restarts, and **Turn off** turns the window layout off until you turn it back on here. When screens are connected or removed, M³ arranges the windows again; if Zoom's screen is no longer there, Zoom shares M³'s screen and M³ tells you so.
+Как только конференция откроется, M³ открывает список участников Zoom, если вы об этом попросили, а затем ставит оба окна на место. С этого момента он удерживает Zoom на своем месте: когда Zoom сам передвигает свое окно или меняет его размер, после демонстрации экрана или когда список участников открывается или закрывается, M³ возвращает его на место. Если вы сами передвинете Zoom или измените его размер, M³ оставит его там, куда вы его поставили, до следующей встречи. Каждый раз, когда M³ сам передвигает Zoom, об этом сообщает уведомление с двумя кнопками на случай, если это мешает: **Не трогать Zoom** прекращает это до перезапуска M³, а **Выключить** выключает расположение окон, пока вы снова не включите его здесь. Когда экраны подключаются или отключаются, M³ снова располагает окна; если экрана Zoom больше нет, Zoom делит экран с M³, и M³ сообщает вам об этом.
 
-While Zoom shares the media window, it hides its own meeting window, participants list included. With **Show the participants list while sharing** on, M³ then opens Zoom's participants list in a window of its own, in Zoom's place, so you still see who raises a hand to comment. If you close it, it stays closed until the next share; Zoom closes it by itself when sharing stops, and its meeting window comes back in place.
+Пока Zoom демонстрирует окно мультимедиа, он скрывает свое окно конференции вместе со списком участников. Если включен параметр **Показывать список участников во время демонстрации**, M³ открывает список участников Zoom в отдельном окне на месте Zoom, чтобы вы по-прежнему видели, кто поднимает руку для комментария. Если вы его закроете, он останется закрытым до следующей демонстрации; когда демонстрация заканчивается, Zoom сам закрывает его, и окно конференции возвращается на место.
 
-With Zoom's **Use dual monitors** setting on, Zoom opens a second window (showing the shared screen or the speaker). M³ puts it full screen on the media window's screen, behind the media window: hide the media window to show it, for example to see the participants.
+Если в Zoom для параметра **Meeting window view** выбрано **Dual window** (**Use dual monitors** в старых версиях Zoom), Zoom открывает второе окно (с демонстрируемым экраном или выступающим). M³ разворачивает его на весь экран, на котором находится окно мультимедиа, позади окна мультимедиа: скройте окно мультимедиа, чтобы его увидеть, например чтобы посмотреть на участников.
 
-When **Snap them with Windows** is on, M³ snaps the two windows side by side with Windows' own snapping, as if you had dragged them to the edges of the screen, so dragging the border between them resizes both. To do so, M³ brings each window forward for a moment.
+Если включен параметр **Прикреплять средствами Windows**, M³ прикрепляет оба окна рядом друг с другом средствами самой Windows, как будто вы перетащили их к краям экрана, поэтому при перетаскивании границы между ними меняется размер обоих. Для этого M³ на мгновение выводит каждое окно на передний план.
 
-The **Arrange windows** button in the Zoom popup puts everything back in place at any time. The window layout is kept per computer, since it depends on its screens.
+Кнопка **Расположить окна** во всплывающем окне Zoom в любой момент возвращает все на место. Расположение окон сохраняется для каждого компьютера отдельно, поскольку зависит от его экранов.
 
-**Default**: off
+**По умолчанию**: выключено
 
 ### Интеграция с OBS Studio {#settings-guide-obs-integration}
 

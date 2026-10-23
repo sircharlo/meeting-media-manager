@@ -565,26 +565,26 @@ Zoom은 사용하는 언어로 손 든 참여자를 표시하므로 M³가 먼�
 
 **기본값**: `false`
 
-#### Window Layout {#zoom-meeting-manager-window-layout}
+#### 창 배치 {#zoom-meeting-manager-window-layout}
 
 <!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
 
-M³ can put Zoom's meeting window, and its own main window, where you want them on your screens. The setup assistant asks where in two steps, which the **Choose the layout** button here opens again at any time:
+M³는 Zoom 회의 창과 자체 기본 창을 화면의 원하는 위치에 배치할 수 있습니다. 설정 도우미에서 두 단계에 걸쳐 위치를 묻습니다. 여기 있는 **배치 선택** 버튼으로 언제든지 이 단계를 다시 열 수 있습니다.
 
-1. On a map of your screens as they are arranged, pick the screen for Zoom's meeting. The screen the media window fills is never offered. If Zoom's screen isn't the one M³ is on, choose whether Zoom has it to itself or shares it with M³ (M³ then moves there too).
-2. On a drawing of that screen at its real shape, drag the divider to share it between M³ and Zoom. It clicks onto the usual proportions (a half, a third, a quarter and so on); hold `Alt` to drag it freely. The divider never leaves a window smaller than it can be: Zoom needs more room while its participants list is open. On a portrait screen, the two windows go one above the other.
+1. 실제 배치대로 표시된 화면 지도에서 Zoom 회의를 표시할 화면을 선택합니다. 미디어 창이 차지하는 화면은 선택할 수 없습니다. Zoom 화면이 M³가 있는 화면이 아니면, Zoom이 그 화면을 단독으로 사용할지 M³와 함께 사용할지 선택합니다(함께 사용하면 M³도 그 화면으로 옮겨집니다).
+2. 실제 비율로 그려진 그 화면에서 구분선을 끌어 M³와 Zoom이 화면을 나누어 쓰도록 조정합니다. 구분선은 자주 쓰는 비율(2분의 1, 3분의 1, 4분의 1 등)에 맞춰집니다. 자유롭게 끌려면 `Alt` 키를 누른 채로 끕니다. 구분선은 어떤 창도 최소 크기보다 작아지지 않게 합니다. 참가자 목록이 열려 있으면 Zoom에 더 많은 공간이 필요합니다. 세로 방향 화면에서는 두 창이 위아래로 배치됩니다.
 
-As soon as the meeting opens, M³ opens Zoom's participants list if you asked it to, then puts both windows in place. From then on, it keeps Zoom where it belongs: when Zoom moves or resizes its window by itself, after screen sharing or as its participants list opens or closes, M³ puts it back. If you move or resize Zoom yourself, M³ leaves it where you put it until the next meeting. Each time M³ moves Zoom by itself, a notification says so, with two buttons should that get in the way: **Leave Zoom alone** stops it until M³ restarts, and **Turn off** turns the window layout off until you turn it back on here. When screens are connected or removed, M³ arranges the windows again; if Zoom's screen is no longer there, Zoom shares M³'s screen and M³ tells you so.
+회의가 열리면 M³는 요청한 경우 Zoom 참가자 목록을 연 다음 두 창을 제자리에 배치합니다. 그 후로 M³는 Zoom을 제자리에 유지합니다. 화면 공유 후나 참가자 목록이 열리거나 닫힐 때 Zoom이 저절로 창을 옮기거나 크기를 바꾸면 M³가 제자리로 되돌립니다. Zoom을 직접 옮기거나 크기를 바꾸면 M³는 다음 집회 때까지 둔 자리에 그대로 둡니다. M³가 Zoom을 스스로 옮길 때마다 알림이 표시되며, 방해가 될 경우를 위해 버튼 두 개가 함께 표시됩니다. **Zoom 그대로 두기**를 누르면 M³를 다시 시작할 때까지 중지되고, **끄기**를 누르면 여기에서 다시 켤 때까지 창 배치가 꺼집니다. 화면을 연결하거나 분리하면 M³가 창을 다시 정렬합니다. Zoom 화면이 더 이상 없으면 Zoom이 M³의 화면을 함께 사용하고 M³가 이를 알려 줍니다.
 
-While Zoom shares the media window, it hides its own meeting window, participants list included. With **Show the participants list while sharing** on, M³ then opens Zoom's participants list in a window of its own, in Zoom's place, so you still see who raises a hand to comment. If you close it, it stays closed until the next share; Zoom closes it by itself when sharing stops, and its meeting window comes back in place.
+Zoom은 미디어 창을 공유하는 동안 참가자 목록을 포함한 자체 회의 창을 숨깁니다. **공유 중에 참가자 목록 표시**가 켜져 있으면 M³가 Zoom 자리에 Zoom 참가자 목록을 별도의 창으로 열어 주므로, 해설하려고 손을 든 사람을 계속 볼 수 있습니다. 목록을 닫으면 다음 공유 때까지 닫힌 상태로 유지됩니다. 공유가 끝나면 Zoom이 목록을 스스로 닫고 회의 창이 제자리로 돌아옵니다.
 
-With Zoom's **Use dual monitors** setting on, Zoom opens a second window (showing the shared screen or the speaker). M³ puts it full screen on the media window's screen, behind the media window: hide the media window to show it, for example to see the participants.
+Zoom의 **Meeting window view** 설정이 **Dual window**로 되어 있으면(이전 버전의 Zoom에서는 **Use dual monitors**) Zoom이 두 번째 창(공유 화면이나 발표자 표시)을 엽니다. M³는 그 창을 미디어 창이 있는 화면에 미디어 창 뒤로 전체 화면으로 표시합니다. 미디어 창을 숨기면 그 창이 보이므로, 예를 들어 참가자를 확인할 수 있습니다.
 
-When **Snap them with Windows** is on, M³ snaps the two windows side by side with Windows' own snapping, as if you had dragged them to the edges of the screen, so dragging the border between them resizes both. To do so, M³ brings each window forward for a moment.
+**Windows 창 맞춤으로 정렬**이 켜져 있으면 M³가 Windows 자체의 창 맞춤 기능으로 두 창을 나란히 맞춥니다. 화면 가장자리로 끌어다 놓은 것처럼 맞춰지므로, 두 창 사이의 경계를 끌면 두 창의 크기가 함께 바뀝니다. 이를 위해 M³가 각 창을 잠시 앞으로 가져옵니다.
 
-The **Arrange windows** button in the Zoom popup puts everything back in place at any time. The window layout is kept per computer, since it depends on its screens.
+Zoom 팝업의 **창 정렬** 버튼을 누르면 언제든지 모든 창을 제자리로 되돌릴 수 있습니다. 창 배치는 컴퓨터의 화면에 따라 달라지므로 컴퓨터별로 저장됩니다.
 
-**Default**: off
+**기본값**: 꺼짐
 
 ### OBS Studio 연동 {#settings-guide-obs-integration}
 

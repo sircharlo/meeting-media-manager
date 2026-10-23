@@ -565,26 +565,26 @@ Zoom označuje dvignjene roke v svojem jeziku, zato se mora M³ najprej naučiti
 
 **Privzeto**: `false`
 
-#### Window Layout {#zoom-meeting-manager-window-layout}
+#### Postavitev oken {#zoom-meeting-manager-window-layout}
 
 <!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
 
-M³ can put Zoom's meeting window, and its own main window, where you want them on your screens. The setup assistant asks where in two steps, which the **Choose the layout** button here opens again at any time:
+M³ lahko okno Zoom shoda in svoje glavno okno postavi na tvojih zaslonih, kamor želiš. Pomočnik za nastavitev te v dveh korakih vpraša, kam, gumb **Izberi postavitev** tukaj pa ju kadar koli znova odpre:
 
-1. On a map of your screens as they are arranged, pick the screen for Zoom's meeting. The screen the media window fills is never offered. If Zoom's screen isn't the one M³ is on, choose whether Zoom has it to itself or shares it with M³ (M³ then moves there too).
-2. On a drawing of that screen at its real shape, drag the divider to share it between M³ and Zoom. It clicks onto the usual proportions (a half, a third, a quarter and so on); hold `Alt` to drag it freely. The divider never leaves a window smaller than it can be: Zoom needs more room while its participants list is open. On a portrait screen, the two windows go one above the other.
+1. Na zemljevidu svojih zaslonov, razporejenih tako, kot so, izberi zaslon za Zoom shod. Zaslon, ki ga zapolnjuje multimedijsko okno, ni nikoli na voljo. Če zaslon za Zoom ni tisti, na katerem je M³, izberi, ali je Zoom na njem sam ali si ga deli z M³ (M³ se potem tudi premakne tja).
+2. Na risbi tega zaslona v njegovi resnični obliki povleci ločilnik, da zaslon razdeliš med M³ in Zoom. Ločilnik se zaskoči pri običajnih razmerjih (polovica, tretjina, četrtina in tako naprej); da ga vlečeš prosto, drži tipko `Alt`. Ločilnik nikoli ne naredi okna manjšega od njegove najmanjše velikosti: Zoom potrebuje več prostora, medtem ko je njegov seznam udeležencev odprt. Na pokončnem zaslonu sta okni ena nad drugim.
 
-As soon as the meeting opens, M³ opens Zoom's participants list if you asked it to, then puts both windows in place. From then on, it keeps Zoom where it belongs: when Zoom moves or resizes its window by itself, after screen sharing or as its participants list opens or closes, M³ puts it back. If you move or resize Zoom yourself, M³ leaves it where you put it until the next meeting. Each time M³ moves Zoom by itself, a notification says so, with two buttons should that get in the way: **Leave Zoom alone** stops it until M³ restarts, and **Turn off** turns the window layout off until you turn it back on here. When screens are connected or removed, M³ arranges the windows again; if Zoom's screen is no longer there, Zoom shares M³'s screen and M³ tells you so.
+Takoj ko se shod odpre, M³ odpre Zoomov seznam udeležencev, če si to želel, nato pa obe okni postavi na njuno mesto. Od takrat drži Zoom tam, kamor spada: ko Zoom sam od sebe premakne svoje okno ali mu spremeni velikost, po deljenju zaslona ali ko se njegov seznam udeležencev odpre ali zapre, ga M³ vrne na mesto. Če Zoom premakneš ali mu spremeniš velikost sam, ga M³ pusti tam, kamor si ga postavil, do naslednjega shoda. Vsakič ko M³ sam od sebe premakne Zoom, te o tem obvesti obvestilo z dvema gumboma za primer, da bi to motilo: **Pusti Zoom pri miru** to ustavi do ponovnega zagona M³, **Izklopi** pa izklopi postavitev oken, dokler je tukaj znova ne vklopiš. Ko priključiš ali odstraniš zaslone, M³ znova razporedi okna; če zaslona za Zoom ni več, si Zoom deli zaslon z M³ in M³ te o tem obvesti.
 
-While Zoom shares the media window, it hides its own meeting window, participants list included. With **Show the participants list while sharing** on, M³ then opens Zoom's participants list in a window of its own, in Zoom's place, so you still see who raises a hand to comment. If you close it, it stays closed until the next share; Zoom closes it by itself when sharing stops, and its meeting window comes back in place.
+Medtem ko Zoom deli multimedijsko okno, skrije svoje okno shoda, skupaj s seznamom udeležencev. Ko je vklopljena možnost **Prikaži seznam udeležencev med deljenjem**, M³ takrat odpre Zoomov seznam udeležencev v ločenem oknu, na mestu Zooma, da še naprej vidiš, kdo dviguje roko za komentar. Če ga zapreš, ostane zaprt do naslednjega deljenja; Zoom ga sam zapre, ko se deljenje konča, in njegovo okno shoda se vrne na mesto.
 
-With Zoom's **Use dual monitors** setting on, Zoom opens a second window (showing the shared screen or the speaker). M³ puts it full screen on the media window's screen, behind the media window: hide the media window to show it, for example to see the participants.
+Ko je v Zoomu nastavitev **Meeting window view** nastavljena na **Dual window** (v starejših različicah Zooma **Use dual monitors**), Zoom odpre drugo okno (ki prikazuje deljeni zaslon ali govornika). M³ ga prikaže čez cel zaslon na zaslonu multimedijskega okna, za multimedijskim oknom: skrij multimedijsko okno, da ga vidiš, na primer zato, da vidiš udeležence.
 
-When **Snap them with Windows** is on, M³ snaps the two windows side by side with Windows' own snapping, as if you had dragged them to the edges of the screen, so dragging the border between them resizes both. To do so, M³ brings each window forward for a moment.
+Ko je vklopljena možnost **Pripni ju z Windowsom**, M³ obe okni pripne drugo ob drugo z Windowsovim lastnim pripenjanjem, kot če bi ju povlekel do robov zaslona, tako da vlečenje meje med njima spremeni velikost obeh. Za to M³ vsako okno za trenutek prikaže v ospredju.
 
-The **Arrange windows** button in the Zoom popup puts everything back in place at any time. The window layout is kept per computer, since it depends on its screens.
+Gumb **Razporedi okna** v Zoomovem pojavnem oknu kadar koli vse vrne na mesto. Postavitev oken je shranjena za vsak računalnik posebej, saj je odvisna od njegovih zaslonov.
 
-**Default**: off
+**Privzeto**: izklopljeno
 
 ### Združevanje s programom OBS Studio {#settings-guide-obs-integration}
 

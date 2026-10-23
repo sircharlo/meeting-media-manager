@@ -565,26 +565,26 @@ Zoom geeft opgestoken handen aan in zijn eigen taal, dus M³ moet eerst leren ho
 
 **Standaard**: `false`
 
-#### Window Layout {#zoom-meeting-manager-window-layout}
+#### Vensterindeling {#zoom-meeting-manager-window-layout}
 
 <!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
 
-M³ can put Zoom's meeting window, and its own main window, where you want them on your screens. The setup assistant asks where in two steps, which the **Choose the layout** button here opens again at any time:
+M³ kan het vergadervenster van Zoom, en zijn eigen hoofdvenster, op je schermen neerzetten waar jij ze wilt. De configuratieassistent vraagt waar in twee stappen, die de knop **Indeling kiezen** hier op elk moment weer opent:
 
-1. On a map of your screens as they are arranged, pick the screen for Zoom's meeting. The screen the media window fills is never offered. If Zoom's screen isn't the one M³ is on, choose whether Zoom has it to itself or shares it with M³ (M³ then moves there too).
-2. On a drawing of that screen at its real shape, drag the divider to share it between M³ and Zoom. It clicks onto the usual proportions (a half, a third, a quarter and so on); hold `Alt` to drag it freely. The divider never leaves a window smaller than it can be: Zoom needs more room while its participants list is open. On a portrait screen, the two windows go one above the other.
+1. Kies op een kaart van je schermen, zoals ze zijn geplaatst, het scherm voor de Zoom-vergadering. Het scherm dat het mediavenster vult, staat er nooit tussen. Als het scherm van Zoom niet het scherm is waarop M³ staat, kies dan of Zoom het voor zichzelf heeft of het deelt met M³ (M³ gaat dan ook daarheen).
+2. Versleep op een tekening van dat scherm in zijn echte vorm de scheidingslijn om het te verdelen tussen M³ en Zoom. Die springt naar de gebruikelijke verhoudingen (de helft, een derde, een kwart enzovoort); houd `Alt` ingedrukt om hem vrij te verslepen. De scheidingslijn maakt een venster nooit kleiner dan het kan zijn: Zoom heeft meer ruimte nodig zolang de deelnemerslijst open is. Op een staand scherm komen de twee vensters boven elkaar.
 
-As soon as the meeting opens, M³ opens Zoom's participants list if you asked it to, then puts both windows in place. From then on, it keeps Zoom where it belongs: when Zoom moves or resizes its window by itself, after screen sharing or as its participants list opens or closes, M³ puts it back. If you move or resize Zoom yourself, M³ leaves it where you put it until the next meeting. Each time M³ moves Zoom by itself, a notification says so, with two buttons should that get in the way: **Leave Zoom alone** stops it until M³ restarts, and **Turn off** turns the window layout off until you turn it back on here. When screens are connected or removed, M³ arranges the windows again; if Zoom's screen is no longer there, Zoom shares M³'s screen and M³ tells you so.
+Zodra de vergadering opent, opent M³ de deelnemerslijst van Zoom als je daarom hebt gevraagd, en zet daarna beide vensters op hun plek. Vanaf dan houdt het Zoom op zijn plek: als Zoom zijn venster uit zichzelf verplaatst of van grootte verandert, na schermdeling of als de deelnemerslijst opent of sluit, zet M³ het terug. Als je Zoom zelf verplaatst of van grootte verandert, laat M³ het tot de volgende vergadering waar je het neerzet. Elke keer dat M³ Zoom uit zichzelf verplaatst, laat een melding dat weten, met twee knoppen voor als dat in de weg zit: **Zoom met rust laten** stopt het tot M³ opnieuw start, en **Uitschakelen** schakelt de vensterindeling uit tot je die hier weer inschakelt. Als er schermen worden aangesloten of verwijderd, schikt M³ de vensters opnieuw; als het scherm van Zoom er niet meer is, deelt Zoom het scherm van M³ en laat M³ je dat weten.
 
-While Zoom shares the media window, it hides its own meeting window, participants list included. With **Show the participants list while sharing** on, M³ then opens Zoom's participants list in a window of its own, in Zoom's place, so you still see who raises a hand to comment. If you close it, it stays closed until the next share; Zoom closes it by itself when sharing stops, and its meeting window comes back in place.
+Terwijl Zoom het mediavenster deelt, verbergt het zijn eigen vergadervenster, met de deelnemerslijst erbij. Met **Deelnemerslijst tonen tijdens het delen** aan opent M³ dan de deelnemerslijst van Zoom in een eigen venster, op de plek van Zoom, zodat je blijft zien wie de hand opsteekt om commentaar te geven. Als je die sluit, blijft die dicht tot de volgende keer delen; Zoom sluit die zelf als het delen stopt, en het vergadervenster komt terug op zijn plek.
 
-With Zoom's **Use dual monitors** setting on, Zoom opens a second window (showing the shared screen or the speaker). M³ puts it full screen on the media window's screen, behind the media window: hide the media window to show it, for example to see the participants.
+Als **Meeting window view** in Zoom op **Dual window** staat (**Use dual monitors** in oudere versies van Zoom), opent Zoom een tweede venster (met het gedeelde scherm of de spreker). M³ zet het schermvullend op het scherm van het mediavenster, achter het mediavenster: verberg het mediavenster om het te tonen, bijvoorbeeld om de deelnemers te zien.
 
-When **Snap them with Windows** is on, M³ snaps the two windows side by side with Windows' own snapping, as if you had dragged them to the edges of the screen, so dragging the border between them resizes both. To do so, M³ brings each window forward for a moment.
+Als **Uitlijnen met Windows** aan staat, lijnt M³ de twee vensters naast elkaar uit met de uitlijnfunctie van Windows zelf, alsof je ze naar de randen van het scherm hebt gesleept, zodat ze allebei van grootte veranderen als je de rand tussen ze versleept. Daarvoor haalt M³ elk venster even naar voren.
 
-The **Arrange windows** button in the Zoom popup puts everything back in place at any time. The window layout is kept per computer, since it depends on its screens.
+De knop **Vensters schikken** in het Zoom-pop-upvenster zet op elk moment alles terug op zijn plek. De vensterindeling wordt per computer bewaard, omdat die van de schermen afhangt.
 
-**Default**: off
+**Standaard**: uit
 
 ### OBS Studio-integratie {#settings-guide-obs-integration}
 

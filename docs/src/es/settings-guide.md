@@ -565,26 +565,26 @@ Zoom marca las manos levantadas en su propio idioma, así que M³ necesita prime
 
 **Predeterminado**: `false`
 
-#### Window Layout {#zoom-meeting-manager-window-layout}
+#### Disposición de ventanas {#zoom-meeting-manager-window-layout}
 
 <!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
 
-M³ can put Zoom's meeting window, and its own main window, where you want them on your screens. The setup assistant asks where in two steps, which the **Choose the layout** button here opens again at any time:
+M³ puede colocar la ventana de la reunión de Zoom, y también su propia ventana principal, donde quieras en tus pantallas. El asistente de configuración te pregunta dónde en dos pasos, que el botón **Elegir la disposición** de aquí vuelve a abrir en cualquier momento:
 
-1. On a map of your screens as they are arranged, pick the screen for Zoom's meeting. The screen the media window fills is never offered. If Zoom's screen isn't the one M³ is on, choose whether Zoom has it to itself or shares it with M³ (M³ then moves there too).
-2. On a drawing of that screen at its real shape, drag the divider to share it between M³ and Zoom. It clicks onto the usual proportions (a half, a third, a quarter and so on); hold `Alt` to drag it freely. The divider never leaves a window smaller than it can be: Zoom needs more room while its participants list is open. On a portrait screen, the two windows go one above the other.
+1. En un mapa de tus pantallas tal como están colocadas, elige la pantalla para la reunión de Zoom. La pantalla que ocupa la ventana de multimedia nunca aparece como opción. Si la pantalla de Zoom no es la de M³, elige si Zoom la tiene para él solo o la comparte con M³ (entonces M³ también se mueve allí).
+2. En un dibujo de esa pantalla con su forma real, arrastra el divisor para repartirla entre M³ y Zoom. Se ajusta a las proporciones habituales (la mitad, un tercio, un cuarto, etc.); mantén pulsada la tecla `Alt` para arrastrarlo libremente. El divisor nunca deja una ventana por debajo de su tamaño mínimo: Zoom necesita más espacio mientras su lista de participantes está abierta. En una pantalla vertical, las dos ventanas se colocan una encima de la otra.
 
-As soon as the meeting opens, M³ opens Zoom's participants list if you asked it to, then puts both windows in place. From then on, it keeps Zoom where it belongs: when Zoom moves or resizes its window by itself, after screen sharing or as its participants list opens or closes, M³ puts it back. If you move or resize Zoom yourself, M³ leaves it where you put it until the next meeting. Each time M³ moves Zoom by itself, a notification says so, with two buttons should that get in the way: **Leave Zoom alone** stops it until M³ restarts, and **Turn off** turns the window layout off until you turn it back on here. When screens are connected or removed, M³ arranges the windows again; if Zoom's screen is no longer there, Zoom shares M³'s screen and M³ tells you so.
+En cuanto se abre la reunión, M³ abre la lista de participantes de Zoom si se lo pediste y luego coloca las dos ventanas. A partir de entonces, mantiene Zoom en su sitio: cuando Zoom mueve o cambia el tamaño de su ventana por sí solo, después de compartir pantalla o al abrirse o cerrarse su lista de participantes, M³ lo vuelve a poner en su sitio. Si mueves Zoom o cambias su tamaño tú mismo, M³ lo deja donde lo pusiste hasta la próxima reunión. Cada vez que M³ mueve Zoom por su cuenta, una notificación te lo indica, con dos botones por si eso estorba: **Dejar Zoom como está** lo detiene hasta que M³ se reinicie, y **Desactivar** desactiva la disposición de ventanas hasta que vuelvas a activarla aquí. Cuando se conectan o se desconectan pantallas, M³ vuelve a organizar las ventanas; si la pantalla de Zoom ya no está, Zoom comparte la pantalla de M³ y M³ te lo indica.
 
-While Zoom shares the media window, it hides its own meeting window, participants list included. With **Show the participants list while sharing** on, M³ then opens Zoom's participants list in a window of its own, in Zoom's place, so you still see who raises a hand to comment. If you close it, it stays closed until the next share; Zoom closes it by itself when sharing stops, and its meeting window comes back in place.
+Mientras Zoom comparte la ventana de multimedia, oculta su propia ventana de la reunión, incluida la lista de participantes. Con **Mostrar la lista de participantes al compartir** activada, M³ abre entonces la lista de participantes de Zoom en una ventana aparte, en el lugar de Zoom, para que sigas viendo quién levanta la mano para comentar. Si la cierras, se queda cerrada hasta la próxima vez que se comparta; Zoom la cierra por sí solo cuando se deja de compartir, y su ventana de la reunión vuelve a su sitio.
 
-With Zoom's **Use dual monitors** setting on, Zoom opens a second window (showing the shared screen or the speaker). M³ puts it full screen on the media window's screen, behind the media window: hide the media window to show it, for example to see the participants.
+Cuando la opción **Meeting window view** de Zoom está en **Dual window** (**Use dual monitors** en versiones anteriores de Zoom), Zoom abre una segunda ventana (que muestra la pantalla compartida o al orador). M³ la pone en pantalla completa en la pantalla de la ventana de multimedia, detrás de la ventana de multimedia: oculta la ventana de multimedia para verla, por ejemplo, para ver a los participantes.
 
-When **Snap them with Windows** is on, M³ snaps the two windows side by side with Windows' own snapping, as if you had dragged them to the edges of the screen, so dragging the border between them resizes both. To do so, M³ brings each window forward for a moment.
+Cuando **Ajustarlas con Windows** está activado, M³ ajusta las dos ventanas una al lado de la otra con la función de ajuste del propio Windows, como si las hubieras arrastrado a los bordes de la pantalla, así que al arrastrar el borde que las separa se cambia el tamaño de las dos. Para ello, M³ pone cada ventana en primer plano un momento.
 
-The **Arrange windows** button in the Zoom popup puts everything back in place at any time. The window layout is kept per computer, since it depends on its screens.
+El botón **Organizar ventanas** de la ventana emergente de Zoom vuelve a poner todo en su sitio en cualquier momento. La disposición de ventanas se guarda por computadora, ya que depende de sus pantallas.
 
-**Default**: off
+**Predeterminado**: desactivado
 
 ### Integración con OBS Studio {#settings-guide-obs-integration}
 
