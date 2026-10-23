@@ -101,6 +101,7 @@ const electronApi: ElectronApi = {
   extractNestedZipEntry: (i, e, o, op) =>
     invoke('extractNestedZipEntry', i, e, o, op),
   fileUrlToPath,
+  focusMainWindow: () => send('focusMainWindow'),
   focusMediaWindow: () => send('focusMediaWindow'),
   fs,
   getAllScreens: () => invoke('getAllScreens'),

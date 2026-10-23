@@ -109,6 +109,7 @@ import {
 } from 'src-electron/main/waf-challenge';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import {
+  focusMainWindow,
   mainWindowInfo,
   toggleAuthorizedClose,
 } from 'src-electron/main/window/window-main';
@@ -257,6 +258,10 @@ handleIpcSend(
     return enableFadeTransitions ? fadeMediaWindow('out') : win.hide();
   },
 );
+
+handleIpcSend('focusMainWindow', () => {
+  focusMainWindow();
+});
 
 handleIpcSend('focusMediaWindow', () => {
   focusMediaWindow();

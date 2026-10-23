@@ -76,18 +76,6 @@
     </q-card-actions>
 
     <ConfirmDialog
-      v-model="startMusicConfirmPending"
-      :confirm-label="t('quick-actions-play-music')"
-      dialog-id="quick-actions-start-music-confirm"
-      icon="mmm-music-note"
-      icon-color="primary"
-      :message="t('quick-actions-start-music-confirm-message')"
-      persistent
-      :title="t('quick-actions-start-music-confirm-title')"
-      @cancel="startMusicConfirmPending = false"
-      @confirm="confirmStartMusic"
-    />
-    <ConfirmDialog
       v-model="dismissConfirmPending"
       :confirm-label="t('quick-actions-dismiss')"
       dialog-id="quick-actions-dismiss-after-confirm"
@@ -138,7 +126,7 @@ const confirmDismissAfter = () => {
 
 const music = useMusicStore();
 const { mediaIsActivelyPlaying, musicPlaying, musicState } = storeToRefs(music);
-const { formatClockTime, playMusic, stopMusic } = music;
+const { formatClockTime, requestMusicStart, stopMusic } = music;
 
 const recording = useRecordingStore();
 const { canStopRecording, isRecording, togglePending } = storeToRefs(recording);
@@ -172,30 +160,14 @@ const musicButtonLabel = computed(() => {
     ? t('quick-actions-stop-music')
     : t('quick-actions-play-music');
 });
-// Starting background music after the meeting is only ever intentional when
-// the last song has actually finished and the meeting isn't still scheduled
-// to be going - otherwise it's likely a mis-click, so confirm first rather
-// than starting playback over a meeting that may still be in progress.
-const shouldConfirmStartMusic = computed(() => {
-  if (lastSongEndedAt.value === null) return true;
-  const oneMinuteAfterSongEnd = lastSongEndedAt.value + 60 * 1000;
-  return props.now < oneMinuteAfterSongEnd;
-});
-const startMusicConfirmPending = ref(false);
-const confirmStartMusic = () => {
-  startMusicConfirmPending.value = false;
-  void playMusic('quick-action');
-};
+// Asks to confirm first while the meeting may not be over yet (see
+// requestMusicStart), like every other way of starting music.
 const onMusicClick = () => {
   if (musicPlaying.value) {
     stopMusic(true);
     return;
   }
-  if (shouldConfirmStartMusic.value) {
-    startMusicConfirmPending.value = true;
-    return;
-  }
-  void playMusic('quick-action');
+  requestMusicStart('quick-action');
 };
 const phase = computed<'ended' | 'last-song' | 'scheduled'>(() => {
   if (lastSongEndedAt.value !== null) return 'ended';

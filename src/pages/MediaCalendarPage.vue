@@ -227,7 +227,6 @@ import type {
   MediaSectionWithConfig,
   PublicationFetcher,
 } from 'src/types';
-import type { BackgroundMusicAction, BackgroundMusicState } from 'stores/music';
 
 import {
   useBroadcastChannel,
@@ -338,6 +337,11 @@ import {
 import { isDemoModeActive } from 'stores/demo-mode';
 import { useJwStore } from 'stores/jw';
 import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
+import {
+  type BackgroundMusicAction,
+  type BackgroundMusicState,
+  useMusicStore,
+} from 'stores/music';
 import { useObsStateStore } from 'stores/obs-state';
 import {
   computed,
@@ -530,6 +534,7 @@ const obsState = useObsStateStore();
 const { obsConnectionState, obsSceneListError } = storeToRefs(obsState);
 const meetingQuickActions = useMeetingQuickActionsStore();
 const { recordLastSongEnded } = meetingQuickActions;
+const { offerMusicAfterLastSong } = useMusicStore();
 const congregationSettingsStore = useCongregationSettingsStore();
 
 const totalFiles = ref(0);
@@ -2876,6 +2881,7 @@ const maybeSendLastSongShortcut = (
   if (!stoppedWasLastSong) return;
 
   recordLastSongEnded();
+  offerMusicAfterLastSong();
   if (!sendShortcut || !shortcut) return;
 
   sendConfiguredCustomShortcut(

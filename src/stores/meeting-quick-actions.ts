@@ -145,12 +145,17 @@ export const useMeetingQuickActionsStore = defineStore(
       if (scope) scope.lastSongEndedAt = endedAt;
     };
 
+    /** When today's last song ended, whichever date the calendar shows. */
+    const getTodaysLastSongEndedAt = () =>
+      getScope(undefined, new Date())?.lastSongEndedAt ?? null;
+
     return {
       checkedItemIds,
       dismissAfter,
       dismissBefore,
       dismissedAfterPanel,
       dismissedBeforePanel,
+      getTodaysLastSongEndedAt,
       isItemChecked,
       isItemCheckedAutomatically,
       lastSongEndedAt,

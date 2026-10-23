@@ -165,6 +165,7 @@ export interface ElectronApi {
    *   // => '/home/user/document.pdf'
    */
   fileUrlToPath: (url?: string) => string;
+  focusMainWindow: () => void;
   focusMediaWindow: () => void;
   fs: ElectronFsApi;
   getAllScreens: () => Promise<Display[]>;
@@ -599,6 +600,7 @@ export type ElectronIpcSendKey =
   | 'capturePreloadError'
   | 'checkForUpdates'
   | 'dev-menu-state'
+  | 'focusMainWindow'
   | 'focusMediaWindow'
   | 'launchZoomMeeting'
   | 'markUserWarnedAboutDiskSpace'
