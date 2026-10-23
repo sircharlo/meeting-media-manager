@@ -565,26 +565,26 @@ Zoom 会用自己的语言标示举手，因此 M³ 需要先学会识别：在 
 
 **默认**：`false`
 
-#### Window Layout {#zoom-meeting-manager-window-layout}
+#### 窗口布局 {#zoom-meeting-manager-window-layout}
 
 <!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
 
-M³ can put Zoom's meeting window, and its own main window, where you want them on your screens. The setup assistant asks where in two steps, which the **Choose the layout** button here opens again at any time:
+M³ 可以把 Zoom 会议窗口和它自己的主窗口放到屏幕上你想要的位置。设置助手会分两步询问要放在哪里，你可以随时用这里的**选择布局**按钮重新打开这两步：
 
-1. On a map of your screens as they are arranged, pick the screen for Zoom's meeting. The screen the media window fills is never offered. If Zoom's screen isn't the one M³ is on, choose whether Zoom has it to itself or shares it with M³ (M³ then moves there too).
-2. On a drawing of that screen at its real shape, drag the divider to share it between M³ and Zoom. It clicks onto the usual proportions (a half, a third, a quarter and so on); hold `Alt` to drag it freely. The divider never leaves a window smaller than it can be: Zoom needs more room while its participants list is open. On a portrait screen, the two windows go one above the other.
+1. 在按实际排列显示的屏幕示意图上，选择用于 Zoom 会议的屏幕。媒体窗口占满的屏幕不会出现在选项中。如果 Zoom 的屏幕不是 M³ 所在的屏幕，请选择 Zoom 是单独使用这个屏幕，还是与 M³ 共用（这样 M³ 也会移到那里）。
+2. 在按实际形状绘制的屏幕图上，拖动分隔条，在 M³ 和 Zoom 之间分配屏幕。分隔条会自动对齐常用比例（二分之一、三分之一、四分之一等）；按住 `Alt` 可以自由拖动。分隔条绝不会让窗口小于它的最小尺寸：参与者列表打开时，Zoom 需要更多空间。在竖屏上，两个窗口会上下排列。
 
-As soon as the meeting opens, M³ opens Zoom's participants list if you asked it to, then puts both windows in place. From then on, it keeps Zoom where it belongs: when Zoom moves or resizes its window by itself, after screen sharing or as its participants list opens or closes, M³ puts it back. If you move or resize Zoom yourself, M³ leaves it where you put it until the next meeting. Each time M³ moves Zoom by itself, a notification says so, with two buttons should that get in the way: **Leave Zoom alone** stops it until M³ restarts, and **Turn off** turns the window layout off until you turn it back on here. When screens are connected or removed, M³ arranges the windows again; if Zoom's screen is no longer there, Zoom shares M³'s screen and M³ tells you so.
+Zoom 会议一打开，M³ 就会按你的要求打开 Zoom 的参与者列表，然后把两个窗口放到位。此后，它会让 Zoom 一直保持在原位：Zoom 自己移动窗口或调整窗口大小时（屏幕共享之后，或参与者列表打开或关闭时），M³ 会把它放回原位。如果你自己移动 Zoom 或调整它的大小，M³ 会让它留在你放置的位置，直到下一次聚会。每次 M³ 自行移动 Zoom 时，都会显示一则通知，并附有两个按钮，以防造成干扰：**不再移动 Zoom** 会在 M³ 重新启动前停止移动，**关闭** 会关闭窗口布局，直到你在这里重新开启。连接或移除屏幕时，M³ 会重新排列窗口；如果 Zoom 的屏幕已不在，Zoom 会与 M³ 共用屏幕，M³ 也会告诉你。
 
-While Zoom shares the media window, it hides its own meeting window, participants list included. With **Show the participants list while sharing** on, M³ then opens Zoom's participants list in a window of its own, in Zoom's place, so you still see who raises a hand to comment. If you close it, it stays closed until the next share; Zoom closes it by itself when sharing stops, and its meeting window comes back in place.
+Zoom 共享媒体窗口时，会隐藏它自己的会议窗口，包括参与者列表。开启**共享时显示参与者列表**后，M³ 会在 Zoom 的位置用单独的窗口打开 Zoom 的参与者列表，让你仍然能看到谁举手要评论。如果你关闭它，它会保持关闭，直到下一次共享；共享停止时，Zoom 会自行关闭它，会议窗口也会回到原位。
 
-With Zoom's **Use dual monitors** setting on, Zoom opens a second window (showing the shared screen or the speaker). M³ puts it full screen on the media window's screen, behind the media window: hide the media window to show it, for example to see the participants.
+如果 Zoom 的**Meeting window view**设置为**Dual window**（旧版 Zoom 中为**Use dual monitors**），Zoom 会打开第二个窗口（显示共享的屏幕或发言人）。 M³ 会把它全屏显示在媒体窗口所在的屏幕上，位于媒体窗口后面：隐藏媒体窗口即可看到它，例如查看参与者。
 
-When **Snap them with Windows** is on, M³ snaps the two windows side by side with Windows' own snapping, as if you had dragged them to the edges of the screen, so dragging the border between them resizes both. To do so, M³ brings each window forward for a moment.
+开启**使用 Windows 贴靠**后，M³ 会使用 Windows 自带的贴靠功能把两个窗口并排贴靠，就像你把它们拖到屏幕边缘一样，因此拖动两者之间的边框会同时调整两个窗口的大小。为此，M³ 会把每个窗口短暂地移到最前面。
 
-The **Arrange windows** button in the Zoom popup puts everything back in place at any time. The window layout is kept per computer, since it depends on its screens.
+Zoom 弹出窗口中的**排列窗口**按钮可以随时把一切放回原位。窗口布局按计算机保存，因为它取决于计算机的屏幕。
 
-**Default**: off
+**默认**：关闭
 
 ### OBS Studio 集成 {#settings-guide-obs-integration}
 
