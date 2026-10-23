@@ -565,6 +565,27 @@ Zoom indica le mani alzate nella propria lingua, quindi M³ deve prima impararlo
 
 **Predefinito**: `false`
 
+#### Window Layout {#zoom-meeting-manager-window-layout}
+
+<!-- **Setting**: `zoomMeetingManagerWindowLayout` -->
+
+M³ can put Zoom's meeting window, and its own main window, where you want them on your screens. The setup assistant asks where in two steps, which the **Choose the layout** button here opens again at any time:
+
+1. On a map of your screens as they are arranged, pick the screen for Zoom's meeting. The screen the media window fills is never offered. If Zoom's screen isn't the one M³ is on, choose whether Zoom has it to itself or shares it with M³ (M³ then moves there too).
+2. On a drawing of that screen at its real shape, drag the divider to share it between M³ and Zoom. It clicks onto the usual proportions (a half, a third, a quarter and so on); hold `Alt` to drag it freely. The divider never leaves a window smaller than it can be: Zoom needs more room while its participants list is open. On a portrait screen, the two windows go one above the other.
+
+As soon as the meeting opens, M³ opens Zoom's participants list if you asked it to, then puts both windows in place. From then on, it keeps Zoom where it belongs: when Zoom moves or resizes its window by itself, after screen sharing or as its participants list opens or closes, M³ puts it back. If you move or resize Zoom yourself, M³ leaves it where you put it until the next meeting. Each time M³ moves Zoom by itself, a notification says so, with two buttons should that get in the way: **Leave Zoom alone** stops it until M³ restarts, and **Turn off** turns the window layout off until you turn it back on here. When screens are connected or removed, M³ arranges the windows again; if Zoom's screen is no longer there, Zoom shares M³'s screen and M³ tells you so.
+
+While Zoom shares the media window, it hides its own meeting window, participants list included. With **Show the participants list while sharing** on, M³ then opens Zoom's participants list in a window of its own, in Zoom's place, so you still see who raises a hand to comment. If you close it, it stays closed until the next share; Zoom closes it by itself when sharing stops, and its meeting window comes back in place.
+
+With Zoom's **Use dual monitors** setting on, Zoom opens a second window (showing the shared screen or the speaker). M³ puts it full screen on the media window's screen, behind the media window: hide the media window to show it, for example to see the participants.
+
+When **Snap them with Windows** is on, M³ snaps the two windows side by side with Windows' own snapping, as if you had dragged them to the edges of the screen, so dragging the border between them resizes both. To do so, M³ brings each window forward for a moment.
+
+The **Arrange windows** button in the Zoom popup puts everything back in place at any time. The window layout is kept per computer, since it depends on its screens.
+
+**Default**: off
+
 ### Integrazione con OBS Studio {#settings-guide-obs-integration}
 
 #### Abilita OBS {#enable-obs}
