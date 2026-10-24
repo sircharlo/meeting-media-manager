@@ -41,6 +41,13 @@ app.on('ready', () => {
         'media',
         'notifications',
       ];
+      // Since Electron 45, capturing a screen, window or tab (getDisplayMedia,
+      // or getUserMedia with chromeMediaSource) is requested as
+      // `display-capture` instead of `media`. Only our own pages capture
+      // (media preview, website mirroring), so trusted sites don't get it.
+      if (isSelf(url)) {
+        allowed.push('display-capture');
+      }
       if (allowed.includes(permission)) {
         callback(true);
       } else {
