@@ -48,14 +48,12 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Stability**: Fixed an error each time M³'s main screen was closed and set up again, which rarely happens. It also left that screen's handlers for keyboard shortcuts, downloads and other events in place, so they could then react twice.
 - 🐞 **Meeting Timer**: The copy button next to the timer remote's addresses, in the timer popup, now copies the address instead of failing with an error.
 - 🐞 **Meeting Timer**: The timer remote no longer shows the raised hand all the time. It now only appears when the timer display shows it too: when someone raises their hand in Zoom, or when it's switched on by hand.
+- 🐞 **Zoom Meeting Manager**: When Zoom ignores M³'s press of its microphone or camera button, which it does now and then, M³ now presses it once more after a few seconds instead of giving up. Unmuting failed this way during the check M³ makes when it starts, which then paused the Zoom automations.
 
 ### 🔧 Chores
 
 - 🔧 **Dependencies**: Raised the `brace-expansion` (to 1.1.21 and 2.1.7) and `undici` (to 8.11.2) versions pinned in the app's own dependency tree, which the packaging tools and the native-module build use. Each pin was once the fixed release; newer advisories had since made them the vulnerable ones.
 - 🔧 **Localization**: The translated FAQ and About pages, and the buttons on the documentation's home page, now come out of Crowdin correct instead of being repaired after every translation update. The automated Crowdin repair no longer puts a space before the heading anchors it fixes, removes the anchors a translation repeats in a heading's title, and approves the localized links it sets for the home-page buttons, since Crowdin only exports approved translations.
-
-### 🔧 Chores
-
 - 🔧 **Dependencies**: Updated Electron to version 45.
 
 ## v26.10.1
