@@ -54,6 +54,10 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🔧 **Dependencies**: Raised the `brace-expansion` (to 1.1.21 and 2.1.7) and `undici` (to 8.11.2) versions pinned in the app's own dependency tree, which the packaging tools and the native-module build use. Each pin was once the fixed release; newer advisories had since made them the vulnerable ones.
 - 🔧 **Localization**: The translated FAQ and About pages, and the buttons on the documentation's home page, now come out of Crowdin correct instead of being repaired after every translation update. The automated Crowdin repair no longer puts a space before the heading anchors it fixes, removes the anchors a translation repeats in a heading's title, and approves the localized links it sets for the home-page buttons, since Crowdin only exports approved translations.
 
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Updated Electron to version 45.
+
 ## v26.10.1
 
 ### ✨ New Features

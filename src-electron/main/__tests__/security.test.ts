@@ -1,8 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { appOn, isSelfMock, setPermissionRequestHandler } = vi.hoisted(() => ({
+const {
+  appOn,
+  isSelfMock,
+  isTrustedNavigationTargetMock,
+  setPermissionRequestHandler,
+} = vi.hoisted(() => ({
   appOn: vi.fn(),
   isSelfMock: vi.fn(),
+  isTrustedNavigationTargetMock: vi.fn(() => false),
   setPermissionRequestHandler: vi.fn(),
 }));
 
@@ -15,7 +21,7 @@ vi.mock('electron', () => ({
 vi.mock('src-electron/main/utils', () => ({
   captureElectronError: vi.fn(),
   isSelf: isSelfMock,
-  isTrustedNavigationTarget: vi.fn(() => false),
+  isTrustedNavigationTarget: isTrustedNavigationTargetMock,
 }));
 
 vi.mock('src-electron/main/window/window-base', () => ({
@@ -33,6 +39,9 @@ type PermissionHandler = (
   details?: { requestingUrl?: string },
 ) => void;
 
+const OWN = 'app://index.html';
+const TRUSTED = 'https://trusted.example/';
+
 const getPermissionHandler = async (): Promise<PermissionHandler> => {
   await import('../security');
   const onReady = appOn.mock.calls.find(([event]) => event === 'ready')?.[1];
@@ -45,6 +54,7 @@ describe('permission request handler', () => {
     vi.resetModules();
     vi.clearAllMocks();
     isSelfMock.mockImplementation((url: string) => url === 'app://index.html');
+    isTrustedNavigationTargetMock.mockReturnValue(false);
   });
 
   // MMM-V2-3JN: a request made before the webContents committed its first
@@ -71,23 +81,49 @@ describe('permission request handler', () => {
     expect(callback).toHaveBeenCalledWith(false);
   });
 
-  // MMM-V2-3ME: Electron asks for clipboard-sanitized-write even right after
-  // a click, so denying it broke navigator.clipboard.writeText() everywhere.
+  // Electron 45 requests screen/window/tab capture as `display-capture`
+  // rather than `media`; the media preview and website mirroring need it,
+  // and only our own pages get it. MMM-V2-3ME: Electron asks for
+  // clipboard-sanitized-write even right after a click, so denying it broke
+  // navigator.clipboard.writeText() everywhere.
   it.each([
+    { expected: true, permission: 'display-capture', trusted: false, url: OWN },
+    {
+      expected: false,
+      permission: 'display-capture',
+      trusted: true,
+      url: TRUSTED,
+    },
+    { expected: true, permission: 'media', trusted: true, url: TRUSTED },
+    {
+      expected: true,
+      permission: 'notifications',
+      trusted: true,
+      url: TRUSTED,
+    },
     {
       expected: true,
       permission: 'clipboard-sanitized-write',
-      url: 'app://index.html',
+      trusted: false,
+      url: OWN,
+    },
+    {
+      expected: true,
+      permission: 'clipboard-sanitized-write',
+      trusted: true,
+      url: TRUSTED,
     },
     {
       expected: false,
       permission: 'clipboard-sanitized-write',
+      trusted: false,
       url: 'https://example.com/',
     },
-    { expected: false, permission: 'clipboard-read', url: 'app://index.html' },
+    { expected: false, permission: 'clipboard-read', trusted: false, url: OWN },
   ])(
     'answers $permission from $url with $expected',
-    async ({ expected, permission, url }) => {
+    async ({ expected, permission, trusted, url }) => {
+      isTrustedNavigationTargetMock.mockReturnValue(trusted);
       const handler = await getPermissionHandler();
       const callback = vi.fn();
 
