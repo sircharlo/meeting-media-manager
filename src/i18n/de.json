@@ -717,6 +717,7 @@
   "quick-actions-enabled": "Aktiviert",
   "quick-actions-item-name": "Name der Aufgabe",
   "quick-actions-last-song-ends-at": "Letztes Lied endet um {time}",
+  "quick-actions-meeting-ended-at": "Die Zusammenkunft sollte planmäßig um {time} enden",
   "quick-actions-meeting-ends-at": "Die Zusammenkunft endet planmäßig um {time}",
   "quick-actions-meeting-started-at": "Geplanter Beginn der Zusammenkunft war um {time}",
   "quick-actions-meeting-starts-at": "Geplanter Beginn der Zusammenkunft ({time}) in",
