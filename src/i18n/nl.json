@@ -717,6 +717,7 @@
   "quick-actions-enabled": "Ingeschakeld",
   "quick-actions-item-name": "Naam van de taak",
   "quick-actions-last-song-ends-at": "Laatste lied eindigt om {time}",
+  "quick-actions-meeting-ended-at": "De vergadering zou volgens planning om {time} eindigen",
   "quick-actions-meeting-ends-at": "De vergadering eindigt volgens planning om {time}",
   "quick-actions-meeting-started-at": "De vergadering zou volgens planning om {time} beginnen",
   "quick-actions-meeting-starts-at": "Geplande begintijd van de vergadering ({time}) over",
