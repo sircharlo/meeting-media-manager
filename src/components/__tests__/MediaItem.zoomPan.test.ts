@@ -1,6 +1,7 @@
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { useCurrentStateStore } from 'stores/current-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import VueZoomable from 'vue-zoomable';
 
@@ -304,5 +305,43 @@ describe('MediaItem image zoom and pan', () => {
     // The reset button and the zoom out/in pair.
     expect(item.findAll('.thumbnail-zoom-control')).toHaveLength(2);
     expect(rowPointerdown).not.toHaveBeenCalled();
+  });
+
+  it("passes a playing image's zoom and pan on to the media window every frame", async () => {
+    const currentState = useCurrentStateStore();
+    currentState.mediaPlaying = {
+      ...currentState.mediaPlaying,
+      pan: { x: 0, y: 0 },
+      uniqueId: testMediaId,
+      url: 'file:///C:/media/image.jpg',
+      zoom: 1,
+    };
+    const item = mountImageItem();
+    await flushPromises();
+    const frameCallbacks: FrameRequestCallback[] = [];
+    vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(
+      (callback) => frameCallbacks.push(callback),
+    );
+    const runFrame = () => {
+      for (const callback of frameCallbacks.splice(0)) {
+        callback(performance.now());
+      }
+    };
+
+    // A zoom and a pan in the same frame go out together, on that frame.
+    await zoomTo(item, 2);
+    await dragViewport(item, [0, 0], [16, 9]);
+    expect(currentState.mediaPlaying.zoom).toBe(1);
+    runFrame();
+    expect(currentState.mediaPlaying.zoom).toBe(2);
+    // Sent as the shift inside the scale: 16 / 160 / 2 and 9 / 90 / 2.
+    expect(currentState.mediaPlaying.pan).toEqual({ x: 0.05, y: 0.05 });
+
+    // And the next change goes out on the very next frame, not 300ms later.
+    await dragViewport(item, [0, 0], [16, 9]);
+    runFrame();
+    expect(currentState.mediaPlaying.pan).toEqual({ x: 0.1, y: 0.1 });
+
+    currentState.$reset();
   });
 });

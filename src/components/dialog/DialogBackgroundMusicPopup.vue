@@ -72,7 +72,7 @@
         icon="mmm-play"
         :label="t('play-music')"
         unelevated
-        @click="playMusic('manual-button')"
+        @click="requestMusicStart('manual-button')"
       />
       <q-btn
         v-else
@@ -114,7 +114,7 @@ const {
   summaryText,
   timeUntilMusicStops,
 } = storeToRefs(music);
-const { formatClockTime, playMusic, stopMusic } = music;
+const { formatClockTime, requestMusicStart, stopMusic } = music;
 
 // One line for both the summary ("Stops at 7:25") and the live status the
 // music button shows (displayStatusText). That live status only adds to the

@@ -3,7 +3,7 @@
     v-model="open"
     :status-color="statusColor"
     :status-icon="statusIcon"
-    :status-loading="searchingForWindow"
+    :status-loading="searchingForWindow || restartingHelper"
     :status-text="statusText"
     :title="t('zoomMeetingManager')"
   >
@@ -143,25 +143,6 @@
       </div>
     </template>
 
-    <!-- Puts the windows back where the setup assistant's layout says -->
-    <div v-if="zoomLayout.enabled" class="q-px-md q-pt-sm">
-      <q-btn
-        class="full-width"
-        color="primary"
-        :disable="!meetingFound || arrangingWindows"
-        icon="mmm-window"
-        :label="t('zoom-layout-arrange')"
-        :loading="arrangingWindows"
-        no-caps
-        outline
-        @click="arrangeWindows"
-      >
-        <q-tooltip :delay="500">{{
-          t('zoom-layout-arrange-explain')
-        }}</q-tooltip>
-      </q-btn>
-    </div>
-
     <template v-if="currentSettings?.zoomMeetingManagerHandAlert">
       <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
         {{ t('zoom-raised-hands') }}
@@ -190,14 +171,16 @@
         >
           {{ t('zoom-no-raised-hands') }}
         </div>
-        <q-list v-else dense>
+        <!-- Full width (lists in menus are 300px otherwise), with the
+             buttons under the name so that long names and labels fit -->
+        <q-list v-else class="full-width" dense>
           <q-item v-for="name in raisedHands" :key="name" class="q-px-md">
-            <q-item-section avatar>
+            <q-item-section avatar top>
               <q-icon color="warning" name="mmm-groups" />
             </q-item-section>
-            <q-item-section class="ellipsis">{{ name }}</q-item-section>
-            <q-item-section side>
-              <div class="row no-wrap q-gutter-xs">
+            <q-item-section>
+              <q-item-label class="ellipsis">{{ name }}</q-item-label>
+              <div class="row q-gutter-xs">
                 <q-btn
                   class="btn-tonal"
                   color="positive"
@@ -245,7 +228,7 @@
       </div>
     </template>
 
-    <div v-if="zoomHelperLogs.length" class="q-px-md q-pt-md">
+    <div v-if="showLogs && zoomHelperLogs.length" class="q-px-md q-pt-md">
       <q-expansion-item
         v-model="logsExpanded"
         class="action-popup__tint rounded-borders"
@@ -267,55 +250,140 @@
 
     <ZoomSelfTestPanel v-if="isDev" />
 
+    <!-- One row: the action that fits the meeting's state, then a menu with
+         the rarely needed ones (problems that need the setup assistant
+         offer it in a banner) -->
     <template #footer>
-      <div>
+      <div
+        v-if="footerAction === 'settings'"
+        class="text-caption text-dark-grey"
+      >
+        {{ t('zoom-meeting-manager-meeting-id-missing') }}
+      </div>
+      <div class="action-popup__footer-row">
         <q-btn
-          class="full-width"
+          v-if="footerAction === 'arrange'"
+          class="col"
           color="primary"
-          :disable="!meetingId"
+          :disable="arrangingWindows"
+          icon="mmm-window"
+          :label="t('zoom-layout-arrange')"
+          :loading="arrangingWindows"
+          unelevated
+          @click="arrangeWindows"
+        >
+          <q-tooltip :delay="500">
+            {{ t('zoom-layout-arrange-explain') }}
+          </q-tooltip>
+        </q-btn>
+        <q-btn
+          v-else-if="footerAction === 'layout'"
+          class="col"
+          color="primary"
+          icon="mmm-window"
+          :label="t('zoom-layout-open')"
+          unelevated
+          @click="openWindowLayout"
+        />
+        <q-btn
+          v-else-if="footerAction === 'settings'"
+          class="col"
+          color="primary"
+          :disable="mediaIsPlaying"
+          icon="mmm-settings"
+          :label="t('go-to-settings')"
+          unelevated
+          @click="goToSettings('zoomMeetingManagerMeetingId')"
+        />
+        <!-- Not until M³ has looked: it may be open already -->
+        <q-btn
+          v-else
+          class="col"
+          color="primary"
+          :disable="searchingForWindow"
           icon="mmm-arrow-outward"
           :label="t('launch-zoom-meeting')"
           unelevated
           @click="launchZoomMeeting(meetingId)"
         />
-        <q-tooltip v-if="!meetingId" :delay="500">
-          {{ t('zoom-meeting-manager-meeting-id-missing') }}
-        </q-tooltip>
+        <q-btn
+          :aria-label="t('more-options')"
+          class="btn-tonal"
+          color="secondary"
+          flat
+          icon="mmm-dots"
+        >
+          <q-tooltip v-if="!moreOptionsOpen" :delay="500">
+            {{ t('more-options') }}
+          </q-tooltip>
+          <q-menu
+            v-model="moreOptionsOpen"
+            anchor="top right"
+            self="bottom right"
+          >
+            <!-- No v-close-popup: in this nested menu it would close the
+                 whole popup too, so the items close what they need to -->
+            <q-list role="menu">
+              <q-item clickable @click="openSetupAssistant">
+                <q-item-section avatar>
+                  <q-icon name="mmm-cog-sparkles" />
+                </q-item-section>
+                <q-item-section>
+                  {{ t('zoomMeetingManagerSetupAssistant') }}
+                </q-item-section>
+              </q-item>
+              <q-item
+                clickable
+                :disable="mediaIsPlaying"
+                @click="goToSettings('zoomMeetingManagerEnable')"
+              >
+                <q-item-section avatar>
+                  <q-icon name="mmm-settings" />
+                </q-item-section>
+                <q-item-section>{{ t('go-to-settings') }}</q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item
+                clickable
+                :disable="restartingHelper"
+                @click="restartFromMenu"
+              >
+                <q-item-section avatar>
+                  <q-icon name="mmm-reset" />
+                </q-item-section>
+                <q-item-section>{{
+                  t('zoom-connection-restart')
+                }}</q-item-section>
+              </q-item>
+              <q-item
+                clickable
+                :disable="!zoomHelperLogs.length"
+                @click="toggleLogs"
+              >
+                <q-item-section avatar>
+                  <q-icon name="mmm-file" />
+                </q-item-section>
+                <q-item-section>{{ t('zoom-helper-logs') }}</q-item-section>
+                <q-item-section v-if="showLogs" side>
+                  <q-icon color="primary" name="mmm-check" />
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
       </div>
-    </template>
-    <template #footer-secondary>
-      <q-btn
-        :aria-label="t('zoomMeetingManagerSetupAssistant')"
-        class="btn-tonal"
-        color="secondary"
-        flat
-        icon="mmm-cog-sparkles"
-        @click="openSetupAssistant"
-      >
-        <q-tooltip :delay="500">
-          {{ t('zoomMeetingManagerSetupAssistant') }}
-        </q-tooltip>
-      </q-btn>
-      <q-btn
-        class="col btn-tonal"
-        color="secondary"
-        flat
-        icon="mmm-reset"
-        :label="t('zoom-helper-restart')"
-        :loading="restartingHelper"
-        no-caps
-        @click="restartHelper"
-      />
     </template>
   </ActionPopup>
 </template>
 
 <script setup lang="ts">
-import type { ZoomMeetingState } from 'src/types';
+import type { SettingsValues, ZoomMeetingState } from 'src/types';
 
 import ZoomSelfTestPanel from 'components/dialog/ZoomSelfTestPanel.vue';
 import ActionPopup from 'components/ui/ActionPopup.vue';
 import { storeToRefs } from 'pinia';
+import { getZoomHelperErrorMessageKey } from 'src/constants/zoom';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   getZoomMeetingState,
@@ -333,7 +401,9 @@ import { useHandAlertStore } from 'stores/hand-alert';
 import { useZoomStateStore } from 'stores/zoom-state';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
+type FooterAction = 'arrange' | 'launch' | 'layout' | 'settings';
 type ZoomAction = 'meeting' | 'postMeeting';
 
 const MAIN_WINDOW_POLL_INTERVAL_MS = 5000;
@@ -353,8 +423,24 @@ const openSetupAssistant = () => {
   globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
 };
 
+// The assistant's window layout steps, as Settings' "Choose the layout" does
+const openWindowLayout = () => {
+  open.value = false;
+  globalThis.dispatchEvent(
+    new CustomEvent('openZoomSetupAssistant', { detail: { step: 'layout' } }),
+  );
+};
+
+const router = useRouter();
+
+const goToSettings = (setting: keyof SettingsValues) => {
+  open.value = false;
+  void router.push(`/settings/${setting}`);
+};
+
 const currentState = useCurrentStateStore();
-const { currentSettings, zoomHelperLogs } = storeToRefs(currentState);
+const { currentSettings, mediaIsPlaying, zoomHelperLogs } =
+  storeToRefs(currentState);
 
 const zoomState = useZoomStateStore();
 const { automationsPaused, checkRunning, pause, relearnNeeded } =
@@ -415,7 +501,15 @@ const meeting = ref<null | ZoomMeetingState>(null);
 const hasCheckedForWindow = ref(false);
 const runningAction = ref<null | ZoomAction>(null);
 const restartingHelper = ref(false);
+const moreOptionsOpen = ref(false);
+const showLogs = ref(false);
 const logsExpanded = ref(false);
+
+const toggleLogs = () => {
+  moreOptionsOpen.value = false;
+  showLogs.value = !showLogs.value;
+  logsExpanded.value = showLogs.value;
+};
 
 const meetingId = computed(
   () => currentSettings.value?.zoomMeetingManagerMeetingId?.trim() ?? '',
@@ -433,7 +527,13 @@ const searchingForWindow = computed(
   () => !hasCheckedForWindow.value && !meetingFound.value,
 );
 
+const footerAction = computed<FooterAction>(() => {
+  if (meetingFound.value) return zoomLayout.enabled ? 'arrange' : 'layout';
+  return meetingId.value ? 'launch' : 'settings';
+});
+
 const statusText = computed(() => {
+  if (restartingHelper.value) return t('zoom-setup-helper-checking');
   if (searchingForWindow.value) return t('zoom-meeting-window-searching');
   return meetingFound.value
     ? t('zoom-meeting-window-found')
@@ -472,11 +572,25 @@ const runAction = async (action: ZoomAction) => {
 const restartHelper = async () => {
   restartingHelper.value = true;
   try {
-    await restartZoomHelper();
+    const result = await restartZoomHelper();
+    if (!result.ok) {
+      createTemporaryNotification({
+        caption: t(getZoomHelperErrorMessageKey(result.error)),
+        message: t('zoom-helper-start-failed'),
+        type: 'negative',
+      });
+    }
     await syncMainWindow();
+  } catch (error) {
+    errorCatcher(error, { contexts: { fn: { name: 'restartZoomHelper' } } });
   } finally {
     restartingHelper.value = false;
   }
+};
+
+const restartFromMenu = () => {
+  moreOptionsOpen.value = false;
+  void restartHelper();
 };
 
 watch(

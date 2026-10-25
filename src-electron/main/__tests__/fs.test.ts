@@ -1088,7 +1088,10 @@ describe('extractNestedZipEntry', () => {
 
     // The reader handed to yauzl reads the msix's own bytes in the bundle.
     const [reader, size] = yauzlFromRandomAccessReaderPromiseMock.mock
-      .calls[0] as [{ _readStreamForRange: (s: number, e: number) => unknown }, number];
+      .calls[0] as [
+      { _readStreamForRange: (s: number, e: number) => unknown },
+      number,
+    ];
     expect(size).toBe(500);
     reader._readStreamForRange(0, 22);
     expect(createReadStreamMock).toHaveBeenCalledWith(bundle, {
@@ -1129,9 +1132,21 @@ describe('watchFolder', () => {
     expect(watchMock).toHaveBeenCalledWith(
       webDavPath,
       expect.objectContaining({
-        interval: 1000,
-        usePolling: true,
+        backend: 'polling',
+        pollingInterval: 1000,
       }),
+    );
+  });
+
+  it('lets chokidar pick the native backend for local folders', async () => {
+    mockWatcherRegistration();
+    const { watchFolder } = await import('../fs');
+
+    watchFolder('/tmp/media');
+
+    expect(watchMock).toHaveBeenCalledWith(
+      '/tmp/media',
+      expect.objectContaining({ backend: 'auto' }),
     );
   });
 

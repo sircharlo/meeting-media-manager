@@ -1,0 +1,602 @@
+{
+  "_comment": "Grounded JW terminology for ilo, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-10-23",
+  "_language": "ilo",
+  "_note": "Iloko HAS a version of jw.org's Terminology Guide (read from the English page's hreflang=\"ilo\" link): https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/ ('Dagiti Termino nga Us-usaren Dagiti Saksi ni Jehova'), cited as the primary source wherever it covers a term. Meeting-part names come from the current Iloko S-38 instructions (S-38-IL 8/26, wol.jw.org/ilo/wol/d/r115/lp-il/1201038) and a live meeting-workbook week (Oktubre 19-25, 2026). The Iloko WOL edition is wol.jw.org/ilo/wol/d/r115/lp-il/<id> (from wol.jw.org/wol/finder?wtlocale=IL); most English topic-index ids in the 1200xxxxxx range return HTTP 404 under /ilo/, so Organized to Do Jehovah's Will (od, chap. 5 = 1102014935, chap. 7 = 1102014937) and WOL phrase searches (hit counts quoted in notes) were used instead. Watch for one inconsistency in the official material itself: the 2026 S-38 uses the English loanwords 'elder' and 'circuit overseer' (e.g. heading 'Bisita ti Circuit Overseer'), while the Terminology Guide, od and almost all other publications use 'panglakayen' and 'manangaywan iti sirkito'. Prefer the Terminology Guide forms.",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Dagiti Saksi ni Jehova",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://www.jw.org/ilo/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide: 'Mausar koma ti opisial a nagan a “Dagiti Saksi ni Jehova” no damo a madakamat... Mabalin met a mausar ti “dagiti Saksi.” No maysa nga indibidual ti matuktukoy, usaren ti “maysa a Saksi” wenno “maysa kadagiti Saksi ni Jehova,” saan ket a “Saksi ni Jehova” wenno “Jehovah Witness.”' The plural article 'Dagiti' is part of the name; in running text it is lowercase ('kongregasion dagiti Saksi ni Jehova'), Title Case in names ('Kingdom Hall Dagiti Saksi ni Jehova'). Site title: 'Dagiti Saksi ni Jehova—Opisial a Website: jw.org | Iloko'."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Kingdom Hall",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://www.jw.org/ilo/saksi-ni-jehova/faq/saksi-ni-jehova-simbaan-kingdom-hall/"
+      ],
+      "confidence": "high",
+      "notes": "Kept in English. Terminology Guide entry 'Kingdom Hall Dagiti Saksi ni Jehova. Pasdek a pagdaydayawan ti maysa wenno ad-adu pay a kongregasion. Masansan a maawagan dayta iti “Kingdom Hall.” Saanyo koma nga awagan dayta iti “simbaan.”' Never translate it as 'simbaan' (church). Same pattern for 'Assembly Hall'."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "manangaywan iti sirkito",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://www.jw.org/ilo/saksi-ni-jehova/faq/pannakaorganisar-dagiti-kongregasion/",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014935"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'manangaywan iti sirkito. Eksperiensiado a panglakayen nga iwanwanwan ti sanga nga opisina...'. 517 WOL documents vs 2 for the English 'circuit overseer'. Confirms the earlier app translation. Caution: the 2026 S-38 (wol.jw.org/ilo/wol/d/r115/lp-il/1201038) uses the English loan ('BISITA TI CIRCUIT OVERSEER', 'palawag serbisio ti circuit overseer') - an outlier; prefer 'manangaywan iti sirkito'. sirkito = circuit."
+    },
+    {
+      "termEn": "congregation",
+      "official": "kongregasion",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://www.jw.org/ilo/saksi-ni-jehova/faq/pannakaorganisar-dagiti-kongregasion/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide: 'kongregasion. Organisado a grupo dagiti Saksi a regular nga agtataripnong tapno agdaydayaw.' Confirms the earlier app translation."
+    },
+    {
+      "termEn": "elder",
+      "official": "panglakayen",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014935"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'panglakayen. Lalaki a Saksi a nataengan iti naespirituan...'. Plural 'dagiti panglakayen'; 3502 WOL documents. The 2026 S-38 uses the English loan 'elder' ('maysa nga elder') - only 17 WOL documents do; don't 'correct' panglakayen to elder."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "koordineytor ti bagi dagiti panglakayen",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014935",
+        "https://wol.jw.org/en/wol/d/r1/lp-e/1200274607"
+      ],
+      "confidence": "high",
+      "notes": "English WOL index 1200274607 marks 'PRESIDING OVERSEER (Discontinued) ... (Later called Coordinator of the Body of Elders)'. The current Iloko term, verbatim in od chap. 5: 'Ti koordineytor ti bagi dagiti panglakayen ti agserbi kas tserman kadagiti miting ti bagi dagiti panglakayen' (60 WOL documents). Note the phonetic spelling 'koordineytor', not 'koordinador' (0 hits). No native Iloko rendering of the old title 'presiding overseer' exists: older Iloko km issues (2004-2008) kept it in English only inside the form name 'Presiding Overseer/Secretary Change of Address (S-29)'."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "ministerial nga adipen",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'ministerial nga adipen'. Also in S-38 and a 2024 Study Watchtower title 'Kakabsat a Lallaki—Kalatyo Kadi ti Agbalin a Ministerial nga Adipen?'."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "payunir",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://www.jw.org/ilo/saksi-ni-jehova/faq/masansanay-jw-maaramidda-ministerioda/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'payunir' (phonetic spelling). The Guide keeps the subtypes in English in quotes ('regular pioneer', 'auxiliary pioneer'); training FAQ keeps school names in English ('Pioneer Service School')."
+    },
+    {
+      "termEn": "field service",
+      "official": "tay-ak ti serbisio",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014935"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'tay-ak ti serbisio. Ti ministerio dagiti Saksi ni Jehova...' and 'panangasaba. Kitaen ti: tay-ak ti serbisio.' Verb phrase form 'panagserbi iti tay-ak' (od chap. 5: 'urnos iti panagserbi iti tay-ak'); generic 'preaching' = 'panangasaba', 'ministry' = 'ministerio'. 'Meetings for field service' = 'Dagiti Taripnong Sakbay ti Panangasaba' (od chap. 7)."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Memorial",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://www.jw.org/ilo/saksi-ni-jehova/memorial/"
+      ],
+      "confidence": "high",
+      "notes": "Kept as 'Memorial'. Terminology Guide headword 'Memorial ti ipapatay ni Kristo... Maawagan met iti Pangrabii ti Apo, Maudi a Pangrabii, Memorial, wenno Pananglaglagip iti ipapatay ni Jesus.' jw.org nav label 'Memorial'; the Memorial page itself is titled 'Pananglaglagip iti Ipapatay ni Jesus'. S-38: 'LAWAS TI MEMORIAL' (Week of the Memorial)."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Panagadal ti Kongregasion iti Biblia",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/202026258"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §17 and the live workbook ('9. Panagadal ti Kongregasion iti Biblia (30 min.)'); 975 WOL documents. Note 'ti Kongregasion iti Biblia' (not 'iti Kongregasion ti Biblia')."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "gimong iti tengnga ti lawas",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'gimong iti tengnga ti lawas. Linawas a taripnong ti kongregasion a masansan a maaramid iti rabii iti tengnga ti lawas.' od chap. 7 heading 'GIMONG ITI TENGNGA TI LAWAS'. 'gimong' = meeting; 'taripnong' is used as a synonym in running text."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "gimong iti ngudo ti lawas",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014937",
+        "https://www.jw.org/ilo/saksi-ni-jehova/faq/masansanay-jw-maaramidda-ministerioda/"
+      ],
+      "confidence": "high",
+      "notes": "od chap. 7 heading 'GIMONG ITI NGUDO TI LAWAS'; training FAQ: 'Gimong iti ngudo ti lawas. Dua ti paset daytoy a gimong.' The Terminology Guide has no 'weekend meeting' headword; it describes this meeting under 'Miting Publiko' (= English guide's 'Public Meeting')."
+    },
+    {
+      "termEn": "public talk",
+      "official": "palawag publiko",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014937",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038"
+      ],
+      "confidence": "high",
+      "notes": "od chap. 7: 'Napateg ti palawag publiko tapno maipaay dagiti naespirituan a kasapulan...' (434 WOL documents; 'pangpubliko a palawag' has 0). Noun-adjective order with the Spanish-style 'publiko' after the noun, no linker. Public Meeting = 'Miting Publiko' (Terminology Guide)."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "Panagadal iti Pagwanawanan",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://wol.jw.org/ilo/wol/meetings/r115/lp-il/2026/43",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide ('Sarunuen daytoy ti Panagadal iti Pagwanawanan'), WOL meetings page section header, od chap. 7. 227 WOL documents. The earlier app translation's 'Panagadal ti Pagwanawanan' (with 'ti') is an older variant (72 documents, mostly 1986-1998) - use 'iti'."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "Ti Pagwanawanan",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://www.jw.org/ilo/libraria/magasin/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'Ti Pagwanawanan Mangibumbunannag iti Pagarian ni Jehova. Ti kompleto a paulo... Maawagan met iti Pagwanawanan.' The capitalized article 'Ti' is part of the title, even mid-sentence ('artikulo ti pagadalan nga edision Ti Pagwanawanan'). Editions: 'ti publiko nga edision Ti Pagwanawanan' and 'ti met pagadalan nga edision Ti Pagwanawanan'."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "Agriingkayo!",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://www.jw.org/ilo/libraria/magasin/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'Agriingkayo! Magasin nga ipabpablaak ken iwarwaras dagiti Saksi ni Jehova.' Keep the exclamation mark."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "Baro a Lubong a Patarus ti Nasantuan a Kasuratan",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://www.jw.org/ilo/saksi-ni-jehova/faq/jw-biblia/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide: 'Baro a Lubong a Patarus ti Nasantuan a Kasuratan... Mabalin met a maawagan iti Baro a Lubong a Patarus.' Short form 'Baro a Lubong a Patarus' is fine. Some FAQ titles keep the English name ('Umiso Kadi ti New World Translation?')."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": ["https://www.jw.org/ilo/tulong-online/jw-library/"],
+      "confidence": "high",
+      "notes": "Proper noun, never translated ('JW Library app', 'JW Library® app' in S-38 §28)."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/",
+        "https://www.jw.org/ilo/tulong-online/panangusar-iti-jw-org/agbuya-kadagiti-video/"
+      ],
+      "confidence": "high",
+      "notes": "Domain kept as is. Site title 'Dagiti Saksi ni Jehova—Opisial a Website: jw.org'; footer 'JW.ORG® / OPISIAL A WEBSITE DAGITI SAKSI NI JEHOVA'; help pages head 'WEBSITE A JW.ORG'. So 'the official website (of) jw.org' ≈ 'ti opisial a website a jw.org'. 'website' itself is kept in English."
+    },
+    {
+      "termEn": "songbook",
+      "official": "pagkantaan",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/2023648",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/2017641",
+        "https://www.jw.org/ilo/libraria/musika-dagiti-kanta/siraragsak-a-kantaantayo/"
+      ],
+      "confidence": "high",
+      "notes": "Generic 'songbook' = 'pagkantaan' / 'libro a pagkantaan' (w23 Nobiembre p. 32: 'libro a pagkantaan wenno gadyet'; w17 Nobiembre: 'baro a pagkantaan'). Current songbook title: '‘Siraragsak a Kantaantayo’ ni Jehova' (see separate entry)."
+    },
+    {
+      "termEn": "convention",
+      "official": "kombension",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide: 'kombension. Kitaen ti: internasional a kombension ken rehional a kombension.' Regional convention = 'rehional a kombension'. jw.org nav also 'Kombension'. 1990s publications spell it 'kumbension' - obsolete."
+    },
+    {
+      "termEn": "assembly",
+      "official": "asamblea",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide: 'asamblea. Kitaen ti: asamblea sirkito.' Circuit assembly = 'asamblea sirkito' (no linker). S-38 §22 heading 'LAWAS TI ASAMBLEA WENNO KOMBENSION' (Week of an Assembly or a Convention)."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "teokratiko nga eskuelaan",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102001051",
+        "https://www.jw.org/ilo/saksi-ni-jehova/faq/masansanay-jw-maaramidda-ministerioda/"
+      ],
+      "confidence": "medium",
+      "notes": "Attested verbatim only inside the name of the discontinued 'Teokratiko nga Eskuelaan ti Panagministro' (Theocratic Ministry School). The current training FAQ describes the schools generically as 'dagiti eskuelaan para kadagiti Saksi ni Jehova a maisursuro ti maipapan iti Biblia' and keeps each school's name in English (Pioneer Service School, School for Kingdom Evangelizers, Kingdom Ministry School...). 'teokratiko nga eskuelaan' is a reasonable generic rendering; plain 'eskuelaan' also works."
+    },
+    {
+      "termEn": "sign language",
+      "official": "sign language",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/502500219"
+      ],
+      "confidence": "high",
+      "notes": "Kept in English: jw.org language picker 'Ipakita Laeng Dagiti Sign Language'; hdu art. 22: 'nasurok a 100 a sign language'; adjectival 'sign-language' ('publikasion a video iti sign-language', 'sign-language group'). 181 WOL documents. The native calque 'pagsasao a senias' appears only in 1989-1990 Awake! issues - obsolete."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "Workbook iti Gimong",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/libraria/jw-workbook-iti-gimong/",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "jw.org nav label 'Workbook iti Gimong'; 'workbook' is kept in English. Longer form 'Workbook iti Gimong a Panagbiag ken Ministerio' (issue covers, S-38). See also the full title entry."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "teksto para iti tawen",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/2019240",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/2020600",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/202021399"
+      ],
+      "confidence": "high",
+      "notes": "Most frequent and most recent form (42 WOL documents, latest 2019-2021: w19 Enero 'ti napili a teksto para iti tawen 2019'). Older variants: 'teksto ti tawen' (22 documents, mostly 1990s-2006) and 'tinawen a teksto' (9, 1990s). No WOL index entry exists in Iloko; the 2026 yeartext document itself (wol.jw.org/ilo/wol/d/r115/lp-il/1102026800) carries no label."
+    },
+    {
+      "termEn": "branch office",
+      "official": "sanga nga opisina",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'sanga nga opisina... Maawagan met daytoy no maminsan iti “sangay.”' Branch Committee = 'Komite ti Sangay'. 1324 WOL documents."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Bagi a Manarawidwid",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://www.jw.org/ilo/saksi-ni-jehova/faq/bagi-a-manarawidwid-katulongan/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'Bagi a Manarawidwid Dagiti Saksi ni Jehova... Masansan a mapaababa kas “Bagi a Manarawidwid.”'. Capitalized; don't confuse with 'bagi dagiti panglakayen' (body of elders)."
+    },
+    {
+      "termEn": "Our Christian Life and Ministry meeting",
+      "context": "the midweek meeting's official name; the app calls it the Life and Ministry Meeting",
+      "official": "Gimong a Panagbiag ken Ministeriotayo kas Kristiano",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "S-38 title 'Instruksion Para iti Gimong a Panagbiag ken Ministeriotayo kas Kristiano'. Short form used throughout S-38 and od: 'Gimong a Panagbiag ken Ministerio' (e.g. 'tserman iti Gimong a Panagbiag ken Ministerio' = Life and Ministry Meeting chairman). WOL meetings page heading just 'Panagbiag ken Ministerio'."
+    },
+    {
+      "termEn": "Treasures From God's Word",
+      "context": "first section of the midweek meeting (abbreviated TGW in the app)",
+      "official": "Gameng Manipud iti Sao ti Dios",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/202026258"
+      ],
+      "confidence": "high",
+      "notes": "S-38 section header and live workbook header ('GAMENG MANIPUD ITI SAO TI DIOS'); od chap. 7 §15."
+    },
+    {
+      "termEn": "Treasures talk",
+      "context": "the 10-minute talk that opens the Treasures From God's Word section",
+      "official": "Palawag",
+      "sourceUrls": ["https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038"],
+      "confidence": "medium",
+      "notes": "Neither English nor Iloko S-38 has a fixed 'Treasures talk' name: the part is just 'Palawag' (S-38 §3 'Palawag: Sangapulo a minuto') listed under 'Gameng Manipud iti Sao ti Dios'; in the weekly workbook it carries its own theme title. A descriptive label such as 'Palawag iti Gameng Manipud iti Sao ti Dios' would be a translator's construction, not an attested name."
+    },
+    {
+      "termEn": "Spiritual Gems",
+      "context": "second part of Treasures From God's Word",
+      "official": "Panagkali iti Naespirituan a Gameng",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/202026258"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §4 and live workbook ('2. Panagkali iti Naespirituan a Gameng (10 min.)'). Literally 'Digging for Spiritual Gems' (the older English name); the Iloko kept the longer form."
+    },
+    {
+      "termEn": "Bible Reading",
+      "context": "student part in Treasures From God's Word",
+      "official": "Panagbasa iti Biblia",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/202026258"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §5 and live workbook ('3. Panagbasa iti Biblia (4 min.)'). Same phrase is used for the weekly Bible reading schedule ('linawas a panagbasa iti Biblia')."
+    },
+    {
+      "termEn": "Apply Yourself to the Field Ministry",
+      "context": "second section of the midweek meeting (abbreviated AYFM in the app)",
+      "official": "Agbalin a Mas Epektibo iti Ministerio",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/202026258",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "Matched against the English S-38-E 8/26 table of contents (same paragraph numbers 6-15). The Iloko name literally means 'Become More Effective in the Ministry', not a word-for-word rendering of the English - do not back-translate it."
+    },
+    {
+      "termEn": "Living as Christians",
+      "context": "third section of the midweek meeting (abbreviated LAC in the app)",
+      "official": "Panagbiag kas Kristiano",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/202026258"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §16 header and live workbook ('PANAGBIAG KAS KRISTIANO')."
+    },
+    {
+      "termEn": "Opening Comments",
+      "context": "chairman's 1-minute introduction at the midweek meeting",
+      "official": "Panglukat a Sasao",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/202026258"
+      ],
+      "confidence": "high",
+      "notes": "Live workbook: 'Kanta 21 ken Kararag | Panglukat a Sasao (1 min.)'."
+    },
+    {
+      "termEn": "Concluding Comments",
+      "context": "chairman's 3-minute closing remarks at the midweek meeting",
+      "official": "Pangserra a Sasao",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/202026258"
+      ],
+      "confidence": "high",
+      "notes": "Live workbook: 'Pangserra a Sasao (3 min.) | Kanta 87 ken Kararag'."
+    },
+    {
+      "termEn": "concluding prayer",
+      "context": "the prayer that closes a meeting",
+      "official": "pangserra a kararag",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/202007241"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §21: 'Mabalinna nga awisen ti maysa a brother para iti pangserra a kararag.' 276 WOL documents. 'prayer' alone = 'kararag' (workbook 'Kanta 87 ken Kararag'); opening prayer by analogy 'panglukat a kararag'."
+    },
+    {
+      "termEn": "chairman",
+      "context": "the elder who presides over a meeting (the app mentions getting the chairman's attention)",
+      "official": "tserman",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "Phonetic loan. S-38 §25 heading 'TSERMAN ITI GIMONG A PANAGBIAG KEN MINISTERIO'; od chap. 7 'agserbi kas tserman iti gimong'. 194 WOL documents."
+    },
+    {
+      "termEn": "Our Christian Life and Ministry—Meeting Workbook",
+      "context": "full title of the midweek meeting workbook publication",
+      "official": "Panagbiag ken Ministeriotayo kas Kristiano—Workbook iti Gimong",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/libraria/jw-workbook-iti-gimong/",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "Verbatim jw.org library page heading (and od chap. 7 §14). Issue covers and WOL use 'Workbook iti Gimong a Panagbiag ken Ministerio' (e.g. 'Workbook iti Gimong a Panagbiag ken Ministerio—2026 | Septiembre'). Either is official; the short nav label is 'Workbook iti Gimong'."
+    },
+    {
+      "termEn": "The Watchtower—Study Edition",
+      "context": "the edition studied at the weekend meeting",
+      "official": "Ti Pagwanawanan—Pagadalan nga Edision",
+      "sourceUrls": ["https://www.jw.org/ilo/libraria/magasin/"],
+      "confidence": "high",
+      "notes": "jw.org magazine list labels study issues 'TI PAGWANAWANAN—PAGADALAN NGA EDISION Agosto 2026'. WOL abbreviates it 'Ti Pagwanawanan (Pagadalan)'; running text says 'pagadalan nga edision Ti Pagwanawanan' (283 WOL documents)."
+    },
+    {
+      "termEn": "The Watchtower—Public Edition",
+      "context": "the edition for the general public",
+      "official": "Ti Pagwanawanan (publiko nga edision)",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/tulong-online/panangusar-iti-jw-org/biroken-ti-material-online/",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014247"
+      ],
+      "confidence": "high",
+      "notes": "Verbatim on the Iloko jw.org help page: 'ti uppat a kabaruan a ruar ti Agriingkayo! ken Ti Pagwanawanan (publiko nga edision)'. The jw.org magazine list itself labels public issues simply 'TI PAGWANAWANAN' (no edition suffix). Running text: 'ti publiko nga edision Ti Pagwanawanan' (kr chap. 8, Terminology Guide)."
+    },
+    {
+      "termEn": "Sing Out Joyfully to Jehovah",
+      "context": "title of the current songbook",
+      "official": "‘Siraragsak a Kantaantayo’ ni Jehova",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/libraria/musika-dagiti-kanta/siraragsak-a-kantaantayo/",
+        "https://wol.jw.org/ilo/wol/meetings/r115/lp-il/2026/43"
+      ],
+      "confidence": "high",
+      "notes": "Verbatim page title (U+2018/U+2019 curly single quotes around 'Siraragsak a Kantaantayo', then 'ni Jehova'). Literally 'Let us joyfully sing to Jehovah'. WOL short form '‘Siraragsak a Kantaantayoʼ' (sjj)."
+    },
+    {
+      "termEn": "song",
+      "context": "a numbered song sung at meetings",
+      "official": "kanta",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/202026258",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1101984246"
+      ],
+      "confidence": "high",
+      "notes": "Workbook 'Kanta 21 ken Kararag', Watchtower 'KANTA 106'; index 'Indise Dagiti Kanta' (Index of Songs). Plural 'dagiti kanta'. jw.org's songbook page category is 'Nakristianuan a Kanta'."
+    },
+    {
+      "termEn": "Kingdom song",
+      "context": "what jw.org calls the songs in the songbook",
+      "official": "kanta ti Pagarian",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102016874",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/2010925"
+      ],
+      "confidence": "high",
+      "notes": "Song 74 title 'Makidanggay iti Kanta ti Pagarian!'; 165 WOL documents vs 8 for 'kanta iti Pagarian'."
+    },
+    {
+      "termEn": "Memorial talk",
+      "context": "the talk given at the Memorial",
+      "official": "palawag ti Memorial",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/2022245",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/2024241"
+      ],
+      "confidence": "high",
+      "notes": "w22 Enero: 'Padpadaananda ti palawag ti Memorial...'. 20 WOL documents vs 5 (yearbooks) for 'palawag iti Memorial'."
+    },
+    {
+      "termEn": "Memorial Welcome Video",
+      "context": "the welcome video shown before the Memorial (from the Memorial invitation publication)",
+      "official": "",
+      "sourceUrls": [],
+      "confidence": "low",
+      "notes": "No Iloko name found: the video ships inside the Memorial-invitation JWPUB (mi<YY>), whose pub-media listing returns 404 for both English and Iloko, and no WOL/jw.org text names it. A descriptive rendering (e.g. built from 'video', 'panangabrasa' = welcome, 'Memorial') would be a translator's choice - flag it for the human reviewer."
+    },
+    {
+      "termEn": "public talk outline",
+      "context": "the S-34 outlines speakers prepare public talks from",
+      "official": "balabala ti palawag publiko",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014255",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/201999403"
+      ],
+      "confidence": "high",
+      "notes": "kr chap. 16: 'Idi 2013, addan ti nasurok a 180 a balabala ti palawag publiko.' 'balabala' = outline (also S-38 'ti balabala ti dua wenno tallo a kangrunaan a punto'). The S-34 document's own Iloko title was not found online."
+    },
+    {
+      "termEn": "body of elders",
+      "context": "all the elders of a congregation acting together",
+      "official": "bagi dagiti panglakayen",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014935",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://www.jw.org/ilo/saksi-ni-jehova/faq/pannakaorganisar-dagiti-kongregasion/"
+      ],
+      "confidence": "high",
+      "notes": "od chap. 5, S-38 §17/§24 ('Ti bagi dagiti panglakayen ti mangpili...'), FAQ 'Adda grupo wenno bagi dagiti panglakayen a mangidadaulo iti tunggal kongregasion.' 229 WOL documents. Lowercase; distinct from 'Bagi a Manarawidwid'."
+    },
+    {
+      "termEn": "branch",
+      "context": "short form of branch office (e.g. 'branch territory')",
+      "official": "sangay",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/",
+        "https://www.jw.org/ilo/saksi-ni-jehova/faq/bagi-a-manarawidwid-katulongan/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide: 'Maawagan met daytoy no maminsan iti “sangay.”' Also 'Komite ti Sangay', 'pasilidad ti sangay', and 'iti maysa wenno ad-adu pay a pagilian a sakup dayta a sangay' (countries under that branch's jurisdiction - useful for 'branch territory')."
+    },
+    {
+      "termEn": "talk",
+      "context": "a discourse given at a meeting",
+      "official": "palawag",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "S-38 'Palawag 3', 'Palawag 12'; od chap. 7. The verb 'to give a talk' = 'agpalawag'; speaker = 'ispiker'."
+    },
+    {
+      "termEn": "service talk",
+      "context": "the circuit overseer's talk during his visit (app: 'CO Service Talk')",
+      "official": "palawag serbisio",
+      "sourceUrls": ["https://wol.jw.org/ilo/wol/d/r115/lp-il/1201038"],
+      "confidence": "high",
+      "notes": "S-38 §21: 'masuktan iti 30-minuto a palawag serbisio ti circuit overseer' (note: this S-38 paragraph uses the English 'circuit overseer'; elsewhere use 'manangaywan iti sirkito')."
+    },
+    {
+      "termEn": "Videoconference Organizer",
+      "context": "the person who hosts the congregation's videoconference (Zoom) meeting",
+      "official": "",
+      "sourceUrls": ["https://wol.jw.org/ilo/wol/d/r115/lp-il/2025295"],
+      "confidence": "low",
+      "notes": "No official Iloko role name found on jw.org/WOL. The loanword 'videoconference' itself is used as is in Iloko prose (w25 Pebrero: 'makigimgimongda laeng... babaen ti videoconference'; 20 WOL documents). Any role label is a translator's construction - flag for review."
+    },
+    {
+      "termEn": "technical/audio-video support",
+      "context": "the volunteers who run sound, video and media at meetings",
+      "official": "audio ken video",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102026204",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/502500207"
+      ],
+      "confidence": "medium",
+      "notes": "es26 (2026): 'Adda met dagiti ag-operate iti audio ken video, agserbi kas attendant...' - so 'audio and video' is rendered 'audio ken video' with English loans; hdu uses 'Audio/Video System'. No fixed name for the assignment itself was found. 'teknikal' exists as an adjective (154 WOL documents) but never for this role."
+    },
+    {
+      "termEn": "circuit overseer's visit",
+      "context": "the twice-yearly week when the circuit overseer visits a congregation",
+      "official": "panagbisita ti manangaywan iti sirkito",
+      "sourceUrls": [
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/1102014935",
+        "https://wol.jw.org/ilo/wol/d/r115/lp-il/2023565"
+      ],
+      "confidence": "high",
+      "notes": "od chap. 5 §42 and od subject index ('panagbisita ti manangaywan iti sirkito: 5:42-44'). Equally official variants: 'ibibisita ti manangaywan iti sirkito' (39 documents, e.g. km, od) and 'bisita ti manangaywan iti sirkito' (18, e.g. w23 Septiembre 'lawas ti bisita ti manangaywan iti sirkito'). S-38 §21 heading uses 'BISITA TI CIRCUIT OVERSEER' with the English loan."
+    },
+    {
+      "termEn": "JW Hub",
+      "context": "the JW Hub website (source of S-34mp playlists)",
+      "official": "JW Hub",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/impormasion-para-kadagiti-opisial-ti-gobierno/termino-us-usaren-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "Proper noun kept as is; Iloko jw.org footer lists 'JW Hub®'. Not mentioned in WOL text."
+    },
+    {
+      "termEn": "JW Broadcasting",
+      "context": "the organization's video channel/programs",
+      "official": "JW Broadcasting",
+      "sourceUrls": [
+        "https://www.jw.org/ilo/tulong-online/",
+        "https://www.jw.org/ilo/libraria/video/"
+      ],
+      "confidence": "high",
+      "notes": "Proper noun kept as is (jw.org nav 'JW Broadcasting®'; help 'Tulong Para iti JW Broadcasting'; 65 WOL documents, e.g. 'mairuar iti JW Broadcasting')."
+    }
+  ]
+}

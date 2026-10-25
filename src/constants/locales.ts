@@ -12,6 +12,7 @@ export type LanguageValue =
   | 'et'
   | 'fr'
   | 'hu'
+  | 'ilo'
   | 'it'
   | 'ko'
   | 'nl'
