@@ -38,6 +38,12 @@ const UPDATE_IGNORE_ERRORS: (string | string[])[] = [
   'ENOSPC',
   'EPIPE',
   'ERR_ADDRESS_UNREACHABLE',
+  // The update server's certificate didn't check out on the user's
+  // computer: an antivirus or proxy inspecting HTTPS with a root the
+  // updater doesn't trust, or a wrong system clock. Chromium's take on
+  // SELF_SIGNED_CERT_IN_CHAIN below (MMM-V2-AN).
+  'ERR_CERT_AUTHORITY_INVALID',
+  'ERR_CERT_DATE_INVALID',
   'ERR_CONNECTION_CLOSED',
   'ERR_CONNECTION_RESET',
   'ERR_CONNECTION_TIMED_OUT',

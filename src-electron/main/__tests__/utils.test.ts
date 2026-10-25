@@ -185,6 +185,9 @@ describe('isIgnoredUpdateError', () => {
     expect(isIgnoredUpdateError('net::ERR_HTTP2_SERVER_REFUSED_STREAM')).toBe(
       true,
     );
+    // MMM-V2-AN: HTTPS inspection by an antivirus/proxy, or a wrong clock.
+    expect(isIgnoredUpdateError('net::ERR_CERT_AUTHORITY_INVALID')).toBe(true);
+    expect(isIgnoredUpdateError('net::ERR_CERT_DATE_INVALID')).toBe(true);
     expect(
       isIgnoredUpdateError(
         "Error: ENOENT: no such file or directory, unlink '/home/test/dir/meeting-media-manager-30.1.4-x86_64.AppImage'",
