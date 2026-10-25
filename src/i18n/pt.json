@@ -717,6 +717,7 @@
   "quick-actions-enabled": "Ativado",
   "quick-actions-item-name": "Nome da tarefa",
   "quick-actions-last-song-ends-at": "O último cântico termina às {time}",
+  "quick-actions-meeting-ended-at": "A reunião estava programada para terminar às {time}",
   "quick-actions-meeting-ends-at": "A reunião está programada para terminar às {time}",
   "quick-actions-meeting-started-at": "A reunião estava programada para começar às {time}",
   "quick-actions-meeting-starts-at": "O início programado da reunião ({time}) é em",
