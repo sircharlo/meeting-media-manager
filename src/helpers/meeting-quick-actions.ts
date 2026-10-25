@@ -19,6 +19,36 @@ import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
 // items still act as a visual reminder even after the meeting has begun.
 export const BEFORE_PANEL_GRACE_MS = 5 * 60 * 1000;
 
+// How long the after-panel stays visible once the meeting is over: enough
+// for the after-meeting checklist, and gone when M³ is opened later that day.
+export const AFTER_PANEL_GRACE_MS = 60 * 60 * 1000;
+
+/**
+ * When the after-meeting panel stops showing: AFTER_PANEL_GRACE_MS after the
+ * meeting's last song ended or, until it has, after the later of the planned
+ * end and the playing last song's expected end (a meeting running long).
+ * @param ends What's known of the meeting's end
+ * @param ends.lastSongEndedAt When the last song ended, if it has
+ * @param ends.predictedEnd When the playing last song should end, if it's playing
+ * @param ends.scheduledEnd The meeting's planned end, if today has a meeting
+ * @returns The time in ms, or null when nothing is known of the end
+ */
+export const getAfterPanelCloseTime = ({
+  lastSongEndedAt,
+  predictedEnd,
+  scheduledEnd,
+}: {
+  lastSongEndedAt: null | number;
+  predictedEnd: Date | null;
+  scheduledEnd: Date | null;
+}): null | number => {
+  if (lastSongEndedAt !== null) return lastSongEndedAt + AFTER_PANEL_GRACE_MS;
+  const ends = [scheduledEnd, predictedEnd]
+    .filter((end): end is Date => end !== null)
+    .map((end) => end.getTime());
+  return ends.length ? Math.max(...ends) + AFTER_PANEL_GRACE_MS : null;
+};
+
 /**
  * Returns the ids of the checklist items that are actually visible to the
  * user for the given mode - enabled themselves *and* under an enabled

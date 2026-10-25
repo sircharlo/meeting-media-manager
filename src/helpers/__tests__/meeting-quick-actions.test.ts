@@ -18,6 +18,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as DateHelpers from '../date';
 
 import {
+  getAfterPanelCloseTime,
   getMusicStartMeetingConflict,
   getTodaysChecklistMode,
   getTodaysScheduledMeetingEndDateTime,
@@ -292,6 +293,38 @@ describe('getMusicStartMeetingConflict', () => {
   it('without a last song, asks until half an hour after the scheduled end', () => {
     expect(conflictAt(105 + 29)).toBe('meeting');
     expect(conflictAt(105 + 30)).toBeNull();
+  });
+});
+
+describe('getAfterPanelCloseTime', () => {
+  const hour = 60 * 60 * 1000;
+  const scheduledEnd = new Date(2026, 9, 25, 20, 45);
+  const lastSongEndedAt = scheduledEnd.getTime() - 10 * 60 * 1000;
+  const runningLong = new Date(scheduledEnd.getTime() + 90 * 60 * 1000);
+
+  it.each([
+    {
+      ends: { lastSongEndedAt, predictedEnd: null, scheduledEnd },
+      expected: lastSongEndedAt + hour,
+      when: 'an hour after the last song ended',
+    },
+    {
+      ends: { lastSongEndedAt: null, predictedEnd: null, scheduledEnd },
+      expected: scheduledEnd.getTime() + hour,
+      when: 'without a last song, an hour after the planned end',
+    },
+    {
+      ends: { lastSongEndedAt: null, predictedEnd: runningLong, scheduledEnd },
+      expected: runningLong.getTime() + hour,
+      when: 'an hour after the last song of a meeting running long',
+    },
+    {
+      ends: { lastSongEndedAt: null, predictedEnd: null, scheduledEnd: null },
+      expected: null,
+      when: 'never when nothing is known of the end',
+    },
+  ])('closes $when', ({ ends, expected }) => {
+    expect(getAfterPanelCloseTime(ends)).toBe(expected);
   });
 });
 

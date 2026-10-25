@@ -107,6 +107,7 @@ import {
 } from 'src/helpers/demo-mode';
 import {
   BEFORE_PANEL_GRACE_MS,
+  getAfterPanelCloseTime,
   getTodaysScheduledMeetingEndDateTime,
   getVisibleChecklistItemIds,
   predictLastSongEndDateTime,
@@ -196,11 +197,24 @@ const lastSongScrollThreshold = computed(() =>
 // banner can tell "this panel's time window is active, but it was
 // dismissed" apart from "this panel's window isn't relevant right now" -
 // only the former should offer a Show button.
+const afterPanelOpened = computed(
+  () =>
+    lastSongEndedAt.value !== null ||
+    (afterTrigger.value !== null && now.value >= afterTrigger.value),
+);
+// The panel goes away by itself an hour after the meeting is over, rather
+// than staying up for the rest of the day (see getAfterPanelCloseTime).
+const afterPanelClosed = computed(() => {
+  const closeTime = getAfterPanelCloseTime({
+    lastSongEndedAt: lastSongEndedAt.value,
+    predictedEnd: predictedEnd.value,
+    scheduledEnd: scheduledEnd.value,
+  });
+  return closeTime !== null && now.value >= closeTime;
+});
 const afterPanelWindowActive = computed(
   () =>
-    isMeetingToday.value &&
-    (lastSongEndedAt.value !== null ||
-      (afterTrigger.value !== null && now.value >= afterTrigger.value)),
+    isMeetingToday.value && afterPanelOpened.value && !afterPanelClosed.value,
 );
 const showAfter = computed(
   () => afterPanelWindowActive.value && !dismissedAfterPanel.value,
