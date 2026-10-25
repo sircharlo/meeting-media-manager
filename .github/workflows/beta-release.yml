@@ -103,6 +103,13 @@ jobs:
         with:
           ref: master
           fetch-depth: 0
+      # Build and tag this commit, not whatever master is by then: GitHub
+      # creates a draft's tag when it's published, so a merge while the
+      # builds run got tagged as part of a release built without it, and
+      # the next beta run then found nothing new to release (v26.10.2-beta.8).
+      - id: release_commit
+        name: Pin the commit to release
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Generate release notes
         run: |
           python scripts/release-commits.py \
@@ -115,12 +122,13 @@ jobs:
         with:
           name: ${{ needs.bump-version.outputs.newTag }}
           tag: ${{ needs.bump-version.outputs.newTag }}
-          commit: 'master'
+          commit: ${{ steps.release_commit.outputs.sha }}
           draft: true
           prerelease: true
           bodyFile: release-notes.md
     outputs:
       id: ${{ steps.create_release.outputs.id }}
+      sha: ${{ steps.release_commit.outputs.sha }}
 
   build:
     needs: draft-release
@@ -128,6 +136,7 @@ jobs:
     with:
       checkout-latest: true
       publish-release: true
+      ref: ${{ needs.draft-release.outputs.sha }}
     secrets:
       APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
       APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -153,7 +162,7 @@ jobs:
   publish-release:
     name: 'Publish release'
     runs-on: ubuntu-latest
-    needs: [bump-version, build]
+    needs: [bump-version, draft-release, build]
     permissions:
       contents: write
     steps:
@@ -161,6 +170,7 @@ jobs:
         with:
           name: ${{ needs.bump-version.outputs.newTag }}
           tag: ${{ needs.bump-version.outputs.newTag }}
+          commit: ${{ needs.draft-release.outputs.sha }}
           draft: false
           prerelease: true
           allowUpdates: true

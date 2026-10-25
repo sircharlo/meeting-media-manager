@@ -10,6 +10,10 @@ on:
         description: 'Publish build artifacts to GitHub Releases via electron-builder'
         type: boolean
         default: false
+      ref:
+        description: 'With checkout-latest, the commit to build instead of the latest master'
+        type: string
+        default: ''
     secrets:
       APPLE_APP_SPECIFIC_PASSWORD:
         required: true
@@ -86,7 +90,7 @@ jobs:
         if: ${{ inputs.checkout-latest == true }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: master
+          ref: ${{ inputs.ref || 'master' }}
       - name: Check out Git repository
         if: ${{ inputs.checkout-latest == false }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -128,7 +132,7 @@ jobs:
         if: ${{ inputs.checkout-latest == true }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: master
+          ref: ${{ inputs.ref || 'master' }}
       - name: Check out Git repository
         if: ${{ inputs.checkout-latest == false }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
