@@ -717,6 +717,7 @@
   "quick-actions-enabled": "활성화",
   "quick-actions-item-name": "작업 이름",
   "quick-actions-last-song-ends-at": "마지막 노래 종료: {time}",
+  "quick-actions-meeting-ended-at": "집회는 {time}에 끝날 예정이었습니다",
   "quick-actions-meeting-ends-at": "집회는 {time}에 끝날 예정입니다",
   "quick-actions-meeting-started-at": "예정된 집회 시작 시간: {time}",
   "quick-actions-meeting-starts-at": "예정된 집회 시작 시간({time})까지",

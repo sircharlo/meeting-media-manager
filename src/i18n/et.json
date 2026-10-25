@@ -717,6 +717,7 @@
   "quick-actions-enabled": "Lubatud",
   "quick-actions-item-name": "Ülesande nimi",
   "quick-actions-last-song-ends-at": "Viimane laul lõpeb kell {time}",
+  "quick-actions-meeting-ended-at": "Koosolek pidi lõppema kell {time}",
   "quick-actions-meeting-ends-at": "Koosolek peaks lõppema kell {time}",
   "quick-actions-meeting-started-at": "Koosoleku kavandatud algusaeg oli kell {time}",
   "quick-actions-meeting-starts-at": "Koosoleku kavandatud algusaeg ({time}) on",

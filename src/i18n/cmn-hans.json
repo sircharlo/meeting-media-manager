@@ -717,6 +717,7 @@
   "quick-actions-enabled": "已启用",
   "quick-actions-item-name": "任务名称",
   "quick-actions-last-song-ends-at": "最后一首诗歌将在{time}结束",
+  "quick-actions-meeting-ended-at": "聚会原定在{time}结束",
   "quick-actions-meeting-ends-at": "聚会预计在{time}结束",
   "quick-actions-meeting-started-at": "原定聚会开始时间是{time}",
   "quick-actions-meeting-starts-at": "原定聚会开始时间（{time}）还有",

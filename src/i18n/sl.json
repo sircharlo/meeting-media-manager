@@ -717,6 +717,7 @@
   "quick-actions-enabled": "Omogočeno",
   "quick-actions-item-name": "Ime naloge",
   "quick-actions-last-song-ends-at": "Zadnja pesem se konča ob {time}",
+  "quick-actions-meeting-ended-at": "Načrtovani konec shoda je bil ob {time}",
   "quick-actions-meeting-ends-at": "Shod naj bi se končal ob {time}",
   "quick-actions-meeting-started-at": "Načrtovani začetek shoda je bil ob {time}",
   "quick-actions-meeting-starts-at": "Načrtovani začetek shoda ({time}) je čez",

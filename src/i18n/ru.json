@@ -717,6 +717,7 @@
   "quick-actions-enabled": "Включено",
   "quick-actions-item-name": "Название задачи",
   "quick-actions-last-song-ends-at": "Последняя песня закончится в {time}",
+  "quick-actions-meeting-ended-at": "Встреча должна была закончиться в {time}",
   "quick-actions-meeting-ends-at": "Встреча должна закончиться в {time}",
   "quick-actions-meeting-started-at": "Встреча должна была начаться в {time}",
   "quick-actions-meeting-starts-at": "До запланированного начала встречи ({time}) осталось",

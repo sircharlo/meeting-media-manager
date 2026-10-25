@@ -717,6 +717,7 @@
   "quick-actions-enabled": "Tu‘ati-hia",
   "quick-actions-item-name": "I‘oa no te ohipa",
   "quick-actions-last-song-ends-at": "E oti te hīmene hopea i te hora {time}",
+  "quick-actions-meeting-ended-at": "I faanahonahohia te putuputuraa ia oti i te hora {time}",
   "quick-actions-meeting-ends-at": "Ua faanahonahohia te putuputuraa ia oti i te hora {time}",
   "quick-actions-meeting-started-at": "Te taime i faanahohia no te haamata i te rururaa oia hoi i te hora {time}",
   "quick-actions-meeting-starts-at": "Te taime i faanahohia no te haamata i te rururaa ({time}) oia hoi",
