@@ -523,6 +523,9 @@ namespace M3.ZoomHelper
         // Buttons whose tops are this close (in pixels) count as one row.
         const int RowTolerance = 8;
         const int WaitTimeoutMs = 8000;
+        // How long the microphone or camera button gets to change before it's
+        // pressed again (see SetButtonState).
+        const int RepressAfterMs = 3000;
         const int PollIntervalMs = 200;
 
         // --- Waiting and windows ---------------------------------------------
@@ -1462,14 +1465,21 @@ namespace M3.ZoomHelper
             if (onTitle.Length == 0 || offTitle.Length == 0) throw new ZoomActionError(what + "-titles-not-captured");
             if (current != onTitle && current != offTitle) throw new ZoomActionError(what + "-title-unrecognized:" + current);
             if ((current == onTitle) == on) return Changed(false);
-            Press(button);
             var wanted = on ? onTitle : offTitle;
-            var done = WaitUntil(() =>
+            Func<bool> reachedWanted = () =>
             {
                 var latest = find();
                 return latest != null && FirstSegment(latest.Name) == wanted;
-            }, WaitTimeoutMs);
-            if (!done) throw new ZoomActionError(what + "-not-changed");
+            };
+            Press(button);
+            if (WaitUntil(reachedWanted, RepressAfterMs)) return Changed(true);
+            // Zoom now and then ignores a press of these buttons (MMM-V2-3MR:
+            // unmuting, in Italian and Portuguese). Press once more, but only
+            // if the button still reads as before, or a slow first press
+            // would be undone.
+            var unchanged = find();
+            if (unchanged != null && FirstSegment(unchanged.Name) == current) Press(unchanged);
+            if (!WaitUntil(reachedWanted, WaitTimeoutMs - RepressAfterMs)) throw new ZoomActionError(what + "-not-changed");
             return Changed(true);
         }
 

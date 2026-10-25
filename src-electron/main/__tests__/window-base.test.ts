@@ -1,9 +1,12 @@
 import type { JwSiteParams } from 'src/types';
 
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('electron', () => ({
-  app: { getPath: vi.fn(() => '/tmp/app-data') },
+  app: {
+    getAppPath: vi.fn(() => '/tmp/app'),
+    getPath: vi.fn(() => '/tmp/app-data'),
+  },
   BrowserWindow: vi.fn(),
 }));
 
@@ -32,8 +35,15 @@ vi.mock('src-electron/main/window/window-state', () => ({
   StatefulBrowserWindow: vi.fn(),
 }));
 
-const { __testables } = await import('../window/window-base');
+const { __testables, createWindow } = await import('../window/window-base');
 const { buildWebsitePage } = __testables;
+const { captureElectronError } = await import('src-electron/main/utils');
+const { StatefulBrowserWindow } =
+  await import('src-electron/main/window/window-state');
+
+afterEach(() => {
+  vi.clearAllMocks();
+});
 
 const siteParams = (overrides: Partial<JwSiteParams>): JwSiteParams => ({
   langCode: 'en',
@@ -117,4 +127,80 @@ describe('buildWebsitePage', () => {
     expect(query).not.toContain('../');
     expect(query).not.toContain('#');
   });
+});
+
+/**
+ * A window whose page load fails with `loadError`. Like Electron's, its
+ * webContents can't be read any more once the window itself is destroyed.
+ * @param loadError The error the load fails with
+ * @returns What's destroyed so far, for the test to change
+ */
+const mockWindowFailingToLoad = (loadError: Error) => {
+  const destroyed = { webContents: false, window: false };
+  const webContents = {
+    closeDevTools: vi.fn(),
+    isDestroyed: () => destroyed.webContents,
+    on: vi.fn(),
+    openDevTools: vi.fn(),
+  };
+  const win = {
+    isDestroyed: () => destroyed.window,
+    loadFile: vi.fn(async () => {
+      throw loadError;
+    }),
+    on: vi.fn(),
+    setMenuBarVisibility: vi.fn(),
+    get webContents() {
+      if (destroyed.window) throw new Error('Object has been destroyed');
+      return webContents;
+    },
+  };
+  vi.mocked(StatefulBrowserWindow).mockImplementation(function () {
+    return { win } as unknown as InstanceType<typeof StatefulBrowserWindow>;
+  });
+  return destroyed;
+};
+
+const flushLoad = () =>
+  new Promise<void>((resolve) => {
+    setTimeout(resolve, 0);
+  });
+
+describe('createWindow - page load errors', () => {
+  const loadError = Object.assign(
+    new Error(
+      "ERR_FAILED (-2) loading 'file:///app/index.html#?page=media-player'",
+    ),
+    { code: 'ERR_FAILED', errno: -2 },
+  );
+
+  it('reports a page that failed to load', async () => {
+    mockWindowFailingToLoad(loadError);
+
+    createWindow('media');
+    await flushLoad();
+
+    expect(captureElectronError).toHaveBeenCalledWith(loadError, {
+      contexts: { fn: { name: 'createWindow', window: 'media' } },
+    });
+  });
+
+  // MMM-V2-3MT: Electron fails a load that's still under way when its
+  // window goes away, e.g. when M³ quits. Closing destroys the page first,
+  // destroying the window takes both (checked against Electron 45).
+  it.each([
+    { how: 'closed', webContents: true, window: false },
+    { how: 'destroyed', webContents: true, window: true },
+  ])(
+    "doesn't report a load cut short by the window being $how",
+    async ({ webContents, window }) => {
+      const destroyed = mockWindowFailingToLoad(loadError);
+
+      createWindow('media');
+      Object.assign(destroyed, { webContents, window });
+      await flushLoad();
+
+      expect(captureElectronError).not.toHaveBeenCalled();
+    },
+  );
 });

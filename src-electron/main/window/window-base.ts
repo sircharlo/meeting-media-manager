@@ -118,6 +118,9 @@ export function createWindow(
       break;
   }
   const captureLoadError = (error: unknown) => {
+    // A window closed while its page was still loading (M³ quit, say) fails
+    // the load with ERR_FAILED: nothing went wrong (MMM-V2-3MT).
+    if (win.isDestroyed() || win.webContents.isDestroyed()) return;
     captureElectronError(error, {
       contexts: { fn: { name: 'createWindow', window: name } },
     });

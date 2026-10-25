@@ -1,3 +1,5 @@
+import type * as ObsHelpers from 'src/helpers/obs';
+
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
@@ -31,7 +33,9 @@ vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: errorCatcherMock,
 }));
 
-vi.mock('src/helpers/obs', () => ({
+vi.mock('src/helpers/obs', async (importOriginal) => ({
+  isTransientObsError: (await importOriginal<typeof ObsHelpers>())
+    .isTransientObsError,
   obsConnect: vi.fn(),
   obsGetRecordingDirectory: obsGetRecordingDirectoryMock,
   obsGetRecordingState: obsGetRecordingStateMock,
@@ -153,7 +157,7 @@ describe('DialogObsPopup - scene switch error handling', () => {
     obsState.obsConnectionState = 'connected';
     obsState.scenes = [{ sceneName: 'Camera' }, { sceneName: 'Media' }];
 
-    const rejection = new Error('OBS is not ready to perform the request.');
+    const rejection = new Error('No source was found by the name of `Camera`.');
     callMock.mockRejectedValueOnce(rejection);
 
     mount(DialogObsPopup, {
@@ -183,6 +187,32 @@ describe('DialogObsPopup - scene switch error handling', () => {
       }),
     );
   });
+
+  // MMM-V2-3HB: OBS answers "not ready" while it loads or switches its
+  // scene collection, and the socket can drop mid-request.
+  it.each(['OBS is not ready to perform the request.', 'Not connected'])(
+    'does not report a transient "%s" failure',
+    async (message) => {
+      const obsState = setupObsSettings({ obsSwitchSceneAfterMedia: false });
+      obsState.obsConnectionState = 'connected';
+      obsState.scenes = [{ sceneName: 'Camera' }, { sceneName: 'Media' }];
+
+      callMock.mockRejectedValueOnce(new Error(message));
+
+      mount(DialogObsPopup, {
+        props: { modelValue: true },
+      });
+      await Promise.resolve();
+
+      clickSceneButton('Stage');
+      await flushPromises();
+
+      expect(callMock).toHaveBeenCalledWith('SetCurrentProgramScene', {
+        sceneName: 'Camera',
+      });
+      expect(errorCatcherMock).not.toHaveBeenCalled();
+    },
+  );
 });
 
 // FE-15 (full-audit-2026-09-05.md): isRecording was only ever reconciled
