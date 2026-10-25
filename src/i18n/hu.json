@@ -717,6 +717,7 @@
   "quick-actions-enabled": "Engedélyezve",
   "quick-actions-item-name": "Feladat neve",
   "quick-actions-last-song-ends-at": "Az utolsó ének vége: {time}",
+  "quick-actions-meeting-ended-at": "Az összejövetel tervezett vége {time} volt",
   "quick-actions-meeting-ends-at": "Az összejövetel tervezett vége: {time}",
   "quick-actions-meeting-started-at": "Az összejövetel tervezett kezdési időpontja {time} volt",
   "quick-actions-meeting-starts-at": "Az összejövetel tervezett kezdetéig ({time}) hátralévő idő:",

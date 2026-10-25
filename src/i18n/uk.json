@@ -717,6 +717,7 @@
   "quick-actions-enabled": "Увімкнено",
   "quick-actions-item-name": "Назва завдання",
   "quick-actions-last-song-ends-at": "Остання пісня закінчиться о {time}",
+  "quick-actions-meeting-ended-at": "Зібрання мало закінчитися о {time}",
   "quick-actions-meeting-ends-at": "Зібрання має закінчитися о {time}",
   "quick-actions-meeting-started-at": "Зібрання мало початися о {time}",
   "quick-actions-meeting-starts-at": "До запланованого початку зібрання ({time}) залишилося",
