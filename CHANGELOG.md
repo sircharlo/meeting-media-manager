@@ -48,6 +48,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Stability**: Fixed an error each time M³'s main screen was closed and set up again, which rarely happens. It also left that screen's handlers for keyboard shortcuts, downloads and other events in place, so they could then react twice.
 - 🐞 **Meeting Timer**: The copy button next to the timer remote's addresses, in the timer popup, now copies the address instead of failing with an error.
 - 🐞 **Meeting Timer**: The timer remote no longer shows the raised hand all the time. It now only appears when the timer display shows it too: when someone raises their hand in Zoom, or when it's switched on by hand.
+- 🐞 **Meeting Quick Actions**: Once the meeting's planned end time has passed, the after-meeting panel now says when the meeting was scheduled to end, instead of saying it "is scheduled to end" above a countdown stuck at 00:00 (when M³ is opened hours after the meeting, for instance).
 - 🐞 **Zoom Meeting Manager**: When Zoom ignores M³'s press of its microphone or camera button, which it does now and then, M³ now presses it once more after a few seconds instead of giving up. Unmuting failed this way during the check M³ makes when it starts, which then paused the Zoom automations.
 
 ### 🔧 Chores

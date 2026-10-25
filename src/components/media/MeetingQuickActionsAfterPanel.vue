@@ -17,8 +17,15 @@
     </q-card-section>
 
     <q-card-section class="meeting-quick-actions-panel__countdown">
-      <div class="text-caption">{{ statusText }}</div>
-      <div class="meeting-quick-actions-panel__time">{{ countdown }}</div>
+      <template v-if="isScheduledEndInPast">
+        <div class="meeting-quick-actions-panel__time">
+          {{ t('quick-actions-meeting-ended-at', { time: scheduledEndTime }) }}
+        </div>
+      </template>
+      <template v-else>
+        <div class="text-caption">{{ statusText }}</div>
+        <div class="meeting-quick-actions-panel__time">{{ countdown }}</div>
+      </template>
     </q-card-section>
 
     <q-card-section
@@ -199,6 +206,19 @@ const countdown = computed(() => {
     Math.max(0, (targetEnd.value.getTime() - props.now) / 1000),
   );
 });
+// Once the planned end has gone by with no last song to follow (M³ opened
+// hours after the meeting, say), the countdown would only sit at 00:00
+// under a sentence in the future tense: say when the meeting was planned
+// to end instead, as the before panel does with a past start time.
+const isScheduledEndInPast = computed(
+  () =>
+    phase.value === 'scheduled' &&
+    !!scheduledEnd.value &&
+    scheduledEnd.value.getTime() <= props.now,
+);
+const scheduledEndTime = computed(() =>
+  scheduledEnd.value ? formatClockTime(scheduledEnd.value) : '',
+);
 const recordingEnabled = computed(
   () =>
     !!currentSettings.value?.recordingEnable ||
