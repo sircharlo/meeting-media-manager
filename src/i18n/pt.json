@@ -1053,7 +1053,7 @@
   "zoom-check-problem-meeting": "Abrindo a reunião do Zoom da sua congregação",
   "zoom-check-running": "Verificando o Zoom…",
   "zoom-check-test-again": "Testar novamente",
-  "zoom-check-while-sharing": "M³ can't check Zoom while it's sharing. Stop sharing in Zoom, then test again.",
+  "zoom-check-while-sharing": "O M³ não consegue verificar o Zoom enquanto ele está compartilhando. Pare o compartilhamento no Zoom e teste novamente.",
   "zoom-connection-restart": "Reiniciar a conexão do M³ com o Zoom",
   "zoom-dialog-in-the-way": "Uma janela do Zoom está aberta (uma caixa de diálogo ou um pop-up) e pode atrapalhar o M³. Feche-a no Zoom.",
   "zoom-hand-already-unmuted": "O áudio de {name} já está ativado no Zoom",
