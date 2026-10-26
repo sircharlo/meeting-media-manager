@@ -51,6 +51,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Meeting Timer**: The timer remote no longer shows the raised hand all the time. It now only appears when the timer display shows it too: when someone raises their hand in Zoom, or when it's switched on by hand.
 - 🐞 **Meeting Quick Actions**: Once the meeting's planned end time has passed, the after-meeting panel now says when the meeting was scheduled to end, instead of saying it "is scheduled to end" above a countdown stuck at 00:00 (when M³ is opened after the meeting without its last song having played, for instance).
 - 🐞 **Zoom Meeting Manager**: When Zoom ignores M³'s press of its microphone or camera button, which it does now and then, M³ now presses it once more after a few seconds instead of giving up. Unmuting failed this way during the check M³ makes when it starts, which then paused the Zoom automations.
+- 🐞 **Media Export**: When the auto-export folder can't be found or created, for example because it's on a drive that isn't connected, or because the settings came from another computer where the folder was somewhere else, M³ now says so, with a button that opens the setting, instead of quietly exporting nothing.
 
 ### 🔧 Chores
 

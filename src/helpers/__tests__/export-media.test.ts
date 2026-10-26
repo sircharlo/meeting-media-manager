@@ -1,5 +1,6 @@
 import type { DateInfo } from 'src/types';
 
+import { rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { createPinia, setActivePinia } from 'pinia';
 import { defaultSettings } from 'src/constants/settings';
@@ -11,14 +12,20 @@ import { useJwStore } from 'stores/jw';
 import { join } from 'upath';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// copySpy is created before export-media loads, since the module grabs
-// fs.copy once at import time. It calls through unless a test overrides it.
-const { copySpy, createTemporaryNotificationMock, errorCatcherMock } =
-  vi.hoisted(() => ({
-    copySpy: vi.spyOn(globalThis.electronApi.fs, 'copy'),
-    createTemporaryNotificationMock: vi.fn(),
-    errorCatcherMock: vi.fn(),
-  }));
+// The spies are created before export-media loads, since the module grabs
+// the fs functions once at import time. They call through unless a test
+// overrides them.
+const {
+  copySpy,
+  createTemporaryNotificationMock,
+  ensureDirSpy,
+  errorCatcherMock,
+} = vi.hoisted(() => ({
+  copySpy: vi.spyOn(globalThis.electronApi.fs, 'copy'),
+  createTemporaryNotificationMock: vi.fn(),
+  ensureDirSpy: vi.spyOn(globalThis.electronApi.fs, 'ensureDir'),
+  errorCatcherMock: vi.fn(),
+}));
 
 vi.mock('src/helpers/notifications', () => ({
   createTemporaryNotification: createTemporaryNotificationMock,
@@ -79,6 +86,20 @@ const setupCongregationDay = (targetDate: Date) => {
       status: 'complete',
     } as unknown as DateInfo,
   ];
+};
+
+const exportDayTo = async (targetDate: Date, folder: string) => {
+  setupCongregationDay(targetDate);
+  const congregationSettings = useCongregationSettingsStore();
+  congregationSettings.congregations[CONGREGATION_ID] = {
+    ...defaultSettings,
+    convertFilesToMp4: false,
+    enableMediaAutoExport: true,
+    mediaAutoExportFolder: folder,
+  };
+
+  await addDayToExportQueue(targetDate);
+  await waitForExportToSettle(formatDate(targetDate, 'YYYY-MM-DD'));
 };
 
 // FE-9 (full-audit-2026-09-04.md): a genuine ffmpeg conversion failure
@@ -142,20 +163,6 @@ describe('export-media copy failures', () => {
       syscall: 'lstat',
     });
 
-  const exportDayTo = async (targetDate: Date, folder: string) => {
-    setupCongregationDay(targetDate);
-    const congregationSettings = useCongregationSettingsStore();
-    congregationSettings.congregations[CONGREGATION_ID] = {
-      ...defaultSettings,
-      convertFilesToMp4: false,
-      enableMediaAutoExport: true,
-      mediaAutoExportFolder: folder,
-    };
-
-    await addDayToExportQueue(targetDate);
-    await waitForExportToSettle(formatDate(targetDate, 'YYYY-MM-DD'));
-  };
-
   beforeEach(() => {
     setActivePinia(createPinia());
   });
@@ -193,5 +200,68 @@ describe('export-media copy failures', () => {
         },
       },
     );
+  });
+});
+
+// MMM-V2-3FW: the auto-export folder was under a Windows user folder that
+// didn't exist on that computer, so creating it always failed with EPERM.
+describe('export-media unavailable export folder', () => {
+  const missingUserFolderError = () =>
+    Object.assign(
+      new Error("EPERM: operation not permitted, mkdir 'C:\\Users\\someone'"),
+      { code: 'EPERM', syscall: 'mkdir' },
+    );
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  afterEach(() => {
+    ensureDirSpy.mockReset();
+    vi.clearAllMocks();
+    globalThis.location.hash = '';
+  });
+
+  it('tells the user once, without retrying or reporting it', async () => {
+    ensureDirSpy.mockRejectedValue(missingUserFolderError());
+    const folder = join(tmpdir(), 'm3-missing-user', 'Export');
+
+    await exportDayTo(new Date('2026-08-21T00:00:00'), folder);
+    await exportDayTo(new Date('2026-08-22T00:00:00'), folder);
+
+    expect(ensureDirSpy).toHaveBeenCalledTimes(2);
+    expect(copySpy).not.toHaveBeenCalled();
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+    expect(createTemporaryNotificationMock).toHaveBeenCalledTimes(1);
+    expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'negative' }),
+    );
+  });
+
+  it('opens the auto-export folder setting from the notification', async () => {
+    ensureDirSpy.mockRejectedValue(missingUserFolderError());
+
+    await exportDayTo(
+      new Date('2026-08-23T00:00:00'),
+      join(tmpdir(), 'm3-missing-user-settings', 'Export'),
+    );
+    createTemporaryNotificationMock.mock.calls[0]?.[0].actions[0].handler();
+
+    expect(globalThis.location.hash).toBe('#/settings/mediaAutoExportFolder');
+  });
+
+  it('tells the user again if the folder comes back and then goes missing again', async () => {
+    const parentFolder = join(tmpdir(), 'm3-export-comes-and-goes');
+    const folder = join(parentFolder, 'Export');
+    await rm(parentFolder, { force: true, recursive: true });
+
+    ensureDirSpy.mockRejectedValueOnce(missingUserFolderError());
+    await exportDayTo(new Date('2026-08-24T00:00:00'), folder);
+    await exportDayTo(new Date('2026-08-25T00:00:00'), folder);
+    await rm(parentFolder, { force: true, recursive: true });
+    ensureDirSpy.mockRejectedValueOnce(missingUserFolderError());
+    await exportDayTo(new Date('2026-08-26T00:00:00'), folder);
+
+    expect(createTemporaryNotificationMock).toHaveBeenCalledTimes(2);
   });
 });

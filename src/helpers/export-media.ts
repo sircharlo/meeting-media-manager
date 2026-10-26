@@ -92,7 +92,12 @@ const exportDayToFolder = async (targetDate?: Date) => {
       return;
     }
 
-    const destFolder = getDestinationFolder(targetDate);
+    const exportFolder = getExportFolder();
+    if (!(await ensureExportFolder(exportFolder))) {
+      return;
+    }
+
+    const destFolder = getDestinationFolder(exportFolder, targetDate);
     if (!(await ensureDestinationFolder(destFolder))) {
       return;
     }
@@ -155,16 +160,64 @@ const findDayData = (
   );
 };
 
-const getDestinationFolder = (targetDate: Date): string => {
+const getExportFolder = (): string => {
   const currentStateStore = useCurrentStateStore();
   if (!currentStateStore.currentSettings?.mediaAutoExportFolder) {
     throw new Error('No media auto export folder set');
   }
-  const dateFolderName = formatDate(targetDate, 'YYYY-MM-DD');
-  return join(
-    currentStateStore.currentSettings.mediaAutoExportFolder,
-    dateFolderName,
-  );
+  return currentStateStore.currentSettings.mediaAutoExportFolder;
+};
+
+const getDestinationFolder = (exportFolder: string, targetDate: Date) =>
+  join(exportFolder, formatDate(targetDate, 'YYYY-MM-DD'));
+
+// Export folders the user was already told about, so that exporting a whole
+// calendar of days shows one notification instead of one per day.
+const unavailableExportFolders = new Set<string>();
+
+const notifyExportFolderUnavailable = (exportFolder: string) => {
+  if (unavailableExportFolders.has(exportFolder)) return;
+  unavailableExportFolders.add(exportFolder);
+  createTemporaryNotification({
+    actions: [
+      {
+        color: 'white',
+        handler: () => {
+          globalThis.location.hash = '/settings/mediaAutoExportFolder';
+        },
+        label: i18n.global.t('go-to-settings'),
+      },
+    ],
+    caption: i18n.global.t('media-export-folder-unavailable-caption', {
+      folder: exportFolder,
+    }),
+    message: i18n.global.t('media-export-folder-unavailable'),
+    timeout: 15_000,
+    type: 'negative',
+  });
+};
+
+// The setting can point somewhere that doesn't exist on this computer: a
+// drive that isn't connected, or a folder under another Windows user's
+// profile, e.g. settings brought over from another computer (MMM-V2-3FW:
+// EPERM on mkdir 'C:\Users\<name>', the first missing folder on the way
+// down). Only the user can fix that, so tell them instead of retrying and
+// reporting it.
+const ensureExportFolder = async (exportFolder: string): Promise<boolean> => {
+  try {
+    if (!(await pathExists(exportFolder))) await ensureDir(exportFolder);
+    unavailableExportFolders.delete(exportFolder);
+    return true;
+  } catch (error) {
+    log(
+      `Auto-export folder ${exportFolder} is unavailable`,
+      'filesystem',
+      'warn',
+      error,
+    );
+    notifyExportFolderUnavailable(exportFolder);
+    return false;
+  }
 };
 
 const ensureDestinationFolder = async (
@@ -173,7 +226,7 @@ const ensureDestinationFolder = async (
   try {
     // The auto-export destination is commonly a cloud-synced folder
     // (OneDrive, Dropbox, ...) whose sync client can hold a transient lock
-    // on a just-created/renamed path (MMM-V2-3FW: EPERM on mkdir).
+    // on a just-created/renamed path.
     await withLockRetry(() => ensureDir(destFolder));
     return true;
   } catch (error) {
