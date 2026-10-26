@@ -745,12 +745,18 @@ describe('JW Store', () => {
     // review on this project's side.
     it('pins jsdelivr fontsource URLs to a specific version, not @latest', () => {
       const store = useJwStore();
-
-      expect(store.fontUrls.NotoSans).not.toContain('@latest');
-      expect(store.fontUrls.NotoSans).toMatch(
-        /^https:\/\/cdn\.jsdelivr\.net\/fontsource\/fonts\/noto-sans:vf@\d+\.\d+\.\d+\//,
+      const fontsourceUrls = Object.values(store.fontUrls).filter((url) =>
+        url.startsWith('https://cdn.jsdelivr.net/'),
       );
-      expect(store.fontUrls.AbyssinicaSIL).not.toContain('@latest');
+
+      expect(fontsourceUrls).toContain(store.fontUrls.NotoSansKR);
+      expect(fontsourceUrls).toContain(store.fontUrls.AbyssinicaSIL);
+      for (const url of fontsourceUrls) {
+        expect(url).not.toContain('@latest');
+        expect(url).toMatch(
+          /^https:\/\/cdn\.jsdelivr\.net\/fontsource\/fonts\/[a-z-]+(:vf)?@\d+\.\d+\.\d+\//,
+        );
+      }
     });
   });
 

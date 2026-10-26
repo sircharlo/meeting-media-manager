@@ -27,6 +27,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🛠️ **Media Window**: Zooming and panning an image now moves smoothly and calmly on the media window, and keeps up with the image's thumbnail in M³'s main window. The image used to keep drifting for nearly 3 seconds after you stopped, move in small jolts while you dragged or pinched, and swing sideways as it zoomed, so the spot you zoomed in on slid away and back. It now settles in under a second, follows a drag or a pinch closely, and keeps the spot you zoom toward in place the whole way, resetting the zoom included.
 - 🛠️ **Meeting Quick Actions**: The after-meeting panel now goes away by itself an hour after the meeting is over (once its last song has ended, or else its planned end time has passed), instead of staying up for the rest of the day until dismissed. Opening M³ later that day no longer shows it.
 - 🛠️ **Meeting Timer**: The "Analog and digital" display no longer shows the countdown twice. The ring now only shows how much time is left, and the time itself shows once, beside it, in much larger digits that follow the "Timer size" setting (they used to stay small whatever it was set to). The "Analog" display still shows the time inside the ring.
+- 🛠️ **Appearance**: M³ now uses Noto Sans for its interface, instead of Inter. For Chinese and Korean, it now uses Noto Sans SC or Noto Sans KR instead of the computer's own fonts. These fonts are too large to include with every installation, so M³ downloads the one it needs the first time it's used in that language and keeps it for offline use. Until then, or if it can't be downloaded, the computer's own font is used.
 
 ### 🐞 Bug Fixes
 
@@ -52,6 +53,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Meeting Quick Actions**: Once the meeting's planned end time has passed, the after-meeting panel now says when the meeting was scheduled to end, instead of saying it "is scheduled to end" above a countdown stuck at 00:00 (when M³ is opened after the meeting without its last song having played, for instance).
 - 🐞 **Zoom Meeting Manager**: When Zoom ignores M³'s press of its microphone or camera button, which it does now and then, M³ now presses it once more after a few seconds instead of giving up. Unmuting failed this way during the check M³ makes when it starts, which then paused the Zoom automations.
 - 🐞 **Media Export**: When the auto-export folder can't be found or created, for example because it's on a drive that isn't connected, or because the settings came from another computer where the folder was somewhere else, M³ now says so, with a button that opens the setting, instead of quietly exporting nothing.
+- 🐞 **Yeartext**: In languages written in the Arabic, Bengali, Malayalam, Myanmar, Tamil, Telugu and several other scripts, the characters the yeartext's own font doesn't have, such as the digits of its scripture reference, now show in Noto Sans or Noto Serif as intended, instead of in a font from the computer.
 
 ### 🔧 Chores
 

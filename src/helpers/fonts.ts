@@ -37,7 +37,7 @@ const DEFAULT_YEARTEXT_FONT: YeartextFontConfig = {
 const YEARTEXT_FONTS: Record<string, YeartextFontConfig> = {
   ARABIC: {
     cdnFont: 'NotoNaskhArabic',
-    fontFamily: "'NotoNaskhArabic', 'NotoSerifVariable', serif",
+    fontFamily: "'NotoNaskhArabic', 'Noto Serif Variable', serif",
   },
   ARMENIAN: {
     cdnFont: 'NotoSerifArmenian',
@@ -46,7 +46,7 @@ const YEARTEXT_FONTS: Record<string, YeartextFontConfig> = {
   ASSYRIAN: { fontFamily: "'Noto Serif Variable', Georgia, serif" },
   BENGALI: {
     cdnFont: 'NotoSansBengali',
-    fontFamily: "'NotoSansBengali', 'NotoSans', sans-serif",
+    fontFamily: "'NotoSansBengali', 'Noto Sans Variable', sans-serif",
   },
   CAMBODIAN: {
     cdnFont: 'NotoSerifKhmer',
@@ -77,7 +77,7 @@ const YEARTEXT_FONTS: Record<string, YeartextFontConfig> = {
   },
   GURMUKHI: {
     cdnFont: 'NotoSansGurmukhi',
-    fontFamily: "'NotoSansGurmukhi', 'NotoSans', Raavi",
+    fontFamily: "'NotoSansGurmukhi', 'Noto Sans Variable', Raavi",
   },
   HEBREW: {
     cdnFont: 'NotoSerifHebrew',
@@ -101,21 +101,22 @@ const YEARTEXT_FONTS: Record<string, YeartextFontConfig> = {
   },
   MALAYALAM: {
     cdnFont: 'NotoSansMalayalam',
-    fontFamily: "'NotoSansMalayalam', 'NotoSans', Kartika, sans-serif",
+    fontFamily:
+      "'NotoSansMalayalam', 'Noto Sans Variable', Kartika, sans-serif",
   },
   MONGOLIAN: {
     cdnFont: 'WTMannaSansMongolian',
-    fontFamily: "'WTMannaSansMongolian', 'NotoSansSC', 'NotoSans'",
+    fontFamily: "'WTMannaSansMongolian', 'NotoSansSC', 'Noto Sans Variable'",
   },
   MYANMAR: {
     cdnFont: 'WTMannaSansMyanmar',
     fontFamily:
-      "'WTMannaSansMyanmar', 'NotoSans', 'Myanmar Sangam MN', sans-serif",
+      "'WTMannaSansMyanmar', 'Noto Sans Variable', 'Myanmar Sangam MN', sans-serif",
   },
   ORIYA: {
     cdnFont: 'NotoSansOriya',
     fontFamily:
-      "'NotoSansOriya', 'NotoSans', 'Oriya Sangam MN', Kalinga, sans-serif",
+      "'NotoSansOriya', 'Noto Sans Variable', 'Oriya Sangam MN', Kalinga, sans-serif",
   },
   ROMAN: { fontFamily: "'Wt-ClearText-Bold', serif" },
   SINDHI: { fontFamily: "'Noto Serif Variable', Georgia, serif" },
@@ -125,20 +126,21 @@ const YEARTEXT_FONTS: Record<string, YeartextFontConfig> = {
   },
   TAMIL: {
     cdnFont: 'NotoSansTamil',
-    fontFamily: "'NotoSansTamil', 'NotoSans', Latha, sans-serif",
+    fontFamily: "'NotoSansTamil', 'Noto Sans Variable', Latha, sans-serif",
   },
   TELUGU: {
     cdnFont: 'NotoSansTelugu',
-    fontFamily: "'NotoSansTelugu', 'NotoSans', Gautami, sans-serif",
+    fontFamily: "'NotoSansTelugu', 'Noto Sans Variable', Gautami, sans-serif",
   },
   THAI: { cdnFont: 'WTTextNew', fontFamily: "'WTTextNew', serif" },
   TIBETAN: {
     cdnFont: 'WTMannaSansTibetan',
-    fontFamily: "'WTMannaSansTibetan', 'NotoSans', sans-serif",
+    fontFamily: "'WTMannaSansTibetan', 'Noto Sans Variable', sans-serif",
   },
   URDU: {
     cdnFont: 'NotoNastaliqUrdu',
-    fontFamily: "'NotoNastaliqUrdu', 'NotoSans', 'Jameel Noori Nastaleeq'",
+    fontFamily:
+      "'NotoNastaliqUrdu', 'Noto Sans Variable', 'Jameel Noori Nastaleeq'",
   },
 };
 
@@ -402,6 +404,39 @@ export const setElementFont = async (fontName: FontName) => {
   return fontFacePromises[fontName];
 };
 
+// UI languages whose script Noto Sans doesn't cover. Their fonts are too big
+// to bundle for everyone (0.5-1 MB each), so like the yeartext fonts they're
+// downloaded on first use and cached; until then, or if they can't be
+// fetched, the system's font for that script is used.
+const UI_LOCALE_FONTS: Partial<Record<string, FontName>> = {
+  cmnHans: 'NotoSansSC',
+  cmnHant: 'NotoSansTC',
+  ko: 'NotoSansKR',
+};
+const UI_LOCALE_FONT_PROPERTY = '--ui-locale-font';
+
+/**
+ * Loads the font a UI language needs on top of the bundled Noto Sans, and
+ * puts it in the UI's font stack (the --ui-locale-font slot of
+ * $typography-font-family).
+ * @param locale The UI language
+ * @returns Whether the language's font is available - true if it needs none.
+ */
+export const loadUiLocaleFont = async (locale: string) => {
+  const fontName = UI_LOCALE_FONTS[locale];
+  const rootStyle = document.documentElement.style;
+
+  if (!fontName) {
+    rootStyle.removeProperty(UI_LOCALE_FONT_PROPERTY);
+    return true;
+  }
+
+  // Set before the font loads, so this call can't overwrite a quicker,
+  // later language switch. Until the font is added, the stack skips it.
+  rootStyle.setProperty(UI_LOCALE_FONT_PROPERTY, `'${fontName}'`);
+  return setElementFont(fontName);
+};
+
 const setFallbackFont = async (
   fontName: FontName,
   url: string,
@@ -420,9 +455,13 @@ const setFallbackFont = async (
     document.fonts.add(fontFace);
     return true;
   } catch (e) {
-    errorCatcher(e, {
-      contexts: { fn: { fontName, name: 'setFallbackFont', url } },
-    });
+    // Offline, the CDN can't be reached either: nothing to report, the font
+    // is downloaded and cached once back online (as in getLocalFontPath()).
+    if (useCurrentStateStore().online) {
+      errorCatcher(e, {
+        contexts: { fn: { fontName, name: 'setFallbackFont', url } },
+      });
+    }
     return false;
   }
 };

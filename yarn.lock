@@ -626,10 +626,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fontsource-variable/inter@npm:^5.3.0":
+"@fontsource-variable/noto-sans@npm:^5.3.0":
   version: 5.3.0
-  resolution: "@fontsource-variable/inter@npm:5.3.0"
-  checksum: 10c0/46fbe41e8482a718f99634c8254346c6081d615415059be12e177224c903d688199125967825e75d4b8122668fd83f70880e11d4e02d08c20b503c65fe2a96d1
+  resolution: "@fontsource-variable/noto-sans@npm:5.3.0"
+  checksum: 10c0/5518c158bc8bdd067ac6e59972bdfb019888c5bf03da4c1d6f208995ed642ea7ae67c04e4f8efd8f21c1bc40998c3654b0bf21d2563947b98ff9c35a52fd1edc
   languageName: node
   linkType: hard
 
@@ -7833,7 +7833,7 @@ __metadata:
     "@electron/rebuild": "npm:^4.2.1"
     "@eslint/config-helpers": "npm:^0.7.0"
     "@eslint/js": "npm:^10.0.1"
-    "@fontsource-variable/inter": "npm:^5.3.0"
+    "@fontsource-variable/noto-sans": "npm:^5.3.0"
     "@fontsource-variable/noto-serif": "npm:^5.3.0"
     "@formkit/drag-and-drop": "npm:^0.6.1"
     "@intlify/message-compiler": "npm:11.4.16"

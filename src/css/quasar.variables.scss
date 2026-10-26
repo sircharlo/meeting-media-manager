@@ -12,7 +12,11 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
-$typography-font-family: 'Inter Variable', sans-serif !default;
+// --ui-locale-font names the font for UI languages Noto Sans doesn't cover
+// (Chinese, Korean). It's downloaded on first use rather than bundled - see
+// loadUiLocaleFont() in src/helpers/fonts.ts.
+$typography-font-family:
+  'Noto Sans Variable', var(--ui-locale-font, sans-serif), sans-serif !default;
 
 $accent: #9c27b0;
 
