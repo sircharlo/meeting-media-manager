@@ -22,6 +22,7 @@ import {
   getScreens,
   getVisibleWindowRects,
   getWindowRect,
+  hideWindows,
   isMinimized,
   minimizeWindow,
   moveWindow,
@@ -37,6 +38,10 @@ import {
 // have. Needs only the host in the meeting.
 
 const TOOLBAR_HIDE_TIMEOUT_MS = 12_000;
+// Zoom hides its share toolbar 15 to 20 seconds after the mouse leaves it,
+// though not every time.
+const SHARE_TOOLBAR_HIDE_TIMEOUT_MS = 40_000;
+const SHARE_TOOLBAR_CLASS = 'ZPFloatToolbarClass';
 
 describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
   const helper = createHelper();
@@ -200,6 +205,7 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
         y: (screen?.y ?? 0) + (screen?.height ?? 1080) / 2 - 180,
       }),
     ];
+    let stopped;
     try {
       await sleep(5000);
       focusWindow(findWindowByTitle('Media Player - M'));
@@ -235,9 +241,11 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
         `shared ${JSON.stringify(layers)}, media ${JSON.stringify(media)}`,
       ).toBe(true);
     } finally {
-      await helper.request({ type: 'stop-share' });
+      stopped = await helper.request({ type: 'stop-share' });
       decoys.forEach((decoy) => decoy.kill());
     }
+    // A share left running would fail the next tests instead.
+    expect(stopped).toMatchObject({ changed: true, ok: true });
   });
 
   it('puts the mouse and the focused window back after acting', async () => {
@@ -352,6 +360,49 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
       await sleep(1000);
       expect((await meeting()).sharing).toBe(false);
     }
+  });
+
+  it('keeps the meeting, reads its participants and stops sharing once Zoom hides its share toolbar', async () => {
+    const started = await helper.request({
+      shareButtonTitle: titles.shareButtonTitle,
+      type: 'start-share',
+      windowTitle: MEDIA_WINDOW_TITLE,
+    });
+    expect(started).toMatchObject({ changed: true, ok: true });
+    let stopped;
+    try {
+      // The participants list in a window of its own, as the window layout
+      // opens it while the share toolbar still shows.
+      expect(
+        await helper.request({ type: 'share-participants' }),
+      ).toMatchObject({ ok: true });
+      lookAway();
+      const deadline = Date.now() + SHARE_TOOLBAR_HIDE_TIMEOUT_MS;
+      while (
+        getVisibleWindowRects(SHARE_TOOLBAR_CLASS).length > 0 &&
+        Date.now() < deadline
+      ) {
+        await sleep(1000);
+      }
+      if (getVisibleWindowRects(SHARE_TOOLBAR_CLASS).length > 0) {
+        print(
+          '  Zoom kept its share toolbar showing: hidden here as Zoom does',
+        );
+        hideWindows(SHARE_TOOLBAR_CLASS);
+      }
+      expect(getVisibleWindowRects(SHARE_TOOLBAR_CLASS)).toHaveLength(0);
+
+      // The meeting window is hidden too, in Zoom's single window.
+      expect(await meeting()).toMatchObject({ found: true, sharing: true });
+      const participants = await helper.request({ type: 'participants' });
+      expect(participants.ok).toBe(true);
+      expect(participants.participants?.length).toBeGreaterThan(0);
+    } finally {
+      stopped = await helper.request({ type: 'stop-share' });
+    }
+    expect(stopped).toMatchObject({ changed: true, ok: true });
+    await sleep(1000);
+    expect((await meeting()).sharing).toBe(false);
   });
 
   // Last: diagnose leaves the participants panel open, which narrows Zoom's

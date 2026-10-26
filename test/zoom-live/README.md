@@ -68,7 +68,8 @@ Pieces you can also run on their own:
 - `node scripts/zoom-live/participants.mjs [count]` keeps test participants
   in the meeting until you stop it (Ctrl+C). While it runs, the tests and the
   in-app developer tool reuse those participants instead of joining new
-  ones, which keeps Zoom from turning them away as a bot.
+  ones, which keeps Zoom from turning them away as a bot. The startup
+  check's test with the host alone is skipped then.
 - `powershell -ExecutionPolicy Bypass -File scripts/zoom-live/fake-media-window.ps1`
   opens the stand-in media window.
 

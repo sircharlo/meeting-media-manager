@@ -153,6 +153,22 @@ const clickButton = async (page, pattern) => {
   return true;
 };
 
+// Zoom asks to confirm leaving, with a "Leave Meeting" menu item (a button
+// with role="menuitem", so not one by its role). Closing the browser without
+// confirming only drops the connection, and the host's Zoom then keeps
+// listing the participant for 3 more minutes.
+const confirmLeave = async (page) => {
+  const confirm = page
+    .locator('button', { hasText: /^\s*leave meeting\s*$/i })
+    .first();
+  await confirm.waitFor({ state: 'attached', timeout: 3000 });
+  await confirm.evaluate((el) => el.click(), undefined, { timeout: 2000 });
+  // Out of the meeting once the web client leaves the meeting's page.
+  await page.waitForURL((url) => !url.pathname.endsWith('/join'), {
+    timeout: 5000,
+  });
+};
+
 const readPageInfo = async (page) => ({
   labels: await buttonLabels(page),
   text: await page.evaluate(() => document.body.innerText),
@@ -264,7 +280,7 @@ const runAction = async (participant, action) => {
       participant.phase = 'left';
       if (!page) return true;
       await clickButton(page, /^leave$/i).catch(() => false);
-      await sleep(500);
+      await confirmLeave(page).catch(() => undefined);
       await participant.context.close();
       return true;
     case 'mute':

@@ -109,9 +109,7 @@ const missingControls = (
  * With others in the meeting: finds every control the automations use,
  * without pressing anything they'd notice.
  */
-const checkWithoutPressing = async (
-  alreadySharing: boolean,
-): Promise<Findings> => {
+const checkWithoutPressing = async (): Promise<Findings> => {
   const needs = getNeeds();
   const diagnosis = await diagnoseZoom();
   if (!diagnosis) return findings([HELPER_PROBLEM]);
@@ -128,7 +126,7 @@ const checkWithoutPressing = async (
   // has to be showing to be offered, and it isn't shown just for this, as
   // it might be on the congregation's screens.
   const mediaWindowShowing = useCurrentStateStore().mediaWindowVisible;
-  if (needs.sharing && !alreadySharing && mediaWindowShowing) {
+  if (needs.sharing && mediaWindowShowing) {
     const share = await testZoomShareEntry(
       getZoomTitlesFromSettings().shareButtonTitle,
     );
@@ -214,15 +212,19 @@ const waitForMeeting = async () => {
 
 /**
  * What doesn't work in Zoom; null if there's nothing to check (no meeting
- * open, and none to open now); or, before the meeting's window, when to
- * check.
+ * open, and none to open now); 'sharing' if it can't be checked until Zoom
+ * stops sharing; or, before the meeting's window, when to check.
  */
 const findProblems = async (
   manual: boolean,
-): Promise<Findings | null | { checkInSeconds: number }> => {
+): Promise<'sharing' | Findings | null | { checkInSeconds: number }> => {
   // Only looking, so far: nothing to tell the user about.
   const meeting = await getZoomMeetingState();
   if (!meeting) return findings([HELPER_PROBLEM]);
+  // Never during a share: testing would end it, and in Zoom's single window
+  // (its default) sharing hides the meeting window, and with it everything
+  // a check looks at, which would read as no meeting at all.
+  if (meeting.found && meeting.sharing) return 'sharing';
 
   const meetingId =
     useCurrentStateStore().currentSettings?.zoomMeetingManagerMeetingId?.trim();
@@ -250,7 +252,7 @@ const findProblems = async (
     log('Zoom check: others in the meeting, only looking', 'zoom', 'info', {
       people,
     });
-    return checkWithoutPressing(!!meeting.sharing);
+    return checkWithoutPressing();
   });
 };
 
@@ -417,6 +419,11 @@ export const runZoomStartupCheck = async ({
   if (!zoomState.checkedCongregations.includes(congregationId)) {
     zoomState.checkedCongregations.push(congregationId);
   }
+  const checkLater = () => {
+    zoomState.checkedCongregations = zoomState.checkedCongregations.filter(
+      (id) => id !== congregationId,
+    );
+  };
   try {
     log('Zoom check: starting', 'zoom', 'info', { manual });
     // Only this check's failed actions go in its report.
@@ -434,11 +441,22 @@ export const runZoomStartupCheck = async ({
       log('Zoom check: no meeting to check now', 'zoom', 'info');
       return 'skipped';
     }
+    if (found === 'sharing') {
+      // Today's check is still to do: the regular recheck runs it once
+      // sharing has stopped.
+      checkLater();
+      log('Zoom check: waiting for Zoom to stop sharing', 'zoom', 'info');
+      if (!manual) return 'scheduled';
+      createTemporaryNotification({
+        group: 'zoom-check',
+        message: t('zoom-check-while-sharing'),
+        type: 'warning',
+      });
+      return 'skipped';
+    }
     if ('checkInSeconds' in found) {
       // Too early: check when the meeting's window opens, if M³ is still on.
-      zoomState.checkedCongregations = zoomState.checkedCongregations.filter(
-        (id) => id !== congregationId,
-      );
+      checkLater();
       scheduleZoomStartupCheck(found.checkInSeconds * 1000);
       log('Zoom check: waiting for the meeting', 'zoom', 'info', found);
       return 'scheduled';

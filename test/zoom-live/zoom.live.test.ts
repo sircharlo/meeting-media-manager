@@ -24,8 +24,8 @@ import {
   openFakeMediaWindow,
   print,
   ROOT,
-  sleep,
   titles,
+  waitUntilHostAlone,
 } from './support';
 
 // The full self-test against the real Zoom app, with test participants: see
@@ -156,7 +156,10 @@ describe.skipIf(!canRunLive)('Zoom Meeting Manager, live', () => {
   afterAll(async () => {
     if (participants && ownParticipants) {
       await participants.call('/quit', {}).catch(() => undefined);
-      await sleep(3000);
+      // The startup check's live test needs the host alone.
+      if (!(await waitUntilHostAlone(helper))) {
+        print('  The test participants are still in the meeting');
+      }
     }
     children.forEach((child) => child.kill());
     helper.stop();

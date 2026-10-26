@@ -487,8 +487,10 @@ namespace M3.ZoomHelper
         // The video thumbnail Zoom shows in place of the meeting window in
         // its mini view.
         const string FloatVideoClass = "ZPFloatVideoWndClass";
-        // Zoom's annotation layer, laid over whatever is being shared.
+        // Zoom's annotation layer, laid over whatever is being shared, and
+        // the annotate button it shows beside it.
         const string AnnotationLayerClass = "ZoomAnnoWindowWndClass";
+        const string AnnotateButtonClass = "ZPAnnotateEntryPointClass";
 
         // Zoom's default shortcuts. They only help find a control the first
         // time: once a control's name (in the user's Zoom language) is
@@ -1310,9 +1312,35 @@ namespace M3.ZoomHelper
             return buttons.Count > 1 ? buttons[1] : null;
         }
 
+        /// <summary>Whether Zoom is sharing. Zoom hides its share toolbar a few
+        /// seconds after the mouse leaves it (and keeps it, hidden, once
+        /// sharing stops), but the annotation layer over what's shared and the
+        /// annotate button beside it stay for as long as the share does.</summary>
         static bool IsSharing()
         {
-            return TopWindows(ShareToolbarClass, true).Count > 0;
+            return TopWindows(ShareToolbarClass, true).Count > 0 ||
+                TopWindows(AnnotationLayerClass, true).Count > 0 ||
+                TopWindows(AnnotateButtonClass, true).Count > 0;
+        }
+
+        /// <summary>The share toolbar while sharing, shown or hidden (see
+        /// IsSharing); IntPtr.Zero when not sharing. With `show`, a hidden one
+        /// is first brought back into view (without the focus), so that what's
+        /// pressed in it can't land on whatever is behind it.</summary>
+        static IntPtr ShareToolbarWindow(bool show)
+        {
+            var shown = TopWindows(ShareToolbarClass, true);
+            if (shown.Count > 0) return shown[0];
+            if (!IsSharing()) return IntPtr.Zero;
+            var hidden = TopWindows(ShareToolbarClass, false);
+            if (hidden.Count == 0) return IntPtr.Zero;
+            var handle = hidden[0];
+            if (show)
+            {
+                Native.ShowWindow(handle, Native.SwShowNoActivate);
+                WaitUntil(() => Native.IsWindowVisible(handle), 1000);
+            }
+            return handle;
         }
 
         /// <summary>What's going on in Zoom. Without `reveal`, it never changes
@@ -1521,9 +1549,16 @@ namespace M3.ZoomHelper
 
         /// <summary>Where the participants panel is: in the meeting window, or
         /// in a window of its own once the host popped it out (Zoom's "Open
-        /// in new window"). That window is titled like the panel's heading
-        /// ("Participants (15)") and holds the same list and buttons.</summary>
+        /// in new window") or while sharing (see ShareParticipants).</summary>
         static El PanelHost(El window)
+        {
+            return PoppedOutPanel() ?? window;
+        }
+
+        /// <summary>The participants panel's own window, if open. It's titled
+        /// like the panel's heading ("Participants (15)") and holds the same
+        /// list and buttons.</summary>
+        static El PoppedOutPanel()
         {
             foreach (var handle in TopWindows(PoppedOutPanelClass, true))
             {
@@ -1534,7 +1569,22 @@ namespace M3.ZoomHelper
                 }
                 catch (Exception) { } // the window went away
             }
-            return window;
+            return null;
+        }
+
+        /// <summary>The window the participants actions start from: the
+        /// meeting window, or, while sharing hides it (in Zoom's single
+        /// window, its default), the participants list's own window when it's
+        /// open (see ShareParticipants). Everything they use is in that window
+        /// then, as once the host popped the list out (see PanelHost).</summary>
+        static El RequireParticipantsWindow()
+        {
+            if (FindMeetingWindow() == null && IsSharing())
+            {
+                var list = PoppedOutPanel();
+                if (list != null) return list;
+            }
+            return RequireMeetingWindow();
         }
 
         /// <summary>The participants panel's heading ("Participants (3)"): the
@@ -1817,7 +1867,7 @@ namespace M3.ZoomHelper
 
         public static Dictionary<string, object> Participants()
         {
-            var window = RequireMeetingWindow();
+            var window = RequireParticipantsWindow();
             OpenParticipantsPanel(window);
             var rows = new List<object>();
             foreach (var row in ParticipantRows(window))
@@ -1864,7 +1914,7 @@ namespace M3.ZoomHelper
         /// looked up afresh.</summary>
         public static Dictionary<string, object> Admit(List<string> names)
         {
-            var window = RequireMeetingWindow();
+            var window = RequireParticipantsWindow();
             OpenParticipantsPanel(window);
             var waiting = new List<string>();
             foreach (var row in ParticipantRows(window))
@@ -2287,7 +2337,7 @@ namespace M3.ZoomHelper
         public static Dictionary<string, object> RaisedHands(string phrase)
         {
             if (string.IsNullOrEmpty(phrase)) throw new ZoomActionError("hand-phrase-not-learned");
-            var window = RequireMeetingWindow();
+            var window = RequireParticipantsWindow();
             OpenParticipantsPanel(window);
             var names = new List<object>();
             foreach (var row in ParticipantRows(window))
@@ -2308,7 +2358,7 @@ namespace M3.ZoomHelper
             var unmuteTitle = FirstSegment(micOffTitle ?? "");
             var lowerTitle = FirstSegment(lowerHandTitle ?? "");
             var askTitle = FirstSegment(askToUnmuteTitle ?? "");
-            var window = RequireMeetingWindow();
+            var window = RequireParticipantsWindow();
             OpenParticipantsPanel(window);
             var row = UniqueMeetingRow(window, name);
             if (row == null) throw new ZoomActionError("participant-not-found");
@@ -2360,7 +2410,7 @@ namespace M3.ZoomHelper
             if (string.IsNullOrEmpty(name)) throw new ZoomActionError("participant-name-missing");
             if (string.IsNullOrEmpty(phrase)) throw new ZoomActionError("hand-phrase-not-learned");
             var lowerTitle = FirstSegment(lowerHandTitle ?? "");
-            var window = RequireMeetingWindow();
+            var window = RequireParticipantsWindow();
             OpenParticipantsPanel(window);
             var row = UniqueMeetingRow(window, name);
             if (row == null) throw new ZoomActionError("participant-not-found");
@@ -2796,11 +2846,11 @@ namespace M3.ZoomHelper
 
         public static Dictionary<string, object> StopShare()
         {
-            var toolbars = TopWindows(ShareToolbarClass, true);
-            if (toolbars.Count == 0) return Changed(false);
+            var toolbar = ShareToolbarWindow(true);
+            if (toolbar == IntPtr.Zero) return Changed(false);
             // "Stop share" is known by its learned name, else as the last
             // share-toolbar button that shows a shortcut.
-            var buttons = Uia.Descendants(Uia.FromHandle(toolbars[0]), Uia.ButtonType);
+            var buttons = Uia.Descendants(Uia.FromHandle(toolbar), Uia.ButtonType);
             var stop = ByName(buttons, Known.StopShare);
             if (stop == null)
             {
@@ -2819,9 +2869,9 @@ namespace M3.ZoomHelper
 
         static List<El> ShareToolbarButtons()
         {
-            var toolbars = TopWindows(ShareToolbarClass, true);
-            if (toolbars.Count == 0) throw new ZoomActionError("not-sharing");
-            return Named(Uia.Descendants(Uia.FromHandle(toolbars[0]), Uia.ButtonType));
+            var toolbar = ShareToolbarWindow(true);
+            if (toolbar == IntPtr.Zero) throw new ZoomActionError("not-sharing");
+            return Named(Uia.Descendants(Uia.FromHandle(toolbar), Uia.ButtonType));
         }
 
         /// <summary>The share toolbar's buttons while sharing, for the user to
@@ -3372,8 +3422,8 @@ namespace M3.ZoomHelper
 
         static List<object> ShareToolbarControlNames()
         {
-            var toolbars = TopWindows(ShareToolbarClass, true);
-            return toolbars.Count == 0 ? new List<object>() : ControlNames(toolbars[0]);
+            var toolbar = ShareToolbarWindow(false);
+            return toolbar == IntPtr.Zero ? new List<object>() : ControlNames(toolbar);
         }
 
         /// <summary>The names of a window's buttons, menu entries, checkboxes
@@ -3470,14 +3520,17 @@ namespace M3.ZoomHelper
         // mini view, its popped-out panels (such as the participants list),
         // sharing (the toolbar, the annotation layer and its button), Zoom's
         // home window, its menus' shadows, its notification toasts (one shows
-        // as sharing starts and stays briefly after it stops) and its corner
+        // as sharing starts and stays briefly after it stops), its corner
         // notices (the "talking while muted" prompt, and the "note taking is
-        // now available" notice that closes itself after 30 seconds).
+        // now available" notice that closes itself after 30 seconds) and its
+        // meeting notices (the "your volume is low" strip, with its "Increase
+        // volume" and "Close" buttons), none of which blocks anything.
         static readonly string[] ZoomMainWindowClasses =
         {
             MeetingWindowClass, FloatVideoClass, PoppedOutPanelClass, ShareToolbarClass, AnnotationLayerClass,
-            "ZPAnnotateEntryPointClass", "ZPPTMainFrmWndClassEx", "ZPToolBarParentWndClass",
+            AnnotateButtonClass, "ZPPTMainFrmWndClassEx", "ZPToolBarParentWndClass",
             "ZoomShadowFrameClass", "VideoFrameWndClass", "DsToast", "CVoiceActivityDetectedDlgCls",
+            "zMeetingNotificationWndClass",
         };
 
         /// <summary>Whether a window is one of Zoom's own rather than a dialog
