@@ -1053,7 +1053,7 @@
   "zoom-check-problem-meeting": "Ouverture de la réunion Zoom de votre assemblée locale",
   "zoom-check-running": "Vérification de Zoom…",
   "zoom-check-test-again": "Tester à nouveau",
-  "zoom-check-while-sharing": "M³ can't check Zoom while it's sharing. Stop sharing in Zoom, then test again.",
+  "zoom-check-while-sharing": "M³ ne peut pas tester Zoom pendant un partage. Arrêtez le partage dans Zoom, puis testez à nouveau.",
   "zoom-connection-restart": "Redémarrer la connexion de M³ à Zoom",
   "zoom-dialog-in-the-way": "Une fenêtre de Zoom est ouverte (une boîte de dialogue ou une fenêtre contextuelle) et risque de gêner M³. Fermez-la dans Zoom.",
   "zoom-hand-already-unmuted": "Le micro de {name} est déjà activé dans Zoom",
