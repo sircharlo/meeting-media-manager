@@ -53,7 +53,7 @@
     "@vueuse/core": "^15.0.0",
     "@vueuse/router": "^15.0.0",
     "buffer": "^6.0.3",
-    "check-disk-space": "^3.4.0",
+    "check-disk-space": "^4.0.0",
     "cheerio": "^1.2.0",
     "chokidar": "^6.0.0",
     "countries-and-timezones": "^3.11.0",
