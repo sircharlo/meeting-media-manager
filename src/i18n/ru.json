@@ -1053,6 +1053,7 @@
   "zoom-check-problem-meeting": "Открытие конференции Zoom вашего собрания",
   "zoom-check-running": "Проверка Zoom…",
   "zoom-check-test-again": "Проверить еще раз",
+  "zoom-check-while-sharing": "M³ can't check Zoom while it's sharing. Stop sharing in Zoom, then test again.",
   "zoom-connection-restart": "Перезапустить подключение M³ к Zoom",
   "zoom-dialog-in-the-way": "В Zoom открыто окно (диалоговое или всплывающее), которое может помешать M³. Закройте его в Zoom.",
   "zoom-hand-already-unmuted": "{name}: звук в Zoom уже включен",
