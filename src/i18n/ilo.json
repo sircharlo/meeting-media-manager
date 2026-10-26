@@ -1053,6 +1053,7 @@
   "zoom-check-problem-meeting": "Opening your congregation's Zoom meeting",
   "zoom-check-running": "Checking Zoom…",
   "zoom-check-test-again": "Test again",
+  "zoom-check-while-sharing": "M³ can't check Zoom while it's sharing. Stop sharing in Zoom, then test again.",
   "zoom-connection-restart": "Restart M³'s connection to Zoom",
   "zoom-dialog-in-the-way": "A Zoom window is open (a dialog or a popup) and may be in M³'s way. Close it in Zoom.",
   "zoom-hand-already-unmuted": "{name} is already unmuted in Zoom",

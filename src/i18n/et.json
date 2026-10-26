@@ -1053,6 +1053,7 @@
   "zoom-check-problem-meeting": "Sinu koguduse Zoomi koosoleku avamine",
   "zoom-check-running": "Zoomi kontrollimine…",
   "zoom-check-test-again": "Testi uuesti",
+  "zoom-check-while-sharing": "M³ can't check Zoom while it's sharing. Stop sharing in Zoom, then test again.",
   "zoom-connection-restart": "Taaskäivita M³-e ühendus Zoomiga",
   "zoom-dialog-in-the-way": "Zoomis on avatud aken (dialoogiaken või hüpikaken), mis võib M³-e tööd segada. Sulge see Zoomis.",
   "zoom-hand-already-unmuted": "{name}: heli on Zoomis juba sisse lülitatud",
