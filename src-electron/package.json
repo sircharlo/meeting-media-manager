@@ -18,7 +18,7 @@
     "@carboneio/image-size": "3.0.0",
     "@numairawan/video-duration": "^1.0.0",
     "@sentry/electron": "^8.1.0",
-    "check-disk-space": "^3.4.0",
+    "check-disk-space": "^4.0.0",
     "chokidar": "^6.0.0",
     "countries-and-timezones": "^3.9.0",
     "electron-updater": "^6.8.9",
