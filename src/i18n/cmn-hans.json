@@ -447,6 +447,8 @@
   "media-display": "媒体显示",
   "media-display-settings": "媒体显示设置",
   "media-export-conversion-failed": "导出时没有文件转换失败 | 导出时有 1 个文件转换失败 | 导出时有 {count} 个文件转换失败",
+  "media-export-folder-unavailable": "M³ can't export media because the auto-export folder isn't available.",
+  "media-export-folder-unavailable-caption": "{folder} doesn't exist on this computer and couldn't be created. If it's on a drive or network folder, check that it's connected. Otherwise, choose another folder in Settings.",
   "media-from-s34mp": "来自公众演讲提纲的媒体",
   "media-item-missing-explain": "此媒体文件缺失。若要播放，请通过“@:extra-media",
   "media-only": "仅媒体",
