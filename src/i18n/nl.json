@@ -447,6 +447,8 @@
   "media-display": "Mediaweergave",
   "media-display-settings": "Instellingen voor mediaweergave",
   "media-export-conversion-failed": "Alle bestanden zijn tijdens het exporteren geconverteerd | 1 bestand kon tijdens het exporteren niet worden geconverteerd | {count} bestanden konden tijdens het exporteren niet worden geconverteerd",
+  "media-export-folder-unavailable": "M³ can't export media because the auto-export folder isn't available.",
+  "media-export-folder-unavailable-caption": "{folder} doesn't exist on this computer and couldn't be created. If it's on a drive or network folder, check that it's connected. Otherwise, choose another folder in Settings.",
   "media-from-s34mp": "Media uit schema's voor openbare lezingen",
   "media-item-missing-explain": "Dit media-item ontbreekt. Om het af te spelen, voeg je het toe via het menu @:extra-media of sleep je het vanaf je computer naar de medialijst.",
   "media-only": "Alleen media",
