@@ -1053,6 +1053,7 @@
   "zoom-check-problem-meeting": "Zoom-Meeting Ihrer Versammlung öffnen",
   "zoom-check-running": "Zoom wird überprüft…",
   "zoom-check-test-again": "Erneut testen",
+  "zoom-check-while-sharing": "M³ can't check Zoom while it's sharing. Stop sharing in Zoom, then test again.",
   "zoom-connection-restart": "Verbindung von M³ zu Zoom neu starten",
   "zoom-dialog-in-the-way": "Ein Zoom-Fenster ist geöffnet (ein Dialogfenster oder ein Popup) und könnte M³ im Weg sein. Schließen Sie es in Zoom.",
   "zoom-hand-already-unmuted": "Die Stummschaltung von {name} ist in Zoom bereits aufgehoben",
