@@ -10,6 +10,7 @@ import { ZoomHelperProcess } from 'src-electron/main/zoom-helper-process';
 export const ROOT = process.cwd();
 
 const MEETING_LAUNCH_TIMEOUT_MS = 90_000;
+const OTHERS_LEAVE_TIMEOUT_MS = 90_000;
 
 const readEnv = (): Record<string, string> => {
   try {
@@ -71,6 +72,27 @@ export const ensureMeeting = async (helper: ZoomHelperProcess) => {
     if (Date.now() > deadline) throw new Error('The Zoom meeting did not open');
     await sleep(2000);
   }
+};
+
+/**
+ * Waits until Zoom's participants list shows the host alone. Test
+ * participants take a while to leave, and Zoom keeps listing one whose
+ * browser closed before it could leave. False if others are still in at
+ * the timeout. With no meeting open, or a list that can't be read, there's
+ * nobody to wait for.
+ */
+export const waitUntilHostAlone = async (helper: ZoomHelperProcess) => {
+  const othersIn = async () => {
+    const { participants } = await helper.request({ type: 'participants' });
+    if (!participants) return false;
+    return participants.filter((row) => row.section === 'meeting').length > 1;
+  };
+  const deadline = Date.now() + OTHERS_LEAVE_TIMEOUT_MS;
+  while (await othersIn()) {
+    if (Date.now() > deadline) return false;
+    await sleep(3000);
+  }
+  return true;
 };
 
 /**
