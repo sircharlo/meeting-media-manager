@@ -915,11 +915,13 @@ export const useJwStore = defineStore('jw-store', {
       // SEC-3 (full-audit-2026-09-04.md): pinned rather than `@latest` -
       // static font bytes are lower risk than the pdf-parse worker script
       // above, but an unpinned CDN reference still means an unreviewed
-      // future version gets served automatically. Fontsource publishes every
-      // font package under one synchronized version number (confirmed via
-      // `npm view`, matching this project's own pinned
-      // `@fontsource-variable/inter`/`noto-serif` dependencies), so a single
-      // constant covers all of them - bump it when those dependencies bump.
+      // future version gets served automatically. Fontsource releases its
+      // font packages under shared version numbers (confirmed via `npm
+      // view`, matching this project's own pinned
+      // `@fontsource-variable/noto-sans`/`noto-serif` dependencies), so a
+      // single constant covers all of them - bump it when those dependencies
+      // bump, after checking every font below has that version too (some,
+      // like the CJK ones, get extra point releases of their own).
       const FONTSOURCE_VERSION = '5.3.0';
       const jsdelivr = (font: string, file: string) =>
         `https://cdn.jsdelivr.net/fontsource/fonts/${font}@${FONTSOURCE_VERSION}/${file}`;
@@ -938,7 +940,6 @@ export const useJwStore = defineStore('jw-store', {
           'noto-nastaliq-urdu:vf',
           'arabic-wght-normal.woff2',
         ),
-        NotoSans: jsdelivr('noto-sans:vf', 'latin-wght-normal.woff2'),
         NotoSansBengali: jsdelivr(
           'noto-sans-bengali:vf',
           'bengali-wght-normal.woff2',
@@ -947,6 +948,9 @@ export const useJwStore = defineStore('jw-store', {
           'noto-sans-gurmukhi:vf',
           'gurmukhi-wght-normal.woff2',
         ),
+        // The CJK fonts are static (400) files: Fontsource only ships their
+        // variable versions as ~100 unicode-range slices, not as one file.
+        NotoSansKR: jsdelivr('noto-sans-kr', 'korean-400-normal.woff2'),
         NotoSansMalayalam: jsdelivr(
           'noto-sans-malayalam:vf',
           'malayalam-wght-normal.woff2',
@@ -957,7 +961,7 @@ export const useJwStore = defineStore('jw-store', {
         ),
         NotoSansSC: jsdelivr(
           'noto-sans-sc',
-          'chinese-simplified-400-normal.woff',
+          'chinese-simplified-400-normal.woff2',
         ),
         NotoSansTamil: jsdelivr(
           'noto-sans-tamil:vf',
@@ -965,7 +969,7 @@ export const useJwStore = defineStore('jw-store', {
         ),
         NotoSansTC: jsdelivr(
           'noto-sans-tc',
-          'chinese-traditional-400-normal.woff',
+          'chinese-traditional-400-normal.woff2',
         ),
         NotoSansTelugu: jsdelivr(
           'noto-sans-telugu:vf',

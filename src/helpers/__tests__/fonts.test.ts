@@ -2,10 +2,11 @@ import type * as ApiModule from 'src/utils/api';
 
 import { createPinia, setActivePinia } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { registerCachePathProvider } from 'src/utils/fs';
 import { join } from 'upath';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { fs, getAppDataPath } = globalThis.electronApi;
 const { emptyDir, ensureDir, pathExists, readFile, remove, writeFile } = fs;
@@ -164,8 +165,8 @@ describe('getLocalFontPath', () => {
 
     const { getLocalFontPath } = await import('../fonts');
 
-    await expect(getLocalFontPath('NotoSans')).rejects.toThrow(
-      'Failed to download font NotoSans and no local copy exists',
+    await expect(getLocalFontPath('NotoSansBengali')).rejects.toThrow(
+      'Failed to download font NotoSansBengali and no local copy exists',
     );
     expect(errorCatcher).not.toHaveBeenCalled();
   });
@@ -217,9 +218,158 @@ describe('getLocalFontPath', () => {
 
     const { getLocalFontPath } = await import('../fonts');
 
-    await expect(getLocalFontPath('NotoSans')).rejects.toThrow(
-      'Failed to download font NotoSans and no local copy exists',
+    await expect(getLocalFontPath('NotoSansBengali')).rejects.toThrow(
+      'Failed to download font NotoSansBengali and no local copy exists',
     );
     expect(errorCatcher).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('loadUiLocaleFont', () => {
+  let fontsDir = '';
+  let failFontLoads = false;
+  const addedFonts: string[] = [];
+
+  const uiLocaleFont = () =>
+    document.documentElement.style.getPropertyValue('--ui-locale-font');
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    vi.resetModules();
+    setActivePinia(createPinia());
+    registerCachePathProvider(() => undefined);
+    const appDataPath = await getAppDataPath();
+    await remove(appDataPath);
+    fontsDir = join(appDataPath, 'Fonts');
+    await emptyDir(fontsDir);
+    document.documentElement.style.removeProperty('--ui-locale-font');
+
+    // happy-dom has neither FontFace nor document.fonts
+    failFontLoads = false;
+    addedFonts.length = 0;
+    Object.defineProperty(globalThis, 'FontFace', {
+      configurable: true,
+      value: class {
+        family: string;
+        constructor(family: string) {
+          this.family = family;
+        }
+        async load() {
+          if (failFontLoads) {
+            throw new DOMException('A network error occurred.', 'NetworkError');
+          }
+          return this;
+        }
+      },
+    });
+    Object.defineProperty(document, 'fonts', {
+      configurable: true,
+      value: {
+        add: (font: { family: string }) => addedFonts.push(font.family),
+      },
+    });
+  });
+
+  // Not vi.unstubAllGlobals(): that would also drop the electronApi stub
+  // from the test setup.
+  afterEach(() => {
+    Reflect.deleteProperty(globalThis, 'FontFace');
+    Reflect.deleteProperty(document, 'fonts');
+  });
+
+  it('downloads, caches and uses Noto Sans KR for the Korean UI', async () => {
+    const { fetchRaw } = await import('src/utils/api');
+    vi.mocked(fetchRaw).mockResolvedValueOnce(
+      new Response(Uint8Array.from([1, 2, 3]), { status: 200 }),
+    );
+    const { loadUiLocaleFont } = await import('../fonts');
+
+    await expect(loadUiLocaleFont('ko')).resolves.toBe(true);
+
+    expect(fetchRaw).toHaveBeenCalledWith(
+      useJwStore().fontUrls.NotoSansKR,
+      expect.objectContaining({ method: 'GET' }),
+      false,
+    );
+    expect(await pathExists(join(fontsDir, 'NotoSansKR.woff2'))).toBe(true);
+    expect(addedFonts).toEqual(['NotoSansKR']);
+    expect(uiLocaleFont()).toBe("'NotoSansKR'");
+  });
+
+  it('uses an already cached Noto Sans SC for the Chinese UI without going online', async () => {
+    // Cached before its URL moved from .woff to .woff2
+    await writeFile(join(fontsDir, 'NotoSansSC.woff'), Buffer.from('font'));
+    const { fetchRaw } = await import('src/utils/api');
+    const { loadUiLocaleFont } = await import('../fonts');
+
+    await expect(loadUiLocaleFont('cmnHans')).resolves.toBe(true);
+
+    expect(fetchRaw).not.toHaveBeenCalled();
+    expect(addedFonts).toEqual(['NotoSansSC']);
+    expect(uiLocaleFont()).toBe("'NotoSansSC'");
+  });
+
+  it('takes the font out of the stack for a language Noto Sans covers', async () => {
+    document.documentElement.style.setProperty(
+      '--ui-locale-font',
+      "'NotoSansKR'",
+    );
+    const { fetchRaw } = await import('src/utils/api');
+    const { loadUiLocaleFont } = await import('../fonts');
+
+    await expect(loadUiLocaleFont('fr')).resolves.toBe(true);
+
+    expect(uiLocaleFont()).toBe('');
+    expect(fetchRaw).not.toHaveBeenCalled();
+    expect(addedFonts).toEqual([]);
+  });
+
+  it('leaves the system font in place quietly while offline, then loads it once online', async () => {
+    const currentState = useCurrentStateStore();
+    currentState.online = false;
+    failFontLoads = true;
+    const { fetchRaw } = await import('src/utils/api');
+    vi.mocked(fetchRaw).mockRejectedValue(
+      new TypeError('Failed to fetch (cdn.jsdelivr.net)'),
+    );
+    const { loadUiLocaleFont } = await import('../fonts');
+
+    await expect(loadUiLocaleFont('ko')).resolves.toBe(false);
+    expect(errorCatcher).not.toHaveBeenCalled();
+    expect(addedFonts).toEqual([]);
+
+    currentState.online = true;
+    failFontLoads = false;
+    vi.mocked(fetchRaw).mockResolvedValueOnce(
+      new Response(Uint8Array.from([1, 2, 3]), { status: 200 }),
+    );
+
+    await expect(loadUiLocaleFont('ko')).resolves.toBe(true);
+    expect(addedFonts).toEqual(['NotoSansKR']);
+  });
+
+  it('reports a font the CDN fails to serve while online', async () => {
+    useCurrentStateStore().online = true;
+    failFontLoads = true;
+    const { fetchRaw } = await import('src/utils/api');
+    vi.mocked(fetchRaw).mockRejectedValue(
+      new TypeError('Failed to fetch (cdn.jsdelivr.net)'),
+    );
+    const { loadUiLocaleFont } = await import('../fonts');
+
+    await expect(loadUiLocaleFont('ko')).resolves.toBe(false);
+
+    expect(errorCatcher).toHaveBeenCalledTimes(1);
+    expect(errorCatcher).toHaveBeenCalledWith(
+      expect.any(DOMException),
+      expect.objectContaining({
+        contexts: {
+          fn: expect.objectContaining({
+            fontName: 'NotoSansKR',
+            name: 'setFallbackFont',
+          }),
+        },
+      }),
+    );
   });
 });

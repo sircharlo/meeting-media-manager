@@ -133,7 +133,7 @@ import {
 } from 'src/helpers/date';
 import { DISK_FULL_ERROR_EVENT, errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
-import { setElementFont } from 'src/helpers/fonts';
+import { loadUiLocaleFont, setElementFont } from 'src/helpers/fonts';
 import { watchExternalFolder } from 'src/helpers/fs';
 import {
   clearMeetingCheckStatusPruneTimers,
@@ -1256,6 +1256,15 @@ watchImmediate(
 
     // Update previous state
     previousState.value = { base, mediator, wasOnline: online };
+  },
+);
+
+// Also retried on coming back online: a font that couldn't be fetched isn't
+// kept as failed, and one already loaded returns at once.
+watchImmediate(
+  (): [string, boolean] => [locale.value, online.value],
+  ([newLocale]) => {
+    void loadUiLocaleFont(newLocale);
   },
 );
 

@@ -1,2 +1,2 @@
-import '@fontsource-variable/inter';
+import '@fontsource-variable/noto-sans';
 import '@fontsource-variable/noto-serif';
