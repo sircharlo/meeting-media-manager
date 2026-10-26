@@ -1053,7 +1053,7 @@
   "zoom-check-problem-meeting": "打开会众的 Zoom 会议",
   "zoom-check-running": "正在检查 Zoom…",
   "zoom-check-test-again": "重新测试",
-  "zoom-check-while-sharing": "M³ can't check Zoom while it's sharing. Stop sharing in Zoom, then test again.",
+  "zoom-check-while-sharing": "Zoom 正在共享时，M³ 无法检查 Zoom。请在 Zoom 中停止共享，然后重新测试。",
   "zoom-connection-restart": "重新启动 M³ 与 Zoom 的连接",
   "zoom-dialog-in-the-way": "Zoom 中有一个窗口（对话框或弹出窗口）处于打开状态，可能会妨碍 M³ 操作。请在 Zoom 中关闭它。",
   "zoom-hand-already-unmuted": "{name} 在 Zoom 中已解除静音",

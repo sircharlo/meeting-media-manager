@@ -1053,7 +1053,7 @@
   "zoom-check-problem-meeting": "Odpiranje Zoom shoda vaše občine",
   "zoom-check-running": "Preverjanje Zooma …",
   "zoom-check-test-again": "Preizkusi znova",
-  "zoom-check-while-sharing": "M³ can't check Zoom while it's sharing. Stop sharing in Zoom, then test again.",
+  "zoom-check-while-sharing": "M³ ne more preveriti Zooma, medtem ko Zoom deli vsebino. V Zoomu ustavi deljenje in nato preizkusi znova.",
   "zoom-connection-restart": "Znova zaženi povezavo M³ z Zoomom",
   "zoom-dialog-in-the-way": "Odprto je Zoomovo okno (pogovorno ali pojavno okno), ki bi lahko oviralo M³. Zapri ga v Zoomu.",
   "zoom-hand-already-unmuted": "{name} ima v Zoomu že vklopljen mikrofon",

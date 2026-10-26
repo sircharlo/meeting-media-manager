@@ -1053,7 +1053,7 @@
   "zoom-check-problem-meeting": "A gyülekezet Zoom-értekezletének megnyitása",
   "zoom-check-running": "Zoom ellenőrzése…",
   "zoom-check-test-again": "Újbóli teszt",
-  "zoom-check-while-sharing": "M³ can't check Zoom while it's sharing. Stop sharing in Zoom, then test again.",
+  "zoom-check-while-sharing": "Az M³ nem tudja ellenőrizni a Zoomot megosztás közben. Állítsa le a megosztást a Zoomban, majd tesztelje újra.",
   "zoom-connection-restart": "Az M³ és a Zoom közötti kapcsolat újraindítása",
   "zoom-dialog-in-the-way": "Nyitva van egy Zoom-ablak (párbeszédablak vagy felugró ablak), amely akadályozhatja az M³ működését. Zárja be a Zoomban.",
   "zoom-hand-already-unmuted": "{name} némítása már fel van oldva a Zoomban",
