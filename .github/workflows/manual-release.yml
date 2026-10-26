@@ -76,6 +76,14 @@ jobs:
           ref: master
           fetch-depth: 0
 
+      # Build and tag this commit, not whatever master is by then: GitHub
+      # creates a draft's tag when it's published, by hand here and often
+      # days later, so with 'master' as its target the tag took in every
+      # commit merged since the build (see beta-release.yml).
+      - id: release_commit
+        name: Pin the commit to release
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Clear existing draft release assets
         run: |
           if gh release view "v${{ needs.bump-version.outputs.new_version }}" > /dev/null 2>&1; then
@@ -127,14 +135,25 @@ jobs:
         with:
           name: v${{ needs.bump-version.outputs.new_version }}
           tag: v${{ needs.bump-version.outputs.new_version }}
-          commit: 'master'
+          commit: ${{ steps.release_commit.outputs.sha }}
           draft: true
           prerelease: false
           bodyFile: release-notes.md
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      # A re-run for an existing draft leaves its notes alone but rebuilds
+      # from the commit pinned above, so the draft has to point there too.
+      - name: Point the existing draft at the rebuilt commit
+        if: needs.bump-version.outputs.draft_exists == 'true'
+        run: gh release edit "v$NEW_VERSION" --target "$RELEASE_COMMIT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_VERSION: ${{ needs.bump-version.outputs.new_version }}
+          RELEASE_COMMIT: ${{ steps.release_commit.outputs.sha }}
     outputs:
       id: ${{ steps.create_release.outputs.id || '' }}
+      sha: ${{ steps.release_commit.outputs.sha }}
 
   debug-before-build:
     name: Debug before build
@@ -167,6 +186,7 @@ jobs:
     with:
       checkout-latest: true
       publish-release: true
+      ref: ${{ needs.draft-release.outputs.sha }}
     secrets:
       APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
       APPLE_ID: ${{ secrets.APPLE_ID }}
