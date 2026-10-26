@@ -447,6 +447,8 @@
   "media-display": "Multimedijski zaslon",
   "media-display-settings": "Nastavitve multimedijskega zaslona",
   "media-export-conversion-failed": "Med izvozom ni spodletela nobena pretvorba datotek | Med izvozom je spodletela pretvorba 1 datoteke | Med izvozom je spodletela pretvorba {count} datotek",
+  "media-export-folder-unavailable": "M³ can't export media because the auto-export folder isn't available.",
+  "media-export-folder-unavailable-caption": "{folder} doesn't exist on this computer and couldn't be created. If it's on a drive or network folder, check that it's connected. Otherwise, choose another folder in Settings.",
   "media-from-s34mp": "Multimedijska vsebina iz očrtov za javne govore",
   "media-item-missing-explain": "Ta multimedijska datoteka manjka. Če jo želiš predvajati, jo dodaj v meniju @:extra-media ali jo iz računalnika povleci na seznam multimedijske vsebine.",
   "media-only": "Samo multimedijska vsebina",
