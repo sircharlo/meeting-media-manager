@@ -1053,6 +1053,7 @@
   "zoom-check-problem-meeting": "회중의 Zoom 회의 열기",
   "zoom-check-running": "Zoom 확인 중…",
   "zoom-check-test-again": "다시 테스트",
+  "zoom-check-while-sharing": "M³ can't check Zoom while it's sharing. Stop sharing in Zoom, then test again.",
   "zoom-connection-restart": "M³와 Zoom의 연결 다시 시작",
   "zoom-dialog-in-the-way": "Zoom 창(대화 상자 또는 팝업)이 열려 있어 M³의 작업을 방해할 수 있습니다. Zoom에서 이 창을 닫으십시오.",
   "zoom-hand-already-unmuted": "{name} 님은 Zoom에서 이미 음소거가 해제되어 있습니다",
