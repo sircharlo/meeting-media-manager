@@ -447,6 +447,8 @@
   "media-display": "Medienanzeige",
   "media-display-settings": "Einstellungen für Medienanzeige",
   "media-export-conversion-failed": "Beim Export ist keine Konvertierung fehlgeschlagen | 1 Datei konnte beim Export nicht konvertiert werden | {count} Dateien konnten beim Export nicht konvertiert werden",
+  "media-export-folder-unavailable": "M³ can't export media because the auto-export folder isn't available.",
+  "media-export-folder-unavailable-caption": "{folder} doesn't exist on this computer and couldn't be created. If it's on a drive or network folder, check that it's connected. Otherwise, choose another folder in Settings.",
   "media-from-s34mp": "Medien aus Dispositionen für öffentliche Vorträge",
   "media-item-missing-explain": "Dieses Medienelement fehlt. Um es abzuspielen, fügen Sie es über das Menü @:extra-media hinzu oder ziehen Sie es von Ihrem Computer in die Medienliste.",
   "media-only": "Nur Medien",
