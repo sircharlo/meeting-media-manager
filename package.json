@@ -110,7 +110,7 @@
     "autoprefixer": "^10.6.1",
     "depcheck": "^1.4.7",
     "electron": "^45.0.0",
-    "electron-builder": "26.15.3",
+    "electron-builder": "26.18.0",
     "eslint": "^10.13.0",
     "eslint-plugin-perfectionist": "^5.12.1",
     "eslint-plugin-vue": "^10.11.1",
