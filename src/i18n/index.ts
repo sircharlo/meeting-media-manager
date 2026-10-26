@@ -36,10 +36,10 @@ import hu from './hu.json' with { type: 'json' };
 import et from './et.json' with { type: 'json' };
 
 // 99.1% translated as of 2026-10-26
-import pt from './pt.json' with { type: 'json' };
-
-// 99.0% translated as of 2026-10-26
 import it from './it.json' with { type: 'json' };
+
+// 99.1% translated as of 2026-10-26
+import pt from './pt.json' with { type: 'json' };
 
 // 99.0% translated as of 2026-10-26
 import ty from './ty.json' with { type: 'json' };
