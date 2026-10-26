@@ -66,7 +66,7 @@ export async function getLowDiskSpaceStatus(
     }
   }
   try {
-    const checkDiskSpace = (await import('check-disk-space')).default;
+    const { checkDiskSpace } = await import('check-disk-space');
     const diskSpace = await checkDiskSpace(userDataPath);
     const freeSpaceGB = bytesToGB(diskSpace.free);
     if (diskSpace.free < minFreeBytes) {

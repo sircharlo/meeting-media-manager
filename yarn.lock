@@ -4428,10 +4428,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"check-disk-space@npm:^3.4.0":
-  version: 3.4.0
-  resolution: "check-disk-space@npm:3.4.0"
-  checksum: 10c0/cc39c91e1337e974fb5069c2fbd9eb92aceca6e35f3da6863a4eada58f15c1bf6970055bffed1e41c15cde1fd0ad2580bb99bef8275791ed56d69947f8657aa5
+"check-disk-space@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "check-disk-space@npm:4.0.0"
+  checksum: 10c0/0993231a5e0f941b5739d2b26777903ae444da31757a90bf53bfc58e55c754418cd24c7086931a979435e90271e589dbdb00e08989125151bfbc5da19cadc431
   languageName: node
   linkType: hard
 
@@ -7865,7 +7865,7 @@ __metadata:
     "@vueuse/router": "npm:^15.0.0"
     autoprefixer: "npm:^10.6.1"
     buffer: "npm:^6.0.3"
-    check-disk-space: "npm:^3.4.0"
+    check-disk-space: "npm:^4.0.0"
     cheerio: "npm:^1.2.0"
     chokidar: "npm:^6.0.0"
     countries-and-timezones: "npm:^3.11.0"
