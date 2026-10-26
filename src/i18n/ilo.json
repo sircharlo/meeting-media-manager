@@ -447,6 +447,8 @@
   "media-display": "Media display",
   "media-display-settings": "Media display settings",
   "media-export-conversion-failed": "No files failed to convert during export | 1 file failed to convert during export | {count} files failed to convert during export",
+  "media-export-folder-unavailable": "M³ can't export media because the auto-export folder isn't available.",
+  "media-export-folder-unavailable-caption": "{folder} doesn't exist on this computer and couldn't be created. If it's on a drive or network folder, check that it's connected. Otherwise, choose another folder in Settings.",
   "media-from-s34mp": "Media from public talk outlines",
   "media-item-missing-explain": "This media item is missing. To play it, add it using the @:extra-media menu or by dragging it into the media list from your computer.",
   "media-only": "Media only",
