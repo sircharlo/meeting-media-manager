@@ -1053,7 +1053,7 @@
   "zoom-check-problem-meeting": "De Zoom-vergadering van je gemeente openen",
   "zoom-check-running": "Zoom controleren…",
   "zoom-check-test-again": "Opnieuw testen",
-  "zoom-check-while-sharing": "M³ can't check Zoom while it's sharing. Stop sharing in Zoom, then test again.",
+  "zoom-check-while-sharing": "M³ kan Zoom niet controleren tijdens het delen. Stop het delen in Zoom en test daarna opnieuw.",
   "zoom-connection-restart": "Verbinding van M³ met Zoom opnieuw starten",
   "zoom-dialog-in-the-way": "Er is een Zoom-venster geopend (een dialoogvenster of pop-up) dat M³ in de weg kan zitten. Sluit het in Zoom.",
   "zoom-hand-already-unmuted": "Het dempen van {name} is in Zoom al opgeheven",
