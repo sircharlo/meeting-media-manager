@@ -1,0 +1,178 @@
+name: Fix Vulnerable Dependencies
+
+# Dependabot's security updates can't move a version that a `resolutions`
+# entry pins, which is how alerts on src-electron/yarn.lock (the lockfile the
+# packaged app is built from) stayed open until someone raised the pins by
+# hand. This checks both lockfiles against the advisory database every day,
+# re-resolves each flagged package to the newest version its dependents'
+# ranges allow, and merges the result. A fix that needs a version outside
+# those ranges, or one a `resolutions` pin holds back, can't be made here:
+# the run's summary and warnings list those advisories instead.
+
+on:
+  schedule:
+    - cron: '30 5 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: fix-vulnerable-dependencies
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    name: Re-resolve vulnerable dependencies
+    runs-on: ubuntu-latest
+    if: github.repository == 'sircharlo/meeting-media-manager'
+    permissions:
+      contents: write
+    outputs:
+      branch: ${{ steps.fix.outputs.branch }}
+      has_changes: ${{ steps.fix.outputs.has_changes }}
+      body: ${{ steps.fix.outputs.body }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24
+          cache: 'yarn'
+
+      # This step resolves fresh, not yet reviewed versions while holding a
+      # write token. --mode=update-lockfile only rewrites yarn.lock and links
+      # nothing into node_modules, so no dependency code runs, and
+      # YARN_ENABLE_SCRIPTS=false backs that up.
+      - name: Re-resolve flagged packages
+        id: fix
+        env:
+          BRANCH: chore/fix-vulnerable-dependencies
+          YARN_ENABLE_SCRIPTS: 'false'
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/audit"
+          mkdir -p "$work"
+          fixed="$work/fixed.md"
+          locked="$work/locked.md"
+          : > "$fixed"
+          : > "$locked"
+
+          # yarn npm audit exits 1 both when it finds something and when it
+          # fails, so the output tells them apart: one JSON line per advisory,
+          # or Yarn's plain error text.
+          audit() {
+            local out
+            out=$(yarn npm audit --all --recursive --no-deprecations --json) || true
+            if grep -q -v -e '^{' -e '^$' <<< "$out"; then
+              echo "$out"
+              echo "::error::yarn npm audit failed in $label"
+              exit 1
+            fi
+            printf '%s\n' "$out" | jq -c '{
+              name: .value,
+              id: .children.ID,
+              severity: .children.Severity,
+              issue: .children.Issue,
+              url: .children.URL,
+              vulnerable: .children["Vulnerable Versions"],
+              installed: (.children["Tree Versions"] | join(", "))
+            }' > "$1"
+          }
+
+          locked_versions() {
+            grep -F "  resolution: \"$1@npm:" yarn.lock \
+              | sed -E 's/.*@npm:([^"]+)".*/\1/' | sort -uV | paste -sd ' ' -
+          }
+
+          for project in . src-electron; do
+            label="$project"
+            if [ "$project" = . ]; then
+              label=root
+            fi
+            pushd "$project" > /dev/null
+            audit "$work/before.json"
+            mapfile -t packages < <(jq -r '.name' "$work/before.json" | sort -u)
+            if [ "${#packages[@]}" -eq 0 ]; then
+              popd > /dev/null
+              continue
+            fi
+
+            # Re-resolves every range of these packages to its newest match.
+            yarn up --recursive --mode=update-lockfile "${packages[@]}"
+            audit "$work/after.json"
+
+            if ! git diff --quiet -- yarn.lock; then
+              jq -r --arg project "$label" --slurpfile after "$work/after.json" '
+                select(.id as $id | $after | map(.id) | index($id) | not)
+                | "- `\($project)` \(.name) \(.installed): [\(.issue)](\(.url)) (\(.severity))"
+              ' "$work/before.json" >> "$fixed"
+              for name in "${packages[@]}"; do
+                echo "- \`$label\` $name: $(locked_versions "$name")" >> "$locked"
+              done
+            fi
+
+            if [ -s "$work/after.json" ] && ! grep -q '^## Unfixed' "$GITHUB_STEP_SUMMARY"; then
+              echo "## Unfixed advisories" >> "$GITHUB_STEP_SUMMARY"
+            fi
+            while read -r advisory; do
+              name=$(jq -r '.name' <<< "$advisory")
+              pins=$(jq -r --arg n "$name" '(.resolutions // {}) | keys[]
+                | select(. == $n or startswith($n + "@") or endswith("/" + $n) or contains("/" + $n + "@"))' package.json \
+                | paste -sd ' ' -)
+              hint="needs a version outside the range its dependents allow"
+              if [ -n "$pins" ]; then
+                hint="is held back by package.json resolutions ($pins)"
+              fi
+              message=$(jq -r --arg project "$label" --arg hint "$hint" \
+                '"\($project): \(.name) \(.installed) is still vulnerable (\(.vulnerable), \(.url)); it \($hint)."' <<< "$advisory")
+              echo "::warning title=Unfixed advisory::$message"
+              echo "- $message" >> "$GITHUB_STEP_SUMMARY"
+            done < "$work/after.json"
+            popd > /dev/null
+          done
+
+          if git diff --quiet -- yarn.lock src-electron/yarn.lock; then
+            echo "No lockfile changes."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add yarn.lock src-electron/yarn.lock
+          git commit -m "chore(deps): re-resolve vulnerable dependencies"
+          # A fixed branch name, so a run whose PR didn't merge is updated by
+          # the next one instead of opening another PR beside it.
+          git push --force origin "HEAD:refs/heads/$BRANCH"
+
+          delimiter="EOF_$(openssl rand -hex 16)"
+          {
+            echo "branch=$BRANCH"
+            echo "has_changes=true"
+            echo "body<<$delimiter"
+            echo "Automated re-resolution of packages with security advisories, within the ranges their dependents allow."
+            echo
+            echo "Fixed advisories:"
+            echo
+            cat "$fixed"
+            echo
+            echo "Now locked:"
+            echo
+            cat "$locked"
+            echo "$delimiter"
+          } >> "$GITHUB_OUTPUT"
+
+  merge:
+    name: Merge the lockfile update
+    needs: fix
+    if: needs.fix.outputs.has_changes == 'true'
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: ./.github/workflows/pr-creator-and-waiter.yml
+    with:
+      head: ${{ needs.fix.outputs.branch }}
+      title: 'chore(deps): fix vulnerable dependency versions'
+      body: ${{ needs.fix.outputs.body }}
+      admin: true
