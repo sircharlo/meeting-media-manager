@@ -47,7 +47,7 @@
     "@formkit/drag-and-drop": "^0.6.1",
     "@numairawan/video-duration": "^1.0.0",
     "@quasar/extras": "^2.1.0",
-    "@sentry/core": "^11.8.0",
+    "@sentry/core": "^11.9.0",
     "@sentry/electron": "^8.2.0",
     "@sentry/vue": "^11.8.0",
     "@vueuse/core": "^15.0.0",
