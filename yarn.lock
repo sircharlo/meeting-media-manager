@@ -325,7 +325,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/rebuild@npm:^4.0.4, @electron/rebuild@npm:^4.2.1":
+"@electron/rebuild@npm:^4.2.1":
   version: 4.2.1
   resolution: "@electron/rebuild@npm:4.2.1"
   dependencies:
@@ -1549,17 +1549,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:1.8.0":
+"@noble/hashes@npm:1.8.0, @noble/hashes@npm:^1.8.0":
   version: 1.8.0
   resolution: "@noble/hashes@npm:1.8.0"
   checksum: 10c0/06a0b52c81a6fa7f04d67762e08b2c476a00285858150caeaaff4037356dd5e119f45b2a530f638b77a5eeca013168ec1b655db41bae3236cb2e9d511484fc77
-  languageName: node
-  linkType: hard
-
-"@noble/hashes@npm:^2.2.0":
-  version: 2.4.0
-  resolution: "@noble/hashes@npm:2.4.0"
-  checksum: 10c0/f5820a38c52886073a69722a030688ad188bbacb822d01554545371259961c2b916266c57c013c2ce5a0d78aec977142fc68fd2a79be4c97b0644fcee9bb35f6
   languageName: node
   linkType: hard
 
@@ -2380,6 +2373,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/browser-utils@npm:11.9.0":
+  version: 11.9.0
+  resolution: "@sentry/browser-utils@npm:11.9.0"
+  dependencies:
+    "@sentry/conventions": "npm:^0.27.0"
+    "@sentry/core": "npm:11.9.0"
+    web-vitals: "npm:^6.2.3"
+  checksum: 10c0/323fa0e12213d8753ceb47e5f6af1ce5ef1c6f2db5dee0458c07f751c7b0a461dbe8a0da6fa100032cfef3e0f108bb317d4621c8301426bcab7e6896fa41763b
+  languageName: node
+  linkType: hard
+
 "@sentry/browser@npm:11.8.0":
   version: 11.8.0
   resolution: "@sentry/browser@npm:11.8.0"
@@ -2391,6 +2395,20 @@ __metadata:
     "@sentry/replay": "npm:11.8.0"
     "@sentry/replay-canvas": "npm:11.8.0"
   checksum: 10c0/66eff45b112fd94eb428bd380c741a41e7305d681dc996c37cd2d2ca4f04f2f3aee8be3eb31028cd971e038c367ce9636df57574fc4dde376bfe49da10a69fd4
+  languageName: node
+  linkType: hard
+
+"@sentry/browser@npm:11.9.0":
+  version: 11.9.0
+  resolution: "@sentry/browser@npm:11.9.0"
+  dependencies:
+    "@sentry/browser-utils": "npm:11.9.0"
+    "@sentry/conventions": "npm:^0.27.0"
+    "@sentry/core": "npm:11.9.0"
+    "@sentry/feedback": "npm:11.9.0"
+    "@sentry/replay": "npm:11.9.0"
+    "@sentry/replay-canvas": "npm:11.9.0"
+  checksum: 10c0/ca162c6691639e53baf35ac9bbdbeda753a477e91c21b8dc8449a8d2ddc3fd76c16e8c6e61643f3c1e0cf5a3137c2941de2bc98a061421b200f6cdc3d71ba65d
   languageName: node
   linkType: hard
 
@@ -2420,6 +2438,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/bundler-plugins@npm:11.9.0":
+  version: 11.9.0
+  resolution: "@sentry/bundler-plugins@npm:11.9.0"
+  dependencies:
+    "@sentry/core": "npm:11.9.0"
+    dotenv: "npm:^17.4.2"
+    glob: "npm:^13.0.6"
+    magic-string: "npm:~0.30.8 || ^1.0.0"
+    oxc-parser: "npm:^0.152.0"
+    sentry: "npm:^0.45.0"
+    supports-color: "npm:^8.1.1"
+  peerDependencies:
+    rollup: ">=3.2.0"
+    webpack: ">=5.1.0"
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+    webpack:
+      optional: true
+  checksum: 10c0/e0dfcf55ae761e86c4e66bf0eaf8995aafcf717d34d6beeec4d09daeea581cf1db732621ffeda1a52b41f76acba5112dd0d45f433033a60d48ccfa0e045886fb
+  languageName: node
+  linkType: hard
+
 "@sentry/conventions@npm:^0.27.0":
   version: 0.27.0
   resolution: "@sentry/conventions@npm:0.27.0"
@@ -2427,12 +2468,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:11.8.0, @sentry/core@npm:^11.8.0":
+"@sentry/core@npm:11.8.0":
   version: 11.8.0
   resolution: "@sentry/core@npm:11.8.0"
   dependencies:
     "@sentry/conventions": "npm:^0.27.0"
   checksum: 10c0/420d3009b5e42e157471c1dfb6e0eecc7d09cd1bf5f9c2b6a96f066eb9e5d69099cb2424fd0ef16e8a73cd84c0ef93a72997fc92b74089c0130b1d952905ddf8
+  languageName: node
+  linkType: hard
+
+"@sentry/core@npm:11.9.0, @sentry/core@npm:^11.9.0":
+  version: 11.9.0
+  resolution: "@sentry/core@npm:11.9.0"
+  dependencies:
+    "@sentry/conventions": "npm:^0.27.0"
+  checksum: 10c0/2c5c30acaad130ed7aca7a2f6a65c0c3ab682de086a17c88fc2cb24f1c0443e4c4f937dcffc453a463804b93c7778fa9ab2a9061c71c5a9607d0afebcee7499c
   languageName: node
   linkType: hard
 
@@ -2460,6 +2510,15 @@ __metadata:
   dependencies:
     "@sentry/core": "npm:11.8.0"
   checksum: 10c0/5a7e28366240fcdf291ef22fb4b8760fd824296284cfb714bdda45f525af8b03737e987f51067d5a2e644b5c650928bba5106b386c10b2ba59ffeb521175509b
+  languageName: node
+  linkType: hard
+
+"@sentry/feedback@npm:11.9.0":
+  version: 11.9.0
+  resolution: "@sentry/feedback@npm:11.9.0"
+  dependencies:
+    "@sentry/core": "npm:11.9.0"
+  checksum: 10c0/a5372b17a7c5d709492c56226fad7816212b7ac3627e75fd54acd1d46eef6bf07edd3d1ffe4728d72cac115ba6fd3c69aec6351918e8058bf540e989bc7c84e0
   languageName: node
   linkType: hard
 
@@ -2500,6 +2559,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/replay-canvas@npm:11.9.0":
+  version: 11.9.0
+  resolution: "@sentry/replay-canvas@npm:11.9.0"
+  dependencies:
+    "@sentry/core": "npm:11.9.0"
+    "@sentry/replay": "npm:11.9.0"
+  checksum: 10c0/925f1cd3b0d72630dcca5c33c248dbc09a73f67f466cbd3cb5c182bc73a0cb6f3e2eabd9f743f60ccf0a95e5ef660ae98c9ff3435b52be384af1b11b5ae70a19
+  languageName: node
+  linkType: hard
+
 "@sentry/replay@npm:11.8.0":
   version: 11.8.0
   resolution: "@sentry/replay@npm:11.8.0"
@@ -2510,17 +2579,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/rollup-plugin@npm:^11.8.0":
-  version: 11.8.0
-  resolution: "@sentry/rollup-plugin@npm:11.8.0"
+"@sentry/replay@npm:11.9.0":
+  version: 11.9.0
+  resolution: "@sentry/replay@npm:11.9.0"
   dependencies:
-    "@sentry/bundler-plugins": "npm:11.8.0"
+    "@sentry/browser-utils": "npm:11.9.0"
+    "@sentry/core": "npm:11.9.0"
+  checksum: 10c0/d27c591aa36e0b0b0273a0768ca59fd203534ab77afdfa711fe3cb8a6a08fa245764c9df8541e685c815ab38948022fb0cc089c9e1b0885d948062a6e4a3fe86
+  languageName: node
+  linkType: hard
+
+"@sentry/rollup-plugin@npm:^11.9.0":
+  version: 11.9.0
+  resolution: "@sentry/rollup-plugin@npm:11.9.0"
+  dependencies:
+    "@sentry/bundler-plugins": "npm:11.9.0"
   peerDependencies:
     rollup: ">=3.2.0"
   peerDependenciesMeta:
     rollup:
       optional: true
-  checksum: 10c0/1602884bd72201873fdc9c39810ee14f2309b14843ba3b3d7f63aa82d8a15dfc52f5b997f5c61b06e628995b72394880896bae7ef3e2526b505e3eb54146d293
+  checksum: 10c0/5c3a0d0faa58d19af6850467dce3ed3706d936fba3477609aa7affac2d2bbbe0d499ce08fa2f94f128ac5e0047e0f7936f090b1de6a099fe9822caf65eb7a2ca
   languageName: node
   linkType: hard
 
@@ -2545,22 +2624,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vite-plugin@npm:^11.8.0":
-  version: 11.8.0
-  resolution: "@sentry/vite-plugin@npm:11.8.0"
+"@sentry/vite-plugin@npm:^11.9.0":
+  version: 11.9.0
+  resolution: "@sentry/vite-plugin@npm:11.9.0"
   dependencies:
-    "@sentry/bundler-plugins": "npm:11.8.0"
-  checksum: 10c0/76a81e51a7373ff3be578697ea14ed02188f2044ae0a750353c9cc4d5982d77ffbef6df2649ac8ed0562df5679059ba3c86f84c7d03b638bb7b299d56222523d
+    "@sentry/bundler-plugins": "npm:11.9.0"
+  checksum: 10c0/b3c6d48ad826aa75bdb2c506bc68b7cb31f5899144235a576da04aba8ea722a8bfa85d45650730bd24688a56066c858642ab6139d8e58a73b67b4cb211d372eb
   languageName: node
   linkType: hard
 
-"@sentry/vue@npm:^11.8.0":
-  version: 11.8.0
-  resolution: "@sentry/vue@npm:11.8.0"
+"@sentry/vue@npm:^11.9.0":
+  version: 11.9.0
+  resolution: "@sentry/vue@npm:11.9.0"
   dependencies:
-    "@sentry/browser": "npm:11.8.0"
+    "@sentry/browser": "npm:11.9.0"
     "@sentry/conventions": "npm:^0.27.0"
-    "@sentry/core": "npm:11.8.0"
+    "@sentry/core": "npm:11.9.0"
   peerDependencies:
     "@tanstack/vue-router": ^1.64.0
     pinia: 2.x || 3.x || 4.x
@@ -2570,7 +2649,7 @@ __metadata:
       optional: true
     pinia:
       optional: true
-  checksum: 10c0/e9ae6a8cfb14d4a6dd03d98bc63cf9ec23bc7dd7d3712d3c62c14cc2aec37218db3d8863d3970e3b71bd06999f79cd2839aa383afcdaf518537ab30dd97737e3
+  checksum: 10c0/69491597e22782dffd8367de83497b5afef504f0ff042e84a603e23ba035679d2de27b90c5805f7485ab80c46feb43d18fb661e33fb3bb2f9fb3893c3015b320
   languageName: node
   linkType: hard
 
@@ -3092,7 +3171,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/scope-manager@npm:8.72.0, @typescript-eslint/scope-manager@npm:^8.13.0, @typescript-eslint/scope-manager@npm:^8.58.0":
+"@typescript-eslint/scope-manager@npm:8.72.0, @typescript-eslint/scope-manager@npm:^8.13.0, @typescript-eslint/scope-manager@npm:^8.71.2":
   version: 8.72.0
   resolution: "@typescript-eslint/scope-manager@npm:8.72.0"
   dependencies:
@@ -3153,7 +3232,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:8.72.0, @typescript-eslint/utils@npm:^8.58.0, @typescript-eslint/utils@npm:^8.60.0, @typescript-eslint/utils@npm:^8.71.2":
+"@typescript-eslint/utils@npm:8.72.0, @typescript-eslint/utils@npm:^8.60.0, @typescript-eslint/utils@npm:^8.71.2":
   version: 8.72.0
   resolution: "@typescript-eslint/utils@npm:8.72.0"
   dependencies:
@@ -3197,16 +3276,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/eslint-plugin@npm:^1.6.27":
-  version: 1.6.27
-  resolution: "@vitest/eslint-plugin@npm:1.6.27"
+"@vitest/eslint-plugin@npm:^1.6.28":
+  version: 1.6.28
+  resolution: "@vitest/eslint-plugin@npm:1.6.28"
   dependencies:
-    "@typescript-eslint/scope-manager": "npm:^8.58.0"
-    "@typescript-eslint/utils": "npm:^8.58.0"
+    "@typescript-eslint/scope-manager": "npm:^8.71.2"
+    "@typescript-eslint/utils": "npm:^8.71.2"
   peerDependencies:
     "@typescript-eslint/eslint-plugin": "*"
     eslint: ">=8.57.0"
-    typescript: ">=5.0.0"
+    typescript: ">=6.0.0"
     vitest: "*"
   peerDependenciesMeta:
     "@typescript-eslint/eslint-plugin":
@@ -3215,7 +3294,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/2523b1f3af37164127a745634da20616494538a234426956c72d9fbf6062dcc5b3040cc5283bcf5a4bcfa1f993f9746d9d467c5f3bb5c879cddbdaabb3060cac
+  checksum: 10c0/d4ea5a3ef62ea3d5630aa61500433fc36c4c5149e1d6fc9f22d96309e31bc9e611f7df351539994bfe2224406bad6e6c51c6f6d77bbfb1301e3f808160b0eb6e
   languageName: node
   linkType: hard
 
@@ -3743,25 +3822,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"app-builder-lib@npm:26.15.3":
-  version: 26.15.3
-  resolution: "app-builder-lib@npm:26.15.3"
+"app-builder-lib@npm:26.18.0":
+  version: 26.18.0
+  resolution: "app-builder-lib@npm:26.18.0"
   dependencies:
     "@electron/asar": "npm:3.4.1"
     "@electron/fuses": "npm:^1.8.0"
     "@electron/get": "npm:^3.0.0"
     "@electron/notarize": "npm:2.5.0"
     "@electron/osx-sign": "npm:1.3.3"
-    "@electron/rebuild": "npm:^4.0.4"
+    "@electron/rebuild": "npm:^4.2.1"
     "@electron/universal": "npm:2.0.3"
     "@malept/flatpak-bundler": "npm:^0.4.0"
-    "@noble/hashes": "npm:^2.2.0"
+    "@noble/hashes": "npm:^1.8.0"
     "@peculiar/webcrypto": "npm:^1.7.1"
     "@types/fs-extra": "npm:9.0.13"
     ajv: "npm:^8.18.0"
     asn1js: "npm:^3.0.10"
     async-exit-hook: "npm:^2.0.1"
-    builder-util: "npm:26.15.3"
+    builder-util: "npm:26.16.0"
     builder-util-runtime: "npm:9.7.0"
     chromium-pickle-js: "npm:^0.2.0"
     ci-info: "npm:4.3.1"
@@ -3769,7 +3848,7 @@ __metadata:
     dotenv: "npm:^16.4.5"
     dotenv-expand: "npm:^11.0.6"
     ejs: "npm:^3.1.8"
-    electron-publish: "npm:26.15.3"
+    electron-publish: "npm:26.18.0"
     fs-extra: "npm:^10.1.0"
     hosted-git-info: "npm:^4.1.0"
     isbinaryfile: "npm:^5.0.0"
@@ -3789,9 +3868,9 @@ __metadata:
     unzipper: "npm:^0.12.3"
     which: "npm:^5.0.0"
   peerDependencies:
-    dmg-builder: 26.15.3
-    electron-builder-squirrel-windows: 26.15.3
-  checksum: 10c0/c3421f45df7eb69ecbd66ade2ced54fd60f452ab527c917f0613d5ce3c43172e2de677db9d3bdc4e6087d22732baf6357c3247624059a1b5a9c434243a81ff14
+    dmg-builder: 26.18.0
+    electron-builder-squirrel-windows: 26.18.0
+  checksum: 10c0/cd5cf76b576f2e1d353271742182d3eca84ec92db9c4b77f2ebd385c358b4269dec3c657bb05e2fbe884d2ec11dc6d03f7c0017d73c167fe949c2d167205617d
   languageName: node
   linkType: hard
 
@@ -4141,9 +4220,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"builder-util@npm:26.15.3":
-  version: 26.15.3
-  resolution: "builder-util@npm:26.15.3"
+"builder-util@npm:26.16.0":
+  version: 26.16.0
+  resolution: "builder-util@npm:26.16.0"
   dependencies:
     "@types/debug": "npm:^4.1.6"
     builder-util-runtime: "npm:9.7.0"
@@ -4159,7 +4238,7 @@ __metadata:
     stat-mode: "npm:^1.0.0"
     temp-file: "npm:^3.4.0"
     tiny-async-pool: "npm:1.3.0"
-  checksum: 10c0/e3ae624acca1b81793bfcfdeef81bbc15cc3acee67db2b00e6743138d658179f242b64a9d7111e717842ba0ca5df60620750a14ba5fdb0cee0ec58cdeeef13d4
+  checksum: 10c0/db2e0e6f7717accdf3acd67b51573065e358c44facb9d0b3f33868e541bf3e1441d876a7f9f422c5c216f3c44ea3ede0cd3fa6d3c87380170445d11ac37ee214
   languageName: node
   linkType: hard
 
@@ -4976,15 +5055,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dmg-builder@npm:26.15.3":
-  version: 26.15.3
-  resolution: "dmg-builder@npm:26.15.3"
+"dmg-builder@npm:26.18.0":
+  version: 26.18.0
+  resolution: "dmg-builder@npm:26.18.0"
   dependencies:
-    app-builder-lib: "npm:26.15.3"
-    builder-util: "npm:26.15.3"
+    app-builder-lib: "npm:26.18.0"
+    builder-util: "npm:26.16.0"
     fs-extra: "npm:^10.1.0"
     js-yaml: "npm:^4.1.0"
-  checksum: 10c0/6219e169d1a980c0f7301b2b76d204e2500ad87ad4acf7489f38b136932da042fd12c4f64d54ef1e00a751cb15766a25ee0a1f90f69b7ea60baf718e631c7133
+  checksum: 10c0/fbf0740369681c288aa44867cd9db45270bbc66aa705a6d2ee7d9884c77835fee952c8dacd48d9ee5c84b7153e572338e40350d85741291f2e75e73ca80ee7ef
   languageName: node
   linkType: hard
 
@@ -5166,16 +5245,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-builder@npm:26.15.3":
-  version: 26.15.3
-  resolution: "electron-builder@npm:26.15.3"
+"electron-builder@npm:26.18.0":
+  version: 26.18.0
+  resolution: "electron-builder@npm:26.18.0"
   dependencies:
-    app-builder-lib: "npm:26.15.3"
-    builder-util: "npm:26.15.3"
+    app-builder-lib: "npm:26.18.0"
+    builder-util: "npm:26.16.0"
     builder-util-runtime: "npm:9.7.0"
     chalk: "npm:^4.1.2"
     ci-info: "npm:^4.2.0"
-    dmg-builder: "npm:26.15.3"
+    dmg-builder: "npm:26.18.0"
     fs-extra: "npm:^10.1.0"
     lazy-val: "npm:^1.0.5"
     simple-update-notifier: "npm:2.0.0"
@@ -5183,24 +5262,24 @@ __metadata:
   bin:
     electron-builder: ./cli.js
     install-app-deps: ./install-app-deps.js
-  checksum: 10c0/5d0d6c121ca6c59932a9e796413862476c716b2bdf0d2a504b36836bbb727717652fd1f3e1102b48ffa2f18c0c9a816e7724bf025dfaccdd5846d868d703a513
+  checksum: 10c0/445c7880931e903112fb50929f4d5be788802acac18aaf8d476143ae66a111f6b93dc53c67eb0c47c3c7f7f9c9ac33763ceecdee9012780b6a76c20d31d48cd1
   languageName: node
   linkType: hard
 
-"electron-publish@npm:26.15.3":
-  version: 26.15.3
-  resolution: "electron-publish@npm:26.15.3"
+"electron-publish@npm:26.18.0":
+  version: 26.18.0
+  resolution: "electron-publish@npm:26.18.0"
   dependencies:
     "@types/fs-extra": "npm:^9.0.11"
     aws4: "npm:^1.13.2"
-    builder-util: "npm:26.15.3"
+    builder-util: "npm:26.16.0"
     builder-util-runtime: "npm:9.7.0"
     chalk: "npm:^4.1.2"
     form-data: "npm:^4.0.5"
     fs-extra: "npm:^10.1.0"
     lazy-val: "npm:^1.0.5"
     mime: "npm:^2.5.2"
-  checksum: 10c0/809629339769d6d45460af91de55546b1ae4e88a62d7cfe9b2b597b5aa31d190c1aea80f517f8248c08acee7e6f7327eb921b4dc9c9dd601bcde4feeedb7a87a
+  checksum: 10c0/14e935e45c1d02280e2ac462b8042e070d8b6558b6488675254b134fe3cc03d5aa43d42253d75ec011ecdcbcb650b7b189ebee93d519109900b36c2f32da95fe
   languageName: node
   linkType: hard
 
@@ -7764,11 +7843,11 @@ __metadata:
     "@quasar/app-vite": "npm:^3.10.3"
     "@quasar/extras": "npm:^2.1.0"
     "@quasar/vite-plugin": "npm:^2.0.2"
-    "@sentry/core": "npm:^11.8.0"
+    "@sentry/core": "npm:^11.9.0"
     "@sentry/electron": "npm:^8.2.0"
-    "@sentry/rollup-plugin": "npm:^11.8.0"
-    "@sentry/vite-plugin": "npm:^11.8.0"
-    "@sentry/vue": "npm:^11.8.0"
+    "@sentry/rollup-plugin": "npm:^11.9.0"
+    "@sentry/vite-plugin": "npm:^11.9.0"
+    "@sentry/vue": "npm:^11.9.0"
     "@types/fluent-ffmpeg": "npm:^2.1.28"
     "@types/fontkit": "npm:^2.0.9"
     "@types/fs-extra": "npm:^11.0.4"
@@ -7777,7 +7856,7 @@ __metadata:
     "@types/node": "npm:^26.6.5"
     "@types/yauzl": "npm:^3.4.0"
     "@vitejs/plugin-vue": "npm:^6.0.10"
-    "@vitest/eslint-plugin": "npm:^1.6.27"
+    "@vitest/eslint-plugin": "npm:^1.6.28"
     "@vue/compiler-dom": "npm:^3.5.44"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.9.0"
@@ -7793,7 +7872,7 @@ __metadata:
     depcheck: "npm:^1.4.7"
     dompurify: "npm:^3.4.17"
     electron: "npm:^45.0.0"
-    electron-builder: "npm:26.15.3"
+    electron-builder: "npm:26.18.0"
     electron-updater: "npm:^6.8.9"
     eslint: "npm:^10.13.0"
     eslint-plugin-perfectionist: "npm:^5.12.1"
