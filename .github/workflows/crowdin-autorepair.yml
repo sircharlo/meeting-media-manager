@@ -151,13 +151,30 @@ jobs:
             exit 1
           fi
 
+      # Mergify usually merges Crowdin's PR, deleting l10n_master, within a
+      # couple of minutes of the push - often before the sweep above is done.
+      # The export is on master by then and there's no branch left to repair
+      # (Crowdin's copy was repaired at the source, so the next export comes
+      # out clean); checking it out used to fail the run instead.
+      - name: Check that l10n_master still exists
+        id: branch
+        run: |
+          if git ls-remote --exit-code --heads "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" l10n_master > /dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "l10n_master is gone: Crowdin's PR was merged or closed before this job got to it, so there's no export left to repair."
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Check out l10n_master
+        if: steps.branch.outputs.exists == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: l10n_master
           token: ${{ secrets.PERSONAL_TOKEN }}
 
       - name: Set up Node
+        if: steps.branch.outputs.exists == 'true'
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24
@@ -169,11 +186,13 @@ jobs:
       # install time. --mode=skip-build is Yarn 4's install flag for that,
       # and YARN_ENABLE_SCRIPTS=false the config-level equivalent.
       - name: Install dependencies
+        if: steps.branch.outputs.exists == 'true'
         env:
           YARN_ENABLE_SCRIPTS: 'false'
         run: yarn install --mode=skip-build
 
       - name: Repair the exported files
+        if: steps.branch.outputs.exists == 'true'
         run: |
           if [ "$APPLY" = "true" ]; then
             node docs/utils/fix-doc-markdown.mjs --verbose
@@ -188,14 +207,14 @@ jobs:
       # needs a human fix in Crowdin. Reported as a warning rather than a
       # failure so it never blocks pushing the repairs that did succeed.
       - name: Report what could not be repaired
-        if: env.APPLY == 'true'
+        if: steps.branch.outputs.exists == 'true' && env.APPLY == 'true'
         continue-on-error: true
         run: |
           node docs/utils/fix-doc-markdown.mjs --check
           node scripts/fix-i18n-locales.mjs --check
 
       - name: Commit and push the repairs
-        if: env.APPLY == 'true'
+        if: steps.branch.outputs.exists == 'true' && env.APPLY == 'true'
         run: |
           git add -u -- docs/src src/i18n
           if git diff --staged --quiet; then
@@ -214,6 +233,12 @@ jobs:
           $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
           EOF
           git show --stat --format='%h %s' HEAD
+          # Merged while this job ran: pushing now would create l10n_master
+          # anew, holding nothing but this repair.
+          if ! git ls-remote --exit-code --heads origin l10n_master > /dev/null; then
+            echo "l10n_master was merged or closed meanwhile; nothing to push to."
+            exit 0
+          fi
           # Crowdin's exports come in bursts, so the branch can move while
           # this job runs: rebase onto the new tip and retry before giving up.
           for attempt in 1 2 3; do
