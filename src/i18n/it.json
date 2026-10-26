@@ -717,7 +717,7 @@
   "quick-actions-enabled": "Abilitato",
   "quick-actions-item-name": "Nome attività",
   "quick-actions-last-song-ends-at": "L'ultimo cantico finisce alle {time}",
-  "quick-actions-meeting-ended-at": "L'adunanza sarebbe dovuta terminare alle {time}",
+  "quick-actions-meeting-ended-at": "Meeting was scheduled to end at {time}",
   "quick-actions-meeting-ends-at": "L'adunanza dovrebbe terminare alle {time}",
   "quick-actions-meeting-started-at": "L'orario di inizio previsto dell'adunanza era alle {time}",
   "quick-actions-meeting-starts-at": "L'orario di inizio previsto dell'adunanza ({time}) è tra",
