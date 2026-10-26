@@ -205,6 +205,7 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
         y: (screen?.y ?? 0) + (screen?.height ?? 1080) / 2 - 180,
       }),
     ];
+    let stopped;
     try {
       await sleep(5000);
       focusWindow(findWindowByTitle('Media Player - M'));
@@ -240,9 +241,11 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
         `shared ${JSON.stringify(layers)}, media ${JSON.stringify(media)}`,
       ).toBe(true);
     } finally {
-      await helper.request({ type: 'stop-share' });
+      stopped = await helper.request({ type: 'stop-share' });
       decoys.forEach((decoy) => decoy.kill());
     }
+    // A share left running would fail the next tests instead.
+    expect(stopped).toMatchObject({ changed: true, ok: true });
   });
 
   it('puts the mouse and the focused window back after acting', async () => {
