@@ -497,6 +497,42 @@ describe('Zoom startup check', () => {
     expect(sentry.captureMessage).not.toHaveBeenCalled();
   });
 
+  it('waits for Zoom to stop sharing instead of checking during a share', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    zoom.getZoomMeetingState.mockResolvedValue({ found: true, sharing: true });
+
+    expect(await runZoomStartupCheck()).toBe('scheduled');
+    // Nothing pressed (testing would end the share) and nothing paused.
+    expect(zoom.withZoomRun).not.toHaveBeenCalled();
+    expect(zoom.countZoomMeetingParticipants).not.toHaveBeenCalled();
+    expect(zoom.diagnoseZoom).not.toHaveBeenCalled();
+    const zoomState = useZoomStateStore();
+    expect(zoomState.pause).toBeNull();
+    expect(zoom.notify).not.toHaveBeenCalled();
+    // Today's check is still to do, and runs once the share is over.
+    expect(zoomState.checkedCongregations).toEqual([]);
+    zoom.getZoomMeetingState.mockResolvedValue(OPEN);
+    expect(await runZoomStartupCheck()).toBe('passed');
+  });
+
+  it('asks to stop sharing first when tested again during a share', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    const zoomState = useZoomStateStore();
+    zoomState.pauseAutomations('cong-1', ['zoom-check-problem-meeting'], false);
+    zoom.getZoomMeetingState.mockResolvedValue({ found: true, sharing: true });
+
+    expect(await runZoomStartupCheck({ manual: true })).toBe('skipped');
+    expect(zoom.withZoomRun).not.toHaveBeenCalled();
+    expect(notification()).toMatchObject({
+      message:
+        "M³ can't check Zoom while it's sharing. Stop sharing in Zoom, then test again.",
+      type: 'warning',
+    });
+    // Still paused until a check passes, and today's check still to do.
+    expect(zoomState.automationsPaused).toBe(true);
+    expect(zoomState.checkedCongregations).toEqual([]);
+  });
+
   it("doesn't show the media window to check sharing while others are in", async () => {
     const { runZoomStartupCheck } = await import('../zoom-startup-check');
     zoom.countZoomMeetingParticipants.mockResolvedValue(null);

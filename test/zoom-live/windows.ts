@@ -192,18 +192,32 @@ public static class M3Enum {
   [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr h);
   [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetClassName(IntPtr h, StringBuilder b, int m);
   [DllImport("user32.dll")] static extern bool GetWindowRect(IntPtr h, out RECT r);
-  public static string[] Find(string cls) {
-    var found = new List<string>();
+  [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr h, int c);
+  static List<IntPtr> Visible(string cls) {
+    var found = new List<IntPtr>();
     EnumWindows((h, l) => {
       var name = new StringBuilder(256);
       GetClassName(h, name, 256);
-      RECT r;
-      if (IsWindowVisible(h) && name.ToString() == cls && GetWindowRect(h, out r)) found.Add(r.L + "," + r.T + "," + r.R + "," + r.B);
+      if (IsWindowVisible(h) && name.ToString() == cls) found.Add(h);
       return true;
     }, IntPtr.Zero);
+    return found;
+  }
+  public static string[] Find(string cls) {
+    var found = new List<string>();
+    RECT r;
+    foreach (var h in Visible(cls)) if (GetWindowRect(h, out r)) found.Add(r.L + "," + r.T + "," + r.R + "," + r.B);
     return found.ToArray();
   }
+  public static void Hide(string cls) {
+    foreach (var h in Visible(cls)) ShowWindow(h, 0);
+  }
 }'`;
+
+/** Hides the visible top-level windows of a class, as Zoom hides its own. */
+export const hideWindows = (className: string) => {
+  run(`${ENUM_WINDOWS}; [M3Enum]::Hide('${className.replaceAll("'", "''")}')`);
+};
 
 /** The positions of the visible top-level windows of a class, in physical pixels. */
 export const getVisibleWindowRects = (className: string) =>
