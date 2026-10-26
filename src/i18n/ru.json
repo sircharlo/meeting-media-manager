@@ -447,6 +447,8 @@
   "media-display": "Воспроизведение медиа",
   "media-display-settings": "Настройки воспроизведения мультимедиа",
   "media-export-conversion-failed": "Все файлы успешно преобразованы при экспорте | При экспорте не удалось преобразовать 1 файл | При экспорте не удалось преобразовать файлов: {count}",
+  "media-export-folder-unavailable": "M³ can't export media because the auto-export folder isn't available.",
+  "media-export-folder-unavailable-caption": "{folder} doesn't exist on this computer and couldn't be created. If it's on a drive or network folder, check that it's connected. Otherwise, choose another folder in Settings.",
   "media-from-s34mp": "Медиа из планов публичных речей",
   "media-item-missing-explain": "Этот медиа-элемент отсутствует. Чтобы воспроизвести его, добавьте его через меню @:extra-media или перетащите в список медиа-файлов со своего компьютера.",
   "media-only": "Только медиа",
