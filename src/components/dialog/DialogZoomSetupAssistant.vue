@@ -424,11 +424,16 @@
                 </q-item-section>
               </q-item>
               <div
-                v-if="!currentSettings.enableMusicButton"
+                v-if="
+                  !currentSettings.enableMusicButton &&
+                  currentSettings.zoomMeetingManagerAutomatePostMeetingAudioSettings
+                "
                 class="row items-center no-wrap q-mt-sm text-caption text-warning"
               >
                 <q-icon class="q-mr-xs" name="mmm-info" size="14px" />
-                <div class="col">{{ t('zoom-setup-music-needed') }}</div>
+                <div class="col">
+                  {{ t('zoom-setup-music-needed-after-meeting') }}
+                </div>
                 <q-btn
                   color="primary"
                   dense

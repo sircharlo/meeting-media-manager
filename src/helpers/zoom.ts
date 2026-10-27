@@ -864,7 +864,8 @@ export const runZoomPostMeetingSequence = (
 
 /**
  * Applies the in-meeting Zoom settings, if enabled.
- * (Triggered when background music stops just before a meeting.)
+ * (Triggered just before each meeting, when background music stops: see
+ * zoom-meeting-day.ts.)
  */
 export const automateZoomMeetingSettings = async () => {
   if (!getSettings()?.zoomMeetingManagerAutomateMeetingAudioSettings) return;
@@ -874,7 +875,8 @@ export const automateZoomMeetingSettings = async () => {
 
 /**
  * Applies the before/after-meeting Zoom settings, if enabled.
- * (Triggered when background music starts.)
+ * (Triggered before each meeting, right after the startup check, and after
+ * it when background music starts: see zoom-meeting-day.ts.)
  */
 export const automateZoomPostMeetingSettings = async () => {
   if (!getSettings()?.zoomMeetingManagerAutomatePostMeetingAudioSettings) {
@@ -886,22 +888,29 @@ export const automateZoomPostMeetingSettings = async () => {
   await runZoomPostMeetingSequence();
 };
 
-export const autoLaunchZoomMeetingIfNeeded = async (
-  timeUntilMeetingSeconds?: number,
-) => {
+/**
+ * Background music started: applies the before/after-meeting settings,
+ * unless today's meeting is still to come. Before it, the meeting's own
+ * schedule applies them, right after the startup check (see
+ * zoom-meeting-day.ts).
+ */
+export const automateZoomSettingsOnMusicStart = async (now = new Date()) => {
+  const start = getMeetingStartToday(now);
+  if (start && now < start) return;
+  await automateZoomPostMeetingSettings();
+};
+
+/**
+ * Launches the congregation's Zoom meeting, if enabled and no meeting is
+ * open yet. (Triggered before each meeting: see zoom-meeting-day.ts.)
+ */
+export const autoLaunchZoomMeetingIfNeeded = async () => {
   const settings = getSettings();
   if (!settings?.zoomMeetingManagerEnable) return;
   if (!settings.zoomMeetingManagerAutoLaunchMeeting) return;
 
   const meetingId = settings.zoomMeetingManagerMeetingId?.trim();
   if (!meetingId) return;
-
-  if (
-    typeof timeUntilMeetingSeconds === 'number' &&
-    timeUntilMeetingSeconds <= 0
-  ) {
-    return;
-  }
 
   if (!(await zoomAutomationsAllowed('Zoom meeting auto-launch'))) return;
 
@@ -910,7 +919,6 @@ export const autoLaunchZoomMeetingIfNeeded = async (
 
   log('Auto-launching Zoom meeting before meeting start', 'zoom', 'info', {
     meetingId,
-    timeUntilMeetingSeconds,
   });
   globalThis.electronApi.launchZoomMeeting(meetingId);
 };

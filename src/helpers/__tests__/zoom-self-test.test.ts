@@ -166,6 +166,30 @@ describe('runZoomSelfTest', () => {
     expect(world.sharing).toBe(false);
   });
 
+  it('leaves computer audio again when the meeting was found without it', async () => {
+    // As the before/after-meeting settings leave a meeting before it starts.
+    Object.assign(world, { audioJoined: false, videoOn: false });
+
+    const steps = await runZoomSelfTest({
+      steps: [
+        'meeting',
+        'leave-audio',
+        'join-audio',
+        'mic-off',
+        'mic-on',
+        'video-off',
+        'video-on',
+        'restore',
+      ],
+      timeouts: FAST,
+      titles: TITLES,
+    });
+
+    expect(steps.filter((step) => step.status !== 'passed')).toEqual([]);
+    expect(world.audioJoined).toBe(false);
+    expect(world.videoOn).toBe(false);
+  });
+
   it('fails a step when participants can still unmute themselves after a locked mute', async () => {
     const { muteAllZoomParticipants } = await import('src/helpers/zoom');
     vi.mocked(muteAllZoomParticipants).mockImplementationOnce(async () =>

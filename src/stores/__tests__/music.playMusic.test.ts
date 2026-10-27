@@ -8,11 +8,13 @@ import {
   prepareMeetingDaySongQueue,
 } from 'src/helpers/background-music';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { automateZoomSettingsOnMusicStart } from 'src/helpers/zoom';
 import { log } from 'src/shared/vanilla';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { nextTick } from 'vue';
 
 import { useMusicStore } from '../music';
 
@@ -35,9 +37,7 @@ vi.mock('src/helpers/error-catcher', () => ({ errorCatcher: vi.fn() }));
 vi.mock('src/helpers/jw-media', () => ({ downloadBackgroundMusic: vi.fn() }));
 
 vi.mock('src/helpers/zoom', () => ({
-  autoLaunchZoomMeetingIfNeeded: vi.fn(async () => undefined),
-  automateZoomMeetingSettings: vi.fn(async () => undefined),
-  automateZoomPostMeetingSettings: vi.fn(async () => undefined),
+  automateZoomSettingsOnMusicStart: vi.fn(async () => undefined),
 }));
 
 vi.mock('src/shared/vanilla', async (importOriginal) => ({
@@ -106,6 +106,30 @@ describe('playMusic', () => {
 
     expect(fetchSongLibrary).not.toHaveBeenCalled();
     expect(music.musicState).toBe('');
+  });
+
+  it('runs the Zoom settings when the music starts, not for each new song', async () => {
+    const music = useMusicStore();
+    await music.playMusic();
+    const player = music.musicPlayer as HTMLAudioElement;
+    Object.defineProperty(player, 'duration', {
+      configurable: true,
+      value: 180,
+    });
+    const fire = async (type: string) => {
+      player.dispatchEvent(new Event(type));
+      await nextTick();
+    };
+
+    await fire('durationchange');
+    await fire('play');
+    expect(music.musicState).toBe('music.playing');
+    expect(automateZoomSettingsOnMusicStart).toHaveBeenCalledOnce();
+
+    // The next song: paused at the end of the last one, then played.
+    await fire('pause');
+    await fire('play');
+    expect(automateZoomSettingsOnMusicStart).toHaveBeenCalledOnce();
   });
 
   it('plays the next song and fades in to the configured volume', async () => {

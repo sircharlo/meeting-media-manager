@@ -689,7 +689,7 @@ describe('DialogZoomSetupAssistant', () => {
     await click('Continue');
 
     expect(text()).toContain(
-      'triggered by background music, which is turned off',
+      'applied when background music is started, but background music is turned off',
     );
     await click('Turn on background music');
     expect(settings().enableMusicButton).toBe(true);
@@ -711,6 +711,20 @@ describe('DialogZoomSetupAssistant', () => {
     expect(text()).toContain("You're all set!");
     await click('Finish');
     expect(settings().zoomMeetingManagerEnable).toBe(true);
+  });
+
+  it("doesn't ask for background music for the meeting settings alone", async () => {
+    await mountAssistant({
+      enableMusicButton: false,
+      zoomMeetingManagerAutomateMeetingAudioSettings: true,
+    });
+    await reachVideoStep();
+    await learnButtons();
+    await click('Check sharing');
+    await click('Continue');
+
+    expect(text()).toContain('What should M³ do?');
+    expect(text()).not.toContain('Turn on background music');
   });
 
   // With a media scene, OBS Studio already shows the media in Zoom, so Zoom

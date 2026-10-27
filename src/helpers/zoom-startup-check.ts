@@ -63,7 +63,6 @@ const findings = (problems: string[], details: string[] = []): Findings => ({
   problems,
 });
 
-const STARTUP_DELAY_MS = 10_000;
 const MEETING_OPEN_TIMEOUT_MS = 90_000;
 const MEETING_POLL_MS = 3000;
 // Lets a meeting that just opened finish setting up its window.
@@ -389,31 +388,38 @@ const report = (
 };
 
 /**
- * Checks the Zoom Meeting Manager. On its own (`manual` false), only once a
+ * Whether the check may run now: on its own (`manual` false), only once a
  * day per congregation, when the startup check is turned on and the setup
  * assistant has been through; asked for, whenever possible.
  */
-export const runZoomStartupCheck = async ({
-  manual = false,
-} = {}): Promise<ZoomStartupCheckOutcome> => {
-  const currentState = useCurrentStateStore();
+const mayCheck = (congregationId: string, manual: boolean) => {
+  const settings = useCurrentStateStore().currentSettings;
   const zoomState = useZoomStateStore();
-  const congregationId = currentState.currentCongregation;
-  const settings = currentState.currentSettings;
-  if (!congregationId || !settings?.zoomMeetingManagerEnable) return 'skipped';
-  if (isZoomSetupNeeded() || zoomState.checkRunning) return 'skipped';
+  if (!settings?.zoomMeetingManagerEnable) return false;
+  if (isZoomSetupNeeded() || zoomState.checkRunning) return false;
   // The setup assistant operates Zoom and tests everything itself, and its
   // names are half learned on the way (which also makes Zoom look changed):
   // a check now would get in its way. Today's check is still to do.
   if (useDialogStateStore().isDialogOpen(ZOOM_SETUP_ASSISTANT_DIALOG_ID)) {
-    return 'skipped';
+    return false;
   }
-  if (!manual) {
-    if (!settings.zoomMeetingManagerStartupCheck) return 'skipped';
-    if (zoomState.checkedCongregations.includes(congregationId)) {
-      return 'skipped';
-    }
-  }
+  if (manual) return true;
+  return (
+    settings.zoomMeetingManagerStartupCheck &&
+    !zoomState.checkedCongregations.includes(congregationId) &&
+    // Never while an automation operates Zoom: they'd press each other's
+    // buttons. Today's check is still to do.
+    !zoomState.runActive
+  );
+};
+
+/** Checks the Zoom Meeting Manager, when it may (see mayCheck). */
+export const runZoomStartupCheck = async ({
+  manual = false,
+} = {}): Promise<ZoomStartupCheckOutcome> => {
+  const zoomState = useZoomStateStore();
+  const congregationId = useCurrentStateStore().currentCongregation;
+  if (!congregationId || !mayCheck(congregationId, manual)) return 'skipped';
 
   zoomState.checkRunning = true;
   if (!zoomState.checkedCongregations.includes(congregationId)) {
@@ -455,9 +461,9 @@ export const runZoomStartupCheck = async ({
       return 'skipped';
     }
     if ('checkInSeconds' in found) {
-      // Too early: check when the meeting's window opens, if M³ is still on.
+      // Too early: the meeting day's schedule (see zoom-meeting-day.ts)
+      // checks again when the meeting's window opens, if M³ is still on.
       checkLater();
-      scheduleZoomStartupCheck(found.checkInSeconds * 1000);
       log('Zoom check: waiting for the meeting', 'zoom', 'info', found);
       return 'scheduled';
     }
@@ -486,34 +492,3 @@ export const watchZoomChanges = () => {
   globalThis.removeEventListener(ZOOM_CHANGED_EVENT, onZoomChanged);
   globalThis.addEventListener(ZOOM_CHANGED_EVENT, onZoomChanged);
 };
-
-let startupTimer: ReturnType<typeof setTimeout> | undefined;
-
-// M³ may stay open for days: each new day gets its own check (on meeting
-// days, that's what opens the meeting in time), and a computer that slept
-// through the time a check was due catches up when it wakes.
-const RECHECK_INTERVAL_MS = 5 * 60 * 1000;
-let recheckTimer: ReturnType<typeof setInterval> | undefined;
-let checkedDay = new Date().toDateString();
-
-const recheck = () => {
-  const today = new Date().toDateString();
-  if (today !== checkedDay) {
-    checkedDay = today;
-    useZoomStateStore().checkedCongregations = [];
-  }
-  void runZoomStartupCheck();
-};
-
-/**
- * Runs the startup check shortly after M³ starts (or a congregation is
- * opened), once things have settled, or after the given delay; and from
- * then on, again each day.
- */
-export function scheduleZoomStartupCheck(delayMs = STARTUP_DELAY_MS) {
-  clearTimeout(startupTimer);
-  startupTimer = setTimeout(() => {
-    void runZoomStartupCheck();
-  }, delayMs);
-  recheckTimer ??= setInterval(recheck, RECHECK_INTERVAL_MS);
-}
