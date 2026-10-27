@@ -407,6 +407,10 @@ const runSteps = async (
           titles,
         );
       }
+      // A meeting waiting to start, with computer audio left by the
+      // before/after-meeting settings, mustn't be left with the Kingdom
+      // Hall's microphone live in it.
+      if (initialAudioJoined === false) await leaveZoomAudio();
     },
     'share-start': async () => {
       const prepare = prepareMediaWindow ?? skip('No media window to share');

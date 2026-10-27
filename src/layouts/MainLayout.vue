@@ -166,10 +166,8 @@ import {
   syncZoomHandAlertWatcher,
 } from 'src/helpers/zoom-hand-alert';
 import { syncZoomLayoutWatcher } from 'src/helpers/zoom-layout';
-import {
-  scheduleZoomStartupCheck,
-  watchZoomChanges,
-} from 'src/helpers/zoom-startup-check';
+import { scheduleZoomAutomations } from 'src/helpers/zoom-meeting-day';
+import { watchZoomChanges } from 'src/helpers/zoom-startup-check';
 import { localeOptions } from 'src/i18n';
 import { log, type LogPrefix } from 'src/shared/vanilla';
 import { useAppSettingsStore } from 'src/stores/app-settings';
@@ -1845,12 +1843,13 @@ watchImmediate(
 );
 
 // Once M³ has started (or a congregation is opened), check its Zoom before
-// any automation relies on it. The check itself runs only once per session.
+// any automation relies on it (once a day), then run the automations due
+// before each meeting, in order.
 watchImmediate(
   () => currentCongregation.value,
   (congregation) => {
     watchZoomChanges();
-    if (congregation) scheduleZoomStartupCheck();
+    if (congregation) scheduleZoomAutomations();
   },
 );
 

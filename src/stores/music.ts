@@ -28,11 +28,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { getMusicStartMeetingConflict } from 'src/helpers/meeting-quick-actions';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import {
-  autoLaunchZoomMeetingIfNeeded,
-  automateZoomMeetingSettings,
-  automateZoomPostMeetingSettings,
-} from 'src/helpers/zoom';
+import { automateZoomSettingsOnMusicStart } from 'src/helpers/zoom';
 import { log } from 'src/shared/vanilla';
 import { sleep } from 'src/utils/general';
 import { formatTime } from 'src/utils/time';
@@ -623,7 +619,7 @@ export const useMusicStore = defineStore('music', () => {
           'backgroundMusic',
           'info',
         );
-        stopMusic(false, 5, true);
+        stopMusic(false, 5);
         return;
       }
 
@@ -636,11 +632,7 @@ export const useMusicStore = defineStore('music', () => {
     }
   }
 
-  function stopMusic(
-    manualStop = false,
-    fadeSeconds = 5,
-    automateMeetingSettings = false,
-  ) {
+  function stopMusic(manualStop = false, fadeSeconds = 5) {
     musicStartId.value += 1;
     activeFadeId += 1;
     clearTimeout(autoStartRetryTimer);
@@ -655,9 +647,6 @@ export const useMusicStore = defineStore('music', () => {
       }
 
       musicState.value = 'music.stopping';
-      if (automateMeetingSettings) {
-        void automateZoomMeetingSettings();
-      }
       fadeToVolumeLevel(0, fadeSeconds);
     } catch (error) {
       errorCatcher(error);
@@ -934,11 +923,12 @@ export const useMusicStore = defineStore('music', () => {
   whenever(
     () => musicPlaying.value && duration.value > 0,
     () => {
+      // Each new song plays again too: only a start counts for Zoom.
+      const started = musicState.value === 'music.starting';
       musicState.value = 'music.playing';
       dismissMusicAfterMeetingPrompt?.();
       dismissMusicAfterMeetingPrompt = undefined;
-      void autoLaunchZoomMeetingIfNeeded(timeUntilMeeting.value);
-      void automateZoomPostMeetingSettings();
+      if (started) void automateZoomSettingsOnMusicStart();
     },
   );
 
@@ -1002,7 +992,7 @@ export const useMusicStore = defineStore('music', () => {
         'backgroundMusic',
         'info',
       );
-      stopMusic(false, 5, true);
+      stopMusic(false, 5);
     }
   });
 

@@ -209,28 +209,6 @@ describe('Zoom startup check', () => {
     expect(zoom.withZoomRun).not.toHaveBeenCalled();
   });
 
-  it('checks again each day while M³ stays open, opening the meeting in time', async () => {
-    vi.useFakeTimers();
-    // Wednesday evening; the meeting is on Thursday at 19:30.
-    vi.setSystemTime(new Date(2026, 9, 14, 20, 0));
-    vi.resetModules();
-    const { scheduleZoomStartupCheck } = await import('../zoom-startup-check');
-    const launch = meetingClosedUntilLaunched();
-    zoom.getMeetingStartToday.mockImplementation((now = new Date()) =>
-      now.getDate() === 15 ? new Date(2026, 9, 15, 19, 30) : null,
-    );
-
-    scheduleZoomStartupCheck();
-    await vi.advanceTimersByTimeAsync(MINUTE);
-    expect(launch).not.toHaveBeenCalled();
-
-    // Thursday, 18:10: not yet (the window opens at 18:15).
-    await vi.advanceTimersByTimeAsync((22 * 60 + 9) * MINUTE);
-    expect(launch).not.toHaveBeenCalled();
-    await vi.advanceTimersByTimeAsync(10 * MINUTE);
-    expect(launch).toHaveBeenCalledWith('123 456 7890');
-  });
-
   it('goes by the calendar date, whichever day is selected', async () => {
     const { runZoomStartupCheck } = await import('../zoom-startup-check');
     meetingClosedUntilLaunched();
@@ -256,14 +234,31 @@ describe('Zoom startup check', () => {
 
     expect(await runZoomStartupCheck()).toBe('scheduled');
     expect(launch).not.toHaveBeenCalled();
+    // Today's check is still to do.
+    expect(useZoomStateStore().checkedCongregations).toEqual([]);
 
-    // 1 h 15 min before the meeting (1 h 45 min from now), M³ checks again.
-    await vi.advanceTimersByTimeAsync(104 * MINUTE);
-    expect(launch).not.toHaveBeenCalled();
-    await vi.advanceTimersByTimeAsync(2 * MINUTE);
-    expect(launch).toHaveBeenCalledWith('123 456 7890');
+    // 1 h 15 min before the meeting, the meeting day's schedule (see
+    // zoom-meeting-day.ts) checks again.
+    meetingStartsIn(75 * MINUTE);
+    const outcome = runZoomStartupCheck();
     await vi.runAllTimersAsync();
+    expect(await outcome).toBe('passed');
+    expect(launch).toHaveBeenCalledWith('123 456 7890');
     expect(zoom.runZoomSelfTest).toHaveBeenCalledOnce();
+  });
+
+  it('waits while another automation is operating Zoom', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    const zoomState = useZoomStateStore();
+    zoomState.beginRun('zoom-run-post-meeting-sequence');
+
+    expect(await runZoomStartupCheck()).toBe('skipped');
+    expect(zoom.getZoomMeetingState).not.toHaveBeenCalled();
+    // Today's check is still to do.
+    expect(zoomState.checkedCongregations).toEqual([]);
+
+    zoomState.endRun();
+    expect(await runZoomStartupCheck()).toBe('passed');
   });
 
   it('opens the meeting before it starts, then tests what is automated', async () => {

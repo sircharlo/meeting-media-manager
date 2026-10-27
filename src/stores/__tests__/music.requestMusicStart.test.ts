@@ -43,9 +43,7 @@ vi.mock('src/helpers/notifications', () => ({
 }));
 
 vi.mock('src/helpers/zoom', () => ({
-  autoLaunchZoomMeetingIfNeeded: vi.fn(async () => undefined),
-  automateZoomMeetingSettings: vi.fn(async () => undefined),
-  automateZoomPostMeetingSettings: vi.fn(async () => undefined),
+  automateZoomSettingsOnMusicStart: vi.fn(async () => undefined),
 }));
 
 vi.mock('src/shared/vanilla', async (importOriginal) => ({

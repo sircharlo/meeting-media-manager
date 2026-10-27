@@ -252,6 +252,29 @@ describe('Zoom meeting automation', () => {
     expect(zoomCommandMock).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ['after the meeting has started', -60, true],
+    ['on a day without a meeting', null, true],
+    // Its own schedule applies them then, after the startup check.
+    ['before the meeting', 60, false],
+  ])(
+    'music starting %s (meeting in %s min) applies the before/after-meeting settings: %s',
+    async (_when, minutesToStart, applied) => {
+      currentSettings.zoomMeetingManagerAutomatePostMeetingAudioSettings = true;
+      const now = new Date(2026, 9, 15, 19, 30);
+      dateMocks.getMeetingStartToday.mockReturnValue(
+        minutesToStart === null
+          ? null
+          : new Date(now.getTime() + minutesToStart * 60_000),
+      );
+      const { automateZoomSettingsOnMusicStart } = await import('../zoom');
+
+      await automateZoomSettingsOnMusicStart(now);
+
+      expect(commandTypes().includes('leave-audio')).toBe(applied);
+    },
+  );
+
   it('skips every step when no Zoom meeting is open', async () => {
     meetingFound = false;
     const { runZoomMeetingSequence } = await import('../zoom');
@@ -550,7 +573,7 @@ describe('Zoom meeting auto-launch', () => {
     meetingFound = false;
     const { autoLaunchZoomMeetingIfNeeded } = await import('../zoom');
 
-    await autoLaunchZoomMeetingIfNeeded(600);
+    await autoLaunchZoomMeetingIfNeeded();
 
     expect(launchZoomMeetingMock).toHaveBeenCalledWith('123 456');
   });
@@ -559,7 +582,7 @@ describe('Zoom meeting auto-launch', () => {
     currentSettings.zoomMeetingManagerAutoLaunchMeeting = true;
     const { autoLaunchZoomMeetingIfNeeded } = await import('../zoom');
 
-    await autoLaunchZoomMeetingIfNeeded(600);
+    await autoLaunchZoomMeetingIfNeeded();
 
     expect(launchZoomMeetingMock).not.toHaveBeenCalled();
   });
@@ -581,7 +604,7 @@ describe('Zoom automations and the startup check', () => {
 
     await automateZoomMeetingSettings();
     expect(await automateZoomMediaSharing(true)).toBe(false);
-    await autoLaunchZoomMeetingIfNeeded(600);
+    await autoLaunchZoomMeetingIfNeeded();
 
     expect(zoomCommandMock).not.toHaveBeenCalled();
     expect(launchZoomMeetingMock).not.toHaveBeenCalled();
