@@ -498,6 +498,9 @@ namespace M3.ZoomHelper
         const string HotkeyVideo = "Alt+V";
         const string HotkeyMuteAll = "Alt+M";
         const string HotkeyParticipants = "Alt+U";
+        // Zoom's default for its plain Raise hand/Lower hand button, which it
+        // shows instead of the Reactions button on accounts without reactions.
+        const string HotkeyRaiseHand = "Alt+Y";
         // Toolbar buttons that are clearly neither Share nor React, and in two
         // cases must never be pressed to find out: End (Alt+Q) and Record
         // (Alt+R).
@@ -521,6 +524,7 @@ namespace M3.ZoomHelper
         // The Reactions button's trailing "(Ctrl+Shift+Y)", matched by shape
         // like TrailingHotkey.
         static readonly Regex ReactHotkey = new Regex(@"[(（](?:[^()（）\s+]+\+){2}Y[)）]\s*$");
+
 
         // Buttons whose tops are this close (in pixels) count as one row.
         const int RowTolerance = 8;
@@ -2166,6 +2170,153 @@ namespace M3.ZoomHelper
             return ByName(buttons, reactTitle);
         }
 
+        /// <summary>The toolbar's plain Raise hand/Lower hand button, which
+        /// Zoom shows instead of the Reactions button on accounts where
+        /// reactions are turned off: found by its shortcut (Alt+Y), since its
+        /// name is in the user's language. Null when Zoom keeps it in its
+        /// "More" menu (the toolbar being narrow) or offers Reactions.</summary>
+        static El HandToolbarButton(El window)
+        {
+            foreach (var button in ToolbarButtons(window))
+                if (HasHotkey(button.Name, HotkeyRaiseHand)) return button;
+            return null;
+        }
+
+        /// <summary>Presses Zoom's plain Raise hand/Lower hand button, named
+        /// `title`: the toolbar button, or else the "More" entry (its name is
+        /// in the user's language, learned earlier or picked by the user).
+        /// Reports the button pressed and, when it came from "More", the
+        /// entry titles before the press (its name changes with the hand's
+        /// state, see LearnHandRaised). False when Zoom has neither.</summary>
+        static bool PressHandTitle(El window, string title, out El pressed, out List<string> entriesBefore)
+        {
+            pressed = null;
+            entriesBefore = null;
+            if (string.IsNullOrEmpty(title)) return false;
+            pressed = ByName(ToolbarButtons(window), title);
+            if (pressed != null)
+            {
+                Press(pressed);
+                return true;
+            }
+            var grid = OpenMoreGrid(window);
+            if (grid == null) return false;
+            var entries = GridEntries(grid);
+            var titles = new List<string>();
+            foreach (var key in entries.Keys) titles.Add(key);
+            El entry;
+            if (!entries.TryGetValue(title, out entry))
+            {
+                CloseAll(MoreGridClass);
+                return false;
+            }
+            pressed = entry;
+            entriesBefore = titles;
+            Press(entry);
+            return true;
+        }
+
+        /// <summary>What the plain Raise hand button reads once the hand is up
+        /// ("Lower hand", in the user's language): the toolbar button at the
+        /// same place, or the "More" entry that changed names. Null if neither
+        /// can be read.</summary>
+        static string ChangedHandTitle(El window, El pressed, List<string> entriesBefore)
+        {
+            return entriesBefore == null
+                ? ChangedToolbarTitle(window, pressed)
+                : ChangedGridEntry(window, entriesBefore);
+        }
+
+        static El ToolbarButtonAt(El window, El before)
+        {
+            foreach (var button in ToolbarButtons(window))
+                if (button.Rect.left == before.Rect.left && button.Rect.top == before.Rect.top) return button;
+            return null;
+        }
+
+        static string ChangedToolbarTitle(El window, El pressed)
+        {
+            var was = FirstSegment(pressed.Name);
+            string title = null;
+            WaitUntil(() =>
+            {
+                var button = ToolbarButtonAt(window, pressed);
+                title = button == null ? null : FirstSegment(button.Name);
+                return !string.IsNullOrEmpty(title) && title != was;
+            }, 3000);
+            if (!string.IsNullOrEmpty(title) && title != was) return title;
+            // It moved into "More" meanwhile, where its shortcut isn't shown.
+            var hand = HandToolbarButton(window);
+            return hand == null ? null : FirstSegment(hand.Name);
+        }
+
+        /// <summary>The "More" menu's entry titles, the menu closed again.</summary>
+        static List<string> MoreEntryTitles(El window)
+        {
+            var titles = new List<string>();
+            var grid = OpenMoreGrid(window);
+            if (grid == null) return titles;
+            foreach (var title in GridEntries(grid).Keys) titles.Add(title);
+            CloseAll(MoreGridClass);
+            return titles;
+        }
+
+        static string ChangedGridEntry(El window, List<string> before)
+        {
+            foreach (var title in MoreEntryTitles(window))
+                if (!before.Contains(title)) return title;
+            return null;
+        }
+
+        /// <summary>Whether the entry picked or learned as Zoom's React button
+        /// is in fact its plain Raise hand button (accounts without
+        /// reactions): pressed, and a row then shows the raised hand. Whatever
+        /// else the press opened is closed again.</summary>
+        static bool TryPlainHandButton(El window, string title, Dictionary<string, string> before, out El pressed, out List<string> entriesBefore)
+        {
+            pressed = null;
+            entriesBefore = null;
+            var windows = ZoomWindows();
+            if (!PressHandTitle(window, title, out pressed, out entriesBefore)) return false;
+            string name;
+            string word;
+            if (WaitForAddedWord(window, before, 2500, out name, out word)) return true;
+            // Zoom's Reactions panel opened instead (or nothing did): closed
+            // again before trying it as the React button.
+            if (TopWindows(ReactionPanelClass, true).Count == 0) DismissNewWindows(windows);
+            return false;
+        }
+
+        /// <summary>Waits for Zoom to add one word to a participant's row, how
+        /// it marks that their hand is up in the user's language, and reports
+        /// whose row and which word. False if no row changed that way in time:
+        /// a row that gained several words at once is no hand mark.</summary>
+        static bool WaitForAddedWord(El window, Dictionary<string, string> before, int timeoutMs, out string name, out string word)
+        {
+            string foundName = null;
+            string foundWord = null;
+            var found = WaitUntil(() =>
+            {
+                foreach (var entry in MeetingRowDetails(window))
+                {
+                    string old;
+                    if (!before.TryGetValue(entry.Key, out old) || old == entry.Value) continue;
+                    var oldSegments = Segments(old);
+                    var added = new List<string>();
+                    foreach (var segment in Segments(entry.Value))
+                        if (!oldSegments.Contains(segment)) added.Add(segment);
+                    if (added.Count != 1) continue;
+                    foundWord = added[0];
+                    foundName = entry.Key;
+                    return true;
+                }
+                return false;
+            }, timeoutMs);
+            name = foundName;
+            word = foundWord;
+            return found;
+        }
+
         /// <summary>Opens Zoom's Reactions panel, the way sharing opens its
         /// picker: through the toolbar's Reactions button, else its entry in
         /// "More" (found by its name). From "More", Zoom only moves the button
@@ -2281,43 +2432,65 @@ namespace M3.ZoomHelper
         }
 
         /// <summary>Learns how Zoom marks a raised hand in the user's language:
-        /// raises the host's own hand from the Reactions panel, reads what
-        /// Zoom added to the host's row in the participants list, then lowers
-        /// it again and makes sure the words went away.</summary>
-        public static Dictionary<string, object> LearnHandRaised(string reactTitle)
+        /// raises the host's own hand, reads what Zoom added to the host's row
+        /// in the participants list, then lowers it again and makes sure the
+        /// words went away. Zoom raises hands from its Reactions panel, or
+        /// through a plain Raise hand button (in the toolbar or in "More") on
+        /// accounts where reactions are turned off, which M3 presses the same
+        /// way. `handTitle` is that button's name, learned earlier; `reactTitle`
+        /// is the React button's, or the entry the user picked, which may be
+        /// the plain button instead.</summary>
+        public static Dictionary<string, object> LearnHandRaised(string reactTitle, string handTitle)
         {
             var window = RequireMeetingWindow();
             // Looked for before the participants panel narrows the toolbar.
+            var toolbarHand = string.IsNullOrEmpty(handTitle) ? HandToolbarButton(window) : null;
             var react = ReactButton(window, reactTitle);
             if (react != null) reactTitle = FirstSegment(react.Name);
             OpenParticipantsPanel(window);
             var before = MeetingRowDetails(window);
             if (before.Count == 0) throw new ZoomActionError("participants-not-found");
-            string learnedReactTitle;
-            var raiseTitle = PressHandButton(window, reactTitle, null, out learnedReactTitle);
-            string phrase = null;
-            string name = null;
-            var raised = WaitUntil(() =>
-            {
-                foreach (var entry in MeetingRowDetails(window))
-                {
-                    string old;
-                    if (!before.TryGetValue(entry.Key, out old) || old == entry.Value) continue;
-                    var oldSegments = Segments(old);
-                    var added = new List<string>();
-                    foreach (var segment in Segments(entry.Value))
-                        if (!oldSegments.Contains(segment)) added.Add(segment);
-                    if (added.Count != 1) continue;
-                    phrase = added[0];
-                    name = entry.Key;
-                    return true;
-                }
-                return false;
-            }, 5000);
-            if (!raised) throw new ZoomActionError("hand-not-raised");
 
-            string ignored;
-            PressHandButton(window, learnedReactTitle, raiseTitle, out ignored);
+            var learnedHandTitle = string.IsNullOrEmpty(handTitle) && toolbarHand != null
+                ? FirstSegment(toolbarHand.Name)
+                : handTitle;
+            var learnedReactTitle = reactTitle;
+            string panelRaiseTitle = null;
+            El pressed = null;
+            List<string> entriesBefore = null;
+            // The plain Raise hand button, pressed by its name (trained, or
+            // found by its shortcut): no Reactions panel on these accounts.
+            var direct = PressHandTitle(window, learnedHandTitle, out pressed, out entriesBefore);
+
+            // The entry picked as React may be the plain Raise hand button.
+            if (!direct && react == null && !string.IsNullOrEmpty(reactTitle))
+            {
+                direct = TryPlainHandButton(window, reactTitle, before, out pressed, out entriesBefore);
+                if (direct) learnedHandTitle = reactTitle;
+            }
+            // Whichever raised it is the one to look for from now on.
+            if (direct) learnedReactTitle = null;
+            else learnedHandTitle = null;
+
+            if (!direct) panelRaiseTitle = PressHandButton(window, reactTitle, null, out learnedReactTitle);
+
+            string name;
+            string phrase;
+            if (!WaitForAddedWord(window, before, 5000, out name, out phrase))
+                throw new ZoomActionError("hand-not-raised");
+
+            if (direct)
+            {
+                // Its name reads "Lower hand" while the hand is up.
+                var lowerTitle = ChangedHandTitle(window, pressed, entriesBefore);
+                if (string.IsNullOrEmpty(lowerTitle) || !PressHandTitle(window, lowerTitle, out pressed, out entriesBefore))
+                    throw new ZoomActionError("hand-button-lower-not-found");
+            }
+            else
+            {
+                string ignored;
+                PressHandButton(window, learnedReactTitle, panelRaiseTitle, out ignored);
+            }
             var lowered = WaitUntil(() =>
             {
                 string now;
@@ -2328,7 +2501,12 @@ namespace M3.ZoomHelper
             // The "Lower hand" button of other people's rows (the host's own
             // row names its hand button differently) is learned from the first
             // raised hand M3 acts on.
-            return new Dictionary<string, object> { { "phrase", phrase }, { "reactButtonTitle", learnedReactTitle } };
+            return new Dictionary<string, object>
+            {
+                { "handButtonTitle", learnedHandTitle },
+                { "phrase", phrase },
+                { "reactButtonTitle", learnedReactTitle },
+            };
         }
 
         /// <summary>Who in the meeting has their hand raised, going by the words
@@ -3665,7 +3843,8 @@ namespace M3.ZoomHelper
                 case "ask-all-to-unmute": return AskAllToUnmute();
                 case "participants": return Participants();
                 case "admit": return Admit(GetStrings(request, "names"));
-                case "learn-hand-raised": return LearnHandRaised(GetString(request, "reactButtonTitle"));
+                case "learn-hand-raised":
+                    return LearnHandRaised(GetString(request, "reactButtonTitle"), GetString(request, "handRaiseTitle"));
                 case "raised-hands": return RaisedHands(GetString(request, "phrase"));
                 case "set-participant-mic":
                     return SetParticipantMic(GetString(request, "name"), GetBool(request, "on"), GetString(request, "micOnTitle"), GetString(request, "micOffTitle"), GetString(request, "lowerHandTitle"), GetString(request, "askToUnmuteTitle"), GetString(request, "phrase"));

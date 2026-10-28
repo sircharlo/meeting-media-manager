@@ -4,6 +4,7 @@ import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const currentSettings = {
+  zoomHandButtonTitle: null as null | string,
   zoomHandRaisedPhrase: null as null | string,
   zoomJoinAudioTitle: null as null | string,
   zoomLearnedVersion: null as null | string,
@@ -684,6 +685,7 @@ describe('Zoom setup assistant', () => {
 
   it("learns raised hands through Zoom's Reactions button, remembering its name", async () => {
     Object.assign(currentSettings, {
+      zoomHandButtonTitle: null,
       zoomHandRaisedPhrase: null,
       zoomReactButtonTitle: 'React',
     });
@@ -697,13 +699,55 @@ describe('Zoom setup assistant', () => {
     await learnZoomHandRaisedPhrase();
 
     expect(zoomCommandMock).toHaveBeenCalledWith({
+      handRaiseTitle: null,
       reactButtonTitle: 'React',
       titles: expect.any(Object),
       type: 'learn-hand-raised',
     });
     expect(currentSettings).toMatchObject({
+      zoomHandButtonTitle: null,
       zoomHandRaisedPhrase: 'Hand raised',
       zoomReactButtonTitle: 'Reactions',
+    });
+  });
+
+  it("learns raised hands through Zoom's plain Raise hand button", async () => {
+    Object.assign(currentSettings, {
+      zoomHandButtonTitle: null,
+      zoomHandRaisedPhrase: null,
+      zoomReactButtonTitle: 'React',
+    });
+    zoomCommandMock.mockResolvedValue({
+      handButtonTitle: 'Raise hand',
+      ok: true,
+      phrase: 'Hand raised',
+      reactButtonTitle: null,
+    });
+    const { learnZoomHandRaisedPhrase } = await import('../zoom');
+
+    await learnZoomHandRaisedPhrase('Raise hand');
+
+    expect(zoomCommandMock).toHaveBeenCalledWith({
+      handRaiseTitle: null,
+      reactButtonTitle: 'Raise hand',
+      titles: expect.any(Object),
+      type: 'learn-hand-raised',
+    });
+    // Zoom has no React button for this account: none is looked for again.
+    expect(currentSettings).toMatchObject({
+      zoomHandButtonTitle: 'Raise hand',
+      zoomHandRaisedPhrase: 'Hand raised',
+      zoomReactButtonTitle: null,
+    });
+
+    // Learning again goes by the button learned, whatever Zoom shows first.
+    zoomCommandMock.mockClear();
+    await learnZoomHandRaisedPhrase();
+    expect(zoomCommandMock).toHaveBeenCalledWith({
+      handRaiseTitle: 'Raise hand',
+      reactButtonTitle: null,
+      titles: expect.any(Object),
+      type: 'learn-hand-raised',
     });
   });
 
