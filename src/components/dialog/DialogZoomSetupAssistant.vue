@@ -972,9 +972,10 @@ const learnMic = async (micIsOn: boolean) => {
 // How Zoom marks a raised hand (and lowers one) is only known in the user's
 // Zoom language: M³ raises and lowers the host's own hand to read it.
 const handStatus = ref<Status>('pending');
-// Its hand is raised from Zoom's React button. Should M³ not find it (named
-// in the user's language, and sometimes kept in "More"), the user picks it
-// from Zoom's entries, as for Share.
+// Its hand is raised from Zoom's React button, or from Zoom's plain Raise
+// hand button where reactions are turned off for the account. Should M³ not
+// find either (named in the user's language, and sometimes kept in "More"),
+// the user picks whichever raises their hand, as for Share.
 const handReactMissing = ref(false);
 const handEntries = ref<{ more: string[]; toolbar: string[] }>({
   more: [],
@@ -1010,7 +1011,7 @@ const handStatusText = computed(() => {
   return t('zoom-setup-hand-failed');
 });
 
-/** Learns raised hands through a React entry (the remembered one if none). */
+/** Learns raised hands through a React or Raise hand entry (the remembered ones if none). */
 const runHandLearning = async (reactEntry?: string) => {
   handStatus.value = 'running';
   const result = await withoutZoomFeedback(() =>

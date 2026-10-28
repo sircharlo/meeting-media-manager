@@ -352,6 +352,8 @@ export interface SettingsValues {
   zoomAutoFocusMediaWindow: boolean;
   zoomCancelAutomationShortcut: null | string;
   zoomEnable: boolean;
+  /** Zoom's plain Raise hand button, on accounts where reactions are off. */
+  zoomHandButtonTitle: null | string;
   zoomHandRaisedPhrase: null | string;
   zoomJoinAudioTitle: null | string;
   /** Zoom's version when the learned names last passed a check. */

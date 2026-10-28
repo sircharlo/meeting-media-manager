@@ -548,9 +548,11 @@ describe('DialogZoomSetupAssistant', () => {
     await click('Raise and lower my hand');
     expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenLastCalledWith(undefined);
     // Asking is expected, not reported as an error.
-    expect(text()).toContain('M³ needs your help to find its React button');
-    expect(text()).not.toContain("That didn't open Zoom's reactions");
-    expect(text()).toContain("Which of these opens Zoom's reactions?");
+    expect(text()).toContain(
+      'M³ needs your help to find the button that raises your hand',
+    );
+    expect(text()).not.toContain("That didn't raise your hand");
+    expect(text()).toContain('Which of these raises your hand in Zoom?');
     // React is asked for once Zoom has moved it into "More": listed first.
     expect(text().indexOf('In Zoom\'s "More" menu')).toBeLessThan(
       text().indexOf("In Zoom's toolbar"),
@@ -568,12 +570,12 @@ describe('DialogZoomSetupAssistant', () => {
 
     await pick('Partager');
     expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenLastCalledWith('Partager');
-    expect(text()).toContain("That didn't open Zoom's reactions");
+    expect(text()).toContain("That didn't raise your hand");
 
     await pick('Réagir');
     expect(zoom.learnZoomHandRaisedPhrase).toHaveBeenLastCalledWith('Réagir');
     expect(text()).toContain('recognizes raised hands (“Main levée”)');
-    expect(text()).not.toContain("Which of these opens Zoom's reactions?");
+    expect(text()).not.toContain('Which of these raises your hand in Zoom?');
     expect(isDisabled(button('Continue'))).toBe(false);
   });
 

@@ -734,6 +734,16 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomMeetingManager',
     type: 'toggle',
   },
+  // Zoom's plain Raise hand button, on accounts where reactions are turned
+  // off and Zoom shows that button instead of its React one.
+  zoomHandButtonTitle: {
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    hidden: true,
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'text',
+  },
   zoomHandRaisedPhrase: {
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
@@ -1298,6 +1308,7 @@ export const defaultSettings: SettingsValues = {
   zoomAutoFocusMediaWindow: false,
   zoomCancelAutomationShortcut: 'Ctrl+Alt+Escape',
   zoomEnable: false,
+  zoomHandButtonTitle: null,
   zoomHandRaisedPhrase: null,
   zoomJoinAudioTitle: null,
   zoomLearnedVersion: null,
