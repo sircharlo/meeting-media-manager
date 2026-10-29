@@ -163,7 +163,7 @@ El botón **Aviso de mano levantada** en la ventana emergente del cronómetro mu
 
 #### El cronómetro en una tableta {#user-guide-timer-remote}
 
-El [control remoto del cronómetro](/settings-guide#timer-remote) opcional sirve una copia de solo lectura de la pantalla del cronómetro como página web en tu red local. Abre la dirección que se muestra en la ventana emergente del cronómetro en el navegador de una tableta o teléfono en el atril, y el discursante verá el tiempo restante de forma privada mientras todos los controles permanecen en M³.
+El [control remoto del cronómetro](/settings-guide#timer-remote) opcional sirve una copia de solo lectura de la pantalla del cronómetro como página web en tu red local. Abre la dirección que se muestra en la ventana emergente del cronómetro en el navegador de una tableta o teléfono en el atril, y el discursante verá el tiempo restante de forma privada mientras todos los controles permanecen en M³. Its optional focus layout shows the time in a progress ring, with the names of Zoom participants who raised their hand listed beside it. The page also keeps the tablet's screen awake while it's open, so it doesn't lock mid-part.
 
 #### Acceso rápido {#user-guide-timer-quick-access}
 
