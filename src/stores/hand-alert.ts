@@ -7,7 +7,7 @@ import { defineStore } from 'pinia';
 interface Store {
   /** Switched on by the operator, whatever Zoom says. */
   manual: boolean;
-  /** Participants Zoom reports with a raised hand, in list order. */
+  /** Participants Zoom reports with a raised hand, in the order they raised them. */
   raisedHands: string[];
 }
 
@@ -19,10 +19,17 @@ export const useHandAlertStore = defineStore('hand-alert', {
     },
     setRaisedHands(names: string[]) {
       const unique = [...new Set(names)];
+      // Keep the order hands went up in: a hand still raised stays where it
+      // was, and newcomers join at the end, whatever order Zoom happens to
+      // list its participants in.
+      const next = [
+        ...this.raisedHands.filter((name) => unique.includes(name)),
+        ...unique.filter((name) => !this.raisedHands.includes(name)),
+      ];
       const same =
-        unique.length === this.raisedHands.length &&
-        unique.every((name, index) => this.raisedHands[index] === name);
-      if (!same) this.raisedHands = unique;
+        next.length === this.raisedHands.length &&
+        next.every((name, index) => this.raisedHands[index] === name);
+      if (!same) this.raisedHands = next;
     },
     toggleManual() {
       this.manual = !this.manual;

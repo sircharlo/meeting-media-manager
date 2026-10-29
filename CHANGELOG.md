@@ -6,9 +6,14 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ## UPCOMING VERSION
 
+### ✨ New Features
+
+- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+
 ### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Zoom Meeting Manager**: M³ can now raise and lower your hand on Zoom accounts where reactions are turned off. Zoom then replaces its React button with a plain "Raise hand" button, in its toolbar or in the "More" menu, which M³ couldn't learn raised hands with before: it now goes through whichever button raises your hand, and when it can't find either, the setup assistant asks you which one it is, listing both. The button is remembered by its name, so learning again goes straight to it.
+- 🛠️ **Timer Remote**: The page keeps the tablet or phone at the lectern awake while it's open, so the screen doesn't lock during a part. It uses the browser's wake lock where the page is allowed to, with a silent looping video as the fallback where it isn't.
 
 ## v26.10.2
 
