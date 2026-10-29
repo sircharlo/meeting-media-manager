@@ -163,7 +163,7 @@ Dans la fenêtre contextuelle du minuteur, le bouton **Alerte main levée** fait
 
 #### Minuteur sur tablette {#user-guide-timer-remote}
 
-Le [minuteur à distance](/settings-guide#timer-remote), une fonction facultative, diffuse une copie en lecture seule de l'affichage du minuteur sous forme de page web sur votre réseau local. Ouvrez, dans le navigateur d'une tablette ou d'un téléphone placé au pupitre, l'adresse indiquée dans la fenêtre contextuelle du minuteur : l'orateur voit alors le temps restant en toute discrétion, tandis que toutes les commandes restent dans M³.
+Le [minuteur à distance](/settings-guide#timer-remote), une fonction facultative, diffuse une copie en lecture seule de l'affichage du minuteur sous forme de page web sur votre réseau local. Ouvrez, dans le navigateur d'une tablette ou d'un téléphone placé au pupitre, l'adresse indiquée dans la fenêtre contextuelle du minuteur : l'orateur voit alors le temps restant en toute discrétion, tandis que toutes les commandes restent dans M³. Its optional focus layout shows the time in a progress ring, with the names of Zoom participants who raised their hand listed beside it. The page also keeps the tablet's screen awake while it's open, so it doesn't lock mid-part.
 
 #### Accès rapide {#user-guide-timer-quick-access}
 
