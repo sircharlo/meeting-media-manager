@@ -483,9 +483,13 @@ Válassza ki, hogyan érhető el az időzítő a főablakból:
 
 ### Távoli időzítő {#timer-remote}
 
-<!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
+<!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->
 
 Ha be van kapcsolva, az M³ a helyi hálózaton weboldalként teszi elérhetővé az időzítő kijelzőjének csak olvasható másolatát a pulpitusnál lévő táblagép vagy telefon számára: így az előadó látja a hátralévő időt anélkül, hogy az megjelenne a gyülekezet kijelzőjén vagy a Zoom-megosztásban. Az oldal valós időben követi az időzítőt, beleértve az összejövetel előtti visszaszámlálást, az órát, az időtúllépés színeit és a kézfelemelés-jelzést, a vezérlők pedig mind az M³-ban maradnak.
+
+With **Focus layout for the timer remote** on, the page shows the time in a large progress ring instead: teal while there's time to spare, yellow in the last minute, then red with the amount of overtime (`+02:18`). The Zoom participants whose hand is raised are listed beside it, in the order they raised them, with the first four by name and a count of the rest, and each new hand flashes a "Hand raised" banner for a few seconds while the hands stay listed. The default display remains the plain large time.
+
+While the page is open, it keeps the device's screen awake, so a tablet at the lectern doesn't lock or dim mid-part. Where the browser doesn't allow that on the page's plain-HTTP address, it plays a silent video to hold the screen on instead.
 
 Az eszközön megnyitandó címek az időzítő felugró ablakában vannak felsorolva, egy másolás gombbal együtt. A portot csak akkor módosítsa, ha egy másik program már használja. Vegye figyelembe, hogy amíg ez be van kapcsolva, ugyanazon a hálózaton bárki megnyithatja az oldalt; az oldal azonban csak az időzítőt mutatja.
 
