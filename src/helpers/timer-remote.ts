@@ -13,9 +13,11 @@ const t = (key: string) => (i18n.global.t as (key: string) => string)(key);
 
 const getPageText = (): Record<string, string> => ({
   elapsed: t('elapsed'),
+  handRaised: t('hand-raised'),
   lang: i18n.global.locale.value,
   meetingStartsIn: t('meeting-starts-in'),
   paused: t('paused'),
+  raisedHands: t('raised-hands'),
   reconnecting: t('timer-remote-reconnecting'),
   remaining: t('remaining'),
 });
@@ -61,7 +63,12 @@ const applySettings = async () => {
   }
 
   globalThis.electronApi.timerRemoteText(getPageText());
-  if (runningPort === wanted) return;
+  if (runningPort === wanted) {
+    // A setting that only changes what the page draws needs no restart:
+    // push the current state so an idle page picks it up too.
+    if (wanted !== null) useTimer().updateTimerWindow();
+    return;
+  }
 
   const status = await globalThis.electronApi.startTimerRemote(wanted);
   if (!status.running) {

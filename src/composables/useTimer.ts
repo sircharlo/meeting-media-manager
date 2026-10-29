@@ -836,6 +836,7 @@ const createTimer = () => {
         currentSettings.value?.timerOvertimeShowAmountOnly,
       timerOvertimeTextColor: currentSettings.value?.timerOvertimeTextColor,
       timerPartTargetSeconds: getPartDurationSeconds(currentPart.value),
+      timerRemoteFocusLayout: currentSettings.value?.timerRemoteFocusLayout,
       timerTextColor: currentSettings.value?.timerTextColor,
       timerTextSize: currentSettings.value?.timerTextSize,
       timerTimeOfDayDisplay: currentSettings.value?.timerTimeOfDayDisplay,

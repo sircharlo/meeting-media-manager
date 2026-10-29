@@ -83,6 +83,7 @@ export interface TimerData {
   timerOvertimeTextColor?: string;
   /** The planned length of the part being timed, in both timer modes. */
   timerPartTargetSeconds?: number;
+  timerRemoteFocusLayout?: boolean;
   timerTextColor?: string;
   timerTextSize?: string;
   timerTimeOfDayDisplay?: TimerTimeOfDayDisplay;

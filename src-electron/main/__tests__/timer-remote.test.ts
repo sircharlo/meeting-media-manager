@@ -94,10 +94,23 @@ describe('timer remote', () => {
     expect(page.body).toContain('lang="fr"');
     expect(page.body).toContain('La réunion commence dans');
     expect(page.body).toContain('/app.js');
+    expect(page.body).toContain('id="awake"');
 
     expect((await get(port, '/app.js')).response.status).toBe(200);
     expect((await get(port, '/app.css')).response.status).toBe(200);
     expect((await get(port, '/nope')).response.status).toBe(404);
+
+    // The silent clip the page plays when Wake Lock isn't available.
+    const clip = await fetch(`http://127.0.0.1:${port}/awake.mp4`);
+    expect(clip.status).toBe(200);
+    expect(clip.headers.get('content-type')).toBe('video/mp4');
+    expect(clip.headers.get('content-security-policy')).toContain(
+      "media-src 'self'",
+    );
+    const clipBytes = new Uint8Array(await clip.arrayBuffer());
+    expect(clipBytes.byteLength).toBeGreaterThan(1000);
+    // A real MP4 starts with a 4-byte box size, then "ftyp".
+    expect(new TextDecoder().decode(clipBytes.slice(4, 8))).toBe('ftyp');
 
     updateTimerRemote({
       mode: 'countdown',
@@ -118,10 +131,27 @@ describe('timer remote', () => {
 
     const page = await get(port, '/');
     expect(page.body).toMatch(/<div id="hand" class="hand" hidden>/);
-    // .hand sets display: flex, which beats the browser's own [hidden] rule.
+    expect(page.body).toMatch(/<aside id="hands" class="hands" hidden>/);
+    // .hand and .hands set display: flex, which beats the browser's own [hidden] rule.
     const css = (await get(port, '/app.css')).body;
     expect(css).toMatch(/\.hand \{[^}]*display: flex/);
+    expect(css).toMatch(/\.hands \{[^}]*display: flex/);
     expect(css).toMatch(/\[hidden\] \{ display: none !important; \}/);
+  });
+
+  it('serves the focus layout: a progress ring, and the raised hands beside it', async () => {
+    const { startTimerRemote } = await import('../timer-remote');
+    const port = await freePort();
+    await startTimerRemote(port);
+
+    const page = (await get(port, '/')).body;
+    expect(page).toContain('id="ringProgress"');
+    expect(page).toContain('id="handBanner"');
+    expect(page).toContain('id="handList"');
+
+    const css = (await get(port, '/app.css')).body;
+    expect(css).toMatch(/\.display\.focus\.has-hands \{ padding-right:/);
+    expect(css).toMatch(/\.hand-banner\.flash \{ animation:/);
   });
 
   it('reports a port already in use', async () => {
