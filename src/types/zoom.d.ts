@@ -31,6 +31,12 @@ export interface ZoomCommandResult {
   entries?: string[];
   /** A short machine-readable reason, e.g. `meeting-not-found`. */
   error?: string;
+  /**
+   * `learn-hand-raised`: Zoom's plain Raise hand button's name (in the
+   * toolbar or its "More" menu), on accounts where reactions are turned off
+   * and Zoom shows that button instead of its React button.
+   */
+  handButtonTitle?: null | string;
   /** `test-mute-all-entry`: whether the entry picked asked to confirm muting everyone. */
   isMuteAll?: boolean;
   /** `window-layout`: where Zoom's meeting windows are. */
@@ -349,6 +355,15 @@ export interface ZoomWindowState {
 
 type ZoomCommandBody =
   | {
+      /**
+       * Zoom's plain Raise hand button's name, once learned (accounts without
+       * reactions, where Zoom shows that button instead of React).
+       */
+      handRaiseTitle: null | string;
+      reactButtonTitle: null | string;
+      type: 'learn-hand-raised';
+    }
+  | {
       /** The "Ask to unmute" button name once learned. */
       askToUnmuteTitle: null | string;
       /** The "Lower hand" button name once learned. */
@@ -407,7 +422,6 @@ type ZoomCommandBody =
       type: 'set-video';
     }
   | { phrase: null | string; type: 'raised-hands' }
-  | { reactButtonTitle: null | string; type: 'learn-hand-raised' }
   | { reveal?: boolean; type: 'meeting' }
   | {
       shareButtonTitle: null | string;
