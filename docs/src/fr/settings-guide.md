@@ -483,9 +483,13 @@ Choisissez comment accéder au minuteur depuis la fenêtre principale :
 
 ### Minuteur à distance {#timer-remote}
 
-<!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
+<!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->
 
 Lorsque cette option est activée, M³ diffuse une copie en lecture seule de l'affichage du minuteur sous forme de page web sur votre réseau local, pour une tablette ou un téléphone au pupitre : l'orateur voit le temps restant sans que celui-ci apparaisse sur l'écran de l'assemblée locale ou dans un partage Zoom. La page suit le minuteur en temps réel, y compris le compte à rebours avant la réunion, l'horloge, les couleurs de dépassement de temps et l'alerte main levée ; toutes les commandes restent dans M³.
+
+With **Focus layout for the timer remote** on, the page shows the time in a large progress ring instead: teal while there's time to spare, yellow in the last minute, then red with the amount of overtime (`+02:18`). The Zoom participants whose hand is raised are listed beside it, in the order they raised them, with the first four by name and a count of the rest, and each new hand flashes a "Hand raised" banner for a few seconds while the hands stay listed. The default display remains the plain large time.
+
+While the page is open, it keeps the device's screen awake, so a tablet at the lectern doesn't lock or dim mid-part. Where the browser doesn't allow that on the page's plain-HTTP address, it plays a silent video to hold the screen on instead.
 
 Les adresses à ouvrir sur l'appareil sont indiquées dans la fenêtre contextuelle du minuteur, avec un bouton pour les copier. Ne modifiez le port que si un autre programme l'utilise déjà. Notez que, tant que cette option est activée, toute personne se trouvant sur le même réseau peut ouvrir la page ; celle-ci n'affiche toutefois que le minuteur.
 
