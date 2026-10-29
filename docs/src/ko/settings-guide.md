@@ -483,9 +483,13 @@ M³는 공유 폴더 안에 예정된 집회마다 폴더를 만들고, 집회 �
 
 ### 원격 타이머 {#timer-remote}
 
-<!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
+<!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->
 
 이 기능을 켜면 M³가 연단에 있는 태블릿이나 휴대폰에서 볼 수 있도록 타이머 화면을 읽기 전용 웹 페이지로 로컬 네트워크에 제공합니다. 연사는 남은 시간을 볼 수 있지만, 이 시간은 회중이 보는 화면이나 Zoom 공유 화면에는 표시되지 않습니다. 이 페이지는 집회 시작 전 카운트다운, 시계, 시간 초과 색상, 손 들기 알림을 포함하여 타이머를 실시간으로 따라가며, 모든 제어는 그대로 M³에서 합니다.
+
+With **Focus layout for the timer remote** on, the page shows the time in a large progress ring instead: teal while there's time to spare, yellow in the last minute, then red with the amount of overtime (`+02:18`). The Zoom participants whose hand is raised are listed beside it, in the order they raised them, with the first four by name and a count of the rest, and each new hand flashes a "Hand raised" banner for a few seconds while the hands stay listed. The default display remains the plain large time.
+
+While the page is open, it keeps the device's screen awake, so a tablet at the lectern doesn't lock or dim mid-part. Where the browser doesn't allow that on the page's plain-HTTP address, it plays a silent video to hold the screen on instead.
 
 기기에서 열 주소는 복사 버튼과 함께 타이머 팝업에 표시됩니다. 다른 프로그램이 이미 포트를 사용하고 있는 경우에만 포트를 변경하십시오. 이 기능이 켜져 있는 동안에는 같은 네트워크에 있는 누구나 이 페이지를 열 수 있지만, 페이지에는 타이머만 표시됩니다.
 
