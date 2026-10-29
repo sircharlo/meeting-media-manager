@@ -483,9 +483,13 @@ M³ 会在共享文件夹中为每个即将举行的聚会创建一个文件夹�
 
 ### 远程计时器 {#timer-remote}
 
-<!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
+<!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->
 
 开启后，M³ 会在本地网络上以网页形式提供计时器显示的只读副本，供讲台上的平板电脑或手机使用：讲者可以看到剩余时间，而这些时间不会显示在会众的屏幕上或 Zoom 共享画面中。该网页会实时跟随计时器，包括聚会开始前的倒计时、时钟、超时颜色和举手提示，所有控制仍保留在 M³ 中。
+
+With **Focus layout for the timer remote** on, the page shows the time in a large progress ring instead: teal while there's time to spare, yellow in the last minute, then red with the amount of overtime (`+02:18`). The Zoom participants whose hand is raised are listed beside it, in the order they raised them, with the first four by name and a count of the rest, and each new hand flashes a "Hand raised" banner for a few seconds while the hands stay listed. The default display remains the plain large time.
+
+While the page is open, it keeps the device's screen awake, so a tablet at the lectern doesn't lock or dim mid-part. Where the browser doesn't allow that on the page's plain-HTTP address, it plays a silent video to hold the screen on instead.
 
 要在设备上打开的地址会列在计时器弹出窗口中，并附有复制按钮。只有在其他程序已占用该端口时才需要更改端口。请注意，开启此功能时，同一网络上的任何人都可以打开该网页；网页上只显示计时器。
 

@@ -163,7 +163,7 @@ Um botão **Alerta de mão levantada** no pop-up do temporizador mostra uma mão
 
 #### Temporizador em um tablet {#user-guide-timer-remote}
 
-O [temporizador remoto](/settings-guide#timer-remote) opcional disponibiliza uma cópia somente leitura da tela do temporizador como uma página web na sua rede local. Abra o endereço mostrado no pop-up do temporizador no navegador de um tablet ou celular na tribuna, e o orador verá o tempo restante de forma discreta, enquanto todos os controles continuam no M³.
+O [temporizador remoto](/settings-guide#timer-remote) opcional disponibiliza uma cópia somente leitura da tela do temporizador como uma página web na sua rede local. Abra o endereço mostrado no pop-up do temporizador no navegador de um tablet ou celular na tribuna, e o orador verá o tempo restante de forma discreta, enquanto todos os controles continuam no M³. Its optional focus layout shows the time in a progress ring, with the names of Zoom participants who raised their hand listed beside it. The page also keeps the tablet's screen awake while it's open, so it doesn't lock mid-part.
 
 #### Acesso rápido {#user-guide-timer-quick-access}
 

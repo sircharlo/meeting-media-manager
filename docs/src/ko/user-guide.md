@@ -163,7 +163,7 @@ M³에 누락된 미디어가 있다고 표시되면 먼저 해당 항목이 집
 
 #### 태블릿에서 타이머 보기 {#user-guide-timer-remote}
 
-선택 기능인 [원격 타이머](/settings-guide#timer-remote)는 타이머 화면을 읽기 전용 웹 페이지로 로컬 네트워크에 제공합니다. 연단에 있는 태블릿이나 휴대폰의 브라우저에서 타이머 팝업에 표시된 주소를 열면 연사만 남은 시간을 볼 수 있으며, 모든 제어는 그대로 M³에서 합니다.
+선택 기능인 [원격 타이머](/settings-guide#timer-remote)는 타이머 화면을 읽기 전용 웹 페이지로 로컬 네트워크에 제공합니다. 연단에 있는 태블릿이나 휴대폰의 브라우저에서 타이머 팝업에 표시된 주소를 열면 연사만 남은 시간을 볼 수 있으며, 모든 제어는 그대로 M³에서 합니다. Its optional focus layout shows the time in a progress ring, with the names of Zoom participants who raised their hand listed beside it. The page also keeps the tablet's screen awake while it's open, so it doesn't lock mid-part.
 
 #### 빠른 접근 {#user-guide-timer-quick-access}
 

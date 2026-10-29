@@ -163,7 +163,7 @@ Taimeri hüpikakna nupp **Käetõstmise märguanne** näitab taimeri ekraanil su
 
 #### Taimer tahvelarvutis {#user-guide-timer-remote}
 
-Valikuline [taimeri kaugkuva](/settings-guide#timer-remote) pakub kohalikus võrgus veebilehena taimeri kuva koopiat, mida saab ainult vaadata. Ava taimeri hüpikaknas näidatud aadress kõnepuldi juures oleva tahvelarvuti või telefoni brauseris – nii näeb kõneleja järelejäänud aega privaatselt, kuid kõik juhtnupud jäävad M³-sse.
+Valikuline [taimeri kaugkuva](/settings-guide#timer-remote) pakub kohalikus võrgus veebilehena taimeri kuva koopiat, mida saab ainult vaadata. Ava taimeri hüpikaknas näidatud aadress kõnepuldi juures oleva tahvelarvuti või telefoni brauseris – nii näeb kõneleja järelejäänud aega privaatselt, kuid kõik juhtnupud jäävad M³-sse. Its optional focus layout shows the time in a progress ring, with the names of Zoom participants who raised their hand listed beside it. The page also keeps the tablet's screen awake while it's open, so it doesn't lock mid-part.
 
 #### Kiirjuurdepääs {#user-guide-timer-quick-access}
 

@@ -483,9 +483,13 @@ A fa’anaho i te huru o te ha’amāramarama tāime: ia ’īrava ’ōpani-’
 
 ### Haapa'oraa taime mai te ātea {#timer-remote}
 
-<!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
+<!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->
 
 ’Ia fa’atupuhia, e hōro’a M³ i te hō’ē hōho’a ta’io-noa o te tapura hora mai te hō’ē ’api itenati i ni’a i tō ’oe reni itenati nō te fare, nō te hō’ē tablet ’aore rā te hō’ē niuniu i te ’amura’i ’ōrero: e ’ite te ’ōrero i te taime e toe ra ma te ’ore e fa’aitehia i ni’a i te paruai o te amuiraa ’aore rā i roto i te ’ōperera’a Zoom. E pe’e te ’api i te fa’atere-hora i te taime mau, ’oia ato’a te taime fa’ataime hou te putuputura’a, te uati, te mau ’ū o te taime hau ’e te tapao rima, ’e e vai noa te mau fa’aterera’a ato’a i roto ia M³.
+
+With **Focus layout for the timer remote** on, the page shows the time in a large progress ring instead: teal while there's time to spare, yellow in the last minute, then red with the amount of overtime (`+02:18`). The Zoom participants whose hand is raised are listed beside it, in the order they raised them, with the first four by name and a count of the rest, and each new hand flashes a "Hand raised" banner for a few seconds while the hands stay listed. The default display remains the plain large time.
+
+While the page is open, it keeps the device's screen awake, so a tablet at the lectern doesn't lock or dim mid-part. Where the browser doesn't allow that on the page's plain-HTTP address, it plays a silent video to hold the screen on instead.
 
 Tē fa’aitehia ra te mau vāhi e ’iriti i ni’a i te mātini i roto i te ha’amāramarama iti o te fa’atere-hora, ma te hō’ē pitopito nō te hāmani hōho’a. ’A taui i te uputa ana’e mai te peu e te fa’a’ohipa ra te tahi atu porotarama i te reira. ’A ha’amana’o ē, e nehenehe te ta’ata ato’a i ni’a i taua reni itenati ra e ’iriti i te ’api ’a fa’atupuhia ai teie; ’aita e mea ’ē atu i ni’a iho maori rā te fa’atere-hora.
 
