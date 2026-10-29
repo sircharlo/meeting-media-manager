@@ -487,9 +487,9 @@ M³ створює у спільній папці папку для кожног
 
 Якщо цю функцію ввімкнено, M³ показує копію екрана таймера (лише для перегляду) як вебсторінку у вашій локальній мережі для планшета чи телефона на кафедрі: промовець бачить, скільки часу залишилося, але цього не видно ні на екрані для збору, ні в демонстрації в Zoom. Сторінка в реальному часі повторює таймер, зокрема відлік до початку зібрання, годинник, кольори перевищення часу та сигнал піднятої руки, а всі елементи керування залишаються в M³.
 
-With **Focus layout for the timer remote** on, the page shows the time in a large progress ring instead: teal while there's time to spare, yellow in the last minute, then red with the amount of overtime (`+02:18`). The Zoom participants whose hand is raised are listed beside it, in the order they raised them, with the first four by name and a count of the rest, and each new hand flashes a "Hand raised" banner for a few seconds while the hands stay listed. The default display remains the plain large time.
+Коли ввімкнено **режим фокусування віддаленого таймера**, сторінка показує час у великому кільці прогресу: бірюзовим, поки час є, жовтим останньої хвилини, а потім червоним із зазначенням перепрацювання (`+02:18`). Учасники Zoom, які підняли руку, перелічуються поруч у тому порядку, у якому вони це зробили: перші чотири — за іменем, решта — числом; кожна нова рука на кілька секунд викликає появу банера «Руку піднято», поки список рук залишається на екрані. Типовим залишається простий великий час.
 
-While the page is open, it keeps the device's screen awake, so a tablet at the lectern doesn't lock or dim mid-part. Where the browser doesn't allow that on the page's plain-HTTP address, it plays a silent video to hold the screen on instead.
+Поки сторінка відкрита, вона не дає екрану пристрою згаснути, щоб планшет на кафедрі не блокувався й не тьмянів посеред частини. Там, де браузер не дозволяє це на звичайній HTTP-адресі сторінки, вона натомість відтворює беззвучне відео, щоб екран залишався ввімкненим.
 
 Адреси, які потрібно відкрити на пристрої, перелічено в спливному вікні таймера разом із кнопкою копіювання. Змінюйте порт, лише якщо його вже використовує інша програма. Зверніть увагу: поки цю функцію ввімкнено, сторінку може відкрити будь-хто в тій самій мережі; на ній показано лише таймер.
 

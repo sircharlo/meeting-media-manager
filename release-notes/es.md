@@ -81,7 +81,7 @@ Para ver la lista completa de cambios entre versiones, consulta nuestro archivo 
 - ✨ **Reproducción de audio vinculado**: Se añadió compatibilidad para reproducir el audio de un archivo junto con el video de otro archivo. Esto puede ser útil para reproducir presentaciones de video con música de acompañamiento.
 - ✨ **Diseños de archivos multimedia supervisados**: Se añadió persistencia para los elementos multimedia supervisados y el orden de las secciones entre carpetas supervisadas. Esto garantiza que la lista de archivos multimedia se muestre de la misma manera incluso cuando la carpeta supervisada se sincroniza entre dispositivos.
 
-## v26 6.1
+## v26.6.1
 
 ### ✨ Nuevas funciones
 
@@ -90,7 +90,7 @@ Para ver la lista completa de cambios entre versiones, consulta nuestro archivo 
 - ✨ **Filtrar configuración**: Se añadió un cuadro de filtro a la página de configuración que te permite encontrar opciones por palabra clave o categoría. Para usarlo, simplemente haz clic en el botón Buscar de la esquina superior derecha de la página de configuración o usa el atajo de teclado estándar para buscar (Ctrl+F o Cmd+F).
 - ✨ **Advertencia por superposición de música de fondo**: Se añadió una notificación de advertencia cuando se inician archivos multimedia mientras se reproduce música de fondo. Los usuarios pueden elegir detener la música de fondo desde la notificación.
 
-## v26.6
+## v26.6.0
 
 ### ✨ Nuevas funciones
 

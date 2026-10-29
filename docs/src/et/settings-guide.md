@@ -487,9 +487,9 @@ Vali, kuidas põhiaknast taimerini jõuda:
 
 Kui see on sisse lülitatud, pakub M³ kohalikus võrgus veebilehena taimeri kuva koopiat, mida saab ainult vaadata, kõnepuldi juures olevale tahvelarvutile või telefonile: kõneleja näeb järelejäänud aega, ilma et see oleks koguduse ekraanil või Zoomi jagamises. Leht järgib taimerit reaalajas, sealhulgas koosoleku-eelset loendust, kella, ajaületuse värve ja käetõstmise märguannet, ning kõik juhtnupud jäävad M³-sse.
 
-With **Focus layout for the timer remote** on, the page shows the time in a large progress ring instead: teal while there's time to spare, yellow in the last minute, then red with the amount of overtime (`+02:18`). The Zoom participants whose hand is raised are listed beside it, in the order they raised them, with the first four by name and a count of the rest, and each new hand flashes a "Hand raised" banner for a few seconds while the hands stay listed. The default display remains the plain large time.
+Kui **taimeri kaugkuva fookusvaade** on sisse lülitatud, kuvab leht aega suure edenemisrõngana: türkiissininen, kuni aega jätkub, kollane viimasel minutil ja seejärel punane üleaja näiduga (`+02:18`). Zoomi osalejad, kes on käe tõstnud, loetletakse selle kõrval järjekorras, nagu nad seda tegid; esimesed neli nimepidi ja ülejäänud arvuna ning iga uus käsi vilgutab paariks sekundiks „Käsi tõstetud“ bännerit, samal ajal kui käed jäävad loendisse. Vaikevaade on endiselt lihtne suur aeg.
 
-While the page is open, it keeps the device's screen awake, so a tablet at the lectern doesn't lock or dim mid-part. Where the browser doesn't allow that on the page's plain-HTTP address, it plays a silent video to hold the screen on instead.
+Kui leht on avatud, hoiab see seadme ekraani ärkvel, nii et kõnepuldi tahvelarvuti ei lülitu programmi keskel lukku ega tuhmu. Kui brauser ei luba seda lehe tavalisel HTTP-aadressil, esitab see ekraani sisselülitamiseks vaikse video.
 
 Seadmes avatavad aadressid on loetletud taimeri hüpikaknas koos kopeerimisnupuga. Muuda porti ainult siis, kui mõni teine programm seda juba kasutab. Pea meeles, et kui see on sisse lülitatud, saab lehte avada igaüks samas võrgus; sellel ei ole midagi peale taimeri.
 
