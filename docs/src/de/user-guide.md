@@ -163,7 +163,7 @@ Eine Schaltfläche **Handsignal** im Timer-Popup zeigt eine große Hand auf der 
 
 #### Timer auf einem Tablet {#user-guide-timer-remote}
 
-Die optionale [Timer-Fernanzeige](/settings-guide#timer-remote) stellt die Timer-Anzeige als reine Ansicht auf einer Webseite in Ihrem lokalen Netzwerk bereit. Öffnen Sie die im Timer-Popup angezeigte Adresse im Browser eines Tablets oder Smartphones am Rednerpult, dann sieht der Redner die verbleibende Zeit für sich, während die gesamte Steuerung in M³ bleibt. Its optional focus layout shows the time in a progress ring, with the names of Zoom participants who raised their hand listed beside it. The page also keeps the tablet's screen awake while it's open, so it doesn't lock mid-part.
+Die optionale [Timer-Fernanzeige](/settings-guide#timer-remote) stellt die Timer-Anzeige als reine Ansicht auf einer Webseite in Ihrem lokalen Netzwerk bereit. Öffnen Sie die im Timer-Popup angezeigte Adresse im Browser eines Tablets oder Smartphones am Rednerpult, dann sieht der Redner die verbleibende Zeit für sich, während die gesamte Steuerung in M³ bleibt. Ihre optionale Fokusansicht zeigt die Zeit in einem Fortschrittsring und listet daneben die Namen der Zoom-Teilnehmer auf, die die Hand erhoben haben. Die Seite hält außerdem den Bildschirm des Tablets wach, solange sie geöffnet ist, damit er während eines Programmpunkts nicht sperrt.
 
 #### Schnellzugriff {#user-guide-timer-quick-access}
 
