@@ -4,7 +4,7 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
-## VERSION À VENIR
+## v26.10.2
 
 ### ✨ Nouvelles fonctionnalités
 
