@@ -23,6 +23,8 @@ import {
 import url from 'node:url';
 import { PLATFORM } from 'src-electron/constants';
 import { capturePreloadError } from 'src-electron/preload/log';
+import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
+import { log } from 'src/shared/vanilla';
 import { join, normalize } from 'upath';
 
 // Short-circuits before the IPC round-trip on non-macOS - this runs ahead
@@ -155,20 +157,52 @@ export const fileUrlToPath = (fileurl?: string) => {
   return normalize(url.fileURLToPath(fileurl));
 };
 
-export const hideFileOnWindows = async (filePath: string) => {
-  if (PLATFORM !== 'win32' || !filePath) return;
+// `attrib` lives in System32, and spawning it by bare name only resolves it
+// through PATH: one machine where that failed reported an ENOENT per marker
+// file (`spawn attrib ENOENT`, MMM-V2-3N0/3N1). Call it by full path and,
+// when even that can't be spawned, stop trying for the rest of the session
+// instead of repeating the failure for every file.
+const getAttribCommand = () => {
+  const windowsDir = process.env.SystemRoot || process.env.windir;
+  if (!windowsDir) return 'attrib';
+  return `${windowsDir.replace(/[\\/]+$/, '')}\\System32\\attrib.exe`;
+};
+
+let attribUnavailable = false;
+const reportedAttribFailures = new Set<string>();
+
+const setFileAttributes = async (
+  operation: 'hideFileOnWindows' | 'showFileOnWindows',
+  args: string[],
+  filePath: string,
+) => {
+  if (PLATFORM !== 'win32' || !filePath || attribUnavailable) return;
 
   try {
     const { execFile } = await import('node:child_process');
     const { promisify } = await import('node:util');
     const execFileAsync = promisify(execFile);
 
-    await execFileAsync('attrib', ['+h', filePath]);
+    await execFileAsync(getAttribCommand(), args);
   } catch (error) {
+    // Hiding these marker files is cosmetic and self-healing, so a machine
+    // that can't run attrib at all shouldn't report a burst of identical
+    // errors on every launch: note it once and skip the rest.
+    if (getFilesystemErrorCode(error) === 'ENOENT') {
+      attribUnavailable = true;
+      log(
+        'attrib is unavailable; skipping marker file attributes',
+        'errorHandling',
+        'warn',
+      );
+      return;
+    }
+    if (reportedAttribFailures.has(operation)) return;
+    reportedAttribFailures.add(operation);
     capturePreloadError(error, {
       contexts: {
         fn: {
-          name: 'hideFileOnWindows',
+          name: operation,
           path: filePath,
         },
       },
@@ -176,30 +210,21 @@ export const hideFileOnWindows = async (filePath: string) => {
   }
 };
 
+export const hideFileOnWindows = async (filePath: string) => {
+  await setFileAttributes('hideFileOnWindows', ['+h', filePath], filePath);
+};
+
 export const showFileOnWindows = async (filePath: string) => {
-  if (PLATFORM !== 'win32' || !filePath) return;
-
-  try {
-    const { execFile } = await import('node:child_process');
-    const { promisify } = await import('node:util');
-    const execFileAsync = promisify(execFile);
-
-    // Not just -h: on a file that's also System, `attrib -h` leaves it
-    // hidden ("Not resetting system file") yet still exits 0, and Windows
-    // refuses to overwrite a Hidden, System or Read-only file in place -
-    // so the caller's write failed with `EPERM ... open` (MMM-V2-3KQ).
-    // Only ever called on this app's own marker files.
-    await execFileAsync('attrib', ['-h', '-s', '-r', filePath]);
-  } catch (error) {
-    capturePreloadError(error, {
-      contexts: {
-        fn: {
-          name: 'showFileOnWindows',
-          path: filePath,
-        },
-      },
-    });
-  }
+  // Not just -h: on a file that's also System, `attrib -h` leaves it
+  // hidden ("Not resetting system file") yet still exits 0, and Windows
+  // refuses to overwrite a Hidden, System or Read-only file in place -
+  // so the caller's write failed with `EPERM ... open` (MMM-V2-3KQ).
+  // Only ever called on this app's own marker files.
+  await setFileAttributes(
+    'showFileOnWindows',
+    ['-h', '-s', '-r', filePath],
+    filePath,
+  );
 };
 
 /**

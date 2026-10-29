@@ -18,6 +18,8 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🐞 Bug Fixes
 
 - 🐞 **Selecting Media**: Right-clicking a media item outside a selection of several items opened the menu for that selection, whose actions then applied to the selected items instead of the one you right-clicked. The right-clicked item now becomes the selection, as in a file manager, and the menu acts on it alone.
+- 🐞 **Windows**: The small bookkeeping files M³ keeps in each publication folder (which record when a publication was last used) stay hidden again on computers where Windows' own `attrib` command couldn't be found through the system path, instead of showing up in the folder. M³ now runs that command from its full path in the Windows folder, and on a computer where it still can't run, it notes it once instead of reporting an error for every publication folder.
+- 🐞 **Folder Access**: On macOS, M³ no longer decides that a folder is unusable when a temporary file inside it disappears while M³ checks access, which could make it ask for folder access again or fall back to another folder.
 
 ### 🔧 Chores
 

@@ -422,6 +422,45 @@ describe('isUsablePath', () => {
 
     expect(openMock).not.toHaveBeenCalled();
   });
+
+  // MMM-V2-3N4: the probe picked a hidden config temp file that a writer
+  // renamed away moments later, so a perfectly usable folder failed the
+  // read-existing step with ENOENT. Neither hidden/temp files nor a file
+  // vanishing mid-probe should count against the folder.
+  it('skips hidden and temporary files when choosing an existing file to read on macOS', async () => {
+    setPlatform('darwin');
+    readdirMock.mockResolvedValue([
+      makeDirent('.sircharlo.meeting-media-manager.7O1lG8'),
+      makeDirent('staged.json.tmp'),
+      makeDirent('cached.jwpub'),
+    ]);
+    openMock.mockResolvedValue({ close: vi.fn(), read: vi.fn() });
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath('/tmp/cache')).resolves.toBe(true);
+
+    expect(openMock).toHaveBeenCalledWith('/tmp/cache/cached.jwpub', 'r');
+  });
+
+  it('does not fail the macOS probe when the file it picked vanishes before the read', async () => {
+    setPlatform('darwin');
+    readdirMock.mockResolvedValue([makeDirent('cached.jwpub')]);
+    const vanished = new Error(
+      "ENOENT: no such file or directory, open '/tmp/cache/cached.jwpub'",
+    );
+    (vanished as Error & { code?: string }).code = 'ENOENT';
+    openMock.mockRejectedValue(vanished);
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath('/tmp/cache')).resolves.toBe(true);
+
+    expect(addElectronBreadcrumbMock).not.toHaveBeenCalledWith(
+      expect.objectContaining({ message: '[isUsablePath] Probe failed' }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
 });
 
 describe('getAppDataPath', () => {
