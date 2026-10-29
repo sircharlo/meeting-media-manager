@@ -163,7 +163,7 @@ M³ 会按聚会类型和节目部分自动整理媒体：
 
 #### 在平板电脑上显示计时器 {#user-guide-timer-remote}
 
-可选的[远程计时器](/settings-guide#timer-remote)会在本地网络上以网页形式提供计时器显示的只读副本。在讲台上的平板电脑或手机浏览器中打开计时器弹出窗口中显示的地址，讲者就能私下看到剩余时间，而所有控制仍保留在 M³ 中。 Its optional focus layout shows the time in a progress ring, with the names of Zoom participants who raised their hand listed beside it. The page also keeps the tablet's screen awake while it's open, so it doesn't lock mid-part.
+可选的[远程计时器](/settings-guide#timer-remote)会在本地网络上以网页形式提供计时器显示的只读副本。在讲台上的平板电脑或手机浏览器中打开计时器弹出窗口中显示的地址，讲者就能私下看到剩余时间，而所有控制仍保留在 M³ 中。它的可选聚焦布局会用进度环显示时间，并在旁边列出已举手的 Zoom 参与者姓名。页面打开期间还会保持平板电脑屏幕常亮，以免在节目进行中锁定。
 
 #### 快速访问 {#user-guide-timer-quick-access}
 
