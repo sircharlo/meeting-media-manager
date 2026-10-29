@@ -163,7 +163,7 @@ Un pulsante **Avviso mano** nel popup del timer mostra una grande mano sulla vis
 
 #### Timer su tablet {#user-guide-timer-remote}
 
-Il [timer remoto](/settings-guide#timer-remote) opzionale rende disponibile una copia di sola lettura della visualizzazione del timer come pagina web sulla rete locale. Apri l'indirizzo mostrato nel popup del timer nel browser di un tablet o di un telefono posto sul leggio: l'oratore vedrà il tempo rimanente in modo riservato, mentre tutti i controlli restano in M³. Its optional focus layout shows the time in a progress ring, with the names of Zoom participants who raised their hand listed beside it. The page also keeps the tablet's screen awake while it's open, so it doesn't lock mid-part.
+Il [timer remoto](/settings-guide#timer-remote) opzionale rende disponibile una copia di sola lettura della visualizzazione del timer come pagina web sulla rete locale. Apri l'indirizzo mostrato nel popup del timer nel browser di un tablet o di un telefono posto sul leggio: l'oratore vedrà il tempo rimanente in modo riservato, mentre tutti i controlli restano in M³. Il suo layout mirato opzionale mostra il tempo in un anello di avanzamento, con i nomi dei partecipanti Zoom che hanno alzato la mano elencati accanto. La pagina inoltre mantiene acceso lo schermo del tablet finché è aperta, così non si blocca a metà parte.
 
 #### Accesso rapido {#user-guide-timer-quick-access}
 
