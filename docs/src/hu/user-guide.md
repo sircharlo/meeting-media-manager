@@ -163,7 +163,7 @@ Az időzítő felugró ablakában található **Kézfelemelés-jelzés** gomb eg
 
 #### Időzítő táblagépen {#user-guide-timer-remote}
 
-A választható [távoli időzítő](/settings-guide#timer-remote) a helyi hálózaton weboldalként teszi elérhetővé az időzítő kijelzőjének csak olvasható másolatát. Nyissa meg az időzítő felugró ablakában látható címet a pulpitusnál lévő táblagép vagy telefon böngészőjében, így az előadó csak saját maga látja a hátralévő időt, a vezérlők pedig mind az M³-ban maradnak.
+A választható [távoli időzítő](/settings-guide#timer-remote) a helyi hálózaton weboldalként teszi elérhetővé az időzítő kijelzőjének csak olvasható másolatát. Nyissa meg az időzítő felugró ablakában látható címet a pulpitusnál lévő táblagép vagy telefon böngészőjében, így az előadó csak saját maga látja a hátralévő időt, a vezérlők pedig mind az M³-ban maradnak. Its optional focus layout shows the time in a progress ring, with the names of Zoom participants who raised their hand listed beside it. The page also keeps the tablet's screen awake while it's open, so it doesn't lock mid-part.
 
 #### Gyors hozzáférés {#user-guide-timer-quick-access}
 

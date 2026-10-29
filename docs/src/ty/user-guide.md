@@ -163,7 +163,7 @@ E fa’aite te pitopito **Tapao rima** i roto i te ha’amāramarama iti o te fa
 
 #### Te fa’atere-hora i ni’a i te hō’ē tablet {#user-guide-timer-remote}
 
-Tē hōro’a te [Haapa'oraa taime mai te ātea](/settings-guide#timer-remote), ’ia hina’arohia, i te hō’ē hōho’a ta’io-noa o te tapura hora mai te hō’ē ’api itenati i ni’a i tō ’oe reni itenati nō te fare. ’A ’iriti i te vāhi e fa’aitehia i roto i te ha’amāramarama iti o te fa’atere-hora i roto i te porotarama itenati o te hō’ē tablet ’aore rā te hō’ē niuniu i te ’amura’i ’ōrero, ’e e ’ite te ’ōrero ana’e i te taime e toe ra, ’area te mau fa’aterera’a ato’a e vai noa i roto ia M³.
+Tē hōro’a te [Haapa'oraa taime mai te ātea](/settings-guide#timer-remote), ’ia hina’arohia, i te hō’ē hōho’a ta’io-noa o te tapura hora mai te hō’ē ’api itenati i ni’a i tō ’oe reni itenati nō te fare. ’A ’iriti i te vāhi e fa’aitehia i roto i te ha’amāramarama iti o te fa’atere-hora i roto i te porotarama itenati o te hō’ē tablet ’aore rā te hō’ē niuniu i te ’amura’i ’ōrero, ’e e ’ite te ’ōrero ana’e i te taime e toe ra, ’area te mau fa’aterera’a ato’a e vai noa i roto ia M³. Its optional focus layout shows the time in a progress ring, with the names of Zoom participants who raised their hand listed beside it. The page also keeps the tablet's screen awake while it's open, so it doesn't lock mid-part.
 
 #### Fa’a’ohipara’a vitiviti {#user-guide-timer-quick-access}
 

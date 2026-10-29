@@ -483,9 +483,13 @@ M³ создает в общей папке папку для каждой пр�
 
 ### Удаленный таймер {#timer-remote}
 
-<!-- **Settings**: `timerRemoteEnable`, `timerRemotePort` -->
+<!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->
 
 Если эта функция включена, M³ показывает копию экрана таймера (только для просмотра) как веб-страницу в локальной сети для планшета или телефона на трибуне: докладчик видит оставшееся время, но оно не появляется на экране собрания или в демонстрации Zoom. Страница отображает таймер в реальном времени, включая обратный отсчет до встречи, часы, цвета превышения времени и сигнал поднятой руки, а все элементы управления остаются в M³.
+
+With **Focus layout for the timer remote** on, the page shows the time in a large progress ring instead: teal while there's time to spare, yellow in the last minute, then red with the amount of overtime (`+02:18`). The Zoom participants whose hand is raised are listed beside it, in the order they raised them, with the first four by name and a count of the rest, and each new hand flashes a "Hand raised" banner for a few seconds while the hands stay listed. The default display remains the plain large time.
+
+While the page is open, it keeps the device's screen awake, so a tablet at the lectern doesn't lock or dim mid-part. Where the browser doesn't allow that on the page's plain-HTTP address, it plays a silent video to hold the screen on instead.
 
 Адреса, которые нужно открыть на устройстве, перечислены во всплывающем окне таймера вместе с кнопкой копирования. Меняйте порт, только если его уже использует другая программа. Обратите внимание, что, пока эта функция включена, страницу может открыть любой в той же сети; на ней показывается только таймер.
 
