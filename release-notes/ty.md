@@ -9,6 +9,7 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 ### ✨ Te mau rave’a ‘āpī
 
 - ✨ **Haapa'oraa taime mai te ātea**: Te ’ape’a fa’atere-hora nō te tabula i ni’a i te vāhi fa’a’ite, e hō’ē fa’anahora’a fa’atāpū tōna e fa’atupuhia i roto i te mau fa’anahora’a. E fa’a’ite oia i te taime i roto i te hō’ē tāpura rahi e fa’aite i te haere mua, e huri i te re’are’a i roto i te minuti hope’a, ’e i muri iho e ’umu’umu ma te rahi o te taime hau (+02:18), ’e e fa’a’ite i te pae o te mau ta’ata o Zoom i fa’ateitei i tō rātou rima, i te hō’ē ra’a i muri i te tahi: te maha mātāmua ma tō rātou i’oa, ’e te rahira’a o te tahi atu. E fa’a’amo’amo te parau "’Ua fa’ateiteihia te rima" i te toru tētoni no te mau rima ’āpī atoa, ’e e fa’a’āpīhia te tāpura i te taime e fa’ateiteihia ’e e fa’ataha te mau rima. E vai noa te fa’aitera’a o teie nei.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 

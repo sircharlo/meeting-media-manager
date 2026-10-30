@@ -9,6 +9,7 @@
 ### ✨ 새로운 기능
 
 - ✨ **원격 타이머**: 연단의 태블릿용 타이머 페이지에 선택적인 집중 레이아웃이 있으며, 설정에서 켤 수 있습니다. 큰 진행 링에 시간을 표시하며, 링은 마지막 1분 동안 노란색이 되고 초과 시간(+02:18)이 생기면 빨간색으로 바뀝니다. 또한 옆에 손을 든 Zoom 참여자를 든 순서대로 나열하며, 처음 네 명은 이름으로, 나머지는 인원수로 표시합니다. 새로 손을 들 때마다 3초 동안 “손을 들었습니다”가 깜박이며, 손을 들고 내릴 때마다 목록이 업데이트됩니다. 현재 표시가 기본값으로 유지됩니다.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 

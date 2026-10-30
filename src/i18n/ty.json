@@ -1337,6 +1337,8 @@
   "zoomMeetingManagerEnable-explain": "A faahora i te tauira tamataraa no te Zoom Putuputuraa Faanahoraa.",
   "zoomMeetingManagerHandAlert": "Tauturu nō te mau rima i fa’ateiteihia",
   "zoomMeetingManagerHandAlert-explain": "I te roara’a o te hō’ē putuputura’a, e hi’o M³ i te tāpura o te feiā i putuputu mai a Zoom nō te ’ite i te mau rima i fa’ateiteihia. ’Ia fa’ateitei te hō’ē ta’ata i tōna rima, e vaiiho te hō’ē fa’aarara’a i roto ia M³ ia ’oe ’ia fa’amatara i tōna reo nā roto i hō’ē noa patara’a, ’e i muri iho ’ia tāpe’a fa’ahou i tōna reo ’e ’ia tu’u i tōna rima i raro. E fa’aite ato’a te pitopito Zoom i ni’a i te motu ha’atere i te mau rima i fa’ateiteihia. Mai te peu ’ua fa’atupuhia te fa’atere-hora nō te putuputura’a, e fa’aitehia ato’a te hō’ē rima rahi ’e te i’oa o te ta’ata i ni’a i te tapura hora nō te ti’a’au. Nā mua roa, e tītau M³ i te ha’api’i e nāfea Zoom e tāpa’o ai i te mau rima i fa’ateiteihia i tō ’oe reo, nā roto i te pitopito i raro nei.",
+  "zoomMeetingManagerHandAlertNotifyOnly": "Only tell me about raised hands",
+  "zoomMeetingManagerHandAlertNotifyOnly-explain": "M³ still notices who raises their hand, in its notification and on the timer display, but offers no buttons that unmute a participant or lower their hand: you do those in Zoom yourself. Turn this on where you would rather keep control of participant audio and hands.",
   "zoomMeetingManagerMeetingId": "Te numera o te putuputuraa Zoom",
   "zoomMeetingManagerMeetingId-explain": "Te numera o te putuputuraa o te faaohipahia ia haamatahia te Zoom Putuputuraa Faanahoraa.",
   "zoomMeetingManagerPostMeetingAskToUnmute": "’A ani ato’a i te ta’ata ato’a ’ia fa’amatara i tō rātou reo",
