@@ -9,6 +9,7 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 ### ✨ Neue Funktionen
 
 - ✨ **Timer-Fernanzeige**: Die Timerseite für das Tablet am Rednerpult hat eine optionale Fokusansicht, die in den Einstellungen eingeschaltet wird. Sie zeigt die Zeit in einem großen Fortschrittsring, der in der letzten Minute gelb und dann rot mit der Überziehungszeit (+02:18) wird, und listet daneben die Zoom-Teilnehmer auf, die die Hand erhoben haben, in der Reihenfolge, in der sie es getan haben: die ersten vier mit Namen, dazu die Anzahl der übrigen. Jede neue Hand blinkt drei Sekunden lang "Hand erhoben", und die Liste aktualisiert sich, wenn Hände hochgehen und wieder herunter. Die aktuelle Anzeige bleibt die Standardeinstellung.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 
