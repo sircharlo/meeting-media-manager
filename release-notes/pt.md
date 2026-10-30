@@ -8,7 +8,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **Temporizador remoto**: A página do temporizador para o tablet no púlpito tem um layout de foco opcional, ativado nas Configurações. Ele mostra o tempo em um grande anel de progresso que fica amarelo no último minuto e depois vermelho com o tempo excedido (+02:18), e lista ao lado os participantes do Zoom que levantaram a mão, na ordem em que fizeram isso: os quatro primeiros por nome, com uma contagem dos demais. Cada nova mão pisca "Mão levantada" por três segundos, e a lista é atualizada conforme as mãos se levantam e se abaixam. A exibição atual continua sendo o padrão.
 
 ## v26.10.2
 
