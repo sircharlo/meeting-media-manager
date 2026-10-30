@@ -10,7 +10,7 @@ Per l'elenco completo delle modifiche tra le versioni, consulta il file CHANGELO
 
 - ✨ **Timer Remote**: La pagina del timer per il tablet al lectern ha un layout di messa a fuoco opzionale, attivato in Impostazioni. Mostra il tempo in un grande anello di avanzamento che diventa giallo nell'ultimo minuto, poi rosso con la quantità di straordinari (+02:18), ed elenca i partecipanti Zoom la cui mano è alzata accanto ad esso, nell'ordine li alzarono: i primi quattro per nome, con un conto del resto. Ogni nuova mano lampeggia "la mano alzata" per tre secondi, e gli aggiornamenti della lista come mani su e giù. Il display attuale rimane il predefinito.
 
-## v26,10.2
+## v26.10.2
 
 ### ✨ Nuove funzionalità
 

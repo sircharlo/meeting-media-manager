@@ -8,7 +8,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **Taimeri kaugkuva**: Kõnepuldi tahvelarvuti taimerilehel on valikuline fookusvaade, mille saad sisse lülitada seadetes. See näitab aega suures edenemisrõngas, mis muutub viimasel minutil kollaseks ja seejärel üleaja korral punaseks koos üleaja näiduga (+02:18), ning loetleb selle kõrval Zoomi osalejad, kes on käe tõstnud, selles järjekorras, nagu nad seda tegid: esimesed neli nimepidi, ülejäänud arvuna. Iga uus käsi vilgub kolm sekundit tekstiga „Käsi tõstetud” ja loend uueneb, kui käed tõusevad ja langevad. Praegune vaade jääb vaikeväärtuseks.
 
 ## v26.10.2
 

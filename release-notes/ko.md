@@ -8,7 +8,7 @@
 
 ### ✨ 새로운 기능
 
-- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **원격 타이머**: 연단의 태블릿용 타이머 페이지에 선택적인 집중 레이아웃이 있으며, 설정에서 켤 수 있습니다. 큰 진행 링에 시간을 표시하며, 링은 마지막 1분 동안 노란색이 되고 초과 시간(+02:18)이 생기면 빨간색으로 바뀝니다. 또한 옆에 손을 든 Zoom 참여자를 든 순서대로 나열하며, 처음 네 명은 이름으로, 나머지는 인원수로 표시합니다. 새로 손을 들 때마다 3초 동안 “손을 들었습니다”가 깜박이며, 손을 들고 내릴 때마다 목록이 업데이트됩니다. 현재 표시가 기본값으로 유지됩니다.
 
 ## v26.10.2
 
