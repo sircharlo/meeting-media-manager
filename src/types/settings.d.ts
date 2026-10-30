@@ -366,6 +366,7 @@ export interface SettingsValues {
   zoomMeetingManagerAutomatePostMeetingAudioSettings: boolean;
   zoomMeetingManagerEnable: boolean;
   zoomMeetingManagerHandAlert: boolean;
+  zoomMeetingManagerHandAlertNotifyOnly: boolean;
   zoomMeetingManagerMeetingId: null | string;
   zoomMeetingManagerPostMeetingAskToUnmute: boolean;
   /** No value: the setting is the button opening the setup assistant. */

@@ -14,6 +14,10 @@ node_modules
 # committed glossaries under scripts/i18n-quality/glossaries/ are NOT here
 /reports/translation-quality/
 
+# Per-run reports of the live Zoom test (test/zoom-live): local, and they
+# name the Zoom controls and test participants of this computer
+/reports/zoom-live/
+
 # Quasar core related directories
 .quasar
 /dist

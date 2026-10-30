@@ -19,6 +19,14 @@ desktop app on your computer:
   gets shared), and side effects the helper must
   not have (moving the mouse at all, keeping focus, changing a Zoom
   setting).
+- `zoom-hand.live.test.ts` covers raised hands: learning how Zoom marks one
+  (with reactions on, and through Zoom's plain "Raise hand" button where
+  they're turned off), learning again with the names M³ remembered, noticing
+  a test participant's raised hand, and the ask-to-unmute and
+  mute-and-lower-hand actions on that participant. Unlike the others, a
+  failing step doesn't stop it: everything it saw is written to a report (see
+  below), so a report from another Zoom language can be reproduced by
+  switching this computer's Zoom to that language.
 
 It never runs in CI or in `yarn test:unit`. The same checks are available in
 development builds from the Zoom popup ("Test Zoom integration").
@@ -49,6 +57,12 @@ ZOOM_TEST_MIC_OFF_TITLE=Unmute
 ZOOM_TEST_VIDEO_ON_TITLE=Stop Video
 ZOOM_TEST_VIDEO_OFF_TITLE=Start Video
 ZOOM_TEST_SHARE_BUTTON_TITLE=Share
+# Only for zoom-hand.live.test.ts: the entry that raises a hand in YOUR Zoom
+# language, as the setup assistant lists it (Portuguese "Levantar mão"). It is
+# pressed once, as the user would pick it. Without it, that part is skipped:
+# the test never guesses an entry, since the same list holds Record and
+# Breakout rooms.
+ZOOM_TEST_HAND_ENTRY=Raise hand
 ```
 
 ## Running
@@ -62,6 +76,28 @@ checks that the mouse never moves, admitting someone from the waiting room
 takes a key press, and focus changes close Zoom's menus. The test starts the
 meeting if it isn't open, opens a stand-in "Media Player - M³" window to
 share, and the participants leave at the end.
+
+## Reports
+
+`zoom-hand.live.test.ts` writes what it saw to `reports/zoom-live/`
+(gitignored, because it names this computer's Zoom controls and test
+participants):
+
+- `hand-<timestamp>.json`: every probe, in order, with what it was trying to
+  find out (`wants`), whether it worked, how long it took, and Zoom's raw
+  answer. `zoom` holds the other findings: M³'s Zoom names before and after
+  learning (`settings.*`), the toolbar and "More" menu buttons (`entries`),
+  Zoom's own wording for each participant (`rows`) and every control of a
+  raised-hand row with its "More" menu (`inspect`). `verdicts` sums it up.
+- `hand-<timestamp>.ndjson`: the same probes, one JSON object per line, for
+  `jq` (for example `jq -r '.id + " " + .ok'`), plus the same one-line
+  summary printed as it runs.
+
+To compare with a report from another Zoom language, run it there and diff
+the two files: the `phrase`, `handButtonTitle`, `reactButtonTitle` and
+`lowerHandTitle` values are Zoom's own words, and a probe that failed carries
+Zoom's `snapshot` (its toolbar names, the row's buttons and any dialog in the
+way). Nothing is sent anywhere.
 
 Pieces you can also run on their own:
 
