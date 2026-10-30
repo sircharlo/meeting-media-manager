@@ -8,7 +8,7 @@
 
 ### ✨ Новые возможности
 
-- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **Удаленный таймер**: Страница таймера для планшета на трибуне имеет дополнительный режим фокусировки, который включается в настройках. Время показывается в большом кольце прогресса, которое в последнюю минуту становится желтым, а при переработке — красным с указанием ее величины (+02:18); рядом перечисляются участники Zoom, поднявшие руку, в том порядке, в котором они это сделали: первые четыре — по имени, остальные — с указанием количества. Каждая новая рука на три секунды высвечивает «Рука поднята», а список обновляется, когда руки поднимаются и опускаются. Текущий вид остается видом по умолчанию.
 
 ## v26.10.2
 

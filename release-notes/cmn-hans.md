@@ -8,7 +8,7 @@
 
 ### ✨ 新功能
 
-- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **远程计时器**：讲台上的平板电脑所用的计时器页面提供可选的聚焦布局，可在设置中开启。它用大号进度环显示时间，进度环在最后一分钟变为黄色，超时后变为红色并显示超时时间（+02:18），同时在旁边按举手顺序列出已举手的 Zoom 参与者：前四位显示姓名，其余显示人数。每当有人新举手时，“有人举手”会闪烁三秒，列表也会随着举手和放下而更新。当前显示仍为默认显示。
 
 ## v26.10.2
 

@@ -8,7 +8,7 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 
 ### ✨ Neue Funktionen
 
-- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **Timer-Fernanzeige**: Die Timerseite für das Tablet am Rednerpult hat eine optionale Fokusansicht, die in den Einstellungen eingeschaltet wird. Sie zeigt die Zeit in einem großen Fortschrittsring, der in der letzten Minute gelb und dann rot mit der Überziehungszeit (+02:18) wird, und listet daneben die Zoom-Teilnehmer auf, die die Hand erhoben haben, in der Reihenfolge, in der sie es getan haben: die ersten vier mit Namen, dazu die Anzahl der übrigen. Jede neue Hand blinkt drei Sekunden lang "Hand erhoben", und die Liste aktualisiert sich, wenn Hände hochgehen und wieder herunter. Die aktuelle Anzeige bleibt die Standardeinstellung.
 
 ## v26.10.2
 

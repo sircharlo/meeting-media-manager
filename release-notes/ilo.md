@@ -8,7 +8,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ### ✨ New Features
 
-- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **Remote ti timer**: Ti panid ti timer para iti tablet iti pulpito adda opsional a focus layout, a maipasged kadagiti Setting. Ipakita na ti oras iti dakkel a progress ring a nagbalin a duyaw iti naudi a minuto, sa nagbalin a nalabaga a kadua ti kaadu ti sobra nga oras (+02:18), ken ilista na iti abay dagiti participant iti Zoom a nangipangato iti ima, iti urnos nga inpangatoda: dagiti umuna nga uppat babaen ti nagan, ken ti bilang dagiti dadduma. Tunggal baro nga ima agsilnag ti "Nakangato ti ima" iti tallo a segundo, ken ma-update ti lista bayat a ngumato ken bumaba dagiti ima. Ti agdama a display ti agtalinaed a default.
 
 ## v26.10.2
 
