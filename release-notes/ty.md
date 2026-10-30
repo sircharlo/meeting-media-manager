@@ -8,7 +8,7 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **Haapa'oraa taime mai te ātea**: Te ’ape’a fa’atere-hora nō te tabula i ni’a i te vāhi fa’a’ite, e hō’ē fa’anahora’a fa’atāpū tōna e fa’atupuhia i roto i te mau fa’anahora’a. E fa’a’ite oia i te taime i roto i te hō’ē tāpura rahi e fa’aite i te haere mua, e huri i te re’are’a i roto i te minuti hope’a, ’e i muri iho e ’umu’umu ma te rahi o te taime hau (+02:18), ’e e fa’a’ite i te pae o te mau ta’ata o Zoom i fa’ateitei i tō rātou rima, i te hō’ē ra’a i muri i te tahi: te maha mātāmua ma tō rātou i’oa, ’e te rahira’a o te tahi atu. E fa’a’amo’amo te parau "’Ua fa’ateiteihia te rima" i te toru tētoni no te mau rima ’āpī atoa, ’e e fa’a’āpīhia te tāpura i te taime e fa’ateiteihia ’e e fa’ataha te mau rima. E vai noa te fa’aitera’a o teie nei.
 
 ## v26.10.2
 
