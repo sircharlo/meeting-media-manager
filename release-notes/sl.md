@@ -8,7 +8,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **Oddaljeni časovnik**: Stran s časovnikom za tablico na govorniškem pultu ima izbirni osrednji prikaz, ki ga vklopiš v Nastavitvah. Čas prikazuje v velikem krogu napredka, ki v zadnji minuti postane rumen, nato pa rdeč z zneskom prekoračitve (+02:18), ob njem pa našteje udeležence Zooma, ki so dvignili roko, po vrstnem redu, kot so jo dvignili: prve štiri po imenu, s številom ostalih. Vsaka nova roka za tri sekunde utripne »Roka dvignjena«, seznam pa se posodablja, ko se roke dvigujejo in spuščajo. Trenutni prikaz ostane privzeti.
 
 ## v26.10.2
 
