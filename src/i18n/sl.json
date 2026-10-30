@@ -1337,6 +1337,8 @@
   "zoomMeetingManagerEnable-explain": "Omogoči beta povezavo z Upraviteljem Zoom shoda.",
   "zoomMeetingManagerHandAlert": "Pomočnik za dvignjene roke",
   "zoomMeetingManagerHandAlert-explain": "Med shodom M³ spremlja Zoomov seznam udeležencev in išče dvignjene roke. Ko nekdo dvigne roko, te M³ z obvestilom opozori, da lahko tega udeleženca z enim klikom povabiš, naj si vklopi mikrofon, pozneje pa ga znova utišaš in spustiš njegovo roko. Tudi gumb za Zoom v orodni vrstici prikazuje seznam dvignjenih rok. Če je časovnik shoda omogočen, se na prikazu časovnika za predsedujočega pojavi velika roka z imenom udeleženca. M³ se mora najprej naučiti, kako Zoom označuje dvignjene roke, in sicer s spodnjim gumbom.",
+  "zoomMeetingManagerHandAlertNotifyOnly": "Only tell me about raised hands",
+  "zoomMeetingManagerHandAlertNotifyOnly-explain": "M³ still notices who raises their hand, in its notification and on the timer display, but offers no buttons that unmute a participant or lower their hand: you do those in Zoom yourself. Turn this on where you would rather keep control of participant audio and hands.",
   "zoomMeetingManagerMeetingId": "ID številka Zoom shoda",
   "zoomMeetingManagerMeetingId-explain": "ID shoda, ki bo uporabljen ob zagonu Upravitelja Zoom shoda.",
   "zoomMeetingManagerPostMeetingAskToUnmute": "Prosi tudi vse, naj si vklopijo mikrofon",
