@@ -8,7 +8,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Minuteur à distance** : La page du minuteur pour la tablette sur le pupitre propose un affichage ciblé facultatif, activé dans les Paramètres. Elle affiche le temps dans un grand anneau de progression qui devient jaune dans la dernière minute, puis rouge avec la durée de dépassement (+02:18), et liste à côté les participants Zoom qui ont levé la main, dans l'ordre où ils l'ont fait : les quatre premiers par leur nom, avec le nombre des autres. Chaque nouvelle main clignote « Main levée » pendant trois secondes, et la liste se met à jour à mesure que les mains se lèvent et se baissent. The current display stays the default.
+- ✨ **Minuteur à distance** : La page du minuteur pour la tablette sur le pupitre propose un affichage ciblé facultatif, activé dans les Paramètres. Elle affiche le temps dans un grand anneau de progression qui devient jaune dans la dernière minute, puis rouge avec la durée de dépassement (+02:18), et liste à côté les participants Zoom qui ont levé la main, dans l'ordre où ils l'ont fait : les quatre premiers par leur nom, avec le nombre des autres. Chaque nouvelle main clignote « Main levée » pendant trois secondes, et la liste se met à jour à mesure que les mains se lèvent et se baissent. L'affichage actuel reste celui par défaut.
 
 ## v26.10.2
 
