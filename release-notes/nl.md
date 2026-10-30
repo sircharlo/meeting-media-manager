@@ -8,7 +8,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### ✨ Nieuwe functies
 
-- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **Timer op afstand**: De timerpagina voor de tablet op de lessenaar heeft een optionele focusindeling, die je aanzet in Instellingen. Die toont de tijd in een grote voortgangsring die in de laatste minuut geel wordt en daarna rood met de hoeveelheid over tijd (+02:18), en toont ernaast de Zoom-deelnemers die hun hand hebben opgestoken, in de volgorde waarin ze dat deden: de eerste vier bij naam, met een telling van de rest. Elke nieuwe hand knippert drie seconden met "Hand opgestoken", en de lijst wordt bijgewerkt wanneer handen omhoog- en omlaaggaan. De huidige weergave blijft de standaard.
 
 ## v26.10.2
 
