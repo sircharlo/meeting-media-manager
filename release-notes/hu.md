@@ -8,7 +8,7 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ### ✨ Új funkciók
 
-- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **Távoli időzítő**: A pulpituson lévő táblagép időzítőoldalán választható fókuszált elrendezés érhető el, amelyet a Beállításokban lehet bekapcsolni. Nagy folyamatjelző gyűrűben mutatja az időt, amely az utolsó percben sárgára, majd a túllépés mértékével (+02:18) pirosra vált, és mellette felsorolja azokat a Zoom-résztvevőket, akik felemelték a kezüket, abban a sorrendben, ahogy tették: az első négyet név szerint, a többiek számával együtt. Minden új kéz három másodpercre felvillantja a „Kéz felemelve” üzenetet, és a lista frissül, ahogy a kezek felemelkednek és leereszkednek. Az aktuális kijelzés marad az alapértelmezett.
 
 ## v26.10.2
 
