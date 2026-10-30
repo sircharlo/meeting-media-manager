@@ -9,6 +9,7 @@ Para ver la lista completa de cambios entre versiones, consulta nuestro archivo 
 ### ✨ Nuevas funciones
 
 - ✨ **Control remoto del cronómetro**: La página del cronómetro para la tableta del atril tiene una vista enfocada opcional, que se activa en Configuración. Muestra el tiempo en un gran anillo de progreso que se vuelve amarillo en el último minuto y luego rojo con la cantidad de tiempo extra (+02:18), y a su lado enumera a los participantes de Zoom que han levantado la mano, en el orden en que lo hicieron: los cuatro primeros por su nombre, con un recuento de los demás. Cada nueva mano hace parpadear "Mano levantada" durante tres segundos, y la lista se actualiza a medida que las manos se levantan y se bajan. La visualización actual sigue siendo la predeterminada.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 

@@ -9,6 +9,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 ### ✨ Novos Recursos
 
 - ✨ **Temporizador remoto**: A página do temporizador para o tablet no púlpito tem um layout de foco opcional, ativado nas Configurações. Ele mostra o tempo em um grande anel de progresso que fica amarelo no último minuto e depois vermelho com o tempo excedido (+02:18), e lista ao lado os participantes do Zoom que levantaram a mão, na ordem em que fizeram isso: os quatro primeiros por nome, com uma contagem dos demais. Cada nova mão pisca "Mão levantada" por três segundos, e a lista é atualizada conforme as mãos se levantam e se abaixam. A exibição atual continua sendo o padrão.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 

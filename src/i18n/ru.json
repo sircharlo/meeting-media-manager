@@ -1337,6 +1337,8 @@
   "zoomMeetingManagerEnable-explain": "Включить бета-версию интеграции с менеджером конференций Zoom.",
   "zoomMeetingManagerHandAlert": "Помощник для поднятых рук",
   "zoomMeetingManagerHandAlert-explain": "Во время встречи M³ следит за поднятыми руками в списке участников Zoom. Когда кто-то поднимает руку, уведомление в M³ позволяет одним нажатием включить этому участнику звук, а позже снова выключить звук и опустить руку. Кнопка Zoom на панели действий также показывает поднятые руки. Если включен таймер встречи, для председателя на экране таймера также появляется большая рука с именем участника. Сначала M³ нужно определить с помощью кнопки ниже, как Zoom отмечает поднятые руки на вашем языке.",
+  "zoomMeetingManagerHandAlertNotifyOnly": "Only tell me about raised hands",
+  "zoomMeetingManagerHandAlertNotifyOnly-explain": "M³ still notices who raises their hand, in its notification and on the timer display, but offers no buttons that unmute a participant or lower their hand: you do those in Zoom yourself. Turn this on where you would rather keep control of participant audio and hands.",
   "zoomMeetingManagerMeetingId": "Идентификатор конференции Zoom",
   "zoomMeetingManagerMeetingId-explain": "Идентификатор конференции, который будет использоваться при ее запуске менеджером конференций Zoom.",
   "zoomMeetingManagerPostMeetingAskToUnmute": "Также просить всех включить звук",

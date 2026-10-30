@@ -1337,6 +1337,8 @@
   "zoomMeetingManagerEnable-explain": "A béta Zoom-értekezletkezelő integráció engedélyezése.",
   "zoomMeetingManagerHandAlert": "Kézfelemelés-segéd",
   "zoomMeetingManagerHandAlert-explain": "Az összejövetel alatt az M³ figyeli a Zoom résztvevőlistáját, hogy van-e felemelt kéz. Ha valaki felemeli a kezét, az M³ egy értesítésében egy kattintással feloldhatja az adott résztvevő némítását, később pedig újra lenémíthatja és leengedheti a kezét. A műveleti panel Zoom gombja is felsorolja a felemelt kezeket. Ha az összejöveteli időzítő engedélyezve van, az elnök számára egy nagy kéz is megjelenik a résztvevő nevével az időzítő kijelzőjén. Az M³-nak először meg kell tanulnia az alábbi gombbal, hogyan jelöli a Zoom a felemelt kezeket az Ön nyelvén.",
+  "zoomMeetingManagerHandAlertNotifyOnly": "Only tell me about raised hands",
+  "zoomMeetingManagerHandAlertNotifyOnly-explain": "M³ still notices who raises their hand, in its notification and on the timer display, but offers no buttons that unmute a participant or lower their hand: you do those in Zoom yourself. Turn this on where you would rather keep control of participant audio and hands.",
   "zoomMeetingManagerMeetingId": "Zoom-értekezletazonosító",
   "zoomMeetingManagerMeetingId-explain": "Az értekezletazonosító, amelyet a Zoom-értekezletkezelő az értekezlet indításakor használ.",
   "zoomMeetingManagerPostMeetingAskToUnmute": "Mindenki felkérése a némítás feloldására is",

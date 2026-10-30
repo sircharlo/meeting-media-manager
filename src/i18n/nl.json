@@ -1337,6 +1337,8 @@
   "zoomMeetingManagerEnable-explain": "Schakel de bèta-integratie met de Zoom-vergaderbeheerder in.",
   "zoomMeetingManagerHandAlert": "Hulp bij opgestoken handen",
   "zoomMeetingManagerHandAlert-explain": "Tijdens een vergadering houdt M³ de deelnemerslijst van Zoom in de gaten voor opgestoken handen. Als iemand de hand opsteekt, kun je via een melding in M³ met één klik het dempen van die deelnemer opheffen, en de deelnemer later weer dempen en de hand laten zakken. De Zoom-knop op de actiebalk toont de opgestoken handen ook. Als de vergadertimer is ingeschakeld, verschijnt er voor de voorzitter ook een grote hand met de naam van de deelnemer op de timerweergave. M³ moet eerst met de knop hieronder leren hoe Zoom opgestoken handen in jouw taal aangeeft.",
+  "zoomMeetingManagerHandAlertNotifyOnly": "Only tell me about raised hands",
+  "zoomMeetingManagerHandAlertNotifyOnly-explain": "M³ still notices who raises their hand, in its notification and on the timer display, but offers no buttons that unmute a participant or lower their hand: you do those in Zoom yourself. Turn this on where you would rather keep control of participant audio and hands.",
   "zoomMeetingManagerMeetingId": "Zoom-vergadering-ID",
   "zoomMeetingManagerMeetingId-explain": "Vergadering-ID die de Zoom-vergaderbeheerder gebruikt bij het starten van de vergadering.",
   "zoomMeetingManagerPostMeetingAskToUnmute": "Iedereen ook vragen het dempen op te heffen",

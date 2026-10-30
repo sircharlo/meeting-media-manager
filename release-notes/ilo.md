@@ -9,6 +9,7 @@ Para iti kompleto a listaan dagiti nabaliwan iti nagbaetan dagiti bersion, kitae
 ### ✨ Dagiti Baro a Feature
 
 - ✨ **Remote ti timer**: Ti panid ti timer para iti tablet iti pulpito adda opsional a focus layout, a maipasged kadagiti Setting. Ipakita na ti oras iti dakkel a progress ring a nagbalin a duyaw iti naudi a minuto, sa nagbalin a nalabaga a kadua ti kaadu ti sobra nga oras (+02:18), ken ilista na iti abay dagiti participant iti Zoom a nangipangato iti ima, iti urnos nga inpangatoda: dagiti umuna nga uppat babaen ti nagan, ken ti bilang dagiti dadduma. Tunggal baro nga ima agsilnag ti "Nakangato ti ima" iti tallo a segundo, ken ma-update ti lista bayat a ngumato ken bumaba dagiti ima. Ti agdama a display ti agtalinaed a default.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 
