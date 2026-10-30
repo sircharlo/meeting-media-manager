@@ -1337,6 +1337,8 @@
   "zoomMeetingManagerEnable-explain": "Abilita l'integrazione beta con Zoom Meeting Manager.",
   "zoomMeetingManagerHandAlert": "Assistente per le mani alzate",
   "zoomMeetingManagerHandAlert-explain": "Durante un'adunanza, M³ controlla l'elenco dei partecipanti di Zoom per individuare le mani alzate. Quando qualcuno alza la mano, una notifica in M³ ti consente di riattivare l'audio di quel partecipante con un clic e, in seguito, di disattivarlo di nuovo e abbassargli la mano. Anche il pulsante Zoom nell'isola di azione elenca le mani alzate. Se il timer dell'adunanza è attivo, sul display del timer per il presidente compare anche una grande mano con il nome del partecipante. M³ deve prima imparare come Zoom indica le mani alzate nella tua lingua, con il pulsante qui sotto.",
+  "zoomMeetingManagerHandAlertNotifyOnly": "Only tell me about raised hands",
+  "zoomMeetingManagerHandAlertNotifyOnly-explain": "M³ still notices who raises their hand, in its notification and on the timer display, but offers no buttons that unmute a participant or lower their hand: you do those in Zoom yourself. Turn this on where you would rather keep control of participant audio and hands.",
   "zoomMeetingManagerMeetingId": "ID adunanza Zoom",
   "zoomMeetingManagerMeetingId-explain": "ID dell'adunanza che verrà usato all'avvio di Zoom Meeting Manager.",
   "zoomMeetingManagerPostMeetingAskToUnmute": "Chiedi anche a tutti di riattivare l'audio",
