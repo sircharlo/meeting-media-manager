@@ -275,18 +275,21 @@ const readState = async (participant) => {
 const setHand = async (page, raising) => {
   const pattern = raising ? /^raise hand$/i : /^lower hand$/i;
   const deadline = Date.now() + 20_000;
-  let openedPanel = false;
-  while (Date.now() < deadline) {
+  // One look at the footer, then another after a pause until the deadline.
+  // Recursion rather than a loop: each look is awaited before the next one
+  // starts, which is the whole point of polling a UI.
+  const look = async (openedPanel) => {
+    if (Date.now() >= deadline) return false;
     if (await clickButton(page, pattern)) return true;
     if (!openedPanel && (await clickButton(page, /^reactions$/i))) {
-      openedPanel = true;
       // The panel is a portal of its own: give it a moment to render.
       await sleep(600);
-      continue;
+      return look(true);
     }
-    await sleep(1000); // NOSONAR: sequential - waits for the footer to appear
-  }
-  return false;
+    await sleep(1000);
+    return look(openedPanel);
+  };
+  return look(false);
 };
 
 const runAction = async (participant, action) => {
