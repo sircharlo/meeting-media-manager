@@ -8,9 +8,9 @@ Per l'elenco completo delle modifiche tra le versioni, consulta il file CHANGELO
 
 ### ✨ Nuove funzionalità
 
-- ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **Timer Remote**: La pagina del timer per il tablet al lectern ha un layout di messa a fuoco opzionale, attivato in Impostazioni. Mostra il tempo in un grande anello di avanzamento che diventa giallo nell'ultimo minuto, poi rosso con la quantità di straordinari (+02:18), ed elenca i partecipanti Zoom la cui mano è alzata accanto ad esso, nell'ordine li alzarono: i primi quattro per nome, con un conto del resto. Ogni nuova mano lampeggia "la mano alzata" per tre secondi, e gli aggiornamenti della lista come mani su e giù. Il display attuale rimane il predefinito.
 
-## v26.10.2
+## v26,10.2
 
 ### ✨ Nuove funzionalità
 
