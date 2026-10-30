@@ -47,10 +47,10 @@ import it from './it.json' with { type: 'json' };
 import pt from './pt.json' with { type: 'json' };
 
 // 98.9% translated as of 2026-10-30
-import nl from './nl.json' with { type: 'json' };
-
-// 98.7% translated as of 2026-10-30
 import es from './es.json' with { type: 'json' };
+
+// 98.9% translated as of 2026-10-30
+import nl from './nl.json' with { type: 'json' };
 
 // 98.5% translated as of 2026-10-30
 import de from './de.json' with { type: 'json' };
