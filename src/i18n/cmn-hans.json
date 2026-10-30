@@ -1337,6 +1337,8 @@
   "zoomMeetingManagerEnable-explain": "启用测试版 Zoom 会议管理器集成。",
   "zoomMeetingManagerHandAlert": "举手助手",
   "zoomMeetingManagerHandAlert-explain": "聚会期间，M³ 会监视 Zoom 的参与者列表，查看是否有人举手。有人举手时，M³ 中会显示一则通知，让你只需点击一下即可为该参与者解除静音，之后再将其静音并放下手。操作图标上的 Zoom 按钮也会列出举手的参与者。如果启用了聚会计时器，计时器显示上还会为主席显示一只大手和该参与者的名字。M³ 需要先通过下面的按钮，识别 Zoom 用你的语言标示举手的方式。",
+  "zoomMeetingManagerHandAlertNotifyOnly": "Only tell me about raised hands",
+  "zoomMeetingManagerHandAlertNotifyOnly-explain": "M³ still notices who raises their hand, in its notification and on the timer display, but offers no buttons that unmute a participant or lower their hand: you do those in Zoom yourself. Turn this on where you would rather keep control of participant audio and hands.",
   "zoomMeetingManagerMeetingId": "Zoom 会议 ID",
   "zoomMeetingManagerMeetingId-explain": "启动 Zoom 会议管理器时使用的会议 ID。",
   "zoomMeetingManagerPostMeetingAskToUnmute": "同时请求所有人解除静音",
