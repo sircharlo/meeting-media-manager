@@ -9,6 +9,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 ### ✨ New Features
 
 - ✨ **Timer Remote**: The timer page for the tablet at the lectern has an optional focus layout, turned on in Settings. It shows the time in a large progress ring that turns yellow in the last minute, then red with the amount of overtime (+02:18), and lists the Zoom participants whose hand is raised beside it, in the order they raised them: the first four by name, with a count of the rest. Each new hand flashes "Hand raised" for three seconds, and the list updates as hands go up and down. The current display stays the default.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 
