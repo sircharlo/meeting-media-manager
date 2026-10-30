@@ -50,7 +50,9 @@ const ACTIONS = new Set([
   'accept-unmute-requests', // future "please unmute" prompts are accepted
   'ignore-unmute-requests', // ...or left unanswered
   'leave',
+  'lower-hand', // for M³ to lower someone else's hand
   'mute',
+  'raise-hand', // so M³ has a raised hand to find in the list
   'reset-events',
   'try-unmute', // the participant tries to unmute themselves
 ]);
@@ -265,6 +267,28 @@ const readState = async (participant) => {
   }
 };
 
+// Raises or lowers the participant's own hand. The web client builds its
+// footer a few seconds after joining, keeps the hand button in its Reactions
+// panel, or shows it straight in the footer where reactions are turned off
+// for the account: it is looked for for a while, and the panel opened once if
+// it isn't there.
+const setHand = async (page, raising) => {
+  const pattern = raising ? /^raise hand$/i : /^lower hand$/i;
+  const deadline = Date.now() + 20_000;
+  let openedPanel = false;
+  while (Date.now() < deadline) {
+    if (await clickButton(page, pattern)) return true;
+    if (!openedPanel && (await clickButton(page, /^reactions$/i))) {
+      openedPanel = true;
+      // The panel is a portal of its own: give it a moment to render.
+      await sleep(600);
+      continue;
+    }
+    await sleep(1000); // NOSONAR: sequential - waits for the footer to appear
+  }
+  return false;
+};
+
 const runAction = async (participant, action) => {
   const { page } = participant;
   if (!page && action !== 'leave') return false;
@@ -283,6 +307,14 @@ const runAction = async (participant, action) => {
       await confirmLeave(page).catch(() => undefined);
       await participant.context.close();
       return true;
+    case 'lower-hand':
+    case 'raise-hand': {
+      const raising = action === 'raise-hand';
+      const pressed = await setHand(page, raising);
+      if (pressed)
+        addEvent(participant, raising ? 'hand-raised' : 'hand-lowered');
+      return pressed;
+    }
     case 'mute':
       return clickButton(page, /^mute my microphone$/i);
     case 'reset-events':

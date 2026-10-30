@@ -180,7 +180,12 @@
             </q-item-section>
             <q-item-section>
               <q-item-label class="ellipsis">{{ name }}</q-item-label>
-              <div class="row q-gutter-xs">
+              <!-- Notify-only: the list still names who raised a hand, but the
+                   participant is left to the operator in Zoom. -->
+              <div
+                v-if="!currentSettings?.zoomMeetingManagerHandAlertNotifyOnly"
+                class="row q-gutter-xs"
+              >
                 <q-btn
                   class="btn-tonal"
                   color="positive"

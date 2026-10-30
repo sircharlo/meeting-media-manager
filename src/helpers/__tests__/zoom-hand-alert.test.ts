@@ -15,12 +15,19 @@ import {
   stopZoomHandAlertWatcher,
 } from '../zoom-hand-alert';
 
-const { createTemporaryNotification, getZoomRaisedHands, updateTimerWindow } =
-  vi.hoisted(() => ({
-    createTemporaryNotification: vi.fn(),
-    getZoomRaisedHands: vi.fn<() => Promise<null | string[]>>(),
-    updateTimerWindow: vi.fn(),
-  }));
+const {
+  createTemporaryNotification,
+  getZoomRaisedHands,
+  muteZoomParticipantAndLowerHand,
+  unmuteZoomParticipant,
+  updateTimerWindow,
+} = vi.hoisted(() => ({
+  createTemporaryNotification: vi.fn(),
+  getZoomRaisedHands: vi.fn<() => Promise<null | string[]>>(),
+  muteZoomParticipantAndLowerHand: vi.fn(async () => ({ ok: false })),
+  unmuteZoomParticipant: vi.fn(async () => ({ ok: false })),
+  updateTimerWindow: vi.fn(),
+}));
 
 vi.mock('boot/i18n', () => ({
   i18n: {
@@ -35,8 +42,8 @@ vi.mock('src/helpers/notifications', () => ({ createTemporaryNotification }));
 
 vi.mock('src/helpers/zoom', () => ({
   getZoomRaisedHands,
-  muteZoomParticipantAndLowerHand: vi.fn(async () => ({ ok: false })),
-  unmuteZoomParticipant: vi.fn(async () => ({ ok: false })),
+  muteZoomParticipantAndLowerHand,
+  unmuteZoomParticipant,
 }));
 
 vi.mock('src/helpers/fs', () => ({ getRendererPlatform: () => 'win32' }));
@@ -45,12 +52,16 @@ vi.mock('src/composables/useTimer', () => ({
   default: () => ({ updateTimerWindow }),
 }));
 
-const enableHandAlert = (phrase: null | string = 'Hand raised') => {
+const enableHandAlert = (
+  phrase: null | string = 'Hand raised',
+  notifyOnly = false,
+) => {
   useCongregationSettingsStore().congregations['cong'] = {
     ...defaultSettings,
     zoomHandRaisedPhrase: phrase,
     zoomMeetingManagerEnable: true,
     zoomMeetingManagerHandAlert: true,
+    zoomMeetingManagerHandAlertNotifyOnly: notifyOnly,
   };
   useCurrentStateStore().currentCongregation = 'cong';
 };
@@ -126,6 +137,20 @@ describe('handleRaisedHands', () => {
 
     handleRaisedHands([]);
     expect(dismiss).not.toHaveBeenCalled();
+  });
+
+  it('only reports a hand in notify-only mode, leaving the participant to Zoom', () => {
+    enableHandAlert('Hand raised', true);
+
+    handleRaisedHands(['Ann']);
+    // Still noticed, and still the store's business for the timer display.
+    expect(useHandAlertStore().raisedHands).toEqual(['Ann']);
+    const options = createTemporaryNotification.mock.calls.at(-1)?.[0] as {
+      actions: { handler?: () => void; label: string }[];
+    };
+    expect(options.actions.map((action) => action.label)).toEqual(['dismiss']);
+    expect(unmuteZoomParticipant).not.toHaveBeenCalled();
+    expect(muteZoomParticipantAndLowerHand).not.toHaveBeenCalled();
   });
 
   it('leaves a manually switched-on alert alone', () => {

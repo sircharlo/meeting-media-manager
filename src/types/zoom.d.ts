@@ -293,7 +293,9 @@ export type ZoomTestParticipantAction =
   | 'accept-unmute-requests'
   | 'ignore-unmute-requests'
   | 'leave'
+  | 'lower-hand'
   | 'mute'
+  | 'raise-hand'
   | 'reset-events'
   | 'try-unmute';
 
@@ -301,6 +303,8 @@ export interface ZoomTestParticipantEvent {
   at: number;
   type:
     | 'audio-rejoined'
+    | 'hand-lowered'
+    | 'hand-raised'
     | 'unmute-blocked'
     | 'unmute-request-accepted'
     | 'unmute-requested';

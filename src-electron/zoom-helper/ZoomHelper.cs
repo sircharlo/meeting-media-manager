@@ -2156,6 +2156,16 @@ namespace M3.ZoomHelper
             return false;
         }
 
+        /// <summary>The toolbar's Reactions button, found by its shortcut
+        /// (Ctrl+Shift+Y): the only sure sign that a button opens the Reactions
+        /// panel, since a name may well be the plain Raise hand button.</summary>
+        static El ReactButtonByHotkey(El window)
+        {
+            foreach (var button in ToolbarButtons(window))
+                if (ReactHotkey.IsMatch(button.Name)) return button;
+            return null;
+        }
+
         /// <summary>The toolbar's Reactions button, known by its shortcut
         /// (Ctrl+Shift+Y) or else by its name, learned earlier or picked by
         /// the user (never one of the OtherButtonHotkeys buttons). Null while
@@ -2163,9 +2173,9 @@ namespace M3.ZoomHelper
         /// out of room (the participants panel narrows it).</summary>
         static El ReactButton(El window, string reactTitle)
         {
+            var react = ReactButtonByHotkey(window);
+            if (react != null) return react;
             var buttons = ToolbarButtons(window);
-            foreach (var button in buttons)
-                if (ReactHotkey.IsMatch(button.Name)) return button;
             buttons.RemoveAll(IsOtherButton);
             return ByName(buttons, reactTitle);
         }
@@ -2279,42 +2289,132 @@ namespace M3.ZoomHelper
             var windows = ZoomWindows();
             if (!PressHandTitle(window, title, out pressed, out entriesBefore)) return false;
             string name;
-            string word;
-            if (WaitForAddedWord(window, before, 2500, out name, out word)) return true;
+            List<string> words;
+            // Pressed something, but only a row change says it raised a hand:
+            // any other entry (Record, Breakout rooms) does nothing of the sort.
+            if (WaitForAddedWords(window, before, null, 2500, out name, out words)) return true;
             // Zoom's Reactions panel opened instead (or nothing did): closed
             // again before trying it as the React button.
             if (TopWindows(ReactionPanelClass, true).Count == 0) DismissNewWindows(windows);
             return false;
         }
 
-        /// <summary>Waits for Zoom to add one word to a participant's row, how
-        /// it marks that their hand is up in the user's language, and reports
-        /// whose row and which word. False if no row changed that way in time:
-        /// a row that gained several words at once is no hand mark.</summary>
-        static bool WaitForAddedWord(El window, Dictionary<string, string> before, int timeoutMs, out string name, out string word)
+        /// <summary>"Mão levantada" and an equivalent with a non-breaking
+        /// space are the same word: Zoom's labels use either.</summary>
+        static string Normalized(string text)
+        {
+            return Regex.Replace(text ?? "", @"\s+", " ").Trim();
+        }
+
+        /// <summary>Whether a row's details contain the word M3 learned: Zoom's
+        /// mark for a raised hand, in the user's language.</summary>
+        static bool HasWord(string details, string phrase)
+        {
+            if (string.IsNullOrEmpty(phrase)) return false;
+            var wanted = Normalized(phrase);
+            foreach (var segment in Segments(details))
+                if (Normalized(segment) == wanted) return true;
+            return false;
+        }
+
+        /// <summary>The meeting rows, read again until two reads agree. Zoom
+        /// lays the list out and fills in its labels while the panel opens, and
+        /// a baseline read half-way through would make that look like a change
+        /// nobody made (a word added to the host's row, say).</summary>
+        static Dictionary<string, string> SettledMeetingRows(El window)
+        {
+            var rows = MeetingRowDetails(window);
+            Thread.Sleep(PollIntervalMs);
+            WaitUntil(() =>
+            {
+                var next = MeetingRowDetails(window);
+                var same = next.Count == rows.Count;
+                if (same)
+                    foreach (var entry in next)
+                    {
+                        string old;
+                        if (!rows.TryGetValue(entry.Key, out old) || old != entry.Value) { same = false; break; }
+                    }
+                rows = next;
+                return same;
+            }, 1500);
+            return rows;
+        }
+
+        /// <summary>The first person in the meeting's list: Zoom lists the host
+        /// (the one whose own hand M3 raises) first.</summary>
+        static string FirstMeetingName(El window)
+        {
+            foreach (var row in ParticipantRows(window))
+                if (row.Section == "meeting") return row.Name;
+            return null;
+        }
+
+        /// <summary>Waits for Zoom to add words to a participant's row, how it
+        /// marks that their hand is up in the user's language, and reports
+        /// whose row and which words. The host's row is looked at first, since
+        /// only their hand was raised; rows that weren't in the baseline are
+        /// ignored (someone joined), and the words must still be there on the
+        /// next read, so a row redrawing itself isn't taken for a hand.
+        /// Several words can appear at once (a label Zoom fills in late), so
+        /// which one is the hand mark is settled by lowering the hand again.
+        /// False if no such row changed in time.</summary>
+        static bool WaitForAddedWords(El window, Dictionary<string, string> before, string host, int timeoutMs, out string name, out List<string> added)
         {
             string foundName = null;
-            string foundWord = null;
-            var found = WaitUntil(() =>
+            List<string> found = null;
+            var seen = new Dictionary<string, string>();
+            var foundIt = WaitUntil(() =>
             {
-                foreach (var entry in MeetingRowDetails(window))
+                var rows = MeetingRowDetails(window);
+                var order = new List<string>();
+                if (host != null && rows.ContainsKey(host)) order.Add(host);
+                foreach (var key in rows.Keys) if (!order.Contains(key)) order.Add(key);
+                foreach (var key in order)
                 {
                     string old;
-                    if (!before.TryGetValue(entry.Key, out old) || old == entry.Value) continue;
+                    if (!before.TryGetValue(key, out old)) continue;
                     var oldSegments = Segments(old);
-                    var added = new List<string>();
-                    foreach (var segment in Segments(entry.Value))
-                        if (!oldSegments.Contains(segment)) added.Add(segment);
-                    if (added.Count != 1) continue;
-                    foundWord = added[0];
-                    foundName = entry.Key;
-                    return true;
+                    var words = new List<string>();
+                    foreach (var segment in Segments(rows[key]))
+                        if (!oldSegments.Contains(segment)) words.Add(segment);
+                    if (words.Count == 0) { seen.Remove(key); continue; }
+                    var signature = string.Join("\u0001", words);
+                    string previous;
+                    if (seen.TryGetValue(key, out previous) && previous == signature)
+                    {
+                        foundName = key;
+                        found = words;
+                        return true;
+                    }
+                    seen[key] = signature;
                 }
                 return false;
             }, timeoutMs);
             name = foundName;
-            word = foundWord;
-            return found;
+            added = found;
+            return foundIt;
+        }
+
+        /// <summary>Waits for the words Zoom added when the hand went up to
+        /// leave that row again, and reports the one that did: with a word of
+        /// its own, that is how Zoom marks a raised hand. False when none went
+        /// away (the hand is still up) or when several did (nothing tells the
+        /// hand mark from the rest).</summary>
+        static bool WaitForRemovedWord(El window, string name, List<string> added, int timeoutMs, out string phrase)
+        {
+            var gone = new List<string>();
+            var lowered = WaitUntil(() =>
+            {
+                string now;
+                if (!MeetingRowDetails(window).TryGetValue(name, out now)) return false;
+                gone = new List<string>();
+                foreach (var word in added)
+                    if (!HasWord(now, word)) gone.Add(word);
+                return gone.Count > 0;
+            }, timeoutMs);
+            phrase = lowered && gone.Count == 1 ? gone[0] : null;
+            return phrase != null;
         }
 
         /// <summary>Opens Zoom's Reactions panel, the way sharing opens its
@@ -2445,11 +2545,17 @@ namespace M3.ZoomHelper
             var window = RequireMeetingWindow();
             // Looked for before the participants panel narrows the toolbar.
             var toolbarHand = string.IsNullOrEmpty(handTitle) ? HandToolbarButton(window) : null;
-            var react = ReactButton(window, reactTitle);
+            // Only a React button found by its shortcut is sure to open the
+            // Reactions panel: a name may well be the plain Raise hand button
+            // the user picked (reactions turned off), which raises a hand
+            // without opening anything.
+            var reactByHotkey = ReactButtonByHotkey(window);
+            var react = reactByHotkey ?? ReactButton(window, reactTitle);
             if (react != null) reactTitle = FirstSegment(react.Name);
             OpenParticipantsPanel(window);
-            var before = MeetingRowDetails(window);
+            var before = SettledMeetingRows(window);
             if (before.Count == 0) throw new ZoomActionError("participants-not-found");
+            var host = FirstMeetingName(window);
 
             var learnedHandTitle = string.IsNullOrEmpty(handTitle) && toolbarHand != null
                 ? FirstSegment(toolbarHand.Name)
@@ -2462,8 +2568,10 @@ namespace M3.ZoomHelper
             // found by its shortcut): no Reactions panel on these accounts.
             var direct = PressHandTitle(window, learnedHandTitle, out pressed, out entriesBefore);
 
-            // The entry picked as React may be the plain Raise hand button.
-            if (!direct && react == null && !string.IsNullOrEmpty(reactTitle))
+            // The entry the user picked may be the plain Raise hand button:
+            // tried as one unless Zoom's Reactions button is right there, in
+            // which case that is what the entry is.
+            if (!direct && reactByHotkey == null && !string.IsNullOrEmpty(reactTitle))
             {
                 direct = TryPlainHandButton(window, reactTitle, before, out pressed, out entriesBefore);
                 if (direct) learnedHandTitle = reactTitle;
@@ -2475,8 +2583,8 @@ namespace M3.ZoomHelper
             if (!direct) panelRaiseTitle = PressHandButton(window, reactTitle, null, out learnedReactTitle);
 
             string name;
-            string phrase;
-            if (!WaitForAddedWord(window, before, 5000, out name, out phrase))
+            List<string> added;
+            if (!WaitForAddedWords(window, before, host, 5000, out name, out added))
                 throw new ZoomActionError("hand-not-raised");
 
             if (direct)
@@ -2491,12 +2599,11 @@ namespace M3.ZoomHelper
                 string ignored;
                 PressHandButton(window, learnedReactTitle, panelRaiseTitle, out ignored);
             }
-            var lowered = WaitUntil(() =>
-            {
-                string now;
-                return MeetingRowDetails(window).TryGetValue(name, out now) && !Segments(now).Contains(phrase);
-            }, 5000);
-            if (!lowered) throw new ZoomActionError("hand-not-lowered");
+            // Of the words that appeared with the hand, the one that leaves
+            // again with it is Zoom's mark for a raised hand.
+            string phrase;
+            if (!WaitForRemovedWord(window, name, added, 5000, out phrase))
+                throw new ZoomActionError("hand-not-lowered");
 
             // The "Lower hand" button of other people's rows (the host's own
             // row names its hand button differently) is learned from the first
@@ -2519,7 +2626,7 @@ namespace M3.ZoomHelper
             OpenParticipantsPanel(window);
             var names = new List<object>();
             foreach (var row in ParticipantRows(window))
-                if (row.Section == "meeting" && Segments(row.Details).Contains(phrase) && !names.Contains(row.Name)) names.Add(row.Name);
+                if (row.Section == "meeting" && HasWord(row.Details, phrase) && !names.Contains(row.Name)) names.Add(row.Name);
             return new Dictionary<string, object> { { "raisedHands", names } };
         }
 
@@ -2546,7 +2653,7 @@ namespace M3.ZoomHelper
             string learnedAskToUnmuteTitle = null;
             var found = false;
             bool hovered;
-            var handRaised = !string.IsNullOrEmpty(phrase) && Segments(row.Details).Contains(phrase);
+            var handRaised = HasWord(row.Details, phrase);
             var pressed = WithRowButtons(window, row, name, buttons =>
             {
                 var layout = ReadRowLayout(buttons, muteTitle, unmuteTitle, lowerTitle, askTitle, handRaised);
@@ -2592,7 +2699,7 @@ namespace M3.ZoomHelper
             OpenParticipantsPanel(window);
             var row = UniqueMeetingRow(window, name);
             if (row == null) throw new ZoomActionError("participant-not-found");
-            if (!Segments(row.Details).Contains(phrase)) return Changed(false);
+            if (!HasWord(row.Details, phrase)) return Changed(false);
             string learnedLowerHandTitle = null;
             bool hovered;
             var pressed = WithRowButtons(window, row, name, buttons =>
@@ -2608,7 +2715,7 @@ namespace M3.ZoomHelper
             {
                 Row latest = null;
                 try { latest = UniqueMeetingRow(window, name); } catch (ZoomActionError) { }
-                return latest != null && !Segments(latest.Details).Contains(phrase);
+                return latest != null && !HasWord(latest.Details, phrase);
             }, 4000);
             if (!lowered) throw new ZoomActionError("hand-not-lowered");
             return new Dictionary<string, object> { { "changed", true }, { "hovered", hovered }, { "lowerHandTitle", learnedLowerHandTitle } };

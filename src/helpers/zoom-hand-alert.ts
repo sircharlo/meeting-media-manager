@@ -44,6 +44,14 @@ export const isZoomHandAlertEnabled = () => {
 };
 
 /**
+ * Raised hands are only reported, with no button that acts on a participant:
+ * for congregations that do all participant controls in Zoom itself.
+ */
+export const isZoomHandAlertNotifyOnly = () =>
+  !!useCurrentStateStore().currentSettings
+    ?.zoomMeetingManagerHandAlertNotifyOnly;
+
+/**
  * Once a participant has been unmuted, offers to mute them again and lower
  * their hand in one go, when they're done speaking.
  */
@@ -92,37 +100,52 @@ const dismissHandNotification = (name: string) => {
 
 const notifyHandRaised = (name: string) => {
   dismissHandNotification(name);
+  // Notify-only: the hand is reported exactly as before, but the participant
+  // is left to the operator in Zoom, so no button acts on them ("Dismiss"
+  // stays, as it only hides the notification).
+  const actions = isZoomHandAlertNotifyOnly()
+    ? [
+        {
+          color: 'dark',
+          handler: () => {
+            forgetHandNotification(name);
+          },
+          label: t('dismiss'),
+          noCaps: true,
+        },
+      ]
+    : [
+        {
+          color: 'dark',
+          handler: () => {
+            forgetHandNotification(name);
+            void unmuteZoomParticipant(name).then((result) => {
+              if (result.ok) notifyParticipantSpeaking(name);
+            });
+          },
+          label: t('zoom-hand-unmute'),
+          noCaps: true,
+        },
+        {
+          color: 'dark',
+          handler: () => {
+            forgetHandNotification(name);
+            void muteZoomParticipantAndLowerHand(name);
+          },
+          label: t('zoom-hand-mute-and-lower'),
+          noCaps: true,
+        },
+        {
+          color: 'dark',
+          handler: () => {
+            forgetHandNotification(name);
+          },
+          label: t('dismiss'),
+          noCaps: true,
+        },
+      ];
   const dismiss = createTemporaryNotification({
-    actions: [
-      {
-        color: 'dark',
-        handler: () => {
-          forgetHandNotification(name);
-          void unmuteZoomParticipant(name).then((result) => {
-            if (result.ok) notifyParticipantSpeaking(name);
-          });
-        },
-        label: t('zoom-hand-unmute'),
-        noCaps: true,
-      },
-      {
-        color: 'dark',
-        handler: () => {
-          forgetHandNotification(name);
-          void muteZoomParticipantAndLowerHand(name);
-        },
-        label: t('zoom-hand-mute-and-lower'),
-        noCaps: true,
-      },
-      {
-        color: 'dark',
-        handler: () => {
-          forgetHandNotification(name);
-        },
-        label: t('dismiss'),
-        noCaps: true,
-      },
-    ],
+    actions,
     group: `zoom-hand-${name}`,
     icon: 'mmm-groups',
     message: t('zoom-hand-raised', { name }),
