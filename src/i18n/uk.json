@@ -445,6 +445,8 @@
   "make-sure-that-m-is-in-not-use-before-quitting": "Перш ніж закрити M³, переконайтеся, що програма не використовується.",
   "maxRes": "Максимальна роздільна здатність для відео",
   "maxRes-explain": "Виберіть максимальну роздільну здатність для відео. Відео з роздільною здатністю вище цієї не будуть завантажені.",
+  "media-decode-failed": "Video couldn't be played",
+  "media-decode-failed-explain": "The video couldn't be decoded on this device, so it was skipped. If this keeps happening, turning on \"@:{'disableHardwareAcceleration'}\" in the Settings may help.",
   "media-display": "Показ медіа",
   "media-display-settings": "Налаштування відображення медіа",
   "media-export-conversion-failed": "Під час експорту всі файли успішно перетворено | Під час експорту не вдалося перетворити 1 файл | Під час експорту не вдалося перетворити файлів: {count}",
