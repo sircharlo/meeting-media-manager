@@ -1337,6 +1337,8 @@
   "zoomMeetingManagerEnable-explain": "Die Beta-Integration des Zoom Meeting Managers aktivieren.",
   "zoomMeetingManagerHandAlert": "Helfer für erhobene Hände",
   "zoomMeetingManagerHandAlert-explain": "Während einer Zusammenkunft überwacht M³ die Teilnehmerliste von Zoom auf erhobene Hände. Wenn jemand die Hand hebt, können Sie über eine Benachrichtigung in M³ die Stummschaltung dieses Teilnehmers mit einem Klick aufheben und ihn später wieder stummschalten und seine Hand senken. Die Zoom-Schaltfläche auf der Aktionsinsel listet die erhobenen Hände ebenfalls auf. Wenn der Zusammenkunfts-Timer aktiviert ist, erscheint außerdem eine große Hand mit dem Namen des Teilnehmers auf der Timer-Anzeige für den Vorsitzenden. Dazu muss M³ zunächst über die Schaltfläche unten ermitteln, wie Zoom erhobene Hände in Ihrer Sprache kennzeichnet.",
+  "zoomMeetingManagerHandAlertNotifyOnly": "Only tell me about raised hands",
+  "zoomMeetingManagerHandAlertNotifyOnly-explain": "M³ still notices who raises their hand, in its notification and on the timer display, but offers no buttons that unmute a participant or lower their hand: you do those in Zoom yourself. Turn this on where you would rather keep control of participant audio and hands.",
   "zoomMeetingManagerMeetingId": "Zoom-Meeting-ID",
   "zoomMeetingManagerMeetingId-explain": "Meeting-ID, die beim Starten des Zoom Meeting Managers verwendet wird.",
   "zoomMeetingManagerPostMeetingAskToUnmute": "Außerdem alle bitten, die Stummschaltung aufzuheben",

@@ -9,6 +9,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 ### ✨ Nove funkcije
 
 - ✨ **Oddaljeni časovnik**: Stran s časovnikom za tablico na govorniškem pultu ima izbirni osrednji prikaz, ki ga vklopiš v Nastavitvah. Čas prikazuje v velikem krogu napredka, ki v zadnji minuti postane rumen, nato pa rdeč z zneskom prekoračitve (+02:18), ob njem pa našteje udeležence Zooma, ki so dvignili roko, po vrstnem redu, kot so jo dvignili: prve štiri po imenu, s številom ostalih. Vsaka nova roka za tri sekunde utripne »Roka dvignjena«, seznam pa se posodablja, ko se roke dvigujejo in spuščajo. Trenutni prikaz ostane privzeti.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 

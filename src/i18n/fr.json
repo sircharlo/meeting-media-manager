@@ -1337,6 +1337,8 @@
   "zoomMeetingManagerEnable-explain": "Activer l'intégration bêta du gestionnaire de réunions Zoom.",
   "zoomMeetingManagerHandAlert": "Gestion des mains levées",
   "zoomMeetingManagerHandAlert-explain": "Pendant une réunion, M³ surveille la liste des participants de Zoom pour repérer les mains levées. Lorsqu'une personne lève la main, une notification dans M³ vous permet de réactiver le micro de ce participant en un clic, puis, plus tard, de le couper de nouveau et de baisser sa main. Le bouton Zoom de l'îlot d'actions affiche aussi la liste des mains levées. Si le minuteur de réunion est activé, une grande main accompagnée du nom du participant apparaît également sur l'affichage du minuteur, à l'intention du président. M³ doit d'abord apprendre comment Zoom signale les mains levées dans votre langue, à l'aide du bouton ci-dessous.",
+  "zoomMeetingManagerHandAlertNotifyOnly": "Only tell me about raised hands",
+  "zoomMeetingManagerHandAlertNotifyOnly-explain": "M³ still notices who raises their hand, in its notification and on the timer display, but offers no buttons that unmute a participant or lower their hand: you do those in Zoom yourself. Turn this on where you would rather keep control of participant audio and hands.",
   "zoomMeetingManagerMeetingId": "Identifiant de réunion Zoom",
   "zoomMeetingManagerMeetingId-explain": "Identifiant de réunion qui sera utilisé lors du lancement du gestionnaire de réunions Zoom.",
   "zoomMeetingManagerPostMeetingAskToUnmute": "Demander aussi à tous de réactiver leur micro",

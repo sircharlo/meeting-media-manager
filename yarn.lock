@@ -3952,9 +3952,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.6.1":
-  version: 10.6.1
-  resolution: "autoprefixer@npm:10.6.1"
+"autoprefixer@npm:^10.6.2":
+  version: 10.6.2
+  resolution: "autoprefixer@npm:10.6.2"
   dependencies:
     browserslist: "npm:^4.28.9"
     caniuse-lite: "npm:^1.0.30001810"
@@ -3965,7 +3965,7 @@ __metadata:
     postcss: ^8.1.0
   bin:
     autoprefixer: bin/autoprefixer
-  checksum: 10c0/bd5273fbe36a2baccf29e7cb62b32181b1848a64f92d4d24fe5db66960f6f576ab9684983b93569f1bd890fa25ebc270eafac9692619517705e7be4f4d95db74
+  checksum: 10c0/16dce8742468c4f956205f2ad3a1b4a8da5a298533796077110dcddd2dfcc439fea693c03aaf503db080c10b24f0a286ae841a54dbd8f78b1aba4a690ac5b7f7
   languageName: node
   linkType: hard
 
@@ -6151,12 +6151,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.16.0":
-  version: 1.16.1
-  resolution: "follow-redirects@npm:1.16.1"
+  version: 1.16.2
+  resolution: "follow-redirects@npm:1.16.2"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10c0/544e24ccb93b7afb5dd5a2199bd556e167b84de2af7c13b2ced08494239677359d7883bae56ae43a9ca98ac5451e75cf4834a5fadd6fa79053b9248fac5447a4
+  checksum: 10c0/ff38c8ceb904e505021057f58d395ea5f2e7c34257032960a76b21df1726395ce753f5678b6ee3b15210a557277c00b2607c67b682ee4dec1f33cb5147e08e90
   languageName: node
   linkType: hard
 
@@ -7805,7 +7805,7 @@ __metadata:
     "@vue/test-utils": "npm:^2.5.1"
     "@vueuse/core": "npm:^15.0.0"
     "@vueuse/router": "npm:^15.0.0"
-    autoprefixer: "npm:^10.6.1"
+    autoprefixer: "npm:^10.6.2"
     buffer: "npm:^6.0.3"
     check-disk-space: "npm:^4.0.0"
     cheerio: "npm:^1.2.0"
@@ -7830,7 +7830,7 @@ __metadata:
     is-online: "npm:^12.0.2"
     lint-staged: "npm:^17.6.0"
     lodash-es: "npm:^4.18.1"
-    mime: "npm:^4.1.1"
+    mime: "npm:^4.1.2"
     mousetrap: "npm:^1.6.5"
     msw: "npm:^3.0.3"
     music-metadata: "npm:^12.3.2"
@@ -7841,7 +7841,7 @@ __metadata:
     pinia-plugin-persistedstate: "npm:^4.7.1"
     playwright: "npm:^1.64.1"
     png2icons: "npm:^2.0.1"
-    postcss: "npm:^8.5.30"
+    postcss: "npm:^8.5.32"
     prettier: "npm:^3.9.6"
     pretty-bytes: "npm:^7.2.0"
     quasar: "npm:^2.35.1"
@@ -7987,12 +7987,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mime@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "mime@npm:4.1.1"
+"mime@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "mime@npm:4.1.2"
   bin:
     mime: bin/cli.js
-  checksum: 10c0/9e3c421cb727a3f51a683ce5ab4ed182559edd6770113386fe6d560b5d83f800944dd79f40b41b9442b4d73201da32d290b07721c0bac42d12425b8e887acb10
+  checksum: 10c0/fb135a0a9b6350d823fa04400816fbe164085bcd1f7b116d88e3659c2cebe08d38d33603b46a3793a2ebd44569e0aa43189c383f6f90371c19d5f0daf309e90a
   languageName: node
   linkType: hard
 
@@ -9139,6 +9139,17 @@ __metadata:
     picocolors: "npm:^1.1.1"
     source-map-js: "npm:^1.2.2"
   checksum: 10c0/52f94c6655f86f568a803ce9c8eb3c749e109cc711d26644c4cde953b30c1b947a2f25af3b9453de68584ac655572f46ed8e830b8ab2f21dd226b3f640992e00
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.5.32":
+  version: 8.5.32
+  resolution: "postcss@npm:8.5.32"
+  dependencies:
+    nanoid: "npm:^3.3.20"
+    picocolors: "npm:^1.1.1"
+    source-map-js: "npm:^1.2.2"
+  checksum: 10c0/5fa6cad84e277c2ced965dc7e8e7c0b8d7e5b76a6835591b57a43fde46e671d0c8428d365e9141c080abaae5441d495ed77ffd7472c5bd41d6c2154bd03c01d7
   languageName: node
   linkType: hard
 

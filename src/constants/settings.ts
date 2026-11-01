@@ -740,6 +740,16 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomMeetingManager',
     type: 'toggle',
   },
+  // For congregations that would rather keep participant controls in Zoom:
+  // raised hands are still reported, but M³ offers no buttons that act on
+  // them.
+  zoomMeetingManagerHandAlertNotifyOnly: {
+    depends: 'zoomMeetingManagerHandAlert',
+    group: 'integrations',
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'toggle',
+  },
   // Zoom's plain Raise hand button, on accounts where reactions are turned
   // off and Zoom shows that button instead of its React one.
   zoomHandButtonTitle: {
@@ -1326,6 +1336,7 @@ export const defaultSettings: SettingsValues = {
   zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
   zoomMeetingManagerEnable: false,
   zoomMeetingManagerHandAlert: false,
+  zoomMeetingManagerHandAlertNotifyOnly: false,
   zoomMeetingManagerMeetingId: null,
   zoomMeetingManagerPostMeetingAskToUnmute: true,
   zoomMeetingManagerSetupAssistant: null,

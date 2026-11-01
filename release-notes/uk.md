@@ -9,6 +9,7 @@
 ### ✨ Нові функції
 
 - ✨ **Віддалений таймер**: Сторінка таймера для планшета на трибуні має додатковий режим фокусування, який вмикається в налаштуваннях. Час показується у великому кільці прогресу, яке останньої хвилини стає жовтим, а за перепрацювання — червоним із зазначенням його величини (+02:18); поруч перелічуються учасники Zoom, які підняли руку, у тому порядку, у якому вони це зробили: перші чотири — за іменем, решта — із зазначенням кількості. Кожна нова рука на три секунди висвічує «Руку піднято», а список оновлюється, коли руки піднімаються й опускаються. Поточний вигляд залишається типовим.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 

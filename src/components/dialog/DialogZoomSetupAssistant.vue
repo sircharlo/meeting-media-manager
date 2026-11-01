@@ -989,11 +989,15 @@ const hasHandEntries = computed(
   () => handEntries.value.toolbar.length + handEntries.value.more.length > 0,
 );
 
-/** Like shareNeedsFirstPick: an expected step, not an error. */
+/**
+ * Like shareNeedsFirstPick: an expected step, not an error. Whatever went
+ * wrong, Zoom's buttons are offered to pick from, so the step is never a dead
+ * end: on accounts where reactions are turned off, and whenever M³ pressed a
+ * button that didn't raise the hand where it could see it.
+ */
 const handNeedsFirstPick = computed(
   () =>
     handStatus.value === 'failed' &&
-    handReactMissing.value &&
     !handEntryTried.value &&
     hasHandEntries.value,
 );
@@ -1023,7 +1027,9 @@ const runHandLearning = async (reactEntry?: string) => {
 
 const learnHand = async () => {
   await runHandLearning();
-  if (!handReactMissing.value) return;
+  // Zoom's buttons are only listed when the attempt failed: learning worked,
+  // or there is nothing left to pick from.
+  if (handStatus.value === 'passed') return;
   handEntries.value = await getZoomShareEntries();
   selectedHandEntry.value = null;
   handEntryTried.value = false;

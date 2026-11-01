@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "26.10.3-beta.1",
+  "version": "26.11.0",
   "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "keywords": [
     "M³",
@@ -37,6 +37,7 @@
     "lint": "eslint -c ./eslint.config.js './src/**/*.{js,ts,cjs,mjs,mts,vue}' './src-electron/**/*.{js,ts,cjs,mjs,mts}' && vue-tsc --noEmit -p tsconfig.json",
     "depcheck": "depcheck --skip-missing && depcheck src-electron --skip-missing",
     "test:unit": "node scripts/fix-i18n-locales.mjs --check && vitest --project quasar --project electron",
+    "test:zoom-hand": "vitest run --config test/zoom-live/vitest.config.mts test/zoom-live/zoom-hand.live.test.ts",
     "test:zoom-live": "vitest run --config test/zoom-live/vitest.config.mts",
     "screenshot:refresh": "node test/playwright/run.mjs"
   },
@@ -64,7 +65,7 @@
     "fs-extra": "^11.4.1",
     "heic-convert": "^2.1.0",
     "is-online": "^12.0.2",
-    "mime": "^4.1.1",
+    "mime": "^4.1.2",
     "mousetrap": "^1.6.5",
     "music-metadata": "^12.3.2",
     "obs-websocket-js": "^5.0.8",
@@ -107,7 +108,7 @@
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.9.0",
     "@vue/test-utils": "^2.5.1",
-    "autoprefixer": "^10.6.1",
+    "autoprefixer": "^10.6.2",
     "depcheck": "^1.4.7",
     "electron": "^45.0.0",
     "electron-builder": "26.18.0",
@@ -123,7 +124,7 @@
     "msw": "^3.0.3",
     "playwright": "^1.64.1",
     "png2icons": "^2.0.1",
-    "postcss": "^8.5.30",
+    "postcss": "^8.5.32",
     "prettier": "^3.9.6",
     "rollup-plugin-visualizer": "^7.1.1",
     "sharp": "^0.35.4",

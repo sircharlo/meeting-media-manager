@@ -9,6 +9,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 ### ✨ Nouvelles fonctionnalités
 
 - ✨ **Minuteur à distance** : La page du minuteur pour la tablette sur le pupitre propose un affichage ciblé facultatif, activé dans les Paramètres. Elle affiche le temps dans un grand anneau de progression qui devient jaune dans la dernière minute, puis rouge avec la durée de dépassement (+02:18), et liste à côté les participants Zoom qui ont levé la main, dans l'ordre où ils l'ont fait : les quatre premiers par leur nom, avec le nombre des autres. Chaque nouvelle main clignote « Main levée » pendant trois secondes, et la liste se met à jour à mesure que les mains se lèvent et se baissent. L'affichage actuel reste celui par défaut.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 

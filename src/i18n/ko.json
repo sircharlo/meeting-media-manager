@@ -1337,6 +1337,8 @@
   "zoomMeetingManagerEnable-explain": "베타 버전의 Zoom 회의 관리자 연동을 사용합니다.",
   "zoomMeetingManagerHandAlert": "손 들기 도우미",
   "zoomMeetingManagerHandAlert-explain": "집회 중에 M³가 Zoom의 참여자 목록에서 손을 든 참여자가 있는지 확인합니다. 누군가 손을 들면 M³에 알림이 표시되어 클릭 한 번으로 해당 참여자의 음소거를 해제할 수 있고, 나중에 다시 음소거하고 손을 내릴 수 있습니다. 작업 아일랜드의 Zoom 버튼에도 손을 든 참여자가 표시됩니다. 집회 타이머가 활성화되어 있으면 사회자를 위해 타이머 화면에도 참여자의 이름과 함께 큰 손 모양이 표시됩니다. 먼저 아래 버튼을 사용해 M³가 사용자의 언어에서 Zoom이 손 든 참여자를 어떻게 표시하는지 학습하게 해야 합니다.",
+  "zoomMeetingManagerHandAlertNotifyOnly": "Only tell me about raised hands",
+  "zoomMeetingManagerHandAlertNotifyOnly-explain": "M³ still notices who raises their hand, in its notification and on the timer display, but offers no buttons that unmute a participant or lower their hand: you do those in Zoom yourself. Turn this on where you would rather keep control of participant audio and hands.",
   "zoomMeetingManagerMeetingId": "Zoom 회의 ID",
   "zoomMeetingManagerMeetingId-explain": "Zoom 회의 관리자에서 회의를 시작할 때 사용할 회의 ID입니다.",
   "zoomMeetingManagerPostMeetingAskToUnmute": "모두에게 음소거 해제도 요청",

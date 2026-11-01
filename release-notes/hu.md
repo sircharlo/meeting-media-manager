@@ -9,6 +9,7 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 ### ✨ Új funkciók
 
 - ✨ **Távoli időzítő**: A pulpituson lévő táblagép időzítőoldalán választható fókuszált elrendezés érhető el, amelyet a Beállításokban lehet bekapcsolni. Nagy folyamatjelző gyűrűben mutatja az időt, amely az utolsó percben sárgára, majd a túllépés mértékével (+02:18) pirosra vált, és mellette felsorolja azokat a Zoom-résztvevőket, akik felemelték a kezüket, abban a sorrendben, ahogy tették: az első négyet név szerint, a többiek számával együtt. Minden új kéz három másodpercre felvillantja a „Kéz felemelve” üzenetet, és a lista frissül, ahogy a kezek felemelkednek és leereszkednek. Az aktuális kijelzés marad az alapértelmezett.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 

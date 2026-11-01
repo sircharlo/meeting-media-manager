@@ -9,6 +9,7 @@ Per l'elenco completo delle modifiche tra le versioni, consulta il file CHANGELO
 ### ✨ Nuove funzionalità
 
 - ✨ **Timer Remote**: La pagina del timer per il tablet al lectern ha un layout di messa a fuoco opzionale, attivato in Impostazioni. Mostra il tempo in un grande anello di avanzamento che diventa giallo nell'ultimo minuto, poi rosso con la quantità di straordinari (+02:18), ed elenca i partecipanti Zoom la cui mano è alzata accanto ad esso, nell'ordine li alzarono: i primi quattro per nome, con un conto del resto. Ogni nuova mano lampeggia "la mano alzata" per tre secondi, e gli aggiornamenti della lista come mani su e giù. Il display attuale rimane il predefinito.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 

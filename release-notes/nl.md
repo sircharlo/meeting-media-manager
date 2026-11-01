@@ -9,6 +9,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 ### ✨ Nieuwe functies
 
 - ✨ **Timer op afstand**: De timerpagina voor de tablet op de lessenaar heeft een optionele focusindeling, die je aanzet in Instellingen. Die toont de tijd in een grote voortgangsring die in de laatste minuut geel wordt en daarna rood met de hoeveelheid over tijd (+02:18), en toont ernaast de Zoom-deelnemers die hun hand hebben opgestoken, in de volgorde waarin ze dat deden: de eerste vier bij naam, met een telling van de rest. Elke nieuwe hand knippert drie seconden met "Hand opgestoken", en de lijst wordt bijgewerkt wanneer handen omhoog- en omlaaggaan. De huidige weergave blijft de standaard.
+- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
 
 ## v26.10.2
 

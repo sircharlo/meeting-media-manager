@@ -1337,6 +1337,8 @@
   "zoomMeetingManagerEnable-explain": "Ativar a integração beta com o Gerenciador de Reuniões do Zoom.",
   "zoomMeetingManagerHandAlert": "Assistente de mãos levantadas",
   "zoomMeetingManagerHandAlert-explain": "Durante uma reunião, o M³ observa a lista de participantes do Zoom em busca de mãos levantadas. Quando alguém levanta a mão, uma notificação no M³ permite ativar o áudio desse participante com um clique e, depois, desativar o áudio de novo e abaixar a mão. O botão do Zoom na barra de ações também lista as mãos levantadas. Se o temporizador da reunião estiver ativado, uma mão grande com o nome do participante também aparece na tela do temporizador para o presidente. Primeiro, o M³ precisa aprender, com o botão abaixo, como o Zoom marca as mãos levantadas no seu idioma.",
+  "zoomMeetingManagerHandAlertNotifyOnly": "Only tell me about raised hands",
+  "zoomMeetingManagerHandAlertNotifyOnly-explain": "M³ still notices who raises their hand, in its notification and on the timer display, but offers no buttons that unmute a participant or lower their hand: you do those in Zoom yourself. Turn this on where you would rather keep control of participant audio and hands.",
   "zoomMeetingManagerMeetingId": "ID da reunião do Zoom",
   "zoomMeetingManagerMeetingId-explain": "ID da reunião que o Gerenciador de Reuniões do Zoom vai usar ao iniciar a reunião.",
   "zoomMeetingManagerPostMeetingAskToUnmute": "Também pedir a todos que ativem o áudio",
