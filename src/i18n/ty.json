@@ -445,6 +445,8 @@
   "make-sure-that-m-is-in-not-use-before-quitting": "A hi’opo’a maita’i ē ’aita te M³ e fa’a’ohipahia ra hou a ’ōpani ai.",
   "maxRes": "Fā’atōrea rahi roa a te mau nene’ira’a parau",
   "maxRes-explain": "A mā’iti i te fā’atōrea rahi roa nō te mau video. ’Eiaha te mau video i hau atu i teie fā’atōrea ia tātā’ihia.",
+  "media-decode-failed": "Video couldn't be played",
+  "media-decode-failed-explain": "The video couldn't be decoded on this device, so it was skipped. If this keeps happening, turning on \"@:{'disableHardwareAcceleration'}\" in the Settings may help.",
   "media-display": "Fa’a’itera’a media",
   "media-display-settings": "Te mau fa’ahorora’a nō te fa’a’itera’a media",
   "media-export-conversion-failed": "Aita e pueraa parau i topa i te tauiraa i te taime i huri-ê-hia ai | 1 pueraa parau i topa i te tauiraa i te taime i huri-ê-hia ai | {count} pueraa parau i topa i te tauiraa i te taime i huri-ê-hia ai",
