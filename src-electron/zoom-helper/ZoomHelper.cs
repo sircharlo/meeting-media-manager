@@ -533,6 +533,9 @@ namespace M3.ZoomHelper
         // pressed again (see SetButtonState).
         const int RepressAfterMs = 3000;
         const int PollIntervalMs = 200;
+        // How long the annotation layer gets to say which window is shared
+        // before Zoom's own "Stop share" button is asked instead (StartShare).
+        const int ShareWindowGraceMs = 1500;
 
         // --- Waiting and windows ---------------------------------------------
 
@@ -3060,12 +3063,22 @@ namespace M3.ZoomHelper
             return "window-to-share-not-selected";
         }
 
+        enum ShareCheck
+        {
+            /// <summary>No layer over the window, so something else may be shared.</summary>
+            NotSharing,
+            /// <summary>The layer covers the window asked for.</summary>
+            Sharing,
+            /// <summary>Can't be told: no layer yet (it starts out as a tiny
+            /// placeholder and takes about a second to move over the shared
+            /// content), annotation turned off, or the window not found.</summary>
+            Unknown,
+        }
+
         /// <summary>Whether Zoom is sharing the window, judged by its annotation
-        /// layer covering it. Null if that can't be told (yet): the layer starts
-        /// out as a tiny placeholder and takes about a second to move over the
-        /// shared content, annotation can be turned off, and the window may not
-        /// be found.</summary>
-        static bool? IsSharingWindow(string windowTitle)
+        /// layer covering it, or Unknown if that can't be told: not the same as
+        /// "not sharing", so callers don't wait on an answer that never comes.</summary>
+        static ShareCheck CheckSharedWindow(string windowTitle)
         {
             var layers = new List<IntPtr>();
             foreach (var layer in TopWindows(AnnotationLayerClass, true))
@@ -3075,11 +3088,59 @@ namespace M3.ZoomHelper
                     layers.Add(layer);
             }
             var windows = TopWindowsTitled(windowTitle);
-            if (layers.Count == 0 || windows.Count == 0) return null;
+            if (layers.Count == 0 || windows.Count == 0) return ShareCheck.Unknown;
             foreach (var layer in layers)
                 foreach (var window in windows)
-                    if (Overlap(layer, window) > 0.6) return true;
-            return false;
+                    if (Overlap(layer, window) > 0.6) return ShareCheck.Sharing;
+            return ShareCheck.NotSharing;
+        }
+
+        /// <summary>The share toolbar's "Stop share" button: known by its learned
+        /// name, else the last toolbar button that shows a shortcut. Null when the
+        /// toolbar can't be read (yet).</summary>
+        static El StopShareButton(IntPtr toolbar, bool learn)
+        {
+            try
+            {
+                var buttons = Uia.Descendants(Uia.FromHandle(toolbar), Uia.ButtonType);
+                var stop = ByName(buttons, Known.StopShare);
+                if (stop != null) return stop;
+                foreach (var button in buttons)
+                    if (TrailingHotkey.IsMatch(button.Name)) stop = button;
+                if (learn && stop != null) Known.Learn("stopShare", FirstSegment(stop.Name));
+                return stop;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>Whether the share toolbar is showing its "Stop share" button,
+        /// i.e. Zoom shares and can be stopped. Never shows a hidden toolbar, so it
+        /// changes nothing on screen.</summary>
+        static bool ShareIsStoppable()
+        {
+            var toolbar = ShareToolbarWindow(false);
+            return toolbar != IntPtr.Zero && StopShareButton(toolbar, false) != null;
+        }
+
+        /// <summary>Waits for the annotation layer to settle which window is shared,
+        /// but takes the "Stop share" button, up as soon as Zoom shares, as the
+        /// answer when the layer can't give one.</summary>
+        static ShareCheck WaitForSharedWindow(string windowTitle, int timeoutMs)
+        {
+            var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMs);
+            while (true)
+            {
+                var check = CheckSharedWindow(windowTitle);
+                // A layer on its way over what's shared may cover it only in part
+                // for a moment, so only "sharing" ends the wait early.
+                if (check == ShareCheck.Sharing) return check;
+                if (check == ShareCheck.Unknown && ShareIsStoppable()) return ShareCheck.Sharing;
+                if (DateTime.UtcNow >= deadline) return check;
+                Thread.Sleep(PollIntervalMs);
+            }
         }
 
         static void CloseSharePicker(El picker)
@@ -3096,6 +3157,7 @@ namespace M3.ZoomHelper
         {
             if (IsSharing()) return Changed(false);
             var window = RequireMeetingWindow();
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             OpenSharePicker(window, shareTitle);
             var picker = WaitForWindow(SharePickerClass, WaitTimeoutMs);
             if (picker == null) throw new ZoomActionError("share-picker-not-found");
@@ -3117,11 +3179,17 @@ namespace M3.ZoomHelper
                 throw new ZoomActionError("window-to-share-not-selected");
             }
             Press(buttons[buttons.Count - 1]);
+            var clickedAt = watch.ElapsedMilliseconds;
             if (!WaitUntil(IsSharing, WaitTimeoutMs)) throw new ZoomActionError("share-not-started");
-            // Should something else be shared after all, stop it at once.
-            bool? sharingWindow = null;
-            WaitUntil(() => (sharingWindow = IsSharingWindow(windowTitle)) == true, 4000);
-            if (sharingWindow == false)
+            var sharingAt = watch.ElapsedMilliseconds;
+            // Should something else be shared after all, stop it at once. The
+            // layer takes about a second to move over what's shared and is never
+            // there when annotation is turned off: the "Stop share" button, up as
+            // soon as Zoom shares, answers then instead of waiting the grace out.
+            var shared = WaitForSharedWindow(windowTitle, ShareWindowGraceMs);
+            Console.Error.WriteLine("Zoom helper: start-share clicked at " + clickedAt + " ms, sharing at " +
+                sharingAt + " ms, window " + shared + " at " + watch.ElapsedMilliseconds + " ms");
+            if (shared == ShareCheck.NotSharing)
             {
                 StopShare();
                 throw new ZoomActionError("shared-wrong-window");
@@ -3133,16 +3201,7 @@ namespace M3.ZoomHelper
         {
             var toolbar = ShareToolbarWindow(true);
             if (toolbar == IntPtr.Zero) return Changed(false);
-            // "Stop share" is known by its learned name, else as the last
-            // share-toolbar button that shows a shortcut.
-            var buttons = Uia.Descendants(Uia.FromHandle(toolbar), Uia.ButtonType);
-            var stop = ByName(buttons, Known.StopShare);
-            if (stop == null)
-            {
-                foreach (var button in buttons)
-                    if (TrailingHotkey.IsMatch(button.Name)) stop = button;
-                if (stop != null) Known.Learn("stopShare", FirstSegment(stop.Name));
-            }
+            var stop = StopShareButton(toolbar, true);
             if (stop == null) throw new ZoomActionError("stop-share-button-not-found");
             // It turns Invoke down, but takes a click sent to it; a real
             // click if sharing goes on all the same.
