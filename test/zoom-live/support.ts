@@ -49,9 +49,18 @@ export const sleep = (ms: number) =>
 // captures for failing tests, and these reports matter when all pass too.
 export const print = (line: string) => process.stdout.write(`${line}\n`);
 
-export const createHelper = () =>
+/**
+ * A helper process. Its log lines are printed, and also handed to `onLog`
+ * for the tests that read them (the helper reports how long a share took).
+ */
+export const createHelper = ({
+  onLog,
+}: { onLog?: (line: string) => void } = {}) =>
   new ZoomHelperProcess({
-    onLog: (line) => print(`    [helper] ${line}`),
+    onLog: (line) => {
+      print(`    [helper] ${line}`);
+      onLog?.(line);
+    },
     scriptPath: join(ROOT, 'src-electron/zoom-helper/zoom-helper.ps1'),
   });
 

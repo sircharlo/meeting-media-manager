@@ -19,6 +19,10 @@ desktop app on your computer:
   gets shared), and side effects the helper must
   not have (moving the mouse at all, keeping focus, changing a Zoom
   setting).
+- `zoom-share.live.test.ts` covers only the share part: how long the helper
+  takes to answer once Zoom has started sharing (the "Sharing started"
+  notification waits for that answer), whether Zoom really shares the media
+  window and nothing else, and starting and stopping again.
 - `zoom-hand.live.test.ts` covers raised hands: learning how Zoom marks one
   (with reactions on, and through Zoom's plain "Raise hand" button where
   they're turned off), learning again with the names M³ remembered, noticing
@@ -101,6 +105,9 @@ way). Nothing is sent anywhere.
 
 Pieces you can also run on their own:
 
+- `yarn test:zoom-share` runs only the share part (a minute or so, provided
+  Zoom isn't sharing already), for checking a change to how M³ notices that
+  a share has started.
 - `node scripts/zoom-live/participants.mjs [count]` keeps test participants
   in the meeting until you stop it (Ctrl+C). While it runs, the tests and the
   in-app developer tool reuse those participants instead of joining new

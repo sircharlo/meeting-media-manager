@@ -39,6 +39,7 @@
     "test:unit": "node scripts/fix-i18n-locales.mjs --check && vitest --project quasar --project electron",
     "test:zoom-hand": "vitest run --config test/zoom-live/vitest.config.mts test/zoom-live/zoom-hand.live.test.ts",
     "test:zoom-live": "vitest run --config test/zoom-live/vitest.config.mts",
+    "test:zoom-share": "vitest run --config test/zoom-live/vitest.config.mts test/zoom-live/zoom-share.live.test.ts",
     "screenshot:refresh": "node test/playwright/run.mjs"
   },
   "dependencies": {
