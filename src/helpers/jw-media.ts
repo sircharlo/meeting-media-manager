@@ -461,6 +461,18 @@ const isPermissionError = (error: unknown) => {
 };
 
 /**
+ * A `.jwlplaylist` read from a live cloud-sync folder (Dropbox, OneDrive)
+ * can race the sync client: the watcher fires while the file is still
+ * being written, so yauzl sees a truncated zip (MMM-V2-3F9). The next
+ * watcher tick re-reads the completed file, so this is transient - not a
+ * corrupt playlist and not worth a Sentry report or an error toast.
+ */
+const isTruncatedZipError = (error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  return /end of central directory|truncated|not a zip file/i.test(message);
+};
+
+/**
  * Stops using the custom cache folder for the rest of the session when a
  * real read/write against it just failed with a permission error.
  */
@@ -846,6 +858,15 @@ const getMediaFromJwPlaylist = async (
     );
     return mappedPlaylistMediaItems;
   } catch (error) {
+    if (isTruncatedZipError(error)) {
+      log(
+        `Playlist file still syncing, will retry on next watch tick: ${jwPlaylistPath}`,
+        'watchedFolder',
+        'warn',
+        error,
+      );
+      return [];
+    }
     errorCatcher(error, {
       contexts: {
         fn: {

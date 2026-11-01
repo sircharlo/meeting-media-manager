@@ -4,6 +4,13 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Graphics Crashes**: When M³ detects a graphics (GPU) crash, the temporary software-mode notice and the "media window keeps stopping" notice now both offer a button that takes you straight to the hardware-acceleration setting. And when a video can't be decoded on your device (it played fine up to that point, so the file isn't the problem), M³ now says so once per session and suggests turning on hardware-acceleration disabling in Settings, which switches video decoding to software mode.
+- 🛠️ **Cloud-Synced Watch Folders**: A playlist or section-order file read while Dropbox, OneDrive or a similar service is still writing it is no longer reported as an error and no longer shows an error message: M³ quietly waits for the next folder update, which reads the finished file.
+
 ## v26.11.0
 
 ### ✨ New Features

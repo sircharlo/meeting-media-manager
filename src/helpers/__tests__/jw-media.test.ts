@@ -1577,4 +1577,68 @@ describe('jw-media helpers', () => {
       });
     });
   });
+
+  describe('watched .jwlplaylist import', () => {
+    const TRUNCATED_ZIP = new Error(
+      "Error invoking remote method 'unzip': Error: End of central directory record signature not found. Either not a zip file, or file is truncated.",
+    );
+
+    const mockPlaylistWatch = async () => {
+      const media = await import('src/utils/media');
+      vi.mocked(media.isVideo).mockReturnValue(false);
+      vi.mocked(media.isAudio).mockReturnValue(false);
+      vi.mocked(media.isImage).mockReturnValue(false);
+      vi.mocked(media.isJwPlaylist).mockReturnValue(true);
+      Object.assign(currentStateStore, {
+        getDatedAdditionalMediaDirectory: vi.fn(async () => '/tmp/dated'),
+      });
+    };
+
+    // MMM-V2-3F9: a playlist read mid-sync is truncated, and the next
+    // watcher tick re-reads the completed file - transient, not corrupt.
+    it('quietly skips a playlist that is still syncing instead of reporting it', async () => {
+      await mockPlaylistWatch();
+      unzipMock.mockRejectedValueOnce(TRUNCATED_ZIP);
+      const { watchedItemMapper } = await import('../jw-media');
+
+      const result = await watchedItemMapper(
+        '2026-10-31',
+        '/tmp/Visita.jwlplaylist',
+      );
+
+      expect(result).toEqual([]);
+      expect(errorCatcherMock).not.toHaveBeenCalled();
+      expect(createTemporaryNotificationMock).not.toHaveBeenCalled();
+      expect(logMock).toHaveBeenCalledWith(
+        expect.stringContaining('still syncing'),
+        'watchedFolder',
+        'warn',
+        expect.anything(),
+      );
+    });
+
+    it('still reports a genuine playlist failure to Sentry and tells the user', async () => {
+      await mockPlaylistWatch();
+      unzipMock.mockRejectedValueOnce(new Error('bad zip'));
+      const { watchedItemMapper } = await import('../jw-media');
+
+      const result = await watchedItemMapper(
+        '2026-10-31',
+        '/tmp/Visita.jwlplaylist',
+      );
+
+      expect(result).toEqual([]);
+      expect(errorCatcherMock).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          contexts: expect.objectContaining({
+            fn: expect.objectContaining({ name: 'getMediaFromJwPlaylist' }),
+          }),
+        }),
+      );
+      expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
+        expect.objectContaining({ group: 'jwPlaylistWatchedImportFailed' }),
+      );
+    });
+  });
 });

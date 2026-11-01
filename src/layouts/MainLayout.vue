@@ -773,6 +773,11 @@ bcClose.onmessage = (event) => {
   }
 };
 
+// Whether the GPU-decode-failure recommendation was already shown this
+// session (MMM-V2-3MH) - the media window reports every failure, but the
+// user only needs to hear the recommendation once.
+let gpuDecodeNoticeShown = false;
+
 const initListeners = () => {
   onLog(({ ctx, level, msg }) => {
     log(`[main] ${msg}`, ctx as unknown as LogPrefix, level, ctx);
@@ -864,6 +869,10 @@ const initListeners = () => {
     if (existing) existing.loaded = args.bytesReceived;
   });
 
+  const goToHardwareAccelerationSetting = () => {
+    void router.push('/settings/disableHardwareAcceleration');
+  };
+
   onGpuCrashDetected(() => {
     createTemporaryNotification({
       actions: [
@@ -874,8 +883,14 @@ const initListeners = () => {
           },
           label: t('restart-app'),
         },
+        {
+          color: 'white',
+          handler: goToHardwareAccelerationSetting,
+          label: t('go-to-settings'),
+        },
       ],
       caption: t('gpu-crash-detected-restarting'),
+      group: 'gpu-crash',
       message: t('gpu-crash-detected'),
       timeout: 0,
       type: 'negative',
@@ -893,9 +908,55 @@ const initListeners = () => {
 
   onHardwareAccelerationTemporaryDisabled(() => {
     createTemporaryNotification({
+      actions: [
+        {
+          color: 'dark',
+          handler: goToHardwareAccelerationSetting,
+          label: t('go-to-settings'),
+        },
+        {
+          color: 'dark',
+          icon: 'close',
+          round: true,
+        },
+      ],
       caption: t('gpu-crash-detected-explain'),
+      group: 'gpu-crash',
       message: t('gpu-crash-detected'),
       timeout: 10_000,
+      type: 'warning',
+    });
+  });
+
+  // A video the media window couldn't decode (MMM-V2-3MH): the file played
+  // fine up to that point, so this points at the device's decoder, not the
+  // file. Suggest what actually helps, once per session and never when
+  // hardware acceleration is already off.
+  whenever(gpuDecodeFailed, () => {
+    if (
+      gpuDecodeNoticeShown ||
+      currentSettings.value?.disableHardwareAcceleration
+    ) {
+      return;
+    }
+    gpuDecodeNoticeShown = true;
+    createTemporaryNotification({
+      actions: [
+        {
+          color: 'dark',
+          handler: goToHardwareAccelerationSetting,
+          label: t('go-to-settings'),
+        },
+        {
+          color: 'dark',
+          icon: 'close',
+          round: true,
+        },
+      ],
+      caption: t('media-decode-failed-explain'),
+      group: 'gpu-crash',
+      message: t('media-decode-failed'),
+      timeout: 15_000,
       type: 'warning',
     });
   });
@@ -938,6 +999,11 @@ const initListeners = () => {
               relaunchApp();
             },
             label: t('restart-app'),
+          },
+          {
+            color: 'white',
+            handler: goToHardwareAccelerationSetting,
+            label: t('go-to-settings'),
           },
         ],
         caption: t('media-window-keeps-stopping-explain'),
@@ -1003,6 +1069,10 @@ const { post: postUrlVariables } = useBroadcastChannel<
 });
 const { post: postOnline } = useBroadcastChannel<boolean, boolean>({
   name: 'online',
+});
+
+const { data: gpuDecodeFailed } = useBroadcastChannel<number, number>({
+  name: 'gpu-decode-failed',
 });
 
 // Function to check if we should show the yeartext preview notification

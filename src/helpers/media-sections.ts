@@ -457,6 +457,23 @@ const readWatchedMediaSectionOrder = async (
 
     return result;
   } catch (error) {
+    // A cloud-sync client can leave the file empty or half-written when the
+    // watcher reads it mid-sync (MMM-V2-3N7, same Dropbox race as 3F9):
+    // JSON.parse fails on the truncation, and the next refresh reads the
+    // completed file. Matched on the message, which survives the
+    // contextBridge crossing, rather than the error class, which doesn't.
+    const message = error instanceof Error ? error.message : String(error);
+    if (
+      /unexpected end of json|unexpected token|is not valid json/i.test(message)
+    ) {
+      log(
+        `Section-order file still syncing, will retry on next refresh: ${sectionOrderFilePath}`,
+        'mediaSections',
+        'warn',
+        error,
+      );
+      return {};
+    }
     // A cloud-sync or network drive can briefly fail a read while it swaps
     // placeholders mid-sync (e.g. Google Drive's `EINVAL ... fstat`,
     // MMM-V2-3KR); the next refresh reads it again.

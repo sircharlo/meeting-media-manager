@@ -414,6 +414,21 @@ const isTruncatedMediaError = (error: unknown) => {
 };
 
 /**
+ * Whether a media element failed in its (hardware) video decoder rather
+ * than on the file: Chromium reports MEDIA_ERR_DECODE (code 3) as
+ * PIPELINE_ERROR_DISCONNECTED when the decoder drops mid-playback, or
+ * PIPELINE_ERROR_DECODE for a stream it chokes on (MMM-V2-3MH). The file
+ * played fine up to that point, so disabling hardware acceleration
+ * (software decoding) is what helps - not re-downloading the file.
+ */
+export const isGpuDecodeError = (
+  error: null | undefined | { code?: number; message?: string },
+) =>
+  !!error &&
+  (error.code === 3 ||
+    /decode|pipeline_error_disconnected/i.test(error.message ?? ''));
+
+/**
  * How long a hidden media element may take to read what's needed from a
  * file (its duration, or a frame for its thumbnail) before that's given up
  * on. A file that never loads and never errors - a cloud placeholder that
@@ -540,6 +555,15 @@ export const getMetadataFromMediaPath = async (
     return metadata;
   } catch (error) {
     if (error instanceof Event || isTruncatedMediaError(error)) {
+      return defaultMetadata;
+    }
+    // The video element's own onerror handler above already reported this
+    // failure with the DOM event attached (MMM-V2-3N6) - reporting the
+    // same error again here would only file a duplicate.
+    if (
+      error instanceof Error &&
+      error.message.startsWith('Failed to load video:')
+    ) {
       return defaultMetadata;
     }
     // Environmental (a file that never loads), not a bug: no report.
