@@ -4,6 +4,13 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Graphics Crashes**: When M³ detects a graphics (GPU) crash, the temporary software-mode notice and the "media window keeps stopping" notice now both offer a button that takes you straight to the hardware-acceleration setting. And when a video can't be decoded on your device (it played fine up to that point, so the file isn't the problem), M³ now says so once per session and suggests turning on hardware-acceleration disabling in Settings, which switches video decoding to software mode.
+- 🛠️ **Cloud-Synced Watch Folders**: A playlist or section-order file read while Dropbox, OneDrive or a similar service is still writing it is no longer reported as an error and no longer shows an error message: M³ quietly waits for the next folder update, which reads the finished file.
+
 ## v26.11.0
 
 ### ✨ New Features
@@ -13,8 +20,6 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🛠️ Improvements and Tweaks
 
-- 🛠️ **Graphics Crashes**: When M³ detects a graphics (GPU) crash, the temporary software-mode notice and the "media window keeps stopping" notice now both offer a button that takes you straight to the hardware-acceleration setting. And when a video can't be decoded on your device (it played fine up to that point, so the file isn't the problem), M³ now says so once per session and suggests turning on hardware-acceleration disabling in Settings, which switches video decoding to software mode.
-- 🛠️ **Cloud-Synced Watch Folders**: A playlist or section-order file read while Dropbox, OneDrive or a similar service is still writing it is no longer reported as an error and no longer shows an error message: M³ quietly waits for the next folder update, which reads the finished file.
 - 🛠️ **Zoom Meeting Manager**: M³ can now raise and lower your hand on Zoom accounts where reactions are turned off. Zoom then replaces its React button with a plain "Raise hand" button, in its toolbar or in the "More" menu, which M³ couldn't learn raised hands with before: it now goes through whichever button raises your hand, and when it can't find either, the setup assistant asks you which one it is, listing both. The button is remembered by its name, so learning again goes straight to it.
 - 🛠️ **Zoom Meeting Manager**: The raised-hand step of the setup assistant no longer ends in a dead end when raising and lowering your hand doesn't go as planned: whatever went wrong, it now offers Zoom's toolbar and "More" menu buttons to pick the one that raises your hand from, as it already did when Zoom's React button couldn't be found. This came up on accounts where reactions are turned off, where M³ raises the hand with Zoom's plain "Raise hand" button and Zoom sometimes doesn't show the raised hand in its participants list straight away, so the test failed even though the hand had moved.
 - 🛠️ **Zoom Meeting Manager**: Learning raised hands now works on Zoom versions whose plain "Raise hand" button shows no shortcut in its name (Portuguese "Levantar mão", for one): the button picked in the setup assistant is tried as that button even when M³ had matched its name as a React button, which made the step fail on accounts where reactions are turned off. The step also no longer fails when Zoom is still filling in its participants list, or when a second label appears on your row at the same time as the hand: M³ reads the list once it has settled, watches the host's own row first, and remembers the word that goes away again when the hand goes down.
