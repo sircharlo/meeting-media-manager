@@ -4,7 +4,7 @@
 
 Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGELOG.md GitHubis.
 
-## TULEVANE VERSIOON
+## v26.11.0
 
 ### ✨ Uued funktsioonid
 

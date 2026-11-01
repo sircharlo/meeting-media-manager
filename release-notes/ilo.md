@@ -4,7 +4,7 @@
 
 Para iti kompleto a listaan dagiti nabaliwan iti nagbaetan dagiti bersion, kitaem ti CHANGELOG.md a file-mi iti GitHub.
 
-## SUMARUNO A BERSION
+## v26.11.0
 
 ### ✨ Dagiti Baro a Feature
 
