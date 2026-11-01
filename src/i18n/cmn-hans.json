@@ -445,6 +445,8 @@
   "make-sure-that-m-is-in-not-use-before-quitting": "关闭前，请确保 M³ 当前没有在使用。",
   "maxRes": "视频最高分辨率",
   "maxRes-explain": "选择视频的最高分辨率。高于此分辨率的视频不会被下载。",
+  "media-decode-failed": "Video couldn't be played",
+  "media-decode-failed-explain": "The video couldn't be decoded on this device, so it was skipped. If this keeps happening, turning on \"@:{'disableHardwareAcceleration'}\" in the Settings may help.",
   "media-display": "媒体显示",
   "media-display-settings": "媒体显示设置",
   "media-export-conversion-failed": "导出时没有文件转换失败 | 导出时有 1 个文件转换失败 | 导出时有 {count} 个文件转换失败",

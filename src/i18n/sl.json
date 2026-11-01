@@ -445,6 +445,8 @@
   "make-sure-that-m-is-in-not-use-before-quitting": "Preden zapreš aplikacijo M³, preveri, ali je še vedno v uporabi.",
   "maxRes": "Največja ločljivost za videoposnetke",
   "maxRes-explain": "Izberi največjo ločljivost za videoposnetke. Videoposnetki nad to ločljivostjo ne bodo preneseni.",
+  "media-decode-failed": "Video couldn't be played",
+  "media-decode-failed-explain": "The video couldn't be decoded on this device, so it was skipped. If this keeps happening, turning on \"@:{'disableHardwareAcceleration'}\" in the Settings may help.",
   "media-display": "Multimedijski zaslon",
   "media-display-settings": "Nastavitve multimedijskega zaslona",
   "media-export-conversion-failed": "Med izvozom ni spodletela nobena pretvorba datotek | Med izvozom je spodletela pretvorba 1 datoteke | Med izvozom je spodletela pretvorba {count} datotek",

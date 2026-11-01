@@ -445,6 +445,8 @@
   "make-sure-that-m-is-in-not-use-before-quitting": "Assurez-vous que M³ n'est pas en cours d'utilisation avant de quitter.",
   "maxRes": "Résolution maximale pour les vidéos",
   "maxRes-explain": "Choisissez la résolution maximale pour les vidéos. Les vidéos dont la résolution est supérieure à cette valeur ne seront pas téléchargées.",
+  "media-decode-failed": "Video couldn't be played",
+  "media-decode-failed-explain": "The video couldn't be decoded on this device, so it was skipped. If this keeps happening, turning on \"@:{'disableHardwareAcceleration'}\" in the Settings may help.",
   "media-display": "Affichage des médias",
   "media-display-settings": "Paramètres d'affichage des médias",
   "media-export-conversion-failed": "Aucun échec de conversion lors de l'exportation | 1 fichier n'a pas pu être converti lors de l'exportation | {count} fichiers n'ont pas pu être convertis lors de l'exportation",
