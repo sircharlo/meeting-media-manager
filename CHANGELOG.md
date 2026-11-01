@@ -8,6 +8,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🛠️ Improvements and Tweaks
 
+- 🛠️ **Zoom Meeting Manager**: Starting to share the media window with Zoom no longer waits a few seconds before M³ says "Sharing started": it now takes Zoom's own "Stop share" button, up when Zoom is sharing, as proof that the share is live, and asks Zoom's annotation layer which window is shared only for the first moments after the click, instead of always waiting out its timeout on computers where that layer never shows (annotation turned off, for one).
 - 🛠️ **Graphics Crashes**: When M³ detects a graphics (GPU) crash, the temporary software-mode notice and the "media window keeps stopping" notice now both offer a button that takes you straight to the hardware-acceleration setting. And when a video can't be decoded on your device (it played fine up to that point, so the file isn't the problem), M³ now says so once per session and suggests turning on hardware-acceleration disabling in Settings, which switches video decoding to software mode.
 - 🛠️ **Cloud-Synced Watch Folders**: A playlist or section-order file read while Dropbox, OneDrive or a similar service is still writing it is no longer reported as an error and no longer shows an error message: M³ quietly waits for the next folder update, which reads the finished file.
 
