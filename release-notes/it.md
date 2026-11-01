@@ -4,7 +4,7 @@
 
 Per l'elenco completo delle modifiche tra le versioni, consulta il file CHANGELOG.md su GitHub.
 
-## PROSSIMA VERSIONE
+## v26.11.0
 
 ### ✨ Nuove funzionalità
 
