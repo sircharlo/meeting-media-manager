@@ -197,4 +197,19 @@ describe('getMetadataFromMediaPath for a file without a duration in its metadata
     expect(errorCatcher).not.toHaveBeenCalled();
     expect(videos[0]?.getAttribute('src')).toBeNull();
   });
+
+  // MMM-V2-3N6: the element's own error handler already reported the
+  // failure with the DOM event attached - the outer catch must not file
+  // the same error a second time.
+  it('reports a video that fails to load exactly once', async () => {
+    const videos = captureCreatedVideos();
+    const { getMetadataFromMediaPath } = await import('../media');
+
+    const pending = getMetadataFromMediaPath('C:/media/clip.webm');
+    await vi.waitFor(() => expect(videos).toHaveLength(1));
+    videos[0]?.onerror?.(new Event('error'));
+
+    expect((await pending).format.duration).toBe(0);
+    expect(errorCatcher).toHaveBeenCalledTimes(1);
+  });
 });

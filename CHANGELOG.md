@@ -12,6 +12,8 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🛠️ Improvements and Tweaks
 
+- 🛠️ **Graphics Crashes**: When M³ detects a graphics (GPU) crash, the temporary software-mode notice and the "media window keeps stopping" notice now both offer a button that takes you straight to the hardware-acceleration setting. And when a video can't be decoded on your device (it played fine up to that point, so the file isn't the problem), M³ now says so once per session and suggests turning on hardware-acceleration disabling in Settings, which switches video decoding to software mode.
+- 🛠️ **Cloud-Synced Watch Folders**: A playlist or section-order file read while Dropbox, OneDrive or a similar service is still writing it is no longer reported as an error and no longer shows an error message: M³ quietly waits for the next folder update, which reads the finished file.
 - 🛠️ **Zoom Meeting Manager**: M³ can now raise and lower your hand on Zoom accounts where reactions are turned off. Zoom then replaces its React button with a plain "Raise hand" button, in its toolbar or in the "More" menu, which M³ couldn't learn raised hands with before: it now goes through whichever button raises your hand, and when it can't find either, the setup assistant asks you which one it is, listing both. The button is remembered by its name, so learning again goes straight to it.
 - 🛠️ **Timer Remote**: The page keeps the tablet or phone at the lectern awake while it's open, so the screen doesn't lock during a part. It uses the browser's wake lock where the page is allowed to, with a silent looping video as the fallback where it isn't.
 

@@ -206,6 +206,7 @@ import { mmmIconMapFn } from 'src/utils/icon-map';
 import {
   isAudio,
   isExpectedMediaAccessError,
+  isGpuDecodeError,
   isImage,
   isVideo,
   stopMediaStreamTracks,
@@ -542,6 +543,10 @@ const { post: postLastEndTimestamp } = useBroadcastChannel<number, number>({
   name: 'last-end-timestamp',
 });
 
+const { post: postGpuDecodeFailed } = useBroadcastChannel<number, number>({
+  name: 'gpu-decode-failed',
+});
+
 const customMin = computed(() => {
   return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.min || 0; // NOSONAR: '' is not valid JSON
 });
@@ -819,6 +824,11 @@ const handleMediaError = (layer: 1 | 2) => {
     });
     return;
   }
+
+  // Tell the main window, which recommends what actually helps for a
+  // decoder failure (see isGpuDecodeError). Still reported below and still
+  // treated as end-of-media.
+  if (isGpuDecodeError(element.error)) postGpuDecodeFailed(Date.now());
 
   const errorMessage = element.error?.message || 'Media playback error'; // NOSONAR: '' means no message
   errorCatcher(new Error(errorMessage), {

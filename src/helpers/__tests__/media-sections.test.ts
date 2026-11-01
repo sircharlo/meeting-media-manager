@@ -436,4 +436,21 @@ describe('watched media layout persistence', () => {
       expect(errorCatcherMock).toHaveBeenCalledTimes(reported ? 1 : 0);
     },
   );
+
+  // MMM-V2-3N7: a cloud-sync client can leave `.section-order.json` empty
+  // or half-written when the watcher reads it mid-sync - the next refresh
+  // reads the completed file, so this is transient, not corrupt.
+  it('quietly retries an empty section-order file instead of reporting it', async () => {
+    const datedFolder = '/watched/2026-10-31';
+    files.set(`${datedFolder}/.section-order.json`, '');
+    readJsonMock.mockRejectedValue(
+      new SyntaxError('Unexpected end of JSON input'),
+    );
+
+    const { getWatchedMediaSectionInfo } = await import('../media-sections');
+    const info = await getWatchedMediaSectionInfo(datedFolder, 'video.mp4');
+
+    expect(info).toBeNull();
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
 });
