@@ -215,7 +215,14 @@ export const createMeetingSections = (day: DateInfo) => {
   sections.forEach((section) => {
     const calculatedConfig = getMeetingSectionConfigs(section);
     const mediaSection = getOrCreateMediaSection(day.mediaSections, section);
+    const existingTitle = mediaSection.config.documentTitle;
     mediaSection.config = calculatedConfig;
+    // Preserve a manually set public talk title across media refreshes. The
+    // Watchtower title is reapplied separately via applyFetchedSectionTitles,
+    // so only the pt section needs its title carried over here.
+    if (section === 'pt' && existingTitle && !calculatedConfig.documentTitle) {
+      mediaSection.config.documentTitle = existingTitle;
+    }
   });
 };
 

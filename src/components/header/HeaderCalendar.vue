@@ -1161,6 +1161,22 @@ const importPublicTalkMedia = async (
       pub: 'S-34',
     },
   );
+  // Best-effort: show the chosen public talk title under the section header,
+  // just like the Watchtower title. Persisted via the section config in
+  // lookupPeriod; never blocks the import itself.
+  try {
+    const title = importItem.data.doc?.Title?.trim();
+    if (title && selectedDateObject.value?.mediaSections) {
+      const sectionData = selectedDateObject.value.mediaSections.find(
+        (section) => section.config.uniqueId === targetSection,
+      );
+      if (sectionData) sectionData.config.documentTitle = title;
+    }
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'importPublicTalkMediaTitle' } },
+    });
+  }
 };
 
 const importPublicationMedia = async (
