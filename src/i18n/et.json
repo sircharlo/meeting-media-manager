@@ -446,7 +446,7 @@
   "maxRes": "Maksimaalne eraldusvõime videote jaoks",
   "maxRes-explain": "Vali videote maksimaalne resolutsioon. Seda resolutsiooni ületavaid videoid ei laadita alla.",
   "media-decode-failed": "Videot ei saa esitada",
-  "media-decode-failed-explain": "Seda videot ei olnud võimalik sellel seadmel dekodeerida, seetõttu jäeti see vahele. Kui see juhtub korduvalt, võib abiks olla seadete menüüs valiku „@:{‚disableHardwareAcceleration‘}“ sisselülitamine.",
+  "media-decode-failed-explain": "Seda videot ei olnud võimalik sellel seadmel dekodeerida, seetõttu jäeti see vahele. Kui see juhtub korduvalt, võib abiks olla seadete menüüs valiku „@:{'disableHardwareAcceleration'}“ sisselülitamine.",
   "media-display": "Meedia kuvar",
   "media-display-settings": "Meedia ekraani seaded",
   "media-export-conversion-failed": "Eksportimisel õnnestus kõikide failide teisendamine | Eksportimisel ei õnnestunud 1 faili teisendada | Eksportimisel ei õnnestunud {count} faili teisendada",
