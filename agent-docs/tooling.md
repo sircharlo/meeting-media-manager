@@ -22,9 +22,11 @@ availability, or work on tests' setup or the release flow.
   `yarn docs:test` work on the docs site.
 - `yarn screenshot:refresh` re-runs Playwright screenshots (demo mode).
 - `yarn fix:i18n` / `yarn fix:docs` normalize locale JSON and docs markdown
-  respectively; both also run in `--check` mode as a pre-check inside
-  `dev`/`build*`/`test:unit` (`fix:i18n`) and `docs:build`/`docs:dev`/
-  `docs:lint`/`docs:test` (`fix:docs`).
+  respectively. `fix:i18n` also runs in self-healing (write) mode at the
+  start of `dev`/`build*`/`test:unit`, so a bad Crowdin export is repaired
+  in place instead of failing the pipeline; it still exits non-zero on
+  messages it cannot auto-repair. `fix:docs` runs in `--check` mode as a
+  pre-check inside `docs:build`/`docs:dev`/`docs:lint`/`docs:test`.
 - `yarn generate:jw-icons-fallbacks` / `yarn refresh:jw-icons-fallbacks`
   maintain the JW icon-font fallback map (backs
   `.github/workflows/refresh-jw-icons-fallbacks.yml`).

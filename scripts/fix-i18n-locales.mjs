@@ -161,7 +161,15 @@ async function main() {
       `Done. ${checkOnly ? 'Found' : 'Fixed'} ${totalFixed} message${totalFixed === 1 ? '' : 's'}.`,
     );
 
-    if (checkOnly && (totalFixed > 0 || totalUnfixable.length > 0)) {
+    // Unfixable messages always fail: they need a human fix in Crowdin and
+    // would otherwise crash at runtime (Sentry MMM-V2-3H6). Auto-fixable
+    // messages only fail in --check mode; the dev/build/test scripts run
+    // without --check so the pipeline self-heals instead of breaking on a
+    // bad Crowdin export (see package.json).
+    if (totalUnfixable.length > 0) {
+      process.exit(1);
+    }
+    if (checkOnly && totalFixed > 0) {
       process.exit(1);
     }
   } catch (error) {
