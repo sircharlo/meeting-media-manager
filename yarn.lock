@@ -7872,7 +7872,7 @@ __metadata:
     mime: "npm:^4.1.2"
     mousetrap: "npm:^1.6.5"
     msw: "npm:^3.0.3"
-    music-metadata: "npm:^12.3.2"
+    music-metadata: "npm:^12.3.3"
     obs-websocket-js: "npm:^5.0.8"
     p-queue: "npm:^10.0.0"
     pdf-parse: "npm:^2.4.5"
@@ -8270,9 +8270,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^12.3.2":
-  version: 12.3.2
-  resolution: "music-metadata@npm:12.3.2"
+"music-metadata@npm:^12.3.3":
+  version: 12.3.3
+  resolution: "music-metadata@npm:12.3.3"
   dependencies:
     "@borewit/text-codec": "npm:^0.2.2"
     "@tokenizer/token": "npm:^0.3.0"
@@ -8280,11 +8280,11 @@ __metadata:
     debug: "npm:^4.4.3"
     file-type: "npm:^22.2.0"
     media-typer: "npm:^2.0.0"
-    strtok3: "npm:^10.6.2"
+    strtok3: "npm:^10.6.3"
     token-types: "npm:^6.1.2"
     uint8array-extras: "npm:^1.6.0"
     win-guid: "npm:^0.2.1"
-  checksum: 10c0/454a02c2cae09cf5e3ee1d4bdf9bd03864d5e4cb0fa79324c401fc7fcc49483bd93cdd62f782a6f2053344558b1afbeb3457d8f2ccaa8b7ef9fac5a180e9fdd9
+  checksum: 10c0/86d7fa400ced6b0de7f70a3b0808b2d2f2d9abf3c1e256ceb4bd1f3dba20eadc0b73ab55531ee2818b7d096559dff2fa3cda0aa5c1c0308cf31564534a9a74b4
   languageName: node
   linkType: hard
 
@@ -10527,12 +10527,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strtok3@npm:^10.5.0, strtok3@npm:^10.6.2":
+"strtok3@npm:^10.5.0":
   version: 10.6.2
   resolution: "strtok3@npm:10.6.2"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
   checksum: 10c0/23d5a836b58d1b23f5eaff18afeeca628dbd13f22f69433e6438f83d09d1f7bdab9b9081d0fa69d5e1dcd01a1e7a5c763cc6cfbfb78951a3036464d5d8826e1d
+  languageName: node
+  linkType: hard
+
+"strtok3@npm:^10.6.3":
+  version: 10.6.3
+  resolution: "strtok3@npm:10.6.3"
+  dependencies:
+    "@tokenizer/token": "npm:^0.3.0"
+  checksum: 10c0/b0782803b9648489de25b7e820cd9b3a9a00ad47ab87d2704a1495c4c42b10f1c44d369a1c2c34976ed43630a776d5afa755dd665226182d5b20ad42d5b0115c
   languageName: node
   linkType: hard
 
