@@ -1073,10 +1073,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@intlify/message-compiler@npm:11.4.18":
+  version: 11.4.18
+  resolution: "@intlify/message-compiler@npm:11.4.18"
+  dependencies:
+    "@intlify/shared": "npm:11.4.18"
+    source-map-js: "npm:^1.0.2"
+  checksum: 10c0/5956bf7afc64079803b2aca366fed6cb219c25d3b21c0cc9ca049f2d73c42063f676f029f699cd19356817342c1068023e7969a19dd6f99a3eb0af9c928f6077
+  languageName: node
+  linkType: hard
+
 "@intlify/shared@npm:11.4.16, @intlify/shared@npm:~11.4.15":
   version: 11.4.16
   resolution: "@intlify/shared@npm:11.4.16"
   checksum: 10c0/3bb4ef833b92806024b8677a5b6a70a29bcc1ddd332148e6a32a92db89e05887a45245436b90f6fdb86fd3f13f4bf35ce381a9396a8462d314eb2beeea0993fb
+  languageName: node
+  linkType: hard
+
+"@intlify/shared@npm:11.4.18":
+  version: 11.4.18
+  resolution: "@intlify/shared@npm:11.4.18"
+  checksum: 10c0/8f2606499946b15f468ec737644d82c87dd67dc8d96a5dc81e3b191e2007dc0b2f482f75b11fc0b455b39a745a81932cacecf77d7947188f13c9a8841bb4250b
   languageName: node
   linkType: hard
 
@@ -7825,7 +7842,7 @@ __metadata:
     "@fontsource-variable/noto-sans": "npm:^5.3.0"
     "@fontsource-variable/noto-serif": "npm:^5.3.0"
     "@formkit/drag-and-drop": "npm:^0.6.1"
-    "@intlify/message-compiler": "npm:11.4.16"
+    "@intlify/message-compiler": "npm:11.4.18"
     "@intlify/unplugin-vue-i18n": "npm:^11.2.8"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@pinia/testing": "npm:^2.0.2"
