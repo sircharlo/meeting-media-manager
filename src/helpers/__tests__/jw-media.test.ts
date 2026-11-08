@@ -426,6 +426,68 @@ describe('jw-media helpers', () => {
       });
     });
 
+    // MMM-V2-3ND: a damaged contents file of the right size used to pass the
+    // size check and fail every read of its entries.
+    describe('reading the extracted contents', () => {
+      const eocdError = () =>
+        new Error(
+          'End of central directory record signature not found. Either not a zip file, or file is truncated.',
+        );
+
+      const mockContentsEntries = (...results: (Error | Record<string, number>)[]) => {
+        let call = 0;
+        getZipEntriesMock.mockImplementation(async (path: string) => {
+          if (path === jwpubPath) return { contents: 100 };
+          const result = results[Math.min(call++, results.length - 1)];
+          if (result instanceof Error) throw result;
+          return result;
+        });
+        statMock.mockImplementation(async (path: string) => {
+          if (path === contentsPath) return { size: 100 };
+          if (path === dbPath) return { size: 50 };
+          throw Object.assign(new Error('missing'), { code: 'ENOENT' });
+        });
+      };
+
+      it('re-extracts a contents file that is not a readable zip', async () => {
+        mockContentsEntries(eocdError(), { 'pub.db': 50 });
+        await mockDbFound(dbPath);
+
+        await expect(unzipJwpub()).resolves.toBe('/tmp/out');
+
+        expect(removeMock).toHaveBeenCalledWith(contentsPath);
+        expect(unzipMock).toHaveBeenCalledWith(jwpubPath, '/tmp/out', {
+          includes: ['contents'],
+        });
+        expect(errorCatcherNames()).not.toContain(
+          'jwpubExtractor read contents entries',
+        );
+      });
+
+      it('reports when the re-extracted contents is still unreadable', async () => {
+        const error = eocdError();
+        mockContentsEntries(error);
+        await mockDbFound(dbPath);
+
+        await expect(unzipJwpub()).rejects.toBe(error);
+
+        expect(unzipMock).toHaveBeenCalledTimes(1);
+        expect(errorCatcherNames()).toContain(
+          'jwpubExtractor read contents entries',
+        );
+      });
+
+      it('does not re-extract contents cloud storage could not deliver', async () => {
+        mockContentsEntries(cloudError());
+        await mockDbFound(dbPath);
+
+        await expect(unzipJwpub()).rejects.toThrow('connection timed out');
+
+        expect(removeMock).not.toHaveBeenCalledWith(contentsPath);
+        expect(unzipMock).not.toHaveBeenCalled();
+      });
+    });
+
     describe('extracting the contents entry', () => {
       it('re-extracts contents of the wrong size', async () => {
         mockJwpub({ contentsSize: 60, dbSize: 50 });

@@ -1012,6 +1012,39 @@ export async function identifyJwpub(jwpubPath: string) {
   }
 }
 
+const unzipContentsFromJwpub = async (
+  jwpubPath: string,
+  outputPath: string,
+) => {
+  try {
+    await unzip(jwpubPath, outputPath, {
+      includes: ['contents'],
+    });
+  } catch (error) {
+    warnCloudJwpubUnavailable(jwpubPath, error);
+    invalidateCacheOnPermissionError(error);
+    // If unzipping the JWPUB fails, it's likely corrupted.
+    // Remove it to force a re-download on next attempt unless cloud storage may still
+    // be hydrating the file, or the folder is just temporarily inaccessible.
+    if (isCloudStorageReadError(error) || isPermissionError(error)) throw error;
+
+    await remove(jwpubPath).catch((removeError) =>
+      errorCatcher(removeError, {
+        contexts: {
+          fn: {
+            args: {
+              jwpubPath,
+              outputPath,
+            },
+            name: 'jwpubExtractor remove corrupt jwpub',
+          },
+        },
+      }),
+    );
+    throw error;
+  }
+};
+
 const extractContentsFromJwpub = async (
   jwpubPath: string,
   outputPath: string,
@@ -1063,34 +1096,7 @@ const extractContentsFromJwpub = async (
         'warn',
       );
     }
-    try {
-      await unzip(jwpubPath, outputPath, {
-        includes: ['contents'],
-      });
-    } catch (error) {
-      warnCloudJwpubUnavailable(jwpubPath, error);
-      invalidateCacheOnPermissionError(error);
-      // If unzipping the JWPUB fails, it's likely corrupted.
-      // Remove it to force a re-download on next attempt unless cloud storage may still
-      // be hydrating the file, or the folder is just temporarily inaccessible.
-      if (isCloudStorageReadError(error) || isPermissionError(error))
-        throw error;
-
-      await remove(jwpubPath).catch((removeError) =>
-        errorCatcher(removeError, {
-          contexts: {
-            fn: {
-              args: {
-                jwpubPath,
-                outputPath,
-              },
-              name: 'jwpubExtractor remove corrupt jwpub',
-            },
-          },
-        }),
-      );
-      throw error;
-    }
+    await unzipContentsFromJwpub(jwpubPath, outputPath);
   }
 };
 
@@ -1107,6 +1113,36 @@ const findDbEntry = (contentsEntries: Record<string, number>) => {
   return { expectedDbName: '', expectedDbSize: 0 };
 };
 
+/**
+ * Reads the entries of the extracted 'contents' zip. The size check in
+ * extractContentsFromJwpub can't tell a damaged 'contents' file of the right
+ * size apart from a good one (MMM-V2-3ND), so when the file isn't a readable
+ * zip, it is removed and re-extracted once from the parent JWPUB before giving up.
+ */
+const readContentsEntries = async (
+  contentsPath: string,
+  jwpubPath: string,
+  outputPath: string,
+) => {
+  try {
+    return await getZipEntries(contentsPath);
+  } catch (error) {
+    // Cloud placeholders and permission errors mean the file is temporarily
+    // inaccessible, not corrupt - don't delete or re-extract it.
+    if (isCloudStorageReadError(error) || isPermissionError(error)) throw error;
+
+    log(
+      `[jwpubExtractor] Extracted contents at ${contentsPath} is not a readable zip. Re-extracting it from ${jwpubPath}.`,
+      'mediaPlayback',
+      'warn',
+      error,
+    );
+    await remove(contentsPath);
+    await unzipContentsFromJwpub(jwpubPath, outputPath);
+    return await getZipEntries(contentsPath);
+  }
+};
+
 const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
   // Then, extract 'contents' into the output directory if needed
   // We check if the database exists and has the correct size to determine if we need to unzip
@@ -1115,7 +1151,11 @@ const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
   let contentsEntries: Record<string, number>;
 
   try {
-    contentsEntries = await getZipEntries(contentsPath);
+    contentsEntries = await readContentsEntries(
+      contentsPath,
+      jwpubPath,
+      outputPath,
+    );
   } catch (error) {
     await reportContentsExtractionError(
       error,
