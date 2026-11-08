@@ -173,6 +173,8 @@ describe('isIgnoredUpdateError', () => {
     ).toBe(true);
     expect(isIgnoredUpdateError('504 Gateway Time-out')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_CONNECTION_CLOSED')).toBe(true);
+    // MMM-V2-AN: the user's network refused the connection to GitHub.
+    expect(isIgnoredUpdateError('net::ERR_CONNECTION_REFUSED')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_NAME_NOT_RESOLVED')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_TIMED_OUT')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_INTERNET_DISCONNECTED')).toBe(true);
