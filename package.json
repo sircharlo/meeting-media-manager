@@ -133,7 +133,7 @@
     "vite": "^8.3.4",
     "vitepress": "^2.0.0-alpha.21",
     "vitest": "^5.1.0",
-    "vue-eslint-parser": "^10.4.1",
+    "vue-eslint-parser": "^10.4.2",
     "vue-tsc": "^3.3.14"
   },
   "browserslist": [
