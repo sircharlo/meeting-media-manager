@@ -8,7 +8,7 @@ Per l'elenco completo delle modifiche tra le versioni, consulta il file CHANGELO
 
 ### ✨ Nuove funzionalità
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+- ✨ **PIN delle impostazioni**: ora le impostazioni di un profilo si possono proteggere con un PIN, così niente viene modificato per errore. Puoi impostarne uno in Impostazioni > Avanzate. Serve anche per eliminare il profilo. Se viene dimenticato, chi è autorizzato a modificare le impostazioni può rimuoverlo seguendo i passaggi della Guida utente.
 
 ## v26.11.0
 

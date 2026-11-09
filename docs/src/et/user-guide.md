@@ -418,16 +418,16 @@ Loo endale sobivad kiirklahvid sujuvaks kasutuseks:
 - Proovi varukeelt
 - Kontrolli kasutajaliidese keelt
 
-#### Forgotten Settings PIN {#user-guide-forgotten-settings-pin}
+#### Seadete PIN-kood ununes {#user-guide-forgotten-settings-pin}
 
-Only someone authorized to change M³'s settings should do this. After three wrong tries, M³ offers **Forgot the PIN?** wherever it asks for the PIN. To remove the PIN:
+Seda tohib teha ainult see, kellel on õigus M³-e seadeid muuta. Pärast kolme valet katset pakub M³ valikut **Unustasid PIN-koodi?** igal pool, kus ta PIN-koodi küsib. PIN-koodi eemaldamiseks tee nii:
 
-1. Select **Forgot the PIN?** and leave the window that opens in M³. It shows a folder on this computer.
-2. In your computer's file manager, go to that folder.
-3. Open the text file named `M3 settings PIN reset code.txt`, which M³ has just created there.
-4. Type the six-digit code from that file into M³, then confirm.
+1. Vali **Unustasid PIN-koodi?** ja jäta M³-s avanev aken avatuks. Selles on näidatud kaust selles arvutis.
+2. Mine arvuti failihalduris sellesse kausta.
+3. Ava tekstifail nimega `M3 settings PIN reset code.txt`, mille M³ just sinna lõi.
+4. Sisesta M³-s selles failis olev kuuekohaline kood ja kinnita.
 
-M³ then removes the PIN and deletes the file. To protect the settings again, set a new PIN under **Settings** > **Advanced**.
+Seejärel eemaldab M³ PIN-koodi ja kustutab faili. Seadete uuesti kaitsmiseks määra uus PIN-kood jaotises **Seaded** > **Lisavalikud**.
 
 ### Abi ja tugi {#getting-help}
 

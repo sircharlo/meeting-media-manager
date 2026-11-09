@@ -419,16 +419,16 @@ M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 - 尝试设置后备语言
 - 检查界面语言
 
-#### Forgotten Settings PIN {#user-guide-forgotten-settings-pin}
+#### 忘记设置 PIN 码 {#user-guide-forgotten-settings-pin}
 
-Only someone authorized to change M³'s settings should do this. After three wrong tries, M³ offers **Forgot the PIN?** wherever it asks for the PIN. To remove the PIN:
+只有获授权更改 M³ 设置的人才应执行此操作。输错三次后，M³ 会在每个要求输入 PIN 码的地方提供 **忘记 PIN 码？** 选项。要移除 PIN 码，请按以下步骤操作：
 
-1. Select **Forgot the PIN?** and leave the window that opens in M³. It shows a folder on this computer.
-2. In your computer's file manager, go to that folder.
-3. Open the text file named `M3 settings PIN reset code.txt`, which M³ has just created there.
-4. Type the six-digit code from that file into M³, then confirm.
+1. 选择 **忘记 PIN 码？**，并让 M³ 中打开的窗口保持打开。窗口中显示了这台计算机上的一个文件夹。
+2. 在计算机的文件管理器中前往该文件夹。
+3. 打开名为 `M3 settings PIN reset code.txt` 的文本文件，这是 M³ 刚刚在那里创建的。
+4. 在 M³ 中输入该文件中的六位数代码，然后确认。
 
-M³ then removes the PIN and deletes the file. To protect the settings again, set a new PIN under **Settings** > **Advanced**.
+随后 M³ 会移除 PIN 码并删除该文件。要再次保护设置，请在 **设置** > **高级** 中设置新的 PIN 码。
 
 ### 获取帮助 {#getting-help}
 

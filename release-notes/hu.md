@@ -8,14 +8,14 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ### ✨ Új funkciók
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+- ✨ **Beállítási PIN-kód**: Egy profil beállításai mostantól PIN-kóddal védhetők, hogy semmi ne módosuljon véletlenül. Beállítani a Beállítások > Haladó menüpontban lehet. A profil törléséhez is szükség van rá. Ha elfelejtik, a beállítások módosítására jogosult személy eltávolíthatja a felhasználói útmutató lépéseit követve.
 
 ## v26.11.0
 
 ### ✨ Új funkciók
 
 - ✨ **Távoli időzítő**: A pulpituson lévő táblagép időzítőoldalán választható fókuszált elrendezés érhető el, amelyet a Beállításokban lehet bekapcsolni. Nagy folyamatjelző gyűrűben mutatja az időt, amely az utolsó percben sárgára, majd a túllépés mértékével (+02:18) pirosra vált, és mellette felsorolja azokat a Zoom-résztvevőket, akik felemelték a kezüket, abban a sorrendben, ahogy tették: az első négyet név szerint, a többiek számával együtt. Minden új kéz három másodpercre felvillantja a „Kéz felemelve” üzenetet, és a lista frissül, ahogy a kezek felemelkednek és leereszkednek. Az aktuális kijelzés marad az alapértelmezett.
-- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
+- ✨ **Zoom-értekezletkezelő (béta, Windows)**: A felemelt kezekről mostantól úgy is kaphat jelzést, hogy nem irányítja a résztvevőket. Ha be van kapcsolva a „Csak a felemelt kezekről értesítsen” (a Beállításokban a Kézfelemelés-segéd alatt), az M³ továbbra is észleli, ki emeli fel a kezét, és ezt az értesítésében, valamint az elnök számára az időzítő kijelzőjén is megmutatja, de nem jelenít meg gombokat a résztvevők némításának feloldásához vagy a kezük leengedéséhez: ezeket magában a Zoomban a médiakezelő végzi el. Akkor hasznos, ha a Zoom nem jeleníti meg az M³-nak szükséges résztvevő-vezérlőket, vagy ha a kezelő inkább maga irányítana.
 
 ## v26.10.2
 

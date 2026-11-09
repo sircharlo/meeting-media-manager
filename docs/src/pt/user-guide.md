@@ -419,16 +419,16 @@ Configure atalhos de teclado personalizados para trabalhar com mais eficiência:
 - Tente um idioma secundário
 - Verifique a configuração do idioma da interface
 
-#### Forgotten Settings PIN {#user-guide-forgotten-settings-pin}
+#### PIN das configurações esquecido {#user-guide-forgotten-settings-pin}
 
-Only someone authorized to change M³'s settings should do this. After three wrong tries, M³ offers **Forgot the PIN?** wherever it asks for the PIN. To remove the PIN:
+Apenas alguém autorizado a alterar as configurações do M³ deve fazer isso. Depois de três tentativas erradas, o M³ oferece **Esqueceu o PIN?** em todos os lugares onde pede o PIN. Para remover o PIN:
 
-1. Select **Forgot the PIN?** and leave the window that opens in M³. It shows a folder on this computer.
-2. In your computer's file manager, go to that folder.
-3. Open the text file named `M3 settings PIN reset code.txt`, which M³ has just created there.
-4. Type the six-digit code from that file into M³, then confirm.
+1. Selecione **Esqueceu o PIN?** e deixe aberta a janela que aparece no M³. Ela mostra uma pasta neste computador.
+2. No gerenciador de arquivos do computador, vá até essa pasta.
+3. Abra o arquivo de texto chamado `M3 settings PIN reset code.txt`, que o M³ acabou de criar ali.
+4. Digite no M³ o código de seis dígitos desse arquivo e confirme.
 
-M³ then removes the PIN and deletes the file. To protect the settings again, set a new PIN under **Settings** > **Advanced**.
+O M³ então remove o PIN e apaga o arquivo. Para proteger as configurações novamente, defina um novo PIN em **Configurações** > **Avançado**.
 
 ### Como obter ajuda {#getting-help}
 

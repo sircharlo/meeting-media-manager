@@ -8,7 +8,7 @@ Para ver la lista completa de cambios entre versiones, consulta nuestro archivo 
 
 ### ✨ Nuevas funciones
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+- ✨ **PIN de configuración**: Ahora la configuración de un perfil se puede proteger con un PIN para que no se cambie nada por accidente. Establece uno en Configuración > Avanzado. También se necesita para eliminar el perfil. Si se olvida, alguien autorizado a cambiar la configuración puede quitarlo siguiendo los pasos de la Guía del usuario.
 
 ## v26.11.0
 

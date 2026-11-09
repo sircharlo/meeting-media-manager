@@ -8,7 +8,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+- ✨ **Koda PIN za nastavitve**: Nastavitve profila je zdaj mogoče zaščititi s kodo PIN, da se po nesreči ne bi nič spremenilo. Nastaviš jo lahko v Nastavitve > Napredno. Potrebna je tudi za brisanje profila. Če jo kdo pozabi, jo lahko nekdo, ki ima dovoljenje za spreminjanje nastavitev, odstrani po korakih iz uporabniškega priročnika.
 
 ## v26.11.0
 
