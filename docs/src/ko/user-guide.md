@@ -419,16 +419,16 @@ M³는 집회 녹화를 제어하는 데 도움을 줄 수 있지만 자체 녹�
 - 대체 언어를 설정해 봅니다.
 - 인터페이스 언어 설정을 확인합니다.
 
-#### Forgotten Settings PIN {#user-guide-forgotten-settings-pin}
+#### 설정 PIN을 잊어버린 경우 {#user-guide-forgotten-settings-pin}
 
-Only someone authorized to change M³'s settings should do this. After three wrong tries, M³ offers **Forgot the PIN?** wherever it asks for the PIN. To remove the PIN:
+M³의 설정을 변경할 권한이 있는 사람만 이 작업을 해야 합니다. 세 번 잘못 입력하면 M³가 PIN을 묻는 모든 곳에서 **PIN을 잊으셨습니까?** 옵션을 제공합니다. PIN을 제거하려면 다음과 같이 하십시오.
 
-1. Select **Forgot the PIN?** and leave the window that opens in M³. It shows a folder on this computer.
-2. In your computer's file manager, go to that folder.
-3. Open the text file named `M3 settings PIN reset code.txt`, which M³ has just created there.
-4. Type the six-digit code from that file into M³, then confirm.
+1. **PIN을 잊으셨습니까?** 옵션을 선택하고 M³에 열리는 창을 그대로 두십시오. 창에는 이 컴퓨터의 폴더가 표시됩니다.
+2. 컴퓨터의 파일 관리자에서 해당 폴더로 이동하십시오.
+3. M³가 방금 그곳에 만든 `M3 settings PIN reset code.txt` 텍스트 파일을 여십시오.
+4. 그 파일에 있는 6자리 코드를 M³에 입력한 다음 확인하십시오.
 
-M³ then removes the PIN and deletes the file. To protect the settings again, set a new PIN under **Settings** > **Advanced**.
+그러면 M³가 PIN을 제거하고 파일을 삭제합니다. 설정을 다시 보호하려면 **설정** > **고급**에서 새 PIN을 설정하십시오.
 
 ### 도움 받기 {#getting-help}
 
