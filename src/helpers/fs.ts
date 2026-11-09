@@ -267,7 +267,12 @@ const getThumbnailFromVideoPath = async (
         (e) => {
           reject(
             new Error(
-              e.message || e.error?.message || 'Unknown VideoRef Error',
+              // A media element's 'error' event is a bare Event: Chromium's
+              // reason is on the element's own MediaError.
+              videoRef.error?.message ||
+                e.message ||
+                e.error?.message ||
+                'Unknown VideoRef Error',
               // Only attach a cause when it's an actual MediaError; the raw
               // DOM event itself carries no useful message or stack trace.
               e.error ? { cause: e.error } : undefined,
