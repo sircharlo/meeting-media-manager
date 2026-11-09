@@ -8,14 +8,14 @@
 
 ### ✨ 新功能
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+- ✨ **设置 PIN 码**：现在可以用 PIN 码保护配置的设置，以防设置被意外更改。可在“设置”>“高级”中设置 PIN 码。删除此配置时也需要输入 PIN 码。如果忘记了 PIN 码，有权更改设置的人可以按照用户指南中的步骤将其移除。
 
 ## v26.11.0
 
 ### ✨ 新功能
 
 - ✨ **远程计时器**：讲台上的平板电脑所用的计时器页面提供可选的聚焦布局，可在设置中开启。它用大号进度环显示时间，进度环在最后一分钟变为黄色，超时后变为红色并显示超时时间（+02:18），同时在旁边按举手顺序列出已举手的 Zoom 参与者：前四位显示姓名，其余显示人数。每当有人新举手时，“有人举手”会闪烁三秒，列表也会随着举手和放下而更新。当前显示仍为默认显示。
-- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
+- ✨ **Zoom 会议管理器（测试版，Windows）**：现在可以在不控制参与者的情况下报告举手。开启“仅通知举手情况”后（位于设置的“举手助手”下），M³ 仍会在通知和为主席提供的计时器显示上告诉你谁举手了，但不会显示为参与者解除静音或放下手的按钮：这些操作由媒体操作员直接在 Zoom 中完成。当 Zoom 未显示 M³ 所需的参与者控件，或操作员希望自己掌控时，此功能非常有用。
 
 ## v26.10.2
 
