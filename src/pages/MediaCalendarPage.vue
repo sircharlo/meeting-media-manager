@@ -1593,7 +1593,7 @@ const addMediaFileToMediaItems = async (
   );
   // Not awaited: a diagnostic mustn't hold up the import. Uses the copy
   // because the original may be a temp file that's about to be removed.
-  if (destPath) reportUnplayableMediaTracks(destPath);
+  if (destPath) void reportUnplayableMediaTracks(destPath);
 
   if (matchingMissingItem) {
     const metadata = await getMetadataFromMediaPath(destPath);
