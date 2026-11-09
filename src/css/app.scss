@@ -604,7 +604,9 @@ body.body--dark {
 }
 
 .q-notifications__list--top {
-  margin-top: 4em;
+  // The offset makes room for UpdateProgressToast.vue while it's showing.
+  margin-top: calc(4em + var(--update-toast-offset, 0px));
+  transition: margin-top 0.3s ease;
 }
 
 .q-dialog,
