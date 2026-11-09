@@ -8,14 +8,14 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+- ✨ **PIN o te mau fa’anahora’a**: E nehenehe i teie nei e pāruru i te mau fa’anahora’a o te hō’ē ti’ara’a taata nā roto i te hō’ē PIN, ’ia ’ore e taui-noa-hia. ’A fa’ata’a i te hō’ē i raro a’e i Te mau fa’anahora’a > Mode Tā’āto’a. E hina’arohia ato’a te reira nō te tāmā i te ti’ara’a taata. Mai te peu e ’ua mo’ehia, e nehenehe te ta’ata i fa’ati’ahia ’ia taui i te mau fa’anahora’a e tāmā i te reira mā te pe’e i te mau ’īrava i roto i te Arata’ira’a nō te fa’a’ohipara’a.
 
 ## v26.11.0
 
 ### ✨ Te mau rave’a ‘āpī
 
 - ✨ **Haapa'oraa taime mai te ātea**: Te ’ape’a fa’atere-hora nō te tabula i ni’a i te vāhi fa’a’ite, e hō’ē fa’anahora’a fa’atāpū tōna e fa’atupuhia i roto i te mau fa’anahora’a. E fa’a’ite oia i te taime i roto i te hō’ē tāpura rahi e fa’aite i te haere mua, e huri i te re’are’a i roto i te minuti hope’a, ’e i muri iho e ’umu’umu ma te rahi o te taime hau (+02:18), ’e e fa’a’ite i te pae o te mau ta’ata o Zoom i fa’ateitei i tō rātou rima, i te hō’ē ra’a i muri i te tahi: te maha mātāmua ma tō rātou i’oa, ’e te rahira’a o te tahi atu. E fa’a’amo’amo te parau "’Ua fa’ateiteihia te rima" i te toru tētoni no te mau rima ’āpī atoa, ’e e fa’a’āpīhia te tāpura i te taime e fa’ateiteihia ’e e fa’ataha te mau rima. E vai noa te fa’aitera’a o teie nei.
-- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
+- ✨ **Zoom Putuputuraa Faanahoraa (tauira tamataraa, Windows)**: I teie nei, e nehenehe e fa’a’ite i te mau rima i fa’ateiteihia ma te ’ore e fa’atere i te feiā i putuputu mai. Mai te peu ’ua fa’atupuhia te "E fa’a’ite noa mai iā’u i te mau rima i fa’ateiteihia" (i raro a’e i te Tauturu nō te mau rima i fa’ateiteihia i roto i Te mau fa’anahora’a), e ’ite noa ā M³ i te ta’ata e fa’ateitei ra i tōna rima, i roto i tāna fa’aarara’a ’e i ni’a i te tapura hora nō te ti’a’au, ’aita rā e fa’a’ite i te mau pitopito nō te fa’amatara i te reo o te hō’ē ta’ata ’aore rā nō te tu’u i tōna rima i raro: nā te ta’ata fa’atere e rave i te reira i roto ia Zoom iho. E mea faufa’a ’ia ’ore Zoom e fa’a’ite i te mau pitopito fa’aterera’a o te feiā i putuputu mai e hina’arohia e M³, ’aore rā ’ia hina’aro te ta’ata fa’atere e fa’atere iho.
 
 ## v26.10.2
 

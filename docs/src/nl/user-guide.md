@@ -419,16 +419,16 @@ Configureer aangepaste sneltoetsen voor een efficiënte werking:
 - Probeer een reservetaal
 - Controleer de instelling voor de interfacetaal
 
-#### Forgotten Settings PIN {#user-guide-forgotten-settings-pin}
+#### Pincode van de instellingen vergeten {#user-guide-forgotten-settings-pin}
 
-Only someone authorized to change M³'s settings should do this. After three wrong tries, M³ offers **Forgot the PIN?** wherever it asks for the PIN. To remove the PIN:
+Alleen iemand die bevoegd is om de instellingen van M³ te wijzigen, mag dit doen. Na drie foute pogingen biedt M³ overal waar om de pincode wordt gevraagd **Pincode vergeten?** aan. Zo verwijder je de pincode:
 
-1. Select **Forgot the PIN?** and leave the window that opens in M³. It shows a folder on this computer.
-2. In your computer's file manager, go to that folder.
-3. Open the text file named `M3 settings PIN reset code.txt`, which M³ has just created there.
-4. Type the six-digit code from that file into M³, then confirm.
+1. Selecteer **Pincode vergeten?** en laat het venster dat in M³ opent openstaan. Er wordt een map op deze computer getoond.
+2. Ga in de bestandsbeheerder van je computer naar die map.
+3. Open het tekstbestand `M3 settings PIN reset code.txt`, dat M³ daar net heeft gemaakt.
+4. Typ de code van zes cijfers uit dat bestand in M³ en bevestig.
 
-M³ then removes the PIN and deletes the file. To protect the settings again, set a new PIN under **Settings** > **Advanced**.
+M³ verwijdert dan de pincode en het bestand. Om de instellingen weer te beschermen, stel je een nieuwe pincode in onder **Instellingen** > **Geavanceerd**.
 
 ### Hulp krijgen {#getting-help}
 

@@ -419,16 +419,16 @@ Configurez des raccourcis clavier personnalisés pour une utilisation efficace :
 - Essayez une langue secondaire
 - Vérifiez le paramètre de langue de l'interface
 
-#### Forgotten Settings PIN {#user-guide-forgotten-settings-pin}
+#### Code PIN des paramètres oublié {#user-guide-forgotten-settings-pin}
 
-Only someone authorized to change M³'s settings should do this. After three wrong tries, M³ offers **Forgot the PIN?** wherever it asks for the PIN. To remove the PIN:
+Seule une personne autorisée à modifier les paramètres de M³ devrait effectuer cette opération. Après trois essais infructueux, M³ propose **Code PIN oublié ?** partout où il demande le code PIN. Pour supprimer le code PIN :
 
-1. Select **Forgot the PIN?** and leave the window that opens in M³. It shows a folder on this computer.
-2. In your computer's file manager, go to that folder.
-3. Open the text file named `M3 settings PIN reset code.txt`, which M³ has just created there.
-4. Type the six-digit code from that file into M³, then confirm.
+1. Sélectionnez **Code PIN oublié ?** et laissez ouverte la fenêtre qui s'affiche dans M³. Elle indique un dossier sur cet ordinateur.
+2. Dans le gestionnaire de fichiers de votre ordinateur, allez dans ce dossier.
+3. Ouvrez le fichier texte nommé `M3 settings PIN reset code.txt`, que M³ vient d'y créer.
+4. Entrez dans M³ le code à six chiffres indiqué dans ce fichier, puis confirmez.
 
-M³ then removes the PIN and deletes the file. To protect the settings again, set a new PIN under **Settings** > **Advanced**.
+M³ supprime alors le code PIN et efface le fichier. Pour protéger à nouveau les paramètres, définissez un nouveau code PIN sous **Paramètres** > **Avancé**.
 
 ### Obtenir de l'aide {#getting-help}
 

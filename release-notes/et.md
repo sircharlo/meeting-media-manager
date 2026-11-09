@@ -8,7 +8,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+- ✨ **Seadete PIN-kood**: Profiili seadeid saab nüüd kaitsta PIN-koodiga, et midagi kogemata ei muutuks. Määra see jaotises Seaded > Lisavalikud. Seda on vaja ka profiili kustutamiseks. Kui see ununeb, saab see, kellel on õigus seadeid muuta, selle eemaldada kasutusjuhendis toodud sammude järgi.
 
 ## v26.11.0
 

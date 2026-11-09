@@ -420,16 +420,16 @@ Nastavi lastne bližnjice na tipkovnici za učinkovitejše upravljanje:
 - Poskusi z nadomestnim jezikom
 - Preveri nastavitev jezika vmesnika
 
-#### Forgotten Settings PIN {#user-guide-forgotten-settings-pin}
+#### Pozabljena koda PIN za nastavitve {#user-guide-forgotten-settings-pin}
 
-Only someone authorized to change M³'s settings should do this. After three wrong tries, M³ offers **Forgot the PIN?** wherever it asks for the PIN. To remove the PIN:
+To naj stori samo nekdo, ki ima dovoljenje za spreminjanje nastavitev M³. Po treh napačnih poskusih M³ povsod, kjer zahteva kodo PIN, ponudi možnost **Pozabljena koda PIN?** Kodo PIN odstraniš takole:
 
-1. Select **Forgot the PIN?** and leave the window that opens in M³. It shows a folder on this computer.
-2. In your computer's file manager, go to that folder.
-3. Open the text file named `M3 settings PIN reset code.txt`, which M³ has just created there.
-4. Type the six-digit code from that file into M³, then confirm.
+1. Izberi **Pozabljena koda PIN?** in pusti odprto okno, ki se odpre v M³. Prikazuje mapo na tem računalniku.
+2. V upravitelju datotek na računalniku pojdi v to mapo.
+3. Odpri besedilno datoteko z imenom `M3 settings PIN reset code.txt`, ki jo je M³ pravkar ustvaril tam.
+4. V M³ vnesi šestmestno kodo iz te datoteke in potrdi.
 
-M³ then removes the PIN and deletes the file. To protect the settings again, set a new PIN under **Settings** > **Advanced**.
+M³ nato odstrani kodo PIN in izbriše datoteko. Če želiš nastavitve znova zaščititi, nastavi novo kodo PIN v **Nastavitve** > **Napredno**.
 
 ### Pomoč {#getting-help}
 

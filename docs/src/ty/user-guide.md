@@ -419,16 +419,16 @@ Te fa’anahora’a i te mau rāve’a pāpa’i-’āpee ta’a ’ē nō te �
 - ’A tamata i te tahi atu reo
 - ’A hi’o i te fa’anahora’a reo nō te interface
 
-#### Forgotten Settings PIN {#user-guide-forgotten-settings-pin}
+#### PIN o te mau fa’anahora’a i mo’ehia {#user-guide-forgotten-settings-pin}
 
-Only someone authorized to change M³'s settings should do this. After three wrong tries, M³ offers **Forgot the PIN?** wherever it asks for the PIN. To remove the PIN:
+Te ta’ata ana’e i fa’ati’ahia ’ia taui i te mau fa’anahora’a o M³ te ti’a ’ia rave i teie ’ohipa. I muri a’e e toru tāmatara’a hape, e pūpū mai M³ i **’Ua mo’ehia te PIN?** i te mau vāhi ato’a e ani ai ’oia i te PIN. Nō te tāmā i te PIN:
 
-1. Select **Forgot the PIN?** and leave the window that opens in M³. It shows a folder on this computer.
-2. In your computer's file manager, go to that folder.
-3. Open the text file named `M3 settings PIN reset code.txt`, which M³ has just created there.
-4. Type the six-digit code from that file into M³, then confirm.
+1. ’A mā’iti i **’Ua mo’ehia te PIN?** ’e ’a vaiiho i te ha’amāramarama e matara mai i roto ia M³. Te fa’a’ite ra te reira i te hō’ē fā’ari parau i ni’a i teie roro uira.
+2. ’A haere i taua fā’ari parau ra nā roto i te porotarama fa’aterera’a putu’ite o tā ’oe roro uira.
+3. ’A matara i te putu’ite papa’ira’a i pi’ihia `M3 settings PIN reset code.txt`, tā M³ i hāmani iho nei i reira.
+4. ’A pāpa’i i roto ia M³ i te nūmera e ono tāpa’o o taua putu’ite ra, ’e ’a ha’apāpū.
 
-M³ then removes the PIN and deletes the file. To protect the settings again, set a new PIN under **Settings** > **Advanced**.
+I muri iho, e tāmā M³ i te PIN ’e e tū’ino i te putu’ite. Nō te pāruru fa’ahou i te mau fa’anahora’a, ’a fa’ata’a i te hō’ē PIN ’āpī i raro a’e i **Te mau fa’anahora’a** > **Mode Tā’āto’a**.
 
 ### Te anira’a tauturu {#getting-help}
 

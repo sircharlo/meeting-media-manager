@@ -8,14 +8,14 @@
 
 ### ✨ Нові функції
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+- ✨ **PIN-код налаштувань**: Тепер налаштування профілю можна захистити PIN-кодом, щоб нічого не змінилося випадково. Установити його можна в розділі Налаштування > Додатково. Він також потрібен для видалення профілю. Якщо PIN-код забуто, той, хто має право змінювати налаштування, може видалити його, виконавши кроки з Довідки.
 
 ## v26.11.0
 
 ### ✨ Нові функції
 
 - ✨ **Віддалений таймер**: Сторінка таймера для планшета на трибуні має додатковий режим фокусування, який вмикається в налаштуваннях. Час показується у великому кільці прогресу, яке останньої хвилини стає жовтим, а за перепрацювання — червоним із зазначенням його величини (+02:18); поруч перелічуються учасники Zoom, які підняли руку, у тому порядку, у якому вони це зробили: перші чотири — за іменем, решта — із зазначенням кількості. Кожна нова рука на три секунди висвічує «Руку піднято», а список оновлюється, коли руки піднімаються й опускаються. Поточний вигляд залишається типовим.
-- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
+- ✨ **Менеджер конференцій Zoom (бета-версія, Windows)**: Тепер про підняті руки можна повідомляти без будь-якого керування учасниками. Коли ввімкнено «Лише повідомляти про підняті руки» (у розділі «Помічник для піднятих рук» у налаштуваннях), M³ і далі бачить, хто піднімає руку, і показує це в сповіщенні та на екрані таймера для головуючого, але не показує кнопок, щоб увімкнути учасникові звук або опустити руку: це залишається за оператором медіа в самому Zoom. Корисно, якщо Zoom не показує потрібних M³ елементів керування учасниками або якщо оператор воліє сам керувати ними.
 
 ## v26.10.2
 

@@ -419,16 +419,16 @@ M³ может помочь управлять записью встреч, но
 - Попробуйте указать вторичный язык медиа
 - Проверьте настройки языка интерфейса
 
-#### Forgotten Settings PIN {#user-guide-forgotten-settings-pin}
+#### Если забыт PIN-код настроек {#user-guide-forgotten-settings-pin}
 
-Only someone authorized to change M³'s settings should do this. After three wrong tries, M³ offers **Forgot the PIN?** wherever it asks for the PIN. To remove the PIN:
+Это должен делать только тот, кто имеет право изменять настройки M³. После трех неудачных попыток M³ предлагает вариант **Забыли PIN-код?** везде, где запрашивается PIN-код. Чтобы удалить PIN-код:
 
-1. Select **Forgot the PIN?** and leave the window that opens in M³. It shows a folder on this computer.
-2. In your computer's file manager, go to that folder.
-3. Open the text file named `M3 settings PIN reset code.txt`, which M³ has just created there.
-4. Type the six-digit code from that file into M³, then confirm.
+1. Выберите **Забыли PIN-код?** и не закрывайте окно, которое откроется в M³. В нем показана папка на этом компьютере.
+2. В файловом менеджере компьютера перейдите в эту папку.
+3. Откройте текстовый файл с именем `M3 settings PIN reset code.txt`, который M³ только что там создал.
+4. Введите в M³ шестизначный код из этого файла и подтвердите.
 
-M³ then removes the PIN and deletes the file. To protect the settings again, set a new PIN under **Settings** > **Advanced**.
+После этого M³ удалит PIN-код и файл. Чтобы снова защитить настройки, установите новый PIN-код в разделе **Настройки** > **Дополнительно**.
 
 ### Получение помощи {#getting-help}
 

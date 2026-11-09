@@ -8,14 +8,14 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### ✨ Nieuwe functies
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+- ✨ **Pincode voor instellingen**: De instellingen van een profiel kunnen nu met een pincode worden beschermd, zodat er niet per ongeluk iets wordt gewijzigd. Stel er een in onder Instellingen > Geavanceerd. De pincode is ook nodig om het profiel te verwijderen. Is de pincode vergeten, dan kan iemand die bevoegd is om de instellingen te wijzigen, hem verwijderen door de stappen in de gebruikershandleiding te volgen.
 
 ## v26.11.0
 
 ### ✨ Nieuwe functies
 
 - ✨ **Timer op afstand**: De timerpagina voor de tablet op de lessenaar heeft een optionele focusindeling, die je aanzet in Instellingen. Die toont de tijd in een grote voortgangsring die in de laatste minuut geel wordt en daarna rood met de hoeveelheid over tijd (+02:18), en toont ernaast de Zoom-deelnemers die hun hand hebben opgestoken, in de volgorde waarin ze dat deden: de eerste vier bij naam, met een telling van de rest. Elke nieuwe hand knippert drie seconden met "Hand opgestoken", en de lijst wordt bijgewerkt wanneer handen omhoog- en omlaaggaan. De huidige weergave blijft de standaard.
-- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
+- ✨ **Zoom-vergaderbeheerder (bèta, Windows)**: Opgestoken handen kunnen nu worden gemeld zonder enige controle over de deelnemers. Als "Alleen opgestoken handen melden" is ingeschakeld (onder Hulp bij opgestoken handen in de Instellingen), ziet M³ nog steeds wie de hand opsteekt, in de melding en op de timerweergave voor de voorzitter, maar worden er geen knoppen getoond om het dempen van een deelnemer op te heffen of de hand te laten zakken: dat wordt overgelaten aan de mediabediener in Zoom zelf. Handig als Zoom de deelnemersknoppen die M³ nodig heeft niet toont, of als de bediener liever zelf de controle houdt.
 
 ## v26.10.2
 
