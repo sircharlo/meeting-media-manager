@@ -8,14 +8,14 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 
 ### ✨ Neue Funktionen
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+- ✨ **Einstellungs-PIN**: Die Einstellungen eines Profils können jetzt mit einer PIN geschützt werden, damit nichts versehentlich geändert wird. Eine PIN lässt sich unter Einstellungen > Erweitert festlegen. Sie wird auch zum Löschen des Profils benötigt. Wird sie vergessen, kann jemand, der berechtigt ist, die Einstellungen zu ändern, sie entfernen, indem er die Schritte im Benutzerhandbuch befolgt.
 
 ## v26.11.0
 
 ### ✨ Neue Funktionen
 
 - ✨ **Timer-Fernanzeige**: Die Timerseite für das Tablet am Rednerpult hat eine optionale Fokusansicht, die in den Einstellungen eingeschaltet wird. Sie zeigt die Zeit in einem großen Fortschrittsring, der in der letzten Minute gelb und dann rot mit der Überziehungszeit (+02:18) wird, und listet daneben die Zoom-Teilnehmer auf, die die Hand erhoben haben, in der Reihenfolge, in der sie es getan haben: die ersten vier mit Namen, dazu die Anzahl der übrigen. Jede neue Hand blinkt drei Sekunden lang "Hand erhoben", und die Liste aktualisiert sich, wenn Hände hochgehen und wieder herunter. Die aktuelle Anzeige bleibt die Standardeinstellung.
-- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
+- ✨ **Zoom Meeting Manager (Beta, Windows)**: Erhobene Hände können jetzt gemeldet werden, ohne die Teilnehmer steuern zu müssen. Wenn "Über Meldungen nur informieren" eingeschaltet ist (unter "Helfer für erhobene Hände" in den Einstellungen), erkennt M³ weiterhin, wer die Hand hebt, in seiner Benachrichtigung und auf der Timer-Anzeige für den Vorsitzenden, zeigt aber keine Schaltflächen, um die Stummschaltung eines Teilnehmers aufzuheben oder seine Hand zu senken: Das bleibt dem Bediener in Zoom selbst überlassen. Nützlich, wenn Zoom die Teilnehmersteuerung, die M³ benötigt, nicht anzeigt oder wenn der Bediener lieber selbst die Kontrolle behält.
 
 ## v26.10.2
 
