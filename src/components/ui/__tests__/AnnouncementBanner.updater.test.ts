@@ -1,68 +1,53 @@
-import type * as NotificationsModule from 'src/helpers/notifications';
 import type { UpdateVersionInfo } from 'src/types/general';
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
-import { createTemporaryNotification } from 'src/helpers/notifications';
 import * as api from 'src/utils/api';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import AnnouncementBanner from './../AnnouncementBanner.vue';
-
-// Mock the notification helper so assertions can target the updater
-// notification lifecycle without fighting Quasar's Notify DOM (which mounts
-// a shared #q-notify container per test file). The returned dismiss handle
-// is a vi.fn so the "update in place" calls can be asserted too.
-vi.mock('src/helpers/notifications', async (importOriginal) => {
-  const mod = await importOriginal<typeof NotificationsModule>();
-  return {
-    ...mod,
-    createTemporaryNotification: vi.fn(() => vi.fn()),
-  };
-});
+import UpdateProgressToast from './../UpdateProgressToast.vue';
 
 installQuasarPlugin();
 installPinia();
 
+const noUpdate = { phase: null, progress: null, versionInfo: null };
+
 // The main process runs the update check at startup, concurrently with the
 // renderer booting, so update events can be emitted and dropped before the
 // banner mounts. It must then catch up via getUpdaterState() and still show
-// the downloading/downloaded notification.
+// the downloading/downloaded toast.
 describe('AnnouncementBanner - updater catch-up', () => {
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   const mountBanner = async () => {
     vi.spyOn(api, 'fetchAnnouncements').mockResolvedValueOnce([]);
     vi.spyOn(api, 'fetchLatestVersion').mockResolvedValueOnce('1.2.3');
-    const wrapper = mount(AnnouncementBanner, {});
+    const wrapper = mount(AnnouncementBanner, {
+      global: { stubs: { teleport: true } },
+    });
     await flushPromises();
     return wrapper;
   };
 
-  it('shows the downloaded notification when the update finished before mount', async () => {
+  it('shows the downloaded toast when the update finished before mount', async () => {
     vi.spyOn(globalThis.electronApi, 'getUpdaterState').mockResolvedValue({
       phase: 'downloaded',
       progress: null,
       versionInfo: { isDowngrade: false, version: '1.2.3' },
     });
-    const dismiss = vi.fn();
-    vi.mocked(createTemporaryNotification).mockReturnValue(dismiss);
 
-    await mountBanner();
+    const wrapper = await mountBanner();
+    const toast = wrapper.getComponent(UpdateProgressToast);
 
-    // The catch-up first builds the base notification (downloading), then
-    // transforms it in place into the downloaded state.
-    expect(dismiss).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: expect.stringContaining('ready to be installed'),
-      }),
-    );
+    expect(toast.props('phase')).toBe('downloaded');
+    expect(toast.text()).toContain('Update ready to install');
   });
 
-  it('shows the downloading notification with progress when the download was missed', async () => {
+  it('shows the downloading toast with progress when the download was missed', async () => {
     vi.spyOn(globalThis.electronApi, 'getUpdaterState').mockResolvedValue({
       phase: 'downloading',
       progress: {
@@ -74,31 +59,18 @@ describe('AnnouncementBanner - updater catch-up', () => {
       },
       versionInfo: { isDowngrade: false, version: '1.2.3' },
     });
-    const dismiss = vi.fn();
-    vi.mocked(createTemporaryNotification).mockReturnValue(dismiss);
 
-    await mountBanner();
+    const wrapper = await mountBanner();
+    const toast = wrapper.getComponent(UpdateProgressToast);
 
-    expect(createTemporaryNotification).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: expect.stringContaining('available and downloading'),
-      }),
-    );
-    expect(dismiss).toHaveBeenCalledWith(
-      expect.objectContaining({
-        caption: expect.stringContaining('42%'),
-      }),
-    );
+    expect(toast.text()).toContain('Downloading update');
+    expect(toast.find('progress').attributes('value')).toBe('42');
   });
 
-  it('creates the downloaded notification when update-downloaded fires without update-available', async () => {
-    vi.spyOn(globalThis.electronApi, 'getUpdaterState').mockResolvedValue({
-      phase: null,
-      progress: null,
-      versionInfo: null,
-    });
-    const dismiss = vi.fn();
-    vi.mocked(createTemporaryNotification).mockReturnValue(dismiss);
+  it('shows the downloaded toast when update-downloaded fires without update-available', async () => {
+    vi.spyOn(globalThis.electronApi, 'getUpdaterState').mockResolvedValue(
+      noUpdate,
+    );
 
     // Capture the callback registered by the banner so we can invoke it
     // directly, simulating electron-updater firing update-downloaded
@@ -110,40 +82,72 @@ describe('AnnouncementBanner - updater catch-up', () => {
       },
     );
 
-    mount(AnnouncementBanner, {});
-    await flushPromises();
+    const wrapper = await mountBanner();
 
-    // Invoke the callback the banner registered.
     expect(downloadedCallback).toBeDefined();
     downloadedCallback?.({ isDowngrade: false, version: '1.2.3' });
     await flushPromises();
 
-    // Should have created a new notification (not tried to update a
-    // non-existent one), because updateNotify was undefined.
-    expect(createTemporaryNotification).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: expect.stringContaining('ready to be installed'),
-      }),
+    expect(wrapper.getComponent(UpdateProgressToast).text()).toContain(
+      'Update ready to install',
     );
   });
 
-  it('shows no update notification when no update is in progress', async () => {
+  it('shows no update toast when no update is in progress', async () => {
+    vi.spyOn(globalThis.electronApi, 'getUpdaterState').mockResolvedValue(
+      noUpdate,
+    );
+
+    const wrapper = await mountBanner();
+
+    expect(wrapper.findComponent(UpdateProgressToast).exists()).toBe(false);
+  });
+
+  it('keeps a dismissed toast closed when the download then finishes', async () => {
+    vi.spyOn(globalThis.electronApi, 'getUpdaterState').mockResolvedValue(
+      noUpdate,
+    );
+
+    const versionInfo = { isDowngrade: false, version: '1.2.3' };
+    let availableCallback: ((args: UpdateVersionInfo) => void) | undefined;
+    let downloadedCallback: ((args: UpdateVersionInfo) => void) | undefined;
+    vi.spyOn(globalThis.electronApi, 'onUpdateAvailable').mockImplementation(
+      (cb) => {
+        availableCallback = cb;
+      },
+    );
+    vi.spyOn(globalThis.electronApi, 'onUpdateDownloaded').mockImplementation(
+      (cb) => {
+        downloadedCallback = cb;
+      },
+    );
+
+    const wrapper = await mountBanner();
+
+    availableCallback?.(versionInfo);
+    await flushPromises();
+    wrapper.getComponent(UpdateProgressToast).vm.$emit('dismiss');
+    await flushPromises();
+    expect(wrapper.findComponent(UpdateProgressToast).exists()).toBe(false);
+
+    downloadedCallback?.(versionInfo);
+    await flushPromises();
+    expect(wrapper.findComponent(UpdateProgressToast).exists()).toBe(false);
+  });
+
+  it('installs the update when the toast asks to', async () => {
     vi.spyOn(globalThis.electronApi, 'getUpdaterState').mockResolvedValue({
-      phase: null,
+      phase: 'downloaded',
       progress: null,
-      versionInfo: null,
+      versionInfo: { isDowngrade: false, version: '1.2.3' },
     });
+    const quitAndInstall = vi
+      .spyOn(globalThis.electronApi, 'quitAndInstall')
+      .mockImplementation(() => undefined);
 
-    await mountBanner();
+    const wrapper = await mountBanner();
+    wrapper.getComponent(UpdateProgressToast).vm.$emit('install');
 
-    const messages = vi
-      .mocked(createTemporaryNotification)
-      .mock.calls.map(([props]) => props?.message ?? '');
-    expect(
-      messages.some((message) => message.includes('ready to be installed')),
-    ).toBe(false);
-    expect(
-      messages.some((message) => message.includes('available and downloading')),
-    ).toBe(false);
+    expect(quitAndInstall).toHaveBeenCalledOnce();
   });
 });

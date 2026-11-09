@@ -22,6 +22,19 @@
       </template>
     </q-banner>
   </q-slide-transition>
+  <Teleport to="body">
+    <Transition appear name="update-toast">
+      <UpdateProgressToast
+        v-if="updatePhase && !updateToastDismissed"
+        :key="updateToastKey"
+        :phase="updatePhase"
+        :progress="updateProgress"
+        :version-info="updateVersionInfo"
+        @dismiss="updateToastDismissed = true"
+        @install="quitAndInstall()"
+      />
+    </Transition>
+  </Teleport>
 </template>
 <script setup lang="ts">
 import type {
@@ -31,8 +44,8 @@ import type {
   UpdateVersionInfo,
 } from 'src/types';
 
-import prettyBytes from 'pretty-bytes';
-import { type QNotifyUpdateOptions, useQuasar } from 'quasar';
+import UpdateProgressToast from 'components/ui/UpdateProgressToast.vue';
+import { useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
@@ -41,11 +54,11 @@ import { updatesDisabled } from 'src/utils/fs';
 import { getPreviousVersion, isVersionWithinBounds } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, shallowRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const $q = useQuasar();
-const { locale, t } = useI18n();
+const { t } = useI18n();
 const currentStateStore = useCurrentStateStore();
 const congregationStore = useCongregationSettingsStore();
 
@@ -97,20 +110,14 @@ const loadAnnouncements = async () => {
   announcements.value = await fetchAnnouncements();
 };
 
-// The updater function returned by Notify.create()/createTemporaryNotification():
-// calling it with props updates the existing notification in place (per
-// https://quasar.dev/quasar-plugins/notify#updatable-notifications); calling
-// it with no args dismisses it. Only non-grouped notifications support this,
-// which is why the update/downloaded notification below never sets `group`.
-let updateNotify: ((props?: QNotifyUpdateOptions) => void) | undefined;
-
-// Tracks which step of the updater lifecycle is currently shown, so the
-// notification's text can be re-translated in place if the active locale
-// changes (e.g. when switching to a congregation with a different app
-// language) without losing or resetting the notification itself.
+// Which step of the updater lifecycle the toast is showing, if any.
 type UpdatePhase = 'downloaded' | 'downloading' | null;
-let updatePhase: UpdatePhase = null;
-let lastProgressInfo: undefined | UpdaterProgressInfo;
+const updatePhase = ref<UpdatePhase>(null);
+const updateProgress = shallowRef<UpdaterProgressInfo>();
+const updateVersionInfo = shallowRef<UpdateVersionInfo>();
+const updateToastDismissed = ref(false);
+// Each new update gets a fresh toast, rather than reusing a finished one.
+const updateToastKey = ref(0);
 
 // True once any updater event has been received over IPC. The main process
 // runs the update check at startup, concurrently with the renderer booting,
@@ -120,103 +127,31 @@ let lastProgressInfo: undefined | UpdaterProgressInfo;
 // prevents double-showing when the events did arrive normally.
 let updateEventReceived = false;
 
-const downloadProgressCaption = (info: UpdaterProgressInfo) => {
-  const parts: string[] = [];
-
-  if (info.percent != null) {
-    parts.push(`${Math.round(info.percent)}%`);
-  }
-
-  if (info.transferred != null && info.total != null) {
-    parts.push(`${prettyBytes(info.transferred)} / ${prettyBytes(info.total)}`);
-  }
-
-  if (info.bytesPerSecond != null && info.bytesPerSecond > 0) {
-    parts.push(`(${prettyBytes(info.bytesPerSecond)}${t('perSecond')})`);
-  }
-
-  return parts.join(' - ');
-};
-
 const handleUpdateAvailable = () => {
   updateEventReceived = true;
-  updateNotify?.();
-  updatePhase = 'downloading';
-  lastProgressInfo = undefined;
-  updateNotify = createTemporaryNotification({
-    caption: t('update-preparing'),
-    message: t('update-downloading'),
-    // Survives dismissAllTemporaryNotifications() (e.g. congregation
-    // switches) since it isn't tied to any specific congregation.
-    protect: true,
-    type: 'ongoing',
-  });
+  updatePhase.value = 'downloading';
+  updateProgress.value = undefined;
+  updateToastDismissed.value = false;
+  updateToastKey.value++;
 };
 
 const handleUpdateDownloadProgress = (info: UpdaterProgressInfo) => {
   updateEventReceived = true;
-  lastProgressInfo = info;
-  updateNotify?.({ caption: downloadProgressCaption(info) });
+  updateProgress.value = info;
 };
-
-// SEC-6 (full-audit backlog): a pending downgrade (expected when switching
-// off beta updates - allowDowngrade is always on) previously installed with
-// the exact same one-click wording as a normal update, no indication given.
-// Purely informational - still a single "Quit & Install" click either way.
-const updateDownloadedMessage = (versionInfo?: UpdateVersionInfo) =>
-  versionInfo?.isDowngrade
-    ? t('update-downloaded-downgrade', { version: versionInfo.version })
-    : t('update-downloaded');
 
 const handleUpdateDownloaded = (versionInfo?: UpdateVersionInfo) => {
   updateEventReceived = true;
 
-  // Already in downloaded state — avoid re-creating or re-updating the
-  // notification when the same event fires more than once (e.g. the IPC
-  // event arriving after catchUpUpdaterState already handled it).
-  if (updatePhase === 'downloaded') return;
-
-  updatePhase = 'downloaded';
-
-  const message = updateDownloadedMessage(versionInfo);
+  // Already in downloaded state: the same event can fire more than once
+  // (e.g. the IPC event arriving after catchUpUpdaterState handled it).
+  if (updatePhase.value === 'downloaded') return;
 
   // When an update was already downloaded in a previous session,
   // electron-updater may fire update-downloaded directly without a
-  // preceding update-available, so updateNotify may not exist yet.
-  if (updateNotify) {
-    updateNotify({
-      actions: [
-        {
-          color: 'white',
-          handler: () => quitAndInstall(),
-          label: t('quit-and-install'),
-        },
-        { color: 'white', icon: 'close', round: true },
-      ],
-      caption: undefined,
-      icon: 'mmm-check',
-      message,
-      spinner: false,
-      timeout: 0,
-      type: 'positive',
-    });
-  } else {
-    updateNotify = createTemporaryNotification({
-      actions: [
-        {
-          color: 'white',
-          handler: () => quitAndInstall(),
-          label: t('quit-and-install'),
-        },
-        { color: 'white', icon: 'close', round: true },
-      ],
-      icon: 'mmm-check',
-      message,
-      protect: true,
-      timeout: 0,
-      type: 'positive',
-    });
-  }
+  // preceding update-available, so this can be the toast's first state.
+  updatePhase.value = 'downloaded';
+  updateVersionInfo.value = versionInfo;
 };
 
 // The updater check runs at startup, concurrently with the renderer booting,
@@ -482,34 +417,6 @@ watch(
   },
   { immediate: true },
 );
-
-// Re-translate the in-progress updater notification, if any, when the
-// active locale changes (e.g. after switching to a congregation configured
-// with a different app language) so its text always matches what's shown.
-watch(locale, () => {
-  if (!updateNotify || !updatePhase) return;
-
-  if (updatePhase === 'downloading') {
-    updateNotify({
-      caption: lastProgressInfo
-        ? downloadProgressCaption(lastProgressInfo)
-        : t('update-preparing'),
-      message: t('update-downloading'),
-    });
-  } else if (updatePhase === 'downloaded') {
-    updateNotify({
-      actions: [
-        {
-          color: 'white',
-          handler: () => quitAndInstall(),
-          label: t('quit-and-install'),
-        },
-        { color: 'white', icon: 'close', round: true },
-      ],
-      message: t('update-downloaded'),
-    });
-  }
-});
 
 if (import.meta.env.NEVER) {
   defineExpose({});
