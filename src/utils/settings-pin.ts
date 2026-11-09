@@ -52,13 +52,14 @@ export const verifySettingsPin = async (pin: string, stored: string) => {
 };
 
 export const createSettingsPinResetCode = () => {
-  const digits: number[] = [];
-  while (digits.length < 6) {
-    // Below 250, dividing by 25 gives each digit an equal chance.
-    const [byte = 255] = crypto.getRandomValues(new Uint8Array(1));
-    if (byte < 250) digits.push(Math.floor(byte / 25));
+  // Every hex digit is equally likely, so the ones left after dropping a-f
+  // are too.
+  let code = '';
+  while (code.length < 6) {
+    const random = crypto.getRandomValues(new Uint8Array(8));
+    code += toHex(random).replaceAll(/[a-f]/g, '');
   }
-  return digits.join('');
+  return code.slice(0, 6);
 };
 
 const getResetFilePath = async () =>
