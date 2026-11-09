@@ -8,14 +8,14 @@
 
 ### ✨ 새로운 기능
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+- ✨ **설정 PIN**: 이제 프로필의 설정을 PIN으로 보호하여 실수로 변경되는 일을 막을 수 있습니다. PIN은 설정 > 고급에서 설정할 수 있습니다. 프로필을 삭제할 때도 PIN이 필요합니다. PIN을 잊어버린 경우, 설정을 변경할 권한이 있는 사람이 사용자 가이드에 나오는 단계에 따라 PIN을 제거할 수 있습니다.
 
 ## v26.11.0
 
 ### ✨ 새로운 기능
 
 - ✨ **원격 타이머**: 연단의 태블릿용 타이머 페이지에 선택적인 집중 레이아웃이 있으며, 설정에서 켤 수 있습니다. 큰 진행 링에 시간을 표시하며, 링은 마지막 1분 동안 노란색이 되고 초과 시간(+02:18)이 생기면 빨간색으로 바뀝니다. 또한 옆에 손을 든 Zoom 참여자를 든 순서대로 나열하며, 처음 네 명은 이름으로, 나머지는 인원수로 표시합니다. 새로 손을 들 때마다 3초 동안 “손을 들었습니다”가 깜박이며, 손을 들고 내릴 때마다 목록이 업데이트됩니다. 현재 표시가 기본값으로 유지됩니다.
-- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
+- ✨ **Zoom 회의 관리자(베타, Windows)**: 이제 참여자를 제어하지 않고도 손 든 참여자를 알릴 수 있습니다. ‘손 든 참여자 알림만 받기’를 켜면(설정의 ‘손 들기 도우미’ 아래) M³는 알림과 사회자를 위한 타이머 화면에서 누가 손을 들었는지 계속 알려 주지만, 참여자의 음소거를 해제하거나 손을 내리는 버튼은 표시하지 않습니다. 이러한 작업은 Zoom에서 미디어 담당자가 직접 합니다. Zoom에 M³에 필요한 참여자 제어 기능이 표시되지 않는 경우나 담당자가 직접 제어하기를 원하는 경우에 유용합니다.
 
 ## v26.10.2
 
