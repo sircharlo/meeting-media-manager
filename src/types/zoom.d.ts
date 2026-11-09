@@ -54,6 +54,8 @@ export interface ZoomCommandResult {
   participants?: ZoomParticipantRow[];
   /** `learn-hand-raised`: how Zoom marks a raised hand, in its language. */
   phrase?: null | string;
+  /** `test-share-picker`: why Zoom's share picker didn't open. */
+  pickerError?: string;
   /** `place-windows`: where each window ended up. */
   placed?: ZoomPlacedWindows;
   /** `set-participant-mic`: whether the button was pressed at all. */

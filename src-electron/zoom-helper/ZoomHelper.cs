@@ -476,6 +476,7 @@ namespace M3.ZoomHelper
         const string ControlPanelClass = "ZPControlPanelClass";
         const string JoinAudioDialogClass = "zJoinAudioWndClass";
         const string MuteAllDialogClass = "zChangeNameWndClass";
+        const string HostUnmuteDialogClass = "ZPHostWithUnmutePrivacyWndClass";
         const string MenuClass = "WCN_ModelessWnd";
         const string MoreGridClass = "ZGridMultiLevelPopupWndClass";
         const string SharePickerClass = "ZPShareEntranceClass";
@@ -1460,11 +1461,10 @@ namespace M3.ZoomHelper
             return Changed(true);
         }
 
-        public static Dictionary<string, object> LeaveAudio()
+        /// <summary>Opens the audio menu (the arrow next to the microphone button
+        /// is the toolbar's first menu) and returns its entries.</summary>
+        static List<El> OpenAudioMenuEntries(El window)
         {
-            var window = RequireMeetingWindow();
-            if (!AudioJoined(window)) return Changed(false);
-            // The arrow next to the microphone button is the toolbar's first menu.
             var menus = ToolbarMenus(window);
             if (menus.Count == 0) throw new ZoomActionError("audio-menu-not-found");
             Press(menus[0]);
@@ -1475,11 +1475,37 @@ namespace M3.ZoomHelper
                 menu = WaitForWindow(MenuClass, 4000);
             }
             if (menu == null) throw new ZoomActionError("audio-menu-not-found");
-            var items = MenuItems(menu);
-            // "Leave computer audio" is the entry just before "Audio settings".
-            if (items.Count < 2) throw new ZoomActionError("leave-audio-item-not-found");
-            Press(items[items.Count - 2]);
-            if (!WaitUntil(() => !AudioJoined(window), WaitTimeoutMs)) throw new ZoomActionError("audio-not-left");
+            // The menu's window can be up before its entries are (MMM-V2-3NB).
+            var items = new List<El>();
+            WaitUntil(() => (items = MenuItems(menu)).Count >= 2, 2000);
+            return items;
+        }
+
+        /// <summary>Presses the audio menu's entry `fromEnd` places from the
+        /// bottom and waits for computer audio to be left. False if that entry
+        /// was the one for hosts allowed to unmute this person, whose dialog
+        /// has been closed again.</summary>
+        static bool PressLeaveAudioEntry(El window, int fromEnd)
+        {
+            var before = ZoomWindows();
+            var items = OpenAudioMenuEntries(window);
+            if (items.Count < fromEnd) throw new ZoomActionError("leave-audio-item-not-found");
+            Press(items[items.Count - fromEnd]);
+            Func<bool> openedDialog = () => TopWindows(HostUnmuteDialogClass, true).Exists(handle => !before.ContainsKey(handle));
+            if (!WaitUntil(() => !AudioJoined(window) || openedDialog(), WaitTimeoutMs)) throw new ZoomActionError("audio-not-left");
+            if (!openedDialog()) return true;
+            DismissNewWindows(before);
+            return false;
+        }
+
+        public static Dictionary<string, object> LeaveAudio()
+        {
+            var window = RequireMeetingWindow();
+            if (!AudioJoined(window)) return Changed(false);
+            // "Leave computer audio" is the entry just before "Audio settings",
+            // unless Zoom lists the hosts allowed to unmute this person between
+            // them (MMM-V2-3NB): then it's one further up.
+            if (!PressLeaveAudioEntry(window, 2) && !PressLeaveAudioEntry(window, 3)) throw new ZoomActionError("audio-not-left");
             // The first button now reads "Join audio", worth remembering.
             var after = ToolbarButtons(window);
             if (after.Count > 0 && GetAudioState(window) == AudioState.Unknown) Known.Learn("joinAudio", FirstSegment(after[0].Name));
@@ -3346,16 +3372,18 @@ namespace M3.ZoomHelper
             var window = RequireMeetingWindow();
             var before = ZoomWindows();
             El picker = null;
+            var pickerError = "share-picker-not-found";
             try
             {
                 OpenSharePicker(window, shareTitle);
-                picker = WaitForWindow(SharePickerClass, 5000);
+                // As long as sharing itself waits (see StartShare).
+                picker = WaitForWindow(SharePickerClass, WaitTimeoutMs);
             }
-            catch (ZoomActionError) { }
+            catch (ZoomActionError error) { pickerError = error.Message; }
             if (picker == null)
             {
                 // A wrong entry may have opened something else: close it.
-                return new Dictionary<string, object> { { "opened", false }, { "windowListed", false }, { "windowsLeft", DismissNewWindows(before) } };
+                return new Dictionary<string, object> { { "opened", false }, { "pickerError", pickerError }, { "windowListed", false }, { "windowsLeft", DismissNewWindows(before) } };
             }
             var problem = SelectShareWindow(picker, windowTitle);
             CloseSharePicker(picker);
