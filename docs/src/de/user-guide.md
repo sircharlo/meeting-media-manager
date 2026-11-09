@@ -419,16 +419,16 @@ Konfigurieren Sie benutzerdefinierte Tastenkürzel für einen effizienten Betrie
 - Ausweichsprache ausprobieren
 - Oberflächenspracheinstellung prüfen
 
-#### Forgotten Settings PIN {#user-guide-forgotten-settings-pin}
+#### Einstellungs-PIN vergessen {#user-guide-forgotten-settings-pin}
 
-Only someone authorized to change M³'s settings should do this. After three wrong tries, M³ offers **Forgot the PIN?** wherever it asks for the PIN. To remove the PIN:
+Nur jemand, der berechtigt ist, die Einstellungen von M³ zu ändern, sollte dies tun. Nach drei Fehlversuchen bietet M³ überall dort, wo nach der PIN gefragt wird, **PIN vergessen?** an. So entfernen Sie die PIN:
 
-1. Select **Forgot the PIN?** and leave the window that opens in M³. It shows a folder on this computer.
-2. In your computer's file manager, go to that folder.
-3. Open the text file named `M3 settings PIN reset code.txt`, which M³ has just created there.
-4. Type the six-digit code from that file into M³, then confirm.
+1. Wählen Sie **PIN vergessen?** aus und lassen Sie das Fenster, das sich in M³ öffnet, geöffnet. Es zeigt einen Ordner auf diesem Computer an.
+2. Gehen Sie im Dateimanager Ihres Computers zu diesem Ordner.
+3. Öffnen Sie die Textdatei `M3 settings PIN reset code.txt`, die M³ gerade dort erstellt hat.
+4. Geben Sie den sechsstelligen Code aus dieser Datei in M³ ein und bestätigen Sie.
 
-M³ then removes the PIN and deletes the file. To protect the settings again, set a new PIN under **Settings** > **Advanced**.
+M³ entfernt dann die PIN und löscht die Datei. Um die Einstellungen wieder zu schützen, legen Sie unter **Einstellungen** > **Erweitert** eine neue PIN fest.
 
 ### Hilfe erhalten {#getting-help}
 
