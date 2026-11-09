@@ -34,6 +34,44 @@ describe('getThumbnailUrl', () => {
     expect(errorCatcher).not.toHaveBeenCalled();
   });
 
+  // MMM-V2-3CF: a media element's 'error' event carries no message of its
+  // own, so every failure was reported as "Unknown VideoRef Error".
+  it("reports Chromium's reason for a video that fails to load", async () => {
+    setActivePinia(createPinia());
+    const { fs } = globalThis.electronApi;
+    vi.spyOn(fs, 'pathExists').mockImplementation(
+      async (path) => !String(path).endsWith('.jpg'),
+    );
+    const videos: HTMLVideoElement[] = [];
+    const createElement = document.createElement.bind(document);
+    vi.spyOn(document, 'createElement').mockImplementation(((
+      tagName: string,
+      options?: ElementCreationOptions,
+    ) => {
+      const element = createElement(tagName, options);
+      if (element instanceof HTMLVideoElement) videos.push(element);
+      return element;
+    }) as typeof document.createElement);
+    const { errorCatcher } = await import('src/helpers/error-catcher');
+    const { getThumbnailUrl } = await import('../fs');
+
+    const pending = getThumbnailUrl('C:/media/clip.avi');
+    await vi.waitFor(() => expect(videos).toHaveLength(1));
+    await vi.waitFor(() => expect(videos[0]?.getAttribute('src')).toBeTruthy());
+    Object.defineProperty(videos[0], 'error', {
+      value: { code: 4, message: 'FFmpegDemuxer: open context failed' },
+    });
+    videos[0]?.dispatchEvent(new Event('error'));
+
+    await expect(pending).resolves.toBe('');
+    expect(errorCatcher).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'FFmpegDemuxer: open context failed',
+      }),
+      expect.anything(),
+    );
+  });
+
   // MMM-V2-3G1: the sidecar path used to be built with split('.')[0], which
   // cut a path like C:/Users/first.last/... at the username's dot and tried
   // to write C:/Users/first.jpg.

@@ -198,8 +198,35 @@ describe('getMetadataFromMediaPath for a file without a duration in its metadata
     expect(videos[0]?.getAttribute('src')).toBeNull();
   });
 
+  // MMM-V2-3N6: the event only ever serialized to {"isTrusted":true}, so the
+  // report said nothing about why the file failed.
+  it("reports Chromium's reason for a video that fails to load", async () => {
+    const videos = captureCreatedVideos();
+    const { getMetadataFromMediaPath } = await import('../media');
+
+    const pending = getMetadataFromMediaPath('C:/media/clip.webm');
+    await vi.waitFor(() => expect(videos).toHaveLength(1));
+    Object.defineProperty(videos[0], 'error', {
+      value: { code: 4, message: 'FFmpegDemuxer: open context failed' },
+    });
+    videos[0]?.onerror?.(new Event('error'));
+    await pending;
+
+    expect(errorCatcher).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        contexts: {
+          fn: expect.objectContaining({
+            code: 4,
+            mediaError: 'FFmpegDemuxer: open context failed',
+          }),
+        },
+      }),
+    );
+  });
+
   // MMM-V2-3N6: the element's own error handler already reported the
-  // failure with the DOM event attached - the outer catch must not file
+  // failure with the MediaError attached - the outer catch must not file
   // the same error a second time.
   it('reports a video that fails to load exactly once', async () => {
     const videos = captureCreatedVideos();

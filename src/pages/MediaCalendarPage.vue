@@ -321,6 +321,7 @@ import {
   isPdf,
   isRemoteFile,
   isVideo,
+  reportUnplayableMediaTracks,
 } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import {
@@ -1590,6 +1591,9 @@ const addMediaFileToMediaItems = async (
     sectionToAddTo.value,
     false,
   );
+  // Not awaited: a diagnostic mustn't hold up the import. Uses the copy
+  // because the original may be a temp file that's about to be removed.
+  if (destPath) void reportUnplayableMediaTracks(destPath);
 
   if (matchingMissingItem) {
     const metadata = await getMetadataFromMediaPath(destPath);
