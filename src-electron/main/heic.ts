@@ -39,7 +39,7 @@ const heicConvertPath = createRequire(import.meta.url).resolve('heic-convert');
 const workerSource = `'use strict';
 const convert = require(process.argv[2]);
 
-process.parentPort.on('message', async (message) => {
+process.parentPort.on('message', async ({ data: message }) => {
   try {
     const output = await convert(message.image);
     process.parentPort.postMessage({ buffer: output.buffer, id: message.id });
@@ -174,7 +174,13 @@ export const convertHeic = async (
     return response.buffer ?? new ArrayBuffer(0);
   } catch (e) {
     captureElectronError(e, {
-      contexts: { fn: { format: image.format, name: 'convertHeic' } },
+      contexts: {
+        fn: {
+          format: image.format,
+          name: 'convertHeic',
+          size: image.buffer.byteLength,
+        },
+      },
     });
     return new ArrayBuffer(0);
   }

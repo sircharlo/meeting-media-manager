@@ -103,3 +103,4 @@ stats.html
 yalc.lock
 __pycache__/
 test/playwright/debug-output/*
+.cloud-attachments/*

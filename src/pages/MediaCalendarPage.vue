@@ -313,6 +313,7 @@ import {
   getVisibleMeetingItems,
   isArchive,
   isAudio,
+  isHeic,
   isImage,
   isImageString,
   isJwPlaylist,
@@ -1788,6 +1789,12 @@ const processImportFile = async (
 
   filepath = await normalizeImportFilePath(file, filepath);
   filepath = await convertImageIfNeeded(filepath);
+
+  // Still a HEIC: it couldn't be converted, and Chromium can't display one.
+  if (isHeic(filepath)) {
+    notifyUnsupportedFile(filepath);
+    return;
+  }
 
   if (isImage(filepath)) {
     await addImageFileToMediaItems(filepath, mediaItemsToAdd);
