@@ -9,6 +9,7 @@ import {
   PDF_EXTENSIONS,
   PURE_IMG_EXTENSIONS,
   SVG_EXTENSIONS,
+  UNPLAYABLE_AUDIO_CODEC_PATTERN,
   VIDEO_EXTENSIONS,
   ZIP_EXTENSIONS,
 } from 'src/constants/media';
@@ -481,6 +482,98 @@ export const withMediaElementTimeout = async <T>(
 };
 
 /**
+ * Whether Chromium can show a picture for a file that has a video track. With
+ * no decoder for that track it drops it and carries on without an error
+ * event, leaving videoWidth at 0. Checked on the element rather than against
+ * a list of codecs because the answer can depend on the machine: HEVC only
+ * decodes in hardware.
+ * @param filepath The path to the video file.
+ * @returns False only if the file loaded without a picture.
+ */
+const hasDecodablePicture = async (filepath: string) => {
+  const video = document.createElement('video');
+  const loading = new Promise<boolean>((resolve) => {
+    video.onloadedmetadata = () => resolve(video.videoWidth > 0);
+    // A file that won't load at all is reported by the thumbnail step.
+    video.onerror = () => resolve(true);
+  });
+  video.preload = 'metadata';
+  video.src = pathToFileURL(filepath);
+  video.load();
+  try {
+    return await withMediaElementTimeout(loading, video, filepath);
+  } finally {
+    video.onerror = null;
+    video.onloadedmetadata = null;
+    video.removeAttribute('src');
+    video.load();
+  }
+};
+
+const reportUnplayableTrack = (
+  filepath: string,
+  missing: 'picture' | 'sound',
+  codecNames: string[],
+) => {
+  // A fixed locale, so the fingerprint is the same on every machine.
+  const codec = [...new Set(codecNames)]
+    .toSorted((a, b) => a.localeCompare(b, 'en'))
+    .join('+');
+  const extension = parse(filepath).ext.toLowerCase().slice(1);
+  // No file name: this only counts how often each combination turns up.
+  errorCatcher(
+    new Error(`Imported .${extension} has no ${missing}: ${codec}`),
+    {
+      contexts: {
+        fn: { codec, extension, missing, name: 'reportUnplayableMediaTracks' },
+      },
+      fingerprint: ['media-unplayable-track', missing, extension, codec],
+      level: 'warning',
+      tags: {
+        'media.codec': codec,
+        'media.extension': extension,
+        'media.missing': missing,
+      },
+    },
+  );
+};
+
+/**
+ * Reports an imported file that Chromium will accept but can't fully play, so
+ * Sentry shows how often each extension/codec combination occurs. These files
+ * fail silently, so nothing else reports them. Purely diagnostic: never
+ * throws, and is safe to leave running in the background.
+ * @param filepath The path to the imported audio or video file.
+ */
+export const reportUnplayableMediaTracks = async (filepath: string) => {
+  try {
+    const { trackInfo } = (await parseMediaFile(filepath, { skipCovers: true }))
+      .format;
+
+    const audioCodecs = trackInfo
+      .filter((track) => track.audio)
+      .map((track) => track.codecName ?? 'unknown');
+    // One playable language is enough for the file to have sound.
+    if (
+      audioCodecs.length &&
+      audioCodecs.every((codec) => UNPLAYABLE_AUDIO_CODEC_PATTERN.test(codec))
+    ) {
+      reportUnplayableTrack(filepath, 'sound', audioCodecs);
+    }
+
+    const videoCodecs = trackInfo
+      .filter((track) => track.video)
+      .map((track) => track.codecName ?? 'unknown');
+    if (videoCodecs.length && !(await hasDecodablePicture(filepath))) {
+      reportUnplayableTrack(filepath, 'picture', videoCodecs);
+    }
+  } catch (error) {
+    // A file the parser can't read is reported by getMetadataFromMediaPath.
+    log('Could not check media tracks', 'mediaProcessing', 'warn', error);
+  }
+};
+
+/**
  * Gets the metadata of a media file.
  * @param mediaPath The path to the media file.
  * @returns The metadata of the media file.
@@ -532,7 +625,7 @@ export const getMetadataFromMediaPath = async (
           video.remove();
           resolve();
         };
-        video.onerror = (event) => {
+        video.onerror = () => {
           video.remove();
           const rejectionError = new Error(
             `Failed to load video: ${mediaPath}`,
@@ -540,7 +633,10 @@ export const getMetadataFromMediaPath = async (
           errorCatcher(rejectionError, {
             contexts: {
               fn: {
-                event: JSON.stringify(event, Object.getOwnPropertyNames(event)),
+                // The 'error' event itself is empty ({"isTrusted":true}):
+                // Chromium's reason is on the element's own MediaError.
+                code: video.error?.code,
+                mediaError: video.error?.message,
                 mediaPath,
                 name: 'getMetadataFromMediaPath',
               },
@@ -558,7 +654,7 @@ export const getMetadataFromMediaPath = async (
       return defaultMetadata;
     }
     // The video element's own onerror handler above already reported this
-    // failure with the DOM event attached (MMM-V2-3N6) - reporting the
+    // failure with the MediaError attached (MMM-V2-3N6) - reporting the
     // same error again here would only file a duplicate.
     if (
       error instanceof Error &&

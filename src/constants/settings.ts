@@ -459,6 +459,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'timerDisplay',
     type: 'toggle',
   },
+  timerShowPlannedStartTimes: {
+    depends: 'enableTimerDisplay',
+    group: 'meetingTimer',
+    subgroup: 'timerDisplay',
+    type: 'toggle',
+  },
   timerRemoteEnable: {
     depends: 'enableTimerDisplay',
     group: 'meetingTimer',
@@ -1331,6 +1337,7 @@ export const defaultSettings: SettingsValues = {
   timerRemoteFocusLayout: false,
   timerRemotePort: '8787',
   timerShowOnActionIsland: false,
+  timerShowPlannedStartTimes: true,
   timerTextColor: '#ffffff',
   timerTextSize: '10vw',
   timerTimeOfDayDisplay: 'digital',

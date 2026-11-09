@@ -3,7 +3,10 @@ import type { MeetingPartOption } from 'src/types';
 import { mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
-import { describe, expect, it, vi } from 'vitest';
+import { defaultSettings } from 'src/constants/settings';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
+import { useCurrentStateStore } from 'stores/current-state';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import TimerPartsList from '../TimerPartsList.vue';
 
@@ -44,6 +47,90 @@ const getEditLabel = (part: MeetingPartOption) => {
   wrapper.unmount();
   return editLabel;
 };
+
+describe('TimerPartsList rows', () => {
+  const part: MeetingPartOption = {
+    label: 'AYFM 1 (4 min.)',
+    name: 'AYFM 1',
+    value: 'ayfm-1',
+  };
+  const buttonLabels = (wrapper: ReturnType<typeof mount>) =>
+    wrapper.findAll('button').map((button) => button.attributes('aria-label'));
+
+  beforeEach(async () => {
+    const timer = (await import('src/composables/useTimer')).default();
+    // Computed in useTimer, plain refs in this test's mock of it.
+    const writable = timer as unknown as Record<string, { value: unknown }>;
+    Object.assign(writable.meetingPartsOptions ?? {}, { value: [part] });
+    Object.assign(writable.partDurations ?? {}, { value: { 'ayfm-1': 4 } });
+    Object.assign(writable.partTimings ?? {}, { value: {} });
+    timer.currentPart.value = 'ayfm-1';
+    timer.timerRunning.value = false;
+    vi.mocked(timer.getPlannedStartTime).mockReturnValue(null);
+    vi.mocked(timer.getTimeString).mockReturnValue('19:05');
+    useCongregationSettingsStore().congregations = {
+      'test-cong': { ...defaultSettings },
+    };
+    useCurrentStateStore().currentCongregation = 'test-cong';
+  });
+
+  it('shows the name and duration once, and only a start button', () => {
+    const wrapper = mount(TimerPartsList);
+
+    expect(wrapper.text()).toContain('AYFM 1');
+    expect(wrapper.text()).toContain('4 min.');
+    expect(wrapper.text()).not.toContain('AYFM 1 (4 min.)');
+    expect(buttonLabels(wrapper)).toContain('Start timer');
+    expect(buttonLabels(wrapper)).not.toContain('Increase duration');
+    wrapper.unmount();
+  });
+
+  it('offers quick duration changes on the running part', async () => {
+    const timer = (await import('src/composables/useTimer')).default();
+    timer.timerRunning.value = true;
+
+    const wrapper = mount(TimerPartsList);
+
+    expect(buttonLabels(wrapper)).toContain('Increase duration');
+    expect(buttonLabels(wrapper)).toContain('Decrease duration');
+    wrapper.unmount();
+  });
+
+  it('opens the edit dialog from the duration', async () => {
+    const wrapper = mount(TimerPartsList);
+    const vm = wrapper.vm as unknown as { editDialogOpen: boolean };
+
+    const duration = wrapper
+      .findAll('button')
+      .find((button) => button.text() === '4 min.');
+    await duration?.trigger('click');
+
+    expect(vm.editDialogOpen).toBe(true);
+    wrapper.unmount();
+  });
+
+  it.each([
+    [true, true],
+    [false, false],
+  ])(
+    'with planned start times set to %s, shows them: %s',
+    async (setting, shown) => {
+      const timer = (await import('src/composables/useTimer')).default();
+      vi.mocked(timer.getPlannedStartTime).mockReturnValue(1000);
+      useCongregationSettingsStore().congregations = {
+        'test-cong': {
+          ...defaultSettings,
+          timerShowPlannedStartTimes: setting,
+        },
+      };
+
+      const wrapper = mount(TimerPartsList);
+
+      expect(wrapper.text().includes('Planned start time')).toBe(shown);
+      wrapper.unmount();
+    },
+  );
+});
 
 describe('TimerPartsList edit dialog label', () => {
   it.each([

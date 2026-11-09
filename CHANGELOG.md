@@ -13,6 +13,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Meeting Quick Actions**: A new setting stops the before and after meeting panels from being dismissed. Turn it off under Settings, in the Meeting Quick Actions section.
+- 🛠️ **Meeting Timer**: The timer popup is now laid out for running the meeting. The controls stay at the top while the parts scroll, and each part is a single line with its name, duration and start button, with the running part highlighted in green. Click a duration to change it, and find the setup options under Advanced. "Living as Christians" no longer gets a number when it has only one part, and a new setting hides the planned start times.
 
 ## v26.11.1
 

@@ -27,7 +27,7 @@
         </q-item-section>
         <q-item-section>
           <q-item-label>
-            {{ part.label }}
+            {{ part.name ?? part.label }}
             <q-icon
               v-if="part.warning"
               color="warning"
@@ -37,41 +37,50 @@
               <q-tooltip>{{ t('part-duration-mismatch-warning') }}</q-tooltip>
             </q-icon>
           </q-item-label>
-          <q-item-label caption>
+          <q-item-label v-if="getPartStatusText(part.value)" caption>
             {{ getPartStatusText(part.value) }}
           </q-item-label>
         </q-item-section>
         <q-item-section side>
-          <div class="row no-wrap q-gutter-xs">
+          <div class="row no-wrap items-center q-gutter-xs">
+            <!-- A running part can be given more or less time in one click. -->
+            <template v-if="timerRunning && currentPart === part.value">
+              <q-btn
+                :aria-label="t('decrease-duration')"
+                class="btn-tonal"
+                color="primary"
+                dense
+                flat
+                icon="mmm-minus"
+                size="sm"
+                @click.stop="adjustPartDuration(part.value, -1)"
+              >
+                <q-tooltip>{{ t('decrease-duration') }}</q-tooltip>
+              </q-btn>
+              <q-btn
+                :aria-label="t('increase-duration')"
+                class="btn-tonal"
+                color="primary"
+                dense
+                flat
+                icon="mmm-plus"
+                size="sm"
+                @click.stop="adjustPartDuration(part.value, 1)"
+              >
+                <q-tooltip>{{ t('increase-duration') }}</q-tooltip>
+              </q-btn>
+            </template>
             <q-btn
-              :aria-label="t('decrease-duration')"
-              class="btn-tonal"
-              color="primary"
+              class="timer-parts-list__duration"
               dense
-              :disable="
-                timerRunning && currentPart === part.value
-                  ? false
-                  : (partDurations[part.value] ?? 0) <= 0
+              flat
+              :label="
+                t('minutes-short', { minutes: partDurations[part.value] ?? 0 })
               "
-              flat
-              icon="mmm-minus"
+              no-caps
               size="sm"
-              @click.stop="adjustPartDuration(part.value, -1)"
-            >
-              <q-tooltip>{{ t('decrease-duration') }}</q-tooltip>
-            </q-btn>
-            <q-btn
-              :aria-label="t('increase-duration')"
-              class="btn-tonal"
-              color="primary"
-              dense
-              flat
-              icon="mmm-plus"
-              size="sm"
-              @click.stop="adjustPartDuration(part.value, 1)"
-            >
-              <q-tooltip>{{ t('increase-duration') }}</q-tooltip>
-            </q-btn>
+              @click.stop="openEditDialog(part)"
+            />
             <q-btn
               v-if="
                 (partTimings[part.value]?.startTime ||
@@ -152,7 +161,37 @@
         outlined
         type="number"
         @keyup.enter="saveEdit"
-      />
+      >
+        <template #prepend>
+          <q-btn
+            :aria-label="t('decrease-duration')"
+            color="primary"
+            dense
+            :disable="editDuration <= 0"
+            flat
+            icon="mmm-minus"
+            round
+            size="sm"
+            @click="editDuration = Math.max(0, editDuration - 1)"
+          >
+            <q-tooltip>{{ t('decrease-duration') }}</q-tooltip>
+          </q-btn>
+        </template>
+        <template #append>
+          <q-btn
+            :aria-label="t('increase-duration')"
+            color="primary"
+            dense
+            flat
+            icon="mmm-plus"
+            round
+            size="sm"
+            @click="editDuration += 1"
+          >
+            <q-tooltip>{{ t('increase-duration') }}</q-tooltip>
+          </q-btn>
+        </template>
+      </q-input>
     </q-card-section>
   </ConfirmDialog>
 
@@ -178,7 +217,9 @@
 import type { MeetingPart, MeetingPartOption } from 'src/types';
 
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
+import { storeToRefs } from 'pinia';
 import useTimer from 'src/composables/useTimer';
+import { useCurrentStateStore } from 'stores/current-state';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -204,6 +245,8 @@ const {
   timerRunning,
   updateCustomTimerPart,
 } = useTimer();
+
+const { currentSettings } = storeToRefs(useCurrentStateStore());
 
 // Custom part labels are shown as "Label (N min.)"; strip that suffix (and
 // the whitespace before it) to edit the bare label. Trimming with string ops
@@ -274,18 +317,26 @@ const getPartStatusText = (part: MeetingPart) => {
     return `${t('start-time')}: ${getTimeString(timings.startTime, true)}`;
   }
 
-  const plannedStartTime = getPlannedStartTime(part);
+  const plannedStartTime =
+    currentSettings.value?.timerShowPlannedStartTimes === false
+      ? null
+      : getPlannedStartTime(part);
   if (plannedStartTime) {
     return `${t('planned-start-time')}: ${getTimeString(plannedStartTime)}`;
   }
 
-  if (!duration) return t('part-skipped');
-  return `${t('duration-minutes')}: ${duration}`;
+  return duration ? '' : t('part-skipped');
 };
 </script>
 
 <style scoped>
 .timer-parts-list__item--active {
-  background: rgba(var(--q-primary-rgb, 66, 165, 245), 0.08);
+  background: color-mix(in srgb, var(--q-positive) 14%, transparent);
+  box-shadow: inset 3px 0 0 var(--q-positive);
+}
+
+.timer-parts-list__duration {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 </style>

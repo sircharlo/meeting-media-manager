@@ -187,19 +187,38 @@ describe('DialogTimerPopup', () => {
     expectSeparatorsBetweenSectionsOnly();
   });
 
-  it('shows the timer remote addresses at the end of the scrolling body', async () => {
+  it('shows the timer remote addresses in the scrolling body, before the advanced options', async () => {
     useCurrentStateStore().timerRemoteUrls = ['http://192.168.1.2:8080/'];
     await mountPopup({ settings: { timerRemoteEnable: true } });
 
     const body = scrollBody();
-    expect(body.textContent).toContain('Timer remote');
-    expect(body.lastElementChild?.textContent).toContain(
-      'http://192.168.1.2:8080/',
+    const text = body.textContent ?? '';
+    expect(text.indexOf('http://192.168.1.2:8080/')).toBeGreaterThan(-1);
+    expect(text.indexOf('http://192.168.1.2:8080/')).toBeLessThan(
+      text.indexOf('Advanced'),
     );
     expect(
       body.querySelector('button[aria-label="Copy address"]'),
     ).not.toBeNull();
     expectSeparatorsBetweenSectionsOnly();
+  });
+
+  it('keeps the timer controls outside the scrolling body, so they stay in view', async () => {
+    await mountPopup();
+
+    expect(document.querySelector('timer-quick-controls-stub')).not.toBeNull();
+    expect(scrollBody().querySelector('timer-quick-controls-stub')).toBeNull();
+    expect(scrollBody().textContent).not.toContain('Hand alert');
+    expect(document.body.textContent).toContain('Hand alert');
+  });
+
+  it('puts the parts first and the setup options last, behind Advanced', async () => {
+    await mountPopup();
+
+    const body = scrollBody();
+    expect(body.firstElementChild?.textContent).toContain('Meeting part');
+    expect(body.lastElementChild?.textContent).toContain('Advanced');
+    expect(body.lastElementChild?.textContent).toContain('Add a custom part');
   });
 
   it('asks before resetting all timings', async () => {
