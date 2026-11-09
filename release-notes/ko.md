@@ -4,6 +4,12 @@
 
 버전별 전체 변경 사항은 GitHub의 CHANGELOG.md 파일을 확인해 주세요.
 
+## 출시 예정 버전
+
+### ✨ 새로운 기능
+
+- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+
 ## v26.11.0
 
 ### ✨ 새로운 기능

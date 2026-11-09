@@ -4,6 +4,12 @@
 
 Para ver la lista completa de cambios entre versiones, consulta nuestro archivo CHANGELOG.md en GitHub.
 
+## PRÓXIMA VERSIÓN
+
+### ✨ Nuevas funciones
+
+- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+
 ## v26.11.0
 
 ### ✨ Nuevas funciones
