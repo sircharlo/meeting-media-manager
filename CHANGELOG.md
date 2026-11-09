@@ -8,7 +8,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### ✨ New Features
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile, and a forgotten PIN can be removed with a code M³ saves in a file on the computer.
+- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
 
 ### 🛠️ Improvements and Tweaks
 

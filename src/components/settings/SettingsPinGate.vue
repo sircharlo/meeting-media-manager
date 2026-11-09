@@ -25,15 +25,17 @@
           outlined
           type="password"
         />
-        <div class="row items-center justify-between q-mt-sm">
+        <div class="row items-center q-mt-sm">
           <q-btn
+            v-if="canReset"
             color="primary"
             flat
             :label="t('settings-pin-forgot')"
             no-caps
-            @click="startReset"
+            @click="resetOpen = true"
           />
           <q-btn
+            class="q-ml-auto"
             color="primary"
             :label="t('settings-pin-unlock')"
             :loading="checking"
@@ -46,70 +48,33 @@
     </div>
   </div>
 
-  <ConfirmDialog
+  <DialogSettingsPinReset
     v-model="resetOpen"
-    :confirm-label="t('settings-pin-remove')"
-    dialog-id="settings-pin-reset"
-    icon="mmm-settings"
-    icon-color="primary"
-    persistent
-    :title="t('settings-pin-forgot')"
-    @cancel="cancelReset"
-    @confirm="confirmReset"
-  >
-    <q-card-section class="q-pb-none">
-      {{ t('settings-pin-reset-explain', { file: resetFileName }) }}
-    </q-card-section>
-    <q-card-section>
-      <q-btn
-        class="btn-tonal full-width q-mb-md"
-        color="primary"
-        flat
-        :label="t('settings-pin-reset-open-folder')"
-        no-caps
-        @click="openSettingsPinResetFolder"
-      />
-      <q-input
-        v-model="enteredCode"
-        autocomplete="off"
-        class="bg-accent-100"
-        dense
-        :error="wrongCode"
-        :error-message="t('settings-pin-reset-code-wrong')"
-        inputmode="numeric"
-        :label="t('settings-pin-reset-code')"
-        outlined
-        @keyup.enter="confirmReset"
-      />
-    </q-card-section>
-  </ConfirmDialog>
+    :congregation-id="currentCongregation"
+  />
 </template>
 
 <script setup lang="ts">
-import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
+import DialogSettingsPinReset from 'components/settings/DialogSettingsPinReset.vue';
 import { storeToRefs } from 'pinia';
+import { useSettingsPinAttempts } from 'src/composables/useSettingsPinAttempts';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { createTemporaryNotification } from 'src/helpers/notifications';
-import {
-  createSettingsPinResetCode,
-  openSettingsPinResetFolder,
-  removeSettingsPinResetFile,
-  verifySettingsPin,
-  writeSettingsPinResetFile,
-} from 'src/utils/settings-pin';
 import { useCurrentStateStore } from 'stores/current-state';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const { currentSettings, settingsUnlocked } = storeToRefs(
+const { currentCongregation, currentSettings, settingsUnlocked } = storeToRefs(
   useCurrentStateStore(),
 );
+
+const { canReset, checkPin } = useSettingsPinAttempts(currentCongregation);
 
 const pin = ref('');
 const wrongPin = ref(false);
 const checking = ref(false);
+const resetOpen = ref(false);
 
 const unlock = async () => {
   const stored = currentSettings.value?.settingsPin;
@@ -117,7 +82,7 @@ const unlock = async () => {
   checking.value = true;
   wrongPin.value = false;
   try {
-    if (await verifySettingsPin(pin.value, stored)) {
+    if (await checkPin(pin.value, stored)) {
       settingsUnlocked.value = true;
       return;
     }
@@ -129,58 +94,6 @@ const unlock = async () => {
   } finally {
     checking.value = false;
   }
-};
-
-const resetOpen = ref(false);
-const resetFileName = ref('');
-const enteredCode = ref('');
-const wrongCode = ref(false);
-let expectedCode = '';
-
-const startReset = async () => {
-  try {
-    const code = createSettingsPinResetCode();
-    resetFileName.value = await writeSettingsPinResetFile(
-      code,
-      t('settings-pin-reset-file-note'),
-    );
-    expectedCode = code;
-    enteredCode.value = '';
-    wrongCode.value = false;
-    resetOpen.value = true;
-  } catch (error) {
-    errorCatcher(error, {
-      contexts: { fn: { name: 'startSettingsPinReset' } },
-    });
-    createTemporaryNotification({
-      message: t('settings-pin-reset-failed'),
-      type: 'negative',
-    });
-  }
-};
-
-const endReset = () => {
-  expectedCode = '';
-  resetOpen.value = false;
-  void removeSettingsPinResetFile();
-};
-
-const cancelReset = () => {
-  endReset();
-};
-
-const confirmReset = () => {
-  if (!expectedCode || enteredCode.value.trim() !== expectedCode) {
-    wrongCode.value = true;
-    return;
-  }
-  if (currentSettings.value) currentSettings.value.settingsPin = null;
-  settingsUnlocked.value = true;
-  endReset();
-  createTemporaryNotification({
-    message: t('settings-pin-removed'),
-    type: 'positive',
-  });
 };
 </script>
 

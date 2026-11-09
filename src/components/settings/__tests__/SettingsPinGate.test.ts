@@ -1,38 +1,28 @@
 import { mount, type VueWrapper } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { useSettingsPinAttempts } from 'src/composables/useSettingsPinAttempts';
 import { defaultSettings } from 'src/constants/settings';
 import { hashSettingsPin } from 'src/utils/settings-pin';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { nextTick } from 'vue';
 
 import SettingsPinGate from '../SettingsPinGate.vue';
-
-vi.mock('src/utils/settings-pin', async (importOriginal) => ({
-  ...(await importOriginal<object>()),
-  createSettingsPinResetCode: () => '123456',
-  openSettingsPinResetFolder: vi.fn(),
-  removeSettingsPinResetFile: vi.fn(),
-  writeSettingsPinResetFile: vi.fn(async () => 'reset.txt'),
-}));
 
 installQuasarPlugin();
 installPinia();
 
 const CONGREGATION_ID = 'test-cong';
-const ConfirmDialogStub = {
-  emits: ['cancel', 'confirm'],
-  name: 'ConfirmDialog',
-  props: ['modelValue'],
-  template: '<div class="confirm-stub"><slot /></div>',
-};
+const FORGOT = 'Forgot the PIN?';
 
 let wrapper: VueWrapper;
+let storedPin = '';
 
 const mountGate = () => {
   wrapper = mount(SettingsPinGate, {
-    global: { stubs: { ConfirmDialog: ConfirmDialogStub } },
+    global: { stubs: { DialogSettingsPinReset: true } },
   });
 };
 
@@ -43,29 +33,25 @@ const submitPin = async (pin: string) => {
   await wrapper.find('form').trigger('submit');
 };
 
-const clickForgot = async () => {
-  const forgot = wrapper
-    .findAll('button')
-    .find((button) => button.text().includes('Forgot the PIN?'));
-  await forgot?.trigger('click');
-  await vi.waitFor(() => expect(wrapper.text()).toContain('reset.txt'));
-};
-
-const confirmReset = async (code: string) => {
-  await wrapper.find('.confirm-stub input').setValue(code);
-  wrapper.findComponent({ name: 'ConfirmDialog' }).vm.$emit('confirm');
-  await wrapper.vm.$nextTick();
+const failOnce = async () => {
+  await submitPin('0000');
+  await vi.waitFor(() =>
+    expect(wrapper.text()).toContain("That PIN isn't right"),
+  );
+  // The next wrong try shows the same message, so wait for this one to end.
+  await vi.waitFor(() =>
+    expect(wrapper.find('form input').element).toHaveProperty('value', ''),
+  );
 };
 
 beforeEach(async () => {
+  storedPin = await hashSettingsPin('4321');
   useCongregationSettingsStore().congregations = {
-    [CONGREGATION_ID]: {
-      ...defaultSettings,
-      settingsPin: await hashSettingsPin('4321'),
-    },
+    [CONGREGATION_ID]: { ...defaultSettings, settingsPin: storedPin },
   };
   const state = useCurrentStateStore();
   state.currentCongregation = CONGREGATION_ID;
+  state.settingsPinFailedAttempts = {};
   state.settingsUnlocked = false;
 });
 
@@ -98,32 +84,56 @@ describe('SettingsPinGate', () => {
   it('stays locked with the wrong PIN and says so', async () => {
     mountGate();
 
-    await submitPin('0000');
+    await failOnce();
 
-    await vi.waitFor(() =>
-      expect(wrapper.text()).toContain("That PIN isn't right"),
-    );
     expect(useCurrentStateStore().settingsLocked).toBe(true);
   });
 
-  it('keeps the PIN when the reset code is wrong', async () => {
+  it('only offers resetting the PIN after three wrong tries', async () => {
     mountGate();
-    await clickForgot();
+    expect(wrapper.text()).not.toContain(FORGOT);
 
-    await confirmReset('000000');
+    await failOnce();
+    await failOnce();
+    expect(wrapper.text()).not.toContain(FORGOT);
 
-    expect(settings()?.settingsPin).toBeTruthy();
-    expect(useCurrentStateStore().settingsLocked).toBe(true);
-    expect(wrapper.text()).toContain("That code isn't right");
+    await failOnce();
+    await vi.waitFor(() => expect(wrapper.text()).toContain(FORGOT));
   });
 
-  it('removes the PIN with the code from the reset file', async () => {
+  it('counts wrong tries made elsewhere, such as when deleting the profile', async () => {
     mountGate();
-    await clickForgot();
+    const elsewhere = useSettingsPinAttempts(CONGREGATION_ID);
 
-    await confirmReset('123456');
+    await elsewhere.checkPin('0000', storedPin);
+    await elsewhere.checkPin('1111', storedPin);
+    await elsewhere.checkPin('2222', storedPin);
+    await nextTick();
 
-    expect(settings()?.settingsPin).toBeNull();
-    expect(useCurrentStateStore().settingsLocked).toBe(false);
+    expect(wrapper.text()).toContain(FORGOT);
+  });
+
+  it('starts counting again after the right PIN', async () => {
+    const attempts = useSettingsPinAttempts(CONGREGATION_ID);
+
+    await attempts.checkPin('0000', storedPin);
+    await attempts.checkPin('1111', storedPin);
+    await attempts.checkPin('4321', storedPin);
+    await attempts.checkPin('2222', storedPin);
+
+    expect(attempts.canReset.value).toBe(false);
+    mountGate();
+  });
+
+  it('keeps the count of each profile apart', async () => {
+    const other = useSettingsPinAttempts('other-cong');
+
+    await other.checkPin('0000', storedPin);
+    await other.checkPin('1111', storedPin);
+    await other.checkPin('2222', storedPin);
+
+    expect(other.canReset.value).toBe(true);
+    expect(useSettingsPinAttempts(CONGREGATION_ID).canReset.value).toBe(false);
+    mountGate();
   });
 });

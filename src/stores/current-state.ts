@@ -132,6 +132,8 @@ interface Store {
   pendingSectionImports: MediaSectionIdentifier[];
   pinyinActive: boolean;
   selectedDate: string;
+  /** Wrong settings PINs entered per profile, since M³ started. */
+  settingsPinFailedAttempts: Record<string, number>;
   /** The settings PIN was entered; never persisted, so it locks on restart. */
   settingsUnlocked: boolean;
   /** Where the timer remote page can be opened, while it's served. */
@@ -711,6 +713,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       pendingSectionImports: [],
       pinyinActive: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
+      settingsPinFailedAttempts: {},
       settingsUnlocked: false,
       timerRemoteUrls: [],
       timerWindowVisible: false,

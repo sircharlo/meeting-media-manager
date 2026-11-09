@@ -258,8 +258,22 @@
         outlined
         type="password"
       />
+      <q-btn
+        v-if="canResetDeletePin"
+        color="primary"
+        flat
+        :label="t('settings-pin-forgot')"
+        no-caps
+        @click="deletePinResetOpen = true"
+      />
     </q-card-section>
   </ConfirmDialog>
+
+  <DialogSettingsPinReset
+    v-model="deletePinResetOpen"
+    :congregation-id="String(congToDelete)"
+    data-congregation-switcher-confirm
+  />
 </template>
 
 <script setup lang="ts">
@@ -269,8 +283,10 @@ import type { SettingsValues } from 'src/types';
 import { watchImmediate } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
+import DialogSettingsPinReset from 'components/settings/DialogSettingsPinReset.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { useSettingsPinAttempts } from 'src/composables/useSettingsPinAttempts';
 import { NATIVE_BUTTON_RIPPLE } from 'src/constants/general';
 import { removeCongregationCache } from 'src/helpers/cleanup';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -281,7 +297,6 @@ import {
   createTemporaryNotification,
 } from 'src/helpers/notifications';
 import { exportProfileSettingsToFile } from 'src/utils/profile-settings';
-import { verifySettingsPin } from 'src/utils/settings-pin';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -507,6 +522,9 @@ const deletePinWrong = ref(false);
 const deletePinHash = computed(
   () => congregations.value[congToDelete.value]?.settingsPin ?? null,
 );
+const deletePinResetOpen = ref(false);
+const { canReset: canResetDeletePin, checkPin: checkDeletePin } =
+  useSettingsPinAttempts(congToDelete);
 
 const handleDeleteCongregation = async () => {
   const id = congToDelete.value;
@@ -514,7 +532,7 @@ const handleDeleteCongregation = async () => {
   deletingCongregation.value = true;
   try {
     const pinHash = deletePinHash.value;
-    if (pinHash && !(await verifySettingsPin(deletePin.value, pinHash))) {
+    if (pinHash && !(await checkDeletePin(deletePin.value, pinHash))) {
       deletePinWrong.value = true;
       deletePin.value = '';
       return;

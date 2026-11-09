@@ -1,6 +1,6 @@
 import { errorCatcher } from 'src/helpers/error-catcher';
 
-const { fs, getAppDataPath, join, openFolder } = globalThis.electronApi;
+const { fs, getAppDataPath, join } = globalThis.electronApi;
 
 // The PIN keeps well-meaning people out of the settings: it isn't protection
 // against someone determined with access to this computer's files. Only a
@@ -52,24 +52,32 @@ export const verifySettingsPin = async (pin: string, stored: string) => {
 };
 
 export const createSettingsPinResetCode = () => {
-  const [value = 0] = crypto.getRandomValues(new Uint32Array(1));
-  return String(value % 1_000_000).padStart(6, '0');
+  const digits: number[] = [];
+  while (digits.length < 6) {
+    // Below 250, dividing by 25 gives each digit an equal chance.
+    const [byte = 255] = crypto.getRandomValues(new Uint8Array(1));
+    if (byte < 250) digits.push(Math.floor(byte / 25));
+  }
+  return digits.join('');
 };
 
 const getResetFilePath = async () =>
   join(await getAppDataPath(), RESET_FILE_NAME);
 
 /**
- * A forgotten PIN is reset with a code that M³ writes to a file: reading it
- * shows that whoever asks can reach this computer's files, and it needs no
- * setup that could itself be lost by the time the PIN is forgotten.
+ * A forgotten PIN is reset with a code that M³ writes to a file, whose name
+ * is only given in the user guide. Finding it takes some deliberate effort,
+ * and needs no setup that could itself be lost by the time the PIN is
+ * forgotten.
+ * @returns The folder holding the file, as the operating system writes it.
  */
 export const writeSettingsPinResetFile = async (
   code: string,
   note: string,
 ): Promise<string> => {
   await fs.writeFile(await getResetFilePath(), `${note}\n\n${code}\n`, 'utf-8');
-  return RESET_FILE_NAME;
+  const folder = await getAppDataPath();
+  return /^[a-z]:/i.test(folder) ? folder.replaceAll('/', '\\') : folder;
 };
 
 export const removeSettingsPinResetFile = async () => {
@@ -81,6 +89,3 @@ export const removeSettingsPinResetFile = async () => {
     });
   }
 };
-
-export const openSettingsPinResetFolder = async () =>
-  openFolder(await getAppDataPath());
