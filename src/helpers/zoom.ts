@@ -1287,6 +1287,7 @@ export const testZoomShareEntry = async (shareButtonTitle: null | string) => {
   return {
     error: result.error,
     opened: !!result.opened,
+    pickerError: result.pickerError,
     windowListed: !!result.windowListed,
     windowSelected: !!result.windowSelected,
   };

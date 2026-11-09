@@ -472,6 +472,34 @@ describe('Zoom startup check', () => {
     );
   });
 
+  // MMM-V2-3NC: without the reason, these reports couldn't tell a share button
+  // that wasn't found from a share window that never came up.
+  it('reports why the share picker did not open', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    zoom.countZoomMeetingParticipants.mockResolvedValue(4);
+    zoom.testZoomShareEntry.mockResolvedValueOnce({
+      opened: false,
+      pickerError: 'share-button-not-found',
+      windowListed: false,
+      windowSelected: false,
+    });
+
+    await runZoomStartupCheck();
+
+    await vi.waitFor(() =>
+      expect(sentry.captureMessage).toHaveBeenCalledWith(
+        'Zoom check failed: automations paused',
+        expect.objectContaining({
+          extra: expect.objectContaining({
+            failedSteps: [
+              'share-picker: {"opened":false,"pickerError":"share-button-not-found","windowListed":false,"windowSelected":false}',
+            ],
+          }),
+        }),
+      ),
+    );
+  });
+
   it('changes nothing when the user stops the check', async () => {
     const { runZoomStartupCheck } = await import('../zoom-startup-check');
     const zoomState = useZoomStateStore();
