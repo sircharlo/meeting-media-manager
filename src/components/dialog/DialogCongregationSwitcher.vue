@@ -244,7 +244,22 @@
     :title="t('profile-deletion')"
     @cancel="congToDelete = ''"
     @confirm="handleDeleteCongregation"
-  />
+  >
+    <q-card-section v-if="deletePinHash" class="q-pt-none">
+      <q-input
+        v-model="deletePin"
+        autocomplete="off"
+        class="bg-accent-100"
+        dense
+        :error="deletePinWrong"
+        :error-message="t('settings-pin-wrong')"
+        inputmode="numeric"
+        :label="t('settings-pin-code')"
+        outlined
+        type="password"
+      />
+    </q-card-section>
+  </ConfirmDialog>
 </template>
 
 <script setup lang="ts">
@@ -266,11 +281,12 @@ import {
   createTemporaryNotification,
 } from 'src/helpers/notifications';
 import { exportProfileSettingsToFile } from 'src/utils/profile-settings';
+import { verifySettingsPin } from 'src/utils/settings-pin';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -483,17 +499,40 @@ const removeCongregation = async (id: number | string) => {
 };
 
 const deletingCongregation = ref(false);
+
+// Deleting a profile would take its settings PIN with it, so it asks for the
+// PIN too.
+const deletePin = ref('');
+const deletePinWrong = ref(false);
+const deletePinHash = computed(
+  () => congregations.value[congToDelete.value]?.settingsPin ?? null,
+);
+
 const handleDeleteCongregation = async () => {
   const id = congToDelete.value;
   if (!id) return;
   deletingCongregation.value = true;
   try {
+    const pinHash = deletePinHash.value;
+    if (pinHash && !(await verifySettingsPin(deletePin.value, pinHash))) {
+      deletePinWrong.value = true;
+      deletePin.value = '';
+      return;
+    }
     await removeCongregation(id);
+    congToDelete.value = '';
+  } catch (error) {
+    congToDelete.value = '';
+    throw error;
   } finally {
     deletingCongregation.value = false;
-    congToDelete.value = '';
   }
 };
+
+watch(congToDelete, () => {
+  deletePin.value = '';
+  deletePinWrong.value = false;
+});
 
 watchImmediate(congregationSwitcherOpen, async (open) => {
   if (!open) {

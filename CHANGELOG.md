@@ -4,6 +4,16 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### ✨ New Features
+
+- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile, and a forgotten PIN can be removed with a code M³ saves in a file on the computer.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Meeting Quick Actions**: A new setting stops the before and after meeting panels from being dismissed. Turn it off under Settings, in the Meeting Quick Actions section.
+
 ## v26.11.1
 
 ### 🛠️ Improvements and Tweaks

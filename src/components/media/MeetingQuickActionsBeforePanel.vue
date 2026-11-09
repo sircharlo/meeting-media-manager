@@ -87,7 +87,10 @@
     <q-card-section>
       <MeetingQuickActionsChecklist mode="before" />
     </q-card-section>
-    <q-card-actions align="right">
+    <q-card-actions
+      v-if="currentSettings?.meetingQuickActionsAllowDismiss !== false"
+      align="right"
+    >
       <q-btn
         flat
         :label="t('quick-actions-dismiss')"

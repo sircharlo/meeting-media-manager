@@ -1,6 +1,9 @@
 import { mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { defaultSettings } from 'src/constants/settings';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
+import { useCurrentStateStore } from 'stores/current-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import MeetingQuickActionsAfterPanel from '../MeetingQuickActionsAfterPanel.vue';
@@ -80,5 +83,25 @@ describe('MeetingQuickActionsAfterPanel - planned end time', () => {
     expect(wrapper.text()).toContain('Meeting was scheduled to end at 20:45');
     expect(wrapper.text()).not.toContain('Meeting is scheduled to end');
     expect(wrapper.text()).not.toContain('00:00');
+  });
+});
+
+describe('MeetingQuickActionsAfterPanel - dismissing', () => {
+  it.each([
+    [true, true],
+    [false, false],
+  ])('with dismissing allowed set to %s, offers it: %s', (allowed, offered) => {
+    scheduledEndMock.mockReturnValue(SCHEDULED_END);
+    useCongregationSettingsStore().congregations = {
+      'test-cong': {
+        ...defaultSettings,
+        meetingQuickActionsAllowDismiss: allowed,
+      },
+    };
+    useCurrentStateStore().currentCongregation = 'test-cong';
+
+    const wrapper = mountAt(SCHEDULED_END.getTime());
+
+    expect(wrapper.text().includes('Dismiss panel')).toBe(offered);
   });
 });

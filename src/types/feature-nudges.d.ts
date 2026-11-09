@@ -42,6 +42,7 @@ export type FeatureNudgeId =
   | 'meeting-timer'
   | 'obs'
   | 'schedule-sync'
+  | 'settings-pin'
   | 'shared-folder'
   | 'songbook-videos'
   | 'zoom'

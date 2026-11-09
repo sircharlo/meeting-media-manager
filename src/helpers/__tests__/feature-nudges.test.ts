@@ -190,6 +190,7 @@ describe('FEATURE_NUDGES', () => {
       'songbook-videos',
       'auto-start',
       'obs',
+      'settings-pin',
     ]);
   });
 
