@@ -8,14 +8,14 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+- ✨ **PIN das configurações**: Agora as configurações de um perfil podem ser protegidas com um PIN, para que nada seja alterado por acidente. Defina um em Configurações > Avançado. Ele também é necessário para excluir o perfil. Se for esquecido, alguém autorizado a alterar as configurações pode removê-lo seguindo os passos do Guia do usuário.
 
 ## v26.11.0
 
 ### ✨ Novos Recursos
 
 - ✨ **Temporizador remoto**: A página do temporizador para o tablet no púlpito tem um layout de foco opcional, ativado nas Configurações. Ele mostra o tempo em um grande anel de progresso que fica amarelo no último minuto e depois vermelho com o tempo excedido (+02:18), e lista ao lado os participantes do Zoom que levantaram a mão, na ordem em que fizeram isso: os quatro primeiros por nome, com uma contagem dos demais. Cada nova mão pisca "Mão levantada" por três segundos, e a lista é atualizada conforme as mãos se levantam e se abaixam. A exibição atual continua sendo o padrão.
-- ✨ **Zoom Meeting Manager (beta, Windows)**: Raised hands can now be reported without any control over the participants. With "Only tell me about raised hands" turned on (under the raised-hand helper in Settings), M³ still notices who raises their hand, in its notification and on the timer display for the chairman, but shows no buttons that unmute a participant or lower their hand: those are left to the A/V operator in Zoom itself. Useful where Zoom doesn't show the participant controls M³ needs, or where the operator would rather keep control.
+- ✨ **Gerenciador de Reuniões do Zoom (beta, Windows)**: Agora é possível informar as mãos levantadas sem nenhum controle sobre os participantes. Com "Só me avisar sobre mãos levantadas" ativado (em Assistente de mãos levantadas, nas Configurações), o M³ continua percebendo quem levanta a mão, na notificação e na tela do temporizador para o presidente, mas não mostra botões para ativar o áudio de um participante ou abaixar a mão dele: isso fica a cargo do operador de mídia, no próprio Zoom. Útil quando o Zoom não mostra os controles de participantes de que o M³ precisa, ou quando o operador prefere manter o controle.
 
 ## v26.10.2
 
