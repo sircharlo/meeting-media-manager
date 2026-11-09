@@ -1035,7 +1035,7 @@
   "update-error-read-only-volume": "M³ kon niet worden bijgewerkt omdat het is opgeslagen in een map die alleen-lezen is. Verplaats M³ naar een andere locatie, zoals de map Programma's.",
   "update-failed": "Update mislukt",
   "update-preparing": "Download voorbereiden…",
-  "update-waiting-for-network": "Waiting on the network…",
+  "update-waiting-for-network": "Wachten op het netwerk…",
   "updates-disabled-warning": "Schakel updates in om nieuwe functies, bugfixes en belangrijke beveiligingsupdates te ontvangen.",
   "use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media": "Gebruik de knop @:extra-media om media toe te voegen voor deze datum, of selecteer een andere datum om de bijbehorende media voor die dag te bekijken.",
   "use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item": "Gebruik de schuifregelaar hieronder om de start- en eindtijd van dit media-item aan te passen. Dit is handig voor het afspelen van slechts bepaalde delen van een video.",
