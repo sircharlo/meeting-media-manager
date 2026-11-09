@@ -132,6 +132,10 @@ interface Store {
   pendingSectionImports: MediaSectionIdentifier[];
   pinyinActive: boolean;
   selectedDate: string;
+  /** Wrong settings PINs entered per profile, since M³ started. */
+  settingsPinFailedAttempts: Record<string, number>;
+  /** The settings PIN was entered; never persisted, so it locks on restart. */
+  settingsUnlocked: boolean;
   /** Where the timer remote page can be opened, while it's served. */
   timerRemoteUrls: string[];
   timerWindowVisible: boolean;
@@ -484,13 +488,13 @@ export const useCurrentStateStore = defineStore('current-state', {
 
       return count;
     },
-
     currentLangObject(): JwLanguage | undefined {
       const jwStore = useJwStore();
       return jwStore.jwLanguages.list.find(
         (l) => l.langcode === this.currentSettings?.lang,
       );
     },
+
     currentSettings: (state) => {
       const congregationSettingsStore = useCongregationSettingsStore();
       return Object.keys(congregationSettingsStore.congregations).length > 0
@@ -637,6 +641,9 @@ export const useCurrentStateStore = defineStore('current-state', {
         return null;
       }
     },
+    settingsLocked(): boolean {
+      return !!this.currentSettings?.settingsPin && !this.settingsUnlocked;
+    },
     someItemsHiddenForSelectedDate(): boolean {
       if (!this.selectedDateObject?.mediaSections) return false;
 
@@ -706,6 +713,8 @@ export const useCurrentStateStore = defineStore('current-state', {
       pendingSectionImports: [],
       pinyinActive: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
+      settingsPinFailedAttempts: {},
+      settingsUnlocked: false,
       timerRemoteUrls: [],
       timerWindowVisible: false,
       websiteSelection: undefined,

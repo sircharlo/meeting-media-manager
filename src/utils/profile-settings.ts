@@ -90,7 +90,8 @@ export const exportProfileSettingsToFile = async (
     app: 'Meeting Media Manager',
     exportedAt: new Date().toISOString(),
     profileSettingsExportVersion: PROFILE_SETTINGS_EXPORT_VERSION,
-    settings: normalizeProfileSettings(settings),
+    // A profile's PIN stays with the profile, not in a file that gets shared.
+    settings: { ...normalizeProfileSettings(settings), settingsPin: null },
   };
   const filename = `${sanitizeFilename(settings.congregationName)}-profile-settings.json`;
   const result = await globalThis.electronApi.saveFileDialog(filename, 'json');

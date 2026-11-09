@@ -82,7 +82,11 @@
       </div>
       <div class="col-shrink q-gutter-x-sm">
         <HeaderCalendar v-if="route.fullPath.includes('/media-calendar')" />
-        <HeaderSettings v-else-if="route.fullPath.includes('/settings')" />
+        <HeaderSettings
+          v-else-if="
+            route.fullPath.includes('/settings') && !currentState.settingsLocked
+          "
+        />
         <HeaderWebsite
           v-else-if="route.fullPath.includes('/present-website')"
         />

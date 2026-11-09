@@ -31,6 +31,33 @@
     </q-item>
 
     <template v-if="currentSettings?.enableMeetingQuickActions">
+      <q-item
+        class="rounded-borders"
+        :style="$q.screen.lt.sm ? 'flex-direction: column' : ''"
+        tag="label"
+      >
+        <q-item-section>
+          <q-item-label>{{
+            t('meetingQuickActionsAllowDismiss')
+          }}</q-item-label>
+          <q-item-label caption :class="{ 'q-pb-sm': $q.screen.lt.sm }">
+            {{ t('meetingQuickActionsAllowDismiss-explain') }}
+          </q-item-label>
+        </q-item-section>
+        <q-item-section
+          side
+          :style="
+            ($q.screen.lt.sm ? 'padding-left: 0' : '') + ';align-items: end'
+          "
+        >
+          <q-toggle
+            v-model="currentSettings.meetingQuickActionsAllowDismiss"
+            checked-icon="mmm-check"
+            color="primary"
+          />
+        </q-item-section>
+      </q-item>
+
       <q-separator class="bg-accent-200 q-my-sm" />
 
       <div class="quick-actions-editor">

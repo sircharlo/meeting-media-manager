@@ -244,6 +244,35 @@
     :title="t('profile-deletion')"
     @cancel="congToDelete = ''"
     @confirm="handleDeleteCongregation"
+  >
+    <q-card-section v-if="deletePinHash" class="q-pt-none">
+      <q-input
+        v-model="deletePin"
+        autocomplete="off"
+        class="bg-accent-100"
+        dense
+        :error="deletePinWrong"
+        :error-message="t('settings-pin-wrong')"
+        inputmode="numeric"
+        :label="t('settings-pin-code')"
+        outlined
+        type="password"
+      />
+      <q-btn
+        v-if="canResetDeletePin"
+        color="primary"
+        flat
+        :label="t('settings-pin-forgot')"
+        no-caps
+        @click="deletePinResetOpen = true"
+      />
+    </q-card-section>
+  </ConfirmDialog>
+
+  <DialogSettingsPinReset
+    v-model="deletePinResetOpen"
+    :congregation-id="String(congToDelete)"
+    data-congregation-switcher-confirm
   />
 </template>
 
@@ -254,8 +283,10 @@ import type { SettingsValues } from 'src/types';
 import { watchImmediate } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
+import DialogSettingsPinReset from 'components/settings/DialogSettingsPinReset.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { useSettingsPinAttempts } from 'src/composables/useSettingsPinAttempts';
 import { NATIVE_BUTTON_RIPPLE } from 'src/constants/general';
 import { removeCongregationCache } from 'src/helpers/cleanup';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -270,7 +301,7 @@ import { useAppSettingsStore } from 'stores/app-settings';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -483,17 +514,43 @@ const removeCongregation = async (id: number | string) => {
 };
 
 const deletingCongregation = ref(false);
+
+// Deleting a profile would take its settings PIN with it, so it asks for the
+// PIN too.
+const deletePin = ref('');
+const deletePinWrong = ref(false);
+const deletePinHash = computed(
+  () => congregations.value[congToDelete.value]?.settingsPin ?? null,
+);
+const deletePinResetOpen = ref(false);
+const { canReset: canResetDeletePin, checkPin: checkDeletePin } =
+  useSettingsPinAttempts(congToDelete);
+
 const handleDeleteCongregation = async () => {
   const id = congToDelete.value;
   if (!id) return;
   deletingCongregation.value = true;
   try {
+    const pinHash = deletePinHash.value;
+    if (pinHash && !(await checkDeletePin(deletePin.value, pinHash))) {
+      deletePinWrong.value = true;
+      deletePin.value = '';
+      return;
+    }
     await removeCongregation(id);
+    congToDelete.value = '';
+  } catch (error) {
+    congToDelete.value = '';
+    throw error;
   } finally {
     deletingCongregation.value = false;
-    congToDelete.value = '';
   }
 };
+
+watch(congToDelete, () => {
+  deletePin.value = '';
+  deletePinWrong.value = false;
+});
 
 watchImmediate(congregationSwitcherOpen, async (open) => {
   if (!open) {

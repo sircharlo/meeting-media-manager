@@ -1081,8 +1081,21 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'quickActions',
     type: 'text',
   },
+  meetingQuickActionsAllowDismiss: {
+    group: 'interfaceShortcuts',
+    hidden: true,
+    subgroup: 'quickActions',
+    type: 'toggle',
+  },
 
   // Advanced
+  // Rendered by SettingsPinCard.vue, and a hash rather than the PIN itself.
+  settingsPin: {
+    group: 'advanced',
+    hidden: true,
+    subgroup: 'dangerZone',
+    type: 'text',
+  },
   resetFeatureSuggestions: {
     actions: ['resetFeatureNudges'],
     buttonLabel: 'reset',
@@ -1171,6 +1184,7 @@ export const defaultSettings: SettingsValues = {
   localDateFormat: 'D MMMM YYYY',
   maxRes: '720p',
   mediaAutoExportFolder: '',
+  meetingQuickActionsAllowDismiss: true,
   meetingQuickActionsCategoriesAfter: [
     {
       enabled: true,
@@ -1294,6 +1308,7 @@ export const defaultSettings: SettingsValues = {
   relinkCongregationButton: false,
   resetFeatureSuggestions: null,
   reSyncMeetingScheduleButton: false,
+  settingsPin: null,
   shortcutMediaNext: null,
   shortcutMediaPauseResume: null,
   shortcutMediaPrevious: null,

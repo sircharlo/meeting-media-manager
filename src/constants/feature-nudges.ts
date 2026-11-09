@@ -155,4 +155,13 @@ export const FEATURE_NUDGES: FeatureNudge[] = [
       !settings.zoomMeetingManagerEnable,
     title: 'feature-nudge-obs-title',
   },
+  {
+    acceptLabel: 'feature-nudge-show-me',
+    action: { setting: 'settingsPin', type: 'settings' },
+    getBody: () => 'feature-nudge-settings-pin-body',
+    icon: 'mmm-settings',
+    id: 'settings-pin',
+    isEligible: ({ settings }) => !settings.settingsPin,
+    title: 'feature-nudge-settings-pin-title',
+  },
 ];

@@ -280,6 +280,7 @@ export interface SettingsValues {
   localDateFormat: string;
   maxRes: MaxRes;
   mediaAutoExportFolder: string;
+  meetingQuickActionsAllowDismiss: boolean;
   meetingQuickActionsCategoriesAfter: MeetingChecklistCategory[];
   meetingQuickActionsCategoriesBefore: MeetingChecklistCategory[];
   meetingQuickActionsChecklistAfter: MeetingChecklistItem[];
@@ -316,6 +317,7 @@ export interface SettingsValues {
   relinkCongregationButton: boolean;
   resetFeatureSuggestions: null;
   reSyncMeetingScheduleButton: boolean;
+  settingsPin: null | string;
   shortcutMediaNext: null | string;
   shortcutMediaPauseResume: null | string;
   shortcutMediaPrevious: null | string;
