@@ -419,6 +419,17 @@ Configura scorciatoie da tastiera personalizzate per lavorare in modo efficiente
 - Prova una lingua di riserva
 - Verifica l'impostazione della lingua dell'interfaccia
 
+#### Forgotten Settings PIN {#user-guide-forgotten-settings-pin}
+
+Only someone authorized to change M³'s settings should do this. After three wrong tries, M³ offers **Forgot the PIN?** wherever it asks for the PIN. To remove the PIN:
+
+1. Select **Forgot the PIN?** and leave the window that opens in M³. It shows a folder on this computer.
+2. In your computer's file manager, go to that folder.
+3. Open the text file named `M3 settings PIN reset code.txt`, which M³ has just created there.
+4. Type the six-digit code from that file into M³, then confirm.
+
+M³ then removes the PIN and deletes the file. To protect the settings again, set a new PIN under **Settings** > **Advanced**.
+
 ### Come ottenere aiuto {#getting-help}
 
 Se riscontri dei problemi:

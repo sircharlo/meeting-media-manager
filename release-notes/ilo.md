@@ -4,6 +4,12 @@
 
 Para iti kompleto a listaan dagiti nabaliwan iti nagbaetan dagiti bersion, kitaem ti CHANGELOG.md a file-mi iti GitHub.
 
+## SUMARUNO A BERSION
+
+### ✨ Dagiti Baro a Feature
+
+- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+
 ## v26.11.0
 
 ### ✨ Dagiti Baro a Feature

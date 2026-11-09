@@ -4,6 +4,12 @@
 
 关于各版本之间完整的更改清单，请参阅 GitHub 上的 CHANGELOG.md 文件。
 
+## 即将发布的版本
+
+### ✨ 新功能
+
+- ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
+
 ## v26.11.0
 
 ### ✨ 新功能
