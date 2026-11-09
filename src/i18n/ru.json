@@ -1035,7 +1035,7 @@
   "update-error-read-only-volume": "Не удалось обновить M³, так как программа хранится в каталоге, доступном только для чтения. Пожалуйста, переместите M³ в другое место, например в папку Программы.",
   "update-failed": "Обновление не удалось",
   "update-preparing": "Подготовка к загрузке…",
-  "update-waiting-for-network": "Waiting on the network…",
+  "update-waiting-for-network": "Ожидание сети…",
   "updates-disabled-warning": "Пожалуйста, включите обновления, чтобы получать новые функции, исправления ошибок и важные обновления безопасности.",
   "use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media": "Используйте кнопку «@:{'extra-media'}», чтобы добавить медиа на эту дату, или выберите другую дату, чтобы посмотреть медиа на этот день.",
   "use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item": "Используйте ползунок ниже, чтобы настроить время начала и окончания воспроизведения этого медиафайла. Это полезно если нужно воспроизвести только определенные части видео.",
