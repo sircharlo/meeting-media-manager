@@ -1,3 +1,4 @@
+import { runInNewContext } from 'node:vm';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const childState = vi.hoisted(() => ({
@@ -8,7 +9,8 @@ const childState = vi.hoisted(() => ({
 const killMock = vi.fn();
 const mkdtempSyncMock = vi.fn(() => '/mock/tmp/mmm-heic-worker-test');
 const rmSyncMock = vi.fn();
-const writeFileSyncMock = vi.fn();
+const writeFileSyncMock =
+  vi.fn<(path: string, source: string, encoding: string) => void>();
 
 // `heic.ts` runs its decode in a `utilityProcess` child and writes a small
 // throwaway worker script to the OS temp dir. Both are mocked so the test can
@@ -85,7 +87,50 @@ describe('convertHeic', () => {
     });
 
     await expect(promise).resolves.toEqual(new ArrayBuffer(0));
-    expect(captureElectronError).toHaveBeenCalled();
+    expect(captureElectronError).toHaveBeenCalledWith(expect.any(Error), {
+      contexts: { fn: { format: 'JPEG', name: 'convertHeic', size: 3 } },
+    });
+  });
+
+  // MMM-V2-3NN, #10340: Electron hands a utility process's 'message' listener
+  // { data, ports }, not the message itself. The worker read the event as if
+  // it were the message, so every decode failed, and its reply carried no id
+  // for the main process to match: each conversion waited out the timeout.
+  it('runs a worker script that reads the request from Electron’s message event', async () => {
+    const { convertHeic } = await import('../heic');
+    const pending = convertHeic({
+      buffer: new Uint8Array([1, 2, 3]),
+      format: 'JPEG',
+    });
+    childState.handlers.get('message')?.({
+      buffer: new ArrayBuffer(1),
+      id: childState.lastMessage?.id,
+    });
+    await pending;
+
+    const source = writeFileSyncMock.mock.calls[0]?.[1];
+    const output = new Uint8Array([0xff, 0xd8]);
+    const convert = vi.fn().mockResolvedValue(output);
+    const postMessage = vi.fn();
+    let onMessage: ((event: unknown) => Promise<void>) | undefined;
+    runInNewContext(source ?? '', {
+      process: {
+        argv: ['electron', 'heic-worker.cjs', 'heic-convert'],
+        parentPort: {
+          on: (_event: string, handler: typeof onMessage) => {
+            onMessage = handler;
+          },
+          postMessage,
+        },
+      },
+      require: () => convert,
+    });
+
+    const image = { buffer: new Uint8Array([1, 2, 3]), format: 'JPEG' };
+    await onMessage?.({ data: { id: 5, image }, ports: [] });
+
+    expect(convert).toHaveBeenCalledWith(image);
+    expect(postMessage).toHaveBeenCalledWith({ buffer: output.buffer, id: 5 });
   });
 
   // BE-14 (full-audit-2026-09-05.md): the worker previously had no timeout

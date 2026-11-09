@@ -156,6 +156,10 @@ const convertHeicToJpg = async (filepath: string) => {
       buffer,
       format: 'JPEG',
     });
+    // convertHeic answers with nothing when it couldn't decode the image (and
+    // has reported why): writing that out would leave an empty .jpg behind and
+    // pass it off as a converted image.
+    if (output.byteLength === 0) return filepath;
     const existingPath = parse(filepath);
     const newPath = `${existingPath.dir}/${existingPath.name}.jpg`;
     await writeFile(newPath, Buffer.from(output));
