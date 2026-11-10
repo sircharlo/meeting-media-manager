@@ -191,7 +191,11 @@
                 :loading="checking"
                 no-caps
                 @click="tryParticipantsEntry"
-              />
+              >
+                <template #loading>
+                  <LiquidSpinner />
+                </template>
+              </q-btn>
               <q-btn
                 v-else-if="muteAllEntries.length"
                 class="btn-tonal"
@@ -202,7 +206,11 @@
                 :loading="checking"
                 no-caps
                 @click="tryMuteAllEntry"
-              />
+              >
+                <template #loading>
+                  <LiquidSpinner />
+                </template>
+              </q-btn>
               <q-btn
                 class="btn-tonal"
                 color="primary"
@@ -213,7 +221,11 @@
                 :loading="checking && !hasChecksPicker"
                 no-caps
                 @click="runChecks"
-              />
+              >
+                <template #loading>
+                  <LiquidSpinner />
+                </template>
+              </q-btn>
             </div>
           </div>
 
@@ -319,7 +331,11 @@
                 :loading="handStatus === 'running'"
                 no-caps
                 @click="learnHand"
-              />
+              >
+                <template #loading>
+                  <LiquidSpinner />
+                </template>
+              </q-btn>
               <q-btn
                 v-else-if="handStatus !== 'passed'"
                 class="btn-tonal"
@@ -330,7 +346,11 @@
                 :loading="handStatus === 'running'"
                 no-caps
                 @click="tryHandEntry"
-              />
+              >
+                <template #loading>
+                  <LiquidSpinner />
+                </template>
+              </q-btn>
               <q-btn
                 v-else
                 color="primary"
@@ -381,7 +401,11 @@
                 :loading="shareStatus === 'running'"
                 no-caps
                 @click="checkSharing"
-              />
+              >
+                <template #loading>
+                  <LiquidSpinner />
+                </template>
+              </q-btn>
               <q-btn
                 v-else-if="shareStatus !== 'passed'"
                 class="btn-tonal"
@@ -392,7 +416,11 @@
                 :loading="shareStatus === 'running'"
                 no-caps
                 @click="tryShareEntry"
-              />
+              >
+                <template #loading>
+                  <LiquidSpinner />
+                </template>
+              </q-btn>
             </div>
           </div>
 
@@ -541,7 +569,11 @@
                 :loading="testRunning"
                 no-caps
                 @click="tryStopShareEntry"
-              />
+              >
+                <template #loading>
+                  <LiquidSpinner />
+                </template>
+              </q-btn>
               <q-btn
                 class="btn-tonal"
                 color="primary"
@@ -552,7 +584,11 @@
                 :loading="testRunning && !stopShareEntries.length"
                 no-caps
                 @click="runTest"
-              />
+              >
+                <template #loading>
+                  <LiquidSpinner />
+                </template>
+              </q-btn>
             </div>
           </div>
 
@@ -627,6 +663,7 @@ import EntryPicker from 'components/dialog/ZoomSetupEntryPicker.vue';
 import LayoutScreens from 'components/dialog/ZoomSetupLayoutScreens.vue';
 import LayoutSplit from 'components/dialog/ZoomSetupLayoutSplit.vue';
 import StatusRow from 'components/dialog/ZoomSetupStatusRow.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import {
   getZoomHelperErrorMessageKey,

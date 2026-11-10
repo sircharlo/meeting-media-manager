@@ -1,10 +1,10 @@
 <template>
   <!-- The popup every action island button opens, laid out the same way in
        each: the title alone on its row; a status line under it (icon or
-       spinner, one line of text, and at most one small icon action at its
-       end); banners; the body, which scrolls; and a footer that stays put,
-       with the popup's main action as a full-width button and any secondary
-       actions in a row under it. -->
+       sloshing glass, one line of text, and at most one small icon action
+       at its end); banners; the body, which scrolls; and a footer that stays
+       put, with the popup's main action as a full-width button and any
+       secondary actions in a row under it. -->
   <q-menu
     ref="menu"
     v-model="open"
@@ -24,7 +24,7 @@
         v-if="statusText || $slots.status"
         class="action-popup__status row items-center no-wrap q-px-md"
       >
-        <q-spinner v-if="statusLoading" color="primary" size="16px" />
+        <LiquidSpinner v-if="statusLoading" color="primary" size="16px" />
         <q-icon
           v-else-if="statusIcon"
           :color="statusColor"
@@ -62,13 +62,14 @@
 <script setup lang="ts">
 import type { QMenu } from 'quasar';
 
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { onBeforeUnmount, useTemplateRef, watch } from 'vue';
 
 defineProps<{
   /** Quasar color of the status icon. */
   statusColor?: string;
   statusIcon?: string;
-  /** Shows a spinner in place of the status icon. */
+  /** Shows a sloshing glass in place of the status icon. */
   statusLoading?: boolean;
   /** One line; the `status` slot replaces it. */
   statusText?: string;

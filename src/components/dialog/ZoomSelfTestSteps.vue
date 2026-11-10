@@ -5,7 +5,7 @@
       :key="step.id"
       class="row items-start no-wrap q-py-xs"
     >
-      <q-spinner
+      <LiquidSpinner
         v-if="step.status === 'running'"
         class="q-mr-sm q-mt-xs"
         color="primary"
@@ -31,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import {
   ZOOM_SELF_TEST_STEP_LABELS,
   type ZoomSelfTestStatus,

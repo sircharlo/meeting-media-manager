@@ -211,6 +211,9 @@
                     :ratio="16 / 9"
                     :src="mediaItem.CoverPictureFilePath || mediaItem.FilePath"
                   >
+                    <template #loading>
+                      <LiquidSpinner color="primary" size="40px" />
+                    </template>
                     <q-badge
                       v-if="mediaItem.CategoryType < 0"
                       class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
@@ -255,7 +258,11 @@
           :label="t('add-count', { count: selectedMediaItems.length })"
           :loading="isProcessing"
           @click="addSelectedMediaItems"
-        />
+        >
+          <template #loading>
+            <LiquidSpinner />
+          </template>
+        </q-btn>
       </div>
     </div>
   </BaseDialog>
@@ -267,6 +274,7 @@ import type { MediaSectionIdentifier, MultimediaItem } from 'src/types';
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getStudyBibleBooks, getStudyBibleMedia } from 'src/helpers/jw-media';

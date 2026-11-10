@@ -7,6 +7,7 @@ import {
   ProgressSmoother,
   rollingDigitPositions,
   scatter,
+  sloshAt,
   Spring,
 } from 'src/utils/liquid-motion';
 import { describe, expect, it } from 'vitest';
@@ -287,5 +288,23 @@ describe('confetti', () => {
 
     expect(pieces[0]?.velocityY).toBeGreaterThan(startVelocity);
     expect(advanceConfetti(pieces, 5)).toHaveLength(0);
+  });
+});
+
+describe('sloshAt', () => {
+  const samples = Array.from({ length: 400 }, (_, i) => sloshAt(i * 0.05));
+
+  it('tips and bobs within -1 to 1', () => {
+    for (const { bob, tilt } of samples) {
+      expect(Math.abs(tilt)).toBeLessThanOrEqual(1);
+      expect(Math.abs(bob)).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('tips both ways, far enough to see', () => {
+    const tilts = samples.map(({ tilt }) => tilt);
+
+    expect(Math.max(...tilts)).toBeGreaterThan(0.8);
+    expect(Math.min(...tilts)).toBeLessThan(-0.8);
   });
 });

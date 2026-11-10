@@ -26,7 +26,11 @@
           :label="confirmLabel ?? t('confirm')"
           :loading="loading"
           @click="emit('confirm')"
-        />
+        >
+          <template #loading>
+            <LiquidSpinner />
+          </template>
+        </q-btn>
       </q-card-actions>
     </q-card>
   </BaseDialog>
@@ -34,6 +38,7 @@
 
 <script setup lang="ts">
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { useI18n } from 'vue-i18n';
 
 interface Props {

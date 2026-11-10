@@ -14,7 +14,7 @@
         : undefined
     "
   >
-    <q-spinner v-if="busy" size="sm" />
+    <LiquidSpinner v-if="busy" size="sm" />
     <q-icon v-else name="mmm-obs-studio" />
     <q-tooltip v-if="!obsPopup" :delay="1000" :offset="[14, 22]">
       {{ t(tooltipMessageKey) }}
@@ -25,6 +25,7 @@
 <script setup lang="ts">
 import type { OBSResponseTypes } from 'obs-websocket-js';
 
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import {
   type IslandButtonStatus,

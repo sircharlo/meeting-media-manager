@@ -16,7 +16,7 @@
       :style="clipWidth === null ? {} : { width: `${clipWidth}px` }"
     >
       <div ref="measureEl" class="music-button__inner">
-        <q-spinner v-if="busy" size="sm" />
+        <LiquidSpinner v-if="busy" size="sm" />
         <q-icon v-else name="mmm-music-note" />
         <div
           v-if="musicPlaying || musicState === 'music.starting'"
@@ -37,6 +37,7 @@
 </template>
 
 <script setup lang="ts">
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import {
   type IslandButtonStatus,

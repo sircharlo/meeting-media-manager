@@ -1,29 +1,25 @@
 <template>
   <q-slide-transition>
     <div v-if="showing || isFinishing" class="q-px-md q-pb-sm">
-      <!-- With a known size, the card itself fills up as the files arrive;
-           without one there's nothing to fill, so it keeps a spinner. -->
+      <!-- The card itself fills up as the files arrive; until their size is
+           known (or with nothing to download), its liquid sloshes. -->
       <div
-        class="bg-accent-100 download-progress rounded-borders q-pa-sm"
-        :class="{ 'liquid-host': showsLiquid }"
+        class="bg-accent-100 download-progress liquid-host rounded-borders q-pa-sm"
       >
         <LiquidFill
-          v-if="showsLiquid"
           :done="isFinishing"
           :percent="shownTotalPercent"
+          :sloshing="!showsPercent"
           @frame="onFrame"
           @report="digits?.bump($event)"
         />
         <progress
-          v-if="showsLiquid"
           :aria-label="label"
           class="mmm-visually-hidden"
           max="100"
-          :value="Math.round(shownTotalPercent)"
+          :value="showsPercent ? Math.round(shownTotalPercent) : undefined"
         />
         <div class="row items-center q-gutter-sm no-wrap">
-          <q-spinner v-if="!showsLiquid" color="primary" size="42px" />
-
           <div class="col">
             <div class="text-weight-medium">
               {{ label }}
@@ -31,17 +27,9 @@
             <div class="text-caption text-dark-grey">
               {{ progressSummary }}
             </div>
-            <q-linear-progress
-              v-if="!showsLiquid"
-              class="q-mt-xs"
-              color="primary"
-              indeterminate
-              rounded
-              size="8px"
-            />
           </div>
 
-          <div v-if="showsLiquid" class="download-progress__end">
+          <div v-if="showsPercent" class="download-progress__end">
             <DoneCheck v-if="isFinishing" variant="solid" />
             <RollingNumber
               v-else
@@ -161,7 +149,7 @@ const { start: holdFinishedCard } = useTimeoutFn(
   { immediate: false },
 );
 
-const showsLiquid = computed(() => hasKnownTotal.value || isFinishing.value);
+const showsPercent = computed(() => hasKnownTotal.value || isFinishing.value);
 const shownTotalPercent = computed(() =>
   isFinishing.value ? 100 : aggregatePercent.value,
 );

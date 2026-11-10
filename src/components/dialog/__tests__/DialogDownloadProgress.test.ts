@@ -52,11 +52,17 @@ describe('DialogDownloadProgress', () => {
     expect(wrapper.find('.q-spinner').exists()).toBe(false);
   });
 
-  it('keeps a spinner while the size of what loads is unknown', () => {
+  it('sloshes, with no percentage, while the size of what loads is unknown', () => {
     const wrapper = mountCard(true);
 
-    expect(wrapper.find('.q-spinner').exists()).toBe(true);
-    expect(wrapper.find('.liquid-fill').exists()).toBe(false);
+    expect(wrapper.find('.q-spinner').exists()).toBe(false);
+    expect(wrapper.find('.q-linear-progress').exists()).toBe(false);
+    expect(
+      wrapper.findComponent({ name: 'LiquidFill' }).props('sloshing'),
+    ).toBe(true);
+    expect(wrapper.find('.download-progress__percent').exists()).toBe(false);
+    // An indeterminate <progress> for assistive technology.
+    expect(wrapper.find('progress').attributes('value')).toBeUndefined();
   });
 
   it('stays up, full and green, for a moment once everything is in', async () => {

@@ -24,6 +24,9 @@
             size="sm"
             @click="startSongUpdate()"
           >
+            <template #loading>
+              <LiquidSpinner />
+            </template>
             <q-tooltip :delay="500">
               <div>{{ t('click-to-refresh-list') }}</div>
               <div v-if="songsUpdated">
@@ -89,6 +92,9 @@
             @mouseout="if (!loading) hoveredSong = null;"
             @mouseover="if (!loading) hoveredSong = song.track;"
           >
+            <template #loading>
+              <LiquidSpinner />
+            </template>
             <q-tooltip v-if="!loading">
               {{ song.title }}
             </q-tooltip>
@@ -115,6 +121,7 @@ import type {
 import { watchOnce } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwMediaInfo, getPubMediaLinks } from 'src/helpers/jw-media';

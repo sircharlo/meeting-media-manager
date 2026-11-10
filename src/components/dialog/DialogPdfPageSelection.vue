@@ -39,7 +39,11 @@
                 class="rounded-borders-lg"
                 :ratio="THUMBNAIL_ASPECT_RATIO"
                 :src="thumbnails[page]"
-              />
+              >
+                <template #loading>
+                  <LiquidSpinner color="primary" size="40px" />
+                </template>
+              </q-img>
               <div
                 v-else-if="failedPages.has(page)"
                 class="bg-accent-100 rounded-borders-lg flex items-center justify-center"
@@ -52,7 +56,7 @@
                 class="bg-accent-100 rounded-borders-lg flex items-center justify-center"
                 :style="{ aspectRatio: THUMBNAIL_ASPECT_RATIO }"
               >
-                <q-spinner color="primary" size="1.5em" />
+                <LiquidSpinner color="primary" size="1.5em" />
               </div>
 
               <div v-if="selectedPages.has(page)" class="grid-select-check">
@@ -125,6 +129,7 @@
 // guard, so a PDF dragged/dropped or browsed-in directly (MediaCalendarPage's
 // processImportFile) always converted every page, no matter how many.
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { NATIVE_BUTTON_RIPPLE } from 'src/constants/general';
 import {
   getNrOfPdfPages,

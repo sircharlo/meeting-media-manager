@@ -89,14 +89,18 @@
                 <q-img
                   ref="mediaImage"
                   fit="contain"
-                  :no-spinner="isDemoMode"
                   :ratio="16 / 9"
-                  spinner-color="white"
-                  spinner-size="1em"
                   :src="mediaThumbnailUrl"
                   :width="thumbnailWidth"
                   @error="imageLoadingError"
                 >
+                  <template #loading>
+                    <LiquidSpinner
+                      v-if="!isDemoMode"
+                      color="white"
+                      size="40px"
+                    />
+                  </template>
                   <q-badge
                     v-if="media.duration"
                     class="q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm bg-semi-black"
@@ -208,14 +212,15 @@
               v-if="!showAudioThumbnailFallback"
               ref="mediaImage"
               fit="contain"
-              :no-spinner="isDemoMode"
               :ratio="16 / 9"
-              spinner-color="white"
-              spinner-size="1em"
               :src="mediaThumbnailUrl"
               :width="thumbnailWidth"
               @error="imageLoadingError"
-            />
+            >
+              <template #loading>
+                <LiquidSpinner v-if="!isDemoMode" color="white" size="40px" />
+              </template>
+            </q-img>
             <div
               v-else
               class="media-audio-thumbnail-fallback"
@@ -813,7 +818,7 @@
                   : stopMedia()
               "
             >
-              <q-spinner
+              <LiquidSpinner
                 v-if="!localFile && mediaPlaying.currentPosition === 0"
                 size="xs"
               />
@@ -1367,6 +1372,7 @@ import {
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import MediaItemDownloadOverlay from 'components/media/MediaItemDownloadOverlay.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { type QBtn, type QImg, type QInput, QItem, useQuasar } from 'quasar';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';

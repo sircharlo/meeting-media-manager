@@ -45,6 +45,9 @@
               fetchBibleMedia(true);
             "
           >
+            <template #loading>
+              <LiquidSpinner />
+            </template>
             <q-tooltip :delay="500">
               {{ t('click-to-refresh-list') }}
             </q-tooltip>
@@ -223,7 +226,11 @@
             :label="t('add-count', { count: totalChosenVerses })"
             :loading="isProcessing"
             @click="addSelectedVerses()"
-          />
+          >
+            <template #loading>
+              <LiquidSpinner />
+            </template>
+          </q-btn>
         </div>
       </div>
     </div>
@@ -239,6 +246,7 @@ import type {
 
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getBibleMedia } from 'src/helpers/jw-media';

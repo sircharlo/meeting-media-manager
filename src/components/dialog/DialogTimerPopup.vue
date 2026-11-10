@@ -52,7 +52,11 @@
         no-caps
         outline
         @click="exportReport"
-      />
+      >
+        <template #loading>
+          <LiquidSpinner />
+        </template>
+      </q-btn>
       <q-btn
         class="full-width"
         color="negative"
@@ -479,6 +483,7 @@ import TimeInput from 'components/form-inputs/TimeInput.vue';
 import TimerPartsList from 'components/media/TimerPartsList.vue';
 import TimerQuickControls from 'components/media/TimerQuickControls.vue';
 import ActionPopup from 'components/ui/ActionPopup.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { copyToClipboard } from 'quasar';
 import { useScreenLayout } from 'src/composables/useScreenLayout';

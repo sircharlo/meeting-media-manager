@@ -1,7 +1,7 @@
 <template>
   <div class="zoom-status-row row items-start no-wrap q-py-xs">
     <div class="zoom-status-row__icon q-mr-sm" :class="`text-${color}`">
-      <q-spinner v-if="status === 'running'" size="16px" />
+      <LiquidSpinner v-if="status === 'running'" size="16px" />
       <q-icon v-else :name="icon" size="16px" />
     </div>
     <div class="col">
@@ -13,6 +13,7 @@
 </template>
 
 <script setup lang="ts">
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { computed } from 'vue';
 
 const props = defineProps<{

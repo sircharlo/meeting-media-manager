@@ -660,7 +660,7 @@
           >
             {{ t(obsConnectionBannerTextKey) }}
             <template #avatar>
-              <q-spinner
+              <LiquidSpinner
                 v-if="obsConnectionState === 'connecting'"
                 color="white"
               />
@@ -833,6 +833,7 @@ import TextInput from 'components/form-inputs/TextInput.vue';
 import TimeInput from 'components/form-inputs/TimeInput.vue';
 import ConfettiBurst from 'components/ui/ConfettiBurst.vue';
 import LiquidFill from 'components/ui/LiquidFill.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';

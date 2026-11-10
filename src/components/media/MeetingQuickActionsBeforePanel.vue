@@ -63,7 +63,7 @@
         unelevated
         @click="onMusicClick"
       >
-        <q-spinner v-if="musicIsBusy" size="24px" />
+        <LiquidSpinner v-if="musicIsBusy" size="24px" />
         <q-icon
           v-else
           :name="musicPlaying ? 'mmm-stop' : 'mmm-music-note'"
@@ -95,7 +95,11 @@
         :loading="togglePending"
         unelevated
         @click="toggleRecording"
-      />
+      >
+        <template #loading>
+          <LiquidSpinner />
+        </template>
+      </q-btn>
     </q-card-section>
 
     <q-card-section>
@@ -130,6 +134,7 @@
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import MeetingQuickActionsChecklist from 'components/media/MeetingQuickActionsChecklist.vue';
 import LiquidFill from 'components/ui/LiquidFill.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
 import { formatTime } from 'src/utils/time';
