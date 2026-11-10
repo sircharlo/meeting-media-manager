@@ -1,7 +1,7 @@
 <template>
   <q-btn
     v-if="currentSettings?.enableMusicButton"
-    class="super-rounded"
+    class="liquid-host super-rounded"
     :class="classes"
     :color="color"
     data-wizard-target="music-button"
@@ -11,17 +11,22 @@
     unelevated
     @click="musicPopup = !musicPopup"
   >
-    <div
-      class="music-button__clip"
-      :style="clipWidth === null ? {} : { width: `${clipWidth}px` }"
-    >
+    <!-- Starting or stopping: the button sloshes, its content still
+         showing (laid out the same, to line up with the real one). -->
+    <IslandButtonLiquid :open="musicPopup" :showing="busy" sloshing>
+      <div class="music-button__clip" :style="clipStyle">
+        <div class="music-button__inner">
+          <q-icon name="mmm-music-note" />
+          <div v-if="showsStatusText" class="music-button__status q-ml-sm">
+            {{ displayStatusText }}
+          </div>
+        </div>
+      </div>
+    </IslandButtonLiquid>
+    <div class="music-button__clip" :style="clipStyle">
       <div ref="measureEl" class="music-button__inner">
-        <LiquidSpinner v-if="busy" size="sm" />
-        <q-icon v-else name="mmm-music-note" />
-        <div
-          v-if="musicPlaying || musicState === 'music.starting'"
-          class="music-button__status q-ml-sm"
-        >
+        <q-icon name="mmm-music-note" />
+        <div v-if="showsStatusText" class="music-button__status q-ml-sm">
           {{ displayStatusText }}
         </div>
       </div>
@@ -37,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
+import IslandButtonLiquid from 'components/ui/IslandButtonLiquid.vue';
 import { storeToRefs } from 'pinia';
 import {
   type IslandButtonStatus,
@@ -75,6 +80,12 @@ const { busy, classes, color, textColor } = useIslandButton(status, musicPopup);
 // grows/shrinks instead of snapping between sizes.
 const measureEl = useTemplateRef<HTMLElement>('measureEl');
 const clipWidth = ref<null | number>(null);
+const clipStyle = computed(() =>
+  clipWidth.value === null ? {} : { width: `${clipWidth.value}px` },
+);
+const showsStatusText = computed(
+  () => musicPlaying.value || musicState.value === 'music.starting',
+);
 let widthObserver: ResizeObserver | undefined;
 
 watch(measureEl, (el) => {
