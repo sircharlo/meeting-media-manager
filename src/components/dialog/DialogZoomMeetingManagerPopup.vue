@@ -46,7 +46,7 @@
       </div>
 
       <div v-if="checkRunning" class="action-popup__banner">
-        <q-spinner color="primary" size="18px" />
+        <LiquidSpinner color="primary" size="18px" />
         <div class="col text-caption text-weight-medium">
           {{ t('zoom-check-running') }}
         </div>
@@ -111,6 +111,9 @@
             outline
             @click="runAction('meeting')"
           >
+            <template #loading>
+              <LiquidSpinner />
+            </template>
             <q-tooltip :delay="500">
               {{ t('zoomMeetingManagerAutomateMeetingAudioSettings-explain') }}
             </q-tooltip>
@@ -133,6 +136,9 @@
             outline
             @click="runAction('postMeeting')"
           >
+            <template #loading>
+              <LiquidSpinner />
+            </template>
             <q-tooltip :delay="500">
               {{
                 t('zoomMeetingManagerAutomatePostMeetingAudioSettings-explain')
@@ -198,7 +204,11 @@
                   no-caps
                   size="sm"
                   @click="unmute(name)"
-                />
+                >
+                  <template #loading>
+                    <LiquidSpinner />
+                  </template>
+                </q-btn>
                 <q-btn
                   class="btn-tonal"
                   color="primary"
@@ -211,7 +221,11 @@
                   no-caps
                   size="sm"
                   @click="muteAndLower(name)"
-                />
+                >
+                  <template #loading>
+                    <LiquidSpinner />
+                  </template>
+                </q-btn>
               </div>
             </q-item-section>
           </q-item>
@@ -277,6 +291,9 @@
           unelevated
           @click="arrangeWindows"
         >
+          <template #loading>
+            <LiquidSpinner />
+          </template>
           <q-tooltip :delay="500">
             {{ t('zoom-layout-arrange-explain') }}
           </q-tooltip>
@@ -386,6 +403,7 @@ import type { SettingsValues, ZoomMeetingState } from 'src/types';
 
 import ZoomSelfTestPanel from 'components/dialog/ZoomSelfTestPanel.vue';
 import ActionPopup from 'components/ui/ActionPopup.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { getZoomHelperErrorMessageKey } from 'src/constants/zoom';
 import { errorCatcher } from 'src/helpers/error-catcher';

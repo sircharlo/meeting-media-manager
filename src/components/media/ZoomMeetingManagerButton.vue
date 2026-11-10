@@ -9,7 +9,7 @@
     unelevated
     @click="zoomMeetingManagerPopup = !zoomMeetingManagerPopup"
   >
-    <q-spinner v-if="busy" size="sm" />
+    <LiquidSpinner v-if="busy" size="sm" />
     <q-icon v-else name="mmm-video-meeting" />
     <q-tooltip
       v-if="!zoomMeetingManagerPopup"
@@ -28,6 +28,7 @@
 
 <script setup lang="ts">
 import { useIntervalFn } from '@vueuse/core';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import {
   type IslandButtonStatus,

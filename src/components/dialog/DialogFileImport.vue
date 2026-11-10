@@ -117,7 +117,7 @@
               'cursor-pointer': canBrowseLocalFiles,
               'bg-accent-200':
                 isOverDropZone || (hovering && canBrowseLocalFiles),
-              'liquid-host': showsImportCount,
+              'liquid-host': showsImportCount || isReadingFiles,
             }"
             :role="canBrowseLocalFiles ? 'button' : undefined"
             style="min-height: 200px"
@@ -126,7 +126,8 @@
             @keydown.enter.space.prevent="browseLocalFiles"
           >
             <!-- Several files: the zone fills up as each one is added. One
-                 file (or a JWPUB being read) has no steps to show. -->
+                 file (or a JWPUB being read) has no steps to show, so its
+                 liquid sloshes. -->
             <template v-if="showsImportCount">
               <LiquidFill
                 axis="y"
@@ -165,11 +166,13 @@
                 </div>
               </div>
             </template>
-            <q-spinner
-              v-else-if="totalFiles || (!!jwpubDb && jwpubLoading)"
-              color="primary"
-              size="xl"
-            />
+            <template v-else-if="isReadingFiles">
+              <LiquidFill axis="y" :percent="0" sloshing />
+              <progress
+                :aria-label="t('loading')"
+                class="mmm-visually-hidden"
+              />
+            </template>
             <template v-else>
               <q-icon class="q-mr-sm" name="mmm-drag-n-drop" size="lg" />
               {{ t('drag-and-drop-or-click-to-browse') }}
@@ -293,6 +296,11 @@ const importPercent = computed(() =>
 );
 const showsImportCount = computed(
   () => props.totalFiles > 1 || !!finishedImportTotal.value,
+);
+const isReadingFiles = computed(
+  () =>
+    !showsImportCount.value &&
+    (!!props.totalFiles || (!!jwpubDb.value && jwpubLoading.value)),
 );
 
 // Listen for JW Playlist mode activation

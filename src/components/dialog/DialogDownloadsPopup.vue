@@ -60,12 +60,14 @@
               @update:model-value="(v) => handleExpansionToggle(dateKey, v)"
             >
               <template #header>
-                <!-- The date's own files fill its row as they arrive. -->
+                <!-- The date's own files fill its row as they arrive (it
+                     sloshes until the size of any of them is known). -->
                 <LiquidFill
                   v-if="showsDateLiquid(dateKey, group)"
                   :done="getStatus(dateKey) === 'complete'"
                   :percent="downloadsPercent(group)"
                   :scale="0.5"
+                  :sloshing="!hasKnownSize(group)"
                 />
                 <div class="row items-center no-wrap full-width">
                   <q-icon
@@ -140,15 +142,13 @@
                         name="mmm-cloud-done"
                         size="sm"
                       />
-                      <span
-                        v-else-if="item.total"
-                        class="liquid-host sync-drop"
-                      >
+                      <span v-else class="liquid-host sync-drop">
                         <LiquidFill
                           axis="y"
                           no-bubbles
-                          :percent="((item.loaded ?? 0) / item.total) * 100"
+                          :percent="itemPercent(item)"
                           :scale="0.15"
+                          :sloshing="!item.total"
                         />
                       </span>
                     </div>
@@ -161,7 +161,7 @@
                      icons, dates and buttons of both kinds of rows line up. -->
             <q-item v-else :key="`${dateKey}-checking`" dense>
               <div class="row items-center no-wrap full-width">
-                <q-spinner
+                <LiquidSpinner
                   v-if="getStatus(dateKey) === 'checking'"
                   class="q-mr-sm"
                   color="secondary"
@@ -228,6 +228,7 @@
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import ActionPopup from 'components/ui/ActionPopup.vue';
 import LiquidFill from 'components/ui/LiquidFill.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { DOWNLOAD_ROW_AUTO_COLLAPSE_MS, SORTER } from 'src/constants/general';
@@ -504,18 +505,24 @@ function handleExpansionToggle(dateKey: string, expanded: boolean) {
   expansionModes.value[dateKey] = expanded ? 'manual-open' : 'manual-closed';
 }
 
-// While a date's files with a known size download, and for the moment it
-// stays open after they're all in (green, then).
+const hasKnownSize = (group: typeof filteredDownloads.value) =>
+  group.some((item) => item.total);
+
+const itemPercent = (item: (typeof filteredDownloads.value)[number]) =>
+  item.total ? ((item.loaded ?? 0) / item.total) * 100 : 0;
+
+// While a date's files download, and for the moment it stays open after
+// they're all in (green, then).
 function showsDateLiquid(
   dateKey: string,
   group: typeof filteredDownloads.value,
 ) {
-  if (!group.some((item) => item.total)) return false;
   const status = getStatus(dateKey);
   if (status === 'loading') return true;
   const finishedAt = completedAt.value[dateKey];
   return (
     status === 'complete' &&
+    hasKnownSize(group) &&
     finishedAt !== undefined &&
     Date.now() - finishedAt < DOWNLOAD_ROW_AUTO_COLLAPSE_MS
   );

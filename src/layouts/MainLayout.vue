@@ -841,7 +841,9 @@ const initListeners = () => {
       loaded: existing?.loaded,
       meetingDate: existing?.meetingDate ?? '',
       progressCategory: existing?.progressCategory,
-      total: args.totalBytes,
+      // 0 when the server didn't say (a compressed response, say): keep the
+      // size the media's own details gave, if any.
+      total: args.totalBytes > 0 ? args.totalBytes : existing?.total,
     };
   });
 

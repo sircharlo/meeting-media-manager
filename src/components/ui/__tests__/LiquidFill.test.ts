@@ -66,6 +66,61 @@ describe('LiquidFill', () => {
     expect(wrapper.find('clipPath#ink-test path').exists()).toBe(true);
   });
 
+  it('ignores the percentage while it sloshes, and shows no frames', async () => {
+    vi.useFakeTimers({ toFake: ['performance', 'requestAnimationFrame'] });
+    const wrapper = mount(LiquidFill, {
+      props: { percent: 0, sloshing: true },
+    });
+
+    await wrapper.setProps({ percent: 30 });
+    await vi.advanceTimersByTimeAsync(200);
+
+    expect(wrapper.emitted('report')).toBeUndefined();
+    expect(wrapper.emitted('frame')).toBeUndefined();
+  });
+
+  it('flows a glass on to the real percentage once it stops sloshing', async () => {
+    const wrapper = mount(LiquidFill, {
+      props: { axis: 'y', percent: 0, sloshing: true },
+    });
+
+    await wrapper.setProps({ percent: 25 });
+    await wrapper.setProps({ sloshing: false });
+
+    expect(wrapper.emitted('report')).toEqual([[25]]);
+  });
+
+  it("drains a bar's pool before the bar fills from the left", async () => {
+    vi.useFakeTimers({ toFake: ['performance', 'requestAnimationFrame'] });
+    const wrapper = mount(LiquidFill, {
+      props: { percent: 0, sloshing: true },
+    });
+    await vi.advanceTimersByTimeAsync(1000);
+
+    await wrapper.setProps({ percent: 25, sloshing: false });
+    await vi.advanceTimersByTimeAsync(50);
+
+    // Still draining: nothing reported yet, and the bar shows nothing.
+    expect(wrapper.emitted('report')).toBeUndefined();
+    expect(wrapper.emitted('frame')?.at(-1)).toEqual([0, false]);
+
+    await vi.advanceTimersByTimeAsync(2000);
+
+    expect(wrapper.emitted('report')).toEqual([[25]]);
+  });
+
+  it('lets being done win over sloshing', async () => {
+    vi.useFakeTimers({ toFake: ['performance', 'requestAnimationFrame'] });
+    const wrapper = mount(LiquidFill, {
+      props: { percent: 0, sloshing: true },
+    });
+
+    await wrapper.setProps({ done: true });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(wrapper.emitted('frame')?.at(-1)).toEqual([100, false]);
+  });
+
   it('is hidden from assistive technology', () => {
     const wrapper = mount(LiquidFill, { props: { percent: 10 } });
 

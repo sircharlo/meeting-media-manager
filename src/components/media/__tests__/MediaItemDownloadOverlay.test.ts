@@ -27,13 +27,25 @@ describe('MediaItemDownloadOverlay', () => {
 
   it.each([
     ['without a download', undefined],
-    ['when the size is unknown', { filename: 'song.mp4', loaded: 25 }],
     ['when it failed', { error: true, filename: 'song.mp4', total: 100 }],
     ['when it was already there', { complete: true, filename: 'a', total: 1 }],
   ])('shows nothing %s', (_, progress) => {
     const wrapper = mount(MediaItemDownloadOverlay, { props: { progress } });
 
     expect(wrapper.find('.media-download').exists()).toBe(false);
+  });
+
+  it('sloshes, with no percentage, while the size is unknown', () => {
+    const wrapper = mount(MediaItemDownloadOverlay, {
+      props: { progress: { filename: 'song.mp4', loaded: 25 } },
+    });
+
+    expect(wrapper.find('.media-download').exists()).toBe(true);
+    expect(
+      wrapper.findComponent({ name: 'LiquidFill' }).props('sloshing'),
+    ).toBe(true);
+    expect(wrapper.find('.media-download__percent').exists()).toBe(false);
+    expect(wrapper.find('progress').attributes('value')).toBeUndefined();
   });
 
   it('shows a file that just arrived, full and green, then gets out of the way', async () => {

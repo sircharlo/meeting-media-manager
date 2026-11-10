@@ -23,6 +23,9 @@
             round
             @click="refreshVideos"
           >
+            <template #loading>
+              <LiquidSpinner />
+            </template>
             <q-tooltip :delay="500">
               {{ t('click-to-refresh-list') }}
             </q-tooltip>
@@ -94,6 +97,9 @@
                   class="rounded-borders"
                   :src="getBestImageUrl(video.images, 'md', true)"
                 >
+                  <template #loading>
+                    <LiquidSpinner color="primary" size="40px" />
+                  </template>
                   <q-badge
                     class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
                     style="padding: 5px"
@@ -150,6 +156,7 @@ import type {
 } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getBestImageUrl } from 'src/helpers/jw-media';

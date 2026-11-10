@@ -15,7 +15,7 @@
     transition-show="fade"
   >
     <q-card class="zoom-run column items-center justify-center text-center">
-      <q-spinner color="primary" size="64px" :thickness="3" />
+      <LiquidSpinner color="primary" size="64px" />
       <div class="text-h5 text-weight-medium q-mt-lg">
         {{ t('zoom-run-title') }}
       </div>
@@ -47,6 +47,7 @@
 <script setup lang="ts">
 import { useEventListener } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { cancelZoomRun } from 'src/helpers/zoom';

@@ -253,6 +253,19 @@ export const buildBubblesPath = (bubbles: BubbleCircle[]) =>
     })
     .join('');
 
+/** How full a liquid of unknown progress is while it sloshes. */
+export const SLOSH_LEVEL_PERCENT = 40;
+
+/**
+ * How a liquid of unknown progress rocks `time` radians into its sloshing:
+ * how far it tilts and how much its level bobs, each from -1 to 1. Two
+ * rockings at different rates, so that it never swings like a pendulum.
+ */
+export const sloshAt = (time: number) => ({
+  bob: Math.sin(time * 2 + 0.6),
+  tilt: (Math.sin(time) + 0.3 * Math.sin(time * 2.3 + 1)) / 1.3,
+});
+
 /**
  * How long a finished liquid stays up, green, before whatever shows it moves
  * on (closes, fades, swaps in the next thing).

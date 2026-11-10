@@ -99,12 +99,16 @@ describe('DialogFileImport - import progress', () => {
     wrapper.unmount();
   });
 
-  it('keeps a spinner for a single file, which has no steps to show', async () => {
+  it('sloshes for a single file, which has no steps to show', async () => {
     const wrapper = await mountDialog(1);
 
     const dropArea = findDropArea();
-    expect(dropArea?.querySelector('.liquid-fill')).toBeNull();
-    expect(dropArea?.querySelector('.q-spinner')).not.toBeNull();
+    expect(dropArea?.querySelector('.q-spinner')).toBeNull();
+    expect(dropArea?.querySelector('.liquid-fill')).not.toBeNull();
+    expect(dropArea?.querySelector('.file-import-zone__count')).toBeNull();
+    expect(
+      wrapper.findComponent({ name: 'LiquidFill' }).props('sloshing'),
+    ).toBe(true);
 
     wrapper.unmount();
   });

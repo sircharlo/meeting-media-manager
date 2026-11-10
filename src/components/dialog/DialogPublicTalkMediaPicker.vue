@@ -39,7 +39,7 @@
           <template v-if="s34Db && s34Info && filteredPublicTalks.length > 0">
             {{ s34Info.Year }}, v{{ s34Info.VersionNumber }}
           </template>
-          <q-spinner v-else color="primary" size="sm" />
+          <LiquidSpinner v-else color="primary" size="sm" />
         </div>
         <q-btn color="primary" @click="browse">
           <q-icon class="q-mr-sm" name="mmm-local-media" />
@@ -107,6 +107,7 @@ import type {
 } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { stageUserJwpubForRead, unzipJwpub } from 'src/helpers/jw-media';

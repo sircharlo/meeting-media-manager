@@ -292,7 +292,11 @@
                 fit="contain"
                 :src="getFileUrlFromPath(jwpubImage.FilePath)"
                 style="width: 150px"
-              />
+              >
+                <template #loading>
+                  <LiquidSpinner color="primary" size="40px" />
+                </template>
+              </q-img>
             </div>
             <div class="col">
               <div class="row">{{ getBasename(jwpubImage.FilePath) }}</div>
@@ -305,7 +309,9 @@
         </template>
         <q-inner-loading
           :showing="!!jwpubImportFilePath && !jwpubImages.length"
-        />
+        >
+          <LiquidSpinner color="primary" size="42px" />
+        </q-inner-loading>
       </div>
       <div class="q-px-md q-py-md row justify-end">
         <q-btn flat @click="showCustomBackgroundPicker = false">
@@ -326,6 +332,7 @@ import {
 } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ActionPopup from 'components/ui/ActionPopup.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { useScreenLayout } from 'src/composables/useScreenLayout';
 import { errorCatcher } from 'src/helpers/error-catcher';

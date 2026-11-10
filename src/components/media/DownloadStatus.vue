@@ -14,8 +14,8 @@
     unelevated
     @click="downloadPopup = !downloadPopup"
   >
-    <!-- Downloads with a known size fill the button like a glass; work
-         without one (checking the meeting dates) keeps the spinner. -->
+    <!-- Downloads with a known size fill the button like a glass; before
+         there are any (checking the meeting dates), its liquid sloshes. -->
     <LiquidFill
       v-if="showsLiquid"
       :key="batchNumber"
@@ -24,8 +24,9 @@
       :done="batchFinished"
       :percent="batchPercent"
       :scale="0.35"
+      :sloshing="!batchIsActive"
     />
-    <q-spinner v-if="busy && !showsLiquid" size="sm" />
+    <LiquidSpinner v-if="busy && !showsLiquid" size="sm" />
     <q-icon v-else :class="{ 'mmm-pop-in': batchFinished }" :name="iconName" />
     <!-- The same icon again, in another color, where the liquid covers it. -->
     <span
@@ -54,6 +55,7 @@ import type { DownloadProgressItem } from 'src/types';
 
 import { useIntervalFn } from '@vueuse/core';
 import LiquidFill from 'components/ui/LiquidFill.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { useDownloadBatch } from 'src/composables/useDownloadBatch';
 import {
@@ -148,9 +150,8 @@ const inkClipId = `download-status-ink-${useId()}`;
 // shows the progress itself.
 const showsLiquid = computed(
   () =>
-    batchIsActive.value &&
     !downloadPopup.value &&
-    (status.value === 'busy' || batchFinished.value),
+    (status.value === 'busy' || (batchIsActive.value && batchFinished.value)),
 );
 
 const iconName = computed(() => {

@@ -75,11 +75,11 @@ describe('ZoomMeetingManagerButton', () => {
     expect(button.classes()).not.toContain('island-btn--off');
   });
 
-  it('shows a spinner while the startup check runs', async () => {
+  it('shows a sloshing glass while the startup check runs', async () => {
     useZoomStateStore().checkRunning = true;
     const button = await mountButton();
 
-    expect(button.find('.q-spinner').exists()).toBe(true);
+    expect(button.find('.liquid-spinner').exists()).toBe(true);
     expect(button.classes()).toContain('bg-white-transparent');
   });
 

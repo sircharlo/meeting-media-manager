@@ -166,7 +166,11 @@
         :loading="arranging"
         no-caps
         @click="arrangeNow"
-      />
+      >
+        <template #loading>
+          <LiquidSpinner />
+        </template>
+      </q-btn>
       <StatusRow
         v-if="arrangeStatus"
         class="col"
@@ -186,6 +190,7 @@ import type { Display } from 'src/types';
 
 import ZoomLayoutWindowMock from 'components/dialog/ZoomLayoutWindowMock.vue';
 import StatusRow from 'components/dialog/ZoomSetupStatusRow.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { arrangeZoomWindows, findZoomScreen } from 'src/helpers/zoom-layout';
 import {
   clampM3Share,

@@ -35,7 +35,11 @@
         :loading="togglePending"
         unelevated
         @click="toggleRecording()"
-      />
+      >
+        <template #loading>
+          <LiquidSpinner />
+        </template>
+      </q-btn>
     </template>
     <template
       v-if="currentSettings?.obsEnableRecordingControls && obsRecordingFolder"
@@ -59,6 +63,7 @@ import type { ObsSceneType } from 'src/types';
 
 import { useEventListener, watchImmediate } from '@vueuse/core';
 import ActionPopup from 'components/ui/ActionPopup.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';

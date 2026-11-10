@@ -97,7 +97,7 @@
             </div>
           </div>
           <div v-else class="row items-center justify-center q-my-lg">
-            <q-spinner v-if="shouldShowSpinner" color="primary" size="lg" />
+            <LiquidSpinner v-if="shouldShowSpinner" color="primary" size="lg" />
             <div
               v-else-if="isErrorState"
               class="icon-chip text-negative empty-state-error-icon"
@@ -109,7 +109,11 @@
                 fit="contain"
                 src="~assets/img/no-media.svg"
                 style="max-height: 30vh"
-              />
+              >
+                <template #loading>
+                  <LiquidSpinner color="primary" size="40px" />
+                </template>
+              </q-img>
             </div>
           </div>
           <div
@@ -180,6 +184,7 @@
 <script setup lang="ts">
 import type { DateInfo, MediaSectionIdentifier } from 'src/types';
 
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { TINY_SCREEN_WIDTH } from 'src/constants/general';

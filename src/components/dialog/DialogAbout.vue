@@ -10,13 +10,16 @@
             loading="lazy"
             src="~assets/img/beta-logo.svg"
             width="48px"
-          />
-          <q-img
-            v-else
-            loading="lazy"
-            src="~assets/img/logo.svg"
-            width="48px"
-          />
+          >
+            <template #loading>
+              <LiquidSpinner color="primary" size="40px" />
+            </template>
+          </q-img>
+          <q-img v-else loading="lazy" src="~assets/img/logo.svg" width="48px">
+            <template #loading>
+              <LiquidSpinner color="primary" size="40px" />
+            </template>
+          </q-img>
         </div>
         <div class="col">
           <div class="row text-h6">
@@ -179,6 +182,7 @@
 <script setup lang="ts">
 import { watchImmediate, whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { QCarousel } from 'quasar';
 import { fetchReleaseNotes } from 'src/utils/api';

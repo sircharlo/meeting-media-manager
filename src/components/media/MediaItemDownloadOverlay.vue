@@ -7,12 +7,14 @@
     >
       <!-- Over a media item's thumbnail while its file downloads: the
            picture goes grey and fills up with liquid, so it's plain which
-           items are ready to play and which are close. -->
+           items are ready to play and which are close. Until the file's
+           size is known (still waiting its turn, say), the liquid sloshes. -->
       <LiquidFill
         axis="y"
         :done="isFinishing"
         :percent="percent"
         :scale="0.6"
+        :sloshing="isSloshing"
         @frame="onFrame"
         @report="digits?.bump($event)"
       />
@@ -20,11 +22,11 @@
         :aria-label="t('loading')"
         class="mmm-visually-hidden"
         max="100"
-        :value="Math.round(percent)"
+        :value="isSloshing ? undefined : Math.round(percent)"
       />
       <DoneCheck v-if="isFinishing" :size="30" />
       <RollingNumber
-        v-else
+        v-else-if="!isSloshing"
         ref="digits"
         class="media-download__percent"
         suffix="%"
@@ -42,7 +44,6 @@ import DoneCheck from 'components/ui/DoneCheck.vue';
 import LiquidFill from 'components/ui/LiquidFill.vue';
 import RollingNumber from 'components/ui/RollingNumber.vue';
 import { useMotionMode } from 'src/composables/useMotionMode';
-import { isPendingDownload } from 'src/utils/download-progress';
 import { LIQUID_DONE_HOLD_MS } from 'src/utils/liquid-motion';
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -65,9 +66,12 @@ const { start: holdFinished } = useTimeoutFn(
 );
 
 const isDownloading = computed(
-  () => !!props.progress && isPendingDownload(props.progress),
+  () => !!props.progress && !props.progress.complete && !props.progress.error,
 );
 const isShowing = computed(() => isDownloading.value || isFinishing.value);
+const isSloshing = computed(
+  () => isDownloading.value && !isFinishing.value && !props.progress?.total,
+);
 
 const percent = computed(() => {
   if (isFinishing.value) return 100;

@@ -110,7 +110,11 @@
                       v-if="item.ResolvedPreviewPath"
                       size="md"
                       :src="pathToFileURL(item.ResolvedPreviewPath)"
-                    />
+                    >
+                      <template #loading>
+                        <LiquidSpinner color="primary" size="40px" />
+                      </template>
+                    </q-img>
                     <q-icon
                       v-else
                       color="primary"
@@ -186,7 +190,11 @@
             :label="t('add-count', { count: selectedItems.length })"
             :loading="isProcessing"
             @click="addSelectedItems"
-          />
+          >
+            <template #loading>
+              <LiquidSpinner />
+            </template>
+          </q-btn>
         </div>
       </div>
     </div>
@@ -205,6 +213,7 @@ import type {
 } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { JPG_EXTENSIONS } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';

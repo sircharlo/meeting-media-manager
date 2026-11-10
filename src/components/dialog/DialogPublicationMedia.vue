@@ -12,7 +12,7 @@
         </div>
         <div class="col">{{ t('publication-media') }}</div>
         <div class="col-shrink">
-          <q-spinner v-if="loading" color="primary" />
+          <LiquidSpinner v-if="loading" color="primary" />
         </div>
       </div>
       <div class="text-subtitle2 q-pt-md q-px-md">
@@ -39,7 +39,11 @@
           :placeholder="t('search-placeholder')"
           @clear="clearSearch"
           @keyup="onSearchInput"
-        />
+        >
+          <template #loading>
+            <LiquidSpinner />
+          </template>
+        </q-input>
       </div>
       <DialogDownloadProgress
         :label="t('loading')"
@@ -130,6 +134,9 @@
                             :ratio="1 / 1"
                             :src="result.image.url || 'error'"
                           >
+                            <template #loading>
+                              <LiquidSpinner color="primary" size="40px" />
+                            </template>
                             <template #error>
                               <div
                                 class="absolute-full flex flex-center text-secondary"
@@ -209,7 +216,7 @@
             <q-list class="full-width">
               <q-item v-if="loading && publicationItems.length === 0" disable>
                 <q-item-section avatar>
-                  <q-spinner color="primary" />
+                  <LiquidSpinner color="primary" />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>{{ t('loading') }}</q-item-label>
@@ -253,7 +260,7 @@
             <q-list class="full-width">
               <q-item v-if="loading && yearChoices.length === 0" disable>
                 <q-item-section avatar>
-                  <q-spinner color="primary" />
+                  <LiquidSpinner color="primary" />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>{{ t('loading') }}</q-item-label>
@@ -285,7 +292,7 @@
             <q-list class="full-width">
               <q-item v-if="loading && monthChoices.length === 0" disable>
                 <q-item-section avatar>
-                  <q-spinner color="primary" />
+                  <LiquidSpinner color="primary" />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>{{ t('loading') }}</q-item-label>
@@ -424,6 +431,9 @@
                       :ratio="1"
                       :src="video.trackImage.url"
                     >
+                      <template #loading>
+                        <LiquidSpinner color="primary" size="40px" />
+                      </template>
                       <q-badge
                         class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
                         style="padding: 5px"
@@ -507,6 +517,7 @@ import type { MediaLink, Publication } from 'src/types/jw/publications';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
 import DialogPdfPageSelection from 'components/dialog/DialogPdfPageSelection.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { NATIVE_BUTTON_RIPPLE } from 'src/constants/general';

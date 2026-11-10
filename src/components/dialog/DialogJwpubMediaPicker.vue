@@ -84,7 +84,11 @@
                       height="54px"
                       :src="pathToFileURL(item.ResolvedPreviewPath)"
                       width="96px"
-                    />
+                    >
+                      <template #loading>
+                        <LiquidSpinner color="primary" size="40px" />
+                      </template>
+                    </q-img>
                     <q-icon
                       v-else
                       class="thumbnail-frame"
@@ -156,6 +160,7 @@ import type {
 } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   addJwpubDocumentMediaToFiles,

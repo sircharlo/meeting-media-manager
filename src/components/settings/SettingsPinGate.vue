@@ -42,7 +42,11 @@
             no-caps
             type="submit"
             unelevated
-          />
+          >
+            <template #loading>
+              <LiquidSpinner />
+            </template>
+          </q-btn>
         </div>
       </q-form>
     </div>
@@ -56,6 +60,7 @@
 
 <script setup lang="ts">
 import DialogSettingsPinReset from 'components/settings/DialogSettingsPinReset.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { useSettingsPinAttempts } from 'src/composables/useSettingsPinAttempts';
 import { errorCatcher } from 'src/helpers/error-catcher';

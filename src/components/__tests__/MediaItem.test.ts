@@ -267,23 +267,26 @@ describe('MediaItem Component', () => {
     const demoMode = useDemoModeStore();
     const wrapper = mount(MediaItem, {
       props: {
-        media: mockMediaItem,
+        // A thumbnail that never finishes loading here, so the glass stays.
+        media: { ...mockMediaItem, thumbnailUrl: 'https://example.com/t.jpg' },
         repeat: false,
       },
     });
 
     const thumbnail = wrapper.findComponent({ name: 'QImg' });
+    const showsSpinner = () =>
+      thumbnail.findComponent({ name: 'LiquidSpinner' }).exists();
     // Launched without M3_DEMO_MODE and demo store untouched: not demo mode.
-    expect(thumbnail.props('noSpinner')).toBe(false);
+    expect(showsSpinner()).toBe(true);
 
     // Runtime enable (e.g. via the dev-only Demo menu) flips the UI tweak.
     demoMode.enabled = true;
     await nextTick();
-    expect(thumbnail.props('noSpinner')).toBe(true);
+    expect(showsSpinner()).toBe(false);
 
     // And back off again when demo mode is disabled.
     demoMode.enabled = false;
     await nextTick();
-    expect(thumbnail.props('noSpinner')).toBe(false);
+    expect(showsSpinner()).toBe(true);
   });
 });
