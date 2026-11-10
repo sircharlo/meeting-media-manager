@@ -1,8 +1,9 @@
 /**
- * The motion maths behind UpdateProgressToast.vue. electron-updater reports
- * progress at most once a second, and often far less evenly than that, so the
- * toast animates continuously and treats each report as a nudge rather than
- * as the thing it draws.
+ * The motion maths behind the liquid progress (LiquidFill.vue, first made for
+ * UpdateProgressToast.vue) and its rolling digits, check and confetti.
+ * Downloads report their progress at most once a second, and often far less
+ * evenly than that, so the liquid animates continuously and treats each
+ * report as a nudge rather than as the thing it draws.
  */
 
 export interface ConfettiPiece {
@@ -21,6 +22,17 @@ export interface ConfettiPiece {
 export interface SpringConfig {
   damping: number;
   stiffness: number;
+}
+
+export interface WaveRiseShape {
+  amplitude: number;
+  height: number;
+  lean: number;
+  /** How high the surface sits above the bottom edge. */
+  level: number;
+  phase: number;
+  shift: number;
+  width: number;
 }
 
 export interface WaveShape {
@@ -43,13 +55,15 @@ const clamp = (value: number, min: number, max: number) =>
 
 const SPRING_STEPS_PER_SECOND = 240;
 
-/** A damped spring, stepped by hand once per animation frame. */
+/**
+ * A damped spring, stepped by hand once per animation frame. Its config can
+ * change between steps, to calm it down without a jump.
+ */
 export class Spring {
+  config: SpringConfig;
   target = 0;
   value = 0;
   velocity = 0;
-
-  private readonly config: SpringConfig;
 
   constructor(config: SpringConfig) {
     this.config = config;
@@ -147,10 +161,11 @@ export class ProgressSmoother {
 /**
  * Where each digit column of a rolling counter sits. Each position is a
  * fractional index into a 0-9-then-0 strip, and a column only starts turning
- * as the column to its right rolls over, like an odometer.
+ * as the column to its right rolls over, like an odometer. Values outside
+ * 0..max (a spring overshooting, say) are held at the nearest end.
  */
-export const rollingDigitPositions = (percent: number) => {
-  const value = clamp(percent, 0, 100);
+export const rollingDigitPositions = (input: number, max = 100) => {
+  const value = clamp(input, 0, Math.min(max, 999));
   const ones = value % 10;
   const tensCarry = Math.max(0, ones - 9);
   const hundredsCarry = Math.max(0, (value % 100) - 99);
@@ -165,34 +180,65 @@ export const rollingDigitPositions = (percent: number) => {
 const WAVE_SAMPLE_SPACING = 5;
 const WAVE_OVERDRAW = 2;
 
-/** An SVG path filled from the left up to a wavy vertical edge. */
-export const buildWaveFillPath = ({
-  amplitude,
-  edgeX,
-  height,
-  lean,
-  phase,
-  shift,
-}: WaveShape) => {
-  if (height <= 0) return '';
+/**
+ * How far the liquid's edge strays from its level at a point `along` it: two
+ * sine waves drifting against each other, tipped by `lean` across `length`.
+ */
+const waveOffset = (
+  along: number,
+  length: number,
+  { amplitude, lean, phase, shift }: Omit<WaveShape, 'edgeX' | 'height'>,
+) =>
+  amplitude * Math.sin(along * 0.085 + phase + shift) +
+  amplitude * 0.45 * Math.sin(along * 0.19 - phase * 1.4 + shift * 2) +
+  lean * (along / length - 0.5);
 
-  const edgeAt = (y: number) =>
-    (
-      edgeX +
-      amplitude * Math.sin(y * 0.085 + phase + shift) +
-      amplitude * 0.45 * Math.sin(y * 0.19 - phase * 1.4 + shift * 2) +
-      lean * (y / height - 0.5)
-    ).toFixed(1);
+/** Where to sample the edge: past both ends, so the shape has no gaps. */
+const waveSamples = (length: number) => {
+  const samples = [-WAVE_OVERDRAW];
+  for (let along = 4; along < length; along += WAVE_SAMPLE_SPACING) {
+    samples.push(along);
+  }
+  samples.push(length + WAVE_OVERDRAW);
+  return samples;
+};
+
+/** An SVG path filled from the left up to a wavy vertical edge. */
+export const buildWaveFillPath = ({ edgeX, height, ...wave }: WaveShape) => {
+  if (height <= 0) return '';
 
   const left = -WAVE_OVERDRAW;
   const bottom = height + WAVE_OVERDRAW;
-  const points = [`M${left} ${left}`, `L${edgeAt(left)} ${left}`];
+  const points = [`M${left} ${left}`];
 
-  for (let y = 4; y < height; y += WAVE_SAMPLE_SPACING) {
-    points.push(`L${edgeAt(y)} ${y}`);
+  for (const y of waveSamples(height)) {
+    points.push(`L${(edgeX + waveOffset(y, height, wave)).toFixed(1)} ${y}`);
   }
 
-  points.push(`L${edgeAt(bottom)} ${bottom}`, `L${left} ${bottom}Z`);
+  points.push(`L${left} ${bottom}Z`);
+  return points.join('');
+};
+
+/** An SVG path filled from the bottom up to a wavy surface, like a glass. */
+export const buildWaveRisePath = ({
+  height,
+  level,
+  width,
+  ...wave
+}: WaveRiseShape) => {
+  if (height <= 0 || width <= 0) return '';
+
+  const left = -WAVE_OVERDRAW;
+  const right = width + WAVE_OVERDRAW;
+  const bottom = height + WAVE_OVERDRAW;
+  const surface = height - level;
+  const points = [`M${left} ${bottom}`];
+
+  for (const x of waveSamples(width)) {
+    points.push(`L${x} ${(surface - waveOffset(x, width, wave)).toFixed(1)}`);
+  }
+
+  points.push(`L${right} ${bottom}Z`);
   return points.join('');
 };
 
@@ -206,6 +252,20 @@ export const buildBubblesPath = (bubbles: BubbleCircle[]) =>
       return `${start}a${r} ${r} 0 1 0 ${across} 0a${r} ${r} 0 1 0 -${across} 0`;
     })
     .join('');
+
+/**
+ * How long a finished liquid stays up, green, before whatever shows it moves
+ * on (closes, fades, swaps in the next thing).
+ */
+export const LIQUID_DONE_HOLD_MS = 1100;
+
+let liquidCount = 0;
+
+/** A different seed for each liquid, so that neighbours don't move in step. */
+export const nextLiquidSeed = () => {
+  liquidCount++;
+  return liquidCount * 97;
+};
 
 /**
  * A repeatable scatter in [0, 1). The particles are purely decorative, so

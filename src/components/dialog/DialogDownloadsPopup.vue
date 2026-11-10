@@ -50,10 +50,23 @@
               dense
               dense-toggle
               expand-separator
+              :header-class="{
+                'liquid-host sync-date--liquid': showsDateLiquid(
+                  dateKey,
+                  group,
+                ),
+              }"
               :model-value="expandedDates.has(dateKey)"
               @update:model-value="(v) => handleExpansionToggle(dateKey, v)"
             >
               <template #header>
+                <!-- The date's own files fill its row as they arrive. -->
+                <LiquidFill
+                  v-if="showsDateLiquid(dateKey, group)"
+                  :done="getStatus(dateKey) === 'complete'"
+                  :percent="downloadsPercent(group)"
+                  :scale="0.5"
+                />
                 <div class="row items-center no-wrap full-width">
                   <q-icon
                     class="q-mr-sm"
@@ -127,13 +140,17 @@
                         name="mmm-cloud-done"
                         size="sm"
                       />
-                      <q-circular-progress
-                        v-else-if="item.loaded && item.total"
-                        color="primary"
-                        size="sm"
-                        :thickness="0.3"
-                        :value="(item.loaded / item.total) * 100"
-                      />
+                      <span
+                        v-else-if="item.total"
+                        class="liquid-host sync-drop"
+                      >
+                        <LiquidFill
+                          axis="y"
+                          no-bubbles
+                          :percent="((item.loaded ?? 0) / item.total) * 100"
+                          :scale="0.15"
+                        />
+                      </span>
                     </div>
                   </q-item-section>
                 </q-item>
@@ -210,12 +227,14 @@
 <script setup lang="ts">
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import ActionPopup from 'components/ui/ActionPopup.vue';
+import LiquidFill from 'components/ui/LiquidFill.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { DOWNLOAD_ROW_AUTO_COLLAPSE_MS, SORTER } from 'src/constants/general';
 import { updateLookupPeriod } from 'src/helpers/date';
 import { fetchMedia } from 'src/helpers/jw-media';
 import { dateFromString, getDateDiff, getLocalDate } from 'src/utils/date';
+import { downloadsPercent } from 'src/utils/download-progress';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -485,6 +504,23 @@ function handleExpansionToggle(dateKey: string, expanded: boolean) {
   expansionModes.value[dateKey] = expanded ? 'manual-open' : 'manual-closed';
 }
 
+// While a date's files with a known size download, and for the moment it
+// stays open after they're all in (green, then).
+function showsDateLiquid(
+  dateKey: string,
+  group: typeof filteredDownloads.value,
+) {
+  if (!group.some((item) => item.total)) return false;
+  const status = getStatus(dateKey);
+  if (status === 'loading') return true;
+  const finishedAt = completedAt.value[dateKey];
+  return (
+    status === 'complete' &&
+    finishedAt !== undefined &&
+    Date.now() - finishedAt < DOWNLOAD_ROW_AUTO_COLLAPSE_MS
+  );
+}
+
 // ─── Actions ──────────────────────────────────────────────────────────────────
 
 const fetchOrDownloadsAreRunning = computed(
@@ -565,6 +601,22 @@ watch(open, (isOpen) => {
 // Lines the file names up with their date above (row padding, icon, gap).
 .sync-files {
   padding-left: 32px;
+}
+
+:deep(.sync-date--liquid) {
+  border-radius: 8px;
+}
+
+// A small glass per file, in place of a progress ring.
+.sync-drop {
+  --liquid-back: rgba(48, 117, 242, 0.45);
+  --liquid-front: #{$primary};
+
+  background: color-mix(in srgb, $primary 16%, transparent);
+  border-radius: 50%;
+  display: block;
+  height: 20px;
+  width: 20px;
 }
 
 .date-row-move,

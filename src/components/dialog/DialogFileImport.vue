@@ -112,11 +112,12 @@
         <div class="row q-px-md q-pt-md">
           <div
             ref="dropArea"
-            class="col rounded-borders dashed-border items-center justify-center flex bg-accent-100 animated slow"
+            class="col rounded-borders dashed-border items-center justify-center flex bg-accent-100 animated slow file-import-zone"
             :class="{
               'cursor-pointer': canBrowseLocalFiles,
               'bg-accent-200':
                 isOverDropZone || (hovering && canBrowseLocalFiles),
+              'liquid-host': showsImportCount,
             }"
             :role="canBrowseLocalFiles ? 'button' : undefined"
             style="min-height: 200px"
@@ -124,27 +125,51 @@
             @click="browseLocalFiles"
             @keydown.enter.space.prevent="browseLocalFiles"
           >
-            <template v-if="totalFiles || (!!jwpubDb && jwpubLoading)">
-              <q-circular-progress
-                color="primary"
-                :indeterminate="totalFiles === 1"
-                :max="totalFiles"
-                size="xl"
-                track-color="accent-200"
-                :value="percentValue"
-              >
+            <!-- Several files: the zone fills up as each one is added. One
+                 file (or a JWPUB being read) has no steps to show. -->
+            <template v-if="showsImportCount">
+              <LiquidFill
+                axis="y"
+                :done="!!finishedImportTotal"
+                :percent="importPercent"
+                steady
+                @report="importCount?.bump($event)"
+              />
+              <progress
+                :aria-label="t('loading')"
+                class="mmm-visually-hidden"
+                :max="importTotal"
+                :value="importedCount"
+              />
+              <div class="column items-center">
+                <DoneCheck
+                  v-if="finishedImportTotal"
+                  class="q-mb-xs"
+                  :size="44"
+                  variant="solid"
+                />
                 <div
-                  v-if="totalFiles > 1"
-                  class="absolute-full flex flex-center"
+                  class="file-import-zone__count"
+                  :class="{
+                    'file-import-zone__count--done': finishedImportTotal,
+                  }"
                 >
-                  <q-badge
-                    color="white"
-                    :label="(percentValue * 100).toFixed(0) + '%'"
-                    text-color="primary"
+                  <RollingNumber
+                    ref="importCount"
+                    :max="999"
+                    :value="importedCount"
                   />
+                  <span aria-hidden="true" class="file-import-zone__total">
+                    / {{ importTotal }}
+                  </span>
                 </div>
-              </q-circular-progress>
+              </div>
             </template>
+            <q-spinner
+              v-else-if="totalFiles || (!!jwpubDb && jwpubLoading)"
+              color="primary"
+              size="xl"
+            />
             <template v-else>
               <q-icon class="q-mr-sm" name="mmm-drag-n-drop" size="lg" />
               {{ t('drag-and-drop-or-click-to-browse') }}
@@ -162,8 +187,17 @@
 <script setup lang="ts">
 import type { DocumentItem, MediaSectionIdentifier } from 'src/types';
 
-import { useDropZone, useElementHover, useEventListener } from '@vueuse/core';
+import {
+  useDropZone,
+  useElementHover,
+  useEventListener,
+  useTimeoutFn,
+} from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import DoneCheck from 'components/ui/DoneCheck.vue';
+import LiquidFill from 'components/ui/LiquidFill.vue';
+import RollingNumber from 'components/ui/RollingNumber.vue';
+import { useMotionMode } from 'src/composables/useMotionMode';
 import {
   AUDIO_EXTENSIONS,
   IMG_EXTENSIONS,
@@ -173,6 +207,7 @@ import {
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
 import { formatPageLabel } from 'src/utils/general';
+import { LIQUID_DONE_HOLD_MS } from 'src/utils/liquid-motion';
 import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -226,11 +261,37 @@ const hovering = useElementHover(dropArea);
 const authorizedDrop = ref(false);
 const jwpubLoading = ref(false);
 
-const percentValue = computed(() => {
-  return props.currentFile && props.totalFiles
-    ? props.currentFile / props.totalFiles
-    : 0;
-});
+const motion = useMotionMode();
+const importCount =
+  useTemplateRef<InstanceType<typeof RollingNumber>>('importCount');
+
+// The parent resets both counts the moment the last file is in, so the
+// finished import is kept here to show it full, and green, for a moment.
+const finishedImportTotal = ref(0);
+const { start: closeAfterFinishedImport, stop: keepOpenForNextImport } =
+  useTimeoutFn(
+    () => {
+      finishedImportTotal.value = 0;
+      if (dialogValue.value && !props.totalFiles) dialogValue.value = false;
+    },
+    LIQUID_DONE_HOLD_MS,
+    { immediate: false },
+  );
+
+const importTotal = computed(
+  () => finishedImportTotal.value || props.totalFiles, // NOSONAR: 0 means no finished import
+);
+const importedCount = computed(() =>
+  finishedImportTotal.value
+    ? finishedImportTotal.value
+    : Math.min(props.currentFile, props.totalFiles),
+);
+const importPercent = computed(() =>
+  importTotal.value ? (importedCount.value / importTotal.value) * 100 : 0,
+);
+const showsImportCount = computed(
+  () => props.totalFiles > 1 || !!finishedImportTotal.value,
+);
 
 // Listen for JW Playlist mode activation
 useEventListener(
@@ -284,7 +345,10 @@ const getLocalFiles = () => {
 // The drop zone doubles as a "browse" button, but only while it shows its
 // idle prompt - not while it shows import progress or a JWPUB is loading.
 const canBrowseLocalFiles = computed(
-  () => !props.totalFiles && !(!!jwpubDb.value || jwpubLoading.value),
+  () =>
+    !props.totalFiles &&
+    !finishedImportTotal.value &&
+    !(!!jwpubDb.value || jwpubLoading.value),
 );
 
 const browseLocalFiles = () => {
@@ -395,15 +459,69 @@ watch(
 watch(
   () => props.totalFiles || (!!jwpubDb.value && jwpubLoading.value),
   (isProcessing, wasProcessing) => {
-    // Only close if we were processing and now we're not
-    if (wasProcessing && !isProcessing && dialogValue.value) {
-      log(
-        '🎯 File processing complete, auto-closing dialog',
-        'fileImport',
-        'log',
-      );
-      dialogValue.value = false;
+    if (isProcessing) {
+      // More files dropped while the last import was still on show.
+      keepOpenForNextImport();
+      finishedImportTotal.value = 0;
+      return;
     }
+    // Only close if we were processing and now we're not
+    if (!wasProcessing || !dialogValue.value) return;
+
+    log(
+      '🎯 File processing complete, auto-closing dialog',
+      'fileImport',
+      'log',
+    );
+    const finishedSeveralFiles =
+      typeof wasProcessing === 'number' && wasProcessing > 1;
+    if (finishedSeveralFiles && motion.value !== 'still') {
+      finishedImportTotal.value = wasProcessing;
+      closeAfterFinishedImport();
+      return;
+    }
+    dialogValue.value = false;
   },
 );
 </script>
+
+<style lang="scss" scoped>
+.file-import-zone {
+  --liquid-back: rgba(48, 117, 242, 0.1);
+  --liquid-front: rgba(48, 117, 242, 0.2);
+  --liquid-bubble: rgba(48, 117, 242, 0.35);
+}
+
+.file-import-zone__count {
+  align-items: baseline;
+  color: $primary;
+  display: flex;
+  font-size: 38px;
+  gap: 6px;
+  transition: color 0.3s ease;
+
+  :deep(.rolling-number) {
+    --rolling-number-origin: center;
+  }
+}
+
+.file-import-zone__count--done {
+  color: $positive-strong;
+}
+
+.file-import-zone__total {
+  font-size: 18px;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+body.body--dark .file-import-zone {
+  --liquid-back: rgba(75, 132, 237, 0.18);
+  --liquid-front: rgba(75, 132, 237, 0.34);
+  --liquid-bubble: rgba(255, 255, 255, 0.3);
+
+  .file-import-zone__count:not(.file-import-zone__count--done) {
+    color: color-mix(in srgb, var(--q-primary) 55%, white);
+  }
+}
+</style>

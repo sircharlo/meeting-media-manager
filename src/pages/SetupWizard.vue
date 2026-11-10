@@ -2,10 +2,12 @@
   <q-page padding>
     <template v-if="currentSettings">
       <div class="wizard-header row items-center q-gutter-sm">
-        <div class="wizard-progress-track col">
-          <div
-            class="wizard-progress-fill"
-            :style="{ width: stepProgress * 100 + '%' }"
+        <div ref="progressTrack" class="col liquid-host wizard-progress-track">
+          <LiquidFill
+            :done="isSetupDone"
+            :percent="stepProgress * 100"
+            :scale="0.3"
+            steady
           />
         </div>
         <!-- UX-8 (full-audit-2026-09-04.md): previously only step 1 offered
@@ -812,6 +814,8 @@
       @cancel="cancelAbandonSetup"
       @confirm="confirmAbandonSetup"
     />
+
+    <ConfettiBurst ref="confetti" />
   </q-page>
 </template>
 
@@ -827,6 +831,8 @@ import SelectInput from 'components/form-inputs/SelectInput.vue';
 import ShortcutInput from 'components/form-inputs/ShortcutInput.vue';
 import TextInput from 'components/form-inputs/TextInput.vue';
 import TimeInput from 'components/form-inputs/TimeInput.vue';
+import ConfettiBurst from 'components/ui/ConfettiBurst.vue';
+import LiquidFill from 'components/ui/LiquidFill.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
@@ -846,7 +852,7 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 
@@ -1138,6 +1144,17 @@ const stepProgress = computed(() => {
   return index === -1 ? 0 : index / (names.length - 1);
 });
 
+// The last step: M³ is ready, which is worth a little celebration.
+const isSetupDone = computed(() => stepProgress.value >= 1);
+const progressTrack = useTemplateRef<HTMLElement>('progressTrack');
+const confetti = useTemplateRef<InstanceType<typeof ConfettiBurst>>('confetti');
+
+const celebrateSetup = () => {
+  const track = progressTrack.value?.getBoundingClientRect();
+  if (!track) return;
+  confetti.value?.burst(track.right - 24, track.top);
+};
+
 const sharedFolderName = computed(() =>
   currentSettings.value?.folderToWatch
     ? basename(currentSettings.value.folderToWatch)
@@ -1171,6 +1188,10 @@ const showCongregationLookup = ref(false);
 const openCongregationLookup = () => {
   showCongregationLookup.value = true;
 };
+
+watch(isSetupDone, (isDone) => {
+  if (isDone) celebrateSetup();
+});
 
 watch(step, () => {
   void nextTick(() => {
@@ -1227,20 +1248,19 @@ watchImmediate(
 </script>
 
 <style scoped>
+/* A small tube that fills, and sloshes, a step at a time. */
 .wizard-progress-track {
-  background: rgba(128, 128, 128, 0.25);
-  border-radius: 3px;
-  height: 5px;
-  margin: 0 0 1em;
-  overflow: hidden;
-  width: 100%;
-}
+  --liquid-back: rgba(112, 164, 255, 0.55);
+  --liquid-back-done: rgba(33, 186, 69, 0.5);
+  --liquid-bubble: rgba(255, 255, 255, 0.85);
+  --liquid-front: var(--q-primary);
+  --liquid-front-done: var(--q-positive);
 
-.wizard-progress-fill {
-  background: var(--q-primary);
-  border-radius: 3px;
-  height: 100%;
-  transition: width 200ms ease;
+  background: rgba(128, 128, 128, 0.22);
+  border-radius: 5px;
+  height: 10px;
+  margin: 0 0 1em;
+  width: 100%;
 }
 
 /* One question per screen: only the active step's header is shown at all -

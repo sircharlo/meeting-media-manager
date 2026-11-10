@@ -1,18 +1,41 @@
 <template>
   <q-btn
-    class="super-rounded"
-    :class="classes"
+    class="download-status super-rounded"
+    :class="[
+      classes,
+      {
+        'download-status--finished': batchFinished,
+        'liquid-host': showsLiquid,
+      },
+    ]"
     :color="color"
     rounded
     :text-color="textColor"
     unelevated
     @click="downloadPopup = !downloadPopup"
   >
-    <q-spinner v-if="busy" size="sm" />
-    <q-icon
-      v-else
-      :name="someHaveError ? 'mmm-cloud-error' : 'mmm-cloud-done'"
+    <!-- Downloads with a known size fill the button like a glass; work
+         without one (checking the meeting dates) keeps the spinner. -->
+    <LiquidFill
+      v-if="showsLiquid"
+      :key="batchNumber"
+      axis="y"
+      :clip-id="inkClipId"
+      :done="batchFinished"
+      :percent="batchPercent"
+      :scale="0.35"
     />
+    <q-spinner v-if="busy && !showsLiquid" size="sm" />
+    <q-icon v-else :class="{ 'mmm-pop-in': batchFinished }" :name="iconName" />
+    <!-- The same icon again, in another color, where the liquid covers it. -->
+    <span
+      v-if="showsLiquid"
+      aria-hidden="true"
+      class="download-status__ink"
+      :style="{ clipPath: `url(#${inkClipId})` }"
+    >
+      <q-icon :class="{ 'mmm-pop-in': batchFinished }" :name="iconName" />
+    </span>
     <q-tooltip
       v-if="!downloadPopup"
       anchor="bottom left"
@@ -30,7 +53,9 @@
 import type { DownloadProgressItem } from 'src/types';
 
 import { useIntervalFn } from '@vueuse/core';
+import LiquidFill from 'components/ui/LiquidFill.vue';
 import { storeToRefs } from 'pinia';
+import { useDownloadBatch } from 'src/composables/useDownloadBatch';
 import {
   type IslandButtonStatus,
   useIslandButton,
@@ -38,7 +63,7 @@ import {
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getDateDiff } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, useId } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { isOnline } = globalThis.electronApi;
@@ -110,4 +135,54 @@ const { busy, classes, color, textColor } = useIslandButton(
   status,
   downloadPopup,
 );
+
+const {
+  batchNumber,
+  isActive: batchIsActive,
+  isFinished: batchFinished,
+  percent: batchPercent,
+} = useDownloadBatch();
+const inkClipId = `download-status-ink-${useId()}`;
+
+// Not while its popup is open: the button turns white then, and the popup
+// shows the progress itself.
+const showsLiquid = computed(
+  () =>
+    batchIsActive.value &&
+    !downloadPopup.value &&
+    (status.value === 'busy' || batchFinished.value),
+);
+
+const iconName = computed(() => {
+  if (someHaveError.value) return 'mmm-cloud-error';
+  return showsLiquid.value && !batchFinished.value
+    ? 'mmm-cloud'
+    : 'mmm-cloud-done';
+});
 </script>
+
+<style lang="scss" scoped>
+// White liquid on the island's blue, with the icon turning blue under it.
+.download-status {
+  --liquid-back: rgba(255, 255, 255, 0.5);
+  --liquid-back-done: rgba(33, 186, 69, 0.6);
+  --liquid-bubble: rgba(48, 117, 242, 0.55);
+  --liquid-front: rgba(255, 255, 255, 0.95);
+  --liquid-front-done: #{$positive};
+}
+
+.download-status__ink {
+  align-items: center;
+  color: $primary;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
+  transition: color 0.3s ease;
+}
+
+.download-status--finished .download-status__ink {
+  color: white;
+}
+</style>

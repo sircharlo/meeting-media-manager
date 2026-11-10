@@ -2,12 +2,13 @@ import {
   advanceConfetti,
   buildBubblesPath,
   buildWaveFillPath,
+  buildWaveRisePath,
   createConfetti,
   ProgressSmoother,
   rollingDigitPositions,
   scatter,
   Spring,
-} from 'src/utils/update-toast-motion';
+} from 'src/utils/liquid-motion';
 import { describe, expect, it } from 'vitest';
 
 describe('Spring', () => {
@@ -149,6 +150,17 @@ describe('rollingDigitPositions', () => {
     expect(rollingDigitPositions(103)).toEqual(rollingDigitPositions(100));
     expect(rollingDigitPositions(-2)).toEqual(rollingDigitPositions(0));
   });
+
+  it('counts past 100 when given a higher ceiling', () => {
+    expect(rollingDigitPositions(250, 999)).toEqual({
+      hundreds: 2,
+      ones: 0,
+      tens: 5,
+    });
+    expect(rollingDigitPositions(1200, 999)).toEqual(
+      rollingDigitPositions(999, 999),
+    );
+  });
 });
 
 describe('buildWaveFillPath', () => {
@@ -185,6 +197,45 @@ describe('buildWaveFillPath', () => {
 
     expect(new Set(still).size).toBe(1);
     expect(leaning.at(-1)).toBeGreaterThan(leaning[0] as number);
+  });
+});
+
+describe('buildWaveRisePath', () => {
+  const shape = {
+    amplitude: 0,
+    height: 80,
+    lean: 0,
+    level: 30,
+    phase: 1,
+    shift: 0,
+    width: 150,
+  };
+  // The last point is the shape's bottom-right corner, not the surface.
+  const surfaceYs = (path: string) =>
+    [...path.matchAll(/L(-?\d+) (-?[\d.]+)/g)]
+      .map(([, , y]) => Number(y))
+      .slice(0, -1);
+
+  it('draws a closed shape anchored on the bottom', () => {
+    const path = buildWaveRisePath(shape);
+
+    expect(path.startsWith('M-2 82')).toBe(true);
+    expect(path.endsWith('L152 82Z')).toBe(true);
+  });
+
+  it('puts a calm surface at its level above the bottom', () => {
+    expect(new Set(surfaceYs(buildWaveRisePath(shape)))).toEqual(new Set([50]));
+  });
+
+  it('draws nothing before it has been measured', () => {
+    expect(buildWaveRisePath({ ...shape, width: 0 })).toBe('');
+    expect(buildWaveRisePath({ ...shape, height: 0 })).toBe('');
+  });
+
+  it('tips the surface when the liquid moves', () => {
+    const ys = surfaceYs(buildWaveRisePath({ ...shape, lean: 20 }));
+
+    expect(ys.at(-1)).toBeLessThan(ys[0] as number);
   });
 });
 
