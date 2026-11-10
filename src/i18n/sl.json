@@ -409,7 +409,7 @@
   "keyboardShortcuts": "Bližnjice na tipkovnici",
   "lac": "Krščansko življenje",
   "lac-part": "Krščansko življenje {part} ({duration} min.)",
-  "lac-part-name": "Krščansko življenje - {part}. točka",
+  "lac-part-name": "Krščansko življenje - točka {part}",
   "lang": "Jezik multimedije",
   "lang-explain": "Izberi jezik, v katerem potekajo shodi. To je jezik, ki se bo uporabljal za prenos in predvajanje multimedijske vsebine.",
   "langFallback": "Sekundarni jezik multimedijske vsebine",
