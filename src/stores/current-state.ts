@@ -1,5 +1,6 @@
 import type {
   DateInfo,
+  DownloadProgressItem,
   DownloadProgressItems,
   JwLanguage,
   JwSite,
@@ -25,6 +26,7 @@ import { getRendererPlatform } from 'src/helpers/fs';
 import { dismissAllTemporaryNotifications } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { datesAreSame, formatDate } from 'src/utils/date';
+import { downloadsByFilename } from 'src/utils/download-progress';
 import {
   getAdditionalMediaPath,
   getCachedUserDataPath,
@@ -546,6 +548,12 @@ export const useCurrentStateStore = defineStore('current-state', {
       const currentLanguage = this.currentSettings?.lang;
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
+    },
+    // How a media item finds its own download (see downloadsByFilename).
+    // Only rebuilt when a download starts, ends or fails: the bytes that
+    // arrive in between don't change which download is which.
+    downloadsByFilename(): Map<string, DownloadProgressItem> {
+      return downloadsByFilename(Object.values(this.downloadProgress));
     },
     // Extracted so BE-8's periodic low-disk-space check (MainLayout.vue) can
     // gate on "downloads specifically" without also polling while only a

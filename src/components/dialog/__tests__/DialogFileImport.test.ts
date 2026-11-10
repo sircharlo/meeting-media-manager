@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { LIQUID_DONE_HOLD_MS } from 'src/utils/liquid-motion';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 
@@ -74,6 +75,56 @@ describe('DialogFileImport - keyboard browsing', () => {
     );
     dropArea?.click();
     expect(openFileDialog).not.toHaveBeenCalled();
+
+    wrapper.unmount();
+  });
+});
+
+describe('DialogFileImport - import progress', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('fills the drop zone and counts the files as several are added', async () => {
+    const wrapper = await mountDialog(12);
+    await wrapper.setProps({ currentFile: 5 });
+
+    const dropArea = findDropArea();
+    expect(dropArea?.querySelector('.liquid-fill')).not.toBeNull();
+    expect(dropArea?.textContent).toContain('/ 12');
+    const progress = dropArea?.querySelector('progress');
+    expect(progress?.getAttribute('value')).toBe('5');
+    expect(progress?.getAttribute('max')).toBe('12');
+
+    wrapper.unmount();
+  });
+
+  it('keeps a spinner for a single file, which has no steps to show', async () => {
+    const wrapper = await mountDialog(1);
+
+    const dropArea = findDropArea();
+    expect(dropArea?.querySelector('.liquid-fill')).toBeNull();
+    expect(dropArea?.querySelector('.q-spinner')).not.toBeNull();
+
+    wrapper.unmount();
+  });
+
+  it('shows a finished import full for a moment before closing', async () => {
+    vi.useFakeTimers();
+    const wrapper = await mountDialog(3);
+    await wrapper.setProps({ currentFile: 2 });
+
+    // The parent resets both counts as soon as the last file is in.
+    await wrapper.setProps({ currentFile: 0, totalFiles: 0 });
+
+    const dropArea = findDropArea();
+    expect(dropArea?.querySelector('.done-check')).not.toBeNull();
+    expect(dropArea?.textContent).toContain('/ 3');
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+
+    await vi.advanceTimersByTimeAsync(LIQUID_DONE_HOLD_MS);
+
+    expect(wrapper.emitted('update:modelValue')).toEqual([[false]]);
 
     wrapper.unmount();
   });

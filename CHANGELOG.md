@@ -13,6 +13,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Update Notifications**: Downloading an update is now more fun to watch. The notification fills up like liquid, with a wave for each bit of progress and rolling numbers, then opens into the install button with a little celebration when the update is ready.
+- 🛠️ **Progress You Can See**: The same liquid now fills the other places that show how far something has come. A media item that is still downloading fills up over its thumbnail, and its play button pops once it's ready to play. The media sync button fills like a glass, and each date in its popup fills with its own files. The download cards in dialogs, the drop zone when importing several files and the setup wizard's progress bar fill up too, with a little celebration at the end of the setup. In the last ten minutes before the meeting, the before-meeting panel drains like an hourglass, and turns orange for the last minute. All of it calms down while media is shown, and keeps still if your computer is set to reduce motion.
 - 🛠️ **Meeting Quick Actions**: A new setting stops the before and after meeting panels from being dismissed. Turn it off under Settings, in the Meeting Quick Actions section.
 - 🛠️ **Meeting Timer**: The timer popup is now laid out for running the meeting. The controls stay at the top while the parts scroll, and each part is a single line with its name, duration and start button, with the running part highlighted in green. Click a duration to change it, and find the setup options under Advanced. "Living as Christians" no longer gets a number when it has only one part, and a new setting hides the planned start times.
 - 🛠️ **Fewer Repeated Downloads**: When two parts of M³ ask for the same thing at the same moment, like a song's video links, details or thumbnail, M³ now asks the website once and shares the answer, instead of asking twice.
@@ -20,6 +21,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🐞 Bug Fixes
 
 - 🐞 **Profile Selection**: Picking the profile that's already open in the profile selection no longer leaves the media list loading forever on every meeting day, and no longer stops the downloads in progress.
+- 🐞 **Importing Media**: When several files were imported at once, the progress ring barely moved while its label counted up to 100%. The drop zone now fills up as each file is added, and shows how many are in.
 
 ## v26.11.1
 

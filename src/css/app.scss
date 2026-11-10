@@ -775,6 +775,42 @@ a {
   }
 }
 
+// The box a LiquidFill.vue fills: the liquid sits under everything else in
+// it, but over its background, and its waves don't spill out.
+.liquid-host {
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+}
+
+// Something that just became ready (an icon swapped in, say) pops in.
+.mmm-pop-in {
+  animation: mmm-pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes mmm-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mmm-pop-in {
+    animation: none;
+  }
+}
+
+// For assistive technology only, e.g. the real number behind a liquid.
+.mmm-visually-hidden {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
 // A soft wash of the button's own current color instead of a border, so
 // small icon-only actions still read as clearly filled/interactive at rest
 // without the stroked-ring look of an outline button. `currentColor` picks

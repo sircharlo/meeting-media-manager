@@ -34,6 +34,7 @@
             opacity: !fileIsAvailable && !streamIsAvailable ? 0.64 : undefined,
           }"
         >
+          <MediaItemDownloadOverlay :progress="currentDownload" />
           <template v-if="media.isImage">
             <!-- Panning and wheel/pinch zoom are ours, not the library's
                  (see startThumbnailPan and zoomThumbnailWithWheel): it only
@@ -696,6 +697,7 @@
 
               <q-btn
                 ref="playButton"
+                :class="{ 'media-item__play--ready': playIconJustReady }"
                 :color="
                   fileIsAvailable || streamIsAvailable ? 'primary' : 'grey'
                 "
@@ -1357,12 +1359,14 @@ import {
   useElementHover,
   useEventListener,
   useMagicKeys,
+  useTimeoutFn,
   useTimeoutPoll,
   watchImmediate,
   whenever,
 } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
+import MediaItemDownloadOverlay from 'components/media/MediaItemDownloadOverlay.vue';
 import { storeToRefs } from 'pinia';
 import { type QBtn, type QImg, type QInput, QItem, useQuasar } from 'quasar';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
@@ -2786,6 +2790,23 @@ const playButtonIcon = computed(() => {
   return localFile.value ? 'mmm-play' : 'mmm-stream-play';
 });
 
+// This item's own download, while there is one (or was, this session).
+const currentDownload = computed(() => {
+  const { fileUrl } = props.media;
+  if (!fileUrl || !isFileUrl(fileUrl)) return undefined;
+  return currentState.downloadsByFilename.get(basename(fileUrlToPath(fileUrl)));
+});
+
+// The play button pops a little when its file has just finished arriving.
+const playIconJustReady = ref(false);
+const { start: settlePlayIcon } = useTimeoutFn(
+  () => {
+    playIconJustReady.value = false;
+  },
+  600,
+  { immediate: false },
+);
+
 const playButtonTooltip = computed(() => {
   if (isSlideshowLinkedAudio.value) return t('linked-slideshow-audio');
   if (!fileIsAvailable.value && streamIsAvailable.value) {
@@ -3187,6 +3208,12 @@ const mediaElapsed = computed({
   set: (val) => seekTo(val),
 });
 
+watch(playButtonIcon, (icon, previousIcon) => {
+  if (icon !== 'mmm-play' || previousIcon !== 'mmm-stream-play') return;
+  playIconJustReady.value = true;
+  settlePlayIcon();
+});
+
 watch(
   () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
   () => {
@@ -3321,6 +3348,16 @@ watch(
 </script>
 
 <style lang="scss" scoped>
+.media-item__play--ready :deep(.q-icon) {
+  animation: mmm-pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media-item__play--ready :deep(.q-icon) {
+    animation: none;
+  }
+}
+
 // The tag-type toggle's 3 segments now each carry both an icon and a label,
 // spread to fill the card evenly - without a floor on the card's own width,
 // a longer-locale label (e.g. German "Absatz") has less room to breathe
