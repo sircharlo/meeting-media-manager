@@ -21,7 +21,9 @@
         }"
       >
         <svg
+          aria-hidden="true"
           fill="none"
+          focusable="false"
           :height="ARROW_HEIGHT"
           viewBox="0 0 84 110"
           :width="ARROW_WIDTH"

@@ -61,6 +61,7 @@ jobs:
           # fails, so the output tells them apart: one JSON line per advisory,
           # or Yarn's plain error text.
           audit() {
+            local report="$1"
             local out
             out=$(yarn npm audit --all --recursive --no-deprecations --json) || true
             if grep -q -v -e '^{' -e '^$' <<< "$out"; then
@@ -76,11 +77,12 @@ jobs:
               url: .children.URL,
               vulnerable: .children["Vulnerable Versions"],
               installed: (.children["Tree Versions"] | join(", "))
-            }' > "$1"
+            }' > "$report"
           }
 
           locked_versions() {
-            grep -F "  resolution: \"$1@npm:" yarn.lock \
+            local package="$1"
+            grep -F "  resolution: \"$package@npm:" yarn.lock \
               | sed -E 's/.*@npm:([^"]+)".*/\1/' | sort -uV | paste -sd ' ' -
           }
 

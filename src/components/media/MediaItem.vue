@@ -3374,6 +3374,12 @@ watch(
   animation: media-filter-bounce 360ms ease;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .media-filter-current-match {
+    animation: none;
+  }
+}
+
 .media-thumbnail-container,
 .media-audio-thumbnail-fallback {
   aspect-ratio: 16 / 9;

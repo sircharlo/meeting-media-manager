@@ -110,6 +110,7 @@ jobs:
           # Guard against malformed or injected language ids.
           case "$LANGUAGE" in
             ''|*[!a-zA-Z0-9_-]*) LANGUAGE='' ;;
+            *) ;; # A well-formed id: used as it is.
           esac
           ARGS=""
           if [ "${{ inputs.apply }}" = "true" ]; then
