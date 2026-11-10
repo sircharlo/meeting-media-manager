@@ -288,6 +288,133 @@ describe('fetchRaw caching', () => {
   });
 });
 
+// MMM-V2-3NR: two callers asking for the same URL at the same moment both
+// missed the cache and both went to the network.
+describe('fetchRaw requests in flight', () => {
+  const handledUrl = 'https://www.jw.org/en/languages/';
+
+  // A fetch that stays pending until the test settles it.
+  const deferFetch = () => {
+    const pending: PromiseWithResolvers<Response>[] = [];
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(() => {
+      const request = Promise.withResolvers<Response>();
+      pending.push(request);
+      return request.promise;
+    });
+    return { fetchSpy, pending };
+  };
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  it('shares one GET between callers asking at the same time', async () => {
+    const { fetchSpy, pending } = deferFetch();
+
+    const first = fetchRaw(handledUrl, { method: 'GET' }, true);
+    const second = fetchRaw(handledUrl, { method: 'GET' }, true);
+    await vi.waitFor(() => expect(pending).toHaveLength(1));
+    pending[0]?.resolve(new Response(JSON.stringify(jwLangs), { status: 200 }));
+
+    const [res1, res2] = await Promise.all([first, second]);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    await expect(res1.json()).resolves.toEqual(jwLangs);
+    await expect(res2.json()).resolves.toEqual(jwLangs);
+  });
+
+  it('shares one HEAD between callers asking at the same time', async () => {
+    const { fetchSpy, pending } = deferFetch();
+
+    const first = fetchRaw(handledUrl, { method: 'HEAD' }, true);
+    const second = fetchRaw(handledUrl, { method: 'HEAD' }, true);
+    await vi.waitFor(() => expect(pending).toHaveLength(1));
+    pending[0]?.resolve(
+      new Response(null, { headers: { 'content-length': '42' }, status: 200 }),
+    );
+
+    const [res1, res2] = await Promise.all([first, second]);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(res1.headers.get('content-length')).toBe('42');
+    expect(res2.headers.get('content-length')).toBe('42');
+  });
+
+  it('sends its own request when the one it joined fails', async () => {
+    const { fetchSpy, pending } = deferFetch();
+
+    const first = fetchRaw(handledUrl, { method: 'GET' }, true);
+    const second = fetchRaw(handledUrl, { method: 'GET' }, true);
+    await vi.waitFor(() => expect(pending).toHaveLength(1));
+    pending[0]?.reject(new TypeError('fetch failed'));
+
+    await expect(first).rejects.toThrow('fetch failed');
+    await vi.waitFor(() => expect(pending).toHaveLength(2));
+    pending[1]?.resolve(new Response(JSON.stringify(jwLangs), { status: 200 }));
+
+    await expect((await second).json()).resolves.toEqual(jwLangs);
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('sends its own request when the response is too large to share', async () => {
+    const { fetchSpy, pending } = deferFetch();
+    const large = () =>
+      new Response('large response', {
+        headers: { 'content-length': `${1024 * 1024 + 1}` },
+        status: 200,
+      });
+
+    const first = fetchRaw(handledUrl, undefined, true);
+    const second = fetchRaw(handledUrl, undefined, true);
+    await vi.waitFor(() => expect(pending).toHaveLength(1));
+    pending[0]?.resolve(large());
+    await vi.waitFor(() => expect(pending).toHaveLength(2));
+    pending[1]?.resolve(large());
+
+    const [res1, res2] = await Promise.all([first, second]);
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    await expect(res1.text()).resolves.toBe('large response');
+    await expect(res2.text()).resolves.toBe('large response');
+  });
+
+  it('stops waiting once its own signal aborts', async () => {
+    const { fetchSpy, pending } = deferFetch();
+    const controller = new AbortController();
+
+    const first = fetchRaw(handledUrl, { method: 'GET' }, true);
+    const second = fetchRaw(
+      handledUrl,
+      { method: 'GET', signal: controller.signal },
+      true,
+    );
+    await vi.waitFor(() => expect(pending).toHaveLength(1));
+    controller.abort(new DOMException('Timed out', 'TimeoutError'));
+
+    await expect(second).rejects.toThrow('Timed out');
+    pending[0]?.resolve(new Response(JSON.stringify(jwLangs), { status: 200 }));
+    await expect((await first).json()).resolves.toEqual(jwLangs);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not share requests made without the cache', async () => {
+    const { fetchSpy, pending } = deferFetch();
+
+    const first = fetchRaw(handledUrl, undefined, false);
+    const second = fetchRaw(handledUrl, undefined, false);
+    await vi.waitFor(() => expect(pending).toHaveLength(2));
+    for (const request of pending) {
+      request.resolve(new Response('{}', { status: 200 }));
+    }
+
+    await Promise.all([first, second]);
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe('fetchRaw demo mode', () => {
   beforeEach(() => {
     // The fetchRaw caching describe above leaves a fetch spy installed.

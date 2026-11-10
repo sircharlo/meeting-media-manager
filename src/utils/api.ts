@@ -41,6 +41,25 @@ interface CachedFetchResponse {
 
 const fetchCache = new Map<string, CachedFetchResponse>();
 
+interface FetchLogDetails {
+  cache: boolean;
+  init?: RequestInit;
+  url: string;
+}
+
+interface FetchOutcome {
+  /** What later callers can read: null when the response isn't cached. */
+  cached: CachedFetchResponse | null;
+  /** The response for the caller that sent the request. */
+  response: Response;
+}
+
+// Cacheable requests still on their way, so callers asking for the same URL
+// at the same moment share one network request instead of each missing the
+// cache (MMM-V2-3NR: a song's links, media info and thumbnail were each
+// fetched twice at once).
+const inFlightFetches = new Map<string, Promise<FetchOutcome>>();
+
 function buildCachedResponse(cached: CachedFetchResponse) {
   const body = cached.body ? cached.body.slice(0) : null;
   return new Response(body, {
@@ -113,7 +132,10 @@ async function createCachedResponse(response: Response) {
  * Clears the fetch cache.
  * @internal For testing purposes only.
  */
-export const clearFetchCache = () => fetchCache.clear();
+export const clearFetchCache = () => {
+  fetchCache.clear();
+  inFlightFetches.clear();
+};
 
 // An AWS WAF bot challenge: a 2xx with no content, so `ok` alone can't
 // tell it apart from a real answer.
@@ -127,10 +149,7 @@ const isWafChallengeResponse = (response: Response) =>
  * @param logDetails What fetchRaw logs for a cache hit.
  * @returns The cached response, or undefined when there's no fresh one.
  */
-function getFreshCachedResponse(
-  cacheKey: string,
-  logDetails: { cache: boolean; init?: RequestInit; url: string },
-) {
+function getFreshCachedResponse(cacheKey: string, logDetails: FetchLogDetails) {
   const cachedResponse = fetchCache.get(cacheKey);
   if (!cachedResponse) return undefined;
   if (Date.now() - cachedResponse.cachedAt < FETCH_CACHE_TTL_MS) {
@@ -166,21 +185,81 @@ export const fetchRaw = async (
 
   const method = init?.method?.toUpperCase() ?? 'GET';
   const isCacheable = cache && (method === 'GET' || method === 'HEAD');
-  const cacheKey = `${method}:${url}:${JSON.stringify(init?.headers || {})}`;
+  const logDetails = { cache, init, url };
 
-  if (isCacheable) {
-    const cachedResponse = getFreshCachedResponse(cacheKey, {
-      cache,
-      init,
-      url,
-    });
-    if (cachedResponse) return cachedResponse;
+  if (!isCacheable) return fetchFromNetwork(url, init, logDetails);
+
+  const cacheKey = `${method}:${url}:${JSON.stringify(init?.headers || {})}`;
+  const cachedResponse = getFreshCachedResponse(cacheKey, logDetails);
+  if (cachedResponse) return cachedResponse;
+
+  // Looked up and registered without awaiting in between, so two calls
+  // made in the same tick can't both miss it.
+  const inFlight = inFlightFetches.get(cacheKey);
+  if (inFlight) {
+    const sharedResponse = await joinInFlightFetch(
+      inFlight,
+      init?.signal,
+      logDetails,
+    );
+    if (sharedResponse) return sharedResponse;
   }
 
-  if (!import.meta.env.VITEST)
-    log('fetchRaw', 'api', 'debug', { cache, init, url });
+  const request = fetchAndCache(url, init, cacheKey, logDetails);
+  inFlightFetches.set(cacheKey, request);
+  try {
+    return (await request).response;
+  } finally {
+    if (inFlightFetches.get(cacheKey) === request) {
+      inFlightFetches.delete(cacheKey);
+    }
+  }
+};
 
-  let response = await fetch(url, init);
+function buildUrl(url: string, params?: URLSearchParams) {
+  if (!params?.toString()) return url;
+  return `${url}?${params.toString()}`;
+}
+
+/**
+ * Sends a cacheable request and caches its response when it can.
+ * @param url The url to fetch.
+ * @param init Initialization options for the fetch.
+ * @param cacheKey The fetch cache key.
+ * @param logDetails What to log for the request.
+ * @returns The response, and the cached copy later callers can read.
+ */
+async function fetchAndCache(
+  url: string,
+  init: RequestInit | undefined,
+  cacheKey: string,
+  logDetails: FetchLogDetails,
+): Promise<FetchOutcome> {
+  const response = await fetchFromNetwork(url, init, logDetails);
+  if (!response.ok || isWafChallengeResponse(response)) {
+    return { cached: null, response };
+  }
+
+  const outcome = await createCachedResponse(response);
+  if (outcome.cached) fetchCache.set(cacheKey, outcome.cached);
+  return outcome;
+}
+
+/**
+ * Sends a request, passing a configured Website's bot challenge if needed.
+ * @param url The url to fetch.
+ * @param init Initialization options for the fetch.
+ * @param logDetails What to log for the request.
+ * @returns The fetch response.
+ */
+async function fetchFromNetwork(
+  url: string,
+  init: RequestInit | undefined,
+  logDetails: FetchLogDetails,
+) {
+  if (!import.meta.env.VITEST) log('fetchRaw', 'api', 'debug', logDetails);
+
+  const response = await fetch(url, init);
 
   // Some configured Website hosts answer with an empty bot-challenge page
   // until a real browser has passed it once; the main process can, after
@@ -189,22 +268,61 @@ export const fetchRaw = async (
     isWafChallengeResponse(response) &&
     (await globalThis.electronApi?.passWafChallenge?.(url))
   ) {
-    response = await fetch(url, init);
-  }
-
-  if (isCacheable && response.ok && !isWafChallengeResponse(response)) {
-    const cachedResponse = await createCachedResponse(response);
-    if (cachedResponse.cached) {
-      fetchCache.set(cacheKey, cachedResponse.cached);
-    }
-    return cachedResponse.response;
+    return fetch(url, init);
   }
 
   return response;
-};
-function buildUrl(url: string, params?: URLSearchParams) {
-  if (!params?.toString()) return url;
-  return `${url}?${params.toString()}`;
+}
+
+/**
+ * Waits for the same request another caller already sent.
+ * @param inFlight That caller's request.
+ * @param signal This caller's own signal: once it aborts, this stops
+ * waiting, as its own fetch would have.
+ * @param logDetails What to log when the response is shared.
+ * @returns A copy of the response, or undefined when the request failed or
+ * its response can't be shared (not cached), so this caller sends its own.
+ */
+async function joinInFlightFetch(
+  inFlight: Promise<FetchOutcome>,
+  signal: AbortSignal | null | undefined,
+  logDetails: FetchLogDetails,
+) {
+  const shared = await waitUnlessAborted(
+    inFlight.then(
+      ({ cached }) => cached,
+      () => null,
+    ),
+    signal,
+  );
+  if (!shared) return undefined;
+  if (!import.meta.env.VITEST) {
+    log('fetchRaw (shared)', 'api', 'debug', logDetails);
+  }
+  return buildCachedResponse(shared);
+}
+
+/**
+ * Waits for a promise, or rejects with the signal's reason once it aborts.
+ * @param promise The promise to wait for.
+ * @param signal The signal that ends the wait.
+ * @returns What the promise resolves to.
+ */
+async function waitUnlessAborted<T>(
+  promise: Promise<T>,
+  signal: AbortSignal | null | undefined,
+): Promise<T> {
+  if (!signal) return promise;
+  signal.throwIfAborted();
+
+  const { promise: aborted, reject } = Promise.withResolvers<never>();
+  const onAbort = () => reject(signal.reason);
+  signal.addEventListener('abort', onAbort, { once: true });
+  try {
+    return await Promise.race([promise, aborted]);
+  } finally {
+    signal.removeEventListener('abort', onAbort);
+  }
 }
 
 // Publication symbols confirmed to have no media in any format via the
