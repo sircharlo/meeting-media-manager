@@ -227,7 +227,10 @@ whenever(isEditing, () => {
 
 .media-divider {
   margin: 4px 0 4px -1px;
-  transition: all 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
   border-radius: 0px;
 
   &.is-editing {

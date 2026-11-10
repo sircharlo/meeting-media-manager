@@ -1189,6 +1189,12 @@ body.body--dark
   padding: 0 0.08em;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  :deep(.settings-filter__highlight) {
+    animation: none;
+  }
+}
+
 @keyframes settings-filter-bounce {
   0% {
     transform: scale(1);

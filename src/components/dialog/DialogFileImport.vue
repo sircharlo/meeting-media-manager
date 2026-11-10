@@ -215,8 +215,10 @@ const { t } = useI18n();
 
 // toSorted, not sort: the extension lists are shared constants, and sorting
 // them in place would reorder them for every other module that reads them.
+// localeCompare rather than the default code-unit order, which isn't
+// alphabetical.
 const formatExtensions = (extensions: string[]) =>
-  extensions.toSorted().join(', ');
+  extensions.toSorted((a, b) => a.localeCompare(b)).join(', ');
 const imageExtensionsLabel = formatExtensions(IMG_EXTENSIONS);
 const videoExtensionsLabel = formatExtensions(VIDEO_EXTENSIONS);
 const audioExtensionsLabel = formatExtensions(AUDIO_EXTENSIONS);

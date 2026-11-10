@@ -158,11 +158,24 @@ const selectSection = (section: MediaSectionIdentifier) => {
   flex: 1;
   min-width: 80px;
   border-radius: 8px;
-  transition: all 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// Only the shadow, which doesn't move, marks the hover then.
+@media (prefers-reduced-motion: reduce) {
+  .section-btn {
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+      transform: none;
+    }
   }
 }
 </style>

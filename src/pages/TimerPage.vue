@@ -703,6 +703,13 @@ watch(isClockArcDisplay, (showing) => {
   padding: 4vh;
 }
 
+/* Without the pulse, the big yellow hand still catches the chairman's eye. */
+@media (prefers-reduced-motion: reduce) {
+  .hand-alert__hand {
+    animation: none;
+  }
+}
+
 .hand-alert__icon {
   fill: #ffd60a;
   filter: drop-shadow(0 0 1.5vh rgba(0, 0, 0, 0.6));
