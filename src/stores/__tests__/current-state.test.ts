@@ -204,4 +204,72 @@ describe('setCongregation', () => {
     expect(invalidA).toBe(false);
     expect(invalidB).toBe(true);
   });
+
+  // Nothing refetches media when the profile doesn't change, so a reset
+  // here left every meeting day under a loading skeleton for good.
+  it('leaves everything as it is when the active profile is picked again', async () => {
+    const congregationSettingsStore = useCongregationSettingsStore();
+    congregationSettingsStore.congregations = {
+      'cong-a': {
+        ...defaultSettings,
+        congregationName: 'Cong A',
+        disableMediaFetching: true,
+      },
+    };
+    const store = useCurrentStateStore();
+    store.currentCongregation = 'cong-a';
+    store.mediaRefreshPending = false;
+    store.meetingCheckStatus = { '20261110': 'complete' };
+    store.downloadProgress = {
+      'song.mp4': { filename: 'song.mp4', loaded: 10, total: 100 },
+    };
+
+    const invalid = await store.setCongregation('cong-a');
+
+    expect(invalid).toBe(false);
+    expect(store.currentCongregation).toBe('cong-a');
+    expect(store.mediaRefreshPending).toBe(false);
+    expect(store.meetingCheckStatus).toEqual({ '20261110': 'complete' });
+    expect(Object.keys(store.downloadProgress)).toEqual(['song.mp4']);
+  });
+
+  it('still reports invalid settings when the active profile is picked again', async () => {
+    const congregationSettingsStore = useCongregationSettingsStore();
+    congregationSettingsStore.congregations = {
+      'cong-b': {
+        ...defaultSettings,
+        congregationName: 'Cong B',
+        disableMediaFetching: false,
+        enableMediaAutoExport: true,
+        enableMediaDisplayButton: true,
+        mediaAutoExportFolder: '',
+      },
+    };
+    const store = useCurrentStateStore();
+    store.currentCongregation = 'cong-b';
+
+    await expect(store.setCongregation('cong-b')).resolves.toBe(true);
+  });
+
+  it('resets the previous profile’s media state when switching to another one', async () => {
+    const congregationSettingsStore = useCongregationSettingsStore();
+    congregationSettingsStore.congregations = {
+      'cong-a': { ...defaultSettings, disableMediaFetching: true },
+      'cong-c': { ...defaultSettings, disableMediaFetching: true },
+    };
+    const store = useCurrentStateStore();
+    store.currentCongregation = 'cong-a';
+    store.mediaRefreshPending = false;
+    store.meetingCheckStatus = { '20261110': 'complete' };
+    store.downloadProgress = {
+      'song.mp4': { filename: 'song.mp4', loaded: 10, total: 100 },
+    };
+
+    await store.setCongregation('cong-c');
+
+    expect(store.currentCongregation).toBe('cong-c');
+    expect(store.mediaRefreshPending).toBe(true);
+    expect(store.meetingCheckStatus).toEqual({});
+    expect(store.downloadProgress).toEqual({});
+  });
 });
