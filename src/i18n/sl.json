@@ -996,7 +996,7 @@
   "timerRemoteEnable": "Oddaljeni časovnik (stran za tablico ali telefon)",
   "timerRemoteEnable-explain": "Prikaže kopijo prikaza časovnika kot spletno stran v vašem lokalnem omrežju — na primer za tablico na govorniškem pultu — da govornik vidi preostali čas, ne da bi bil prikazan na občinskem zaslonu ali deljen prek Zooma. Vse kontrole ostanejo v M³. Kdor koli v istem omrežju lahko odpre to stran, dokler je ta možnost vklopljena.",
   "timerRemoteFocusLayout": "Osrednji prikaz oddaljenega časovnika",
-  "timerRemoteFocusLayout-explain": "Namesto preprostega časa uporabi velik krog napredka in ob njem naštej udeležence Zooma, ki so dvignili roko, po vrstnem redu, kot so jo dvignili. Krog v zadnji minuti postane rumen, nato pa rdeč z zneskom prekoračitve. Imena se prikažejo, dokler je opozorilo glede dvignjene roke vklopljeno. Izklopljeno ohrani trenutni prikaz.",
+  "timerRemoteFocusLayout-explain": "Namesto preprostega časa uporabi velik krog napredka in ob njem naštej udeležence Zooma, ki so dvignili roko, po vrstnem redu, kot so jo dvignili. Krog v zadnji minuti postane rumen, nato pa rdeč s časom prekoračitve. Imena se prikažejo, dokler je opozorilo glede dvignjene roke vklopljeno. Če je ta možnost izklopljena, se ohrani trenutni prikaz.",
   "timerRemotePort": "Omrežna vrata oddaljenega časovnika",
   "timerRemotePort-explain": "Omrežna vrata, na katerih se streže stran časovnika. Spremeni jih le, če jih že uporablja kak drug program.",
   "timerShowOnActionIsland": "Merilnik časa prikaži v orodni vrstici",
