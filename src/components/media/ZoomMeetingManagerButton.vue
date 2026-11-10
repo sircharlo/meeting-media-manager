@@ -1,7 +1,7 @@
 <template>
   <q-btn
     v-if="currentSettings?.zoomMeetingManagerEnable"
-    class="super-rounded"
+    class="liquid-host super-rounded"
     :class="classes"
     :color="color"
     rounded
@@ -9,8 +9,16 @@
     unelevated
     @click="zoomMeetingManagerPopup = !zoomMeetingManagerPopup"
   >
-    <LiquidSpinner v-if="busy" size="sm" />
-    <q-icon v-else name="mmm-video-meeting" />
+    <!-- Busy (checking Zoom, say): the button sloshes, its icon still
+         showing. -->
+    <IslandButtonLiquid
+      :open="zoomMeetingManagerPopup"
+      :showing="busy"
+      sloshing
+    >
+      <q-icon name="mmm-video-meeting" />
+    </IslandButtonLiquid>
+    <q-icon name="mmm-video-meeting" />
     <q-tooltip
       v-if="!zoomMeetingManagerPopup"
       anchor="bottom left"
@@ -28,7 +36,7 @@
 
 <script setup lang="ts">
 import { useIntervalFn } from '@vueuse/core';
-import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
+import IslandButtonLiquid from 'components/ui/IslandButtonLiquid.vue';
 import { storeToRefs } from 'pinia';
 import {
   type IslandButtonStatus,

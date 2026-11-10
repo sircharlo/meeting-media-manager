@@ -1,7 +1,7 @@
 <template>
   <q-btn
     v-if="currentSettings?.obsEnable"
-    class="super-rounded"
+    class="liquid-host super-rounded"
     :class="classes"
     :color="color"
     rounded
@@ -14,8 +14,11 @@
         : undefined
     "
   >
-    <LiquidSpinner v-if="busy" size="sm" />
-    <q-icon v-else name="mmm-obs-studio" />
+    <!-- Connecting: the button sloshes, its icon still showing. -->
+    <IslandButtonLiquid :open="obsPopup" :showing="busy" sloshing>
+      <q-icon name="mmm-obs-studio" />
+    </IslandButtonLiquid>
+    <q-icon name="mmm-obs-studio" />
     <q-tooltip v-if="!obsPopup" :delay="1000" :offset="[14, 22]">
       {{ t(tooltipMessageKey) }}
     </q-tooltip>
@@ -25,7 +28,7 @@
 <script setup lang="ts">
 import type { OBSResponseTypes } from 'obs-websocket-js';
 
-import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
+import IslandButtonLiquid from 'components/ui/IslandButtonLiquid.vue';
 import { storeToRefs } from 'pinia';
 import {
   type IslandButtonStatus,
