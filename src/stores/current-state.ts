@@ -347,6 +347,24 @@ export const useCurrentStateStore = defineStore('current-state', {
     setCongregation: async function (value: number | string) {
       if (!value) return false;
 
+      // FE-17 (full-audit-2026-09-05.md): captured locally rather than
+      // re-read from this.currentCongregation after the await below - a
+      // second overlapping setCongregation call (e.g. a rapid double
+      // switch) can reassign currentCongregation in between, which would
+      // otherwise make this call resolve invalid-settings for whichever
+      // congregation happens to be current when it wakes up, not the one
+      // it was actually asked to switch to.
+      const newCongregation = value.toString();
+
+      // Picking the profile that's already active changes nothing, and
+      // nothing would refetch its media: MediaCalendarPage stays mounted
+      // and only refetches when currentCongregation changes. Resetting
+      // anyway cancelled its downloads and left mediaRefreshPending set
+      // for good, so every meeting day showed a loading skeleton.
+      if (newCongregation === this.currentCongregation) {
+        return this.getInvalidSettings(newCongregation).length > 0;
+      }
+
       // Cancel all pending downloads from the previous congregation
       cancelAllDownloads();
       this.downloadProgress = {};
@@ -365,14 +383,6 @@ export const useCurrentStateStore = defineStore('current-state', {
       // Dismiss all active notifications when changing congregation
       dismissAllTemporaryNotifications();
 
-      // FE-17 (full-audit-2026-09-05.md): captured locally rather than
-      // re-read from this.currentCongregation after the await below - a
-      // second overlapping setCongregation call (e.g. a rapid double
-      // switch) can reassign currentCongregation in between, which would
-      // otherwise make this call resolve invalid-settings for whichever
-      // congregation happens to be current when it wakes up, not the one
-      // it was actually asked to switch to.
-      const newCongregation = value.toString();
       this.currentCongregation = newCongregation;
       await getCachedUserDataPath();
 
