@@ -264,18 +264,18 @@ E ha’uti M³ i te media ma te reo i ni’a i tō ’oe roro uira, terā rā, �
 3. **Te vai-roa-ra’a o te Reo**: ’A ha’apāpū ē tē vai ra te reo o te pāpāho i ni’a i te tahua natirara mana a te Ite o Iehova
 4. **Reo mono**: ’A tāmata i te mā’iti i te hō’ē reo mono
 
-### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+### :wrench: ’Aita M³ e matara nei i muri a’e i te hō’ē fa’ahoura’a. E aha te mea tā’u e rave? {#faq-update-interrupted}
 
-If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+Mai te peu ē ’ua tāpūhia ’aore rā ’ua ha’amata-fa’ahou-hia te roro uira i te taime e fa’ata’a ra M³ i te hō’ē fa’ahoura’a, ’ua fa’aea paha te fa’ata’ara’a hou a oti ai, ’e ’aita fa’ahou M³ e matara. Tē vai noa ra tā ’oe mau fa’anahora’a ’e tā ’oe mau media. Nō te tātā’i iā M³:
 
-1. Download the latest version from the [Download page](download).
-2. Run the installer. It puts M³ back in place and keeps your settings.
+1. ’A tātari i te version ’āpī roa a’e mai ni’a mai i te [’Ate’a tātari](download).
+2. ’A ha’amata i te porotarama fa’atā’atira’a. E tu’u fa’ahou te reira iā M³ i tōna vāhi, ’e e vaiiho noa i tā ’oe mau fa’anahora’a.
 
-**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+**’Eiaha e fa’a’ore nā mua i te M³**: ’ia fa’a’orehia te M³, e fa’a’orehia ato’a tōna mau fa’anahora’a.
 
-If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+Mai te peu ē ’aita te roro uira e nehenehe e tū’ati i te itenati, i te rahira’a o te taime tē vai noa ra te porotarama fa’atā’atira’a tā M³ i tātari a’ena: ’a pata i ni’a i te mau pitopito `Win+R`, ’a pāpa’i i `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, ’e i muri iho ’a ha’amata i te porotarama fa’atā’atira’a i roto i te fā’ari parau e matara mai.
 
-To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, it still installs updates when it closes, so give it a minute before turning the computer off.
+Nō te ’ape i teie fifi, i ni’a i te Windows, e fa’ata’a M³ i te fa’ahoura’a i tātarihia i te taime i muri iho e matara ai ’ōna, ’e ’ere i te taime e pōpānihia ai ’ōna. ’Ia fa’atā’atihia M³ nō te feiā fa’a’ohipa ato’a o te roro uira, e fa’ata’a noa ā ’ōna i te mau fa’ahoura’a ’ia pōpānihia ’ōna, nō reira ’a tīa’i hō’ē minuti hou ’oe e tāpū ai i te roro uira.
 
 ## Tauturu e Feti’ara’a {#support-community}
 
