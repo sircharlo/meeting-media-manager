@@ -264,18 +264,18 @@ Kontrolli neid keelesätteid:
 3. **Keelte kättesaadavus**: Veendu, et meedia keel on kättesaadav Jehoova tunnistajate ametlikul veebisaidil
 4. **Varukeel**: proovi määrata varukeel
 
-### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+### :wrench: M³ ei avane pärast uuendust. Mida peaksin tegema? {#faq-update-interrupted}
 
-If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+Kui arvuti lülitati välja või taaskäivitati sel ajal, kui M³ uuendust installis, võis installimine poole peal katkeda ja M³ ei avane enam. Sinu seaded ja meedia on endiselt alles. M³ parandamiseks tee nii:
 
-1. Download the latest version from the [Download page](download).
-2. Run the installer. It puts M³ back in place and keeps your settings.
+1. Lae alla uusim versioon [alla laadimise lehelt](download).
+2. Käivita installifail. See paneb M³ tagasi paika ja säilitab sinu seaded.
 
-**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+**Ära desinstalli M³-e enne**: desinstallimine kustutab ka selle seaded.
 
-If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+Kui arvuti ei saa internetiga ühendust, on installifail, mille M³ oli alla laadinud, tavaliselt veel alles: vajuta `Win+R`, sisesta `%LOCALAPPDATA%\meeting-media-manager-updater\pending` ja käivita seejärel avanevas kaustas olev installifail.
 
-To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, it still installs updates when it closes, so give it a minute before turning the computer off.
+Sellise katkestuse vältimiseks installib M³ Windowsis alla laaditud uuenduse järgmisel avamisel, mitte sulgemisel. Kui M³ on installitud kõigile arvuti kasutajatele, installib see uuendused ikkagi sulgemisel, seega anna sellele enne arvuti väljalülitamist minut aega.
 
 ## Tugi ja kogukond {#support-community}
 

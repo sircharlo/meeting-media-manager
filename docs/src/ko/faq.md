@@ -264,18 +264,18 @@ M³는 컴퓨터에서 소리와 함께 미디어를 재생하지만, OBS Studio
 3. **언어 지원 여부**: 선택한 미디어 언어가 여호와의 증인 공식 웹사이트에서 제공되는지 확인합니다.
 4. **대체 언어**: 대체 언어를 설정해 보세요.
 
-### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+### :wrench: 업데이트 후 M³가 실행되지 않습니다. 어떻게 해야 하나요? {#faq-update-interrupted}
 
-If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+M³가 업데이트를 설치하는 도중에 컴퓨터가 꺼졌거나 다시 시작되었다면, 설치가 중간에 멈춰 M³가 더 이상 실행되지 않을 수 있습니다. 설정과 미디어는 그대로 남아 있습니다. M³를 복구하려면 다음 단계를 따르십시오.
 
-1. Download the latest version from the [Download page](download).
-2. Run the installer. It puts M³ back in place and keeps your settings.
+1. [다운로드 페이지](download)에서 최신 버전을 다운로드합니다.
+2. 설치 프로그램을 실행합니다. 설치 프로그램이 M³를 원래대로 되돌려 놓으며, 설정은 그대로 유지됩니다.
 
-**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+**M³를 먼저 제거하지 마십시오**: 제거하면 설정도 함께 삭제됩니다.
 
-If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+컴퓨터를 인터넷에 연결할 수 없다면, M³가 미리 다운로드해 둔 설치 프로그램이 대개 그대로 남아 있습니다. `Win+R` 키를 누르고 `%LOCALAPPDATA%\meeting-media-manager-updater\pending` 경로를 입력한 다음, 열리는 폴더에서 설치 프로그램을 실행하십시오.
 
-To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, it still installs updates when it closes, so give it a minute before turning the computer off.
+이를 방지하기 위해 Windows용 M³는 다운로드한 업데이트를 종료할 때가 아니라 다음에 실행할 때 설치합니다. M³가 컴퓨터의 모든 사용자용으로 설치된 경우에는 여전히 종료할 때 업데이트를 설치하므로, 컴퓨터를 끄기 전에 1분 정도 기다리십시오.
 
 ## 지원 및 커뮤니티 {#support-community}
 

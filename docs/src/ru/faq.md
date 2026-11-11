@@ -264,18 +264,18 @@ M³ воспроизводит медиа со звуком на вашем ко
 3. **Доступность на языке**: Убедитесь, что язык медиа доступен на официальном сайте Свидетелей Иеговы
 4. **Резервный язык**: Попробуйте задать резервный язык
 
-### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+### :wrench: M³ не открывается после обновления. Что мне делать? {#faq-update-interrupted}
 
-If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+Если компьютер выключили или перезагрузили, пока M³ устанавливал обновление, установка могла прерваться на полпути, и теперь M³ не открывается. Ваши настройки и медиа по-прежнему на месте. Чтобы восстановить M³:
 
-1. Download the latest version from the [Download page](download).
-2. Run the installer. It puts M³ back in place and keeps your settings.
+1. Скачайте последнюю версию со [страницы загрузки](download).
+2. Запустите установщик. Он заново установит M³ и сохранит ваши настройки.
 
-**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+**Не удаляйте M³ перед установкой**: вместе с ним удаляются и его настройки.
 
-If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+Если компьютер не может подключиться к Интернету, установщик, который M³ уже загрузил, обычно все еще на месте: нажмите `Win+R`, введите `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, а затем запустите установщик в открывшейся папке.
 
-To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, it still installs updates when it closes, so give it a minute before turning the computer off.
+Чтобы этого не происходило, M³ в Windows устанавливает загруженное обновление при следующем запуске, а не при закрытии. Если M³ установлен для всех пользователей компьютера, он по-прежнему устанавливает обновления при закрытии, поэтому подождите минуту, прежде чем выключать компьютер.
 
 ## Поддержка и сообщество {#support-community}
 
