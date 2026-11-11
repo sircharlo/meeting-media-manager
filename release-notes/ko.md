@@ -8,7 +8,7 @@
 
 ### ✨ 새로운 기능
 
-- ✨ **Media Your Computer Can't Play**: Some videos play without a picture, or without sound, on some computers: an HEVC video on a graphics card that can't decode it, an old AVI or MPEG-4 video, or a movie with AC-3 or DTS sound. M³ now tells you as soon as it finds one, on the media item and in a notice, and the before-meeting panel reminds you, so you can fix it well before you need it. It also no longer suggests turning off hardware acceleration for such a video, which would only make it worse. Convert makes a copy that plays on any computer, using your graphics card when it can so M³ and your meeting stay smooth. Its progress shows on the media item and in the media sync popup, where you can also cancel it. A file you imported is replaced by its converted copy; a file from your watched folder is left as it is, and M³ plays a converted copy kept on this computer.
+- ✨ **컴퓨터에서 재생할 수 없는 미디어**: 일부 컴퓨터에서는 그래픽 카드가 디코딩할 수 없는 HEVC 동영상, 오래된 AVI 또는 MPEG-4 동영상, AC-3 또는 DTS 오디오가 포함된 영화처럼 영상이나 소리 없이 재생되는 동영상이 있습니다. 이제 M³가 이러한 파일을 찾는 즉시 미디어 항목과 알림에서 알려 주고 집회 전 패널에서도 다시 알려 주므로, 필요하기 훨씬 전에 문제를 해결할 수 있습니다. 또한 이러한 동영상에 대해서는 문제를 더 악화시킬 뿐인 하드웨어 가속 비활성화를 더 이상 제안하지 않습니다. ‘변환’ 기능은 어느 컴퓨터에서나 재생되는 사본을 만들며, 가능하면 그래픽 카드를 사용하므로 M³와 집회가 원활하게 진행됩니다. 변환 진행 상황은 미디어 항목과 ‘미디어 다운로드’ 팝업에 표시되며, 이 팝업에서 변환을 취소할 수도 있습니다. 가져온 파일은 변환된 사본으로 바뀌며, 공유 폴더에 있는 파일은 그대로 두고 M³가 이 컴퓨터에 보관된 변환 사본을 재생합니다.
 
 ## v26.11.2
 
