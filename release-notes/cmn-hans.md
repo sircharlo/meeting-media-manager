@@ -8,7 +8,7 @@
 
 ### ✨ 新功能
 
-- ✨ **Media Your Computer Can't Play**: Some videos play without a picture, or without sound, on some computers: an HEVC video on a graphics card that can't decode it, an old AVI or MPEG-4 video, or a movie with AC-3 or DTS sound. M³ now tells you as soon as it finds one, on the media item and in a notice, and the before-meeting panel reminds you, so you can fix it well before you need it. It also no longer suggests turning off hardware acceleration for such a video, which would only make it worse. Convert makes a copy that plays on any computer, using your graphics card when it can so M³ and your meeting stay smooth. Its progress shows on the media item and in the media sync popup, where you can also cancel it. A file you imported is replaced by its converted copy; a file from your watched folder is left as it is, and M³ plays a converted copy kept on this computer.
+- ✨ **计算机无法播放的媒体**：在某些计算机上，有些视频播放时没有画面或没有声音，例如显卡无法解码的 HEVC 视频、旧的 AVI 或 MPEG-4 视频，或者带有 AC-3 或 DTS 音频的影片。现在，M³ 一发现这类文件，就会在媒体项目上和通知中告诉你，聚会前操作面板也会提醒你，让你在需要使用之前就能及早解决问题。对于这类视频，M³ 也不再建议禁用硬件加速，因为那样只会让情况更糟。“转换”会创建一个在任何计算机上都能播放的副本，并尽可能使用显卡，让 M³ 和聚会都能顺畅进行。转换进度会显示在媒体项目上和“媒体同步”弹出窗口中，你也可以在该窗口中取消转换。导入的文件会被替换为转换后的副本；共享文件夹中的文件则保持不变，M³ 会播放保存在这台计算机上的转换副本。
 
 ## v26.11.2
 
