@@ -80,7 +80,7 @@ const fs = {
   remove: vi.fn(async () => undefined),
   stat: vi.fn(async () => ({ mtimeMs: 100, size: 2000 })),
 };
-const convertForPlayback = vi.fn(async () => undefined);
+const convertForPlayback = vi.fn(async () => ({ encoder: 'h264_qsv' }));
 const cancelPlaybackConversion = vi.fn(async () => true);
 
 const fileUrl = (path: string) => `file://${path}`;
@@ -126,7 +126,7 @@ describe('media-conversion', () => {
     fs.pathExists.mockResolvedValue(true);
     fs.stat.mockResolvedValue({ mtimeMs: 100, size: 2000 });
     setupFFmpeg.mockResolvedValue('/bin/ffmpeg');
-    convertForPlayback.mockResolvedValue(undefined);
+    convertForPlayback.mockResolvedValue({ encoder: 'h264_qsv' });
     vi.stubGlobal('electronApi', {
       basename: upath.basename,
       cancelPlaybackConversion,
@@ -197,7 +197,7 @@ describe('media-conversion', () => {
       vi.useFakeTimers();
       findPlaybackProblem.mockResolvedValue(PICTURE);
       convertForPlayback.mockReturnValue(
-        new Promise(() => {
+        new Promise<{ encoder: string }>(() => {
           // Never settles: the conversions stay under way.
         }),
       );
@@ -400,8 +400,8 @@ describe('media-conversion', () => {
       let finishFirst: (() => void) | undefined;
       convertForPlayback.mockImplementationOnce(
         () =>
-          new Promise<undefined>((resolve) => {
-            finishFirst = () => resolve(undefined);
+          new Promise<{ encoder: string }>((resolve) => {
+            finishFirst = () => resolve({ encoder: 'h264_qsv' });
           }),
       );
       const { helper, items, store } = await load([

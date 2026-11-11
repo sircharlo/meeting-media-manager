@@ -253,7 +253,7 @@ export const checkMediaPlayback = async (
   const path = fileUrlToPath(fileUrlOrPath);
   if (!path || !(isVideo(path) || isAudio(path))) return null;
   const running = checksInFlight.get(path);
-  if (running) return running;
+  if (running !== undefined) return running;
 
   const check = (async () => {
     let key: string;
@@ -480,7 +480,7 @@ const convertJob = async (id: string) => {
       percent: job.durationSeconds ? 0 : null,
       status: 'converting',
     });
-    await convertForPlayback(ffmpegPath, {
+    const { encoder } = await convertForPlayback(ffmpegPath, {
       durationSeconds: job.durationSeconds,
       id,
       keepVideo: job.problem.missing === 'sound',
@@ -499,6 +499,7 @@ const convertJob = async (id: string) => {
       status: 'done',
     });
     log('Converted media to play on this computer', 'mediaProcessing', 'log', {
+      encoder,
       missing: job.problem.missing,
       seconds: Math.round((Date.now() - (job.startedAt ?? Date.now())) / 1000),
     });

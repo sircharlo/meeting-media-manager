@@ -1,8 +1,25 @@
-import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vi,
+} from 'vitest';
 
-// What `ffmpeg -i <file>` and `ffmpeg -filters` print, per test.
+// What `ffmpeg -i <file>`, `-filters` and `-encoders` print, per test, and
+// the encoders whose one-frame test fails on this "computer".
 let fileDescription = '';
 let filterList = '';
+let encoderList = '';
+let failingEncoders = new Set<string>();
+
+const ffmpegOutputFor = (args: string[]) => {
+  if (args.includes('-filters')) return filterList;
+  if (args.includes('-encoders')) return encoderList;
+  return fileDescription;
+};
 
 vi.mock('node:child_process', () => ({
   execFile: vi.fn(
@@ -12,11 +29,19 @@ vi.mock('node:child_process', () => ({
       _options: unknown,
       callback: (error: Error | null, stdout: string, stderr: string) => void,
     ) => {
-      callback(
-        new Error('exit 1'),
-        '',
-        args.includes('-filters') ? filterList : fileDescription,
-      );
+      // A one-frame test encode, to nowhere.
+      if (args.includes('null')) {
+        const encoder = args[args.indexOf('-c:v') + 1] ?? '';
+        callback(
+          failingEncoders.has(encoder)
+            ? new Error('Cannot load nvcuda.dll')
+            : null,
+          '',
+          '',
+        );
+        return;
+      }
+      callback(new Error('exit 1'), '', ffmpegOutputFor(args));
     },
   ),
 }));
@@ -96,9 +121,21 @@ const videoFiltersOf = () => {
 };
 
 describe('playback-conversion', () => {
+  const platform = process.platform;
+  const setPlatform = (value: NodeJS.Platform) => {
+    Object.defineProperty(process, 'platform', { configurable: true, value });
+  };
+
+  afterEach(() => {
+    setPlatform(platform);
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     listeners = {};
+    encoderList = '';
+    failingEncoders = new Set();
+    setPlatform('win32');
     fileDescription = `Input #0, mov,mp4: \n  Duration: 00:01:00.00, start: 0.000000\n${SDR_VIDEO}`;
     filterList = FILTERS_WITH_ZSCALE;
   });
@@ -107,7 +144,7 @@ describe('playback-conversion', () => {
     it('re-encodes the picture to H.264 and the sound to AAC, with half the threads given', async () => {
       const { getConversionOptions } = await importModule();
       const options = getConversionOptions({
-        keepVideo: false,
+        encoder: { name: 'libx264', options: ['-crf', '20'] },
         threads: 6,
         toneMap: false,
       });
@@ -122,7 +159,7 @@ describe('playback-conversion', () => {
     it('copies the picture when only the sound needs converting', async () => {
       const { getConversionOptions } = await importModule();
       const options = getConversionOptions({
-        keepVideo: true,
+        encoder: null,
         threads: 2,
         toneMap: false,
       });
@@ -255,6 +292,123 @@ describe('playback-conversion', () => {
       await started();
       finish.reject(new Error('ffmpeg exited with code 1: Invalid data'));
       await expect(conversion).rejects.toThrow('Invalid data');
+    });
+  });
+
+  describe('choosing the encoder', () => {
+    // As \`ffmpeg -encoders\` lists them: every one it was built with.
+    const ALL_WINDOWS_ENCODERS = [
+      ' V....D libx264              libx264 H.264 / AVC / MPEG-4 AVC',
+      ' V....D h264_amf             AMD AMF H.264 Encoder (codec h264)',
+      ' V....D h264_nvenc           NVIDIA NVENC H.264 encoder (codec h264)',
+      ' V..... h264_qsv             H.264 (Intel Quick Sync Video acceleration)',
+    ].join('\n');
+
+    /** Converts, letting its ffmpeg run finish. */
+    const convert = async (options: { keepVideo?: boolean } = {}) => {
+      const { runFfmpegCommand } = await import('src-electron/main/ffmpeg');
+      const runs = vi.mocked(runFfmpegCommand).mock.calls.length;
+      const { convertForPlayback } = await import('../playback-conversion');
+      const conversion = convertForPlayback(
+        '/bin/ffmpeg',
+        { ...request, ...options },
+        vi.fn(),
+      );
+      await vi.waitFor(() => {
+        expect(runFfmpegCommand).toHaveBeenCalledTimes(runs + 1);
+      });
+      finish.resolve();
+      return conversion;
+    };
+
+    const encoderUsed = () => {
+      const options = command.outputOptions.mock.calls.at(-1)?.[0] ?? [];
+      return options[options.indexOf('-c:v') + 1];
+    };
+
+    beforeEach(() => {
+      vi.resetModules();
+      encoderList = ALL_WINDOWS_ENCODERS;
+    });
+
+    it('uses the best graphics-card encoder that works on this computer', async () => {
+      failingEncoders = new Set(['h264_nvenc']);
+      await expect(convert()).resolves.toEqual({ encoder: 'h264_qsv' });
+      expect(encoderUsed()).toBe('h264_qsv');
+      expect(command.outputOptions.mock.calls[0]?.[0]).toEqual(
+        expect.arrayContaining(['-global_quality', '21']),
+      );
+    });
+
+    it('only tries the ones this ffmpeg was built with, once', async () => {
+      encoderList = ' V..... h264_qsv             H.264 (Intel Quick Sync)';
+      await convert();
+      await convert();
+      const { execFile } = await import('node:child_process');
+      const tried = vi
+        .mocked(execFile)
+        .mock.calls.map((call) => call[1] as string[])
+        .filter((args) => args.includes('null'))
+        .map((args) => args[args.indexOf('-c:v') + 1]);
+      expect(tried).toEqual(['h264_qsv']);
+    });
+
+    it('uses x264 when no graphics-card encoder works', async () => {
+      failingEncoders = new Set(['h264_amf', 'h264_nvenc', 'h264_qsv']);
+      await expect(convert()).resolves.toEqual({ encoder: 'libx264' });
+    });
+
+    it('uses x264 where M³ knows no graphics-card encoder', async () => {
+      setPlatform('freebsd');
+      await expect(convert()).resolves.toEqual({ encoder: 'libx264' });
+    });
+
+    it('copies the picture without choosing an encoder when only the sound needs converting', async () => {
+      await expect(convert({ keepVideo: true })).resolves.toEqual({
+        encoder: 'copy',
+      });
+      const { execFile } = await import('node:child_process');
+      expect(
+        vi
+          .mocked(execFile)
+          .mock.calls.some((call) =>
+            (call[1] as string[]).includes('-encoders'),
+          ),
+      ).toBe(false);
+    });
+
+    it('converts again with x264 when the graphics card fails on the real file, and keeps to x264', async () => {
+      const { runFfmpegCommand } = await import('src-electron/main/ffmpeg');
+      const { convertForPlayback } = await import('../playback-conversion');
+      const progress: number[] = [];
+      const conversion = convertForPlayback('/bin/ffmpeg', request, (p) =>
+        progress.push(p.percent),
+      );
+      await started();
+      finish.reject(
+        new Error('ffmpeg exited with code 1: Error during encoding'),
+      );
+      await vi.waitFor(() => {
+        expect(runFfmpegCommand).toHaveBeenCalledTimes(2);
+      });
+      finish.resolve();
+
+      await expect(conversion).resolves.toEqual({ encoder: 'libx264' });
+      expect(progress).toEqual([0, 100]);
+      // The next file goes straight to x264.
+      await expect(convert()).resolves.toEqual({ encoder: 'libx264' });
+      expect(runFfmpegCommand).toHaveBeenCalledTimes(3);
+    });
+
+    it("doesn't convert again once cancelled", async () => {
+      const { runFfmpegCommand } = await import('src-electron/main/ffmpeg');
+      const { cancelPlaybackConversion, convertForPlayback } =
+        await import('../playback-conversion');
+      const conversion = convertForPlayback('/bin/ffmpeg', request, vi.fn());
+      await started();
+      cancelPlaybackConversion('job-1');
+      await expect(conversion).rejects.toThrow('conversion-cancelled');
+      expect(runFfmpegCommand).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -40,6 +40,12 @@ export interface PlaybackConversionRequest {
   sourcePath: string;
 }
 
+/** How a file was converted. */
+export interface PlaybackConversionResult {
+  /** The video encoder used ('copy' when only the sound needed converting). */
+  encoder: string;
+}
+
 /**
  * What keeps a file from playing on this computer: Chromium has no decoder
  * here for its picture (or for its container, such as AVI), or for any of

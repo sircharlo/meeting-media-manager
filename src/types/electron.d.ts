@@ -12,6 +12,7 @@ import type { UpdaterState, UpdateVersionInfo } from 'src/types/general';
 import type {
   PlaybackConversionProgress,
   PlaybackConversionRequest,
+  PlaybackConversionResult,
 } from 'src/types/media-conversion';
 import type {
   ZoomCommand,
@@ -113,7 +114,7 @@ export interface ElectronApi {
   convertForPlayback: (
     ffmpegPath: string,
     request: PlaybackConversionRequest,
-  ) => Promise<void>;
+  ) => Promise<PlaybackConversionResult>;
   convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
   /**
    * Converts a non-video file into a video file.

@@ -8,12 +8,11 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### ✨ New Features
 
-- ✨ **Media Your Computer Can't Play**: Some videos play without a picture, or without sound, on some computers: an HEVC video on a graphics card that can't decode it, an old AVI or MPEG-4 video, or a movie with AC-3 or DTS sound. M³ now tells you as soon as it finds one, on the media item and in a notice, and the before-meeting panel reminds you, so you can fix it well before you need it. Convert makes a copy that plays on any computer, while M³ keeps working. Its progress shows on the media item and in the media sync popup, where you can also cancel it. A file you imported is replaced by its converted copy; a file from your watched folder is left as it is, and M³ plays a converted copy kept on this computer.
+- ✨ **Media Your Computer Can't Play**: Some videos play without a picture, or without sound, on some computers: an HEVC video on a graphics card that can't decode it, an old AVI or MPEG-4 video, or a movie with AC-3 or DTS sound. M³ now tells you as soon as it finds one, on the media item and in a notice, and the before-meeting panel reminds you, so you can fix it well before you need it. It also no longer suggests turning off hardware acceleration for such a video, which would only make it worse. Convert makes a copy that plays on any computer, using your graphics card when it can so M³ and your meeting stay smooth. Its progress shows on the media item and in the media sync popup, where you can also cancel it. A file you imported is replaced by its converted copy; a file from your watched folder is left as it is, and M³ plays a converted copy kept on this computer.
 
 ### 🐞 Bug Fixes
 
 - 🐞 **Zoom Meeting Manager**: Zoom closes its audio menu as soon as its meeting window moves or changes size, as it can when a panel opens just after the meeting starts. The check M³ runs before a meeting then couldn't leave computer audio and paused your automations. M³ now opens the menu again when that happens.
-- 🐞 **Videos Your Computer Can't Decode**: A video in a format your computer has no decoder for, such as an HEVC video on a graphics card that can't decode it, no longer brings up the suggestion to disable hardware acceleration. That would only have made it worse: those videos can only be decoded by the graphics card.
 - 🐞 **Media Export**: With "Convert exported files to MP4" turned on, WAV, FLAC, OGG and M4A audio files couldn't be converted and were left out of the export. They're now converted like MP3 files.
 - 🐞 **Error Reports**: Some error reports about folders M³ couldn't create could include your Windows user name. It's now removed from those too, as it already was everywhere else.
 

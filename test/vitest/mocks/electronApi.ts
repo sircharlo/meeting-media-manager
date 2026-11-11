@@ -44,7 +44,7 @@ export const electronApi: ElectronApi = {
   closeWebsiteWindow: function () {
     throw new Error('Function not implemented.');
   },
-  convertForPlayback: async () => undefined,
+  convertForPlayback: async () => ({ encoder: 'libx264' }),
   convertHeic: function (image) {
     throw new Error('Function not implemented.');
   },
