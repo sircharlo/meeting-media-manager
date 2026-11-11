@@ -264,6 +264,19 @@ M³는 컴퓨터에서 소리와 함께 미디어를 재생하지만, OBS Studio
 3. **언어 지원 여부**: 선택한 미디어 언어가 여호와의 증인 공식 웹사이트에서 제공되는지 확인합니다.
 4. **대체 언어**: 대체 언어를 설정해 보세요.
 
+### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+
+If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+
+1. Download the latest version from the [Download page](download).
+2. Run the installer. It puts M³ back in place and keeps your settings.
+
+**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+
+If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+
+To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, it still installs updates when it closes, so give it a minute before turning the computer off.
+
 ## 지원 및 커뮤니티 {#support-community}
 
 ### :radioactive: 문제를 어떻게 신고하나요? {#how-do-i-report-an-issue}
