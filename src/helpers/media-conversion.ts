@@ -546,6 +546,37 @@ const isPlaying = (path: string) => {
 };
 
 /**
+ * Where an imported file's converted copy goes: its own path when its
+ * container holds H.264 / AAC as is, otherwise an .mp4 beside it, never over
+ * another file.
+ */
+const getImportedDestination = async ({
+  id,
+  sourcePath,
+}: MediaConversionJob) => {
+  const extension = extname(sourcePath).toLowerCase().slice(1);
+  if (IN_PLACE_EXTENSIONS.has(extension)) return sourcePath;
+  const name = basename(sourcePath, extname(sourcePath));
+  const beside = join(dirname(sourcePath), `${name}.mp4`);
+  return (await pathExists(beside))
+    ? join(dirname(sourcePath), `${name}-${id.slice(0, 8)}.mp4`)
+    : beside;
+};
+
+/** Moves a file, retrying for a moment: a file just shown (its thumbnail, a preview) can stay locked. */
+const moveWithRetries = async (from: string, to: string) => {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await move(from, to, { overwrite: true }); // NOSONAR: retried in order
+      return;
+    } catch (error) {
+      if (attempt >= MOVE_RETRIES) throw error;
+      await sleep(MOVE_RETRY_DELAY_MS); // NOSONAR: retried in order
+    }
+  }
+};
+
+/**
  * Moves the converted file where it belongs. An imported file is replaced
  * (it's M³'s own copy), waiting for it to stop playing first; a watched one
  * gets its converted copy in the cache.
@@ -554,49 +585,26 @@ const placeConvertedFile = async (
   job: MediaConversionJob,
   tempPath: string,
 ) => {
-  let destination: string;
   if (job.source === 'watched') {
-    destination = await getWatchedConversionPath(job.sourcePath);
+    const destination = await getWatchedConversionPath(job.sourcePath);
     await ensureDir(dirname(destination));
-  } else {
-    const extension = extname(job.sourcePath).toLowerCase().slice(1);
-    destination = IN_PLACE_EXTENSIONS.has(extension)
-      ? job.sourcePath
-      : join(
-          dirname(job.sourcePath),
-          `${basename(job.sourcePath, extname(job.sourcePath))}.mp4`,
-        );
-    if (destination !== job.sourcePath && (await pathExists(destination))) {
-      destination = join(
-        dirname(job.sourcePath),
-        `${basename(job.sourcePath, extname(job.sourcePath))}-${job.id.slice(0, 8)}.mp4`,
-      );
-    }
-    while (isPlaying(job.sourcePath)) await sleep(MOVE_RETRY_DELAY_MS); // NOSONAR: waits for playback to stop
+    await moveWithRetries(tempPath, destination);
+    return destination;
   }
 
-  // A file just shown (its thumbnail, a preview) can stay locked a moment.
-  for (let attempt = 1; ; attempt++) {
-    try {
-      await move(tempPath, destination, { overwrite: true }); // NOSONAR: retried in order
-      break;
-    } catch (error) {
-      if (attempt >= MOVE_RETRIES) throw error;
-      await sleep(MOVE_RETRY_DELAY_MS); // NOSONAR: retried in order
-    }
+  const destination = await getImportedDestination(job);
+  while (isPlaying(job.sourcePath)) await sleep(MOVE_RETRY_DELAY_MS); // NOSONAR: waits for playback to stop
+  await moveWithRetries(tempPath, destination);
+  if (destination !== job.sourcePath) {
+    await remove(job.sourcePath).catch(() => undefined);
   }
-  if (job.source === 'additional') {
-    if (destination !== job.sourcePath) {
-      await remove(job.sourcePath).catch(() => undefined);
-    }
-    // The thumbnail saved next to the file is of what the original showed,
-    // a black frame when its picture didn't play.
-    await Promise.all(
-      [job.sourcePath, destination].map((path) =>
-        remove(changeExt(path, '.jpg')).catch(() => undefined),
-      ),
-    );
-  }
+  // The thumbnail saved next to the file is of what the original showed, a
+  // black frame when its picture didn't play.
+  await Promise.all(
+    [job.sourcePath, destination].map((path) =>
+      remove(changeExt(path, '.jpg')).catch(() => undefined),
+    ),
+  );
   return destination;
 };
 

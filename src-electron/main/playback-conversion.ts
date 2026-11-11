@@ -74,19 +74,27 @@ const canToneMap = (ffmpegPath: string) => {
   if (!support) {
     support = readFfmpegOutput(ffmpegPath, ['-filters']).then(
       (filters) =>
-        /^\s*\S+\s+zscale\s/m.test(filters) &&
-        /^\s*\S+\s+tonemap\s/m.test(filters),
+        hasFilter(filters, 'zscale') && hasFilter(filters, 'tonemap'),
     );
     toneMappingSupport.set(ffmpegPath, support);
   }
   return support;
 };
 
+/**
+ * Whether `ffmpeg -filters` lists this filter: its name is the second column
+ * (" .SC zscale  V->V  Apply resizing...").
+ */
+const hasFilter = (filters: string, name: string) =>
+  filters
+    .split('\n')
+    .some((line) => line.trim().split(' ').filter(Boolean)[1] === name);
+
 /** The input's video stream line, from ffmpeg's description of the file. */
 const getVideoStreamLine = (description: string) =>
   description
-    .split(/\r?\n/)
-    .find((line) => /Stream #\d+:\d+.*: Video:/.test(line));
+    .split('\n')
+    .find((line) => line.includes('Stream #') && line.includes(': Video:'));
 
 const toSeconds = (match: null | RegExpExecArray) =>
   match
