@@ -4,6 +4,15 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### 🐞 Bug Fixes
+
+- 🐞 **Zoom Meeting Manager**: Zoom closes its audio menu as soon as its meeting window moves or changes size, as it can when a panel opens just after the meeting starts. The check M³ runs before a meeting then couldn't leave computer audio and paused your automations. M³ now opens the menu again when that happens.
+- 🐞 **Videos Your Computer Can't Decode**: A video in a format your computer has no decoder for, such as an HEVC video on a graphics card that can't decode it, no longer brings up the suggestion to disable hardware acceleration. That would only have made it worse: those videos can only be decoded by the graphics card.
+- 🐞 **Media Export**: With "Convert exported files to MP4" turned on, WAV, FLAC, OGG and M4A audio files couldn't be converted and were left out of the export. They're now converted like MP3 files.
+- 🐞 **Error Reports**: Some error reports about folders M³ couldn't create could include your Windows user name. It's now removed from those too, as it already was everywhere else.
+
 ## v26.11.2
 
 ### ✨ New Features

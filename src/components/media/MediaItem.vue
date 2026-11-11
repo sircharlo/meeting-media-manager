@@ -1404,7 +1404,7 @@ import {
 } from 'src/helpers/zoom';
 import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log, uuid } from 'src/shared/vanilla';
-import { isFileUrl } from 'src/utils/fs';
+import { getFileSizeIfExists, isFileUrl } from 'src/utils/fs';
 import {
   getFileNameMaskFromPubMediaId,
   isAudio,
@@ -1636,7 +1636,7 @@ const failedThumbnailUrl = ref('');
 const { basename, dirname, fileUrlToPath, fs, openFileDialog } =
   globalThis.electronApi;
 
-const { pathExists, stat } = fs;
+const { pathExists } = fs;
 const PATH_ACCESS_WARNING_THROTTLE_MS = 30_000;
 
 let lastPathAccessWarningAt = 0;
@@ -2070,14 +2070,12 @@ const notifyPathAccessWarning = () => {
 const fileIsLocal = async () => {
   const filePath = fileUrlToPath(props.media.fileUrl);
   try {
-    const fileExists = await pathExists(filePath);
-    const remoteSizeKnown = props.media.filesize !== undefined;
-    const localSize = fileExists ? (await stat(filePath)).size : 0;
-
-    if (!fileExists) return false;
-    if (!remoteSizeKnown) return true;
-    if (localSize !== props.media.filesize) return false;
-    return true;
+    const localSize = await getFileSizeIfExists(filePath);
+    if (localSize === null) return false;
+    // A remote file of known size is only local once all of it is there.
+    return (
+      props.media.filesize === undefined || localSize === props.media.filesize
+    );
   } catch (error) {
     if (
       isExpectedNetworkPathAccessError(error, filePath, getRendererPlatform())

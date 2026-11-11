@@ -102,6 +102,26 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     expect(out.endsWith('.mp4')).toBe(true);
   });
 
+  // Only .mp3 used to take the audio path: the others went down the image
+  // path and failed there.
+  it.each(['mp3', 'wav', 'flac', 'ogg', 'M4A'])(
+    'converts a .%s file as audio, not as an image',
+    async (extension) => {
+      const { pathExists } = await import('fs-extra/esm');
+      (pathExists as unknown as Mock).mockResolvedValue(false);
+      const imageSize = await import('src-electron/main/image-size');
+      const conversion = createVideoFromNonVideo(
+        `/tmp/audio-${extension}.${extension}`,
+        '/bin/ffmpeg',
+      );
+      await waitUntil(() => !!ffmpegOnMap.end);
+      ffmpegOnMap.end?.();
+      await conversion;
+      expect(ffmpegChain.noVideo).toHaveBeenCalledTimes(1);
+      expect(imageSize.getImageDimensions).not.toHaveBeenCalled();
+    },
+  );
+
   it('converts image to mp4 - missing dimensions throws', async () => {
     const { pathExists } = await import('fs-extra/esm');
     const pathExistsMock = pathExists as unknown as Mock<

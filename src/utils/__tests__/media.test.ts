@@ -391,6 +391,15 @@ describe('Media Utilities', () => {
         'a network failure',
         { code: 2, message: 'PIPELINE_ERROR_NETWORK: net error' },
       ],
+      // MMM-V2-3NV: no decoder for the format on this machine (HEVC).
+      [
+        'a format this machine has no decoder for',
+        {
+          code: 4,
+          message:
+            'PipelineStatus::DECODER_ERROR_NOT_SUPPORTED: GetVideoDecoderConfigCount failed: The operation completed successfully. (0x0)',
+        },
+      ],
     ])('does not treat %s as a decoder failure', (_name, error) => {
       expect(isGpuDecodeError(error)).toBe(false);
     });
