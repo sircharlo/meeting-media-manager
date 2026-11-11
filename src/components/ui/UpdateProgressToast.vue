@@ -47,10 +47,11 @@
           <q-btn
             v-if="isCountingDown"
             class="update-toast__later"
+            color="white"
             :label="t('later')"
             no-caps
+            outline
             rounded
-            unelevated
             @click="emit('postpone')"
           />
           <q-btn
@@ -351,8 +352,6 @@ $update-toast-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .update-toast__later {
-  background: rgba(255, 255, 255, 0.18);
-  color: white;
   flex: none;
   font-weight: 600;
 }
