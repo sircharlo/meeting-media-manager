@@ -87,6 +87,12 @@ export interface UpdaterState {
  */
 export interface UpdateVersionInfo {
   /**
+   * Whether installing asks for administrator permission first (Windows
+   * installs for all users), so the update never installs by itself and waits
+   * for the user to choose to install it.
+   */
+  asksPermission?: boolean;
+  /**
    * Whether this downloaded update has waited since an earlier session, so
    * it's installed now, after a countdown the user can postpone, rather than
    * when the app quits (Windows installs for one user).
