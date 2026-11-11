@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### 🐞 Bug Fixes
+
+- 🐞 **Updates and Shutting Down**: Turning the computer off right after closing M³ could cut an update off halfway, and M³ then wouldn't open anymore. On Windows, M³ now installs a downloaded update the next time it's opened instead, after a short countdown with a **Later** button, and never while media is shown or around meeting time. When M³ is installed for all users, it still installs updates when it closes, but no longer while the computer is shutting down or restarting. If M³ won't open after an interrupted update, the FAQ explains how to repair it without losing any settings.
+
 ## v26.11.2
 
 ### ✨ New Features

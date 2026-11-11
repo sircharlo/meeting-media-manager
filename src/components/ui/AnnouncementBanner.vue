@@ -27,11 +27,13 @@
       <UpdateProgressToast
         v-if="updatePhase && !updateToastDismissed"
         :key="updateToastKey"
+        :install-countdown="installCountdown"
         :phase="updatePhase"
         :progress="updateProgress"
         :version-info="updateVersionInfo"
-        @dismiss="updateToastDismissed = true"
-        @install="quitAndInstall()"
+        @dismiss="dismissUpdateToast()"
+        @install="installUpdate()"
+        @postpone="stopInstallCountdown()"
       />
     </Transition>
   </Teleport>
@@ -44,8 +46,10 @@ import type {
   UpdateVersionInfo,
 } from 'src/types';
 
+import { useIntervalFn } from '@vueuse/core';
 import UpdateProgressToast from 'components/ui/UpdateProgressToast.vue';
 import { useQuasar } from 'quasar';
+import { getMeetingStartToday } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
@@ -119,6 +123,67 @@ const updateToastDismissed = ref(false);
 // Each new update gets a fresh toast, rather than reusing a finished one.
 const updateToastKey = ref(0);
 
+// An update that has waited since an earlier session installs by itself
+// after this countdown, unless the user postpones it (the main process
+// decides which updates are due: see shouldInstallOnLaunch in updater.ts).
+const INSTALL_COUNTDOWN_SECONDS = 15;
+// Installing closes M³ for a minute or so, which must not happen from a bit
+// before the meeting until it's surely over.
+const MINUTES_BEFORE_MEETING_WITHOUT_INSTALL = 15;
+const MINUTES_AFTER_MEETING_START_WITHOUT_INSTALL = 120;
+const MS_PER_MINUTE = 60_000;
+
+// Seconds left before the update installs, while counting down.
+const installCountdown = ref<number>();
+
+const { pause: pauseInstallCountdown, resume: resumeInstallCountdown } =
+  useIntervalFn(
+    () => {
+      if (installCountdown.value) installCountdown.value -= 1;
+    },
+    1000,
+    { immediate: false },
+  );
+
+const stopInstallCountdown = () => {
+  pauseInstallCountdown();
+  installCountdown.value = undefined;
+};
+
+const installUpdate = () => {
+  stopInstallCountdown();
+  quitAndInstall();
+};
+
+const dismissUpdateToast = () => {
+  stopInstallCountdown();
+  updateToastDismissed.value = true;
+};
+
+const isAroundMeetingTime = () => {
+  const meetingStart = getMeetingStartToday();
+  if (!meetingStart) return false;
+  const minutesUntilStart =
+    (meetingStart.getTime() - Date.now()) / MS_PER_MINUTE;
+  return (
+    minutesUntilStart < MINUTES_BEFORE_MEETING_WITHOUT_INSTALL &&
+    minutesUntilStart > -MINUTES_AFTER_MEETING_START_WITHOUT_INSTALL
+  );
+};
+
+const isGoodTimeToInstall = () =>
+  !currentStateStore.mediaIsPlaying && !isAroundMeetingTime();
+
+// The toast just showed an update that is due now: start the countdown,
+// unless the toast was closed or M³ is needed right now. The update then
+// waits for the next launch, or for the toast's own install button.
+const startInstallCountdownIfDue = (versionInfo?: UpdateVersionInfo) => {
+  if (!versionInfo?.installOnLaunch) return;
+  if (updateToastDismissed.value || !isGoodTimeToInstall()) return;
+  installCountdown.value = INSTALL_COUNTDOWN_SECONDS;
+  resumeInstallCountdown();
+};
+
 // True once any updater event has been received over IPC. The main process
 // runs the update check at startup, concurrently with the renderer booting,
 // so update-available/download-progress/update-downloaded can fire before
@@ -129,6 +194,7 @@ let updateEventReceived = false;
 
 const handleUpdateAvailable = () => {
   updateEventReceived = true;
+  stopInstallCountdown();
   updatePhase.value = 'downloading';
   updateProgress.value = undefined;
   updateToastDismissed.value = false;
@@ -152,6 +218,7 @@ const handleUpdateDownloaded = (versionInfo?: UpdateVersionInfo) => {
   // preceding update-available, so this can be the toast's first state.
   updatePhase.value = 'downloaded';
   updateVersionInfo.value = versionInfo;
+  startInstallCountdownIfDue(versionInfo);
 };
 
 // The updater check runs at startup, concurrently with the renderer booting,
@@ -264,6 +331,16 @@ if (import.meta.env.DEV) {
     }, 500);
   };
 
+  // An update that waited since an earlier session, as at launch on Windows.
+  const simulateInstallOnLaunch = () => {
+    handleUpdateAvailable();
+    handleUpdateDownloaded({
+      installOnLaunch: true,
+      isDowngrade: false,
+      version,
+    });
+  };
+
   onMounted(() => {
     createTemporaryNotification({
       actions: [
@@ -271,6 +348,12 @@ if (import.meta.env.DEV) {
           color: 'white',
           handler: simulateUpdateFlow,
           label: 'Simulate updater',
+          noDismiss: true,
+        },
+        {
+          color: 'white',
+          handler: simulateInstallOnLaunch,
+          label: 'Simulate install on launch',
           noDismiss: true,
         },
         { color: 'white', icon: 'close', round: true },
@@ -391,6 +474,10 @@ const activeAnnouncements = computed(() =>
     return isVersionOk(a);
   }),
 );
+
+watch(installCountdown, (secondsLeft) => {
+  if (secondsLeft === 0) installUpdate();
+});
 
 // A plain watchEffect here is a trap: loadAnnouncements()/loadLatestVersion()
 // each read their guard ref (announcements.value / latestVersion.value)

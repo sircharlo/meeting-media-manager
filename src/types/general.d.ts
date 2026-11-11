@@ -86,6 +86,12 @@ export interface UpdaterState {
  * all. Purely informational - never blocks or gates the install.
  */
 export interface UpdateVersionInfo {
+  /**
+   * Whether this downloaded update has waited since an earlier session, so
+   * it's installed now, after a countdown the user can postpone, rather than
+   * when the app quits (Windows installs for one user).
+   */
+  installOnLaunch?: boolean;
   isDowngrade: boolean;
   version: string;
 }
