@@ -264,6 +264,19 @@ Verifique estas configurações de idioma:
 3. **Disponibilidade do idioma**: Certifique-se de que o idioma da mídia está disponível no site oficial das Testemunhas de Jeová
 4. **Idioma alternativo**: Tente configurar um idioma alternativo
 
+### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+
+If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+
+1. Download the latest version from the [Download page](download).
+2. Run the installer. It puts M³ back in place and keeps your settings.
+
+**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+
+If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+
+To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, it still installs updates when it closes, so give it a minute before turning the computer off.
+
 ## Suporte e comunidade {#support-community}
 
 ### :radioactive: Como faço para relatar um problema? {#how-do-i-report-an-issue}
