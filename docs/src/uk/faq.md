@@ -264,18 +264,18 @@ M³ відтворює медіа зі звуком на вашому комп�
 3. **Доступність мовою**: Переконайтеся, що мова медіа доступна на офіційному сайті Свідків Єгови
 4. **Резервна мова**: Спробуйте задати резервну мову
 
-### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+### :wrench: M³ не відкривається після оновлення. Що робити? {#faq-update-interrupted}
 
-If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+Якщо комп’ютер вимкнули або перезавантажили, коли M³ встановлював оновлення, встановлення могло перерватися на півдорозі, і тепер M³ не відкривається. Ваші налаштування та медіа нікуди не зникли. Щоб відновити M³:
 
-1. Download the latest version from the [Download page](download).
-2. Run the installer. It puts M³ back in place and keeps your settings.
+1. Завантажте найновішу версію зі [сторінки завантаження](download).
+2. Запустіть інсталятор. Він повторно встановить M³ і збереже ваші налаштування.
 
-**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+**Не видаляйте M³ перед встановленням**: разом із ним видаляються і його налаштування.
 
-If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+Якщо комп’ютер не може підключитися до інтернету, інсталятор, який M³ уже завантажив, зазвичай досі на місці: натисніть `Win+R`, введіть `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, а потім запустіть інсталятор у папці, що відкриється.
 
-To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, it still installs updates when it closes, so give it a minute before turning the computer off.
+Щоб цього не ставалося, M³ у Windows встановлює завантажене оновлення під час наступного запуску, а не під час закриття. Якщо M³ встановлено для всіх користувачів комп’ютера, він і далі встановлює оновлення під час закриття, тож зачекайте хвилину, перш ніж вимикати комп’ютер.
 
 ## Підтримка та спільнота {#support-community}
 

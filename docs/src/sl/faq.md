@@ -264,18 +264,18 @@ Preveri naslednje jezikovne nastavitve:
 3. **Razpoložljivost jezika**: preveri, ali je izbrani jezik multimedijske vsebine na voljo na uradnem spletnem mestu Jehovovih prič
 4. **Nadomestni jezik**: poskusi nastaviti nadomestni jezik
 
-### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+### :wrench: M³ se po posodobitvi ne odpre. Kaj naj storim? {#faq-update-interrupted}
 
-If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+Če je bil računalnik izklopljen ali znova zagnan, medtem ko je M³ nameščal posodobitev, se je namestitev morda ustavila na pol poti in M³ se ne odpre več. Tvoje nastavitve in multimedijska vsebina so še vedno shranjene. M³ popraviš takole:
 
-1. Download the latest version from the [Download page](download).
-2. Run the installer. It puts M³ back in place and keeps your settings.
+1. Najnovejšo različico prenesi s [strani za prenos](download).
+2. Zaženi namestitveni program. Ta obnovi M³ in ohrani tvoje nastavitve.
 
-**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+**Pred tem ne odstranjuj M³**: z odstranitvijo se izbrišejo tudi njegove nastavitve.
 
-If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+Če se računalnik ne more povezati z internetom, je namestitveni program, ki ga je M³ že prenesel, običajno še vedno tam: pritisni `Win+R`, vnesi `%LOCALAPPDATA%\meeting-media-manager-updater\pending` in nato zaženi namestitveni program v mapi, ki se odpre.
 
-To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, it still installs updates when it closes, so give it a minute before turning the computer off.
+Da se namestitev ne bi tako ustavila na pol poti, M³ v sistemu Windows preneseno posodobitev namesti ob naslednjem zagonu namesto ob zaprtju. Če je M³ nameščen za vse uporabnike računalnika, posodobitve še vedno namešča ob zaprtju, zato mu pred izklopom računalnika pusti minuto časa.
 
 ## Podpora in skupnost {#support-community}
 

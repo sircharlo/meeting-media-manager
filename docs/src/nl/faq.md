@@ -264,18 +264,18 @@ Controleer deze taalinstellingen:
 3. **Taalbeschikbaarheid**: Zorg ervoor dat de mediataal beschikbaar is op de officiële website van Jehovah's Getuigen
 4. **Reservetaal**: Probeer een reservetaal in te stellen
 
-### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+### :wrench: M³ opent niet meer na een update. Wat moet ik doen? {#faq-update-interrupted}
 
-If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+Als de computer werd uitgezet of opnieuw opgestart terwijl M³ een update aan het installeren was, is de installatie misschien halverwege gestopt en opent M³ niet meer. Je instellingen en media zijn er nog. Zo herstel je M³:
 
-1. Download the latest version from the [Download page](download).
-2. Run the installer. It puts M³ back in place and keeps your settings.
+1. Download de nieuwste versie van de [downloadpagina](download).
+2. Voer het installatieprogramma uit. Het herstelt M³ en behoudt je instellingen.
 
-**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+**Verwijder M³ niet eerst**: als je het verwijdert, worden ook de instellingen ervan gewist.
 
-If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+Als de computer geen verbinding met internet kan maken, is het installatieprogramma dat M³ had gedownload meestal nog aanwezig: druk op `Win+R`, typ `%LOCALAPPDATA%\meeting-media-manager-updater\pending` en voer daarna het installatieprogramma uit in de map die wordt geopend.
 
-To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, it still installs updates when it closes, so give it a minute before turning the computer off.
+Om te voorkomen dat een installatie zo halverwege stopt, installeert M³ op Windows een gedownloade update de volgende keer dat het wordt geopend, in plaats van wanneer het wordt afgesloten. Als M³ voor alle gebruikers van de computer is geïnstalleerd, installeert het updates nog steeds bij het afsluiten, dus wacht een minuut voordat je de computer uitzet.
 
 ## Ondersteuning en community {#support-community}
 

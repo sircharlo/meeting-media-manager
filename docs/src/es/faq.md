@@ -264,18 +264,18 @@ Comprueba estas opciones de idioma:
 3. **Disponibilidad del idioma**: Asegúrate de que el idioma de los archivos multimedia esté disponible en el sitio web oficial de los testigos de Jehová
 4. **Idioma alternativo**: Prueba a configurar un idioma alternativo
 
-### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+### :wrench: M³ no se abre después de una actualización. ¿Qué debería hacer? {#faq-update-interrupted}
 
-If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+Si la computadora se apagó o se reinició mientras M³ instalaba una actualización, es posible que la instalación se haya detenido a medias y que M³ ya no se abra. Tu configuración y tus archivos multimedia siguen ahí. Para reparar M³:
 
-1. Download the latest version from the [Download page](download).
-2. Run the installer. It puts M³ back in place and keeps your settings.
+1. Descarga la versión más reciente desde la [página de descargas](download).
+2. Ejecuta el instalador. El instalador restaura M³ y conserva tu configuración.
 
-**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+**No desinstales M³ antes**: al desinstalarlo, también se elimina su configuración.
 
-If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+Si la computadora no puede conectarse a internet, normalmente el instalador que M³ había descargado sigue ahí: pulsa `Win+R`, introduce `%LOCALAPPDATA%\meeting-media-manager-updater\pending` y luego ejecuta el instalador que está en la carpeta que se abre.
 
-To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, it still installs updates when it closes, so give it a minute before turning the computer off.
+Para evitar que esto ocurra, en Windows, M³ instala una actualización descargada la próxima vez que se abre, en lugar de cuando se cierra. Cuando M³ está instalado para todos los usuarios de la computadora, sigue instalando las actualizaciones al cerrarse, así que espera un minuto antes de apagar la computadora.
 
 ## Ayuda y comunidad {#support-community}
 

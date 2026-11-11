@@ -264,18 +264,18 @@ Ellenőrizze a következő nyelvi beállításokat:
 3. **Nyelvi elérhetőség**: Győződjön meg arról, hogy a média nyelve elérhető Jehova Tanúi hivatalos honlapján
 4. **Tartalék nyelv**: Próbáljon meg beállítani egy tartalék nyelvet
 
-### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+### :wrench: Az M³ egy frissítés után nem nyílik meg. Mit kell tennem? {#faq-update-interrupted}
 
-If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+Ha a számítógépet kikapcsolták vagy újraindították, miközben az M³ egy frissítést telepített, a telepítés félúton megszakadhatott, és az M³ többé nem nyílik meg. A beállításai és a médiaanyagai továbbra is megvannak. Az M³ javításához:
 
-1. Download the latest version from the [Download page](download).
-2. Run the installer. It puts M³ back in place and keeps your settings.
+1. Töltse le a legújabb verziót a [Letöltési oldalról](download).
+2. Futtassa a telepítőt. Ez helyreállítja az M³-at, és megtartja a beállításait.
 
-**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+**Ne távolítsa el előbb az M³-at**: az eltávolítás a beállításokat is törli.
 
-If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+Ha a számítógép nem tud csatlakozni az internethez, az M³ által korábban letöltött telepítő általában még megvan: nyomja meg a `Win+R` billentyűkombinációt, írja be a `%LOCALAPPDATA%\meeting-media-manager-updater\pending` útvonalat, majd futtassa a megnyíló mappában található telepítőt.
 
-To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, it still installs updates when it closes, so give it a minute before turning the computer off.
+Az ilyen megszakadás elkerülése érdekében az M³ Windows rendszeren a letöltött frissítést a következő megnyitásakor telepíti, nem pedig a bezárásakor. Ha az M³ a számítógép összes felhasználója számára van telepítve, továbbra is bezáráskor telepíti a frissítéseket, ezért a számítógép kikapcsolása előtt várjon egy percet.
 
 ## Támogatás és közösség {#support-community}
 
