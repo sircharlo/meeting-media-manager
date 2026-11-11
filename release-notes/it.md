@@ -8,6 +8,12 @@ Per l'elenco completo delle modifiche tra le versioni, consulta il file CHANGELO
 
 ### ✨ Nuove funzionalità
 
+- ✨ **Media Your Computer Can't Play**: Some videos play without a picture, or without sound, on some computers: an HEVC video on a graphics card that can't decode it, an old AVI or MPEG-4 video, or a movie with AC-3 or DTS sound. M³ now tells you as soon as it finds one, on the media item and in a notice, and the before-meeting panel reminds you, so you can fix it well before you need it. It also no longer suggests turning off hardware acceleration for such a video, which would only make it worse. Convert makes a copy that plays on any computer, using your graphics card when it can so M³ and your meeting stay smooth. Its progress shows on the media item and in the media sync popup, where you can also cancel it. A file you imported is replaced by its converted copy; a file from your watched folder is left as it is, and M³ plays a converted copy kept on this computer.
+
+## v26.11.2
+
+### ✨ Nuove funzionalità
+
 - ✨ **PIN delle impostazioni**: ora le impostazioni di un profilo si possono proteggere con un PIN, così niente viene modificato per errore. Puoi impostarne uno in Impostazioni > Avanzate. Serve anche per eliminare il profilo. Se viene dimenticato, chi è autorizzato a modificare le impostazioni può rimuoverlo seguendo i passaggi della Guida utente.
 
 ## v26.11.0
