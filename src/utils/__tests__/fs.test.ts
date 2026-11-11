@@ -6,11 +6,12 @@ import { defaultSettings } from 'src/constants/settings';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { join } from 'upath';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   betaUpdatesDisabled,
   getAdditionalMediaPath,
+  getFileSizeIfExists,
   getFontsPath,
   getParentDirectory,
   getPublicationDirectory,
@@ -41,6 +42,43 @@ describe('isFileUrl', () => {
     expect(isFileUrl('https://example.com')).toBe(false);
     expect(isFileUrl('/root/some-path')).toBe(false);
     expect(isFileUrl(String.raw`C:\Users/User/some-path`)).toBe(false);
+  });
+});
+
+describe('getFileSizeIfExists', () => {
+  it('gives the size of a file that is there', async () => {
+    const file = join(basePath, 'size-check', 'present.bin');
+    await ensureFile(file);
+    await fs.writeFile(file, 'four');
+    expect(await getFileSizeIfExists(file)).toBe(4);
+    await remove(join(basePath, 'size-check'));
+  });
+
+  it('gives null when nothing is there', async () => {
+    expect(
+      await getFileSizeIfExists(join(basePath, 'size-check', 'missing.bin')),
+    ).toBeNull();
+  });
+
+  // MMM-V2-3NT: an error crossing contextBridge keeps only its message.
+  it('gives null for ENOENT known only from the message', async () => {
+    const stat = vi
+      .spyOn(fs, 'stat')
+      .mockRejectedValueOnce(
+        new Error("ENOENT: no such file or directory, stat 'C:/x.png'"),
+      );
+    expect(await getFileSizeIfExists('C:/x.png')).toBeNull();
+    stat.mockRestore();
+  });
+
+  it('throws any other error', async () => {
+    const stat = vi
+      .spyOn(fs, 'stat')
+      .mockRejectedValueOnce(
+        new Error("EPERM: operation not permitted, stat 'C:/x.png'"),
+      );
+    await expect(getFileSizeIfExists('C:/x.png')).rejects.toThrow('EPERM');
+    stat.mockRestore();
   });
 });
 
