@@ -8,6 +8,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🐞 Bug Fixes
 
+- 🐞 **Videos Your Computer Can't Decode**: A video in a format your computer has no decoder for, such as an HEVC video on a graphics card that can't decode it, no longer brings up the suggestion to disable hardware acceleration. That would only have made it worse: those videos can only be decoded by the graphics card.
 - 🐞 **Error Reports**: Some error reports about folders M³ couldn't create could include your Windows user name. It's now removed from those too, as it already was everywhere else.
 
 ## v26.11.2
