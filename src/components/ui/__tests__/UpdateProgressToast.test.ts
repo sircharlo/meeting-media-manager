@@ -103,6 +103,33 @@ describe('UpdateProgressToast', () => {
     expect(wrapper.emitted('dismiss')).toHaveLength(1);
   });
 
+  it('counts down to installing an update on launch, and can be put off', async () => {
+    const wrapper = mount(UpdateProgressToast, {
+      props: { installCountdown: 15, phase: 'downloaded' },
+    });
+
+    expect(wrapper.text()).toContain('M³ will restart to install it in 15 s');
+    expect(buttonWithLabel(wrapper, /quit and install/i)).toBeUndefined();
+
+    await wrapper.setProps({ installCountdown: 3 });
+    expect(wrapper.text()).toContain('in 3 s');
+
+    await buttonWithLabel(wrapper, /later/i)?.trigger('click');
+    await buttonWithLabel(wrapper, /install now/i)?.trigger('click');
+
+    expect(wrapper.emitted('postpone')).toHaveLength(1);
+    expect(wrapper.emitted('install')).toHaveLength(1);
+  });
+
+  it('shows no countdown or later button for an ordinary finished download', () => {
+    const wrapper = mount(UpdateProgressToast, {
+      props: { phase: 'downloaded' },
+    });
+
+    expect(wrapper.text()).not.toContain('restart');
+    expect(buttonWithLabel(wrapper, /later/i)).toBeUndefined();
+  });
+
   it('skips the celebration for an update that was already on disk', async () => {
     const wrapper = mount(UpdateProgressToast, {
       props: { phase: 'downloaded' },

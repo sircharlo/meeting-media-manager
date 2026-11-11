@@ -4,16 +4,24 @@ import type {
   UpdateVersionInfo,
 } from 'src/types';
 
-import { app } from 'electron';
+import { app, BrowserWindow, powerMonitor } from 'electron';
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
 import { pathExists } from 'fs-extra/esm';
-import { IS_TEST } from 'src-electron/constants';
+import { IS_TEST, PLATFORM } from 'src-electron/constants';
 import { isDownloadErrorExpected } from 'src-electron/main/downloads';
 import { getAppDataPath } from 'src-electron/main/fs';
 import {
+  clearPendingUpdate,
+  countPendingUpdateInstallAttempt,
+  type PendingUpdate,
+  readPendingUpdate,
+  rememberPendingUpdate,
+} from 'src-electron/main/pending-update';
+import {
   captureElectronError,
   isIgnoredUpdateError,
+  isMachineWideInstallation,
   isUpdaterFullDownloadFallbackError,
   markUpdaterFullDownloadFallback,
 } from 'src-electron/main/utils';
@@ -22,6 +30,7 @@ import {
   mainWindowInfo,
   toggleAuthorizedClose,
 } from 'src-electron/main/window/window-main';
+import { isDiskFullError } from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 import { join } from 'upath';
 
@@ -59,8 +68,20 @@ const updaterLogger = {
   warn: (message: unknown) => logUpdaterMessage('warn', message),
 };
 
-let updateDownloaded = false;
+// The version of the downloaded update that is ready to install, if any.
+let downloadedVersion: null | string = null;
 let updateInstallStarted = false;
+
+// After this many started installs, an update that still isn't installed no
+// longer installs by itself when the app opens. The update notification
+// still offers to install it.
+const MAX_LAUNCH_INSTALL_ATTEMPTS = 2;
+
+// Whether downloaded updates wait for the next launch (see
+// shouldInstallOnLaunch), and the update that was already waiting when the
+// app opened.
+let installsOnLaunch = false;
+let pendingAtLaunch: null | PendingUpdate = null;
 
 // Current updater lifecycle state, kept so the renderer can catch up on an
 // update that started before it mounted and missed the push events (the
@@ -141,7 +162,11 @@ function compareVersions(a: string, b: string): number {
   return comparePrereleases(aPre, bPre);
 }
 
-const buildUpdateVersionInfo = (version: string): UpdateVersionInfo => ({
+const buildUpdateVersionInfo = (
+  version: string,
+  installOnLaunch = false,
+): UpdateVersionInfo => ({
+  installOnLaunch,
   isDowngrade: compareVersions(version, app.getVersion()) < 0,
   version,
 });
@@ -187,6 +212,100 @@ export const getBetaUpdatesPath = async () =>
 const isPortable = () => !!process.env.PORTABLE_EXECUTABLE_DIR;
 
 /**
+ * Whether a downloaded update waits for the next launch instead of being
+ * installed when the app quits (electron-builder#7807). Installing on quit
+ * starts the installer right when people tend to turn the computer off, after
+ * the meeting, and the shutdown then kills it: the NSIS installer removes the
+ * old version before it copies the new one, so the app no longer opens at
+ * all. At launch, the user is there while it installs. Windows installs for
+ * one user only: an installation for all users would ask for administrator
+ * rights at launch, so those keep installing on quit, guarded by
+ * watchForSessionEnd. Squirrel.Mac and AppImage swap the app in one quick
+ * step.
+ */
+const shouldInstallOnLaunch = () =>
+  !IS_TEST && PLATFORM === 'win32' && !isMachineWideInstallation();
+
+const reportPendingUpdateError = (error: unknown, name: string) => {
+  if (isDiskFullError(error)) return;
+  captureElectronError(error, { contexts: { fn: { name } } });
+};
+
+// The update that was already waiting when the app opened. One that is now
+// the running version got installed, so it's forgotten.
+const loadPendingUpdate = (): null | PendingUpdate => {
+  try {
+    const pending = readPendingUpdate();
+    if (pending?.version !== app.getVersion()) return pending;
+    clearPendingUpdate();
+  } catch (error) {
+    reportPendingUpdateError(error, 'loadPendingUpdate');
+  }
+  return null;
+};
+
+const rememberDownloadedUpdate = (version: string) => {
+  try {
+    rememberPendingUpdate(version);
+  } catch (error) {
+    reportPendingUpdateError(error, 'rememberDownloadedUpdate');
+  }
+};
+
+const countInstallAttempt = (version: string) => {
+  try {
+    countPendingUpdateInstallAttempt(version);
+  } catch (error) {
+    reportPendingUpdateError(error, 'countInstallAttempt');
+  }
+};
+
+/**
+ * Whether a just-downloaded update has been waiting since an earlier session,
+ * so the renderer installs it now, at a good moment and after a countdown
+ * the user can postpone.
+ * @param version The downloaded version
+ */
+const isDueOnLaunch = (version: string) =>
+  installsOnLaunch &&
+  pendingAtLaunch?.version === version &&
+  pendingAtLaunch.installAttempts < MAX_LAUNCH_INSTALL_ATTEMPTS;
+
+const skipInstallOnQuitForSessionEnd = () => {
+  if (!autoUpdater.autoInstallOnAppQuit) return;
+  autoUpdater.autoInstallOnAppQuit = false;
+  log(
+    'The system is shutting down, so the downloaded update will be installed the next time the app quits instead.',
+    'electronUpdater',
+    'warn',
+  );
+};
+
+/**
+ * Stops the install on quit once the system starts shutting down, restarting
+ * or logging off: the system would kill the installer before it's done and
+ * leave a broken app behind. The update stays downloaded for the next quit.
+ * Squirrel.Mac applies its update itself, so macOS is left alone.
+ */
+const watchForSessionEnd = () => {
+  if (PLATFORM === 'darwin') return;
+
+  if (PLATFORM !== 'win32') {
+    powerMonitor.on('shutdown', skipInstallOnQuitForSessionEnd);
+    return;
+  }
+
+  // Windows only tells windows about the end of the session, and
+  // query-session-end comes first, before the session actually ends.
+  const watchWindow = (window: BrowserWindow) => {
+    window.on('query-session-end', skipInstallOnQuitForSessionEnd);
+    window.on('session-end', skipInstallOnQuitForSessionEnd);
+  };
+  BrowserWindow.getAllWindows().forEach(watchWindow);
+  app.on('browser-window-created', (_event, window) => watchWindow(window));
+};
+
+/**
  * Surfaces an autoUpdater error to the user (read-only volume) and Sentry,
  * unless downloads are currently expected to fail (e.g. offline) or the
  * error is a known, ignorable one.
@@ -229,9 +348,13 @@ export async function initUpdater() {
   // code - its real effect is allowing a version rollback, which relies on
   // the GitHub releases feed/assets themselves staying trustworthy.
   autoUpdater.allowDowngrade = true;
+  installsOnLaunch = shouldInstallOnLaunch();
   autoUpdater.autoDownload = !IS_TEST;
-  autoUpdater.autoInstallOnAppQuit = !IS_TEST;
+  autoUpdater.autoInstallOnAppQuit = !IS_TEST && !installsOnLaunch;
   autoUpdater.logger = updaterLogger;
+
+  if (installsOnLaunch) pendingAtLaunch = loadPendingUpdate();
+  if (autoUpdater.autoInstallOnAppQuit) watchForSessionEnd();
 
   autoUpdater.on('error', (error, message) => {
     // Whatever was in progress is no longer verifiably progressing - reset
@@ -255,7 +378,7 @@ export async function initUpdater() {
 
   autoUpdater.on('update-available', (info) => {
     log('Update available:', 'electronUpdater', 'log', info);
-    updateDownloaded = false;
+    downloadedVersion = null;
     updateInstallStarted = false;
     updatePhase = 'downloading';
     lastUpdaterProgress = null;
@@ -279,14 +402,26 @@ export async function initUpdater() {
 
   autoUpdater.on('update-downloaded', (info) => {
     log('Update downloaded:', 'electronUpdater', 'log', info);
-    updateDownloaded = true;
+    downloadedVersion = info.version;
     updatePhase = 'downloaded';
+    const installOnLaunch = isDueOnLaunch(info.version);
+    if (installOnLaunch) {
+      log(
+        'This update was already downloaded in an earlier session, so it is due to be installed now that the app has opened again.',
+        'electronUpdater',
+        'log',
+      );
+    }
+    if (installsOnLaunch) rememberDownloadedUpdate(info.version);
     // SEC-6 (full-audit backlog): re-derive rather than trust the
     // lastUpdateVersionInfo an earlier update-available event may have set -
     // that event isn't guaranteed to have fired first in every code path
     // (e.g. an update already downloaded in a previous session can surface
     // here directly).
-    lastUpdateVersionInfo = buildUpdateVersionInfo(info.version);
+    lastUpdateVersionInfo = buildUpdateVersionInfo(
+      info.version,
+      installOnLaunch,
+    );
     sendToWindow(
       mainWindowInfo.mainWindow,
       'update-downloaded',
@@ -332,7 +467,7 @@ export const triggerUpdateCheck = async (attempt = 1) => {
 };
 
 export function quitAndInstallUpdate() {
-  if (!updateDownloaded) {
+  if (!downloadedVersion) {
     log(
       'Ignoring quitAndInstall because no downloaded update is ready.',
       'electronUpdater',
@@ -351,6 +486,12 @@ export function quitAndInstallUpdate() {
   }
 
   updateInstallStarted = true;
+  // An update installed on launch runs the installer silently, which starts
+  // the app again by itself once it's done (the visible installer instead
+  // waits on its Finish page). The app may have opened at login with nobody
+  // watching, and the countdown already said it would restart.
+  const isSilent = isDueOnLaunch(downloadedVersion);
+  if (installsOnLaunch) countInstallAttempt(downloadedVersion);
   // BE-15 (full-audit-2026-09-05.md): on macOS, autoRunAppAfterInstall
   // defaults to true (never overridden here), so MacUpdater calls Electron's
   // own native autoUpdater.quitAndInstall() - which, per Electron's own
@@ -368,7 +509,7 @@ export function quitAndInstallUpdate() {
   toggleAuthorizedClose(true);
 
   try {
-    autoUpdater.quitAndInstall(false, true);
+    autoUpdater.quitAndInstall(isSilent, true);
   } catch (error) {
     updateInstallStarted = false;
     // A failed call never actually quit, so don't leave the main window

@@ -36,12 +36,27 @@
 
         <div class="update-toast__view update-toast__view--done">
           <DoneCheck v-if="isRevealed" />
-          <output class="update-toast__text update-toast__message">
-            {{ downloadedMessage }}
-          </output>
+          <div class="update-toast__text">
+            <output class="update-toast__message">
+              {{ downloadedMessage }}
+            </output>
+            <div v-if="isCountingDown" class="update-toast__caption">
+              {{ t('update-install-countdown', { seconds: installCountdown }) }}
+            </div>
+          </div>
+          <q-btn
+            v-if="isCountingDown"
+            class="update-toast__later"
+            color="white"
+            :label="t('later')"
+            no-caps
+            outline
+            rounded
+            @click="emit('postpone')"
+          />
           <q-btn
             class="update-toast__install"
-            :label="t('quit-and-install')"
+            :label="isCountingDown ? t('install-now') : t('quit-and-install')"
             no-caps
             rounded
             unelevated
@@ -81,12 +96,14 @@ const REVEAL_DELAY_MS = 460;
 const NOTIFICATION_GAP_PX = 10;
 
 const props = defineProps<{
+  /** Seconds left before the update installs by itself, while counting down. */
+  installCountdown?: number;
   phase: 'downloaded' | 'downloading';
   progress?: UpdaterProgressInfo;
   versionInfo?: UpdateVersionInfo;
 }>();
 
-const emit = defineEmits<{ dismiss: []; install: [] }>();
+const emit = defineEmits<{ dismiss: []; install: []; postpone: [] }>();
 
 const { t } = useI18n();
 const motion = useMotionMode();
@@ -110,6 +127,8 @@ const shownPercent = ref(0);
 const reportedPercent = computed(() =>
   Math.round(props.progress?.percent ?? 0),
 );
+
+const isCountingDown = computed(() => props.installCountdown !== undefined);
 
 const downloadedMessage = computed(() =>
   props.versionInfo?.isDowngrade
@@ -286,7 +305,8 @@ $update-toast-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
     animation: update-toast-slide 0.4s 0.06s $update-toast-bounce both;
   }
 
-  .update-toast__install {
+  .update-toast__install,
+  .update-toast__later {
     animation: update-toast-pop 0.5s 0.14s $update-toast-bounce both;
   }
 }
@@ -297,6 +317,7 @@ $update-toast-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .update-toast__message {
+  display: block;
   font-weight: 600;
   line-height: 1.3;
 }
@@ -330,6 +351,11 @@ $update-toast-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
+.update-toast__later {
+  flex: none;
+  font-weight: 600;
+}
+
 .update-toast__close {
   flex: none;
 }
@@ -357,7 +383,8 @@ $update-toast-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   .update-toast__card--revealed {
     .update-toast__view--done .update-toast__message,
-    .update-toast__install {
+    .update-toast__install,
+    .update-toast__later {
       animation: none;
     }
   }
