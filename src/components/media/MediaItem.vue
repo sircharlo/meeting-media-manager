@@ -630,10 +630,13 @@
             </div>
           </div>
         </div>
+        <!-- The slider stays on screen while it fades out, but its QSlider is
+             already unmounted: a click then would crash Quasar's handler
+             (MMM-V2-3NW), so the fading slider ignores the pointer. -->
         <transition
           appear
           enter-active-class="animated fadeIn"
-          leave-active-class="animated fadeOut"
+          leave-active-class="animated fadeOut no-pointer-events"
           mode="out-in"
           name="fade"
         >
