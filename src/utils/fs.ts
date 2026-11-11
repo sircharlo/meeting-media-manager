@@ -153,6 +153,21 @@ export const getCachedUserDataPath = async (): Promise<string> => {
 
 export const isFileUrl = (path?: string) => path?.startsWith('file://');
 
+/**
+ * The size of the file at `path`, or null when there's nothing there. One
+ * stat, not an existence check and then a stat: a file removed in between
+ * (a cache clean-up, a sync client, antivirus) made that stat fail with
+ * ENOENT (MMM-V2-3NT). Any other error is thrown.
+ */
+export const getFileSizeIfExists = async (path: string) => {
+  try {
+    return (await fs.stat(path)).size;
+  } catch (error) {
+    if (getFilesystemErrorCode(error) === 'ENOENT') return null;
+    throw error;
+  }
+};
+
 // Paths
 
 const PUBLICATION_FOLDER = 'Publications';

@@ -421,13 +421,22 @@ const isTruncatedMediaError = (error: unknown) => {
  * PIPELINE_ERROR_DECODE for a stream it chokes on (MMM-V2-3MH). The file
  * played fine up to that point, so disabling hardware acceleration
  * (software decoding) is what helps - not re-downloading the file.
+ *
+ * Not DECODER_ERROR_NOT_SUPPORTED: this machine has no decoder for the
+ * format at all, such as HEVC on a graphics card that can't decode it
+ * (MMM-V2-3NV). Chromium only decodes HEVC in hardware, so disabling
+ * hardware acceleration would take away the only decoder there is.
  */
 export const isGpuDecodeError = (
   error: null | undefined | { code?: number; message?: string },
-) =>
-  !!error &&
-  (error.code === 3 ||
-    /decode|pipeline_error_disconnected/i.test(error.message ?? ''));
+) => {
+  if (!error) return false;
+  const message = error.message ?? '';
+  if (/decoder_error_not_supported/i.test(message)) return false;
+  return (
+    error.code === 3 || /decode|pipeline_error_disconnected/i.test(message)
+  );
+};
 
 /**
  * How long a hidden media element may take to read what's needed from a

@@ -2,7 +2,7 @@ import { pathExists, remove } from 'fs-extra/esm';
 import { createHash } from 'node:crypto';
 import { stat } from 'node:fs/promises';
 import { getImageDimensions } from 'src-electron/main/image-size';
-import { FULL_HD } from 'src/constants/media';
+import { AUDIO_EXTENSIONS, FULL_HD } from 'src/constants/media';
 import { basename, changeExt, extname, join } from 'upath';
 
 const conversionQueue = new Map<string, Promise<string>>();
@@ -257,7 +257,11 @@ export const createVideoFromNonVideo = async (
     );
 
     if (!canReuse) {
-      if (originalFile.toLowerCase().endsWith('.mp3')) {
+      // Every audio file the media list takes, not just .mp3: the others
+      // went down the image path, whose dimension check can't read audio, so
+      // their export failed.
+      const extension = extname(originalFile).slice(1).toLowerCase();
+      if (AUDIO_EXTENSIONS.includes(extension)) {
         await convertAudioToVideo(ffmpegPath, originalFile, convertedFilePath);
       } else {
         await convertImageToVideo(ffmpegPath, originalFile, convertedFilePath);
