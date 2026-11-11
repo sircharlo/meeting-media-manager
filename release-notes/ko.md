@@ -8,6 +8,12 @@
 
 ### ✨ 새로운 기능
 
+- ✨ **Media Your Computer Can't Play**: Some videos play without a picture, or without sound, on some computers: an HEVC video on a graphics card that can't decode it, an old AVI or MPEG-4 video, or a movie with AC-3 or DTS sound. M³ now tells you as soon as it finds one, on the media item and in a notice, and the before-meeting panel reminds you, so you can fix it well before you need it. It also no longer suggests turning off hardware acceleration for such a video, which would only make it worse. Convert makes a copy that plays on any computer, using your graphics card when it can so M³ and your meeting stay smooth. Its progress shows on the media item and in the media sync popup, where you can also cancel it. A file you imported is replaced by its converted copy; a file from your watched folder is left as it is, and M³ plays a converted copy kept on this computer.
+
+## v26.11.2
+
+### ✨ 새로운 기능
+
 - ✨ **설정 PIN**: 이제 프로필의 설정을 PIN으로 보호하여 실수로 변경되는 일을 막을 수 있습니다. PIN은 설정 > 고급에서 설정할 수 있습니다. 프로필을 삭제할 때도 PIN이 필요합니다. PIN을 잊어버린 경우, 설정을 변경할 권한이 있는 사람이 사용자 가이드에 나오는 단계에 따라 PIN을 제거할 수 있습니다.
 
 ## v26.11.0
