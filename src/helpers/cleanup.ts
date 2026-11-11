@@ -14,6 +14,7 @@ import { dateFromString, getSpecificWeekday, isInPast } from 'src/utils/date';
 import {
   congPreferencesPath,
   getAdditionalMediaPath,
+  getConvertedMediaPath,
   getParentDirectory,
   getPublicationDirectory,
   getPublicationsPath,
@@ -885,6 +886,18 @@ export const cleanCache = async () => {
       contexts: {
         fn: { name: 'cleanCache (additional media)' },
       },
+    });
+  }
+
+  // Converted copies of watched-folder files, by the date they're for. This
+  // computer's own, so they go once past even when the watched folder's
+  // past dates are kept.
+  try {
+    void cleanDateFolders(await getConvertedMediaPath());
+  } catch (error) {
+    ok = false;
+    errorCatcher(error, {
+      contexts: { fn: { name: 'cleanCache (converted media)' } },
     });
   }
 

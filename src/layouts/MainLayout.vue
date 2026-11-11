@@ -21,6 +21,7 @@
     <DialogZoomAutomationOverlay />
     <DialogFeatureNudge />
     <DialogMusicStartConfirm />
+    <MediaConversionConfirm />
 
     <!-- Main content -->
     <q-page-container class="app-main-scroll main-bg">
@@ -109,6 +110,7 @@ import DialogFeatureNudge from 'components/dialog/DialogFeatureNudge.vue';
 import DialogMusicStartConfirm from 'components/dialog/DialogMusicStartConfirm.vue';
 import DialogZoomAutomationOverlay from 'components/dialog/DialogZoomAutomationOverlay.vue';
 import DialogZoomSetupAssistant from 'components/dialog/DialogZoomSetupAssistant.vue';
+import MediaConversionConfirm from 'components/dialog/MediaConversionConfirm.vue';
 import HeaderBase from 'components/header/HeaderBase.vue';
 import MediaPreview from 'components/media/MediaPreview.vue';
 import TimerDockPanel from 'components/media/TimerDockPanel.vue';
@@ -147,6 +149,7 @@ import {
   registerAllCustomShortcuts,
   unregisterAllCustomShortcuts,
 } from 'src/helpers/keyboardShortcuts';
+import { markUnplayable } from 'src/helpers/media-conversion';
 import {
   getOrCreateMediaSection,
   removeWatchedMediaSectionInfo,
@@ -588,8 +591,13 @@ async function handleAddWatchFolderEvent(
 
     const itemWithSavedPlacement = {
       ...(existingItem ?? watchedItem),
+      // The file it plays is whatever the folder has now: the watched file,
+      // or its copy converted to play on this computer (which can appear, or
+      // be cleaned up, between two looks at the folder).
+      fileUrl: watchedItem.fileUrl,
       originalSection: watchedItem.originalSection,
       sortOrderOriginal: watchedItem.sortOrderOriginal,
+      thumbnailUrl: watchedItem.thumbnailUrl,
     };
 
     const targetSection = getOrCreateMediaSection(
@@ -1075,6 +1083,15 @@ const { post: postOnline } = useBroadcastChannel<boolean, boolean>({
 
 const { data: gpuDecodeFailed } = useBroadcastChannel<number, number>({
   name: 'gpu-decode-failed',
+});
+
+// A file the media window has no decoder for on this computer (HEVC on a
+// graphics card that can't decode it, say): offer to convert it.
+const { data: noDecoderHere } = useBroadcastChannel<
+  { at: number; url: string },
+  { at: number; url: string }
+>({
+  name: 'media-no-decoder-here',
 });
 
 // Function to check if we should show the yeartext preview notification
@@ -2046,4 +2063,8 @@ useIntervalFn(
 // Tells the user the disk is full whenever a write fails for lack of space
 // (downloads say so through onDownloadError instead).
 useEventListener(globalThis, DISK_FULL_ERROR_EVENT, notifyDiskFull);
+
+watch(noDecoderHere, (failure) => {
+  if (failure?.url) void markUnplayable(failure.url);
+});
 </script>

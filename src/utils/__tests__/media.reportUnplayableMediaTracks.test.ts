@@ -190,12 +190,119 @@ describe('reportUnplayableMediaTracks', () => {
     vi.stubGlobal('electronApi', {
       ...electronApi,
       parseMediaFile: vi.fn(async () => {
-        throw new Error('Guessed MIME-type not supported: video/vnd.avi');
+        throw new Error('Guessed MIME-type not supported: video/x-matroska');
       }),
     } as unknown as ElectronApi);
     const report = await importReporter();
 
-    await expect(report(`${SECRET_FILE}.avi`)).resolves.toBeUndefined();
+    await expect(report(`${SECRET_FILE}.mkv`)).resolves.toBeUndefined();
     expect(reports()).toHaveLength(0);
+  });
+
+  // MMM-V2-3NV: a decoder that can't take this stream fails the element.
+  it('reports a video whose decoder refused it', async () => {
+    stubTracks([video('<hvc1>'), audio('MPEG-4/AAC')]);
+    const report = await importReporter();
+
+    const pending = report(`${SECRET_FILE}.mp4`);
+    await vi.waitFor(() => expect(videos).toHaveLength(1));
+    Object.defineProperty(videos[0], 'error', {
+      value: {
+        code: 4,
+        message:
+          'PipelineStatus::DECODER_ERROR_NOT_SUPPORTED: GetVideoDecoderConfigCount failed',
+      },
+    });
+    videos[0]?.onerror?.(new Event('error'));
+    await pending;
+
+    expect(reports()).toHaveLength(1);
+    expect(reports()[0]?.[1]).toMatchObject({
+      fingerprint: ['media-unplayable-track', 'picture', 'mp4', '<hvc1>'],
+    });
+  });
+
+  it('reports an AVI without reading it: Chromium opens no AVI', async () => {
+    const parseMediaFile = vi.fn();
+    vi.stubGlobal('electronApi', {
+      ...electronApi,
+      parseMediaFile,
+    } as unknown as ElectronApi);
+    const report = await importReporter();
+
+    await report(`${SECRET_FILE}.avi`);
+
+    expect(parseMediaFile).not.toHaveBeenCalled();
+    expect(reports()[0]?.[1]).toMatchObject({
+      fingerprint: ['media-unplayable-track', 'picture', 'avi', 'AVI'],
+    });
+  });
+});
+
+describe('findPlaybackProblem', () => {
+  const stubTracks = (trackInfo: unknown[]) => {
+    vi.stubGlobal('electronApi', {
+      ...electronApi,
+      parseMediaFile: vi.fn(async () => ({ format: { trackInfo } })),
+      pathToFileURL: (path: string) => path,
+    } as unknown as ElectronApi);
+  };
+
+  beforeEach(() => {
+    vi.mocked(errorCatcher).mockClear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('names the sound codecs, and tells Sentry only when asked', async () => {
+    stubTracks([audio('DTS'), audio('AC3')]);
+    vi.resetModules();
+    const { findPlaybackProblem } = await import('../media');
+
+    await expect(findPlaybackProblem(`${SECRET_FILE}.mkv`)).resolves.toEqual({
+      codec: 'AC3+DTS',
+      missing: 'sound',
+    });
+    expect(vi.mocked(errorCatcher)).not.toHaveBeenCalled();
+  });
+
+  it('is null for a file that plays', async () => {
+    stubTracks([audio('MPEG-4/AAC')]);
+    vi.resetModules();
+    const { findPlaybackProblem } = await import('../media');
+
+    await expect(findPlaybackProblem(`${SECRET_FILE}.m4a`)).resolves.toBeNull();
+  });
+
+  it('flags an AVI as having no picture', async () => {
+    vi.resetModules();
+    const { findPlaybackProblem } = await import('../media');
+
+    await expect(findPlaybackProblem(`${SECRET_FILE}.avi`)).resolves.toEqual({
+      codec: 'AVI',
+      missing: 'picture',
+    });
+  });
+});
+
+describe('describeCodec', () => {
+  it.each([
+    ['<hvc1>', 'HEVC (H.265)'],
+    ['<mp4v>', 'MPEG-4 Part 2'],
+    ['<apch>', 'ProRes'],
+    ['EAC3', 'E-AC-3'],
+    ['AC3+DTS', 'AC-3, DTS'],
+    ['AVI', 'AVI'],
+    ['<vp08>', 'vp08'],
+  ])('calls %s %s', async (codec, name) => {
+    const { describeCodec } = await import('../media');
+    expect(describeCodec(codec)).toBe(name);
+  });
+
+  it('says nothing about a codec it was never told', async () => {
+    const { describeCodec } = await import('../media');
+    expect(describeCodec('unknown')).toBe('');
   });
 });

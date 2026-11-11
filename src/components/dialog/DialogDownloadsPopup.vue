@@ -3,7 +3,9 @@
     v-model="open"
     :status-color="summaryColor"
     :status-icon="summaryIcon"
-    :status-loading="checkingCount > 0 || downloadingCount > 0"
+    :status-loading="
+      checkingCount > 0 || downloadingCount > 0 || conversionStore.isBusy
+    "
     :status-text="summaryText"
     :title="t('media-sync')"
   >
@@ -25,7 +27,67 @@
       </q-btn>
     </template>
 
-    <template v-if="groupedByDateEntries.length === 0">
+    <!-- Files being converted to play on this computer (see
+         helpers/media-conversion), above the dates: they aren't tied to one. -->
+    <q-list v-if="conversionJobs.length" class="full-width" dense>
+      <q-item-label class="q-pb-xs q-pt-sm" header>
+        {{ t('media-conversions') }}
+      </q-item-label>
+      <q-item
+        v-for="job in conversionJobs"
+        :key="job.id"
+        :class="{ 'liquid-host sync-date--liquid': showsConversionLiquid(job) }"
+        dense
+      >
+        <LiquidFill
+          v-if="showsConversionLiquid(job)"
+          :done="job.status === 'done'"
+          :percent="job.percent ?? 0"
+          :scale="0.5"
+          :sloshing="job.percent === null"
+        />
+        <div class="row items-center no-wrap full-width">
+          <q-icon
+            class="q-mr-sm"
+            :color="conversionColor(job)"
+            :name="conversionIcon(job)"
+            size="sm"
+          />
+          <div class="col">
+            <q-item-section>
+              <q-item-label class="ellipsis">{{ job.title }}</q-item-label>
+              <q-item-label caption>{{ conversionCaption(job) }}</q-item-label>
+            </q-item-section>
+          </div>
+          <q-btn
+            color="primary"
+            dense
+            flat
+            icon="mmm-clear"
+            round
+            size="xs"
+            @click.stop="
+              isActiveConversion(job)
+                ? cancelMediaConversion(job.id)
+                : conversionStore.dismissJob(job.id)
+            "
+          >
+            <q-tooltip :delay="500">
+              {{
+                isActiveConversion(job)
+                  ? t('cancel-media-conversion')
+                  : t('dismiss')
+              }}
+            </q-tooltip>
+          </q-btn>
+        </div>
+      </q-item>
+      <q-separator v-if="groupedByDateEntries.length" class="q-mt-sm" />
+    </q-list>
+
+    <template
+      v-if="groupedByDateEntries.length === 0 && !conversionJobs.length"
+    >
       <div class="column flex-center q-px-md q-py-lg text-center">
         <q-icon color="positive" name="mmm-cloud-done" size="48px" />
         <div class="text-weight-medium q-mt-sm">
@@ -37,7 +99,7 @@
       </div>
     </template>
 
-    <template v-else>
+    <template v-else-if="groupedByDateEntries.length">
       <q-list class="full-width" dense>
         <transition-group name="date-row">
           <template
@@ -225,6 +287,9 @@
 </template>
 
 <script setup lang="ts">
+import type { MediaConversionJob } from 'src/types';
+
+import { useIntervalFn } from '@vueuse/core';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import ActionPopup from 'components/ui/ActionPopup.vue';
 import LiquidFill from 'components/ui/LiquidFill.vue';
@@ -234,9 +299,15 @@ import { useLocale } from 'src/composables/useLocale';
 import { DOWNLOAD_ROW_AUTO_COLLAPSE_MS, SORTER } from 'src/constants/general';
 import { updateLookupPeriod } from 'src/helpers/date';
 import { fetchMedia } from 'src/helpers/jw-media';
+import { cancelMediaConversion } from 'src/helpers/media-conversion';
 import { dateFromString, getDateDiff, getLocalDate } from 'src/utils/date';
 import { downloadsPercent } from 'src/utils/download-progress';
+import { LIQUID_DONE_HOLD_MS } from 'src/utils/liquid-motion';
 import { useCurrentStateStore } from 'stores/current-state';
+import {
+  isActiveConversion,
+  useMediaConversionStore,
+} from 'stores/media-conversion';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -256,6 +327,65 @@ const {
   meetingCheckStatus,
   selectedDate,
 } = storeToRefs(currentState);
+
+// ─── Conversions ─────────────────────────────────────────────────────────────
+
+const conversionStore = useMediaConversionStore();
+
+// Active ones first, then the finished ones, newest first.
+const conversionJobs = computed(() =>
+  [...conversionStore.jobs].sort(
+    (a, b) =>
+      Number(isActiveConversion(b)) - Number(isActiveConversion(a)) ||
+      (b.finishedAt ?? 0) - (a.finishedAt ?? 0),
+  ),
+);
+
+// Ticks while the popup is open, so a finished row's green moment ends.
+const now = ref(Date.now());
+useIntervalFn(() => {
+  now.value = Date.now();
+}, 1000);
+
+// While it converts, then full and green for a moment once done.
+const showsConversionLiquid = (job: MediaConversionJob) =>
+  isActiveConversion(job) ||
+  (job.status === 'done' &&
+    job.finishedAt !== undefined &&
+    now.value - job.finishedAt < LIQUID_DONE_HOLD_MS);
+
+const conversionIcon = (job: MediaConversionJob) => {
+  if (job.status === 'done') return 'mmm-check';
+  if (job.status === 'failed') return 'mmm-error';
+  if (job.status === 'cancelled') return 'mmm-clear';
+  return 'mmm-movie';
+};
+
+const conversionColor = (job: MediaConversionJob) => {
+  if (job.status === 'done') return 'positive';
+  if (job.status === 'failed') return 'negative';
+  if (job.status === 'cancelled') return 'grey';
+  return 'primary';
+};
+
+const conversionCaption = (job: MediaConversionJob) => {
+  switch (job.status) {
+    case 'cancelled':
+      return t('media-conversion-cancelled');
+    case 'converting':
+      return job.percent === null
+        ? t('media-converting')
+        : t('media-converting-percent', { percent: Math.floor(job.percent) });
+    case 'done':
+      return t('media-conversion-done');
+    case 'failed':
+      return job.error ?? t('media-conversion-failed-error');
+    case 'preparing':
+      return t('media-conversion-preparing');
+    default:
+      return t('media-conversion-queued');
+  }
+};
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -439,6 +569,10 @@ const erroredCount = computed(() => {
 
 const summaryText = computed(() => {
   const parts: string[] = [];
+  const converting = conversionStore.activeJobs.length;
+  if (converting > 0) {
+    parts.push(t('converting-files', { count: converting }, converting));
+  }
   if (checkingCount.value > 0) {
     parts.push(
       t('checking-meeting-dates', {

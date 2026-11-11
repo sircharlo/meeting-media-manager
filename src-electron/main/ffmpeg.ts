@@ -14,7 +14,7 @@ const conversionQueue = new Map<string, Promise<string>>();
  * `convertAudioToVideo`/`convertImageToVideo`) - callers cast their command
  * to this narrower shape.
  */
-interface RunnableFfmpegCommand {
+export interface RunnableFfmpegCommand {
   kill: (signal: string) => unknown;
   on: (event: string, listener: (...args: unknown[]) => void) => unknown;
   save: (output: string) => unknown;
@@ -59,7 +59,7 @@ const toDiskFullErrorIfNeeded = (error: Error) => {
  * @param command An `FfmpegCommand` with its inputs/options already set, not yet saved/run
  * @param convertedFilePath The output path to save to
  */
-const runFfmpegCommand = (
+export const runFfmpegCommand = (
   command: RunnableFfmpegCommand,
   convertedFilePath: string,
 ): Promise<void> => {
@@ -113,7 +113,9 @@ export const cleanupFfmpegConversions = () => {
  * unrelated system executable) reaching the spawn call.
  * @param ffmpegPath The path to validate
  */
-const assertValidFfmpegPath = async (ffmpegPath: string): Promise<void> => {
+export const assertValidFfmpegPath = async (
+  ffmpegPath: string,
+): Promise<void> => {
   if (!basename(ffmpegPath).toLowerCase().includes('ffmpeg')) {
     throw new Error(`Refusing to use non-FFmpeg path: ${ffmpegPath}`);
   }

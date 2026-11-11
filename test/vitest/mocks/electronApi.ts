@@ -35,6 +35,7 @@ export const electronApi: ElectronApi = {
   },
   basename,
   cancelAllDownloads: () => void 0,
+  cancelPlaybackConversion: async () => false,
   changeExt,
   checkForUpdates: () => void 0,
   closeSqliteConnection: async () => undefined,
@@ -43,6 +44,7 @@ export const electronApi: ElectronApi = {
   closeWebsiteWindow: function () {
     throw new Error('Function not implemented.');
   },
+  convertForPlayback: async () => ({ encoder: 'libx264' }),
   convertHeic: function (image) {
     throw new Error('Function not implemented.');
   },
@@ -165,6 +167,7 @@ export const electronApi: ElectronApi = {
   onLog: function (callback) {
     throw new Error('Function not implemented.');
   },
+  onMediaConversionProgress: () => () => undefined,
   onMediaWindowRendererGone: function (callback) {
     throw new Error('Function not implemented.');
   },

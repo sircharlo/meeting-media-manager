@@ -33,6 +33,9 @@ export const VIDEO_EXTENSIONS = ['mp4', 'm4v', 'mov', 'mkv', 'avi', 'webm'];
 // silently, with no error event; an audio-only file won't load at all.
 export const UNPLAYABLE_AUDIO_CODEC_PATTERN = /adpcm|alac|ac-?3|dts|ec-?3/i;
 
+// Video containers Chromium doesn't open at all, whatever they hold.
+export const UNPLAYABLE_VIDEO_CONTAINERS = ['avi'];
+
 export const PDF_EXTENSIONS = ['pdf'];
 export const ZIP_EXTENSIONS = ['zip'];
 export const JWPUB_EXTENSIONS = ['jwpub'];
