@@ -42,6 +42,23 @@ describe('scrubUserPaths', () => {
     );
   });
 
+  // MMM-V2-3KM: per-attempt details are sent as JSON strings, which double
+  // every backslash, and the username got through.
+  it('redacts the username in Windows paths inside JSON strings', () => {
+    const detail = JSON.stringify({
+      dir: 'C:/Users/Olivier/AppData/Local/Temp/MMM/Downloads/x',
+      message: String.raw`ENOENT: no such file or directory, stat 'C:\Users\Olivier\AppData\Local\Temp\MMM\Downloads\x'`,
+    });
+    const scrubbed = scrubUserPaths(detail);
+    expect(scrubbed).not.toContain('Olivier');
+    expect(JSON.parse(scrubbed)).toEqual({
+      dir: 'C:/Users/<user>/AppData/Local/Temp/MMM/Downloads/x',
+      message: String.raw`ENOENT: no such file or directory, stat 'C:\Users\<user>\AppData\Local\Temp\MMM\Downloads\x'`,
+    });
+    // Stringified twice: four backslashes.
+    expect(scrubUserPaths(JSON.stringify(detail))).not.toContain('Olivier');
+  });
+
   it('redacts every occurrence in a string with multiple paths', () => {
     expect(
       scrubUserPaths(

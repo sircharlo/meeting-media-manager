@@ -89,9 +89,12 @@ export const delay = (ms: number) =>
 // Matches the OS home-directory segment of a filesystem path or file:// URL
 // (Windows `C:\Users\<name>` or `C:/Users/<name>`, macOS `/Users/<name>`,
 // Linux `/home/<name>`) so the username can be redacted while the rest of
-// the path is preserved.
+// the path is preserved. A Windows path inside a JSON string has its
+// backslashes doubled (`C:\\Users\\<name>`), and details are sent to Sentry
+// as JSON strings so they don't get flattened (MMM-V2-3KM): any run of
+// backslashes counts as one separator.
 const HOME_DIRECTORY_PATH_PATTERNS: RegExp[] = [
-  /([A-Za-z]:[\\/]Users[\\/])[^\\/]+/g,
+  /([A-Za-z]:(?:\\+|\/)Users(?:\\+|\/))[^\\/]+/g,
   /(\/Users\/)[^/]+/g,
   /(\/home\/)[^/]+/g,
 ];

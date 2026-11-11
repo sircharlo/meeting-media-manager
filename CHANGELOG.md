@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### 🐞 Bug Fixes
+
+- 🐞 **Error Reports**: Some error reports about folders M³ couldn't create could include your Windows user name. It's now removed from those too, as it already was everywhere else.
+
 ## v26.11.2
 
 ### ✨ New Features
