@@ -8,6 +8,12 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 
 ### ✨ Neue Funktionen
 
+- ✨ **Media Your Computer Can't Play**: Some videos play without a picture, or without sound, on some computers: an HEVC video on a graphics card that can't decode it, an old AVI or MPEG-4 video, or a movie with AC-3 or DTS sound. M³ now tells you as soon as it finds one, on the media item and in a notice, and the before-meeting panel reminds you, so you can fix it well before you need it. It also no longer suggests turning off hardware acceleration for such a video, which would only make it worse. Convert makes a copy that plays on any computer, using your graphics card when it can so M³ and your meeting stay smooth. Its progress shows on the media item and in the media sync popup, where you can also cancel it. A file you imported is replaced by its converted copy; a file from your watched folder is left as it is, and M³ plays a converted copy kept on this computer.
+
+## v26.11.2
+
+### ✨ Neue Funktionen
+
 - ✨ **Einstellungs-PIN**: Die Einstellungen eines Profils können jetzt mit einer PIN geschützt werden, damit nichts versehentlich geändert wird. Eine PIN lässt sich unter Einstellungen > Erweitert festlegen. Sie wird auch zum Löschen des Profils benötigt. Wird sie vergessen, kann jemand, der berechtigt ist, die Einstellungen zu ändern, sie entfernen, indem er die Schritte im Benutzerhandbuch befolgt.
 
 ## v26.11.0

@@ -8,6 +8,12 @@ Para iti kompleto a listaan dagiti nabaliwan iti nagbaetan dagiti bersion, kitae
 
 ### ✨ Dagiti Baro a Feature
 
+- ✨ **Media Your Computer Can't Play**: Some videos play without a picture, or without sound, on some computers: an HEVC video on a graphics card that can't decode it, an old AVI or MPEG-4 video, or a movie with AC-3 or DTS sound. M³ now tells you as soon as it finds one, on the media item and in a notice, and the before-meeting panel reminds you, so you can fix it well before you need it. It also no longer suggests turning off hardware acceleration for such a video, which would only make it worse. Convert makes a copy that plays on any computer, using your graphics card when it can so M³ and your meeting stay smooth. Its progress shows on the media item and in the media sync popup, where you can also cancel it. A file you imported is replaced by its converted copy; a file from your watched folder is left as it is, and M³ plays a converted copy kept on this computer.
+
+## v26.11.2
+
+### ✨ Dagiti Baro a Feature
+
 - ✨ **Settings PIN**: A profile's settings can now be protected with a PIN, so nothing gets changed by accident. Set one under Settings > Advanced. It's also needed to delete the profile. If it's forgotten, someone authorized to change the settings can remove it by following the steps in the user guide.
 
 ## v26.11.0
