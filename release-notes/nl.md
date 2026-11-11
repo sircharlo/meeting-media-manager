@@ -8,6 +8,12 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### ✨ Nieuwe functies
 
+- ✨ **Media Your Computer Can't Play**: Some videos play without a picture, or without sound, on some computers: an HEVC video on a graphics card that can't decode it, an old AVI or MPEG-4 video, or a movie with AC-3 or DTS sound. M³ now tells you as soon as it finds one, on the media item and in a notice, and the before-meeting panel reminds you, so you can fix it well before you need it. It also no longer suggests turning off hardware acceleration for such a video, which would only make it worse. Convert makes a copy that plays on any computer, using your graphics card when it can so M³ and your meeting stay smooth. Its progress shows on the media item and in the media sync popup, where you can also cancel it. A file you imported is replaced by its converted copy; a file from your watched folder is left as it is, and M³ plays a converted copy kept on this computer.
+
+## v26.11.2
+
+### ✨ Nieuwe functies
+
 - ✨ **Pincode voor instellingen**: De instellingen van een profiel kunnen nu met een pincode worden beschermd, zodat er niet per ongeluk iets wordt gewijzigd. Stel er een in onder Instellingen > Geavanceerd. De pincode is ook nodig om het profiel te verwijderen. Is de pincode vergeten, dan kan iemand die bevoegd is om de instellingen te wijzigen, hem verwijderen door de stappen in de gebruikershandleiding te volgen.
 
 ## v26.11.0
