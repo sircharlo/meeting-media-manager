@@ -264,6 +264,19 @@ E ha’uti M³ i te media ma te reo i ni’a i tō ’oe roro uira, terā rā, �
 3. **Te vai-roa-ra’a o te Reo**: ’A ha’apāpū ē tē vai ra te reo o te pāpāho i ni’a i te tahua natirara mana a te Ite o Iehova
 4. **Reo mono**: ’A tāmata i te mā’iti i te hō’ē reo mono
 
+### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+
+If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+
+1. Download the latest version from the [Download page](download).
+2. Run the installer. It puts M³ back in place and keeps your settings.
+
+**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+
+If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+
+To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, it still installs updates when it closes, so give it a minute before turning the computer off.
+
 ## Tauturu e Feti’ara’a {#support-community}
 
 ### :radioactive: E aha te rāve’a nō te fa’a’ite i te hō’ē fifi? {#how-do-i-report-an-issue}
