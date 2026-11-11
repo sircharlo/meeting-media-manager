@@ -10,8 +10,6 @@ const toggleAuthorizedCloseMock = vi.fn();
 // used by the other tests below ('26.6.2', '26.6.3'), so they stay ordinary
 // upgrades (isDowngrade: false) and aren't affected by this addition.
 const getVersionMock = vi.fn(() => '26.6.0');
-const appOnMock = vi.fn();
-const getAllWindowsMock = vi.fn((): unknown[] => []);
 const powerMonitorOnMock = vi.fn();
 const isMachineWideInstallationMock = vi.fn(() => false);
 const constants = { IS_TEST: false, PLATFORM: 'linux' as NodeJS.Platform };
@@ -27,9 +25,7 @@ const pendingUpdate = {
 vi.mock('electron', () => ({
   app: {
     getVersion: getVersionMock,
-    on: appOnMock,
   },
-  BrowserWindow: { getAllWindows: getAllWindowsMock },
   powerMonitor: { on: powerMonitorOnMock },
 }));
 
@@ -102,9 +98,8 @@ describe('updater install flow', () => {
     getVersionMock.mockReturnValue('26.6.0');
     pathExistsMock.mockResolvedValue(false);
     // Linux installs on quit, as every platform used to: the tests for
-    // installing on the next launch switch to Windows themselves.
+    // Windows, which never does, switch to it themselves.
     constants.PLATFORM = 'linux';
-    getAllWindowsMock.mockReturnValue([]);
     isMachineWideInstallationMock.mockReturnValue(false);
     pendingUpdate.readPendingUpdate.mockReturnValue(null);
     pendingUpdate.rememberPendingUpdate.mockImplementation(() => undefined);
@@ -210,6 +205,7 @@ describe('updater install flow', () => {
       phase: 'downloading',
       progress: null,
       versionInfo: {
+        asksPermission: false,
         installOnLaunch: false,
         isDowngrade: false,
         version: '26.6.2',
@@ -228,6 +224,7 @@ describe('updater install flow', () => {
       phase: 'downloading',
       progress,
       versionInfo: {
+        asksPermission: false,
         installOnLaunch: false,
         isDowngrade: false,
         version: '26.6.2',
@@ -239,6 +236,7 @@ describe('updater install flow', () => {
       phase: 'downloaded',
       progress,
       versionInfo: {
+        asksPermission: false,
         installOnLaunch: false,
         isDowngrade: false,
         version: '26.6.2',
@@ -255,6 +253,7 @@ describe('updater install flow', () => {
       phase: 'downloading',
       progress: null,
       versionInfo: {
+        asksPermission: false,
         installOnLaunch: false,
         isDowngrade: false,
         version: '26.6.2',
@@ -284,6 +283,7 @@ describe('updater install flow', () => {
       handlers.get('update-available')?.({ version: '26.5.9' });
 
       expect(getUpdaterState().versionInfo).toEqual({
+        asksPermission: false,
         installOnLaunch: false,
         isDowngrade: true,
         version: '26.5.9',
@@ -297,6 +297,7 @@ describe('updater install flow', () => {
       handlers.get('update-downloaded')?.({ version: '26.5.9' });
 
       expect(getUpdaterState().versionInfo).toEqual({
+        asksPermission: false,
         installOnLaunch: false,
         isDowngrade: true,
         version: '26.5.9',
@@ -340,6 +341,7 @@ describe('updater install flow', () => {
       handlers.get('update-available')?.({ version: updateVersion });
 
       expect(getUpdaterState().versionInfo).toEqual({
+        asksPermission: false,
         installOnLaunch: false,
         isDowngrade,
         version: updateVersion,
@@ -465,6 +467,7 @@ describe('updater install flow', () => {
       handlers.get('update-downloaded')?.({ version: '26.6.2' });
 
       const versionInfo = {
+        asksPermission: false,
         installOnLaunch: true,
         isDowngrade: false,
         version: '26.6.2',
@@ -571,70 +574,57 @@ describe('updater install flow', () => {
         contexts: { fn: { name: 'rememberDownloadedUpdate' } },
       });
     });
+  });
 
-    it('keeps installing on quit when installed for all users', async () => {
+  // The installer of an installation for all users asks for administrator
+  // permission with a UAC prompt, also when it runs silently.
+  describe('Windows, installed for all users', () => {
+    beforeEach(() => {
+      constants.PLATFORM = 'win32';
       isMachineWideInstallationMock.mockReturnValue(true);
-      const { initUpdater } = await import('../updater');
+    });
+
+    it('never installs by itself: not on quit, not on the next launch', async () => {
+      const { getUpdaterState, initUpdater } = await import('../updater');
 
       await initUpdater();
       handlers.get('update-downloaded')?.({ version: '26.6.2' });
 
-      expect((await getAutoUpdater()).autoInstallOnAppQuit).toBe(true);
+      expect((await getAutoUpdater()).autoInstallOnAppQuit).toBe(false);
+      expect(getUpdaterState().versionInfo).toEqual({
+        asksPermission: true,
+        installOnLaunch: false,
+        isDowngrade: false,
+        version: '26.6.2',
+      });
       expect(pendingUpdate.readPendingUpdate).not.toHaveBeenCalled();
       expect(pendingUpdate.rememberPendingUpdate).not.toHaveBeenCalled();
+    });
+
+    it('runs the visible installer once the user chooses to install', async () => {
+      const { initUpdater, quitAndInstallUpdate } = await import('../updater');
+
+      await initUpdater();
+      handlers.get('update-downloaded')?.({ version: '26.6.2' });
+      quitAndInstallUpdate();
+
+      expect(quitAndInstallMock).toHaveBeenCalledWith(false, true);
+      expect(
+        pendingUpdate.countPendingUpdateInstallAttempt,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('also flags the update while it downloads', async () => {
+      const { getUpdaterState, initUpdater } = await import('../updater');
+
+      await initUpdater();
+      handlers.get('update-available')?.({ version: '26.6.2' });
+
+      expect(getUpdaterState().versionInfo?.asksPermission).toBe(true);
     });
   });
 
   describe('install on quit while the system shuts down', () => {
-    const createWindow = () => {
-      const windowHandlers = new Map<string, () => void>();
-      return {
-        handlers: windowHandlers,
-        on: vi.fn((event: string, handler: () => void) => {
-          windowHandlers.set(event, handler);
-        }),
-      };
-    };
-
-    it.each(['query-session-end', 'session-end'])(
-      'is skipped once a Windows window gets %s',
-      async (event) => {
-        constants.PLATFORM = 'win32';
-        isMachineWideInstallationMock.mockReturnValue(true);
-        const window = createWindow();
-        getAllWindowsMock.mockReturnValue([window]);
-        const { initUpdater } = await import('../updater');
-        const autoUpdater = await getAutoUpdater();
-
-        await initUpdater();
-        expect(autoUpdater.autoInstallOnAppQuit).toBe(true);
-
-        window.handlers.get(event)?.();
-        expect(autoUpdater.autoInstallOnAppQuit).toBe(false);
-      },
-    );
-
-    it('is skipped once a window opened later learns that the session ends', async () => {
-      constants.PLATFORM = 'win32';
-      isMachineWideInstallationMock.mockReturnValue(true);
-      const { initUpdater } = await import('../updater');
-      const autoUpdater = await getAutoUpdater();
-
-      await initUpdater();
-      const [, onWindowCreated] =
-        appOnMock.mock.calls.find(
-          ([name]) => name === 'browser-window-created',
-        ) ?? [];
-      const window = createWindow();
-      (onWindowCreated as (event: unknown, window: unknown) => void)(
-        {},
-        window,
-      );
-      window.handlers.get('session-end')?.();
-
-      expect(autoUpdater.autoInstallOnAppQuit).toBe(false);
-    });
-
     it('is skipped once Linux shuts down', async () => {
       const { initUpdater } = await import('../updater');
       const autoUpdater = await getAutoUpdater();
@@ -656,17 +646,23 @@ describe('updater install flow', () => {
 
       expect((await getAutoUpdater()).autoInstallOnAppQuit).toBe(true);
       expect(powerMonitorOnMock).not.toHaveBeenCalled();
-      expect(getAllWindowsMock).not.toHaveBeenCalled();
     });
 
-    it('is not watched when the update installs on the next launch', async () => {
-      constants.PLATFORM = 'win32';
-      const { initUpdater } = await import('../updater');
+    it.each([
+      { isMachineWide: false, title: 'for one user' },
+      { isMachineWide: true, title: 'for all users' },
+    ])(
+      'is not watched on Windows installed $title, which never installs on quit',
+      async ({ isMachineWide }) => {
+        constants.PLATFORM = 'win32';
+        isMachineWideInstallationMock.mockReturnValue(isMachineWide);
+        const { initUpdater } = await import('../updater');
 
-      await initUpdater();
+        await initUpdater();
 
-      expect(getAllWindowsMock).not.toHaveBeenCalled();
-      expect(appOnMock).not.toHaveBeenCalled();
-    });
+        expect((await getAutoUpdater()).autoInstallOnAppQuit).toBe(false);
+        expect(powerMonitorOnMock).not.toHaveBeenCalled();
+      },
+    );
   });
 });

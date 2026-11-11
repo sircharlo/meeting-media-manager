@@ -4,7 +4,7 @@ import type {
   UpdateVersionInfo,
 } from 'src/types';
 
-import { app, BrowserWindow, powerMonitor } from 'electron';
+import { app, powerMonitor } from 'electron';
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
 import { pathExists } from 'fs-extra/esm';
@@ -82,6 +82,9 @@ const MAX_LAUNCH_INSTALL_ATTEMPTS = 2;
 // app opened.
 let installsOnLaunch = false;
 let pendingAtLaunch: null | PendingUpdate = null;
+// Whether installing asks for administrator permission (see
+// asksPermissionToInstall).
+let asksPermission = false;
 
 // Current updater lifecycle state, kept so the renderer can catch up on an
 // update that started before it mounted and missed the push events (the
@@ -166,6 +169,7 @@ const buildUpdateVersionInfo = (
   version: string,
   installOnLaunch = false,
 ): UpdateVersionInfo => ({
+  asksPermission,
   installOnLaunch,
   isDowngrade: compareVersions(version, app.getVersion()) < 0,
   version,
@@ -212,19 +216,34 @@ export const getBetaUpdatesPath = async () =>
 const isPortable = () => !!process.env.PORTABLE_EXECUTABLE_DIR;
 
 /**
- * Whether a downloaded update waits for the next launch instead of being
- * installed when the app quits (electron-builder#7807). Installing on quit
- * starts the installer right when people tend to turn the computer off, after
- * the meeting, and the shutdown then kills it: the NSIS installer removes the
- * old version before it copies the new one, so the app no longer opens at
- * all. At launch, the user is there while it installs. Windows installs for
- * one user only: an installation for all users would ask for administrator
- * rights at launch, so those keep installing on quit, guarded by
- * watchForSessionEnd. Squirrel.Mac and AppImage swap the app in one quick
- * step.
+ * Whether a downloaded update is installed when the app quits. Never on
+ * Windows (electron-builder#7807): installing on quit starts the installer
+ * right when people tend to turn the computer off, after the meeting, and the
+ * shutdown then kills it. The NSIS installer removes the old version before
+ * it copies the new one, so the app no longer opens at all. Squirrel.Mac and
+ * AppImage swap the app in one quick step, guarded by watchForSessionEnd.
+ */
+const installsOnQuit = () => !IS_TEST && PLATFORM !== 'win32';
+
+/**
+ * Whether installing asks for administrator permission first: on Windows,
+ * the installer of an installation for all users elevates itself with a UAC
+ * prompt, silent or not. Such an update never installs by itself, since the
+ * app quits before the prompt shows: on a computer where M³ opened at login
+ * with nobody watching, or for a user without an administrator password, the
+ * prompt would go unanswered and M³ would stay closed. It waits for the user
+ * to choose to install it.
+ */
+const asksPermissionToInstall = () =>
+  PLATFORM === 'win32' && isMachineWideInstallation();
+
+/**
+ * Whether a downloaded update waits for the next launch, to install by itself
+ * after a countdown the user can postpone: the user is there while it
+ * installs. Windows installs for one user.
  */
 const shouldInstallOnLaunch = () =>
-  !IS_TEST && PLATFORM === 'win32' && !isMachineWideInstallation();
+  !IS_TEST && PLATFORM === 'win32' && !asksPermissionToInstall();
 
 const reportPendingUpdateError = (error: unknown, name: string) => {
   if (isDiskFullError(error)) return;
@@ -282,27 +301,14 @@ const skipInstallOnQuitForSessionEnd = () => {
 };
 
 /**
- * Stops the install on quit once the system starts shutting down, restarting
- * or logging off: the system would kill the installer before it's done and
- * leave a broken app behind. The update stays downloaded for the next quit.
- * Squirrel.Mac applies its update itself, so macOS is left alone.
+ * Stops the install on quit once Linux starts shutting down: the system
+ * would kill the installer before it's done and leave a broken app behind.
+ * The update stays downloaded for the next quit. Squirrel.Mac applies its
+ * update itself, so macOS is left alone, and Windows never installs on quit.
  */
 const watchForSessionEnd = () => {
   if (PLATFORM === 'darwin') return;
-
-  if (PLATFORM !== 'win32') {
-    powerMonitor.on('shutdown', skipInstallOnQuitForSessionEnd);
-    return;
-  }
-
-  // Windows only tells windows about the end of the session, and
-  // query-session-end comes first, before the session actually ends.
-  const watchWindow = (window: BrowserWindow) => {
-    window.on('query-session-end', skipInstallOnQuitForSessionEnd);
-    window.on('session-end', skipInstallOnQuitForSessionEnd);
-  };
-  BrowserWindow.getAllWindows().forEach(watchWindow);
-  app.on('browser-window-created', (_event, window) => watchWindow(window));
+  powerMonitor.on('shutdown', skipInstallOnQuitForSessionEnd);
 };
 
 /**
@@ -349,8 +355,9 @@ export async function initUpdater() {
   // the GitHub releases feed/assets themselves staying trustworthy.
   autoUpdater.allowDowngrade = true;
   installsOnLaunch = shouldInstallOnLaunch();
+  asksPermission = asksPermissionToInstall();
   autoUpdater.autoDownload = !IS_TEST;
-  autoUpdater.autoInstallOnAppQuit = !IS_TEST && !installsOnLaunch;
+  autoUpdater.autoInstallOnAppQuit = installsOnQuit();
   autoUpdater.logger = updaterLogger;
 
   if (installsOnLaunch) pendingAtLaunch = loadPendingUpdate();

@@ -43,6 +43,12 @@
             <div v-if="isCountingDown" class="update-toast__caption">
               {{ t('update-install-countdown', { seconds: installCountdown }) }}
             </div>
+            <div
+              v-else-if="versionInfo?.asksPermission"
+              class="update-toast__caption"
+            >
+              {{ t('update-install-asks-permission') }}
+            </div>
           </div>
           <q-btn
             v-if="isCountingDown"

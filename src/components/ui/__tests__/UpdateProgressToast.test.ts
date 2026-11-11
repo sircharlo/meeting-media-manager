@@ -127,6 +127,26 @@ describe('UpdateProgressToast', () => {
     });
 
     expect(wrapper.text()).not.toContain('restart');
+    expect(wrapper.text()).not.toContain('permission');
+    expect(buttonWithLabel(wrapper, /later/i)).toBeUndefined();
+  });
+
+  it('says Windows will ask for permission when installed for all users', () => {
+    const wrapper = mount(UpdateProgressToast, {
+      props: {
+        phase: 'downloaded',
+        versionInfo: {
+          asksPermission: true,
+          isDowngrade: false,
+          version: '26.6.2',
+        },
+      },
+    });
+
+    expect(wrapper.text()).toContain(
+      'Windows will ask for permission to install it',
+    );
+    expect(buttonWithLabel(wrapper, /quit and install/i)).toBeDefined();
     expect(buttonWithLabel(wrapper, /later/i)).toBeUndefined();
   });
 

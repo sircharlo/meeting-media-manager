@@ -223,8 +223,8 @@ const handleUpdateDownloaded = (versionInfo?: UpdateVersionInfo) => {
 
 // The updater check runs at startup, concurrently with the renderer booting,
 // so its push events can arrive before these listeners are registered and be
-// silently dropped - the download would still proceed and install on quit,
-// but no notification would ever appear. Re-query the main process's tracked
+// silently dropped - the download would still proceed, but no notification
+// would ever appear. Re-query the main process's tracked
 // state on mount so a missed update is still announced.
 const catchUpUpdaterState = async () => {
   if (updateEventReceived) return;
@@ -341,6 +341,17 @@ if (import.meta.env.DEV) {
     });
   };
 
+  // A downloaded update on Windows when M³ is installed for all users.
+  const simulateUpdateAskingPermission = () => {
+    handleUpdateAvailable();
+    handleUpdateDownloaded({
+      asksPermission: true,
+      installOnLaunch: false,
+      isDowngrade: false,
+      version,
+    });
+  };
+
   onMounted(() => {
     createTemporaryNotification({
       actions: [
@@ -354,6 +365,12 @@ if (import.meta.env.DEV) {
           color: 'white',
           handler: simulateInstallOnLaunch,
           label: 'Simulate install on launch',
+          noDismiss: true,
+        },
+        {
+          color: 'white',
+          handler: simulateUpdateAskingPermission,
+          label: 'Simulate all-users update',
           noDismiss: true,
         },
         { color: 'white', icon: 'close', round: true },
