@@ -10,6 +10,10 @@ import type {
 } from 'src/types/electron';
 import type { UpdaterState, UpdateVersionInfo } from 'src/types/general';
 import type {
+  PlaybackConversionProgress,
+  PlaybackConversionRequest,
+} from 'src/types/media-conversion';
+import type {
   ZoomCommand,
   ZoomCommandResult,
   ZoomHelperStartResult,
@@ -94,11 +98,22 @@ export interface ElectronApi {
   askForMediaAccess: () => void;
   basename: typeof basename;
   cancelAllDownloads: () => void;
+  /** Stops a conversion started by convertForPlayback. False if none was running. */
+  cancelPlaybackConversion: (id: string) => Promise<boolean>;
   changeExt: typeof changeExt;
   checkForUpdates: () => void;
   closeSqliteConnection: (dbPath: string) => Promise<void>;
   closeSqliteConnections: () => Promise<void>;
   closeWebsiteWindow: () => void;
+  /**
+   * Converts a file this computer can't play into an H.264 / AAC MP4 at
+   * `request.outputPath`, with progress on onMediaConversionProgress.
+   * Rejects with a message containing "conversion-cancelled" once cancelled.
+   */
+  convertForPlayback: (
+    ffmpegPath: string,
+    request: PlaybackConversionRequest,
+  ) => Promise<void>;
   convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
   /**
    * Converts a non-video file into a video file.
@@ -299,6 +314,9 @@ export interface ElectronApi {
       msg: string;
     }) => void,
   ) => void;
+  onMediaConversionProgress: (
+    callback: (progress: PlaybackConversionProgress) => void,
+  ) => () => void;
   onMediaWindowRendererGone: (
     callback: (args: { reloading: boolean }) => void,
   ) => void;
@@ -517,8 +535,10 @@ export type ElectronFsApi = Pick<
 
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
+  | 'cancelPlaybackConversion'
   | 'closeSqliteConnection'
   | 'closeSqliteConnections'
+  | 'convertForPlayback'
   | 'convertHeic'
   | 'createVideoFromNonVideo'
   | 'downloadFile'
@@ -576,6 +596,7 @@ export type ElectronIpcListenKey =
   | 'hardware-acceleration-temporary-disabled'
   | 'log'
   | 'media-window-renderer-gone'
+  | 'mediaConversionProgress'
   | 'pathProbeNetworkWarning'
   | 'screenChange'
   | 'screenPrefsChange'

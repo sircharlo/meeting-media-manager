@@ -208,6 +208,7 @@ import {
   isExpectedMediaAccessError,
   isGpuDecodeError,
   isImage,
+  isNoDecoderError,
   isVideo,
   stopMediaStreamTracks,
 } from 'src/utils/media';
@@ -547,6 +548,13 @@ const { post: postGpuDecodeFailed } = useBroadcastChannel<number, number>({
   name: 'gpu-decode-failed',
 });
 
+const { post: postNoDecoderHere } = useBroadcastChannel<
+  { at: number; url: string },
+  { at: number; url: string }
+>({
+  name: 'media-no-decoder-here',
+});
+
 const customMin = computed(() => {
   return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.min || 0; // NOSONAR: '' is not valid JSON
 });
@@ -829,6 +837,10 @@ const handleMediaError = (layer: 1 | 2) => {
   // decoder failure (see isGpuDecodeError). Still reported below and still
   // treated as end-of-media.
   if (isGpuDecodeError(element.error)) postGpuDecodeFailed(Date.now());
+  // No decoder for the file at all: the main window offers to convert it.
+  if (isNoDecoderError(element.error) && layerRef.value.url) {
+    postNoDecoderHere({ at: Date.now(), url: layerRef.value.url });
+  }
 
   const errorMessage = element.error?.message || 'Media playback error'; // NOSONAR: '' means no message
   errorCatcher(new Error(errorMessage), {

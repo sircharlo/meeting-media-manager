@@ -9,15 +9,17 @@
     @click="downloadPopup = !downloadPopup"
   >
     <!-- While the meeting dates are checked, the button's liquid sloshes;
-         downloads with a known size then fill it like a glass. When it's
-         all done, it fills up and turns green for a moment, then fades. -->
+         downloads with a known size then fill it like a glass, and so do
+         files being converted to play on this computer, when nothing is
+         downloading. When it's all done, it fills up and turns green for a
+         moment, then fades. -->
     <IslandButtonLiquid
       :done="isFinished"
       :open="downloadPopup"
-      :percent="batchPercent"
+      :percent="showsConversion ? (conversionPercent ?? 0) : batchPercent"
       :restart-key="batchNumber"
       :showing="showsLiquid"
-      :sloshing="!batchIsActive"
+      :sloshing="showsConversion ? conversionPercent === null : !batchIsActive"
     >
       <q-icon :class="{ 'mmm-pop-in': isFinished }" :name="iconName" />
     </IslandButtonLiquid>
@@ -51,6 +53,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { getDateDiff } from 'src/utils/date';
 import { LIQUID_DONE_HOLD_MS } from 'src/utils/liquid-motion';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useMediaConversionStore } from 'stores/media-conversion';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -94,7 +97,13 @@ const someHaveError = computed(() => {
   );
 });
 
-const someAreLoading = computed(() => currentState.hasActiveMediaWork);
+const conversionStore = useMediaConversionStore();
+const { isBusy: isConverting, percent: conversionPercent } =
+  storeToRefs(conversionStore);
+
+const someAreLoading = computed(
+  () => currentState.hasActiveMediaWork || isConverting.value,
+);
 
 const failedCount = computed(
   () =>
@@ -116,6 +125,9 @@ const statusLine = computed(() => {
     return t('n-items-failed', failedCount.value);
   }
   if (status.value === 'attention') return t('download-status-offline');
+  const converting = conversionStore.activeJobs.length;
+  if (converting)
+    return t('converting-files', { count: converting }, converting);
   return '';
 });
 
@@ -142,6 +154,10 @@ const { start: holdCheckFinished, stop: stopHoldingCheck } = useTimeoutFn(
 );
 
 const isFinished = computed(() => batchFinished.value || checkFinished.value);
+// Downloads have the liquid while there are any.
+const showsConversion = computed(
+  () => isConverting.value && !batchIsActive.value,
+);
 const showsLiquid = computed(() => status.value === 'busy' || isFinished.value);
 
 const iconName = computed(() => {

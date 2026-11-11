@@ -260,6 +260,12 @@ export const getTempPath = () =>
   getCachePath('Temp', true, { bypassCustomPath: true });
 export const getPublicationsPath = () =>
   getCachePath(PUBLICATION_FOLDER, false);
+// Converted copies of watched-folder files this computer can't play, in a
+// folder per meeting date (cleaned up like the watched folder's own). Kept on
+// this computer: another one may play the originals, so syncing them through
+// a custom cache folder would only spread them around.
+export const getConvertedMediaPath = () =>
+  getCachePath('Converted Media', true, { bypassCustomPath: true });
 export const getAdditionalMediaPath = () =>
   getCachePath('Additional Media', false);
 

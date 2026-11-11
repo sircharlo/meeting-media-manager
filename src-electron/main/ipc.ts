@@ -11,6 +11,7 @@ import type {
   JwSiteParams,
   MediaAccessStatus,
   NavigateWebsiteAction,
+  PlaybackConversionRequest,
   SettingsValues,
   UnzipOptions,
   UrlVariables,
@@ -62,6 +63,10 @@ import {
 import { convertHeic } from 'src-electron/main/heic';
 import { openFolder } from 'src-electron/main/open-folder';
 import { exportHtmlToPdf } from 'src-electron/main/pdf';
+import {
+  cancelPlaybackConversion,
+  convertForPlayback,
+} from 'src-electron/main/playback-conversion';
 import { getAllScreens } from 'src-electron/main/screen';
 import {
   decryptSecret,
@@ -576,6 +581,20 @@ handleIpcInvoke(
   'createVideoFromNonVideo',
   async (_e, path: string, ffmpegPath: string, outputDir?: string) =>
     createVideoFromNonVideo(path, ffmpegPath, outputDir),
+);
+
+handleIpcInvoke(
+  'convertForPlayback',
+  async (event, ffmpegPath: string, request: PlaybackConversionRequest) =>
+    convertForPlayback(ffmpegPath, request, (progress) => {
+      if (!event.sender.isDestroyed()) {
+        event.sender.send('mediaConversionProgress', progress);
+      }
+    }),
+);
+
+handleIpcInvoke('cancelPlaybackConversion', (_e, id: string) =>
+  cancelPlaybackConversion(id),
 );
 
 handleIpcInvoke('setExecutable', async (_e, path: string) =>

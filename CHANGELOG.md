@@ -6,6 +6,10 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ## UPCOMING VERSION
 
+### ✨ New Features
+
+- ✨ **Media Your Computer Can't Play**: Some videos play without a picture, or without sound, on some computers: an HEVC video on a graphics card that can't decode it, an old AVI or MPEG-4 video, or a movie with AC-3 or DTS sound. M³ now tells you as soon as it finds one, on the media item and in a notice, and the before-meeting panel reminds you, so you can fix it well before you need it. Convert makes a copy that plays on any computer, while M³ keeps working. Its progress shows on the media item and in the media sync popup, where you can also cancel it. A file you imported is replaced by its converted copy; a file from your watched folder is left as it is, and M³ plays a converted copy kept on this computer.
+
 ### 🐞 Bug Fixes
 
 - 🐞 **Zoom Meeting Manager**: Zoom closes its audio menu as soon as its meeting window moves or changes size, as it can when a panel opens just after the meeting starts. The check M³ runs before a meeting then couldn't leave computer audio and paused your automations. M³ now opens the menu again when that happens.

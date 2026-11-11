@@ -10,6 +10,7 @@ export * from './jw/publications';
 export * from './jw/sites';
 export * from './jw/sqlite';
 export * from './media';
+export * from './media-conversion';
 export * from './meeting-quick-actions';
 export * from './obs';
 export * from './search';

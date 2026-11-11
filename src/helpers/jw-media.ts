@@ -49,6 +49,7 @@ import {
   getThumbnailUrl,
   registerMediaProviders,
 } from 'src/helpers/fs';
+import { findWatchedConversion } from 'src/helpers/media-conversion';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { LAST_USED_FILENAME, updateLastUsedDate } from 'src/helpers/usage';
 import {
@@ -3922,11 +3923,17 @@ export const watchedItemMapper: (
 
     const dateString = parentDate.replaceAll('-', '');
 
-    const fileUrl = pathToFileURL(watchedItemPath);
-
     const video = isVideo(watchedItemPath);
     const audio = isAudio(watchedItemPath);
     const image = isImage(watchedItemPath);
+
+    // A file this computer can't play plays its converted copy, if it was
+    // converted here; the item stays the watched file's (its id, title and
+    // place in the list).
+    const playablePath =
+      ((video || audio) && (await findWatchedConversion(watchedItemPath))) ||
+      watchedItemPath;
+    const fileUrl = pathToFileURL(playablePath);
 
     if (!(video || audio || image)) {
       if (isJwPlaylist(watchedItemPath)) {
@@ -3948,9 +3955,9 @@ export const watchedItemMapper: (
     const title = metadata?.common.title || basename(watchedItemPath); // NOSONAR: empty title uses the file name
 
     const uniqueId = sanitizeId(
-      formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl,
+      formatDate(parentDate, 'YYYYMMDD') + '-' + pathToFileURL(watchedItemPath),
     );
-    const thumbnailUrl = await getThumbnailUrl(watchedItemPath);
+    const thumbnailUrl = await getThumbnailUrl(playablePath);
 
     // Parse section information and order from filename or section order file
     const filename = basename(watchedItemPath);

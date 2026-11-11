@@ -35,6 +35,7 @@ vi.mock('src/shared/vanilla', () => ({
 vi.mock('src/utils/fs', () => ({
   congPreferencesPath: vi.fn(async () => '/cong-preferences'),
   getAdditionalMediaPath: getAdditionalMediaPathMock,
+  getConvertedMediaPath: vi.fn(async () => '/converted-media'),
   getParentDirectory: vi.fn(),
   getPublicationDirectory: vi.fn(),
   getPublicationsPath: vi.fn(async () => '/publications'),
@@ -81,6 +82,7 @@ const toDashed = (d: Date) =>
 const pastYYYYMMDD = toYYYYMMDD(offsetDate(-14));
 const pastDashed = toDashed(offsetDate(-14));
 const futureYYYYMMDD = toYYYYMMDD(offsetDate(14));
+const futureDashed = toDashed(offsetDate(14));
 
 describe('cleanCache', () => {
   beforeEach(() => {
@@ -111,6 +113,8 @@ describe('cleanCache', () => {
         // Additional Media dated folders use YYYYMMDD (no dashes)
         case '/additional-media/congA':
           return [dir(pastYYYYMMDD), dir(futureYYYYMMDD)];
+        case '/converted-media':
+          return [dir(pastDashed), dir(futureDashed)];
         case '/export':
           return [dir(pastDashed)];
         // folderToWatch and mediaAutoExportFolder dated folders use
@@ -175,6 +179,20 @@ describe('cleanCache', () => {
     expect(removeMock).not.toHaveBeenCalledWith(`/watch/${pastDashed}`);
     // Only the watched folder is affected.
     expect(removeMock).toHaveBeenCalledWith(`/export/${pastDashed}`);
+  });
+
+  // Copies of watched files converted to play on this computer.
+  it('deletes past-dated Converted Media folders, even when past watched folders are kept', async () => {
+    if (currentStateStore.currentSettings) {
+      currentStateStore.currentSettings.deletePastWatchedFolders = false;
+    }
+    const { cleanCache } = await import('../cleanup');
+    await cleanCache();
+    await flush();
+    expect(removeMock).toHaveBeenCalledWith(`/converted-media/${pastDashed}`);
+    expect(removeMock).not.toHaveBeenCalledWith(
+      `/converted-media/${futureDashed}`,
+    );
   });
 
   it('deletes past-dated mediaAutoExportFolder folders (YYYY-MM-DD)', async () => {
