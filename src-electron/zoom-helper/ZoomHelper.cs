@@ -1461,24 +1461,87 @@ namespace M3.ZoomHelper
             return Changed(true);
         }
 
-        /// <summary>Opens the audio menu (the arrow next to the microphone button
-        /// is the toolbar's first menu) and returns its entries.</summary>
-        static List<El> OpenAudioMenuEntries(El window)
+        /// <summary>Opens the toolbar's first menu, the audio menu (the arrow
+        /// next to the microphone button). Null if it didn't open. The arrow is
+        /// looked up each time, as the window may have moved since.</summary>
+        static El OpenAudioMenu(El window)
         {
             var menus = ToolbarMenus(window);
-            if (menus.Count == 0) throw new ZoomActionError("audio-menu-not-found");
+            if (menus.Count == 0) throw new ZoomActionError("audio-menu-not-found:no menu arrows");
             Press(menus[0]);
             var menu = WaitForWindow(MenuClass, 4000);
-            if (menu == null)
+            if (menu != null) return menu;
+            menus = ToolbarMenus(window);
+            if (menus.Count == 0) throw new ZoomActionError("audio-menu-not-found:no menu arrows");
+            Click(menus[0]);
+            return WaitForWindow(MenuClass, 4000);
+        }
+
+        /// <summary>Opens the audio menu and returns its entries. Zoom closes
+        /// its menus as soon as the meeting window moves or changes size
+        /// (verified on 7.1.9: a few pixels do it), as when a panel docks into
+        /// it just after the meeting opens. That left the menu without entries
+        /// (MMM-V2-3NB), or kept it from opening at all when it happened while
+        /// the menu was on its way. Either way the menu is opened again, twice
+        /// at most. `found` says what the last try saw.</summary>
+        static List<El> OpenAudioMenuEntries(El window, out string found)
+        {
+            const int maxTries = 3;
+            var groups = new List<List<El>>();
+            var closed = false;
+            var tries = 0;
+            while (true)
             {
-                Click(menus[0]);
-                menu = WaitForWindow(MenuClass, 4000);
+                tries++;
+                var menu = OpenAudioMenu(window);
+                if (menu == null)
+                {
+                    if (tries == maxTries) throw new ZoomActionError("audio-menu-not-found:didn't open, " + tries + " tries");
+                    Thread.Sleep(500); // for the window to settle
+                    continue;
+                }
+                var handle = menu.Raw.CurrentNativeWindowHandle;
+                // The menu's window can be up before its entries are.
+                WaitUntil(() =>
+                {
+                    groups = MenuGroups(menu);
+                    closed = !Native.IsWindowVisible(handle);
+                    return closed || EntryCount(groups) >= 2;
+                }, 2000);
+                if (!closed || tries == maxTries) break;
+                Thread.Sleep(500);
             }
-            if (menu == null) throw new ZoomActionError("audio-menu-not-found");
-            // The menu's window can be up before its entries are (MMM-V2-3NB).
+            found = DescribeAudioMenu(groups, closed, tries);
             var items = new List<El>();
-            WaitUntil(() => (items = MenuItems(menu)).Count >= 2, 2000);
+            foreach (var group in groups) items.AddRange(group);
             return items;
+        }
+
+        static int EntryCount(List<List<El>> groups)
+        {
+            var count = 0;
+            foreach (var group in groups) count += group.Count;
+            return count;
+        }
+
+        /// <summary>What the audio menu showed, for errors: how many entries in
+        /// each group, the names in all but the first two groups (microphones
+        /// and speakers, whose names can carry a person's, like "Bernd's
+        /// AirPods"), whether Zoom had closed it, and after how many tries.</summary>
+        static string DescribeAudioMenu(List<List<El>> groups, bool closed, int tries)
+        {
+            var sizes = new List<string>();
+            foreach (var group in groups) sizes.Add(group.Count.ToString());
+            var text = EntryCount(groups) + " entries [" + string.Join(",", sizes) + "]";
+            if (groups.Count >= 4)
+            {
+                var names = new List<string>();
+                for (var i = 2; i < groups.Count; i++)
+                    foreach (var item in groups[i]) names.Add(FirstSegment(item.Name));
+                text += " " + string.Join(" | ", names);
+            }
+            if (closed) text += ", closed by Zoom";
+            return text + ", " + tries + (tries == 1 ? " try" : " tries");
         }
 
         /// <summary>Presses the audio menu's entry `fromEnd` places from the
@@ -1488,8 +1551,9 @@ namespace M3.ZoomHelper
         static bool PressLeaveAudioEntry(El window, int fromEnd)
         {
             var before = ZoomWindows();
-            var items = OpenAudioMenuEntries(window);
-            if (items.Count < fromEnd) throw new ZoomActionError("leave-audio-item-not-found");
+            string found;
+            var items = OpenAudioMenuEntries(window, out found);
+            if (items.Count < fromEnd) throw new ZoomActionError("leave-audio-item-not-found:" + found);
             Press(items[items.Count - fromEnd]);
             Func<bool> openedDialog = () => TopWindows(HostUnmuteDialogClass, true).Exists(handle => !before.ContainsKey(handle));
             if (!WaitUntil(() => !AudioJoined(window) || openedDialog(), WaitTimeoutMs)) throw new ZoomActionError("audio-not-left");
