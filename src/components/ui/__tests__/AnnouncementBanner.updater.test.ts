@@ -3,8 +3,11 @@ import type { UpdateVersionInfo } from 'src/types/general';
 import { flushPromises, mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import * as dateHelpers from 'src/helpers/date';
 import * as api from 'src/utils/api';
+import { useCurrentStateStore } from 'stores/current-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { nextTick } from 'vue';
 
 import AnnouncementBanner from './../AnnouncementBanner.vue';
 import UpdateProgressToast from './../UpdateProgressToast.vue';
@@ -150,4 +153,141 @@ describe('AnnouncementBanner - updater catch-up', () => {
 
     expect(quitAndInstall).toHaveBeenCalledOnce();
   });
+});
+
+// On Windows, an update downloaded in an earlier session installs when M³
+// opens again, instead of when it quits (where a shutdown could kill the
+// installer halfway): after a countdown, and only at a good moment.
+describe('AnnouncementBanner - installing an update on launch', () => {
+  const dueUpdate: UpdateVersionInfo = {
+    installOnLaunch: true,
+    isDowngrade: false,
+    version: '1.2.3',
+  };
+  const MINUTE = 60_000;
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    useCurrentStateStore().mediaPlaying.url = '';
+  });
+
+  // Mounts the banner and hands back the update-downloaded listener it
+  // registers. Timers are faked only afterwards, once mounting has settled.
+  const mountForDownload = async () => {
+    vi.spyOn(api, 'fetchAnnouncements').mockResolvedValueOnce([]);
+    vi.spyOn(api, 'fetchLatestVersion').mockResolvedValueOnce('1.2.3');
+    vi.spyOn(globalThis.electronApi, 'getUpdaterState').mockResolvedValue(
+      noUpdate,
+    );
+    let downloadedCallback: ((args: UpdateVersionInfo) => void) | undefined;
+    vi.spyOn(globalThis.electronApi, 'onUpdateDownloaded').mockImplementation(
+      (cb) => {
+        downloadedCallback = cb;
+      },
+    );
+    const quitAndInstall = vi
+      .spyOn(globalThis.electronApi, 'quitAndInstall')
+      .mockImplementation(() => undefined);
+
+    const wrapper = mount(AnnouncementBanner, {
+      global: { stubs: { teleport: true } },
+    });
+    await flushPromises();
+    vi.useFakeTimers();
+
+    const download = async (versionInfo: UpdateVersionInfo) => {
+      downloadedCallback?.(versionInfo);
+      await nextTick();
+    };
+    const toast = () => wrapper.getComponent(UpdateProgressToast);
+
+    return { download, quitAndInstall, toast };
+  };
+
+  it('installs it once the countdown ends', async () => {
+    const { download, quitAndInstall, toast } = await mountForDownload();
+
+    await download(dueUpdate);
+    expect(toast().text()).toContain('install it in 15 s');
+
+    await vi.advanceTimersByTimeAsync(14_000);
+    expect(toast().text()).toContain('install it in 1 s');
+    expect(quitAndInstall).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(quitAndInstall).toHaveBeenCalledOnce();
+  });
+
+  it('installs it right away from the install now button', async () => {
+    const { download, quitAndInstall, toast } = await mountForDownload();
+
+    await download(dueUpdate);
+    toast().vm.$emit('install');
+    await vi.advanceTimersByTimeAsync(30_000);
+
+    expect(quitAndInstall).toHaveBeenCalledOnce();
+  });
+
+  it('keeps it for later when put off', async () => {
+    const { download, quitAndInstall, toast } = await mountForDownload();
+
+    await download(dueUpdate);
+    toast().vm.$emit('postpone');
+    await vi.advanceTimersByTimeAsync(30_000);
+
+    expect(quitAndInstall).not.toHaveBeenCalled();
+    expect(toast().text()).toContain('Quit and install');
+    expect(toast().text()).not.toContain('restart');
+  });
+
+  it('does not install it once the toast is closed', async () => {
+    const { download, quitAndInstall, toast } = await mountForDownload();
+
+    await download(dueUpdate);
+    toast().vm.$emit('dismiss');
+    await vi.advanceTimersByTimeAsync(30_000);
+
+    expect(quitAndInstall).not.toHaveBeenCalled();
+  });
+
+  it('does not count down for an update downloaded in this session', async () => {
+    const { download, quitAndInstall, toast } = await mountForDownload();
+
+    await download({ ...dueUpdate, installOnLaunch: false });
+    await vi.advanceTimersByTimeAsync(30_000);
+
+    expect(toast().text()).not.toContain('restart');
+    expect(quitAndInstall).not.toHaveBeenCalled();
+  });
+
+  it('waits while media is shown', async () => {
+    useCurrentStateStore().mediaPlaying.url = 'file:///media/picture.jpg';
+    const { download, quitAndInstall, toast } = await mountForDownload();
+
+    await download(dueUpdate);
+    await vi.advanceTimersByTimeAsync(30_000);
+
+    expect(toast().text()).not.toContain('restart');
+    expect(quitAndInstall).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { countsDown: false, minutesUntilStart: 10, when: '10 minutes before' },
+    { countsDown: false, minutesUntilStart: -60, when: 'an hour into' },
+    { countsDown: true, minutesUntilStart: 30, when: '30 minutes before' },
+    { countsDown: true, minutesUntilStart: -150, when: '2.5 hours after' },
+  ])(
+    'counts down $when the meeting: $countsDown',
+    async ({ countsDown, minutesUntilStart }) => {
+      const { download, toast } = await mountForDownload();
+      vi.spyOn(dateHelpers, 'getMeetingStartToday').mockReturnValue(
+        new Date(Date.now() + minutesUntilStart * MINUTE),
+      );
+
+      await download(dueUpdate);
+
+      expect(toast().text().includes('restart')).toBe(countsDown);
+    },
+  );
 });
