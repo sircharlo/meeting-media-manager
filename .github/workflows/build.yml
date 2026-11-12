@@ -197,6 +197,16 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Ubuntu 26.04's gcc 15 compiles C as C23 by default, where an
+          # implicit function declaration is an error: robotjs 0.9.1's
+          # src/xdisplay.c calls strdup() and includes only <stdio.h> and
+          # <stdlib.h>, so the forced rebuild of the module failed there.
+          # Preinclude <string.h> so strdup gets its real declaration - the
+          # same include the file is missing, without editing it. Turning the
+          # diagnostic off instead would build strdup as returning int and
+          # truncate the pointer it returns on 64-bit. Linux only: MSVC and
+          # clang spell preincludes differently, and only gcc 15 needs it.
+          CFLAGS: ${{ runner.os == 'Linux' && '-include string.h' || '' }}
           GITHUB_TOKEN: ${{ github.token }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}

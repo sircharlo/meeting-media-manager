@@ -165,9 +165,27 @@ jobs:
             echo "$delimiter"
           } >> "$GITHUB_OUTPUT"
 
+  # ci.yml skips pull requests authored by github-actions[bot], which this
+  # one is, so the lockfile PR never gets a Build/Release run of its own: the
+  # merge below would see only the unrelated checks that do run for it and
+  # proceed with --admin, which is how a lockfile that no longer compiled
+  # landed on master unnoticed. Build this branch here instead, so the merge
+  # only happens once the re-resolved lockfile really builds.
+  build:
+    name: Build the re-resolved lockfile
+    needs: fix
+    if: needs.fix.outputs.has_changes == 'true'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build.yml
+    with:
+      checkout-latest: true
+      ref: ${{ needs.fix.outputs.branch }}
+    secrets: inherit
+
   merge:
     name: Merge the lockfile update
-    needs: fix
+    needs: [build, fix]
     if: needs.fix.outputs.has_changes == 'true'
     permissions:
       contents: write
