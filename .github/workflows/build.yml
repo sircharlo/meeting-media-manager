@@ -10,6 +10,10 @@ on:
         description: 'Publish build artifacts to GitHub Releases via electron-builder'
         type: boolean
         default: false
+      quality-only:
+        description: 'Run only the lint and unit-test checks, without packaging the app'
+        type: boolean
+        default: false
       ref:
         description: 'With checkout-latest, the commit to build instead of the latest master'
         type: string
@@ -38,6 +42,9 @@ jobs:
   sonarqube:
     name: SonarQube
     runs-on: ubuntu-latest
+    # Nothing new to scan in quality-only mode, and this job cannot gate a
+    # merge anyway (continue-on-error below), so it stays out of that mode.
+    if: ${{ !inputs.quality-only }}
     continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -124,6 +131,10 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     needs: [quality]
+    # Callers that only need the checks turn the packaging off: the version
+    # bump branch (whose content the release build rebuilds minutes later) is
+    # the case this exists for. Everything else keeps the full matrix.
+    if: ${{ !inputs.quality-only }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
