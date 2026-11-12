@@ -25,10 +25,13 @@ let awaitingAnswer: ((answer: ZoomCheckPromptAnswer) => void) | null = null;
 
 /** Answers the question, whoever answers first: later answers change nothing. */
 const settle = (answer: ZoomCheckPromptAnswer) => {
+  // The question always goes away when it is answered, even if nothing is
+  // waiting for the answer any more (the check gave up on it, see the timeout
+  // below): otherwise the dialog stays on screen and its buttons do nothing.
+  useZoomStateStore().closeCheckPrompt();
   const resolve = awaitingAnswer;
   if (!resolve) return;
   awaitingAnswer = null;
-  useZoomStateStore().closeCheckPrompt();
   resolve(answer);
 };
 

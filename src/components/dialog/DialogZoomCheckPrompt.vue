@@ -27,6 +27,7 @@
     :message="t('zoom-check-skip-confirm-message')"
     persistent
     :title="t('zoom-check-skip-confirm-title')"
+    @cancel="askAboutSkipping = false"
     @confirm="answer('skip')"
   />
 </template>
