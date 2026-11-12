@@ -1063,6 +1063,7 @@
   "update-downloading-short": "Tē tōtarahia nei te fa’ahoura’a",
   "update-error-read-only-volume": "’Aita i ti’a ’ia fa’ahou te M³ nō te mea tē vai ra te reira i roto i te hō’ē pu’era’a parau e fā’ari’i noa i te tai’ora’a. ’A fa’anu’u i te M³ i te tahi atu vāhi, mai te pu’era’a parau Applications.",
   "update-failed": "’Aita te fa’ahoura’a i manu’ia",
+  "update-install-asks-permission": "Windows will ask for permission to install it",
   "update-install-countdown": "E ha’amata fa’ahou M³ nō te fa’ata’a i te fa’ahoura’a i roto e {seconds} s",
   "update-preparing": "Te fa'aineine nei i te iriti…",
   "update-waiting-for-network": "Tē tīa’i nei i te natirara…",
