@@ -275,7 +275,7 @@ Als de computer werd uitgezet of opnieuw opgestart terwijl M³ een update aan he
 
 Als de computer geen verbinding met internet kan maken, is het installatieprogramma dat M³ had gedownload meestal nog aanwezig: druk op `Win+R`, typ `%LOCALAPPDATA%\meeting-media-manager-updater\pending` en voer daarna het installatieprogramma uit in de map die wordt geopend.
 
-Om te voorkomen dat een installatie zo halverwege stopt, installeert M³ op Windows een gedownloade update de volgende keer dat het wordt geopend, in plaats van wanneer het wordt afgesloten. Als M³ voor alle gebruikers van de computer is geïnstalleerd, installeert het updates nog steeds bij het afsluiten, dus wacht een minuut voordat je de computer uitzet.
+Om te voorkomen dat een installatie zo halverwege stopt, installeert M³ op Windows een gedownloade update de volgende keer dat het wordt geopend, in plaats van wanneer het wordt afgesloten. When M³ is installed for all users of the computer, Windows asks for permission first, so M³ waits until you choose to install the update.
 
 ## Ondersteuning en community {#support-community}
 

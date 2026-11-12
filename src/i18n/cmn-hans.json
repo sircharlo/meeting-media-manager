@@ -1063,6 +1063,7 @@
   "update-downloading-short": "正在下载更新",
   "update-error-read-only-volume": "无法更新 M³，因为它位于只读目录中。请将 M³ 移到其他位置，例如“应用程序”文件夹。",
   "update-failed": "更新失败",
+  "update-install-asks-permission": "Windows will ask for permission to install it",
   "update-install-countdown": "M³ 将在 {seconds} 秒后重新启动以安装更新",
   "update-preparing": "正在准备下载……",
   "update-waiting-for-network": "正在等待网络……",

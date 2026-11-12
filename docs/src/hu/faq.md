@@ -275,7 +275,7 @@ Ha a számítógépet kikapcsolták vagy újraindították, miközben az M³ egy
 
 Ha a számítógép nem tud csatlakozni az internethez, az M³ által korábban letöltött telepítő általában még megvan: nyomja meg a `Win+R` billentyűkombinációt, írja be a `%LOCALAPPDATA%\meeting-media-manager-updater\pending` útvonalat, majd futtassa a megnyíló mappában található telepítőt.
 
-Az ilyen megszakadás elkerülése érdekében az M³ Windows rendszeren a letöltött frissítést a következő megnyitásakor telepíti, nem pedig a bezárásakor. Ha az M³ a számítógép összes felhasználója számára van telepítve, továbbra is bezáráskor telepíti a frissítéseket, ezért a számítógép kikapcsolása előtt várjon egy percet.
+Az ilyen megszakadás elkerülése érdekében az M³ Windows rendszeren a letöltött frissítést a következő megnyitásakor telepíti, nem pedig a bezárásakor. When M³ is installed for all users of the computer, Windows asks for permission first, so M³ waits until you choose to install the update.
 
 ## Támogatás és közösség {#support-community}
 

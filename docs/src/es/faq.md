@@ -275,7 +275,7 @@ Si la computadora se apagó o se reinició mientras M³ instalaba una actualizac
 
 Si la computadora no puede conectarse a internet, normalmente el instalador que M³ había descargado sigue ahí: pulsa `Win+R`, introduce `%LOCALAPPDATA%\meeting-media-manager-updater\pending` y luego ejecuta el instalador que está en la carpeta que se abre.
 
-Para evitar que esto ocurra, en Windows, M³ instala una actualización descargada la próxima vez que se abre, en lugar de cuando se cierra. Cuando M³ está instalado para todos los usuarios de la computadora, sigue instalando las actualizaciones al cerrarse, así que espera un minuto antes de apagar la computadora.
+Para evitar que esto ocurra, en Windows, M³ instala una actualización descargada la próxima vez que se abre, en lugar de cuando se cierra. When M³ is installed for all users of the computer, Windows asks for permission first, so M³ waits until you choose to install the update.
 
 ## Ayuda y comunidad {#support-community}
 

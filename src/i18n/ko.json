@@ -1063,6 +1063,7 @@
   "update-downloading-short": "업데이트 다운로드 중",
   "update-error-read-only-volume": "M³가 읽기 전용 폴더에 설치되어 있어 애플리케이션을 업데이트할 수 없습니다. M³를 Applications 폴더 등으로 이동해 실행해 주십시오.",
   "update-failed": "업데이트 실패",
+  "update-install-asks-permission": "Windows will ask for permission to install it",
   "update-install-countdown": "{seconds}초 후 M³가 다시 시작되어 업데이트를 설치합니다",
   "update-preparing": "다운로드 준비 중…",
   "update-waiting-for-network": "네트워크 대기 중…",
