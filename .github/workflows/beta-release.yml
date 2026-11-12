@@ -92,6 +92,9 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       checkout-latest: true
+      # Lint and unit tests are enough here: the bump only changes the version
+      # number, and the release build packages this same content right after.
+      quality-only: true
       ref: ${{ needs.bump-version.outputs.bumpBranch }}
     secrets: inherit
 
