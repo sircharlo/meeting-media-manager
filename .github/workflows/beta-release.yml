@@ -112,7 +112,12 @@ jobs:
   draft-release:
     name: Draft release
     runs-on: ubuntu-latest
-    needs: [get-commit, bump-version, merge-version-bump]
+    # No `if:` on purpose: this must run only when every dependency
+    # succeeded, so a failed bump gate stops the release here instead of
+    # drafting and packaging from a master that never got the bump. The gate
+    # is named in `needs` to keep that dependency explicit rather than
+    # implied through `merge-version-bump` being skipped.
+    needs: [get-commit, bump-version, build-version-bump, merge-version-bump]
     permissions:
       contents: write
     steps:
