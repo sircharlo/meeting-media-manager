@@ -275,7 +275,7 @@ Preveri naslednje jezikovne nastavitve:
 
 Če se računalnik ne more povezati z internetom, je namestitveni program, ki ga je M³ že prenesel, običajno še vedno tam: pritisni `Win+R`, vnesi `%LOCALAPPDATA%\meeting-media-manager-updater\pending` in nato zaženi namestitveni program v mapi, ki se odpre.
 
-Da se namestitev ne bi tako ustavila na pol poti, M³ v sistemu Windows preneseno posodobitev namesti ob naslednjem zagonu namesto ob zaprtju. Če je M³ nameščen za vse uporabnike računalnika, posodobitve še vedno namešča ob zaprtju, zato mu pred izklopom računalnika pusti minuto časa.
+Da se namestitev ne bi tako ustavila na pol poti, M³ v sistemu Windows preneseno posodobitev namesti ob naslednjem zagonu namesto ob zaprtju. When M³ is installed for all users of the computer, Windows asks for permission first, so M³ waits until you choose to install the update.
 
 ## Podpora in skupnost {#support-community}
 
