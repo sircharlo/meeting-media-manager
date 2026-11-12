@@ -1063,6 +1063,7 @@
   "update-downloading-short": "Downloading update",
   "update-error-read-only-volume": "M³ could not be updated because it is stored in a directory that is read-only. Please move M³ to a different location, such as the Applications folder.",
   "update-failed": "Update failed",
+  "update-install-asks-permission": "Windows will ask for permission to install it",
   "update-install-countdown": "M³ will restart to install it in {seconds} s",
   "update-preparing": "Preparing to download…",
   "update-waiting-for-network": "Waiting on the network…",
