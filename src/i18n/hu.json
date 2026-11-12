@@ -1063,6 +1063,7 @@
   "update-downloading-short": "Frissítés letöltése",
   "update-error-read-only-volume": "Az M³ nem frissíthető, mert csak olvasható könyvtárban található. Kérjük, helyezze át az M³-at egy másik helyre, például az Alkalmazások mappába.",
   "update-failed": "A frissítés nem sikerült",
+  "update-install-asks-permission": "Windows will ask for permission to install it",
   "update-install-countdown": "Az M³ {seconds} mp múlva újraindul a telepítéshez",
   "update-preparing": "Letöltés előkészítése…",
   "update-waiting-for-network": "Várakozás a hálózatra…",
