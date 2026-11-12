@@ -114,9 +114,14 @@ jobs:
           echo "Watching checks..."
           gh pr checks "$PR_URL" --watch --interval 30
           checks_status=$?
+
+          # Read the checks again now that --watch has returned. The snapshot
+          # above only waited for checks to appear, so deciding from it would
+          # miss anything that failed while watching and merge regardless.
+          checks_output=$(gh pr checks "$PR_URL" 2>&1)
           set -e
 
-          if [ "$checks_status" -ne 0 ] && gh pr checks "$PR_URL" 2>&1 | grep -q "no checks reported"; then
+          if [ "$checks_status" -ne 0 ] && echo "$checks_output" | grep -q "no checks reported"; then
             echo "No checks were reported for this PR; continuing to merge."
             exit 0
           fi
