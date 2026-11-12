@@ -79,8 +79,16 @@ jobs:
   draft-release:
     name: Draft release
     runs-on: ubuntu-latest
-    needs: [bump-version, merge-version-bump]
-    if: always() && needs.bump-version.result == 'success' && (needs.merge-version-bump.result == 'success' || needs.merge-version-bump.result == 'skipped')
+    needs: [bump-version, build-version-bump, merge-version-bump]
+    # `merge-version-bump` is legitimately skipped when there is nothing to
+    # merge (no changes, or the draft already exists), so `skipped` stays
+    # acceptable for it. It is skipped for a second reason though - the bump
+    # gate failed - and that one must stop the release: drafting and then
+    # packaging from a master that never got the bump ships the previous
+    # version's content under the new tag. Requiring the gate itself to have
+    # succeeded, or to have been skipped because there was nothing to gate,
+    # tells the two apart.
+    if: always() && needs.bump-version.result == 'success' && (needs.build-version-bump.result == 'success' || needs.build-version-bump.result == 'skipped') && (needs.merge-version-bump.result == 'success' || needs.merge-version-bump.result == 'skipped')
     permissions:
       contents: write
     steps:
