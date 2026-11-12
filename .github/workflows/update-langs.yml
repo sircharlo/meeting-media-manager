@@ -67,10 +67,24 @@ jobs:
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
 
+  # ci.yml skips pull requests authored by github-actions[bot], which this
+  # one is, so it would otherwise admin-merge with only the unrelated checks
+  # that do run for it (see fix-vulnerable-dependencies.yml). Build the update
+  # branch first, and let the merge below wait for it.
+  build-langs:
+    name: Build the language update
+    needs: update-langs
+    if: needs.update-langs.outputs.has_changes == 'true' && needs.update-langs.outputs.has_placeholder == 'false'
+    uses: ./.github/workflows/build.yml
+    with:
+      checkout-latest: true
+      ref: ${{ needs.update-langs.outputs.branch }}
+    secrets: inherit
+
   # No new (placeholder) languages were introduced, so it's safe to merge
   # automatically: this only flips already-known languages in/out of enabled[].
   merge-langs:
-    needs: update-langs
+    needs: [build-langs, update-langs]
     if: needs.update-langs.outputs.has_changes == 'true' && needs.update-langs.outputs.has_placeholder == 'false'
     uses: ./.github/workflows/pr-creator-and-waiter.yml
     with:
