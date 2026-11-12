@@ -1063,7 +1063,7 @@
   "update-downloading-short": "Download dell'aggiornamento in corso",
   "update-error-read-only-volume": "Non è stato possibile aggiornare M³ perché si trova in una cartella di sola lettura. Sposta M³ in una posizione diversa, come la cartella Applicazioni.",
   "update-failed": "Aggiornamento non riuscito",
-  "update-install-asks-permission": "Windows will ask for permission to install it",
+  "update-install-asks-permission": "Windows chiederà il permesso di installarlo",
   "update-install-countdown": "M³ si riavvierà per installarlo tra {seconds} s",
   "update-preparing": "Preparazione del download…",
   "update-waiting-for-network": "In attesa della rete…",
