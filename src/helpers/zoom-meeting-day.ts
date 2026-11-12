@@ -172,10 +172,11 @@ const runDue = async () => {
   const stepKey = `${schedule.key}:${step}`;
   if (doneSteps.has(stepKey)) return;
 
-  if (outcome === 'cancelled') {
-    // The user stopped the check: Zoom is left alone until the next step.
+  if (outcome === 'cancelled' || outcome === 'declined') {
+    // The user stopped the check, or chose not to have Zoom tested: Zoom is
+    // left alone for this meeting.
     doneSteps.add(stepKey);
-    log(`Zoom ${step} step: skipped, the check was stopped`, 'zoom', 'info');
+    log(`Zoom ${step} step: skipped, the check was ${outcome}`, 'zoom', 'info');
     return;
   }
   if (await runStep(step, schedule.key)) doneSteps.add(stepKey);

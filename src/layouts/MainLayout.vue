@@ -19,6 +19,7 @@
       :start-step="zoomSetupAssistantStep"
     />
     <DialogZoomAutomationOverlay />
+    <DialogZoomCheckPrompt />
     <DialogFeatureNudge />
     <DialogMusicStartConfirm />
     <MediaConversionConfirm />
@@ -109,6 +110,7 @@ import DialogCongregationSwitcher from 'components/dialog/DialogCongregationSwit
 import DialogFeatureNudge from 'components/dialog/DialogFeatureNudge.vue';
 import DialogMusicStartConfirm from 'components/dialog/DialogMusicStartConfirm.vue';
 import DialogZoomAutomationOverlay from 'components/dialog/DialogZoomAutomationOverlay.vue';
+import DialogZoomCheckPrompt from 'components/dialog/DialogZoomCheckPrompt.vue';
 import DialogZoomSetupAssistant from 'components/dialog/DialogZoomSetupAssistant.vue';
 import MediaConversionConfirm from 'components/dialog/MediaConversionConfirm.vue';
 import HeaderBase from 'components/header/HeaderBase.vue';

@@ -62,6 +62,9 @@
             {{ t('zoom-automations-paused') }}
           </div>
           <div v-if="relearnNeeded">{{ t('zoom-check-names-changed') }}</div>
+          <div v-else-if="checkDeclined">
+            {{ t('zoom-automations-paused-declined') }}
+          </div>
           <div v-else>
             {{
               t('zoom-automations-paused-failed', { problems: pausedProblems })
@@ -466,7 +469,7 @@ const { currentSettings, mediaIsPlaying, zoomHelperLogs } =
   storeToRefs(currentState);
 
 const zoomState = useZoomStateStore();
-const { automationsPaused, checkRunning, pause, relearnNeeded } =
+const { automationsPaused, checkDeclined, checkRunning, pause, relearnNeeded } =
   storeToRefs(zoomState);
 
 const handAlert = useHandAlertStore();

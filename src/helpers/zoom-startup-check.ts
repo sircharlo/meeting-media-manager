@@ -24,6 +24,7 @@ import {
   type ZoomActionFailure,
   zoomNamesChanged,
 } from 'src/helpers/zoom';
+import { askBeforeCheckingZoom } from 'src/helpers/zoom-check-prompt';
 import {
   runZoomSelfTest,
   ZOOM_SELF_TEST_STEP_LABELS,
@@ -48,7 +49,7 @@ import { useZoomStateStore } from 'stores/zoom-state';
 // learn them again. A check the user stops changes nothing.
 
 export type ZoomStartupCheckOutcome =
-  'cancelled' | 'failed' | 'passed' | 'scheduled' | 'skipped';
+  'cancelled' | 'declined' | 'failed' | 'passed' | 'scheduled' | 'skipped';
 
 /** What a check found wrong. */
 interface Findings {
@@ -212,11 +213,20 @@ const waitForMeeting = async () => {
 /**
  * What doesn't work in Zoom; null if there's nothing to check (no meeting
  * open, and none to open now); 'sharing' if it can't be checked until Zoom
- * stops sharing; or, before the meeting's window, when to check.
+ * stops sharing; 'declined' if the user would rather not have it checked;
+ * 'unanswered' if nobody said whether it may run; or, before the meeting's
+ * window, when to check.
  */
 const findProblems = async (
   manual: boolean,
-): Promise<'sharing' | Findings | null | { checkInSeconds: number }> => {
+): Promise<
+  | 'declined'
+  | 'sharing'
+  | 'unanswered'
+  | Findings
+  | null
+  | { checkInSeconds: number }
+> => {
   // Only looking, so far: nothing to tell the user about.
   const meeting = await getZoomMeetingState();
   if (!meeting) return findings([HELPER_PROBLEM]);
@@ -234,6 +244,15 @@ const findProblems = async (
       if (opening !== 'now') return { checkInSeconds: opening };
     }
     if (!meetingId) return findings([MEETING_PROBLEM]);
+  }
+
+  // Zoom is about to be taken for a moment: the user says when.
+  if (!manual) {
+    const answer = await askBeforeCheckingZoom();
+    if (answer === 'skip') return 'declined';
+    // Nobody said: never wait on the question for ever (see the timeout in
+    // zoom-check-prompt.ts), rather give up on this check and ask again.
+    if (answer === 'unanswered') return 'unanswered';
   }
 
   // From here on, M³ may open the meeting and press things in Zoom.
@@ -404,6 +423,8 @@ const mayCheck = (congregationId: string, manual: boolean) => {
     return false;
   }
   if (manual) return true;
+  // They said no already (Test again is the way back): don't ask twice.
+  if (zoomState.checkDeclined) return false;
   return (
     settings.zoomMeetingManagerStartupCheck &&
     !zoomState.checkedCongregations.includes(congregationId) &&
@@ -459,6 +480,28 @@ export const runZoomStartupCheck = async ({
         type: 'warning',
       });
       return 'skipped';
+    }
+    if (found === 'declined') {
+      // They'd rather M³ left Zoom alone: its automations go off for this
+      // meeting, until an asked-for check passes (see the Zoom popup).
+      zoomState.pauseAutomations(congregationId, [], false, true);
+      log('Zoom check: skipped by the user, automations off', 'zoom', 'warn');
+      createTemporaryNotification({
+        caption: t('zoom-check-declined-caption'),
+        group: 'zoom-check',
+        message: t('zoom-automations-off-for-meeting'),
+        timeout: 10_000,
+        type: 'warning',
+      });
+      return 'declined';
+    }
+    if (found === 'unanswered') {
+      // The question went unanswered, which is also what happens when no
+      // dialog is there to answer it: today's check is still to do, so the
+      // next one asks again, rather than Zoom going untested for the day.
+      checkLater();
+      log('Zoom check: nobody answered, asking again later', 'zoom', 'warn');
+      return 'scheduled';
     }
     if ('checkInSeconds' in found) {
       // Too early: the meeting day's schedule (see zoom-meeting-day.ts)

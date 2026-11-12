@@ -11,6 +11,11 @@ import { useCurrentStateStore } from 'stores/current-state';
 export interface ZoomAutomationPause {
   congregationId: string;
   /**
+   * The user chose not to have Zoom tested before the meeting: M³ leaves
+   * Zoom alone for it, until they ask for a check (Test again).
+   */
+  declined?: boolean;
+  /**
    * Zoom's buttons no longer read as M³ learned them (its language was
    * changed, or it was updated): only the setup assistant, learning them
    * again, fixes it.
@@ -30,6 +35,8 @@ interface Store {
   cancelRequested: boolean;
   /** Congregations whose Zoom was checked today. */
   checkedCongregations: string[];
+  /** A check waits for the user's go-ahead (see DialogZoomCheckPrompt). */
+  checkPrompt: boolean;
   checkRunning: boolean;
   /**
    * What the last look at Zoom found (null: not looked yet, or Zoom's
@@ -73,6 +80,10 @@ export const useZoomStateStore = defineStore('zoom-state', {
       }
       this.runDepth++;
     },
+    /** The user's answer came back: nothing left to ask (see askForCheck). */
+    closeCheckPrompt() {
+      this.checkPrompt = false;
+    },
     endRun() {
       if (this.runDepth === 0) return;
       this.runDepth--;
@@ -82,8 +93,15 @@ export const useZoomStateStore = defineStore('zoom-state', {
       congregationId: string,
       problems: string[],
       namesChanged = false,
+      declined = false,
     ) {
-      this.pause = { congregationId, namesChanged, problems };
+      this.pause = declined
+        ? { congregationId, declined, namesChanged, problems }
+        : { congregationId, namesChanged, problems };
+    },
+    /** Asks the user whether M³ may test Zoom now (see askForCheck). */
+    promptForCheck() {
+      this.checkPrompt = true;
     },
     requestCancel() {
       if (this.runDepth === 0) return;
@@ -105,6 +123,10 @@ export const useZoomStateStore = defineStore('zoom-state', {
     automationsPaused: (state) =>
       !!state.pause &&
       state.pause.congregationId === useCurrentStateStore().currentCongregation,
+    /** Whether the user turned the automations off for this meeting. */
+    checkDeclined(): boolean {
+      return this.automationsPaused && !!this.pause?.declined;
+    },
     /** Whether they're paused until the setup assistant relearns Zoom's names. */
     relearnNeeded(): boolean {
       return this.automationsPaused && !!this.pause?.namesChanged;
@@ -115,6 +137,7 @@ export const useZoomStateStore = defineStore('zoom-state', {
     cancellations: 0,
     cancelRequested: false,
     checkedCongregations: [],
+    checkPrompt: false,
     checkRunning: false,
     meeting: null,
     pause: null,

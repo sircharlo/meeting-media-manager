@@ -537,6 +537,9 @@ namespace M3.ZoomHelper
         // How long the annotation layer gets to say which window is shared
         // before Zoom's own "Stop share" button is asked instead (StartShare).
         const int ShareWindowGraceMs = 1500;
+        // How long Zoom's share picker gets to open before the press is
+        // repeated (see OpenSharePickerAndWait).
+        const int ShareRepressAfterMs = 3000;
 
         // --- Waiting and windows ---------------------------------------------
 
@@ -2999,6 +3002,23 @@ namespace M3.ZoomHelper
             throw new ZoomActionError("share-button-not-found");
         }
 
+        /// <summary>Opens Zoom's share picker and waits for it. Zoom now and then
+        /// ignores the press, as it does the microphone and camera buttons (see
+        /// SetButtonState), with another of its own windows in front: its poll
+        /// window, its "Change name" dialog or its volume notice, say
+        /// (MMM-V2-3NC). Press once more before giving up, over the same wait
+        /// the picker gets from StartShare. Null if it never opened.</summary>
+        static El OpenSharePickerAndWait(El window, string shareTitle)
+        {
+            OpenSharePicker(window, shareTitle);
+            var picker = WaitForWindow(SharePickerClass, ShareRepressAfterMs);
+            if (picker != null) return picker;
+            // Leaves a picker that showed up meanwhile as it is (see the first
+            // line of OpenSharePicker): pressing Share again would close it.
+            OpenSharePicker(window, shareTitle);
+            return WaitForWindow(SharePickerClass, WaitTimeoutMs - ShareRepressAfterMs);
+        }
+
         // Zoom's share picker lists the screens, then the open windows (most
         // recently used first, so the media window's spot changes), then
         // browser tabs. It selects an entry only on a real click, and reports
@@ -3248,8 +3268,7 @@ namespace M3.ZoomHelper
             if (IsSharing()) return Changed(false);
             var window = RequireMeetingWindow();
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            OpenSharePicker(window, shareTitle);
-            var picker = WaitForWindow(SharePickerClass, WaitTimeoutMs);
+            var picker = OpenSharePickerAndWait(window, shareTitle);
             if (picker == null) throw new ZoomActionError("share-picker-not-found");
             var problem = SelectShareWindow(picker, windowTitle);
             if (problem != null)
@@ -3439,9 +3458,8 @@ namespace M3.ZoomHelper
             var pickerError = "share-picker-not-found";
             try
             {
-                OpenSharePicker(window, shareTitle);
                 // As long as sharing itself waits (see StartShare).
-                picker = WaitForWindow(SharePickerClass, WaitTimeoutMs);
+                picker = OpenSharePickerAndWait(window, shareTitle);
             }
             catch (ZoomActionError error) { pickerError = error.Message; }
             if (picker == null)
