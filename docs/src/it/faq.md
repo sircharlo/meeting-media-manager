@@ -275,7 +275,7 @@ Se il computer è stato spento o riavviato mentre M³ stava installando un aggio
 
 Se il computer non può connettersi a internet, di solito il programma di installazione che M³ aveva scaricato è ancora presente: premi `Win+R`, inserisci `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, quindi esegui il programma di installazione nella cartella che si apre.
 
-Per evitare questo problema, su Windows M³ installa un aggiornamento scaricato alla successiva apertura, anziché alla chiusura. When M³ is installed for all users of the computer, Windows asks for permission first, so M³ waits until you choose to install the update.
+Per evitare questo problema, su Windows M³ installa un aggiornamento scaricato alla successiva apertura, anziché alla chiusura. Quando M3 è installato per tutti gli utenti del computer, Windows chiede l'autorizzazione prima, quindi M3 aspetta fino a quando si sceglie di installare l'aggiornamento.
 
 ## Supporto e community {#support-community}
 
