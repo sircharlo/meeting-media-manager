@@ -275,7 +275,7 @@ Se o computador foi desligado ou reiniciado enquanto o M³ instalava uma atualiz
 
 Se o computador não conseguir se conectar à internet, o instalador que o M³ tinha baixado geralmente ainda está lá: pressione `Win+R`, digite `%LOCALAPPDATA%\meeting-media-manager-updater\pending` e depois execute o instalador na pasta que for aberta.
 
-Para evitar isso, no Windows, o M³ instala uma atualização baixada na próxima vez que é aberto, em vez de quando é fechado. Quando o M³ está instalado para todos os usuários do computador, ele continua instalando as atualizações ao ser fechado, então espere um minuto antes de desligar o computador.
+Para evitar isso, no Windows, o M³ instala uma atualização baixada na próxima vez que é aberto, em vez de quando é fechado. When M³ is installed for all users of the computer, Windows asks for permission first, so M³ waits until you choose to install the update.
 
 ## Suporte e comunidade {#support-community}
 

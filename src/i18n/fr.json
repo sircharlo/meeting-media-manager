@@ -1063,6 +1063,7 @@
   "update-downloading-short": "Téléchargement de la mise à jour",
   "update-error-read-only-volume": "M³ n'a pas pu être mis à jour car il est stocké dans un répertoire en lecture seule. Veuillez déplacer M³ vers un autre emplacement, tel que le dossier Applications.",
   "update-failed": "Échec de mise à jour",
+  "update-install-asks-permission": "Windows will ask for permission to install it",
   "update-install-countdown": "M³ va redémarrer pour l'installer dans {seconds} s",
   "update-preparing": "Préparation du téléchargement en cours…",
   "update-waiting-for-network": "En attente du réseau…",

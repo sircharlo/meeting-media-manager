@@ -275,7 +275,7 @@ Mai te peu ē ’ua tāpūhia ’aore rā ’ua ha’amata-fa’ahou-hia te roro
 
 Mai te peu ē ’aita te roro uira e nehenehe e tū’ati i te itenati, i te rahira’a o te taime tē vai noa ra te porotarama fa’atā’atira’a tā M³ i tātari a’ena: ’a pata i ni’a i te mau pitopito `Win+R`, ’a pāpa’i i `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, ’e i muri iho ’a ha’amata i te porotarama fa’atā’atira’a i roto i te fā’ari parau e matara mai.
 
-Nō te ’ape i teie fifi, i ni’a i te Windows, e fa’ata’a M³ i te fa’ahoura’a i tātarihia i te taime i muri iho e matara ai ’ōna, ’e ’ere i te taime e pōpānihia ai ’ōna. ’Ia fa’atā’atihia M³ nō te feiā fa’a’ohipa ato’a o te roro uira, e fa’ata’a noa ā ’ōna i te mau fa’ahoura’a ’ia pōpānihia ’ōna, nō reira ’a tīa’i hō’ē minuti hou ’oe e tāpū ai i te roro uira.
+Nō te ’ape i teie fifi, i ni’a i te Windows, e fa’ata’a M³ i te fa’ahoura’a i tātarihia i te taime i muri iho e matara ai ’ōna, ’e ’ere i te taime e pōpānihia ai ’ōna. When M³ is installed for all users of the computer, Windows asks for permission first, so M³ waits until you choose to install the update.
 
 ## Tauturu e Feti’ara’a {#support-community}
 
