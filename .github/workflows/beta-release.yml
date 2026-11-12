@@ -81,9 +81,23 @@ jobs:
           NEW_VERSION: ${{ steps.version-bump.outputs.newTag }}
         run: echo "new version $NEW_VERSION"
 
+  # ci.yml skips pull requests authored by github-actions[bot], which this is,
+  # so the bump would otherwise admin-merge without ever being built (see
+  # fix-vulnerable-dependencies.yml). Build the bump branch first, so a red
+  # master can't get a version bump on top of it: the merge below only runs
+  # once that build is green.
+  build-version-bump:
+    name: Build the version bump
+    needs: bump-version
+    uses: ./.github/workflows/build.yml
+    with:
+      checkout-latest: true
+      ref: ${{ needs.bump-version.outputs.bumpBranch }}
+    secrets: inherit
+
   merge-version-bump:
     name: Merge version bump branch
-    needs: bump-version
+    needs: [bump-version, build-version-bump]
     uses: ./.github/workflows/pr-creator-and-waiter.yml
     with:
       head: ${{ needs.bump-version.outputs.bumpBranch }}
