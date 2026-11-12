@@ -2416,7 +2416,7 @@ __metadata:
     is-online: "npm:^12.0.2"
     mime: "npm:^4.1.0"
     music-metadata: "npm:^11.16.0"
-    robotjs: "npm:^0.9.1"
+    robotjs: "patch:robotjs@npm%3A0.9.1#~/.yarn/patches/robotjs-npm-0.9.1-3be919a5b2.patch"
     upath: "npm:^3.0.8"
     yauzl: "npm:^3.4.0"
   languageName: unknown
@@ -3101,7 +3101,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"robotjs@npm:^0.9.1":
+"robotjs@npm:0.9.1":
   version: 0.9.1
   resolution: "robotjs@npm:0.9.1"
   dependencies:
@@ -3109,6 +3109,17 @@ __metadata:
     node-gyp: "npm:latest"
     node-gyp-build: "npm:^4.8.4"
   checksum: 10c0/3e96ce5820047fee9223ee0557354ddefd4e6fb312e4d5e9f2412e873e09f9a823f9ff6aa1308bfe911918f37eb92fb89904a2a1453bb5f751e3885f43822d2a
+  languageName: node
+  linkType: hard
+
+"robotjs@patch:robotjs@npm%3A0.9.1#~/.yarn/patches/robotjs-npm-0.9.1-3be919a5b2.patch":
+  version: 0.9.1
+  resolution: "robotjs@patch:robotjs@npm%3A0.9.1#~/.yarn/patches/robotjs-npm-0.9.1-3be919a5b2.patch::version=0.9.1&hash=901926"
+  dependencies:
+    node-addon-api: "npm:^4.2.0"
+    node-gyp: "npm:latest"
+    node-gyp-build: "npm:^4.8.4"
+  checksum: 10c0/b424aada6258ae45dab04193fa8fbe2bd68dd34da519c94cd5a319e2334f7305803e602164ae49998d97608dd69171562d316a059d70c6a5d987f8b2a5a0be81
   languageName: node
   linkType: hard
 

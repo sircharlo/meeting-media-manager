@@ -1,0 +1,12 @@
+diff --git a/src/xdisplay.c b/src/xdisplay.c
+index 363d95d829e419de112fd2321336f3aa1b5cca00..2e73111e4a683e60e3c3897f881716e57ce5984f 100644
+--- a/src/xdisplay.c
++++ b/src/xdisplay.c
+@@ -1,6 +1,7 @@
+ #include "xdisplay.h"
+ #include <stdio.h> /* For fputs() */
+ #include <stdlib.h> /* For atexit() */
++#include <string.h> /* For strdup() */
+ 
+ static Display *mainDisplay = NULL;
+ static int registered = 0;

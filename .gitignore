@@ -65,7 +65,9 @@ yarn-error.log*
 !.yarn/sdks
 !.yarn/versions
 .yarn/install-state.gz
-src-electron/.yarn/
+src-electron/.yarn/*
+# src-electron installs on its own, so it keeps its own patches (robotjs).
+!src-electron/.yarn/patches/
 
 # VitePress
 docs/.vitepress/dist

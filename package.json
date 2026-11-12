@@ -76,7 +76,7 @@
     "pinia-plugin-persistedstate": "^4.7.1",
     "pretty-bytes": "^7.2.0",
     "quasar": "^2.35.1",
-    "robotjs": "^0.9.1",
+    "robotjs": "patch:robotjs@npm%3A0.9.1#~/.yarn/patches/robotjs-npm-0.9.1-3be919a5b2.patch",
     "type-fest": "^5.10.0",
     "upath": "^3.0.8",
     "vue": "^3.5.45",
