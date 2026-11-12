@@ -99,6 +99,15 @@ vi.mock('src/helpers/notifications', () => ({
   createTemporaryNotification: zoom.notify,
 }));
 
+const prompt = vi.hoisted(() => ({
+  answer: vi.fn(),
+  ask: vi.fn<() => Promise<'run' | 'skip' | 'unanswered'>>(),
+}));
+vi.mock('src/helpers/zoom-check-prompt', () => ({
+  answerZoomCheckPrompt: prompt.answer,
+  askBeforeCheckingZoom: prompt.ask,
+}));
+
 const sentry = vi.hoisted(() => ({ captureMessage: vi.fn() }));
 vi.mock('@sentry/vue', () => sentry);
 
@@ -148,6 +157,7 @@ beforeEach(() => {
     windowListed: true,
     windowSelected: true,
   });
+  prompt.ask.mockResolvedValue('run');
 });
 
 afterEach(() => {
@@ -171,6 +181,64 @@ describe('Zoom startup check', () => {
     expect(await runZoomStartupCheck()).toBe('skipped');
     // Asked for, it runs again.
     expect(await runZoomStartupCheck({ manual: true })).toBe('passed');
+  });
+
+  it('asks the user before an automatic check touches Zoom', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+
+    expect(await runZoomStartupCheck()).toBe('passed');
+    expect(prompt.ask).toHaveBeenCalledOnce();
+    expect(zoom.withZoomRun).toHaveBeenCalledOnce();
+  });
+
+  it('asks only when a check is really going to run', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    meetingClosedUntilLaunched();
+    meetingStartsIn(null);
+
+    expect(await runZoomStartupCheck()).toBe('skipped');
+    expect(prompt.ask).not.toHaveBeenCalled();
+  });
+
+  it('never asks for a check the user asked for', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+
+    expect(await runZoomStartupCheck({ manual: true })).toBe('passed');
+    expect(prompt.ask).not.toHaveBeenCalled();
+  });
+
+  it('turns the automations off for the meeting when the user skips', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    prompt.ask.mockResolvedValueOnce('skip');
+
+    expect(await runZoomStartupCheck()).toBe('declined');
+    // Zoom was left alone altogether.
+    expect(zoom.withZoomRun).not.toHaveBeenCalled();
+    expect(zoom.runZoomSelfTest).not.toHaveBeenCalled();
+    const zoomState = useZoomStateStore();
+    expect(zoomState.automationsPaused).toBe(true);
+    expect(zoomState.checkDeclined).toBe(true);
+    expect(notification()?.type).toBe('warning');
+    // And it doesn't ask again: Test again is the way back.
+    zoomState.checkedCongregations = [];
+    expect(await runZoomStartupCheck()).toBe('skipped');
+    expect(prompt.ask).toHaveBeenCalledOnce();
+  });
+
+  it('asks again later when nobody answers, leaving the automations on', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    prompt.ask.mockResolvedValueOnce('unanswered');
+
+    expect(await runZoomStartupCheck()).toBe('scheduled');
+    // Zoom was left alone, and nothing was turned off for the meeting.
+    expect(zoom.withZoomRun).not.toHaveBeenCalled();
+    expect(useZoomStateStore().automationsPaused).toBe(false);
+    expect(zoom.notify).not.toHaveBeenCalled();
+
+    // Today's check is still to do, so the next one asks, and runs.
+    expect(await runZoomStartupCheck()).toBe('passed');
+    expect(prompt.ask).toHaveBeenCalledTimes(2);
+    expect(zoom.withZoomRun).toHaveBeenCalledOnce();
   });
 
   it("stays out of the setup assistant's way while it is open", async () => {
