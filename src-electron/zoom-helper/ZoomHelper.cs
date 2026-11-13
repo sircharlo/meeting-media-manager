@@ -673,6 +673,16 @@ namespace M3.ZoomHelper
             Native.SetCursorPos(x, y);
         }
 
+        /// <summary>An element's window handle, read now: zero once the
+        /// window is gone, which Zoom's menus can be by the time they're
+        /// looked at (UI Automation throws then, see
+        /// OpenAudioMenuEntries).</summary>
+        static IntPtr HandleOf(El element)
+        {
+            try { return element.Raw.CurrentNativeWindowHandle; }
+            catch (Exception) { return IntPtr.Zero; }
+        }
+
         /// <summary>Brings a window forward, un-minimizing it: for real key
         /// presses and the last-resort mouse paths. Zoom's controls are
         /// otherwise pressed without the focus.</summary>
@@ -1503,7 +1513,9 @@ namespace M3.ZoomHelper
                     Thread.Sleep(500); // for the window to settle
                     continue;
                 }
-                var handle = menu.Raw.CurrentNativeWindowHandle;
+                // Zoom may have closed the menu already: then there's no
+                // handle to read (zero), and it counts as closed below.
+                var handle = HandleOf(menu);
                 // The menu's window can be up before its entries are.
                 WaitUntil(() =>
                 {
@@ -3010,12 +3022,17 @@ namespace M3.ZoomHelper
         /// the picker gets from StartShare. Null if it never opened.</summary>
         static El OpenSharePickerAndWait(El window, string shareTitle)
         {
+            var pickersBefore = TopWindows(SharePickerClass, false);
             OpenSharePicker(window, shareTitle);
             var picker = WaitForWindow(SharePickerClass, ShareRepressAfterMs);
             if (picker != null) return picker;
             // Leaves a picker that showed up meanwhile as it is (see the first
             // line of OpenSharePicker): pressing Share again would close it.
-            OpenSharePicker(window, shareTitle);
+            // So too one Zoom created for the press but hasn't shown yet, as
+            // on a slow computer: only a press that brought no new picker
+            // window at all was ignored.
+            if (!TopWindows(SharePickerClass, false).Exists(handle => !pickersBefore.Contains(handle)))
+                OpenSharePicker(window, shareTitle);
             return WaitForWindow(SharePickerClass, WaitTimeoutMs - ShareRepressAfterMs);
         }
 
