@@ -742,9 +742,10 @@
                 </q-tooltip>
               </q-select>
 
-              <!-- No sound here: it still plays, and can be converted. -->
+              <!-- No sound here, or it failed to play once: it still plays,
+                   and can be converted. -->
               <q-btn
-                v-if="canConvert && playbackProblem?.missing === 'sound'"
+                v-if="canConvertBesidePlay"
                 color="primary"
                 flat
                 icon="mmm-movie"
@@ -2951,10 +2952,17 @@ const canConvert = computed(
     canConvertMediaItem(props.media),
 );
 // Its picture can't show here: it gets a Convert button instead of Play.
+// Not when that was only seen while playing it: that may not happen again.
 const needsConversionToPlay = computed(
   () =>
     playbackProblem.value?.missing === 'picture' &&
+    !playbackProblem.value.fromPlayback &&
     canConvertMediaItem(props.media),
+);
+// It still plays (without sound, or after failing to play once): Convert
+// sits beside Play.
+const canConvertBesidePlay = computed(
+  () => canConvert.value && !needsConversionToPlay.value,
 );
 const convertMedia = () => {
   requestMediaConversion([props.media]);
