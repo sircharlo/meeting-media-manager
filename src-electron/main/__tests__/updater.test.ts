@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+const checkForUpdatesMock = vi.fn(async () => null);
 const checkForUpdatesAndNotifyMock = vi.fn(async () => undefined);
 const handlers = new Map<string, (...args: unknown[]) => void>();
 const pathExistsMock = vi.fn(async () => false);
@@ -12,7 +13,30 @@ const toggleAuthorizedCloseMock = vi.fn();
 const getVersionMock = vi.fn(() => '26.6.0');
 const powerMonitorOnMock = vi.fn();
 const isMachineWideInstallationMock = vi.fn(() => false);
-const constants = { IS_TEST: false, PLATFORM: 'linux' as NodeJS.Platform };
+const constants = {
+  IS_DEMO_MODE: false,
+  IS_TEST: false,
+  PLATFORM: 'linux' as NodeJS.Platform,
+};
+// electron-updater's own defaults, until the app gives the autoUpdater its
+// options (node_modules/electron-updater/out/AppUpdater.js): it then
+// installs a downloaded update when the app quits, on every platform.
+const autoUpdaterDefaults = {
+  allowDowngrade: false,
+  allowPrerelease: false,
+  autoDownload: true,
+  autoInstallOnAppQuit: true,
+  logger: null as unknown,
+};
+const autoUpdaterMock = {
+  ...autoUpdaterDefaults,
+  checkForUpdates: checkForUpdatesMock,
+  checkForUpdatesAndNotify: checkForUpdatesAndNotifyMock,
+  on: vi.fn((event: string, handler: (...args: unknown[]) => void) => {
+    handlers.set(event, handler);
+  }),
+  quitAndInstall: quitAndInstallMock,
+};
 const pendingUpdate = {
   clearPendingUpdate: vi.fn(),
   countPendingUpdateInstallAttempt: vi.fn(),
@@ -34,20 +58,7 @@ vi.mock('src-electron/constants', () => constants);
 vi.mock('src-electron/main/pending-update', () => pendingUpdate);
 
 vi.mock('electron-updater', () => ({
-  default: {
-    autoUpdater: {
-      allowDowngrade: false,
-      allowPrerelease: false,
-      autoDownload: false,
-      autoInstallOnAppQuit: false,
-      checkForUpdatesAndNotify: checkForUpdatesAndNotifyMock,
-      logger: null,
-      on: vi.fn((event: string, handler: (...args: unknown[]) => void) => {
-        handlers.set(event, handler);
-      }),
-      quitAndInstall: quitAndInstallMock,
-    },
-  },
+  default: { autoUpdater: autoUpdaterMock },
 }));
 
 vi.mock('fs-extra/esm', () => ({
@@ -97,6 +108,8 @@ describe('updater install flow', () => {
     // "installed version" baseline unless it deliberately overrides it.
     getVersionMock.mockReturnValue('26.6.0');
     pathExistsMock.mockResolvedValue(false);
+    Object.assign(autoUpdaterMock, autoUpdaterDefaults);
+    constants.IS_DEMO_MODE = false;
     // Linux installs on quit, as every platform used to: the tests for
     // Windows, which never does, switch to it themselves.
     constants.PLATFORM = 'linux';
@@ -115,6 +128,33 @@ describe('updater install flow', () => {
 
     expect(checkForUpdatesAndNotifyMock).toHaveBeenCalledTimes(1);
   });
+
+  // electron-updater's system notification says the update "will be
+  // automatically installed on exit", which Windows no longer does.
+  it.each([
+    { notifies: true, platform: 'linux' },
+    { notifies: true, platform: 'darwin' },
+    { notifies: false, platform: 'win32' },
+  ] as const)(
+    'shows the system notification only where the update installs on quit: $platform $notifies',
+    async ({ notifies, platform }) => {
+      constants.PLATFORM = platform;
+      const { initUpdater } = await import('../updater');
+
+      await initUpdater();
+      await vi.waitFor(() => {
+        expect(
+          checkForUpdatesMock.mock.calls.length +
+            checkForUpdatesAndNotifyMock.mock.calls.length,
+        ).toBe(1);
+      });
+
+      expect(checkForUpdatesAndNotifyMock).toHaveBeenCalledTimes(
+        notifies ? 1 : 0,
+      );
+      expect(checkForUpdatesMock).toHaveBeenCalledTimes(notifies ? 0 : 1);
+    },
+  );
 
   it('does not call quitAndInstall before an update is downloaded', async () => {
     const { quitAndInstallUpdate } = await import('../updater');
@@ -638,6 +678,20 @@ describe('updater install flow', () => {
       expect(autoUpdater.autoInstallOnAppQuit).toBe(false);
     });
 
+    it('stays skipped if updates are turned off and on again meanwhile', async () => {
+      const { initUpdater, triggerUpdateCheck } = await import('../updater');
+      const autoUpdater = await getAutoUpdater();
+
+      await initUpdater();
+      const [, onShutdown] =
+        powerMonitorOnMock.mock.calls.find(([name]) => name === 'shutdown') ??
+        [];
+      (onShutdown as () => void)();
+      await triggerUpdateCheck();
+
+      expect(autoUpdater.autoInstallOnAppQuit).toBe(false);
+    });
+
     it('is left to Squirrel.Mac on macOS', async () => {
       constants.PLATFORM = 'darwin';
       const { initUpdater } = await import('../updater');
@@ -662,6 +716,151 @@ describe('updater install flow', () => {
 
         expect((await getAutoUpdater()).autoInstallOnAppQuit).toBe(false);
         expect(powerMonitorOnMock).not.toHaveBeenCalled();
+      },
+    );
+  });
+
+  // Settings' update toggle asks for a check either way: that's how the
+  // updater learns they're off.
+  describe.each(['linux', 'darwin'] as const)(
+    'updates turned off after the app opened (%s)',
+    (platform) => {
+      beforeEach(() => {
+        constants.PLATFORM = platform;
+      });
+
+      it('no longer installs a downloaded update on quit', async () => {
+        const { initUpdater, triggerUpdateCheck } = await import('../updater');
+        const autoUpdater = await getAutoUpdater();
+        await initUpdater();
+        handlers.get('update-downloaded')?.({ version: '26.6.2' });
+        expect(autoUpdater.autoInstallOnAppQuit).toBe(true);
+
+        pathExistsMock.mockResolvedValue(true);
+        await triggerUpdateCheck();
+
+        expect(autoUpdater.autoInstallOnAppQuit).toBe(false);
+      });
+
+      it('installs on quit again once they are turned back on', async () => {
+        const { initUpdater, triggerUpdateCheck } = await import('../updater');
+        const autoUpdater = await getAutoUpdater();
+        await initUpdater();
+        pathExistsMock.mockResolvedValue(true);
+        await triggerUpdateCheck();
+
+        pathExistsMock.mockResolvedValue(false);
+        await triggerUpdateCheck();
+
+        expect(autoUpdater.autoInstallOnAppQuit).toBe(true);
+      });
+    },
+  );
+
+  // The Settings toggles for updates and beta updates check for updates right
+  // away, also when the app opened with updates off and never set the
+  // autoUpdater up.
+  describe('checking for updates after the app opened with them off', () => {
+    beforeEach(() => {
+      constants.PLATFORM = 'win32';
+    });
+
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    const openWithUpdatesOff = async () => {
+      pathExistsMock.mockResolvedValue(true);
+      const updater = await import('../updater');
+      await updater.initUpdater();
+      pathExistsMock.mockResolvedValue(false);
+      return updater;
+    };
+
+    it('sets the updater up first, so a Windows update never installs on quit', async () => {
+      const { triggerUpdateCheck } = await openWithUpdatesOff();
+      expect(handlers.size).toBe(0);
+
+      await triggerUpdateCheck();
+
+      const autoUpdater = await getAutoUpdater();
+      expect(autoUpdater.autoInstallOnAppQuit).toBe(false);
+      expect(autoUpdater.allowDowngrade).toBe(true);
+      expect([...handlers.keys()]).toEqual(
+        expect.arrayContaining([
+          'error',
+          'update-available',
+          'update-downloaded',
+        ]),
+      );
+      expect(checkForUpdatesMock).toHaveBeenCalledOnce();
+      expect(checkForUpdatesAndNotifyMock).not.toHaveBeenCalled();
+    });
+
+    it('sets the updater up only once', async () => {
+      const { triggerUpdateCheck } = await openWithUpdatesOff();
+
+      await triggerUpdateCheck();
+      await triggerUpdateCheck();
+
+      expect(
+        autoUpdaterMock.on.mock.calls.filter(
+          ([event]) => event === 'update-downloaded',
+        ),
+      ).toHaveLength(1);
+    });
+
+    it('lets an update that waited since an earlier session wait for the next launch', async () => {
+      pendingUpdate.readPendingUpdate.mockReturnValue({
+        installAttempts: 0,
+        version: '26.6.2',
+      });
+      const { getUpdaterState, triggerUpdateCheck } =
+        await openWithUpdatesOff();
+
+      await triggerUpdateCheck();
+      handlers.get('update-downloaded')?.({ version: '26.6.2' });
+
+      expect(getUpdaterState().versionInfo?.installOnLaunch).toBe(false);
+      expect(pendingUpdate.rememberPendingUpdate).toHaveBeenCalledWith(
+        '26.6.2',
+      );
+    });
+
+    it.each([
+      {
+        reason: 'turned off by the user',
+        turnOff: () => pathExistsMock.mockResolvedValue(true),
+      },
+      {
+        reason: 'portable build',
+        turnOff: () => vi.stubEnv('PORTABLE_EXECUTABLE_DIR', 'C:/M3'),
+      },
+      {
+        reason: 'demo mode',
+        turnOff: () => {
+          constants.IS_DEMO_MODE = true;
+        },
+      },
+    ])(
+      'never checks, nor sets the updater up: $reason',
+      async ({ reason, turnOff }) => {
+        turnOff();
+        const { log } = await import('src/shared/vanilla');
+        const { initUpdater, triggerUpdateCheck } = await import('../updater');
+
+        await initUpdater();
+        await triggerUpdateCheck();
+
+        expect(checkForUpdatesMock).not.toHaveBeenCalled();
+        expect(checkForUpdatesAndNotifyMock).not.toHaveBeenCalled();
+        expect(handlers.size).toBe(0);
+        expect((await getAutoUpdater()).autoInstallOnAppQuit).toBe(true);
+        expect(log).toHaveBeenCalledWith(
+          `Not checking for updates: they are off (${reason}).`,
+          'electronUpdater',
+          'log',
+        );
       },
     );
   });

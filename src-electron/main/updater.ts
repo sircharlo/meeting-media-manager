@@ -8,7 +8,7 @@ import { app, powerMonitor } from 'electron';
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
 import { pathExists } from 'fs-extra/esm';
-import { IS_TEST, PLATFORM } from 'src-electron/constants';
+import { IS_DEMO_MODE, IS_TEST, PLATFORM } from 'src-electron/constants';
 import { isDownloadErrorExpected } from 'src-electron/main/downloads';
 import { getAppDataPath } from 'src-electron/main/fs';
 import {
@@ -85,6 +85,12 @@ let pendingAtLaunch: null | PendingUpdate = null;
 // Whether installing asks for administrator permission (see
 // asksPermissionToInstall).
 let asksPermission = false;
+// Whether the autoUpdater got this app's options and listeners (see
+// configureUpdater).
+let isUpdaterConfigured = false;
+// The system started shutting down (see watchForSessionEnd): no installing
+// on quit any more this session, whatever happens to the update settings.
+let isSessionEnding = false;
 
 // Current updater lifecycle state, kept so the renderer can catch up on an
 // update that started before it mounted and missed the push events (the
@@ -216,6 +222,20 @@ export const getBetaUpdatesPath = async () =>
 const isPortable = () => !!process.env.PORTABLE_EXECUTABLE_DIR;
 
 /**
+ * Why the app doesn't update, if it doesn't: never in demo mode or as a
+ * portable build, nor while the user has turned updates off.
+ * @returns The reason, or null when the app updates
+ */
+const findUpdatesOffReason = async (): Promise<null | string> => {
+  if (IS_DEMO_MODE) return 'demo mode';
+  if (isPortable()) return 'portable build';
+  if (await pathExists(await getUpdatesDisabledPath())) {
+    return 'turned off by the user';
+  }
+  return null;
+};
+
+/**
  * Whether a downloaded update is installed when the app quits. Never on
  * Windows (electron-builder#7807): installing on quit starts the installer
  * right when people tend to turn the computer off, after the meeting, and the
@@ -291,6 +311,7 @@ const isDueOnLaunch = (version: string) =>
   pendingAtLaunch.installAttempts < MAX_LAUNCH_INSTALL_ATTEMPTS;
 
 const skipInstallOnQuitForSessionEnd = () => {
+  isSessionEnding = true;
   if (!autoUpdater.autoInstallOnAppQuit) return;
   autoUpdater.autoInstallOnAppQuit = false;
   log(
@@ -340,9 +361,14 @@ const reportUpdaterError = async (error: Error, message?: string) => {
   }
 };
 
-export async function initUpdater() {
-  if (await pathExists(await getUpdatesDisabledPath())) return; // Skip updater if updates are disabled by user
-  if (isPortable()) return; // Skip updater for portable version
+/**
+ * Gives the autoUpdater this app's options and listeners, once. Until then it
+ * has electron-updater's own defaults, which install a downloaded update when
+ * the app quits, on Windows too, and nothing would tell the user about it.
+ */
+const configureUpdater = () => {
+  if (isUpdaterConfigured) return;
+  isUpdaterConfigured = true;
 
   // SEC-6 (full-audit-2026-09-04.md): load-bearing for the beta<->stable
   // channel switch below (allowPrerelease toggled by getBetaUpdatesPath()) -
@@ -360,7 +386,6 @@ export async function initUpdater() {
   autoUpdater.autoInstallOnAppQuit = installsOnQuit();
   autoUpdater.logger = updaterLogger;
 
-  if (installsOnLaunch) pendingAtLaunch = loadPendingUpdate();
   if (autoUpdater.autoInstallOnAppQuit) watchForSessionEnd();
 
   autoUpdater.on('error', (error, message) => {
@@ -435,14 +460,70 @@ export async function initUpdater() {
       lastUpdateVersionInfo,
     );
   });
+};
+
+export async function initUpdater() {
+  const offReason = await findUpdatesOffReason();
+  if (offReason) {
+    log(`Updates are off (${offReason}).`, 'electronUpdater', 'log');
+    return;
+  }
+
+  configureUpdater();
+  // Only when the app opens: an update that waited since an earlier session
+  // doesn't install by itself when updates are turned back on later.
+  if (installsOnLaunch) pendingAtLaunch = loadPendingUpdate();
 
   void triggerUpdateCheck();
 }
 
+/**
+ * Checks for an update. electron-updater's own system notification says that
+ * the update installs when the app quits, so it only shows where that's true.
+ * Elsewhere, the app's own update notification tells about it.
+ */
+const checkForUpdates = () =>
+  installsOnQuit()
+    ? autoUpdater.checkForUpdatesAndNotify()
+    : autoUpdater.checkForUpdates();
+
+/**
+ * Updates turned off after the app set the autoUpdater up: a downloaded
+ * update no longer installs when the app quits (macOS, Linux), nor does one
+ * still downloading get handed to Squirrel.Mac when it's done. One that
+ * Squirrel.Mac already has is out of the app's hands: macOS applies it.
+ */
+const stopInstallingOnQuit = () => {
+  if (!isUpdaterConfigured || !autoUpdater.autoInstallOnAppQuit) return;
+  autoUpdater.autoInstallOnAppQuit = false;
+  log(
+    'Updates are off: a downloaded update will not be installed when the app quits.',
+    'electronUpdater',
+    'log',
+  );
+};
+
+/**
+ * Checks for updates, when they're on. Also how the app learns that the user
+ * turned them on or off in Settings.
+ */
 export const triggerUpdateCheck = async (attempt = 1) => {
-  if (await pathExists(await getUpdatesDisabledPath())) {
+  const offReason = await findUpdatesOffReason();
+  if (offReason) {
+    stopInstallingOnQuit();
+    log(
+      `Not checking for updates: they are off (${offReason}).`,
+      'electronUpdater',
+      'log',
+    );
     return;
   }
+
+  // Updates turned back on after the app opened with them off: the
+  // autoUpdater never got its options at launch.
+  configureUpdater();
+  // Or turned back on after being turned off (see stopInstallingOnQuit).
+  autoUpdater.autoInstallOnAppQuit = installsOnQuit() && !isSessionEnding;
 
   if (attempt === 1) {
     autoUpdater.allowPrerelease = await pathExists(await getBetaUpdatesPath());
@@ -452,7 +533,7 @@ export const triggerUpdateCheck = async (attempt = 1) => {
     const { default: isOnline } = await import('is-online');
     const online = await isOnline();
     if (online) {
-      await autoUpdater.checkForUpdatesAndNotify();
+      await checkForUpdates();
     } else if (attempt < 5) {
       setTimeout(() => {
         triggerUpdateCheck(attempt + 1).catch((retryError: unknown) => {
