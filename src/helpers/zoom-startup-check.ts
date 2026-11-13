@@ -375,7 +375,6 @@ const notifyFailedCheck = (problems: string[], namesChanged: boolean) => {
 const report = (
   congregationId: string,
   found: Findings,
-  manual: boolean,
 ): ZoomStartupCheckOutcome => {
   const zoomState = useZoomStateStore();
   const { problems } = found;
@@ -392,17 +391,16 @@ const report = (
     return 'failed';
   }
 
-  const wasPaused = zoomState.automationsPaused;
   zoomState.resumeAutomations();
   rememberZoomVersion();
   log('Zoom check passed', 'zoom', 'info');
-  if (manual || wasPaused) {
-    createTemporaryNotification({
-      group: 'zoom-check',
-      message: t('zoom-check-passed'),
-      type: 'positive',
-    });
-  }
+  // Confirmed even when nobody asked and nothing was paused: the check
+  // presses Zoom's buttons, so it says how that went.
+  createTemporaryNotification({
+    group: 'zoom-check',
+    message: t('zoom-check-passed'),
+    type: 'positive',
+  });
   return 'passed';
 };
 
@@ -510,7 +508,7 @@ export const runZoomStartupCheck = async ({
       log('Zoom check: waiting for the meeting', 'zoom', 'info', found);
       return 'scheduled';
     }
-    return report(congregationId, found, manual);
+    return report(congregationId, found);
   } finally {
     zoomState.checkRunning = false;
   }

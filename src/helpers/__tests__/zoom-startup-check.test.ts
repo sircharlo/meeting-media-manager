@@ -402,6 +402,17 @@ describe('Zoom startup check', () => {
     await vi.waitFor(() => expect(zoom.getZoomMeetingState).toHaveBeenCalled());
   });
 
+  it('confirms a routine pass, not only one asked for', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+
+    expect(await runZoomStartupCheck()).toBe('passed');
+    expect(useZoomStateStore().automationsPaused).toBe(false);
+    expect(notification()).toMatchObject({
+      group: 'zoom-check',
+      type: 'positive',
+    });
+  });
+
   it('pauses the automations when a test step fails, until a new check passes', async () => {
     const { runZoomStartupCheck } = await import('../zoom-startup-check');
     zoom.runZoomSelfTest.mockResolvedValueOnce([
