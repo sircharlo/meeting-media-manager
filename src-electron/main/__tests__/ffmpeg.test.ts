@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
-import { cleanupFfmpegConversions, createVideoFromNonVideo } from '../ffmpeg';
+import {
+  cleanupFfmpegConversions,
+  createVideoFromNonVideo,
+  type RunnableFfmpegCommand,
+  wasStoppedAtQuit,
+} from '../ffmpeg';
 
 vi.mock('fs-extra/esm', () => ({
   pathExists: vi.fn(async () => false),
@@ -250,10 +255,14 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
       '/bin/ffmpeg',
     );
     await waitUntil(() => typeof ffmpegOnMap.error === 'function');
+    const command = ffmpegChain as unknown as RunnableFfmpegCommand;
+    expect(wasStoppedAtQuit(command)).toBe(false);
 
     cleanupFfmpegConversions();
 
     expect(ffmpegChain.kill).toHaveBeenCalledWith('SIGKILL');
+    // Its run failing is the app quitting, not ffmpeg (see playback-conversion).
+    expect(wasStoppedAtQuit(command)).toBe(true);
 
     // Settle the still-pending conversion so it doesn't leak into other tests.
     ffmpegOnMap.error?.(new Error('killed'));

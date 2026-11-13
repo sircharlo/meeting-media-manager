@@ -99,7 +99,10 @@ export interface ElectronApi {
   askForMediaAccess: () => void;
   basename: typeof basename;
   cancelAllDownloads: () => void;
-  /** Stops a conversion started by convertForPlayback. False if none was running. */
+  /**
+   * Stops a conversion started by convertForPlayback, even before its ffmpeg
+   * has started. False if none was under way.
+   */
   cancelPlaybackConversion: (id: string) => Promise<boolean>;
   changeExt: typeof changeExt;
   checkForUpdates: () => void;
@@ -107,9 +110,10 @@ export interface ElectronApi {
   closeSqliteConnections: () => Promise<void>;
   closeWebsiteWindow: () => void;
   /**
-   * Converts a file this computer can't play into an H.264 / AAC MP4 at
-   * `request.outputPath`, with progress on onMediaConversionProgress.
-   * Rejects with a message containing "conversion-cancelled" once cancelled.
+   * Converts a file this computer can't play into an H.264 / AAC MP4 (an
+   * AAC M4A for an .m4a) at `request.outputPath`, which must be in the
+   * app's Temp folder, with progress on onMediaConversionProgress. Rejects
+   * with a message containing "conversion-cancelled" once cancelled.
    */
   convertForPlayback: (
     ffmpegPath: string,

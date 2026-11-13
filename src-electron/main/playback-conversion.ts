@@ -4,6 +4,7 @@ import type {
   PlaybackConversionResult,
 } from 'src/types';
 
+import { app } from 'electron';
 import { execFile } from 'node:child_process';
 import {
   availableParallelism,
@@ -14,23 +15,32 @@ import {
   assertValidFfmpegPath,
   runFfmpegCommand,
   type RunnableFfmpegCommand,
+  wasStoppedAtQuit,
 } from 'src-electron/main/ffmpeg';
+import { getAppDataPath } from 'src-electron/main/fs';
 import { FULL_HD } from 'src/constants/media';
+import { dirname, extname, isAbsolute, join, normalize } from 'upath';
 
 /**
  * Converts a file Chromium can't fully play on this computer into an H.264 /
- * AAC MP4, which it can play everywhere. Used for a video whose picture has no
- * decoder here (HEVC on a graphics card without HEVC decoding, MPEG-4 Part 2,
- * an AVI container) or whose sound has none (AC-3, DTS). One file at a time is
- * the caller's business: a conversion takes a lot of processing power, so it
- * uses the graphics card's encoder when it can, gets about half the
- * processor and runs below normal priority, leaving the rest for the meeting.
+ * AAC MP4 (an AAC M4A for a sound-only file), which it can play everywhere.
+ * Used for a video whose picture has no decoder here (HEVC on a graphics card
+ * without HEVC decoding, MPEG-4 Part 2, an AVI container) or whose sound has
+ * none (AC-3, DTS, ADPCM, ALAC). One file at a time is the caller's business:
+ * a conversion takes a lot of processing power, so it uses the graphics
+ * card's encoder when it can, gets about half the processor and runs below
+ * normal priority, leaving the rest for the meeting.
  */
 
 export const CONVERSION_CANCELLED = 'conversion-cancelled';
 
 const PROBE_TIMEOUT_MS = 20_000;
 const PROGRESS_INTERVAL_MS = 500;
+// The sound alone: what a sound-only file converts into.
+const AUDIO_ONLY_EXTENSION = '.m4a';
+const OUTPUT_EXTENSIONS = new Set(['.mp4', AUDIO_ONLY_EXTENSION]);
+// Where the renderer has the conversion written (its getTempPath).
+const TEMP_FOLDER = 'Temp';
 
 // ffmpeg's "time=00:01:02.50" on its progress lines, and the input's
 // "Duration: 00:10:00.00".
@@ -41,11 +51,20 @@ const HDR_TRANSFER_PATTERN = /smpte2084|arib-std-b67/;
 
 interface ConversionCommand extends RunnableFfmpegCommand {
   ffmpegProc?: { pid?: number };
+  inputOptions: (options: string[]) => ConversionCommand;
   outputOptions: (options: string[]) => ConversionCommand;
 }
 
+// Every conversion from its request on (checking the file, choosing the
+// encoder), so it can be cancelled before ffmpeg starts; the ffmpeg
+// commands of those running.
+const pendingConversions = new Set<string>();
 const activeConversions = new Map<string, ConversionCommand>();
 const cancelledConversions = new Set<string>();
+
+const stopIfCancelled = (id: string) => {
+  if (cancelledConversions.has(id)) throw new Error(CONVERSION_CANCELLED);
+};
 
 /** What ffmpeg prints for `args`, whether it succeeds or not. */
 const readFfmpegOutput = (ffmpegPath: string, args: string[]) =>
@@ -232,27 +251,18 @@ export const getVideoFilters = (toneMap: boolean) =>
 const getThreadCount = () =>
   Math.max(2, Math.floor(availableParallelism() / 2));
 
-export const getConversionOptions = ({
-  encoder,
-  threads,
-  toneMap,
-}: {
-  /** Null when only the sound needs converting: the picture is copied. */
-  encoder: null | VideoEncoder;
-  threads: number;
-  toneMap: boolean;
-}) => [
-  // The first picture stream (not cover art) and the first sound stream, if
-  // there are any; subtitles, data and chapters stay behind.
-  '-map',
-  '0:V:0?',
-  '-map',
-  '0:a:0?',
-  '-sn',
-  '-dn',
-  '-map_chapters',
-  '-1',
-  ...(encoder
+/**
+ * The input's options: decoding gets the threads given too. ffmpeg's
+ * -threads only applies to the file it comes before, so the output's
+ * leaves the decoder using every core.
+ */
+export const getInputOptions = (threads: number) => [
+  '-threads',
+  String(threads),
+];
+
+const getVideoOptions = (encoder: null | VideoEncoder, toneMap: boolean) =>
+  encoder
     ? [
         '-c:v',
         encoder.name,
@@ -260,8 +270,37 @@ export const getConversionOptions = ({
         '-vf',
         getVideoFilters(toneMap),
       ]
-    : ['-c:v', 'copy']),
+    : ['-c:v', 'copy'];
+
+export const getConversionOptions = ({
+  audioOnly = false,
+  encoder,
+  threads,
+  toneMap,
+}: {
+  /** The sound alone, into an M4A: no picture, not even cover art. */
+  audioOnly?: boolean;
+  /** Null when only the sound needs converting: the picture is copied. */
+  encoder: null | VideoEncoder;
+  threads: number;
+  toneMap: boolean;
+}) => [
+  // The first picture stream (not cover art; none for the sound alone) and
+  // the first sound stream, if there are any; subtitles, data and chapters
+  // stay behind.
+  ...(audioOnly ? ['-vn'] : ['-map', '0:V:0?']),
+  '-map',
+  '0:a:0?',
+  '-sn',
+  '-dn',
+  '-map_chapters',
+  '-1',
+  ...(audioOnly ? [] : getVideoOptions(encoder, toneMap)),
+  // The encoder's threads, and the filters' (scaling, tone-mapping): those
+  // use every core otherwise. A global option, taken wherever it is.
   '-threads',
+  String(threads),
+  '-filter_threads',
   String(threads),
   '-c:a',
   'aac',
@@ -272,22 +311,76 @@ export const getConversionOptions = ({
   // Playable from the start of the file before all of it is read.
   '-movflags',
   '+faststart',
+  // An .m4a is an MP4 holding only sound.
   '-f',
   'mp4',
 ];
+
+/**
+ * Whether two paths are the same file's, compared the way the file system
+ * does: without case on Windows and macOS.
+ */
+const isSamePath = (a: string, b: string) => {
+  const [first, second] = [normalize(a), normalize(b)];
+  return process.platform === 'linux'
+    ? first === second
+    : first.toLowerCase() === second.toLowerCase();
+};
+
+/**
+ * Checks a request before ffmpeg gets it: ffmpeg overwrites its output, and
+ * a failed run deletes it. So the output can only be an .mp4 or .m4a
+ * directly in the app's Temp folder (its shared or its per-user one), and
+ * never the file converted.
+ */
+const assertValidRequest = async ({
+  id,
+  outputPath,
+  sourcePath,
+}: PlaybackConversionRequest) => {
+  if (typeof id !== 'string' || !id) {
+    throw new Error(`Refusing to convert without an id: ${JSON.stringify(id)}`);
+  }
+  for (const [role, path] of Object.entries({ outputPath, sourcePath })) {
+    if (typeof path !== 'string' || !isAbsolute(path)) {
+      throw new Error(
+        `Refusing to convert: ${role} isn't an absolute path: ${JSON.stringify(path)}`,
+      );
+    }
+  }
+  const extension = extname(outputPath).toLowerCase();
+  if (!OUTPUT_EXTENSIONS.has(extension)) {
+    throw new Error(
+      `Refusing to convert into a "${extension}" file, not ${[...OUTPUT_EXTENSIONS].join(' or ')}: ${outputPath}`,
+    );
+  }
+  if (isSamePath(outputPath, sourcePath)) {
+    throw new Error(`Refusing to convert a file over itself: ${outputPath}`);
+  }
+  const tempFolders = [
+    ...new Set([app.getPath('userData'), await getAppDataPath()]),
+  ].map((base) => join(base, TEMP_FOLDER));
+  const outputFolder = dirname(normalize(outputPath));
+  if (!tempFolders.some((folder) => isSamePath(folder, outputFolder))) {
+    throw new Error(
+      `Refusing to convert into ${outputFolder}, not the app's temp folder (${tempFolders.join(', ')})`,
+    );
+  }
+};
 
 const isCancellation = (error: unknown) =>
   error instanceof Error && error.message === CONVERSION_CANCELLED;
 
 /**
- * Runs one conversion with these output options, reporting its progress.
- * Rejects with CONVERSION_CANCELLED once cancelled; a partial output is
- * deleted either way.
+ * Runs one conversion with these options, reporting its progress. Rejects
+ * with CONVERSION_CANCELLED once cancelled, or killed because the app is
+ * quitting; a partial output is deleted either way.
  */
 const runConversion = async (
   ffmpegPath: string,
   {
     id,
+    inputOptions,
     onProgress,
     options,
     outputPath,
@@ -295,6 +388,7 @@ const runConversion = async (
     totalSeconds,
   }: {
     id: string;
+    inputOptions: string[];
     onProgress: (progress: PlaybackConversionProgress) => void;
     options: string[];
     outputPath: string;
@@ -303,10 +397,11 @@ const runConversion = async (
   },
 ) => {
   const { default: ffmpeg } = await import('fluent-ffmpeg');
+  stopIfCancelled(id);
   ffmpeg.setFfmpegPath(ffmpegPath);
-  const command = (
-    ffmpeg(sourcePath) as unknown as ConversionCommand
-  ).outputOptions(options);
+  const command = (ffmpeg(sourcePath) as unknown as ConversionCommand)
+    .inputOptions(inputOptions)
+    .outputOptions(options);
 
   let lastSent = 0;
   // Its stderr rather than fluent-ffmpeg's 'progress' event, which only has
@@ -343,7 +438,8 @@ const runConversion = async (
   try {
     await runFfmpegCommand(command, outputPath);
   } catch (error) {
-    if (cancelledConversions.has(id)) {
+    // Killed at quit, ffmpeg didn't fail: no converting again with x264.
+    if (cancelledConversions.has(id) || wasStoppedAtQuit(command)) {
       throw new Error(CONVERSION_CANCELLED, { cause: error });
     }
     throw error;
@@ -352,16 +448,14 @@ const runConversion = async (
   }
 };
 
-/**
- * Converts `request.sourcePath` into an H.264 / AAC MP4 at
- * `request.outputPath`, reporting progress along the way, with the
- * graphics card's encoder when this computer has one that works (see
- * chooseEncoder). Rejects with CONVERSION_CANCELLED once
- * cancelPlaybackConversion is called for it; a partial output is deleted
- * either way.
- * @returns The video encoder used ('copy' when only the sound needed it).
- */
-export const convertForPlayback = async (
+/** What convertForPlayback says it used for the picture. */
+const describeVideo = (encoder: null | VideoEncoder, audioOnly: boolean) => {
+  if (encoder) return encoder.name;
+  return audioOnly ? 'none' : 'copy';
+};
+
+/** See convertForPlayback: the conversion, once it's registered. */
+const convert = async (
   ffmpegPath: string,
   request: PlaybackConversionRequest,
   onProgress: (progress: PlaybackConversionProgress) => void,
@@ -373,36 +467,40 @@ export const convertForPlayback = async (
     outputPath,
     sourcePath,
   } = request;
-  if (activeConversions.has(id)) throw new Error(`Already converting ${id}`);
+  await assertValidRequest(request);
   await assertValidFfmpegPath(ffmpegPath);
+  const audioOnly = extname(outputPath).toLowerCase() === AUDIO_ONLY_EXTENSION;
+  // Not when the picture plays as it is, nor for the sound alone.
+  const encodesPicture = !keepVideo && !audioOnly;
 
   const description = await readFfmpegOutput(ffmpegPath, ['-i', sourcePath]);
   const isHdr = HDR_TRANSFER_PATTERN.test(
     getVideoStreamLine(description) ?? '',
   );
-  const toneMap = !keepVideo && isHdr && (await canToneMap(ffmpegPath));
+  const toneMap = encodesPicture && isHdr && (await canToneMap(ffmpegPath));
   const totalSeconds =
     durationSeconds || toSeconds(DURATION_PATTERN.exec(description)) || null; // NOSONAR: 0 means unknown too
+  const threads = getThreadCount();
   const run = (encoder: null | VideoEncoder) =>
     runConversion(ffmpegPath, {
       id,
+      inputOptions: getInputOptions(threads),
       onProgress,
-      options: getConversionOptions({
-        encoder,
-        threads: getThreadCount(),
-        toneMap,
-      }),
+      options: getConversionOptions({ audioOnly, encoder, threads, toneMap }),
       outputPath,
       sourcePath,
       totalSeconds,
     });
 
-  let encoder = keepVideo ? null : await chooseEncoder(ffmpegPath);
+  // Choosing the encoder can take seconds the first time: no starting it
+  // for a cancelled conversion, nor ffmpeg after it.
+  stopIfCancelled(id);
+  let encoder = encodesPicture ? await chooseEncoder(ffmpegPath) : null;
+  stopIfCancelled(id);
   try {
     await run(encoder);
   } catch (error) {
     if (!encoder || encoder === SOFTWARE_ENCODER || isCancellation(error)) {
-      cancelledConversions.delete(id);
       throw error;
     }
     // A graphics-card encoder that passed its one-frame test can still fail
@@ -410,22 +508,46 @@ export const convertForPlayback = async (
     encoderChoices.set(ffmpegPath, Promise.resolve(SOFTWARE_ENCODER));
     encoder = SOFTWARE_ENCODER;
     onProgress({ id, percent: 0 });
-    try {
-      await run(encoder);
-    } finally {
-      cancelledConversions.delete(id);
-    }
+    await run(encoder);
   }
-  cancelledConversions.delete(id);
   onProgress({ id, percent: 100 });
-  return { encoder: encoder?.name ?? 'copy' };
+  return { encoder: describeVideo(encoder, audioOnly) };
 };
 
-/** Stops a conversion started by convertForPlayback. False if none was running. */
+/**
+ * Converts `request.sourcePath` into an H.264 / AAC MP4 at
+ * `request.outputPath` (only its sound, into an M4A, for an .m4a),
+ * reporting progress along the way, with the graphics card's encoder when
+ * this computer has one that works (see chooseEncoder). The request is
+ * checked first: see assertValidRequest. Rejects with CONVERSION_CANCELLED
+ * once cancelPlaybackConversion is called for it, at any point, or once
+ * the app quits; a partial output is deleted either way.
+ * @returns The video encoder used ('copy' when only the sound needed it,
+ * 'none' for an M4A).
+ */
+export const convertForPlayback = async (
+  ffmpegPath: string,
+  request: PlaybackConversionRequest,
+  onProgress: (progress: PlaybackConversionProgress) => void,
+): Promise<PlaybackConversionResult> => {
+  const { id } = request;
+  if (pendingConversions.has(id)) throw new Error(`Already converting ${id}`);
+  pendingConversions.add(id);
+  try {
+    return await convert(ffmpegPath, request, onProgress);
+  } finally {
+    pendingConversions.delete(id);
+    cancelledConversions.delete(id);
+  }
+};
+
+/**
+ * Stops a conversion started by convertForPlayback, whether its ffmpeg is
+ * running or not yet started. False if none was under way.
+ */
 export const cancelPlaybackConversion = (id: string) => {
-  const command = activeConversions.get(id);
-  if (!command) return false;
+  if (!pendingConversions.has(id)) return false;
   cancelledConversions.add(id);
-  command.kill('SIGKILL');
+  activeConversions.get(id)?.kill('SIGKILL');
   return true;
 };

@@ -25,6 +25,8 @@ export interface RunnableFfmpegCommand {
 // left as orphaned child processes - nothing previously kept a reference to
 // the process fluent-ffmpeg spawns internally.
 const activeFfmpegCommands = new Map<string, RunnableFfmpegCommand>();
+// The commands killed that way: they didn't fail, the app is quitting.
+const commandsStoppedAtQuit = new WeakSet<RunnableFfmpegCommand>();
 
 // ffmpeg exits with AVERROR(ENOSPC), -28, when it runs out of disk space:
 // 4294967268 as Windows reports the exit code, 228 elsewhere (its low 8
@@ -95,6 +97,7 @@ export const runFfmpegCommand = (
  */
 export const cleanupFfmpegConversions = () => {
   for (const command of activeFfmpegCommands.values()) {
+    commandsStoppedAtQuit.add(command);
     try {
       command.kill('SIGKILL');
     } catch {
@@ -103,6 +106,13 @@ export const cleanupFfmpegConversions = () => {
   }
   activeFfmpegCommands.clear();
 };
+
+/**
+ * Whether cleanupFfmpegConversions killed this command: its run then fails
+ * because the app is quitting, not because ffmpeg couldn't convert.
+ */
+export const wasStoppedAtQuit = (command: RunnableFfmpegCommand) =>
+  commandsStoppedAtQuit.has(command);
 
 /**
  * Sanity-checks that `ffmpegPath` actually looks like the app's own

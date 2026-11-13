@@ -54,6 +54,7 @@ vi.mock('node:os', () => ({
 
 interface FakeCommand {
   ffmpegProc: { pid: number };
+  inputOptions: Mock<(options: string[]) => FakeCommand>;
   kill: Mock<(signal: string) => void>;
   on: Mock<(event: string, listener: Listener) => FakeCommand>;
   outputOptions: Mock<(options: string[]) => FakeCommand>;
@@ -64,6 +65,7 @@ let listeners: Record<string, Listener> = {};
 let finish: { reject: (error: Error) => void; resolve: () => void };
 const command: FakeCommand = {
   ffmpegProc: { pid: 4321 },
+  inputOptions: vi.fn(() => command),
   kill: vi.fn(() => {
     finish.reject(new Error('ffmpeg was killed with signal SIGKILL'));
   }),
@@ -87,11 +89,21 @@ vi.mock('src-electron/main/ffmpeg', () => ({
         finish = { reject, resolve };
       }),
   ),
+  wasStoppedAtQuit: vi.fn(() => false),
+}));
+
+// The app's Temp folder is in the shared data folder here; the per-user one
+// is where it falls back to.
+vi.mock('src-electron/main/fs', () => ({
+  getAppDataPath: vi.fn(async () => '/app-data'),
+}));
+vi.mock('electron', () => ({
+  app: { getPath: vi.fn(() => '/user-data') },
 }));
 
 const request = {
   id: 'job-1',
-  outputPath: '/tmp/out.mp4',
+  outputPath: '/app-data/Temp/conversion-job-1.mp4',
   sourcePath: '/media/clip.mov',
 };
 
@@ -165,6 +177,33 @@ describe('playback-conversion', () => {
       });
       expect(options[options.indexOf('-c:v') + 1]).toBe('copy');
       expect(options).not.toContain('-vf');
+    });
+
+    it('keeps the filters to the threads given too', async () => {
+      const { getConversionOptions, getInputOptions } = await importModule();
+      const options = getConversionOptions({
+        encoder: { name: 'libx264', options: [] },
+        threads: 6,
+        toneMap: true,
+      });
+      expect(options[options.indexOf('-filter_threads') + 1]).toBe('6');
+      // The decoder's are the input's: ffmpeg's -threads applies to the file
+      // it comes before.
+      expect(getInputOptions(6)).toEqual(['-threads', '6']);
+    });
+
+    it('leaves the picture out of a sound-only file', async () => {
+      const { getConversionOptions } = await importModule();
+      const options = getConversionOptions({
+        audioOnly: true,
+        encoder: null,
+        threads: 2,
+        toneMap: false,
+      });
+      expect(options).toContain('-vn');
+      expect(options).not.toContain('-c:v');
+      expect(options).not.toContain('0:V:0?');
+      expect(options).toEqual(expect.arrayContaining(['0:a:0?', 'aac']));
     });
   });
 
@@ -293,6 +332,119 @@ describe('playback-conversion', () => {
       finish.reject(new Error('ffmpeg exited with code 1: Invalid data'));
       await expect(conversion).rejects.toThrow('Invalid data');
     });
+
+    it('is cancelled before ffmpeg starts, while the file is still being looked at', async () => {
+      const { runFfmpegCommand } = await import('src-electron/main/ffmpeg');
+      const {
+        cancelPlaybackConversion,
+        CONVERSION_CANCELLED,
+        convertForPlayback,
+      } = await importModule();
+      const conversion = convertForPlayback('/bin/ffmpeg', request, vi.fn());
+
+      expect(cancelPlaybackConversion('job-1')).toBe(true);
+      await expect(conversion).rejects.toThrow(CONVERSION_CANCELLED);
+      expect(runFfmpegCommand).not.toHaveBeenCalled();
+      expect(cancelPlaybackConversion('job-1')).toBe(false);
+    });
+
+    it('decodes on the threads given too', async () => {
+      const { convertForPlayback } = await importModule();
+      const conversion = convertForPlayback('/bin/ffmpeg', request, vi.fn());
+      await started();
+      finish.resolve();
+      await conversion;
+      expect(command.inputOptions).toHaveBeenCalledWith(['-threads', '6']);
+      const options = command.outputOptions.mock.calls[0]?.[0] ?? [];
+      expect(options[options.indexOf('-filter_threads') + 1]).toBe('6');
+    });
+
+    it('converts only the sound into an .m4a, without choosing a video encoder', async () => {
+      encoderList = ' V..... h264_qsv             H.264 (Intel Quick Sync)';
+      const { convertForPlayback } = await importModule();
+      const conversion = convertForPlayback(
+        '/bin/ffmpeg',
+        { ...request, outputPath: '/app-data/Temp/conversion-job-1.m4a' },
+        vi.fn(),
+      );
+      await started();
+      finish.resolve();
+
+      await expect(conversion).resolves.toEqual({ encoder: 'none' });
+      const options = command.outputOptions.mock.calls[0]?.[0] ?? [];
+      expect(options).toContain('-vn');
+      expect(options).not.toContain('-c:v');
+      const { execFile } = await import('node:child_process');
+      expect(
+        vi
+          .mocked(execFile)
+          .mock.calls.some((call) =>
+            (call[1] as string[]).includes('-encoders'),
+          ),
+      ).toBe(false);
+    });
+
+    it.each([
+      [
+        'outside the temp folder',
+        { outputPath: '/media/clip.mp4' },
+        "Refusing to convert into /media, not the app's temp folder (/user-data/Temp, /app-data/Temp)",
+      ],
+      [
+        'in a folder under it',
+        { outputPath: '/app-data/Temp/../Publications/x.mp4' },
+        "Refusing to convert into /app-data/Publications, not the app's temp folder",
+      ],
+      [
+        'of another kind',
+        { outputPath: '/app-data/Temp/conversion-job-1.mkv' },
+        'Refusing to convert into a ".mkv" file, not .mp4 or .m4a',
+      ],
+      [
+        'over the file converted',
+        {
+          outputPath: '/app-data/Temp/clip.mp4',
+          sourcePath: '/APP-DATA/Temp/clip.mp4',
+        },
+        'Refusing to convert a file over itself',
+      ],
+      [
+        'relative',
+        { outputPath: 'conversion-job-1.mp4' },
+        'Refusing to convert: outputPath isn\'t an absolute path: "conversion-job-1.mp4"',
+      ],
+      [
+        'without a source',
+        { sourcePath: undefined },
+        "Refusing to convert: sourcePath isn't an absolute path: undefined",
+      ],
+    ])(
+      'refuses an output %s, before ffmpeg is run',
+      async (_case, changes, message) => {
+        const { convertForPlayback } = await importModule();
+        await expect(
+          convertForPlayback(
+            '/bin/ffmpeg',
+            { ...request, ...changes } as typeof request,
+            vi.fn(),
+          ),
+        ).rejects.toThrow(message);
+        const { execFile } = await import('node:child_process');
+        expect(execFile).not.toHaveBeenCalled();
+      },
+    );
+
+    it('takes an output in the per-user temp folder the app falls back to', async () => {
+      const { convertForPlayback } = await importModule();
+      const conversion = convertForPlayback(
+        '/bin/ffmpeg',
+        { ...request, outputPath: '/user-data/Temp/conversion-job-1.mp4' },
+        vi.fn(),
+      );
+      await started();
+      finish.resolve();
+      await expect(conversion).resolves.toBeDefined();
+    });
   });
 
   describe('choosing the encoder', () => {
@@ -409,6 +561,22 @@ describe('playback-conversion', () => {
       cancelPlaybackConversion('job-1');
       await expect(conversion).rejects.toThrow('conversion-cancelled');
       expect(runFfmpegCommand).toHaveBeenCalledTimes(1);
+    });
+
+    it('takes ffmpeg killed as the app quits for a cancel, not the graphics card failing', async () => {
+      const { runFfmpegCommand, wasStoppedAtQuit } =
+        await import('src-electron/main/ffmpeg');
+      const { CONVERSION_CANCELLED, convertForPlayback } =
+        await import('../playback-conversion');
+      const conversion = convertForPlayback('/bin/ffmpeg', request, vi.fn());
+      await started();
+      vi.mocked(wasStoppedAtQuit).mockReturnValueOnce(true);
+      finish.reject(new Error('ffmpeg was killed with signal SIGKILL'));
+
+      await expect(conversion).rejects.toThrow(CONVERSION_CANCELLED);
+      expect(runFfmpegCommand).toHaveBeenCalledTimes(1);
+      // Still the graphics card's encoder for the next file.
+      await expect(convert()).resolves.toEqual({ encoder: 'h264_nvenc' });
     });
   });
 });
