@@ -275,7 +275,7 @@ Si l'ordinateur a été éteint ou redémarré pendant que M³ installait une mi
 
 Si l'ordinateur ne peut pas se connecter à Internet, le programme d'installation que M³ avait téléchargé est généralement toujours là : appuyez sur `Win+R`, entrez `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, puis exécutez le programme d'installation présent dans le dossier qui s'ouvre.
 
-Pour éviter ce problème, sous Windows, M³ installe une mise à jour téléchargée lors de sa prochaine ouverture, plutôt qu'à sa fermeture. Lorsque M³ est installé pour tous les utilisateurs de l'ordinateur, il continue d'installer les mises à jour à sa fermeture, alors patientez une minute avant d'éteindre l'ordinateur.
+Pour éviter ce problème, sous Windows, M³ installe une mise à jour téléchargée lors de sa prochaine ouverture, plutôt qu'à sa fermeture. Lorsque M³ est installé pour tous les utilisateurs de l'ordinateur, Windows demande d'abord l'autorisation : M³ attend donc que vous choisissiez d'installer la mise à jour.
 
 ## Support et communauté {#support-community}
 
