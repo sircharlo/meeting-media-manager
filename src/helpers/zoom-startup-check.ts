@@ -791,7 +791,7 @@ export const runZoomStartupCheck = async ({
 } = {}): Promise<ZoomStartupCheckOutcome> => {
   // Asked for (Test again, in a notification above the question) while a
   // check waits for the user's go-ahead: that's the go-ahead.
-  if (manual && checkUnderWay && useZoomStateStore().checkPrompt) {
+  if (manual && checkUnderWay !== null && useZoomStateStore().checkPrompt) {
     log('Zoom check: asked for while asking, so it runs', 'zoom', 'info');
     answerZoomCheckPrompt('run');
     return checkUnderWay;
