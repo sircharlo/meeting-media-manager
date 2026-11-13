@@ -12,7 +12,8 @@ export interface ZoomAutomationPause {
   congregationId: string;
   /**
    * The user chose not to have Zoom tested before the meeting: M³ leaves
-   * Zoom alone for it, until they ask for a check (Test again).
+   * Zoom alone for it, until they ask for a check (Test again) or the day is
+   * over (see endDeclinedPause).
    */
   declined?: boolean;
   /**
@@ -83,6 +84,14 @@ export const useZoomStateStore = defineStore('zoom-state', {
     /** The user's answer came back: nothing left to ask (see askForCheck). */
     closeCheckPrompt() {
       this.checkPrompt = false;
+    },
+    /**
+     * A new day: the automations the user turned off for a meeting, by
+     * skipping its check, come back on for the next one. Paused by a failed
+     * check, they stay paused until a check passes.
+     */
+    endDeclinedPause() {
+      if (this.pause?.declined) this.pause = null;
     },
     endRun() {
       if (this.runDepth === 0) return;

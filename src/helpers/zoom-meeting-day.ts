@@ -234,7 +234,11 @@ const recheck = () => {
   const today = new Date().toDateString();
   if (today !== checkedDay) {
     checkedDay = today;
-    useZoomStateStore().checkedCongregations = [];
+    const zoomState = useZoomStateStore();
+    zoomState.checkedCongregations = [];
+    // Skipping a meeting's check turned the automations off for that
+    // meeting only.
+    zoomState.endDeclinedPause();
     doneSteps.clear();
     launchedMeetings.clear();
   }
