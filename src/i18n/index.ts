@@ -53,7 +53,7 @@ import es from './es.json' with { type: 'json' };
 // 98.6% translated as of 2026-11-13
 import de from './de.json' with { type: 'json' };
 
-// 0.8% translated as of 2026-11-13
+// 0.9% translated as of 2026-11-13
 // import bzs from './bzs.json' with { type: 'json' };
 
 // 0.8% translated as of 2026-11-13
@@ -62,7 +62,7 @@ import de from './de.json' with { type: 'json' };
 // 0.8% translated as of 2026-11-13
 // import zh from './zh.json' with { type: 'json' };
 
-// 0.1% translated as of 2026-11-13
+// 0.2% translated as of 2026-11-13
 // import ilo from './ilo.json' with { type: 'json' };
 
 export default {
