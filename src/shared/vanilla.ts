@@ -97,7 +97,7 @@ export const delay = (ms: number) =>
 // JSON string then keeps the rest of the JSON. Windows paths are matched
 // whatever their case (`c:\users\...`).
 const HOME_DIRECTORY_PATH_PATTERNS: RegExp[] = [
-  /([A-Za-z]:(?:\\+|\/)Users(?:\\+|\/))[^\\/"]+/gi,
+  /([A-Z]:(?:\\+|\/)Users(?:\\+|\/))[^\\/"]+/gi,
   /(\/Users\/)[^/"]+/g,
   /(\/home\/)[^/"]+/g,
 ];
