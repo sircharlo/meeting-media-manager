@@ -32,11 +32,14 @@ declare module 'pinia' {
 // are polled every few seconds. Each call used to add a "pinia.action"
 // breadcrumb, filling Sentry's 100-breadcrumb buffer within seconds and
 // pushing out the breadcrumbs that actually explain an error (e.g.
-// MMM-V2-3JK, 3K0; in MMM-V2-3MF they made up 80 of the 100).
+// MMM-V2-3JK, 3K0; in MMM-V2-3MF they made up 80 of the 100). The music
+// store's clock formatter runs every second while music plays (the "stops
+// at" summary follows the clock): in MMM-V2-3MW it made up 80 of the 100.
 const QUIET_ACTIONS = new Set([
   'areDependenciesSatisfied',
   'beginRun',
   'endRun',
+  'formatClockTime',
   'getInvalidSettings',
   'getMeetingType',
   'invalidSettings',

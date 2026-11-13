@@ -1,4 +1,4 @@
-import type { ZoomDiagnosis } from 'src/types';
+import type { ZoomDiagnosis, ZoomFailureSnapshot } from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import {
@@ -12,6 +12,7 @@ import {
   countZoomMeetingParticipants,
   diagnoseZoom,
   getZoomMeetingState,
+  getZoomSnapshot,
   getZoomTitlesFromSettings,
   isZoomSetupNeeded,
   prepareMediaWindowForZoomTest,
@@ -57,6 +58,11 @@ interface Findings {
   details: string[];
   /** i18n keys of what doesn't work, to show the user. */
   problems: string[];
+  /**
+   * What Zoom showed when something the check waited for never happened, so
+   * no action failed to leave a snapshot of its own (see meetingNotFound).
+   */
+  snapshot?: ZoomFailureSnapshot;
 }
 
 const findings = (problems: string[], details: string[] = []): Findings => ({
@@ -97,6 +103,17 @@ const getNeeds = () => {
   };
 };
 
+/**
+ * No meeting where the check needs one, with what Zoom shows instead: a
+ * passcode or "waiting for the host" window, a sign-in or update prompt, only
+ * Zoom's home window, or no Zoom at all (MMM-V2-3MW: these reports used to
+ * say nothing but that the meeting wasn't there).
+ */
+const meetingNotFound = async (detail: string): Promise<Findings> => ({
+  ...findings([MEETING_PROBLEM], [detail]),
+  snapshot: (await getZoomSnapshot()) ?? undefined,
+});
+
 const missingControls = (
   diagnosis: ZoomDiagnosis,
   ids: (typeof ZOOM_DIAGNOSIS_CHECKS)[number]['id'][],
@@ -113,7 +130,9 @@ const checkWithoutPressing = async (): Promise<Findings> => {
   const needs = getNeeds();
   const diagnosis = await diagnoseZoom();
   if (!diagnosis) return findings([HELPER_PROBLEM]);
-  if (!diagnosis.meeting) return findings([MEETING_PROBLEM]);
+  if (!diagnosis.meeting) {
+    return meetingNotFound('meeting: gone before its controls were checked');
+  }
 
   const problems: string[] = missingControls(
     diagnosis,
@@ -211,6 +230,53 @@ const waitForMeeting = async () => {
 };
 
 /**
+ * With no meeting open: 'open' to open it for the check; null if there's
+ * none to open now (no meeting today, or it's starting or under way), or,
+ * before the meeting's window, when to check; or, asked for without a
+ * meeting ID, that the meeting can't be opened.
+ */
+const planWithoutMeeting = (
+  manual: boolean,
+  meetingId: string | undefined,
+): 'open' | Findings | null | { checkInSeconds: number } => {
+  if (!manual) {
+    const opening = getMeetingOpeningWindow();
+    if (!meetingId || opening === null) return null;
+    if (opening !== 'now') return { checkInSeconds: opening };
+  }
+  if (!meetingId) {
+    return findings([MEETING_PROBLEM], ['meeting: none open, and no ID']);
+  }
+  return 'open';
+};
+
+/**
+ * Opens the meeting first, given its ID, then checks it: tries everything
+ * when alone in it, else only looks.
+ */
+const checkMeeting = (meetingToOpen: string | undefined) =>
+  withZoomRun('zoom-run-startup-check', async () => {
+    if (meetingToOpen) {
+      log('Zoom check: opening the meeting', 'zoom', 'info');
+      globalThis.electronApi.launchZoomMeeting(meetingToOpen);
+      if (!(await waitForMeeting())) {
+        return meetingNotFound(
+          `meeting: not open ${MEETING_OPEN_TIMEOUT_MS / 1000} s after opening it`,
+        );
+      }
+      await sleep(MEETING_SETTLE_MS);
+    }
+
+    const people = await countZoomMeetingParticipants();
+    // Unknown counts as not alone: nothing gets pressed.
+    if (people === 1) return testEverything();
+    log('Zoom check: others in the meeting, only looking', 'zoom', 'info', {
+      people,
+    });
+    return checkWithoutPressing();
+  });
+
+/**
  * What doesn't work in Zoom; null if there's nothing to check (no meeting
  * open, and none to open now); 'sharing' if it can't be checked until Zoom
  * stops sharing; 'declined' if the user would rather not have it checked;
@@ -238,12 +304,8 @@ const findProblems = async (
   const meetingId =
     useCurrentStateStore().currentSettings?.zoomMeetingManagerMeetingId?.trim();
   if (!meeting.found) {
-    if (!manual) {
-      const opening = getMeetingOpeningWindow();
-      if (!meetingId || opening === null) return null;
-      if (opening !== 'now') return { checkInSeconds: opening };
-    }
-    if (!meetingId) return findings([MEETING_PROBLEM]);
+    const plan = planWithoutMeeting(manual, meetingId);
+    if (plan !== 'open') return plan;
   }
 
   // Zoom is about to be taken for a moment: the user says when.
@@ -256,52 +318,42 @@ const findProblems = async (
   }
 
   // From here on, M³ may open the meeting and press things in Zoom.
-  return withZoomRun('zoom-run-startup-check', async () => {
-    if (!meeting.found && meetingId) {
-      log('Zoom check: opening the meeting', 'zoom', 'info');
-      globalThis.electronApi.launchZoomMeeting(meetingId);
-      if (!(await waitForMeeting())) return findings([MEETING_PROBLEM]);
-      await sleep(MEETING_SETTLE_MS);
-    }
-
-    const people = await countZoomMeetingParticipants();
-    // Unknown counts as not alone: nothing gets pressed.
-    if (people === 1) return testEverything();
-    log('Zoom check: others in the meeting, only looking', 'zoom', 'info', {
-      people,
-    });
-    return checkWithoutPressing();
-  });
+  return checkMeeting(meeting.found ? undefined : meetingId);
 };
 
 /**
  * Tells Sentry that a check failed, grouped by what failed, with what each
- * failed step and action ran into and what Zoom showed at the last failed
- * action (version, windows, button names), so a Zoom update or an untested
- * language breaking the Zoom Meeting Manager shows up as one issue with the
- * details to fix it. Each failed action also left its own breadcrumb.
+ * failed step and action ran into and what Zoom showed (version, windows,
+ * button names) when the check gave up waiting, or else at the last failed
+ * action, so a Zoom update or an untested language breaking the Zoom Meeting
+ * Manager shows up as one issue with the details to fix it. Each failed
+ * action also left its own breadcrumb.
  */
 const reportFailedCheck = async (
-  { details, problems }: Findings,
+  { details, problems, snapshot }: Findings,
   failures: ZoomActionFailure[],
   namesChanged: boolean,
 ) => {
   try {
     const { captureMessage } = await import('@sentry/vue');
     const last = failures.at(-1);
+    // The check's own snapshot explains what it waited for in vain; else
+    // the last failed action's shows what that action ran into.
+    const shown = snapshot ?? last?.snapshot;
+    const snapshotAction = snapshot ? 'snapshot' : (last?.action ?? null);
     captureMessage('Zoom check failed: automations paused', {
       extra: {
         // Spread out: Sentry flattens the snapshot's lists if nested deeper.
-        ...last?.snapshot,
+        ...shown,
         failedActions: failures.map(
           ({ action, error }) => `${action}: ${error ?? 'failed'}`,
         ),
         failedSteps: details,
         namesChanged,
         problems,
-        snapshotAction: last?.action ?? null,
+        snapshotAction,
         zoomVersion:
-          last?.snapshot?.zoomVersion ??
+          shown?.zoomVersion ??
           useZoomStateStore().meeting?.zoomVersion ??
           null,
       },

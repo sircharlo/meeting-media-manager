@@ -3795,9 +3795,10 @@ namespace M3.ZoomHelper
 
         // --- Diagnostics ---------------------------------------------------------------
 
-        /// <summary>What Zoom showed when an action failed, for M3's error
-        /// reports: Zoom's version, its visible windows' classes, the names
-        /// of its toolbar and participants panel buttons, those of its other
+        /// <summary>What Zoom showed when an action failed (or when M3 asks,
+        /// with the snapshot command), for M3's error reports: Zoom's
+        /// version, its visible windows' classes, the names of its toolbar
+        /// and participants panel buttons, those of its other
         /// windows (dialogs in the way) and of the share toolbar, and the
         /// names M3 knows. Nothing personal: no window titles, no participant
         /// rows, nothing in a list. Reads only, without moving the mouse or
@@ -4075,7 +4076,7 @@ namespace M3.ZoomHelper
         {
             Known.Load(request);
             var type = GetString(request, "type");
-            var reply = type == "ping" || type == "window-layout" || (type == "meeting" && !GetBool(request, "reveal"))
+            var reply = type == "ping" || type == "window-layout" || type == "snapshot" || (type == "meeting" && !GetBool(request, "reveal"))
                 ? Run(type, request)
                 : RunRestoringInput(type, request);
             if (Known.Learned.Count > 0) reply["learned"] = new Dictionary<string, object>(Known.Learned);
@@ -4137,6 +4138,10 @@ namespace M3.ZoomHelper
                 case "stop-share": return StopShare();
                 case "diagnose":
                     return new Dictionary<string, object> { { "diagnosis", Diagnose() } };
+                // What Zoom shows when no action failed, e.g. instead of the
+                // meeting M3 opened.
+                case "snapshot":
+                    return new Dictionary<string, object> { { "snapshot", Snapshot() } };
                 case "toggle-video": return ToggleVideo();
                 case "toggle-mic": return ToggleMic(GetBool(request, "assumeAudioJoined"));
                 case "test-share-picker":

@@ -1,4 +1,8 @@
-import type { ZoomDiagnosis, ZoomMeetingState } from 'src/types';
+import type {
+  ZoomDiagnosis,
+  ZoomFailureSnapshot,
+  ZoomMeetingState,
+} from 'src/types';
 
 import { createPinia, setActivePinia } from 'pinia';
 import { useDialogStateStore } from 'stores/dialog-state';
@@ -26,6 +30,7 @@ const zoom = vi.hoisted(() => ({
   diagnoseZoom: vi.fn<() => Promise<null | ZoomDiagnosis>>(),
   getMeetingStartToday: vi.fn<(now?: Date) => Date | null>(),
   getZoomMeetingState: vi.fn<() => Promise<null | ZoomMeetingState>>(),
+  getZoomSnapshot: vi.fn<() => Promise<null | ZoomFailureSnapshot>>(),
   isZoomSetupNeeded: vi.fn(() => false),
   notify: vi.fn(),
   rememberZoomVersion: vi.fn(),
@@ -44,6 +49,7 @@ vi.mock('src/helpers/zoom', () => ({
   countZoomMeetingParticipants: zoom.countZoomMeetingParticipants,
   diagnoseZoom: zoom.diagnoseZoom,
   getZoomMeetingState: zoom.getZoomMeetingState,
+  getZoomSnapshot: zoom.getZoomSnapshot,
   getZoomTitlesFromSettings: () => ({
     shareButtonTitle: 'Share',
     videoOffTitle: 'Start Video',
@@ -146,6 +152,7 @@ beforeEach(() => {
   zoom.getZoomMeetingState.mockResolvedValue(OPEN);
   zoom.countZoomMeetingParticipants.mockResolvedValue(1);
   zoom.diagnoseZoom.mockResolvedValue(ALL_FOUND);
+  zoom.getZoomSnapshot.mockResolvedValue(null);
   // Today's meeting, unless a test says otherwise.
   meetingStartsIn(30 * MINUTE);
   zoom.isZoomSetupNeeded.mockReturnValue(false);
@@ -366,6 +373,13 @@ describe('Zoom startup check', () => {
       found: false,
       sharing: false,
     });
+    zoom.getZoomSnapshot.mockResolvedValue({
+      dialogs: { 'SomeZoomDialog 420x240': ['Join', 'Cancel'] },
+      meeting: false,
+      sharing: false,
+      windows: ['SomeZoomDialog'],
+      zoomVersion: '7.2.5.51704',
+    });
 
     const outcome = runZoomStartupCheck();
     await vi.runAllTimersAsync();
@@ -377,6 +391,51 @@ describe('Zoom startup check', () => {
       problems: ['zoom-check-problem-meeting'],
     });
     expect(notification()?.type).toBe('negative');
+    // MMM-V2-3MW: reported with what Zoom showed instead of the meeting,
+    // where these reports used to say only that it wasn't there.
+    await vi.waitFor(() =>
+      expect(sentry.captureMessage).toHaveBeenCalledWith(
+        'Zoom check failed: automations paused',
+        expect.objectContaining({
+          extra: {
+            dialogs: { 'SomeZoomDialog 420x240': ['Join', 'Cancel'] },
+            failedActions: [],
+            failedSteps: ['meeting: not open 90 s after opening it'],
+            meeting: false,
+            namesChanged: false,
+            problems: ['zoom-check-problem-meeting'],
+            sharing: false,
+            snapshotAction: 'snapshot',
+            windows: ['SomeZoomDialog'],
+            zoomVersion: '7.2.5.51704',
+          },
+        }),
+      ),
+    );
+  });
+
+  it('says there is no meeting ID when tested again with no meeting open', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    currentState.currentSettings.zoomMeetingManagerMeetingId = null;
+    zoom.getZoomMeetingState.mockResolvedValue({
+      found: false,
+      sharing: false,
+    });
+
+    expect(await runZoomStartupCheck({ manual: true })).toBe('failed');
+    await vi.waitFor(() =>
+      expect(sentry.captureMessage).toHaveBeenCalledWith(
+        'Zoom check failed: automations paused',
+        expect.objectContaining({
+          extra: expect.objectContaining({
+            failedSteps: ['meeting: none open, and no ID'],
+            problems: ['zoom-check-problem-meeting'],
+          }),
+        }),
+      ),
+    );
+    // Nothing was opened, so there's nothing to look at in Zoom.
+    expect(zoom.getZoomSnapshot).not.toHaveBeenCalled();
   });
 
   it('checks again when Zoom changed, even if today was checked already', async () => {
