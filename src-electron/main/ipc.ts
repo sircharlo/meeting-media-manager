@@ -579,7 +579,8 @@ handleIpcInvoke('convertHeic', async (_e, image: ConversionOptions) =>
 
 handleIpcInvoke(
   'createVideoFromNonVideo',
-  async (_e, path: string, ffmpegPath: string, outputDir?: string) =>
+  // Its paths are checked there (see conversion-paths.ts).
+  (_e, path: string, ffmpegPath: string, outputDir: string) =>
     createVideoFromNonVideo(path, ffmpegPath, outputDir),
 );
 

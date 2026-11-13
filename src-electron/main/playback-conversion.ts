@@ -4,7 +4,6 @@ import type {
   PlaybackConversionResult,
 } from 'src/types';
 
-import { app } from 'electron';
 import { execFile } from 'node:child_process';
 import {
   availableParallelism,
@@ -12,14 +11,18 @@ import {
   setPriority,
 } from 'node:os';
 import {
+  assertAbsolutePath,
+  assertAppTempFolder,
+  isSamePath,
+} from 'src-electron/main/conversion-paths';
+import {
   assertValidFfmpegPath,
   runFfmpegCommand,
   type RunnableFfmpegCommand,
   wasStoppedAtQuit,
 } from 'src-electron/main/ffmpeg';
-import { getAppDataPath } from 'src-electron/main/fs';
 import { FULL_HD } from 'src/constants/media';
-import { dirname, extname, isAbsolute, join, normalize } from 'upath';
+import { dirname, extname, normalize } from 'upath';
 
 /**
  * Converts a file Chromium can't fully play on this computer into an H.264 /
@@ -39,8 +42,6 @@ const PROGRESS_INTERVAL_MS = 500;
 // The sound alone: what a sound-only file converts into.
 const AUDIO_ONLY_EXTENSION = '.m4a';
 const OUTPUT_EXTENSIONS = new Set(['.mp4', AUDIO_ONLY_EXTENSION]);
-// Where the renderer has the conversion written (its getTempPath).
-const TEMP_FOLDER = 'Temp';
 
 // ffmpeg's "time=00:01:02.50" on its progress lines, and the input's
 // "Duration: 00:10:00.00".
@@ -317,17 +318,6 @@ export const getConversionOptions = ({
 ];
 
 /**
- * Whether two paths are the same file's, compared the way the file system
- * does: without case on Windows and macOS.
- */
-const isSamePath = (a: string, b: string) => {
-  const [first, second] = [normalize(a), normalize(b)];
-  return process.platform === 'linux'
-    ? first === second
-    : first.toLowerCase() === second.toLowerCase();
-};
-
-/**
  * Checks a request before ffmpeg gets it: ffmpeg overwrites its output, and
  * a failed run deletes it. So the output can only be an .mp4 or .m4a
  * directly in the app's Temp folder (its shared or its per-user one), and
@@ -341,13 +331,8 @@ const assertValidRequest = async ({
   if (typeof id !== 'string' || !id) {
     throw new Error(`Refusing to convert without an id: ${JSON.stringify(id)}`);
   }
-  for (const [role, path] of Object.entries({ outputPath, sourcePath })) {
-    if (typeof path !== 'string' || !isAbsolute(path)) {
-      throw new Error(
-        `Refusing to convert: ${role} isn't an absolute path: ${JSON.stringify(path)}`,
-      );
-    }
-  }
+  assertAbsolutePath('outputPath', outputPath);
+  assertAbsolutePath('sourcePath', sourcePath);
   const extension = extname(outputPath).toLowerCase();
   if (!OUTPUT_EXTENSIONS.has(extension)) {
     throw new Error(
@@ -357,15 +342,7 @@ const assertValidRequest = async ({
   if (isSamePath(outputPath, sourcePath)) {
     throw new Error(`Refusing to convert a file over itself: ${outputPath}`);
   }
-  const tempFolders = [
-    ...new Set([app.getPath('userData'), await getAppDataPath()]),
-  ].map((base) => join(base, TEMP_FOLDER));
-  const outputFolder = dirname(normalize(outputPath));
-  if (!tempFolders.some((folder) => isSamePath(folder, outputFolder))) {
-    throw new Error(
-      `Refusing to convert into ${outputFolder}, not the app's temp folder (${tempFolders.join(', ')})`,
-    );
-  }
+  await assertAppTempFolder(dirname(normalize(outputPath)));
 };
 
 const isCancellation = (error: unknown) =>

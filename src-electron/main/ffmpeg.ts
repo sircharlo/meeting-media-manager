@@ -1,9 +1,13 @@
 import { pathExists, remove } from 'fs-extra/esm';
 import { createHash } from 'node:crypto';
 import { stat } from 'node:fs/promises';
+import {
+  assertAbsolutePath,
+  assertAppTempFolder,
+} from 'src-electron/main/conversion-paths';
 import { getImageDimensions } from 'src-electron/main/image-size';
 import { AUDIO_EXTENSIONS, FULL_HD } from 'src/constants/media';
-import { basename, changeExt, extname, join } from 'upath';
+import { basename, extname, join } from 'upath';
 
 const conversionQueue = new Map<string, Promise<string>>();
 
@@ -242,26 +246,35 @@ const getMaxHeight = (dimensions: {
   return undefined;
 };
 
+/**
+ * Turns an image or an audio file into an MP4 for export, written in
+ * `outputDir`, named after the file and its path. The request is checked
+ * first, as for playback (see conversion-paths.ts): ffmpeg overwrites its
+ * output, and a failed run deletes it, so `outputDir` can only be the app's
+ * Temp folder.
+ * @returns Where the MP4 is.
+ */
 export const createVideoFromNonVideo = async (
   originalFile: string,
   ffmpegPath: string,
-  outputDir?: string,
+  outputDir: string,
 ): Promise<string> => {
   const existingPromise = conversionQueue.get(originalFile);
-  if (existingPromise) return existingPromise;
+  if (existingPromise !== undefined) return existingPromise;
 
   const conversionPromise = (async (): Promise<string> => {
+    assertAbsolutePath('originalFile', originalFile);
+    assertAbsolutePath('outputDir', outputDir);
+    await assertAppTempFolder(outputDir);
     await assertValidFfmpegPath(ffmpegPath);
 
-    const convertedFilePath = outputDir
-      ? join(
-          outputDir,
-          `${basename(originalFile, extname(originalFile))}-${createHash('sha1')
-            .update(originalFile)
-            .digest('hex')
-            .slice(0, 8)}.mp4`,
-        )
-      : changeExt(originalFile, '.mp4');
+    const convertedFilePath = join(
+      outputDir,
+      `${basename(originalFile, extname(originalFile))}-${createHash('sha1')
+        .update(originalFile)
+        .digest('hex')
+        .slice(0, 8)}.mp4`,
+    );
 
     const canReuse = await shouldUseExistingConversion(
       originalFile,

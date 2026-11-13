@@ -125,12 +125,14 @@ export interface ElectronApi {
    *
    * @param originalFile - The path to the original non-video file.
    * @param ffmpegPath - The path to the FFmpeg executable.
+   * @param outputDir - Where to write it: the app's Temp folder (getTempPath),
+   * the only folder the main process accepts.
    * @returns A promise that resolves to the path of the converted video file.
    */
   createVideoFromNonVideo: (
     originalFile: string,
     ffmpegPath: string,
-    outputDir?: string,
+    outputDir: string,
   ) => Promise<string>;
   /**
    * Decrypts a secret previously encrypted with {@link encryptSecretSync}.
