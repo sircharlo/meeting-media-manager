@@ -275,7 +275,7 @@ Wenn der Computer ausgeschaltet oder neu gestartet wurde, während M³ ein Updat
 
 Wenn der Computer keine Verbindung zum Internet herstellen kann, ist das Installationsprogramm, das M³ heruntergeladen hatte, meist noch vorhanden: Drücken Sie `Win+R`, geben Sie `%LOCALAPPDATA%\meeting-media-manager-updater\pending` ein und führen Sie dann das Installationsprogramm in dem Ordner aus, der sich öffnet.
 
-Um einen solchen Abbruch zu verhindern, installiert M³ unter Windows ein heruntergeladenes Update beim nächsten Öffnen statt beim Schließen. When M³ is installed for all users of the computer, Windows asks for permission first, so M³ waits until you choose to install the update.
+Um einen solchen Abbruch zu verhindern, installiert M³ unter Windows ein heruntergeladenes Update beim nächsten Öffnen statt beim Schließen. Wenn M³ für alle Benutzer des Computers installiert ist, fragt Windows zuerst nach der Erlaubnis. M³ wartet deshalb, bis Sie sich entscheiden, das Update zu installieren.
 
 ## Support und Community {#support-community}
 
