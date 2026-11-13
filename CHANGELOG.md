@@ -13,6 +13,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Zoom Meeting Manager**: The check M³ runs before a meeting no longer starts on its own: M³ now asks first, in a short window that says what it needs to test and how long that takes (under 15 seconds), so it never presses Zoom's buttons while you're doing something else in Zoom. Skipping it, behind a confirmation, turns the Zoom automations off for that meeting; Test again turns them back on. If the question goes unanswered (its window never appears, for instance), the check gives up after two minutes and asks again later rather than waiting for ever, so Zoom is still checked before your meeting.
+- 🛠️ **Zoom Meeting Manager**: The check M³ runs before a meeting now always confirms that everything it automates works, instead of passing silently when it runs on its own.
 
 ### 🐞 Bug Fixes
 
