@@ -97,6 +97,28 @@ export const getFilesystemErrorSyscall = (error: unknown) => {
     ?.syscall;
 };
 
+// The path can't be looked at: no permission (a folder M³ isn't allowed into,
+// such as a macOS privacy-protected one it wasn't granted, or a Windows
+// folder whose permissions deny it), or it can't lead to a file (a file
+// where a folder should be, a path too long, a symlink loop).
+const INACCESSIBLE_PATH_ERROR_CODES = new Set([
+  'EACCES',
+  'ELOOP',
+  'ENAMETOOLONG',
+  'ENOTDIR',
+  'EPERM',
+]);
+
+/**
+ * Whether an error means the path can't be reached on this computer, which
+ * is about the user's files and permissions, not a bug: a check whether a
+ * file is there treats it as missing, as an existence check does.
+ * @param error The error to check
+ * @returns Whether the path is out of reach
+ */
+export const isInaccessiblePathError = (error: unknown) =>
+  INACCESSIBLE_PATH_ERROR_CODES.has(getFilesystemErrorCode(error) ?? '');
+
 // A full disk, or a used-up disk quota.
 const DISK_FULL_ERROR_CODES = new Set(['EDQUOT', 'ENOSPC']);
 

@@ -17,6 +17,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🐞 Bug Fixes
 
+- 🐞 **Media Display**: Since v26.10.1, going from one picture to the next faded out to the yeartext (or your custom background) before the next picture faded in. Pictures crossfade straight into each other again, and the outgoing picture now stays fully on screen until the next one has faded in over it, so nothing shows through in between.
 - 🐞 **Updates and Shutting Down**: Turning the computer off right after closing M³ could cut an update off halfway, and M³ then wouldn't open anymore. On Windows, M³ now installs a downloaded update the next time it's opened instead, after a short countdown with a **Later** button, and never while media is shown, while background music plays, or around meeting time. When M³ is installed for all users, Windows asks for permission to install an update, so M³ waits until you choose to install it. If M³ won't open after an interrupted update, the FAQ explains how to repair it without losing any settings.
 - 🐞 **Updates**: On macOS and Linux, turning automatic updates off didn't stop an update M³ had already downloaded from installing when M³ closed. It now waits until updates are turned back on. On macOS, an update the system already has ready to apply can still install.
 - 🐞 **Zoom Meeting Manager**: Zoom closes its audio menu as soon as its meeting window moves or changes size, as it can when a panel opens just after the meeting starts. The check M³ runs before a meeting then couldn't leave computer audio and paused your automations. M³ now opens the menu again when that happens.
@@ -28,6 +29,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🔧 Chores
 
 - 🔧 **Dependency Updates**: The automated lockfile update is now built before it merges, so a dependency change that no longer compiles is caught there instead of landing on master and breaking the next release.
+- 🔧 **Build and Release**: The builds that check automated dependency, language and version updates now run with read-only access and without the error-reporting keys, and language updates are checked without packaging the app. The installed app now reads media tags with the same library version the tests use (it was a major version behind).
 - 🔧 **Error Reporting**: When the Zoom meeting M³ opens for its before-meeting check doesn't appear, the error report now says what Zoom showed instead (its version, its open windows and their buttons), so we can find out why. Error reports also keep more of what happened just before a problem while background music is playing.
 
 ## v26.11.2

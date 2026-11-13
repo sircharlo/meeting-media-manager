@@ -6,6 +6,7 @@ import {
   isCloudStoragePath,
   isDiskFullError,
   isExpectedNetworkPathAccessError,
+  isInaccessiblePathError,
   isPhoneStoragePath,
   isPossiblyNetworkFolderPath,
   PHONE_STORAGE_PROVIDER,
@@ -276,6 +277,34 @@ describe('filesystem error helpers', () => {
         'win32',
       ),
     ).toBe(false);
+  });
+});
+
+describe('isInaccessiblePathError', () => {
+  // Errors from fs calls exposed through contextBridge keep only their
+  // message, so the code is read from it.
+  it('recognizes a path M³ may not look at, or that cannot lead to a file', () => {
+    for (const message of [
+      "EPERM: operation not permitted, stat '/Users/me/Documents/a.mp4'",
+      "EACCES: permission denied, stat 'C:/media/a.mp4'",
+      "ENOTDIR: not a directory, stat 'C:/media/a.mp4/b.mp4'",
+      "ENAMETOOLONG: name too long, stat '/a/b'",
+      "ELOOP: too many symbolic links encountered, stat '/a/b'",
+    ]) {
+      expect(isInaccessiblePathError(new Error(message))).toBe(true);
+    }
+  });
+
+  it('leaves missing files and real failures alone', () => {
+    expect(
+      isInaccessiblePathError(
+        new Error("ENOENT: no such file or directory, stat 'C:/a.mp4'"),
+      ),
+    ).toBe(false);
+    expect(
+      isInaccessiblePathError(new Error("EIO: i/o error, stat 'C:/a.mp4'")),
+    ).toBe(false);
+    expect(isInaccessiblePathError(new Error('something else'))).toBe(false);
   });
 });
 

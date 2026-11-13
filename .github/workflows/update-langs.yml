@@ -75,11 +75,30 @@ jobs:
     name: Build the language update
     needs: update-langs
     if: needs.update-langs.outputs.has_changes == 'true' && needs.update-langs.outputs.has_placeholder == 'false'
+    # Read-only, with no Sentry secrets: a test build has no use for them
+    # (like the pull request builds in ci.yml).
+    permissions:
+      contents: read
     uses: ./.github/workflows/build.yml
     with:
       checkout-latest: true
+      # Lint and unit tests are enough here: the update only turns languages
+      # on or off in the source (imports and lists, most often just the
+      # translated-percentage comments), which type-checking and the tests
+      # catch, and packaging all three systems for that once failed the update
+      # only because no macOS runner was free.
+      quality-only: true
       ref: ${{ needs.update-langs.outputs.branch }}
-    secrets: inherit
+    secrets:
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      MAC_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
+      MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+      SENTRY_AUTH_TOKEN: ''
+      SENTRY_DSN: ''
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   # No new (placeholder) languages were introduced, so it's safe to merge
   # automatically: this only flips already-known languages in/out of enabled[].

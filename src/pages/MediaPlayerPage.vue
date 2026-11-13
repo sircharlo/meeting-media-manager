@@ -63,6 +63,7 @@
       class="display-layer"
       :class="{
         'is-live': displayLayer1.isLive,
+        'is-outgoing': displayLayer1.isOutgoing,
         'is-audio': isAudio(displayLayer1.url),
       }"
     >
@@ -116,6 +117,7 @@
       class="display-layer"
       :class="{
         'is-live': displayLayer2.isLive,
+        'is-outgoing': displayLayer2.isOutgoing,
         'is-audio': isAudio(displayLayer2.url),
       }"
     >
@@ -317,18 +319,27 @@ const waitForImageDecode = (url: string): Promise<void> => {
 
 const isEnding = ref(false);
 
-// Display layer state management
+// Display layer state management. `isOutgoing` keeps a layer that just
+// stopped being live fully shown under the one fading in over it, so a
+// crossfade never lets the background through (see crossfadeToNewMedia).
 const displayLayer1 = ref({
   isLive: false,
+  isOutgoing: false,
   token: 0,
   url: '',
 });
 
 const displayLayer2 = ref({
   isLive: false,
+  isOutgoing: false,
   token: 0,
   url: '',
 });
+
+const stopHoldingOutgoingLayers = () => {
+  displayLayer1.value.isOutgoing = false;
+  displayLayer2.value.isOutgoing = false;
+};
 
 const mediaElement1 = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
   'mediaElement1',
@@ -1029,6 +1040,7 @@ const crossfadeToNewMedia = (newUrl: string) => {
   // this, an image fade-out can later clean up a video that reused the same DOM
   // layer before the timeout fired.
   nextLayer.value.token++;
+  nextLayer.value.isOutgoing = false;
   if (nextLayerWasReused) {
     cleanupMediaElement(getLayerElement(nextLayer));
   }
@@ -1046,20 +1058,25 @@ const crossfadeToNewMedia = (newUrl: string) => {
     }
 
     nextLayer.value.isLive = true;
-    if (currentLiveLayer && currentLiveLayer.value !== nextLayer.value) {
-      currentLiveLayer.value.isLive = false;
-    }
-
     if (!currentLiveLayer || currentLiveLayer.value === nextLayer.value) {
       isTransitioning.value = false;
       return;
     }
 
+    // A true crossfade: the outgoing layer stays fully shown under the new
+    // one while it fades in, rather than both fading at once, which lets the
+    // background show through halfway. Audio has nothing to show, so what was
+    // shown fades out as usual then.
+    currentLiveLayer.value.isLive = false;
+    currentLiveLayer.value.isOutgoing = !isAudio(newUrl);
     const oldUrl = currentLiveLayer.value.url;
     const oldToken = ++currentLiveLayer.value.token;
 
     // After transition completes, clean up only the layer/url that faded out.
     setTimeout(() => {
+      if (currentLiveLayer.value.token === oldToken) {
+        currentLiveLayer.value.isOutgoing = false;
+      }
       if (oldUrl) {
         cleanupLayerIfCurrent(currentLiveLayer, oldToken, oldUrl);
       }
@@ -1088,6 +1105,9 @@ const clearCurrentMedia = () => {
   log('🎬 [clearCurrentMedia] Clearing current media', 'mediaPlayer', 'log');
 
   const currentLiveLayer = getLiveLayer();
+  // Stopped mid-crossfade: what was fading out underneath fades out too,
+  // instead of showing again as the live layer fades away.
+  stopHoldingOutgoingLayers();
 
   if (currentLiveLayer?.value.url) {
     const clearingUrl = currentLiveLayer.value.url;
@@ -1668,6 +1688,7 @@ watchImmediate(
       );
       displayLayer1.value.isLive = false;
       displayLayer2.value.isLive = false;
+      stopHoldingOutgoingLayers();
     }
   },
 );
@@ -1773,6 +1794,12 @@ onBeforeUnmount(() => {
 .display-layer.is-live {
   opacity: 1;
   z-index: 3;
+}
+
+/* Under the live layer (z-index 2 against 3) while that one fades in over it:
+   see crossfadeToNewMedia. */
+.display-layer.is-outgoing {
+  opacity: 1;
 }
 
 /* Kept after .is-live (same specificity) so an audio layer stays invisible

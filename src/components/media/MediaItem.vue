@@ -1520,7 +1520,10 @@ import {
   stopZoomSharingAfterMedia,
   triggerZoomScreenShare,
 } from 'src/helpers/zoom';
-import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
+import {
+  isExpectedNetworkPathAccessError,
+  isInaccessiblePathError,
+} from 'src/shared/filesystem-errors';
 import { log, uuid } from 'src/shared/vanilla';
 import { getFileSizeIfExists, isFileUrl } from 'src/utils/fs';
 import {
@@ -2190,6 +2193,23 @@ const notifyPathAccessWarning = () => {
   });
 };
 
+// The file is checked every second at first, then every minute (see
+// localFilePollInterval): an error that keeps coming back is reported once.
+let fileCheckErrorReported = false;
+
+const reportFileCheckError = (error: unknown, filePath: string) => {
+  if (fileCheckErrorReported) return;
+  fileCheckErrorReported = true;
+  errorCatcher(error, {
+    contexts: {
+      fn: {
+        args: { filePath },
+        name: 'MediaItem.fileIsLocal',
+      },
+    },
+  });
+};
+
 const fileIsLocal = async () => {
   const filePath = fileUrlToPath(props.media.fileUrl);
   try {
@@ -2204,15 +2224,10 @@ const fileIsLocal = async () => {
       isExpectedNetworkPathAccessError(error, filePath, getRendererPlatform())
     ) {
       notifyPathAccessWarning();
-    } else {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            args: { filePath },
-            name: 'MediaItem.fileIsLocal',
-          },
-        },
-      });
+    } else if (!isInaccessiblePathError(error)) {
+      // Out of reach (no permission, say) is missing, as it was when this
+      // checked whether the file existed first.
+      reportFileCheckError(error, filePath);
     }
     return false;
   }
@@ -2443,9 +2458,10 @@ const setMediaPlaying = async (
     if (!shouldStartZoomManagerSharing) {
       triggerZoomScreenShare(true);
     }
-  } else if (isImage(mediaPlaying.value.url)) {
-    stopMedia(true);
   }
+  // Media already shown (a picture, say) is replaced as is, not stopped
+  // first: the media window then crossfades from one to the other, instead
+  // of fading out to the yeartext and back in.
   if (signLanguage) {
     if (marker) {
       updateMediaCustomDuration(getMarkerTimes(marker));
