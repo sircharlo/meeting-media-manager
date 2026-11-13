@@ -89,6 +89,7 @@ const SILENT_COMMANDS = new Set<ZoomCommandType>([
   // Presses one share toolbar button while M³'s media is being shared: the
   // overlay would cover M³ just then.
   'share-participants',
+  'snapshot',
   'window-layout',
 ]);
 
@@ -380,6 +381,18 @@ export const getZoomMeetingState = async (
   noticeZoomChanges(meeting);
   return meeting;
 };
+
+/**
+ * What Zoom shows (its version, windows and dialogs' buttons, without
+ * changing anything), for an error report about something that didn't
+ * happen rather than an action that failed, such as a meeting that never
+ * opened. Null if the helper couldn't tell.
+ */
+export const getZoomSnapshot =
+  async (): Promise<null | ZoomFailureSnapshot> => {
+    const result = await runCommand({ type: 'snapshot' });
+    return result.ok ? (result.snapshot ?? null) : null;
+  };
 
 // --- Noticing that Zoom changed ---------------------------------------------
 

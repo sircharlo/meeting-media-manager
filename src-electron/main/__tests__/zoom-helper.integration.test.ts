@@ -131,6 +131,23 @@ describe.runIf(process.platform === 'win32')(
     );
 
     it(
+      'describes what Zoom shows whether or not Zoom is open',
+      async () => {
+        const helper = newHelper();
+        const result = await helper.request({ type: 'snapshot' });
+
+        expect(result.ok).toBe(true);
+        expect(result.snapshot?.error).toBeUndefined();
+        expect(Array.isArray(result.snapshot?.windows)).toBe(true);
+        expect(typeof result.snapshot?.dialogs).toBe('object');
+        expect(typeof result.snapshot?.meeting).toBe('boolean');
+        expect(typeof result.snapshot?.sharing).toBe('boolean');
+        helper.stop();
+      },
+      TIMEOUT,
+    );
+
+    it(
       'answers unknown commands and malformed lines without stopping',
       async () => {
         const replies = await rawSession(cacheDir, [

@@ -64,7 +64,10 @@ export interface ZoomCommandResult {
   raisedHands?: string[];
   /** `learn-hand-raised`: the Reactions button's name, when seen. */
   reactButtonTitle?: null | string;
-  /** On failure: what Zoom showed, for error reports (nothing personal). */
+  /**
+   * On failure, and from the `snapshot` command: what Zoom showed, for error
+   * reports (nothing personal).
+   */
   snapshot?: ZoomFailureSnapshot;
   /** `test-stop-share-entry`: whether the entry picked stopped sharing. */
   stopped?: boolean;
@@ -95,9 +98,10 @@ export interface ZoomDiagnosis {
 }
 
 /**
- * What the helper saw in Zoom when an action failed, attached to error
- * reports so breakage in any Zoom version or language can be understood.
- * Zoom's own labels only: no window titles, no participant names.
+ * What the helper saw in Zoom when an action failed (or when asked, with the
+ * `snapshot` command), attached to error reports so breakage in any Zoom
+ * version or language can be understood. Zoom's own labels only: no window
+ * titles, no participant names.
  */
 export interface ZoomFailureSnapshot {
   /**
@@ -456,6 +460,7 @@ type ZoomCommandBody =
   | { type: 'share-entries' }
   | { type: 'share-participants' }
   | { type: 'share-toolbar-entries' }
+  | { type: 'snapshot' }
   | { type: 'stop-share' }
   | { type: 'toggle-video' }
   | { type: 'video-title' }

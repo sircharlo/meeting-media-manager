@@ -1073,6 +1073,34 @@ describe('telling the user while M³ operates Zoom', () => {
   });
 });
 
+describe('describing Zoom for error reports', () => {
+  it('reads what Zoom shows, without the overlay', async () => {
+    const snapshot = {
+      dialogs: { 'SomeZoomDialog 420x240': ['Join', 'Cancel'] },
+      meeting: false,
+      sharing: false,
+      windows: ['SomeZoomDialog'],
+      zoomVersion: '7.2.5.51704',
+    };
+    zoomCommandMock.mockResolvedValueOnce({ ok: true, snapshot });
+    const { getZoomSnapshot } = await import('../zoom');
+
+    expect(await getZoomSnapshot()).toEqual(snapshot);
+    expect(commandTypes()).toEqual(['snapshot']);
+    expect(zoomState.beginRun).not.toHaveBeenCalled();
+  });
+
+  it("gives null when the helper can't tell", async () => {
+    zoomCommandMock.mockResolvedValueOnce({
+      error: 'helper-not-running',
+      ok: false,
+    });
+    const { getZoomSnapshot } = await import('../zoom');
+
+    expect(await getZoomSnapshot()).toBeNull();
+  });
+});
+
 describe('cancelling also stops the read-only lookups', () => {
   it('answers "cancelled" to a meeting lookup while a cancel is pending', async () => {
     zoomState.runDepth = 1;

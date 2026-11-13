@@ -27,6 +27,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🔧 Chores
 
 - 🔧 **Dependency Updates**: The automated lockfile update is now built before it merges, so a dependency change that no longer compiles is caught there instead of landing on master and breaking the next release.
+- 🔧 **Error Reporting**: When the Zoom meeting M³ opens for its before-meeting check doesn't appear, the error report now says what Zoom showed instead (its version, its open windows and their buttons), so we can find out why. Error reports also keep more of what happened just before a problem while background music is playing.
 
 ## v26.11.2
 

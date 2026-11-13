@@ -42,6 +42,7 @@ const COMMAND_TYPES = new Set<ZoomCommandType>([
   'share-entries',
   'share-participants',
   'share-toolbar-entries',
+  'snapshot',
   'start-share',
   'stop-share',
   'test-mute-all-entry',

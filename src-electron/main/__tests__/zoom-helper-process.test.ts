@@ -321,6 +321,7 @@ describe('isZoomCommand', () => {
     expect(isZoomCommand({ type: 'meeting' })).toBe(true);
     expect(isZoomCommand({ echo: 'x', type: 'ping' })).toBe(true);
     expect(isZoomCommand({ type: 'diagnose' })).toBe(true);
+    expect(isZoomCommand({ type: 'snapshot' })).toBe(true);
     expect(isZoomCommand({ type: 'toggle-video' })).toBe(true);
     expect(isZoomCommand({ type: 'toggle-mic' })).toBe(true);
     expect(isZoomCommand({ type: 'mic-title' })).toBe(true);

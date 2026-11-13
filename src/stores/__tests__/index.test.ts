@@ -14,6 +14,9 @@ describe('piniaBreadcrumbActionTransformer', () => {
     'setRunStep',
     'setMeeting',
     'setRaisedHands',
+    // The music store's clock formatter: every second while music plays
+    // (MMM-V2-3MW).
+    'formatClockTime',
   ])('drops breadcrumbs for frequent actions: %s', (action) => {
     expect(piniaBreadcrumbActionTransformer(action)).toBeNull();
   });
