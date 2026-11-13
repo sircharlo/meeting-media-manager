@@ -88,6 +88,9 @@ let asksPermission = false;
 // Whether the autoUpdater got this app's options and listeners (see
 // configureUpdater).
 let isUpdaterConfigured = false;
+// The system started shutting down (see watchForSessionEnd): no installing
+// on quit any more this session, whatever happens to the update settings.
+let isSessionEnding = false;
 
 // Current updater lifecycle state, kept so the renderer can catch up on an
 // update that started before it mounted and missed the push events (the
@@ -308,6 +311,7 @@ const isDueOnLaunch = (version: string) =>
   pendingAtLaunch.installAttempts < MAX_LAUNCH_INSTALL_ATTEMPTS;
 
 const skipInstallOnQuitForSessionEnd = () => {
+  isSessionEnding = true;
   if (!autoUpdater.autoInstallOnAppQuit) return;
   autoUpdater.autoInstallOnAppQuit = false;
   log(
@@ -483,9 +487,30 @@ const checkForUpdates = () =>
     ? autoUpdater.checkForUpdatesAndNotify()
     : autoUpdater.checkForUpdates();
 
+/**
+ * Updates turned off after the app set the autoUpdater up: a downloaded
+ * update no longer installs when the app quits (macOS, Linux), nor does one
+ * still downloading get handed to Squirrel.Mac when it's done. One that
+ * Squirrel.Mac already has is out of the app's hands: macOS applies it.
+ */
+const stopInstallingOnQuit = () => {
+  if (!isUpdaterConfigured || !autoUpdater.autoInstallOnAppQuit) return;
+  autoUpdater.autoInstallOnAppQuit = false;
+  log(
+    'Updates are off: a downloaded update will not be installed when the app quits.',
+    'electronUpdater',
+    'log',
+  );
+};
+
+/**
+ * Checks for updates, when they're on. Also how the app learns that the user
+ * turned them on or off in Settings.
+ */
 export const triggerUpdateCheck = async (attempt = 1) => {
   const offReason = await findUpdatesOffReason();
   if (offReason) {
+    stopInstallingOnQuit();
     log(
       `Not checking for updates: they are off (${offReason}).`,
       'electronUpdater',
@@ -497,6 +522,8 @@ export const triggerUpdateCheck = async (attempt = 1) => {
   // Updates turned back on after the app opened with them off: the
   // autoUpdater never got its options at launch.
   configureUpdater();
+  // Or turned back on after being turned off (see stopInstallingOnQuit).
+  autoUpdater.autoInstallOnAppQuit = installsOnQuit() && !isSessionEnding;
 
   if (attempt === 1) {
     autoUpdater.allowPrerelease = await pathExists(await getBetaUpdatesPath());

@@ -27,6 +27,11 @@ import {
   updatesDisabled,
 } from '../fs';
 
+// Before ../fs takes it from electronApi.
+const checkForUpdatesSpy = vi.hoisted(() =>
+  vi.spyOn(globalThis.electronApi, 'checkForUpdates'),
+);
+
 const { fs } = globalThis.electronApi;
 const { emptyDir, ensureFile, pathExists, remove } = fs;
 
@@ -234,6 +239,14 @@ describe('auto updates', () => {
     expect(await updatesDisabled()).toBe(true);
     await toggleAutoUpdates(true);
     expect(await updatesDisabled()).toBe(false);
+  });
+
+  it('tells the updater when they are turned off, not only on', async () => {
+    checkForUpdatesSpy.mockClear();
+    await toggleAutoUpdates(false);
+    expect(checkForUpdatesSpy).toHaveBeenCalledOnce();
+    await toggleAutoUpdates(true);
+    expect(checkForUpdatesSpy).toHaveBeenCalledTimes(2);
   });
 });
 

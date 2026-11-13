@@ -678,6 +678,20 @@ describe('updater install flow', () => {
       expect(autoUpdater.autoInstallOnAppQuit).toBe(false);
     });
 
+    it('stays skipped if updates are turned off and on again meanwhile', async () => {
+      const { initUpdater, triggerUpdateCheck } = await import('../updater');
+      const autoUpdater = await getAutoUpdater();
+
+      await initUpdater();
+      const [, onShutdown] =
+        powerMonitorOnMock.mock.calls.find(([name]) => name === 'shutdown') ??
+        [];
+      (onShutdown as () => void)();
+      await triggerUpdateCheck();
+
+      expect(autoUpdater.autoInstallOnAppQuit).toBe(false);
+    });
+
     it('is left to Squirrel.Mac on macOS', async () => {
       constants.PLATFORM = 'darwin';
       const { initUpdater } = await import('../updater');
@@ -705,6 +719,43 @@ describe('updater install flow', () => {
       },
     );
   });
+
+  // Settings' update toggle asks for a check either way: that's how the
+  // updater learns they're off.
+  describe.each(['linux', 'darwin'] as const)(
+    'updates turned off after the app opened (%s)',
+    (platform) => {
+      beforeEach(() => {
+        constants.PLATFORM = platform;
+      });
+
+      it('no longer installs a downloaded update on quit', async () => {
+        const { initUpdater, triggerUpdateCheck } = await import('../updater');
+        const autoUpdater = await getAutoUpdater();
+        await initUpdater();
+        handlers.get('update-downloaded')?.({ version: '26.6.2' });
+        expect(autoUpdater.autoInstallOnAppQuit).toBe(true);
+
+        pathExistsMock.mockResolvedValue(true);
+        await triggerUpdateCheck();
+
+        expect(autoUpdater.autoInstallOnAppQuit).toBe(false);
+      });
+
+      it('installs on quit again once they are turned back on', async () => {
+        const { initUpdater, triggerUpdateCheck } = await import('../updater');
+        const autoUpdater = await getAutoUpdater();
+        await initUpdater();
+        pathExistsMock.mockResolvedValue(true);
+        await triggerUpdateCheck();
+
+        pathExistsMock.mockResolvedValue(false);
+        await triggerUpdateCheck();
+
+        expect(autoUpdater.autoInstallOnAppQuit).toBe(true);
+      });
+    },
+  );
 
   // The Settings toggles for updates and beta updates check for updates right
   // away, also when the app opened with updates off and never set the
