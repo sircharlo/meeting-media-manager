@@ -47,13 +47,16 @@ const participantCount = vi.hoisted(() => ({
 
 vi.mock('src/helpers/zoom', async (importOriginal) => {
   const actual = await importOriginal<{
-    countZoomMeetingParticipants: () => Promise<null | number>;
+    countZoomMeetingParticipants: (options?: {
+      peek?: boolean;
+    }) => Promise<null | number>;
   }>();
   return {
     ...actual,
-    countZoomMeetingParticipants: () =>
+    // A peek (before the check asks) stays a peek: it presses nothing.
+    countZoomMeetingParticipants: (options?: { peek?: boolean }) =>
       participantCount.override === null
-        ? actual.countZoomMeetingParticipants()
+        ? actual.countZoomMeetingParticipants(options)
         : Promise.resolve(participantCount.override),
   };
 });

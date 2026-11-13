@@ -155,6 +155,25 @@ describe('DialogZoomMeetingManagerPopup', () => {
     expect(startupCheckMock).toHaveBeenCalledWith({ manual: true });
   });
 
+  it("offers Test again, rather than saying it's checking, while a check only waits for the go-ahead", async () => {
+    await mountPopup({ meeting: MEETING });
+    const zoomState = useZoomStateStore();
+    // Skipped once already, and asked again (Test again gives the go-ahead).
+    zoomState.pauseAutomations(CONGREGATION_ID, [], false, true);
+    zoomState.checkRunning = true;
+    zoomState.checkPrompt = true;
+    try {
+      await flushPromises();
+
+      expect(document.body.textContent).not.toContain('Checking Zoom');
+      findButton('Test again').click();
+      expect(startupCheckMock).toHaveBeenCalledWith({ manual: true });
+    } finally {
+      zoomState.checkRunning = false;
+      zoomState.checkPrompt = false;
+    }
+  });
+
   it("offers the setup assistant instead when Zoom's names changed", async () => {
     await mountPopup({ meeting: MEETING });
     useZoomStateStore().pauseAutomations(

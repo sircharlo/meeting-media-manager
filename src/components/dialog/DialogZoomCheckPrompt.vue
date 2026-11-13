@@ -58,7 +58,8 @@ const answer = (choice: 'run' | 'skip') => {
   answerZoomCheckPrompt(choice);
 };
 
-// A check asked for elsewhere (Test again) settles this one without an answer.
+// Answered elsewhere, and closed with it: by Test again, which is the
+// go-ahead (see runZoomStartupCheck), or by the question timing out.
 watch(open, (isOpen) => {
   if (!isOpen) askAboutSkipping.value = false;
 });

@@ -12,7 +12,8 @@ export interface ZoomAutomationPause {
   congregationId: string;
   /**
    * The user chose not to have Zoom tested before the meeting: M³ leaves
-   * Zoom alone for it, until they ask for a check (Test again).
+   * Zoom alone for it, until they ask for a check (Test again) or the day is
+   * over (see endDeclinedPause).
    */
   declined?: boolean;
   /**
@@ -37,6 +38,15 @@ interface Store {
   checkedCongregations: string[];
   /** A check waits for the user's go-ahead (see DialogZoomCheckPrompt). */
   checkPrompt: boolean;
+  /**
+   * After a question nobody answered, automatic checks don't ask again
+   * before this time (ms since the epoch; 0: whenever).
+   */
+  checkPromptSnoozedUntil: number;
+  /**
+   * A check is under way, from its first look at Zoom to its result,
+   * including while it waits for the user's go-ahead (see checkingZoom).
+   */
   checkRunning: boolean;
   /**
    * What the last look at Zoom found (null: not looked yet, or Zoom's
@@ -84,6 +94,14 @@ export const useZoomStateStore = defineStore('zoom-state', {
     closeCheckPrompt() {
       this.checkPrompt = false;
     },
+    /**
+     * A new day: the automations the user turned off for a meeting, by
+     * skipping its check, come back on for the next one. Paused by a failed
+     * check, they stay paused until a check passes.
+     */
+    endDeclinedPause() {
+      if (this.pause?.declined) this.pause = null;
+    },
     endRun() {
       if (this.runDepth === 0) return;
       this.runDepth--;
@@ -127,6 +145,11 @@ export const useZoomStateStore = defineStore('zoom-state', {
     checkDeclined(): boolean {
       return this.automationsPaused && !!this.pause?.declined;
     },
+    /**
+     * Whether a check is looking at or testing Zoom: not while it only waits
+     * for the user's go-ahead.
+     */
+    checkingZoom: (state) => state.checkRunning && !state.checkPrompt,
     /** Whether they're paused until the setup assistant relearns Zoom's names. */
     relearnNeeded(): boolean {
       return this.automationsPaused && !!this.pause?.namesChanged;
@@ -138,6 +161,7 @@ export const useZoomStateStore = defineStore('zoom-state', {
     cancelRequested: false,
     checkedCongregations: [],
     checkPrompt: false,
+    checkPromptSnoozedUntil: 0,
     checkRunning: false,
     meeting: null,
     pause: null,

@@ -1054,6 +1054,28 @@ describe('telling the user while M³ operates Zoom', () => {
     expect(zoomState.beginRun).not.toHaveBeenCalled();
   });
 
+  it('counts the people in the meeting from a participants panel already open, when only peeking', async () => {
+    zoomCommandMock
+      .mockResolvedValueOnce({
+        ok: true,
+        participants: [
+          { details: 'Host, me', name: 'Host', section: 'meeting' },
+          { details: 'Waiting', name: 'Visitor', section: 'waiting' },
+          { details: 'Guest', name: 'Guest', section: 'meeting' },
+        ],
+      })
+      // The panel is closed: nothing to read without pressing anything.
+      .mockResolvedValueOnce({ ok: true });
+    const { countZoomMeetingParticipants } = await import('../zoom');
+
+    expect(await countZoomMeetingParticipants({ peek: true })).toBe(2);
+    expect(await countZoomMeetingParticipants({ peek: true })).toBeNull();
+    expect(zoomCommandMock).toHaveBeenCalledWith(
+      expect.objectContaining({ peek: true, type: 'participants' }),
+    );
+    expect(zoomState.beginRun).not.toHaveBeenCalled();
+  });
+
   it('sends nothing more to Zoom once cancelled', async () => {
     const { cancelZoomRun, runZoomMeetingSequence } = await import('../zoom');
     zoomCommandMock.mockImplementation(async (command) => {

@@ -673,6 +673,16 @@ namespace M3.ZoomHelper
             Native.SetCursorPos(x, y);
         }
 
+        /// <summary>An element's window handle, read now: zero once the
+        /// window is gone, which Zoom's menus can be by the time they're
+        /// looked at (UI Automation throws then, see
+        /// OpenAudioMenuEntries).</summary>
+        static IntPtr HandleOf(El element)
+        {
+            try { return element.Raw.CurrentNativeWindowHandle; }
+            catch (Exception) { return IntPtr.Zero; }
+        }
+
         /// <summary>Brings a window forward, un-minimizing it: for real key
         /// presses and the last-resort mouse paths. Zoom's controls are
         /// otherwise pressed without the focus.</summary>
@@ -1503,7 +1513,9 @@ namespace M3.ZoomHelper
                     Thread.Sleep(500); // for the window to settle
                     continue;
                 }
-                var handle = menu.Raw.CurrentNativeWindowHandle;
+                // Zoom may have closed the menu already: then there's no
+                // handle to read (zero), and it counts as closed below.
+                var handle = HandleOf(menu);
                 // The menu's window can be up before its entries are.
                 WaitUntil(() =>
                 {
@@ -1965,10 +1977,31 @@ namespace M3.ZoomHelper
             return result;
         }
 
-        public static Dictionary<string, object> Participants()
+        /// <summary>Who is in the meeting. With `peek`, only as the
+        /// participants panel shows it when it's open already, read without
+        /// pressing or bringing back anything (M3 asks before it presses
+        /// Zoom's buttons for its check, and this tells whether it will, see
+        /// zoom-startup-check.ts): nothing (no `participants`) while the panel
+        /// is closed, or while the meeting window can't be read as it is
+        /// (Zoom's mini view, or minimized).</summary>
+        public static Dictionary<string, object> Participants(bool peek)
         {
+            if (peek) return PeekParticipants();
             var window = RequireParticipantsWindow();
             OpenParticipantsPanel(window);
+            return ParticipantsReply(window);
+        }
+
+        static Dictionary<string, object> PeekParticipants()
+        {
+            var unknown = new Dictionary<string, object>();
+            var window = FindMeetingWindow();
+            if (window == null || Native.IsIconic(HandleOf(window)) || !ParticipantsPanelOpen(window)) return unknown;
+            return ParticipantsReply(window);
+        }
+
+        static Dictionary<string, object> ParticipantsReply(El window)
+        {
             var rows = new List<object>();
             foreach (var row in ParticipantRows(window))
             {
@@ -3010,12 +3043,17 @@ namespace M3.ZoomHelper
         /// the picker gets from StartShare. Null if it never opened.</summary>
         static El OpenSharePickerAndWait(El window, string shareTitle)
         {
+            var pickersBefore = TopWindows(SharePickerClass, false);
             OpenSharePicker(window, shareTitle);
             var picker = WaitForWindow(SharePickerClass, ShareRepressAfterMs);
             if (picker != null) return picker;
             // Leaves a picker that showed up meanwhile as it is (see the first
             // line of OpenSharePicker): pressing Share again would close it.
-            OpenSharePicker(window, shareTitle);
+            // So too one Zoom created for the press but hasn't shown yet, as
+            // on a slow computer: only a press that brought no new picker
+            // window at all was ignored.
+            if (!TopWindows(SharePickerClass, false).Exists(handle => !pickersBefore.Contains(handle)))
+                OpenSharePicker(window, shareTitle);
             return WaitForWindow(SharePickerClass, WaitTimeoutMs - ShareRepressAfterMs);
         }
 
@@ -4076,7 +4114,7 @@ namespace M3.ZoomHelper
         {
             Known.Load(request);
             var type = GetString(request, "type");
-            var reply = type == "ping" || type == "window-layout" || type == "snapshot" || (type == "meeting" && !GetBool(request, "reveal"))
+            var reply = type == "ping" || type == "window-layout" || type == "snapshot" || (type == "meeting" && !GetBool(request, "reveal")) || (type == "participants" && GetBool(request, "peek"))
                 ? Run(type, request)
                 : RunRestoringInput(type, request);
             if (Known.Learned.Count > 0) reply["learned"] = new Dictionary<string, object>(Known.Learned);
@@ -4118,7 +4156,7 @@ namespace M3.ZoomHelper
                 case "mic-title": return MicTitle();
                 case "mute-all": return MuteAll(GetBool(request, "allowSelfUnmute"));
                 case "ask-all-to-unmute": return AskAllToUnmute();
-                case "participants": return Participants();
+                case "participants": return Participants(GetBool(request, "peek"));
                 case "admit": return Admit(GetStrings(request, "names"));
                 case "learn-hand-raised":
                     return LearnHandRaised(GetString(request, "reactButtonTitle"), GetString(request, "handRaiseTitle"));

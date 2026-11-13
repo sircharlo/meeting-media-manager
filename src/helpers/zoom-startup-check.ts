@@ -1,4 +1,8 @@
-import type { ZoomDiagnosis, ZoomFailureSnapshot } from 'src/types';
+import type {
+  ZoomDiagnosis,
+  ZoomFailureSnapshot,
+  ZoomMeetingState,
+} from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import {
@@ -25,7 +29,11 @@ import {
   type ZoomActionFailure,
   zoomNamesChanged,
 } from 'src/helpers/zoom';
-import { askBeforeCheckingZoom } from 'src/helpers/zoom-check-prompt';
+import {
+  answerZoomCheckPrompt,
+  askBeforeCheckingZoom,
+  CHECK_PROMPT_TIMEOUT_MS,
+} from 'src/helpers/zoom-check-prompt';
 import {
   runZoomSelfTest,
   ZOOM_SELF_TEST_STEP_LABELS,
@@ -36,21 +44,30 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { useDialogStateStore } from 'stores/dialog-state';
 import { AUTO_START_WINDOW_HOURS } from 'stores/music';
 import { useZoomStateStore } from 'stores/zoom-state';
+import { watch } from 'vue';
 
 // The startup check: once a day (per congregation) while M³ is open, before
 // any automation relies on Zoom, M³ makes sure the meeting is open and that
-// everything it automates works, much like the setup assistant's test. A
-// meeting already open is checked right away; otherwise, on meeting days,
-// M³ opens it in the same window background music can start in, before the
-// meeting. If anything fails, the user is told and the Zoom automations are
-// paused until M³ restarts or a new check passes, rather than risking an
-// automation going wrong in front of the congregation. When it fails because
-// Zoom's buttons no longer read as learned (Zoom's language was changed, or
-// Zoom was updated), the user is offered the setup assistant instead, to
-// learn them again. A check the user stops changes nothing.
+// everything it automates works, much like the setup assistant's test. On
+// its own, it only runs on meeting days, in the same window background music
+// can start in, before the meeting: on the meeting if it's open, else
+// opening it. Before it presses Zoom's buttons (to open the meeting, or to
+// test everything with the host alone in it), it asks the user; with others
+// in the meeting, it only looks, and asks nothing. If anything fails, the
+// user is told and the Zoom automations are paused until M³ restarts or a
+// new check passes, rather than risking an automation going wrong in front
+// of the congregation. When it fails because Zoom's buttons no longer read
+// as learned (Zoom's language was changed, or Zoom was updated), the user is
+// offered the setup assistant instead, to learn them again. A check the user
+// stops changes nothing.
 
 export type ZoomStartupCheckOutcome =
   'cancelled' | 'declined' | 'failed' | 'passed' | 'scheduled' | 'skipped';
+
+/** A check that can go ahead: on the meeting open, or opening it first. */
+interface CheckPlan {
+  meetingToOpen?: string;
+}
 
 /** What a check found wrong. */
 interface Findings {
@@ -65,15 +82,54 @@ interface Findings {
   snapshot?: ZoomFailureSnapshot;
 }
 
+/**
+ * Why a check that needed the user's go-ahead went without it: 'declined',
+ * they'd rather not have Zoom tested; 'unanswered', nobody said; 'snoozed',
+ * nobody answered the last question, not long ago; 'too-late', too close to
+ * the meeting to ask (see LAST_QUESTION_MS).
+ */
+type NoGoAhead = 'declined' | 'snoozed' | 'too-late' | 'unanswered';
+
+type NotChecked = NoGoAhead | NothingToCheck;
+
+/**
+ * Why a check can't go ahead now: no meeting today, or it's starting or
+ * under way (null); 'no-meeting', asked for with no meeting open and no ID
+ * to open it; 'sharing', until Zoom stops sharing; or, before the meeting's
+ * window, when to check.
+ */
+type NothingToCheck =
+  'no-meeting' | 'sharing' | null | { checkInSeconds: number };
+
 const findings = (problems: string[], details: string[] = []): Findings => ({
   details,
   problems,
 });
 
+/** What a check the user stopped returns: dropped (see runCheck). */
+const stopped = () => findings([]);
+
 const MEETING_OPEN_TIMEOUT_MS = 90_000;
 const MEETING_POLL_MS = 3000;
 // Lets a meeting that just opened finish setting up its window.
 const MEETING_SETTLE_MS = 5000;
+// Ample time to test everything in a meeting that's open.
+const TESTS_MS = 2 * 60_000;
+// The latest an automatic check asks before the meeting's window closes
+// (see getMeetingOpeningWindow): time enough for the question to wait for
+// its answer, then for the check to open the meeting and test everything.
+// So neither runs into the meeting, nor holds up the settings the meeting
+// day's schedule applies after the check (see runDue in zoom-meeting-day.ts).
+const LAST_QUESTION_MS =
+  CHECK_PROMPT_TIMEOUT_MS +
+  MEETING_OPEN_TIMEOUT_MS +
+  MEETING_SETTLE_MS +
+  TESTS_MS;
+// After a question nobody answered, how long until the next: whoever is at
+// the computer may be busy elsewhere, and the question, which stays in front
+// of everything (M³'s shortcuts included), isn't to come back every few
+// minutes for as long as the meeting is open.
+const ASK_AGAIN_AFTER_MS = 15 * 60_000;
 
 const HELPER_PROBLEM = 'zoom-check-problem-helper';
 const MEETING_PROBLEM = 'zoom-check-problem-meeting';
@@ -126,9 +182,10 @@ const missingControls = (
  * With others in the meeting: finds every control the automations use,
  * without pressing anything they'd notice.
  */
-const checkWithoutPressing = async (): Promise<Findings> => {
+const checkWithoutPressing = async (signal: AbortSignal): Promise<Findings> => {
   const needs = getNeeds();
   const diagnosis = await diagnoseZoom();
+  if (signal.aborted) return stopped();
   if (!diagnosis) return findings([HELPER_PROBLEM]);
   if (!diagnosis.meeting) {
     return meetingNotFound('meeting: gone before its controls were checked');
@@ -158,7 +215,7 @@ const checkWithoutPressing = async (): Promise<Findings> => {
 };
 
 /** With nobody else in the meeting: tries each automated action. */
-const testEverything = async (): Promise<Findings> => {
+const testEverything = async (signal: AbortSignal): Promise<Findings> => {
   const needs = getNeeds();
   const steps: ZoomSelfTestStepId[] = ['meeting'];
   if (needs.audio) {
@@ -176,9 +233,12 @@ const testEverything = async (): Promise<Findings> => {
 
   const results = await runZoomSelfTest({
     prepareMediaWindow: prepareMediaWindowForZoomTest,
+    // Stopped, it doesn't go on to the next step (see untilStopped).
+    signal,
     steps,
     titles: getZoomTitlesFromSettings(),
   });
+  if (signal.aborted) return stopped();
   const failed = results.filter((step) => step.status === 'failed');
   const problems = failed.map((step) => ZOOM_SELF_TEST_STEP_LABELS[step.id]);
   const details = failed.map(
@@ -200,13 +260,11 @@ const testEverything = async (): Promise<Findings> => {
 };
 
 /**
- * When the meeting may be opened for the check: in the window background
- * music can auto-start in (see the music store's shouldAutoStart), from
- * AUTO_START_WINDOW_HOURS before the meeting until just before it starts.
- * 'now', the seconds until the window opens, or null: no meeting today, or
- * it's starting or under way.
+ * Today's meeting window for the check, in seconds from now: when it opens
+ * and when it closes (see getMeetingOpeningWindow). Null with no meeting
+ * today.
  */
-const getMeetingOpeningWindow = (): 'now' | null | number => {
+const getMeetingWindowTimes = () => {
   const now = new Date();
   // Whichever day is selected in the media calendar.
   const start = getMeetingStartToday(now);
@@ -214,15 +272,63 @@ const getMeetingOpeningWindow = (): 'now' | null | number => {
   const secondsUntilStart = (start.getTime() - now.getTime()) / 1000;
   const stopBufferSeconds =
     useCurrentStateStore().currentSettings?.meetingStopBufferSeconds ?? 60;
-  if (secondsUntilStart <= stopBufferSeconds * 1.5) return null;
-  const opensIn = secondsUntilStart - AUTO_START_WINDOW_HOURS * 3600;
-  return opensIn > 0 ? opensIn : 'now';
+  return {
+    closesIn: secondsUntilStart - stopBufferSeconds * 1.5,
+    opensIn: secondsUntilStart - AUTO_START_WINDOW_HOURS * 3600,
+  };
 };
 
-const waitForMeeting = async () => {
+/**
+ * When a check may run on its own: in the window background music can
+ * auto-start in (see the music store's shouldAutoStart), from
+ * AUTO_START_WINDOW_HOURS before the meeting until just before it starts.
+ * 'now', the seconds until the window opens, or null: no meeting today, or
+ * it's starting or under way.
+ */
+const getMeetingOpeningWindow = (): 'now' | null | number => {
+  const times = getMeetingWindowTimes();
+  if (!times || times.closesIn <= 0) return null;
+  return times.opensIn > 0 ? times.opensIn : 'now';
+};
+
+/** Whether the meeting's window closes too soon to ask (see LAST_QUESTION_MS). */
+const isTooLateToAsk = () =>
+  (getMeetingWindowTimes()?.closesIn ?? 0) * 1000 < LAST_QUESTION_MS;
+
+/**
+ * Runs `run` with a signal aborted as soon as the user stops the check (see
+ * cancelZoomRun), for it to give up at once. Unlike the stop request, which
+ * only holds Zoom's actions back until the run is force-ended (abortRun
+ * clears it, and Zoom's actions then go through again), the signal stays
+ * aborted.
+ */
+const untilStopped = async <T>(
+  run: (signal: AbortSignal) => Promise<T>,
+): Promise<T> => {
+  const controller = new AbortController();
+  const stopWatching = watch(
+    () => useZoomStateStore().cancellations,
+    () => {
+      controller.abort();
+    },
+    { flush: 'sync' },
+  );
+  try {
+    return await run(controller.signal);
+  } finally {
+    stopWatching();
+  }
+};
+
+/**
+ * Waits for the meeting M³ opened: false if it isn't open in time, or the
+ * user stopped the check meanwhile, after which nothing more goes to Zoom.
+ */
+const waitForMeeting = async (signal: AbortSignal) => {
   const deadline = Date.now() + MEETING_OPEN_TIMEOUT_MS;
   while (Date.now() < deadline) {
     await sleep(MEETING_POLL_MS); // NOSONAR: sequential - polls until ready
+    if (signal.aborted) return false;
     const meeting = await getZoomMeetingState(); // NOSONAR: sequential - polls until ready
     if (meeting?.found) return true;
   }
@@ -230,95 +336,149 @@ const waitForMeeting = async () => {
 };
 
 /**
- * With no meeting open: 'open' to open it for the check; null if there's
- * none to open now (no meeting today, or it's starting or under way), or,
- * before the meeting's window, when to check; or, asked for without a
- * meeting ID, that the meeting can't be opened.
+ * Opens the meeting and lets it settle: false if it isn't open in time, or
+ * the user stopped the check meanwhile.
  */
-const planWithoutMeeting = (
-  manual: boolean,
-  meetingId: string | undefined,
-): 'open' | Findings | null | { checkInSeconds: number } => {
-  if (!manual) {
-    const opening = getMeetingOpeningWindow();
-    if (!meetingId || opening === null) return null;
-    if (opening !== 'now') return { checkInSeconds: opening };
+const openMeeting = async (meetingId: string, signal: AbortSignal) => {
+  log('Zoom check: opening the meeting', 'zoom', 'info');
+  globalThis.electronApi.launchZoomMeeting(meetingId);
+  if (!(await waitForMeeting(signal))) return false;
+  await sleep(MEETING_SETTLE_MS);
+  return true;
+};
+
+/** See checkMeeting. */
+const checkMeetingUntilStopped = async (
+  meetingToOpen: string | undefined,
+  mayPress: boolean,
+  signal: AbortSignal,
+): Promise<Findings> => {
+  const open = !meetingToOpen || (await openMeeting(meetingToOpen, signal));
+  if (signal.aborted) return stopped();
+  if (!open) {
+    return meetingNotFound(
+      `meeting: not open ${MEETING_OPEN_TIMEOUT_MS / 1000} s after opening it`,
+    );
   }
-  if (!meetingId) {
-    return findings([MEETING_PROBLEM], ['meeting: none open, and no ID']);
-  }
-  return 'open';
+  if (!mayPress) return checkWithoutPressing(signal);
+
+  const people = await countZoomMeetingParticipants();
+  if (signal.aborted) return stopped();
+  // Unknown counts as not alone: nothing gets pressed.
+  if (people === 1) return testEverything(signal);
+  log('Zoom check: others in the meeting, only looking', 'zoom', 'info', {
+    people,
+  });
+  return checkWithoutPressing(signal);
 };
 
 /**
- * Opens the meeting first, given its ID, then checks it: tries everything
- * when alone in it, else only looks.
+ * Checks the meeting, opening it first if given its ID: tries everything
+ * when the host is alone in it, unless it mustn't press anything
+ * (`mayPress` false), else only looks. Stopped by the user, it gives up at
+ * once.
  */
-const checkMeeting = (meetingToOpen: string | undefined) =>
-  withZoomRun('zoom-run-startup-check', async () => {
-    if (meetingToOpen) {
-      log('Zoom check: opening the meeting', 'zoom', 'info');
-      globalThis.electronApi.launchZoomMeeting(meetingToOpen);
-      if (!(await waitForMeeting())) {
-        return meetingNotFound(
-          `meeting: not open ${MEETING_OPEN_TIMEOUT_MS / 1000} s after opening it`,
-        );
-      }
-      await sleep(MEETING_SETTLE_MS);
-    }
+const checkMeeting = (meetingToOpen: string | undefined, mayPress: boolean) =>
+  withZoomRun('zoom-run-startup-check', () =>
+    untilStopped((signal) =>
+      checkMeetingUntilStopped(meetingToOpen, mayPress, signal),
+    ),
+  );
 
-    const people = await countZoomMeetingParticipants();
-    // Unknown counts as not alone: nothing gets pressed.
-    if (people === 1) return testEverything();
-    log('Zoom check: others in the meeting, only looking', 'zoom', 'info', {
-      people,
-    });
-    return checkWithoutPressing();
-  });
+const getMeetingId = () =>
+  useCurrentStateStore().currentSettings?.zoomMeetingManagerMeetingId?.trim();
 
 /**
- * What doesn't work in Zoom; null if there's nothing to check (no meeting
- * open, and none to open now); 'sharing' if it can't be checked until Zoom
- * stops sharing; 'declined' if the user would rather not have it checked;
- * 'unanswered' if nobody said whether it may run; or, before the meeting's
- * window, when to check.
+ * What a check can do, given what Zoom shows (null: the helper couldn't
+ * tell). On its own, it only runs in the meeting's window (see
+ * getMeetingOpeningWindow), whether or not the meeting is open: never
+ * during or after the meeting, nor on a day without one.
  */
-const findProblems = async (
+const planCheck = (
   manual: boolean,
-): Promise<
-  | 'declined'
-  | 'sharing'
-  | 'unanswered'
-  | Findings
-  | null
-  | { checkInSeconds: number }
-> => {
-  // Only looking, so far: nothing to tell the user about.
-  const meeting = await getZoomMeetingState();
+  meeting: null | ZoomMeetingState,
+): CheckPlan | Findings | NothingToCheck => {
   if (!meeting) return findings([HELPER_PROBLEM]);
   // Never during a share: testing would end it, and in Zoom's single window
   // (its default) sharing hides the meeting window, and with it everything
   // a check looks at, which would read as no meeting at all.
   if (meeting.found && meeting.sharing) return 'sharing';
+  if (!manual) {
+    const opening = getMeetingOpeningWindow();
+    if (opening === null) return null;
+    if (opening !== 'now') return { checkInSeconds: opening };
+  }
+  if (meeting.found) return {};
+  const meetingId = getMeetingId();
+  if (meetingId) return { meetingToOpen: meetingId };
+  return manual ? 'no-meeting' : null;
+};
 
-  const meetingId =
-    useCurrentStateStore().currentSettings?.zoomMeetingManagerMeetingId?.trim();
-  if (!meeting.found) {
-    const plan = planWithoutMeeting(manual, meetingId);
-    if (plan !== 'open') return plan;
+const goesAhead = (
+  plan: CheckPlan | Findings | NothingToCheck,
+): plan is CheckPlan =>
+  !!plan &&
+  typeof plan === 'object' &&
+  !('problems' in plan) &&
+  !('checkInSeconds' in plan);
+
+/**
+ * How many are in the meeting, the host included, when Zoom's participants
+ * panel shows others than the host: null if it doesn't, or isn't open, as
+ * reading it then means opening it, which presses Zoom's buttons (see
+ * countZoomMeetingParticipants). Unknown counts as maybe alone.
+ */
+const peekAtOthers = async () => {
+  const people = await countZoomMeetingParticipants({ peek: true });
+  return people !== null && people > 1 ? people : null;
+};
+
+/**
+ * Asks the user whether the check may press Zoom's buttons now (see
+ * askBeforeCheckingZoom), unless it's too late to (see LAST_QUESTION_MS),
+ * or the last question went unanswered not long ago (see
+ * ASK_AGAIN_AFTER_MS).
+ */
+const askFirst = async (): Promise<'run' | NoGoAhead> => {
+  if (isTooLateToAsk()) return 'too-late';
+  const zoomState = useZoomStateStore();
+  if (Date.now() < zoomState.checkPromptSnoozedUntil) return 'snoozed';
+  const answer = await askBeforeCheckingZoom();
+  zoomState.checkPromptSnoozedUntil =
+    answer === 'unanswered' ? Date.now() + ASK_AGAIN_AFTER_MS : 0;
+  return answer === 'skip' ? 'declined' : answer;
+};
+
+/**
+ * What doesn't work in Zoom, or why it wasn't checked (see NotChecked).
+ * Zoom's buttons are only pressed (to open the meeting, or to test
+ * everything with the host alone in it) once the user said so, or when they
+ * asked for the check; with others in the meeting, it only looks, and asks
+ * nothing.
+ */
+const findProblems = async (
+  manual: boolean,
+): Promise<Findings | NotChecked> => {
+  // Only looking, so far: nothing to tell the user about.
+  const plan = planCheck(manual, await getZoomMeetingState());
+  if (!goesAhead(plan)) return plan;
+  if (manual) return checkMeeting(plan.meetingToOpen, true);
+  const people = plan.meetingToOpen ? null : await peekAtOthers();
+  if (people) {
+    log('Zoom check: others in the meeting, only looking', 'zoom', 'info', {
+      people,
+    });
+    return checkMeeting(undefined, false);
   }
 
   // Zoom is about to be taken for a moment: the user says when.
-  if (!manual) {
-    const answer = await askBeforeCheckingZoom();
-    if (answer === 'skip') return 'declined';
-    // Nobody said: never wait on the question for ever (see the timeout in
-    // zoom-check-prompt.ts), rather give up on this check and ask again.
-    if (answer === 'unanswered') return 'unanswered';
-  }
-
-  // From here on, M³ may open the meeting and press things in Zoom.
-  return checkMeeting(meeting.found ? undefined : meetingId);
+  const answer = await askFirst();
+  if (answer !== 'run') return answer;
+  // The answer can take a while: Zoom is looked at again, as the user may
+  // have opened the meeting or started sharing meanwhile.
+  const replanned = planCheck(manual, await getZoomMeetingState());
+  if (!goesAhead(replanned)) return replanned;
+  return checkMeeting(replanned.meetingToOpen, true);
 };
 
 /**
@@ -484,23 +644,123 @@ const mayCheck = (congregationId: string, manual: boolean) => {
   );
 };
 
-/** Checks the Zoom Meeting Manager, when it may (see mayCheck). */
-export const runZoomStartupCheck = async ({
-  manual = false,
-} = {}): Promise<ZoomStartupCheckOutcome> => {
+/** Leaves today's check to do: the meeting day's schedule runs the next. */
+const checkLater = (congregationId: string) => {
   const zoomState = useZoomStateStore();
-  const congregationId = useCurrentStateStore().currentCongregation;
-  if (!congregationId || !mayCheck(congregationId, manual)) return 'skipped';
+  zoomState.checkedCongregations = zoomState.checkedCongregations.filter(
+    (id) => id !== congregationId,
+  );
+};
 
+/**
+ * They'd rather M³ left Zoom alone: its automations go off for this
+ * meeting, until the day is over or an asked-for check passes (see the Zoom
+ * popup).
+ */
+const turnOffForMeeting = (congregationId: string): ZoomStartupCheckOutcome => {
+  useZoomStateStore().pauseAutomations(congregationId, [], false, true);
+  log('Zoom check: skipped by the user, automations off', 'zoom', 'warn');
+  createTemporaryNotification({
+    caption: t('zoom-check-declined-caption'),
+    group: 'zoom-check',
+    message: t('zoom-automations-off-for-meeting'),
+    timeout: 10_000,
+    type: 'warning',
+  });
+  return 'declined';
+};
+
+/**
+ * Asked for with no meeting open, and no meeting ID to open it: nothing to
+ * check, which is down to the setup, not to anything broken in Zoom. The
+ * user is told, but it isn't reported, and the automations stay as they
+ * were.
+ */
+const sayThereIsNoMeeting = (): ZoomStartupCheckOutcome => {
+  log('Zoom check: no meeting open, and no meeting ID', 'zoom', 'info');
+  createTemporaryNotification({
+    caption: t('zoom-meeting-manager-meeting-id-missing'),
+    group: 'zoom-check',
+    message: t('zoom-meeting-window-not-found'),
+    type: 'warning',
+  });
+  return 'skipped';
+};
+
+/**
+ * Zoom is sharing: the regular recheck runs the check once sharing has
+ * stopped; asked for, the user is told.
+ */
+const waitForSharingToStop = (manual: boolean): ZoomStartupCheckOutcome => {
+  log('Zoom check: waiting for Zoom to stop sharing', 'zoom', 'info');
+  if (!manual) return 'scheduled';
+  createTemporaryNotification({
+    group: 'zoom-check',
+    message: t('zoom-check-while-sharing'),
+    type: 'warning',
+  });
+  return 'skipped';
+};
+
+/** What a check that didn't go ahead comes to (see NotChecked). */
+const settleNotChecked = (
+  reason: NotChecked,
+  manual: boolean,
+  congregationId: string,
+): ZoomStartupCheckOutcome => {
+  if (reason === null) {
+    log('Zoom check: no meeting to check now', 'zoom', 'info');
+    return 'skipped';
+  }
+  if (reason === 'declined') return turnOffForMeeting(congregationId);
+  if (reason === 'too-late') {
+    // Nor is it asked again today: the meeting is about to start.
+    log('Zoom check: too close to the meeting to ask', 'zoom', 'info', {
+      windowClosesInSeconds: getMeetingWindowTimes()?.closesIn,
+    });
+    return 'skipped';
+  }
+
+  // Today's check is still to do.
+  checkLater(congregationId);
+  if (reason === 'no-meeting') return sayThereIsNoMeeting();
+  if (reason === 'sharing') return waitForSharingToStop(manual);
+  if (reason === 'unanswered') {
+    // Also what happens when no dialog is there to answer it: asked again
+    // later (see ASK_AGAIN_AFTER_MS), rather than Zoom going untested for
+    // the day.
+    log('Zoom check: nobody answered, asking again later', 'zoom', 'warn');
+  } else if (reason === 'snoozed') {
+    const snoozedUntil = useZoomStateStore().checkPromptSnoozedUntil;
+    log(
+      'Zoom check: last question unanswered, not asking yet',
+      'zoom',
+      'info',
+      {
+        askingAgainInSeconds: Math.round((snoozedUntil - Date.now()) / 1000),
+      },
+    );
+  } else {
+    // Too early: the meeting day's schedule (see zoom-meeting-day.ts)
+    // checks again when the meeting's window opens, if M³ is still on.
+    log('Zoom check: waiting for the meeting', 'zoom', 'info', reason);
+  }
+  return 'scheduled';
+};
+
+const isFindings = (found: Findings | NotChecked): found is Findings =>
+  !!found && typeof found === 'object' && 'problems' in found;
+
+/** Runs a check that may run (see mayCheck). */
+const runCheck = async (
+  congregationId: string,
+  manual: boolean,
+): Promise<ZoomStartupCheckOutcome> => {
+  const zoomState = useZoomStateStore();
   zoomState.checkRunning = true;
   if (!zoomState.checkedCongregations.includes(congregationId)) {
     zoomState.checkedCongregations.push(congregationId);
   }
-  const checkLater = () => {
-    zoomState.checkedCongregations = zoomState.checkedCongregations.filter(
-      (id) => id !== congregationId,
-    );
-  };
   try {
     log('Zoom check: starting', 'zoom', 'info', { manual });
     // Only this check's failed actions go in its report.
@@ -514,55 +774,36 @@ export const runZoomStartupCheck = async ({
       log('Zoom check: stopped by the user', 'zoom', 'info');
       return 'cancelled';
     }
-    if (found === null) {
-      log('Zoom check: no meeting to check now', 'zoom', 'info');
-      return 'skipped';
-    }
-    if (found === 'sharing') {
-      // Today's check is still to do: the regular recheck runs it once
-      // sharing has stopped.
-      checkLater();
-      log('Zoom check: waiting for Zoom to stop sharing', 'zoom', 'info');
-      if (!manual) return 'scheduled';
-      createTemporaryNotification({
-        group: 'zoom-check',
-        message: t('zoom-check-while-sharing'),
-        type: 'warning',
-      });
-      return 'skipped';
-    }
-    if (found === 'declined') {
-      // They'd rather M³ left Zoom alone: its automations go off for this
-      // meeting, until an asked-for check passes (see the Zoom popup).
-      zoomState.pauseAutomations(congregationId, [], false, true);
-      log('Zoom check: skipped by the user, automations off', 'zoom', 'warn');
-      createTemporaryNotification({
-        caption: t('zoom-check-declined-caption'),
-        group: 'zoom-check',
-        message: t('zoom-automations-off-for-meeting'),
-        timeout: 10_000,
-        type: 'warning',
-      });
-      return 'declined';
-    }
-    if (found === 'unanswered') {
-      // The question went unanswered, which is also what happens when no
-      // dialog is there to answer it: today's check is still to do, so the
-      // next one asks again, rather than Zoom going untested for the day.
-      checkLater();
-      log('Zoom check: nobody answered, asking again later', 'zoom', 'warn');
-      return 'scheduled';
-    }
-    if ('checkInSeconds' in found) {
-      // Too early: the meeting day's schedule (see zoom-meeting-day.ts)
-      // checks again when the meeting's window opens, if M³ is still on.
-      checkLater();
-      log('Zoom check: waiting for the meeting', 'zoom', 'info', found);
-      return 'scheduled';
-    }
-    return report(congregationId, found);
+    if (isFindings(found)) return report(congregationId, found);
+    return settleNotChecked(found, manual, congregationId);
   } finally {
     zoomState.checkRunning = false;
+  }
+};
+
+// The check under way, for Test again to join while it waits for the
+// user's go-ahead.
+let checkUnderWay: null | Promise<ZoomStartupCheckOutcome> = null;
+
+/** Checks the Zoom Meeting Manager, when it may (see mayCheck). */
+export const runZoomStartupCheck = async ({
+  manual = false,
+} = {}): Promise<ZoomStartupCheckOutcome> => {
+  // Asked for (Test again, in a notification above the question) while a
+  // check waits for the user's go-ahead: that's the go-ahead.
+  if (manual && checkUnderWay !== null && useZoomStateStore().checkPrompt) {
+    log('Zoom check: asked for while asking, so it runs', 'zoom', 'info');
+    answerZoomCheckPrompt('run');
+    return checkUnderWay;
+  }
+  const congregationId = useCurrentStateStore().currentCongregation;
+  if (!congregationId || !mayCheck(congregationId, manual)) return 'skipped';
+  const check = runCheck(congregationId, manual);
+  checkUnderWay = check;
+  try {
+    return await check;
+  } finally {
+    checkUnderWay = null;
   }
 };
 
@@ -573,6 +814,11 @@ export const runZoomStartupCheck = async ({
  */
 const onZoomChanged = () => {
   const zoomState = useZoomStateStore();
+  // Noticed while a check is under way, most often by its own first look at
+  // Zoom (nothing else polls Zoom during a check's run): that check covers
+  // it. Dropping today's check now would only have it asked for and run
+  // again once this one is over.
+  if (zoomState.checkRunning) return;
   const congregationId = useCurrentStateStore().currentCongregation;
   zoomState.checkedCongregations = zoomState.checkedCongregations.filter(
     (id) => id !== congregationId,

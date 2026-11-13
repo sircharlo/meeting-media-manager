@@ -562,10 +562,13 @@ export const admitZoomParticipants = (names: string[]) =>
 
 /**
  * How many people are in the meeting, the host included (not counting the
- * waiting room), or null if Zoom's participants list couldn't be read.
+ * waiting room), or null if Zoom's participants list couldn't be read. It
+ * opens Zoom's participants panel to read it, unless `peek`: then it's only
+ * read if the panel is open already, pressing nothing in Zoom (null while
+ * it's closed).
  */
-export const countZoomMeetingParticipants = async () => {
-  const result = await runCommand({ type: 'participants' });
+export const countZoomMeetingParticipants = async ({ peek = false } = {}) => {
+  const result = await runCommand({ peek, type: 'participants' });
   if (!result.ok || !result.participants) return null;
   return result.participants.filter((row) => row.section === 'meeting').length;
 };

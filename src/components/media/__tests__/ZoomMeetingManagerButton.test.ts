@@ -44,6 +44,7 @@ describe('ZoomMeetingManagerButton', () => {
     const zoomState = useZoomStateStore();
     zoomState.meeting = null;
     zoomState.pause = null;
+    zoomState.checkPrompt = false;
     zoomState.checkRunning = false;
   });
 
@@ -85,6 +86,17 @@ describe('ZoomMeetingManagerButton', () => {
       .findAll('.q-icon')
       .filter((icon) => icon.text() === 'mmm-video-meeting');
     expect(icons).toHaveLength(2);
+    expect(button.classes()).toContain('bg-white-transparent');
+  });
+
+  it("doesn't slosh while the check only waits for the user's go-ahead", async () => {
+    useZoomStateStore().meeting = { found: true, sharing: false };
+    const zoomState = useZoomStateStore();
+    zoomState.checkRunning = true;
+    zoomState.checkPrompt = true;
+    const button = await mountButton();
+
+    expect(button.find('.island-liquid').exists()).toBe(false);
     expect(button.classes()).toContain('bg-white-transparent');
   });
 

@@ -26,7 +26,8 @@ const currentState = vi.hoisted(() => ({
 }));
 
 const zoom = vi.hoisted(() => ({
-  countZoomMeetingParticipants: vi.fn<() => Promise<null | number>>(),
+  countZoomMeetingParticipants:
+    vi.fn<(options?: { peek?: boolean }) => Promise<null | number>>(),
   diagnoseZoom: vi.fn<() => Promise<null | ZoomDiagnosis>>(),
   getMeetingStartToday: vi.fn<(now?: Date) => Date | null>(),
   getZoomMeetingState: vi.fn<() => Promise<null | ZoomMeetingState>>(),
@@ -34,7 +35,8 @@ const zoom = vi.hoisted(() => ({
   isZoomSetupNeeded: vi.fn(() => false),
   notify: vi.fn(),
   rememberZoomVersion: vi.fn(),
-  runZoomSelfTest: vi.fn<() => Promise<ZoomSelfTestStep[]>>(),
+  runZoomSelfTest:
+    vi.fn<(options: { signal?: AbortSignal }) => Promise<ZoomSelfTestStep[]>>(),
   takeZoomActionFailures: vi.fn<() => ZoomActionFailure[]>(),
   testZoomShareEntry: vi.fn(),
   withZoomRun: vi.fn(<T>(_label: string, run: () => Promise<T>) => run()),
@@ -112,6 +114,7 @@ const prompt = vi.hoisted(() => ({
 vi.mock('src/helpers/zoom-check-prompt', () => ({
   answerZoomCheckPrompt: prompt.answer,
   askBeforeCheckingZoom: prompt.ask,
+  CHECK_PROMPT_TIMEOUT_MS: 2 * 60_000,
 }));
 
 const sentry = vi.hoisted(() => ({ captureMessage: vi.fn() }));
@@ -232,8 +235,10 @@ describe('Zoom startup check', () => {
     expect(prompt.ask).toHaveBeenCalledOnce();
   });
 
-  it('asks again later when nobody answers, leaving the automations on', async () => {
+  it('asks again a while later when nobody answers, leaving the automations on', async () => {
+    vi.useFakeTimers();
     const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    meetingStartsIn(60 * MINUTE);
     prompt.ask.mockResolvedValueOnce('unanswered');
 
     expect(await runZoomStartupCheck()).toBe('scheduled');
@@ -242,10 +247,168 @@ describe('Zoom startup check', () => {
     expect(useZoomStateStore().automationsPaused).toBe(false);
     expect(zoom.notify).not.toHaveBeenCalled();
 
-    // Today's check is still to do, so the next one asks, and runs.
+    // Today's check is still to do, but the meeting day's recheck, every 5
+    // minutes, doesn't bring the question back each time.
+    vi.advanceTimersByTime(14 * MINUTE);
+    expect(await runZoomStartupCheck()).toBe('scheduled');
+    expect(prompt.ask).toHaveBeenCalledOnce();
+    expect(zoom.withZoomRun).not.toHaveBeenCalled();
+
+    // A quarter of an hour later, it asks again, and runs.
+    vi.advanceTimersByTime(MINUTE);
     expect(await runZoomStartupCheck()).toBe('passed');
     expect(prompt.ask).toHaveBeenCalledTimes(2);
     expect(zoom.withZoomRun).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    ['under way, as when M³ restarts during it', -10 * MINUTE],
+    ['over', -3 * 60 * MINUTE],
+    ['not today, as in any other Zoom call', null],
+  ])(
+    'leaves an open meeting alone when the meeting is %s',
+    async (_when, startsIn) => {
+      const { runZoomStartupCheck } = await import('../zoom-startup-check');
+      meetingStartsIn(startsIn);
+
+      expect(await runZoomStartupCheck()).toBe('skipped');
+      expect(prompt.ask).not.toHaveBeenCalled();
+      expect(zoom.countZoomMeetingParticipants).not.toHaveBeenCalled();
+      expect(zoom.withZoomRun).not.toHaveBeenCalled();
+    },
+  );
+
+  it("waits for the meeting's window with the meeting already open", async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    meetingStartsIn(3 * 60 * MINUTE);
+
+    expect(await runZoomStartupCheck()).toBe('scheduled');
+    expect(prompt.ask).not.toHaveBeenCalled();
+    expect(zoom.withZoomRun).not.toHaveBeenCalled();
+    // Today's check is still to do.
+    expect(useZoomStateStore().checkedCongregations).toEqual([]);
+  });
+
+  it('only looks, asking nothing, when the open participants panel shows others', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    zoom.countZoomMeetingParticipants.mockResolvedValue(3);
+
+    expect(await runZoomStartupCheck()).toBe('passed');
+    expect(prompt.ask).not.toHaveBeenCalled();
+    // Read from the panel as it was: nothing pressed to find out.
+    expect(zoom.countZoomMeetingParticipants).toHaveBeenCalledWith({
+      peek: true,
+    });
+    expect(zoom.diagnoseZoom).toHaveBeenCalledOnce();
+    expect(zoom.runZoomSelfTest).not.toHaveBeenCalled();
+  });
+
+  it("asks when it can't tell who is in the meeting without opening the participants panel", async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    // The panel is closed: only opening it, once allowed, tells.
+    zoom.countZoomMeetingParticipants.mockImplementation(async (options) =>
+      options?.peek ? null : 1,
+    );
+
+    expect(await runZoomStartupCheck()).toBe('passed');
+    expect(prompt.ask).toHaveBeenCalledOnce();
+    expect(zoom.runZoomSelfTest).toHaveBeenCalledOnce();
+  });
+
+  it('never presses what it did not ask about, even once the others have left', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    zoom.countZoomMeetingParticipants.mockImplementation(async (options) =>
+      options?.peek ? 3 : 1,
+    );
+
+    expect(await runZoomStartupCheck()).toBe('passed');
+    expect(prompt.ask).not.toHaveBeenCalled();
+    expect(zoom.runZoomSelfTest).not.toHaveBeenCalled();
+  });
+
+  it("asks only early enough for the question and the check to be over before the meeting's settings", async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    const zoomState = useZoomStateStore();
+    // The question waits 2 minutes at most, opening the meeting and testing
+    // take up to about 3.5 more, and the meeting's window closes 90 s before
+    // it starts.
+    meetingStartsIn(8 * MINUTE);
+    expect(await runZoomStartupCheck()).toBe('passed');
+    expect(prompt.ask).toHaveBeenCalledOnce();
+
+    zoomState.checkedCongregations = [];
+    meetingStartsIn(7 * MINUTE);
+    expect(await runZoomStartupCheck()).toBe('skipped');
+    expect(prompt.ask).toHaveBeenCalledOnce();
+    expect(zoom.withZoomRun).toHaveBeenCalledOnce();
+    // Nor is it asked again as the meeting starts.
+    expect(zoomState.checkedCongregations).toEqual(['cong-1']);
+
+    // With others in the meeting, there's nothing to ask: it still looks.
+    zoomState.checkedCongregations = [];
+    zoom.countZoomMeetingParticipants.mockResolvedValue(3);
+    expect(await runZoomStartupCheck()).toBe('passed');
+    expect(prompt.ask).toHaveBeenCalledOnce();
+  });
+
+  it('looks at Zoom again once the user answers, rather than opening the meeting they opened meanwhile', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    const launch = vi
+      .spyOn(globalThis.electronApi, 'launchZoomMeeting')
+      .mockReturnValue();
+    zoom.getZoomMeetingState.mockResolvedValueOnce({
+      found: false,
+      sharing: false,
+    });
+
+    expect(await runZoomStartupCheck()).toBe('passed');
+    expect(prompt.ask).toHaveBeenCalledOnce();
+    expect(launch).not.toHaveBeenCalled();
+    expect(zoom.runZoomSelfTest).toHaveBeenCalledOnce();
+  });
+
+  it('waits for Zoom to stop sharing when sharing started while it asked', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    zoom.getZoomMeetingState
+      .mockResolvedValueOnce(OPEN)
+      .mockResolvedValue({ found: true, sharing: true });
+
+    expect(await runZoomStartupCheck()).toBe('scheduled');
+    // The user's share is left alone, and nothing reads as broken.
+    expect(zoom.withZoomRun).not.toHaveBeenCalled();
+    expect(useZoomStateStore().pause).toBeNull();
+    expect(useZoomStateStore().checkedCongregations).toEqual([]);
+  });
+
+  it('runs the check waiting for an answer when the user tests again', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    const zoomState = useZoomStateStore();
+    let answer: (choice: 'run' | 'skip' | 'unanswered') => void = () =>
+      undefined;
+    prompt.ask.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          zoomState.promptForCheck();
+          answer = resolve;
+        }),
+    );
+    prompt.answer.mockImplementationOnce((choice: 'run' | 'skip') => {
+      zoomState.closeCheckPrompt();
+      answer(choice);
+    });
+
+    const automatic = runZoomStartupCheck();
+    await vi.waitFor(() => expect(zoomState.checkPrompt).toBe(true));
+    // Only waiting for the go-ahead: not checking Zoom, as far as the user
+    // is told.
+    expect(zoomState.checkingZoom).toBe(false);
+
+    // Test again, from a notification above the question: the go-ahead.
+    const manual = runZoomStartupCheck({ manual: true });
+    expect(prompt.answer).toHaveBeenCalledWith('run');
+    expect(await manual).toBe('passed');
+    expect(await automatic).toBe('passed');
+    expect(zoom.runZoomSelfTest).toHaveBeenCalledOnce();
   });
 
   it("stays out of the setup assistant's way while it is open", async () => {
@@ -414,26 +577,32 @@ describe('Zoom startup check', () => {
     );
   });
 
-  it('says there is no meeting ID when tested again with no meeting open', async () => {
+  it('says there is no meeting ID when tested again with no meeting open, without reporting it', async () => {
     const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    const zoomState = useZoomStateStore();
+    // Tested again from the popup, after skipping the question.
+    zoomState.pauseAutomations('cong-1', [], false, true);
     currentState.currentSettings.zoomMeetingManagerMeetingId = null;
     zoom.getZoomMeetingState.mockResolvedValue({
       found: false,
       sharing: false,
     });
 
-    expect(await runZoomStartupCheck({ manual: true })).toBe('failed');
-    await vi.waitFor(() =>
-      expect(sentry.captureMessage).toHaveBeenCalledWith(
-        'Zoom check failed: automations paused',
-        expect.objectContaining({
-          extra: expect.objectContaining({
-            failedSteps: ['meeting: none open, and no ID'],
-            problems: ['zoom-check-problem-meeting'],
-          }),
-        }),
-      ),
-    );
+    expect(await runZoomStartupCheck({ manual: true })).toBe('skipped');
+    expect(notification()).toMatchObject({
+      caption:
+        'Set a Zoom meeting ID in the settings to launch the meeting from here.',
+      message: 'No Zoom meeting window detected',
+      type: 'warning',
+    });
+    // Down to the setup, not to anything broken in Zoom: not reported, and
+    // the automations stay as they were, with today's check still to do.
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+    expect(sentry.captureMessage).not.toHaveBeenCalled();
+    expect(zoomState.checkDeclined).toBe(true);
+    expect(zoomState.checkedCongregations).toEqual([]);
     // Nothing was opened, so there's nothing to look at in Zoom.
     expect(zoom.getZoomSnapshot).not.toHaveBeenCalled();
   });
@@ -459,6 +628,26 @@ describe('Zoom startup check', () => {
 
     // The check ran again (and counts as today's check once more).
     await vi.waitFor(() => expect(zoom.getZoomMeetingState).toHaveBeenCalled());
+  });
+
+  it('covers a Zoom change it noticed itself, rather than asking and testing again', async () => {
+    const { runZoomStartupCheck, watchZoomChanges } =
+      await import('../zoom-startup-check');
+    watchZoomChanges();
+    zoom.getZoomMeetingState.mockImplementationOnce(async () => {
+      // Zoom was updated: the check's own look at it is the first to notice.
+      globalThis.dispatchEvent(
+        new CustomEvent('zoomChanged', { detail: { reason: 'version' } }),
+      );
+      return OPEN;
+    });
+
+    expect(await runZoomStartupCheck()).toBe('passed');
+    expect(useZoomStateStore().checkedCongregations).toEqual(['cong-1']);
+    // The next recheck finds today's check done.
+    expect(await runZoomStartupCheck()).toBe('skipped');
+    expect(prompt.ask).toHaveBeenCalledOnce();
+    expect(zoom.runZoomSelfTest).toHaveBeenCalledOnce();
   });
 
   it('confirms a routine pass, not only one asked for', async () => {
@@ -656,6 +845,42 @@ describe('Zoom startup check', () => {
     expect(zoomState.pause).toBeNull();
     expect(zoom.notify).not.toHaveBeenCalled();
     expect(sentry.captureMessage).not.toHaveBeenCalled();
+    // The test was told to stop, and still was once the run was force-ended
+    // (which lets Zoom's actions through again): it goes no further.
+    expect(zoom.runZoomSelfTest.mock.calls[0]?.[0].signal?.aborted).toBe(true);
+    expect(zoom.diagnoseZoom).not.toHaveBeenCalled();
+  });
+
+  it('stops waiting for the meeting it opened when the user stops the check', async () => {
+    vi.useFakeTimers();
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    const zoomState = useZoomStateStore();
+    vi.spyOn(globalThis.electronApi, 'launchZoomMeeting').mockReturnValue();
+    const zoomShows = { meeting: false };
+    zoom.getZoomMeetingState.mockImplementation(async () => ({
+      found: zoomShows.meeting,
+      sharing: false,
+    }));
+
+    const outcome = runZoomStartupCheck();
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(globalThis.electronApi.launchZoomMeeting).toHaveBeenCalled();
+    // Stopped, and force-ended at once (Esc pressed twice), which lets
+    // Zoom's actions through again...
+    zoomState.beginRun('zoom-run-startup-check');
+    zoomState.requestCancel();
+    zoomState.abortRun();
+    const looks = zoom.getZoomMeetingState.mock.calls.length;
+    // ...then the meeting opens, with the host alone in it.
+    zoomShows.meeting = true;
+    await vi.runAllTimersAsync();
+
+    expect(await outcome).toBe('cancelled');
+    // Nothing more went to Zoom: not even a look.
+    expect(zoom.getZoomMeetingState).toHaveBeenCalledTimes(looks);
+    expect(zoom.countZoomMeetingParticipants).not.toHaveBeenCalled();
+    expect(zoom.runZoomSelfTest).not.toHaveBeenCalled();
+    expect(zoom.diagnoseZoom).not.toHaveBeenCalled();
   });
 
   it('waits for Zoom to stop sharing instead of checking during a share', async () => {
