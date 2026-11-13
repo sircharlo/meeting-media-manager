@@ -48,7 +48,7 @@ const findPlaybackProblem = vi.fn<() => Promise<null | PlaybackProblem>>();
 vi.mock('src/utils/media', () => ({
   findPlaybackProblem: () => findPlaybackProblem(),
   getMetadataFromMediaPath: vi.fn(async () => ({ format: { duration: 6 } })),
-  isAudio: (path: string) => /\.(?:m4a|mp3)$/i.test(path),
+  isAudio: (path: string) => /\.(?:m4a|mp3|wav)$/i.test(path),
   isVideo: (path: string) => /\.(?:avi|mkv|mov|mp4)$/i.test(path),
 }));
 
@@ -77,8 +77,13 @@ const fs = {
     ) => Promise<void>
   >(async () => undefined),
   pathExists: vi.fn<(path: string) => Promise<boolean>>(async () => true),
-  remove: vi.fn(async () => undefined),
-  stat: vi.fn(async () => ({ mtimeMs: 100, size: 2000 })),
+  remove: vi.fn<(path: string) => Promise<void>>(async () => undefined),
+  rename: vi.fn<(from: string, to: string) => Promise<void>>(
+    async () => undefined,
+  ),
+  stat: vi.fn<(path: string) => Promise<{ mtimeMs: number; size: number }>>(
+    async () => ({ mtimeMs: 100, size: 2000 }),
+  ),
 };
 const convertForPlayback = vi.fn(async () => ({ encoder: 'h264_qsv' }));
 const cancelPlaybackConversion = vi.fn(async () => true);
@@ -109,6 +114,11 @@ const load = async (items: MediaItem[]) => {
   };
 };
 
+const wait = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
 /** Lets the queue run to its end. */
 const settle = async () => {
   const { useMediaConversionStore } = await import('stores/media-conversion');
@@ -123,7 +133,11 @@ describe('media-conversion', () => {
     vi.clearAllMocks();
     setActivePinia(createPinia());
     currentState.mediaPlaying.url = '';
+    fs.ensureDir.mockResolvedValue(undefined);
+    fs.move.mockResolvedValue(undefined);
     fs.pathExists.mockResolvedValue(true);
+    fs.remove.mockResolvedValue(undefined);
+    fs.rename.mockResolvedValue(undefined);
     fs.stat.mockResolvedValue({ mtimeMs: 100, size: 2000 });
     setupFFmpeg.mockResolvedValue('/bin/ffmpeg');
     convertForPlayback.mockResolvedValue({ encoder: 'h264_qsv' });
@@ -266,11 +280,14 @@ describe('media-conversion', () => {
         outputPath: `/temp/conversion-${job?.id}.mp4`,
         sourcePath: '/add/2026/movie.mkv',
       });
+      // Beside its destination first, then over it in one step.
+      const staging = `/add/2026/movie.mp4.${job?.id.slice(0, 8)}.converting`;
       expect(fs.move).toHaveBeenCalledWith(
         `/temp/conversion-${job?.id}.mp4`,
-        '/add/2026/movie.mp4',
+        staging,
         { overwrite: true },
       );
+      expect(fs.rename).toHaveBeenCalledWith(staging, '/add/2026/movie.mp4');
       expect(fs.remove).toHaveBeenCalledWith('/add/2026/movie.mkv');
       // The thumbnail of what the original showed.
       expect(fs.remove).toHaveBeenCalledWith('/add/2026/movie.jpg');
@@ -286,12 +303,12 @@ describe('media-conversion', () => {
       helper.startMediaConversion(items);
       await settle();
 
-      expect(String(fs.move.mock.calls[0]?.[1])).toMatch(
+      expect(String(fs.rename.mock.calls[0]?.[1])).toMatch(
         /^\/add\/movie-[0-9a-f]{8}\.mp4$/,
       );
     });
 
-    it('converts an imported MP4 in place', async () => {
+    it('converts an imported MP4 in place, never deleting it first', async () => {
       const { helper, items, store } = await load([item('/add/clip.mp4')]);
       store.checks['/add/clip.mp4'] = { key: '2000:100', problem: PICTURE };
 
@@ -302,12 +319,107 @@ describe('media-conversion', () => {
         '/bin/ffmpeg',
         expect.objectContaining({ keepVideo: false }),
       );
-      expect(fs.move).toHaveBeenCalledWith(
-        expect.stringMatching(/^\/temp\/conversion-/),
+      // fs-extra's move with overwrite deletes its destination first.
+      expect(fs.move).not.toHaveBeenCalledWith(
+        expect.anything(),
         '/add/clip.mp4',
-        { overwrite: true },
+        expect.anything(),
+      );
+      expect(fs.rename).toHaveBeenCalledWith(
+        expect.stringMatching(/^\/add\/clip\.mp4\.[0-9a-f]{8}\.converting$/),
+        '/add/clip.mp4',
       );
       expect(fs.remove).not.toHaveBeenCalledWith('/add/clip.mp4');
+      expect(store.jobs[0]?.status).toBe('done');
+    });
+
+    it.each([
+      ['copying it beside the original', 'move'],
+      ['putting it over the original', 'rename'],
+    ] as const)(
+      'keeps the original when %s fails',
+      async (_step, failingStep) => {
+        vi.useFakeTimers();
+        fs[failingStep].mockRejectedValue(
+          Object.assign(new Error('ENOSPC: no space left on device'), {
+            code: 'ENOSPC',
+          }),
+        );
+        const { helper, items, store } = await load([item('/add/clip.mp4')]);
+        store.checks['/add/clip.mp4'] = { key: '2000:100', problem: PICTURE };
+
+        helper.startMediaConversion(items);
+        await vi.advanceTimersByTimeAsync(10_000);
+        await settle();
+
+        expect(store.jobs[0]?.status).toBe('failed');
+        expect(fs.remove).not.toHaveBeenCalledWith('/add/clip.mp4');
+        expect(fs.move).not.toHaveBeenCalledWith(
+          expect.anything(),
+          '/add/clip.mp4',
+          expect.anything(),
+        );
+        // What was copied beside it is gone, and so is the conversion.
+        expect(fs.remove).toHaveBeenCalledWith(
+          expect.stringMatching(/^\/add\/clip\.mp4\.[0-9a-f]{8}\.converting$/),
+        );
+        expect(fs.remove).toHaveBeenCalledWith(
+          expect.stringMatching(/^\/temp\/conversion-/),
+        );
+        expect(items[0]?.fileUrl).toBe(fileUrl('/add/clip.mp4'));
+        expect(String(errorCatcher.mock.calls[0]?.[0])).toContain('ENOSPC');
+      },
+    );
+
+    it('converts a sound-only file into an M4A, which the media window plays as sound', async () => {
+      fs.pathExists.mockImplementation(
+        async (path: string) => path !== '/add/song.m4a',
+      );
+      const { helper, items, store } = await load([
+        item('/add/song.wav', { isAudio: true, isVideo: false }),
+      ]);
+      store.checks['/add/song.wav'] = { key: '2000:100', problem: SOUND };
+
+      helper.startMediaConversion(items);
+      await settle();
+
+      const id = store.jobs[0]?.id;
+      expect(convertForPlayback).toHaveBeenCalledWith(
+        '/bin/ffmpeg',
+        expect.objectContaining({ outputPath: `/temp/conversion-${id}.m4a` }),
+      );
+      expect(fs.rename).toHaveBeenCalledWith(
+        expect.any(String),
+        '/add/song.m4a',
+      );
+      expect(items[0]?.fileUrl).toBe(fileUrl('/add/song.m4a'));
+      // A sound-only file has no thumbnail saved beside it.
+      expect(fs.remove).not.toHaveBeenCalledWith('/add/song.jpg');
+    });
+
+    it('converts an M4A in place, and a watched one into an M4A copy', async () => {
+      const { helper, items, store } = await load([
+        item('/add/song.m4a', { isAudio: true, isVideo: false }),
+        item('/watch/2026-11-13/hymn.wav', {
+          isAudio: true,
+          isVideo: false,
+          source: 'watched',
+        }),
+      ]);
+      store.checks['/add/song.m4a'] = { key: '2000:100', problem: SOUND };
+      store.checks['/watch/2026-11-13/hymn.wav'] = {
+        key: '2000:100',
+        problem: SOUND,
+      };
+
+      helper.startMediaConversion(items);
+      await settle();
+
+      const destinations = fs.rename.mock.calls.map(([, to]) => to);
+      expect(destinations[0]).toBe('/add/song.m4a');
+      expect(destinations[1]).toMatch(
+        /^\/cache\/Converted Media\/2026-11-13\/hymn-[0-9a-f]{12}\.m4a$/,
+      );
     });
 
     it("keeps a watched file's copy in the cache, in its date's folder, and finds it again", async () => {
@@ -320,9 +432,15 @@ describe('media-conversion', () => {
       helper.startMediaConversion(items);
       await settle();
 
-      const destination = String(fs.move.mock.calls[0]?.[1]);
+      const destination = String(fs.rename.mock.calls[0]?.[1]);
       expect(destination).toMatch(
         /^\/cache\/Converted Media\/2026-11-13\/clip-[0-9a-f]{12}\.mp4$/,
+      );
+      // Never half-copied under the name a re-scan looks for.
+      expect(fs.move).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringMatching(/\.converting$/),
+        { overwrite: true },
       );
       expect(fs.remove).not.toHaveBeenCalledWith(source);
       expect(items[0]?.fileUrl).toBe(fileUrl(destination));
@@ -330,6 +448,59 @@ describe('media-conversion', () => {
       await expect(
         helper.findWatchedConversion(String.raw`\watch\2026-11-13\clip.avi`),
       ).resolves.toBe(destination);
+    });
+
+    it('waits for a watched file to stop playing before its item plays the copy', async () => {
+      const source = '/watch/2026-11-13/clip.avi';
+      const { helper, items, store } = await load([
+        item(source, { source: 'watched' }),
+      ]);
+      store.checks[source] = { key: '2000:100', problem: PICTURE };
+      currentState.mediaPlaying.url = fileUrl(source);
+
+      helper.startMediaConversion(items);
+      await vi.waitFor(() => {
+        expect(convertForPlayback).toHaveBeenCalled();
+      });
+      await new Promise((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      expect(items[0]?.fileUrl).toBe(fileUrl(source));
+      expect(store.jobs[0]?.status).toBe('converting');
+
+      currentState.mediaPlaying.url = '';
+      await settle();
+      expect(items[0]?.fileUrl).toMatch(/Converted Media/);
+    });
+
+    it("doesn't use a conversion of a file that changed meanwhile", async () => {
+      const source = '/watch/2026-11-13/clip.avi';
+      let finishConverting: (() => void) | undefined;
+      convertForPlayback.mockImplementationOnce(
+        () =>
+          new Promise<{ encoder: string }>((resolve) => {
+            finishConverting = () => resolve({ encoder: 'h264_qsv' });
+          }),
+      );
+      const { helper, items, store } = await load([
+        item(source, { source: 'watched' }),
+      ]);
+      store.checks[source] = { key: '2000:100', problem: PICTURE };
+
+      helper.startMediaConversion(items);
+      await vi.waitFor(() => {
+        expect(finishConverting).toBeDefined();
+      });
+      // Synced again while it converted.
+      fs.stat.mockResolvedValue({ mtimeMs: 500, size: 3000 });
+      finishConverting?.();
+      await settle();
+
+      expect(store.jobs[0]?.status).toBe('failed');
+      expect(store.jobs[0]?.error).toBe('media-conversion-failed-error');
+      expect(fs.rename).not.toHaveBeenCalled();
+      expect(items[0]?.fileUrl).toBe(fileUrl(source));
+      expect(errorCatcher).not.toHaveBeenCalled();
     });
 
     it('waits for an imported file to stop playing before replacing it', async () => {
@@ -421,6 +592,238 @@ describe('media-conversion', () => {
       await settle();
       expect(store.jobs[1]?.status).toBe('cancelled');
       expect(convertForPlayback).toHaveBeenCalledTimes(1);
+    });
+
+    it('cancels while getting ready, before ffmpeg is asked for anything', async () => {
+      let ffmpegReady: ((path: string) => void) | undefined;
+      setupFFmpeg.mockImplementationOnce(
+        () =>
+          new Promise<string>((resolve) => {
+            ffmpegReady = resolve;
+          }),
+      );
+      const { helper, items, store } = await load([item('/add/clip.mp4')]);
+
+      helper.startMediaConversion(items);
+      await vi.waitFor(() => {
+        expect(ffmpegReady).toBeDefined();
+      });
+      await helper.cancelMediaConversion(store.jobs[0]?.id ?? '');
+      expect(store.jobs[0]?.status).toBe('cancelled');
+      ffmpegReady?.('/bin/ffmpeg');
+      await wait(50);
+
+      expect(store.jobs[0]?.status).toBe('cancelled');
+      expect(convertForPlayback).not.toHaveBeenCalled();
+    });
+
+    it("isn't undone by the conversion starting just after it", async () => {
+      let tempReady: (() => void) | undefined;
+      fs.ensureDir.mockImplementationOnce(
+        () =>
+          new Promise<undefined>((resolve) => {
+            tempReady = () => resolve(undefined);
+          }),
+      );
+      const { helper, items, store } = await load([item('/add/clip.mp4')]);
+
+      helper.startMediaConversion(items);
+      await vi.waitFor(() => {
+        expect(tempReady).toBeDefined();
+      });
+      await helper.cancelMediaConversion(store.jobs[0]?.id ?? '');
+      tempReady?.();
+      await wait(50);
+
+      expect(store.jobs[0]?.status).toBe('cancelled');
+      expect(convertForPlayback).not.toHaveBeenCalled();
+    });
+
+    it('cancels at once while converting, and keeps what ffmpeg finished meanwhile out of place', async () => {
+      let finishConverting: (() => void) | undefined;
+      convertForPlayback.mockImplementationOnce(
+        () =>
+          new Promise<{ encoder: string }>((resolve) => {
+            finishConverting = () => resolve({ encoder: 'h264_qsv' });
+          }),
+      );
+      const { helper, items, store } = await load([item('/add/clip.mp4')]);
+
+      helper.startMediaConversion(items);
+      await vi.waitFor(() => {
+        expect(finishConverting).toBeDefined();
+      });
+      const id = store.jobs[0]?.id ?? '';
+      await helper.cancelMediaConversion(id);
+      expect(store.jobs[0]?.status).toBe('cancelled');
+      expect(cancelPlaybackConversion).toHaveBeenCalledWith(id);
+
+      // ffmpeg was done before it heard.
+      finishConverting?.();
+      await vi.waitFor(() => {
+        expect(fs.remove).toHaveBeenCalledWith(`/temp/conversion-${id}.mp4`);
+      });
+      expect(store.jobs[0]?.status).toBe('cancelled');
+      expect(fs.move).not.toHaveBeenCalled();
+      expect(fs.rename).not.toHaveBeenCalled();
+    });
+
+    it('cancels after converting, while waiting for the file to stop playing', async () => {
+      const { helper, items, store } = await load([item('/add/clip.mp4')]);
+      currentState.mediaPlaying.url = fileUrl('/add/clip.mp4');
+
+      helper.startMediaConversion(items);
+      await vi.waitFor(() => {
+        expect(convertForPlayback).toHaveBeenCalled();
+      });
+      await new Promise((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      await helper.cancelMediaConversion(store.jobs[0]?.id ?? '');
+      expect(store.jobs[0]?.status).toBe('cancelled');
+
+      // It looks again a second later, and stops.
+      await vi.waitFor(
+        () => {
+          expect(fs.remove).toHaveBeenCalledWith(
+            expect.stringMatching(/^\/temp\/conversion-/),
+          );
+        },
+        { timeout: 3000 },
+      );
+      expect(fs.move).not.toHaveBeenCalled();
+      expect(items[0]?.fileUrl).toBe(fileUrl('/add/clip.mp4'));
+    });
+
+    it("keeps an imported picture named like the video, deleting only the video's own thumbnail", async () => {
+      fs.pathExists.mockImplementation(
+        async (path: string) => path !== '/add/talk.mp4',
+      );
+      const { helper, items, store } = await load([
+        item('/add/talk.mkv'),
+        item('/add/talk.jpg', { isImage: true, isVideo: false }),
+        item('/add/clip.avi'),
+      ]);
+      store.checks['/add/talk.mkv'] = { key: '2000:100', problem: PICTURE };
+      store.checks['/add/clip.avi'] = { key: '2000:100', problem: PICTURE };
+
+      helper.startMediaConversion([items[0], items[2]] as MediaItem[]);
+      await settle();
+
+      expect(fs.remove).not.toHaveBeenCalledWith('/add/talk.jpg');
+      expect(fs.remove).toHaveBeenCalledWith('/add/clip.jpg');
+    });
+
+    it('makes an item added from the website a local file, so nothing brings the original back', async () => {
+      fs.pathExists.mockImplementation(
+        async (path: string) => path !== '/add/video.mp4',
+      );
+      fs.stat.mockResolvedValue({ mtimeMs: 300, size: 1234 });
+      const { helper, items, store } = await load([
+        item('/add/video.avi', {
+          filesize: 99_999,
+          streamUrl: 'https://example.com/video.avi',
+        }),
+      ]);
+      store.checks['/add/video.avi'] = { key: '1234:300', problem: PICTURE };
+
+      helper.startMediaConversion(items);
+      await settle();
+
+      expect(store.jobs[0]?.status).toBe('done');
+      expect(items[0]?.filesize).toBe(1234);
+      expect(items[0]?.streamUrl).toBeUndefined();
+    });
+  });
+
+  describe('markUnplayable', () => {
+    it('says a sound-only file has no sound, and lets it still play', async () => {
+      const { helper, store } = await load([]);
+      await helper.markUnplayable(fileUrl('/add/song.m4a'));
+      await helper.markUnplayable(fileUrl('/add/clip.mp4'));
+
+      expect(store.problemFor('/add/song.m4a')).toEqual({
+        codec: 'unknown',
+        fromPlayback: true,
+        missing: 'sound',
+      });
+      expect(store.problemFor('/add/clip.mp4')).toEqual({
+        codec: 'unknown',
+        fromPlayback: true,
+        missing: 'picture',
+      });
+    });
+  });
+
+  describe('a notice closed some other way', () => {
+    it('opens a new one for the next file, rather than updating the closed one', async () => {
+      vi.useFakeTimers();
+      findPlaybackProblem.mockResolvedValue(PICTURE);
+      const { helper } = await load([item('/add/a.mp4'), item('/add/b.mp4')]);
+
+      await helper.checkMediaPlayback('/add/a.mp4', { notify: true });
+      await vi.advanceTimersByTimeAsync(1500);
+      expect(createTemporaryNotification).toHaveBeenCalledTimes(1);
+
+      // Switching profiles closes every notice.
+      const [options] = createTemporaryNotification.mock
+        .calls[0] as unknown as [{ onDismiss: () => void }];
+      options.onDismiss();
+
+      await helper.checkMediaPlayback('/add/b.mp4', { notify: true });
+      await vi.advanceTimersByTimeAsync(1500);
+      expect(createTemporaryNotification).toHaveBeenCalledTimes(2);
+      expect(createTemporaryNotification).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          message: 'media-cannot-play-here-notice:{"title":"b.mp4"}',
+        }),
+      );
+    });
+  });
+
+  describe('removeOrphanedConversions', () => {
+    const GRACE_MS = 2 * 60_000;
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('deletes the converted copies no item plays any more, and only those, a little later', async () => {
+      vi.useFakeTimers();
+      const kept = '/cache/Converted Media/2026-11-13/b-0123456789ab.mp4';
+      const { helper } = await load([
+        item(kept, { source: 'watched', uniqueId: 'b' }),
+      ]);
+
+      helper.removeOrphanedConversions([
+        fileUrl('/cache/Converted Media/2026-11-13/a-0123456789ab.mp4'),
+        fileUrl(kept),
+        fileUrl('/watch/2026-11-13/c.mp4'),
+        undefined,
+      ]);
+      await vi.advanceTimersByTimeAsync(GRACE_MS - 1000);
+      expect(fs.remove).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(1000);
+
+      expect(fs.remove.mock.calls.map(([path]) => path)).toEqual([
+        '/cache/Converted Media/2026-11-13/a-0123456789ab.mp4',
+        '/cache/Converted Media/2026-11-13/a-0123456789ab.jpg',
+      ]);
+    });
+
+    // A sync tool taking a file away and putting it back as it was: its item
+    // comes back playing the same copy.
+    it('keeps a copy whose file came back meanwhile', async () => {
+      vi.useFakeTimers();
+      const copy = '/cache/Converted Media/2026-11-13/a-0123456789ab.mp4';
+      const { helper, items } = await load([]);
+
+      helper.removeOrphanedConversions([fileUrl(copy)]);
+      await vi.advanceTimersByTimeAsync(30_000);
+      items.push(item(copy, { source: 'watched', uniqueId: 'a' }));
+      await vi.advanceTimersByTimeAsync(GRACE_MS);
+
+      expect(fs.remove).not.toHaveBeenCalled();
     });
   });
 });

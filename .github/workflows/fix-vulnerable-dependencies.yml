@@ -1,9 +1,12 @@
 name: Fix Vulnerable Dependencies
 
 # Dependabot's security updates can't move a version that a `resolutions`
-# entry pins, which is how alerts on src-electron/yarn.lock (the lockfile the
-# packaged app is built from) stayed open until someone raised the pins by
-# hand. This checks both lockfiles against the advisory database every day,
+# entry pins, which is how alerts on src-electron/yarn.lock stayed open until
+# someone raised the pins by hand. (That lockfile only serves installs inside
+# src-electron: the packaged app is installed from the root yarn.lock, with
+# the root package.json's `resolutions`, which Quasar copies next to
+# src-electron's dependencies when it builds the app.) This checks both
+# lockfiles against the advisory database every day,
 # re-resolves each flagged package to the newest version its dependents'
 # ranges allow, and merges the result. A fix that needs a version outside
 # those ranges, or one a `resolutions` pin holds back, can't be made here:
@@ -175,13 +178,25 @@ jobs:
     name: Build the re-resolved lockfile
     needs: fix
     if: needs.fix.outputs.has_changes == 'true'
+    # The build runs the re-resolved dependencies' install scripts: it gets a
+    # read-only token, and no Sentry secrets (a test build has no use for
+    # them), like the pull request builds in ci.yml.
     permissions:
       contents: read
     uses: ./.github/workflows/build.yml
     with:
       checkout-latest: true
       ref: ${{ needs.fix.outputs.branch }}
-    secrets: inherit
+    secrets:
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      MAC_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
+      MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+      SENTRY_AUTH_TOKEN: ''
+      SENTRY_DSN: ''
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   merge:
     name: Merge the lockfile update

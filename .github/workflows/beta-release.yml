@@ -89,6 +89,10 @@ jobs:
   build-version-bump:
     name: Build the version bump
     needs: bump-version
+    # Read-only, with no Sentry secrets: a test build has no use for them
+    # (like the pull request builds in ci.yml).
+    permissions:
+      contents: read
     uses: ./.github/workflows/build.yml
     with:
       checkout-latest: true
@@ -96,7 +100,16 @@ jobs:
       # number, and the release build packages this same content right after.
       quality-only: true
       ref: ${{ needs.bump-version.outputs.bumpBranch }}
-    secrets: inherit
+    secrets:
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      MAC_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
+      MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+      SENTRY_AUTH_TOKEN: ''
+      SENTRY_DSN: ''
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   merge-version-bump:
     name: Merge version bump branch

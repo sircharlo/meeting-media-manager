@@ -49,6 +49,12 @@ interface AllowedNotifyProps {
   icon?: QNotifyCreateOptions['icon'];
   message?: QNotifyCreateOptions['message'];
   noClose?: boolean;
+  /**
+   * Called once it's closed, however that happens: its close button or an
+   * action, its timeout, or dismissAllTemporaryNotifications() (switching
+   * congregations). Updating a closed notification shows nothing.
+   */
+  onDismiss?: QNotifyCreateOptions['onDismiss'];
   position?: QNotifyCreateOptions['position'];
   /**
    * When true, this notification is not tracked by
@@ -123,6 +129,19 @@ const trackTemporaryNotification = (dismiss: () => void, timeout: number) => {
   }
 };
 
+/** The options passed on to Quasar only when they're given. */
+const getOptionalOptions = ({
+  caption,
+  classes,
+  group,
+  onDismiss,
+}: AllowedNotifyProps) => ({
+  ...(caption && { caption }),
+  ...(classes && { classes }),
+  ...(group && { group }),
+  ...(onDismiss && { onDismiss }),
+});
+
 export const createTemporaryNotification = (
   props: NoExtraKeys<AllowedNotifyProps>,
 ) => {
@@ -136,9 +155,6 @@ export const createTemporaryNotification = (
 
     const {
       actions,
-      caption,
-      classes,
-      group,
       icon,
       message,
       noClose = false,
@@ -169,11 +185,9 @@ export const createTemporaryNotification = (
       message,
       position,
       timeout,
-      ...(caption && { caption }),
-      ...(classes && { classes }),
+      ...getOptionalOptions(props),
       ...(type && { type }),
       ...(resolvedIcon && { icon: resolvedIcon }),
-      ...(group && { group }),
       ...(!noClose && { actions: actions ?? getCloseActions(type) }),
     });
 

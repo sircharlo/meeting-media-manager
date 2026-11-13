@@ -437,10 +437,12 @@ export const toggleAutoUpdates = async (enable: boolean) => {
   try {
     if (enable) {
       await remove(await getUpdatesDisabledPath());
-      checkForUpdates();
     } else {
       await ensureFile(await getUpdatesDisabledPath());
     }
+    // Checks right away once they're on. Once they're off, it's how the
+    // updater learns not to install a downloaded update when M³ quits.
+    checkForUpdates();
     // Let any listener (the header's "updates disabled" badge, the
     // "updates disabled" startup reminder, ...) know the setting changed,
     // wherever the toggle was flipped from.

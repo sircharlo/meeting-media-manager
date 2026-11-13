@@ -1,12 +1,13 @@
 import type { UpdateVersionInfo } from 'src/types/general';
 
-import { flushPromises, mount } from '@vue/test-utils';
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import * as dateHelpers from 'src/helpers/date';
 import * as api from 'src/utils/api';
 import { useCurrentStateStore } from 'stores/current-state';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { useMusicStore } from 'stores/music';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 
 import AnnouncementBanner from './../AnnouncementBanner.vue';
@@ -14,6 +15,8 @@ import UpdateProgressToast from './../UpdateProgressToast.vue';
 
 installQuasarPlugin();
 installPinia();
+// Banners left mounted would keep reacting to the stores later tests change.
+enableAutoUnmount(afterEach);
 
 const noUpdate = { phase: null, progress: null, versionInfo: null };
 
@@ -166,19 +169,33 @@ describe('AnnouncementBanner - installing an update on launch', () => {
   };
   const MINUTE = 60_000;
 
+  // The profile holds the meeting times, so a due update waits for one.
+  beforeEach(() => {
+    useCurrentStateStore().currentCongregation = 'congregation';
+  });
+
   afterEach(() => {
     vi.useRealTimers();
     vi.restoreAllMocks();
-    useCurrentStateStore().mediaPlaying.url = '';
+    const currentState = useCurrentStateStore();
+    currentState.currentCongregation = '';
+    currentState.mediaPlaying.url = '';
+    useMusicStore().$patch({ musicPlaying: false, musicState: '' });
   });
 
-  // Mounts the banner and hands back the update-downloaded listener it
-  // registers. Timers are faked only afterwards, once mounting has settled.
+  // Mounts the banner and hands back the updater listeners it registers.
+  // Timers are faked only afterwards, once mounting has settled.
   const mountForDownload = async () => {
     vi.spyOn(api, 'fetchAnnouncements').mockResolvedValueOnce([]);
     vi.spyOn(api, 'fetchLatestVersion').mockResolvedValueOnce('1.2.3');
     vi.spyOn(globalThis.electronApi, 'getUpdaterState').mockResolvedValue(
       noUpdate,
+    );
+    let availableCallback: ((args: UpdateVersionInfo) => void) | undefined;
+    vi.spyOn(globalThis.electronApi, 'onUpdateAvailable').mockImplementation(
+      (cb) => {
+        availableCallback = cb;
+      },
     );
     let downloadedCallback: ((args: UpdateVersionInfo) => void) | undefined;
     vi.spyOn(globalThis.electronApi, 'onUpdateDownloaded').mockImplementation(
@@ -200,9 +217,16 @@ describe('AnnouncementBanner - installing an update on launch', () => {
       downloadedCallback?.(versionInfo);
       await nextTick();
     };
+    // Checking for updates again, as turning beta updates on does, finds and
+    // downloads the same update again.
+    const checkAgain = async (versionInfo: UpdateVersionInfo) => {
+      availableCallback?.(versionInfo);
+      await nextTick();
+      await download(versionInfo);
+    };
     const toast = () => wrapper.getComponent(UpdateProgressToast);
 
-    return { download, quitAndInstall, toast };
+    return { checkAgain, download, quitAndInstall, toast };
   };
 
   it('installs it once the countdown ends', async () => {
@@ -288,6 +312,123 @@ describe('AnnouncementBanner - installing an update on launch', () => {
       await download(dueUpdate);
 
       expect(toast().text().includes('restart')).toBe(countsDown);
+    },
+  );
+
+  // Right after launch, no profile is loaded yet (with several, the profile
+  // picker is still open), so neither are the meeting times.
+  it('waits for a profile before counting down', async () => {
+    const currentState = useCurrentStateStore();
+    currentState.currentCongregation = '';
+    const { download, quitAndInstall, toast } = await mountForDownload();
+
+    await download(dueUpdate);
+    await vi.advanceTimersByTimeAsync(30_000);
+    expect(toast().text()).not.toContain('restart');
+    expect(quitAndInstall).not.toHaveBeenCalled();
+
+    currentState.currentCongregation = 'congregation';
+    await nextTick();
+    expect(toast().text()).toContain('install it in 15 s');
+  });
+
+  it('does not count down when the profile it waited for meets soon', async () => {
+    const currentState = useCurrentStateStore();
+    currentState.currentCongregation = '';
+    const { download, quitAndInstall, toast } = await mountForDownload();
+    // The meeting times come with the profile.
+    vi.spyOn(dateHelpers, 'getMeetingStartToday').mockImplementation(() =>
+      currentState.currentCongregation
+        ? new Date(Date.now() + 10 * MINUTE)
+        : null,
+    );
+
+    await download(dueUpdate);
+    currentState.currentCongregation = 'congregation';
+    await nextTick();
+    await vi.advanceTimersByTimeAsync(30_000);
+
+    expect(toast().text()).not.toContain('restart');
+    expect(quitAndInstall).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    {
+      music: { musicPlaying: true, musicState: '' as const },
+      when: 'plays',
+    },
+    {
+      music: { musicPlaying: false, musicState: 'music.starting' as const },
+      when: 'is starting',
+    },
+  ])('waits while background music $when', async ({ music }) => {
+    useMusicStore().$patch(music);
+    const { download, quitAndInstall, toast } = await mountForDownload();
+
+    await download(dueUpdate);
+    await vi.advanceTimersByTimeAsync(30_000);
+
+    expect(toast().text()).not.toContain('restart');
+    expect(quitAndInstall).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    {
+      start: () => {
+        useCurrentStateStore().mediaPlaying.url = 'file:///media/picture.jpg';
+      },
+      when: 'media is shown',
+    },
+    {
+      start: () => {
+        useMusicStore().musicState = 'music.starting';
+      },
+      when: 'background music starts',
+    },
+  ])('stops counting down once $when', async ({ start }) => {
+    const { download, quitAndInstall, toast } = await mountForDownload();
+
+    await download(dueUpdate);
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(toast().text()).toContain('install it in 10 s');
+
+    start();
+    await vi.advanceTimersByTimeAsync(30_000);
+
+    expect(quitAndInstall).not.toHaveBeenCalled();
+    expect(toast().text()).toContain('Quit and install');
+    expect(toast().text()).not.toContain('restart');
+  });
+
+  it('stops counting down once the meeting is about to start', async () => {
+    const { download, quitAndInstall, toast } = await mountForDownload();
+    // 15 minutes before the meeting, 5 s into the countdown.
+    vi.spyOn(dateHelpers, 'getMeetingStartToday').mockReturnValue(
+      new Date(Date.now() + 15 * MINUTE + 5000),
+    );
+
+    await download(dueUpdate);
+    expect(toast().text()).toContain('install it in 15 s');
+    await vi.advanceTimersByTimeAsync(30_000);
+
+    expect(quitAndInstall).not.toHaveBeenCalled();
+    expect(toast().text()).not.toContain('restart');
+  });
+
+  it.each(['postpone', 'dismiss'] as const)(
+    'does not count down again this session after %s',
+    async (event) => {
+      const { checkAgain, download, quitAndInstall, toast } =
+        await mountForDownload();
+
+      await download(dueUpdate);
+      toast().vm.$emit(event);
+      await checkAgain(dueUpdate);
+      await vi.advanceTimersByTimeAsync(30_000);
+
+      expect(quitAndInstall).not.toHaveBeenCalled();
+      expect(toast().text()).toContain('Quit and install');
+      expect(toast().text()).not.toContain('restart');
     },
   );
 });

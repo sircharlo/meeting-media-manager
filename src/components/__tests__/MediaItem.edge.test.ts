@@ -4,6 +4,7 @@ import { basePath } from 'app/test/vitest/mocks/electronApi';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { ensureFile, writeFile } from 'fs-extra';
 import { defaultSettings } from 'src/constants/settings';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { formatTime } from 'src/utils/time';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -353,6 +354,80 @@ describe('MediaItem playback resilience while offline', () => {
     expect(wrapper.text().replaceAll(/\s+/g, ' ')).toContain(
       `${formatTime(30)} - ${formatTime(300)}`,
     );
+    wrapper.unmount();
+  });
+});
+
+describe('MediaItem checking whether its file is there', () => {
+  const media = {
+    fileUrl: 'file:///C:/media/locked.mp4',
+    isVideo: true,
+    title: 'Locked video',
+    type: 'media' as const,
+    uniqueId: 'file-check-1',
+  };
+
+  // This item's only: earlier tests leave items mounted, which check their
+  // own files through the same mocked stat.
+  const fileCheckReports = () =>
+    vi.mocked(errorCatcher).mock.calls.filter(([, context]) => {
+      const fn = (
+        context as
+          | undefined
+          | {
+              contexts?: {
+                fn?: { args?: { filePath?: string }; name?: string };
+              };
+            }
+      )?.contexts?.fn;
+      return (
+        fn?.name === 'MediaItem.fileIsLocal' &&
+        !!fn.args?.filePath?.endsWith('locked.mp4')
+      );
+    });
+
+  // The file is checked every second at first: let a few checks run.
+  const mountAndCheckAFewTimes = async () => {
+    const wrapper = mount(MediaItem, { props: { media, repeat: false } });
+    await vi.advanceTimersByTimeAsync(3_500);
+    return wrapper;
+  };
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.mocked(errorCatcher).mockClear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it('treats a file it may not look at as missing, without reporting it', async () => {
+    const stat = vi
+      .spyOn(globalThis.electronApi.fs, 'stat')
+      .mockRejectedValue(
+        new Error("EPERM: operation not permitted, stat 'C:/media/locked.mp4'"),
+      );
+
+    const wrapper = await mountAndCheckAFewTimes();
+
+    expect(stat.mock.calls.length).toBeGreaterThan(1);
+    expect(fileCheckReports()).toHaveLength(0);
+    wrapper.unmount();
+  });
+
+  it('reports any other error once, not at every check', async () => {
+    const stat = vi
+      .spyOn(globalThis.electronApi.fs, 'stat')
+      .mockRejectedValue(
+        new Error("EIO: i/o error, stat 'C:/media/locked.mp4'"),
+      );
+
+    const wrapper = await mountAndCheckAFewTimes();
+
+    expect(stat.mock.calls.length).toBeGreaterThan(1);
+    expect(fileCheckReports()).toHaveLength(1);
     wrapper.unmount();
   });
 });

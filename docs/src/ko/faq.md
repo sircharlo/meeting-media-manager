@@ -275,7 +275,7 @@ M³가 업데이트를 설치하는 도중에 컴퓨터가 꺼졌거나 다시 �
 
 컴퓨터를 인터넷에 연결할 수 없다면, M³가 미리 다운로드해 둔 설치 프로그램이 대개 그대로 남아 있습니다. `Win+R` 키를 누르고 `%LOCALAPPDATA%\meeting-media-manager-updater\pending` 경로를 입력한 다음, 열리는 폴더에서 설치 프로그램을 실행하십시오.
 
-이를 방지하기 위해 Windows용 M³는 다운로드한 업데이트를 종료할 때가 아니라 다음에 실행할 때 설치합니다. When M³ is installed for all users of the computer, Windows asks for permission first, so M³ waits until you choose to install the update.
+이를 방지하기 위해 Windows용 M³는 다운로드한 업데이트를 종료할 때가 아니라 다음에 실행할 때 설치합니다. M³가 컴퓨터의 모든 사용자용으로 설치되어 있으면 Windows가 먼저 권한을 요청하므로, M³는 사용자가 업데이트 설치를 선택할 때까지 기다립니다.
 
 ## 지원 및 커뮤니티 {#support-community}
 

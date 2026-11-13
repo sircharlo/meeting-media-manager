@@ -1361,13 +1361,38 @@ export const unzipJwpub = async (
   }
 };
 
+/**
+ * Takes the items of a file about to be replaced off the date's media list:
+ * the one imported under its name, and any other that plays it (an item
+ * converted to play on this computer keeps its original file's id).
+ * @param path The file being replaced.
+ * @param uniqueId The id of the item imported under its name.
+ */
+const removeItemsOfReplacedFile = (path: string, uniqueId: string) => {
+  const currentStateStore = useCurrentStateStore();
+  const { selectedDateObject } = currentStateStore;
+  const fileUrl = pathToFileURL(path);
+  const ids = new Set([uniqueId]);
+  for (const section of selectedDateObject?.mediaSections ?? []) {
+    for (const item of section.items ?? []) {
+      if (item.fileUrl === fileUrl) ids.add(item.uniqueId);
+    }
+  }
+  for (const id of ids) {
+    useJwStore().removeFromAdditionMediaMap(
+      id,
+      currentStateStore.currentCongregation,
+      selectedDateObject,
+    );
+  }
+};
+
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
   section: MediaSectionIdentifier | undefined,
   addToAdditionMediaMap?: boolean,
 ) => {
   const currentStateStore = useCurrentStateStore();
-  const jwStore = useJwStore();
   const datedAdditionalMediaDir =
     await currentStateStore.getDatedAdditionalMediaDirectory();
 
@@ -1408,11 +1433,7 @@ export const copyToDatedAdditionalMedia = async (
             },
           });
         }
-        jwStore.removeFromAdditionMediaMap(
-          uniqueId,
-          currentStateStore.currentCongregation,
-          currentStateStore.selectedDateObject,
-        );
+        removeItemsOfReplacedFile(datedAdditionalMediaPath, uniqueId);
       }
     }
     if (filepathToCopy !== datedAdditionalMediaPath) {
@@ -3914,6 +3935,32 @@ const mapDynamicMediaItem = async (
   } as MediaItem;
 };
 
+/**
+ * The id of a watched-folder file's item: from the file, so it stays the same
+ * when the item plays the file's converted copy instead.
+ * @param parentDate The date of the file's folder.
+ * @param watchedItemPath The file, as the folder watcher reports it.
+ */
+export const getWatchedItemId = (parentDate: string, watchedItemPath: string) =>
+  sanitizeId(
+    formatDate(parentDate, 'YYYYMMDD') + '-' + pathToFileURL(watchedItemPath),
+  );
+
+/**
+ * Whether an item is a watched-folder file's: the one playing it, or the one
+ * playing its converted copy (it keeps the file's id).
+ * @param parentDate The date of the file's folder.
+ * @param watchedItemPath The file, as the folder watcher reports it.
+ */
+export const isWatchedItemOfFile = (
+  item: MediaItem,
+  parentDate: string,
+  watchedItemPath: string,
+) =>
+  item.source === 'watched' &&
+  (item.fileUrl === pathToFileURL(watchedItemPath) ||
+    item.uniqueId === getWatchedItemId(parentDate, watchedItemPath));
+
 export const watchedItemMapper: (
   parentDate: string,
   watchedItemPath: string,
@@ -3954,9 +4001,7 @@ export const watchedItemMapper: (
     const duration = metadata?.format.duration || 0; // NOSONAR: NaN falls back too
     const title = metadata?.common.title || basename(watchedItemPath); // NOSONAR: empty title uses the file name
 
-    const uniqueId = sanitizeId(
-      formatDate(parentDate, 'YYYYMMDD') + '-' + pathToFileURL(watchedItemPath),
-    );
+    const uniqueId = getWatchedItemId(parentDate, watchedItemPath);
     const thumbnailUrl = await getThumbnailUrl(playablePath);
 
     // Parse section information and order from filename or section order file

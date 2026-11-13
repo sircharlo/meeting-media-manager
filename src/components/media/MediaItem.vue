@@ -742,9 +742,10 @@
                 </q-tooltip>
               </q-select>
 
-              <!-- No sound here: it still plays, and can be converted. -->
+              <!-- No sound here, or it failed to play once: it still plays,
+                   and can be converted. -->
               <q-btn
-                v-if="canConvert && playbackProblem?.missing === 'sound'"
+                v-if="canConvertBesidePlay"
                 color="primary"
                 flat
                 icon="mmm-movie"
@@ -1520,7 +1521,10 @@ import {
   stopZoomSharingAfterMedia,
   triggerZoomScreenShare,
 } from 'src/helpers/zoom';
-import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
+import {
+  isExpectedNetworkPathAccessError,
+  isInaccessiblePathError,
+} from 'src/shared/filesystem-errors';
 import { log, uuid } from 'src/shared/vanilla';
 import { getFileSizeIfExists, isFileUrl } from 'src/utils/fs';
 import {
@@ -2190,6 +2194,23 @@ const notifyPathAccessWarning = () => {
   });
 };
 
+// The file is checked every second at first, then every minute (see
+// localFilePollInterval): an error that keeps coming back is reported once.
+let fileCheckErrorReported = false;
+
+const reportFileCheckError = (error: unknown, filePath: string) => {
+  if (fileCheckErrorReported) return;
+  fileCheckErrorReported = true;
+  errorCatcher(error, {
+    contexts: {
+      fn: {
+        args: { filePath },
+        name: 'MediaItem.fileIsLocal',
+      },
+    },
+  });
+};
+
 const fileIsLocal = async () => {
   const filePath = fileUrlToPath(props.media.fileUrl);
   try {
@@ -2204,15 +2225,10 @@ const fileIsLocal = async () => {
       isExpectedNetworkPathAccessError(error, filePath, getRendererPlatform())
     ) {
       notifyPathAccessWarning();
-    } else {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            args: { filePath },
-            name: 'MediaItem.fileIsLocal',
-          },
-        },
-      });
+    } else if (!isInaccessiblePathError(error)) {
+      // Out of reach (no permission, say) is missing, as it was when this
+      // checked whether the file existed first.
+      reportFileCheckError(error, filePath);
     }
     return false;
   }
@@ -2443,9 +2459,10 @@ const setMediaPlaying = async (
     if (!shouldStartZoomManagerSharing) {
       triggerZoomScreenShare(true);
     }
-  } else if (isImage(mediaPlaying.value.url)) {
-    stopMedia(true);
   }
+  // Media already shown (a picture, say) is replaced as is, not stopped
+  // first: the media window then crossfades from one to the other, instead
+  // of fading out to the yeartext and back in.
   if (signLanguage) {
     if (marker) {
       updateMediaCustomDuration(getMarkerTimes(marker));
@@ -2951,10 +2968,17 @@ const canConvert = computed(
     canConvertMediaItem(props.media),
 );
 // Its picture can't show here: it gets a Convert button instead of Play.
+// Not when that was only seen while playing it: that may not happen again.
 const needsConversionToPlay = computed(
   () =>
     playbackProblem.value?.missing === 'picture' &&
+    !playbackProblem.value.fromPlayback &&
     canConvertMediaItem(props.media),
+);
+// It still plays (without sound, or after failing to play once): Convert
+// sits beside Play.
+const canConvertBesidePlay = computed(
+  () => canConvert.value && !needsConversionToPlay.value,
 );
 const convertMedia = () => {
   requestMediaConversion([props.media]);

@@ -275,7 +275,7 @@ Kui arvuti lülitati välja või taaskäivitati sel ajal, kui M³ uuendust insta
 
 Kui arvuti ei saa internetiga ühendust, on installifail, mille M³ oli alla laadinud, tavaliselt veel alles: vajuta `Win+R`, sisesta `%LOCALAPPDATA%\meeting-media-manager-updater\pending` ja käivita seejärel avanevas kaustas olev installifail.
 
-Sellise katkestuse vältimiseks installib M³ Windowsis alla laaditud uuenduse järgmisel avamisel, mitte sulgemisel. When M³ is installed for all users of the computer, Windows asks for permission first, so M³ waits until you choose to install the update.
+Sellise katkestuse vältimiseks installib M³ Windowsis alla laaditud uuenduse järgmisel avamisel, mitte sulgemisel. Kui M³ on installitud arvuti kõigile kasutajatele, küsib Windows kõigepealt luba, seega ootab M³, kuni sa valid uuenduse installimise.
 
 ## Tugi ja kogukond {#support-community}
 

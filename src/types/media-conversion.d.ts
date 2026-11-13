@@ -35,14 +35,20 @@ export interface PlaybackConversionRequest {
   id: string;
   /** The picture plays as it is: only the sound needs converting. */
   keepVideo?: boolean;
-  /** Where to write the MP4. Written there directly, so pass a temporary path. */
+  /**
+   * Where to write it, overwriting what's there: a new file directly in the
+   * app's Temp folder, an .mp4, or an .m4a for the sound alone (no picture).
+   */
   outputPath: string;
   sourcePath: string;
 }
 
 /** How a file was converted. */
 export interface PlaybackConversionResult {
-  /** The video encoder used ('copy' when only the sound needed converting). */
+  /**
+   * The video encoder used: 'copy' when only the sound needed converting,
+   * 'none' for an .m4a.
+   */
   encoder: string;
 }
 
@@ -53,5 +59,10 @@ export interface PlaybackConversionResult {
  */
 export interface PlaybackProblem {
   codec: string;
+  /**
+   * Found when the media window failed to play it, not by checking the file:
+   * that may not happen every time, so it can still be played.
+   */
+  fromPlayback?: boolean;
   missing: 'picture' | 'sound';
 }
