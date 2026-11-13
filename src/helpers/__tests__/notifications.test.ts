@@ -220,6 +220,19 @@ describe('createTemporaryNotification', () => {
     });
   });
 
+  it('tells its caller when it closes, however that happens', async () => {
+    const onDismiss = vi.fn();
+    const { createTemporaryNotification } = await import('../notifications');
+
+    createTemporaryNotification({ message: 'x', onDismiss });
+    createTemporaryNotification({ message: 'y' });
+
+    expect(mocks.notifyCreate.mock.calls[0]?.[0]).toMatchObject({ onDismiss });
+    expect(mocks.notifyCreate.mock.calls[1]?.[0]).not.toHaveProperty(
+      'onDismiss',
+    );
+  });
+
   it.each([
     ['info', 'mmm-info'],
     ['negative', 'mmm-error'],

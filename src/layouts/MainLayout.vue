@@ -143,6 +143,7 @@ import {
   clearMeetingCheckStatusPruneTimers,
   downloadSongbookVideos,
   getJwMepsInfo,
+  isWatchedItemOfFile,
   setUrlVariables,
   watchedItemMapper,
 } from 'src/helpers/jw-media';
@@ -151,7 +152,10 @@ import {
   registerAllCustomShortcuts,
   unregisterAllCustomShortcuts,
 } from 'src/helpers/keyboardShortcuts';
-import { markUnplayable } from 'src/helpers/media-conversion';
+import {
+  markUnplayable,
+  removeOrphanedConversions,
+} from 'src/helpers/media-conversion';
 import {
   getOrCreateMediaSection,
   removeWatchedMediaSectionInfo,
@@ -257,7 +261,6 @@ const {
   onVideoCaptureCrashDetected,
   onWatchFolderError,
   onWatchFolderUpdate,
-  pathToFileURL,
   PLATFORM,
   relaunchApp,
   removeListeners,
@@ -647,26 +650,32 @@ async function handleUnlinkCleanup(changedPath: string) {
 
 async function handleUnlinkWatchFolderEvent(
   dayObj: DateInfo,
+  day: string,
   changedPath?: string,
 ) {
   if (!changedPath) return;
-  const targetUrl = pathToFileURL(changedPath).toString();
-  removeWatchedItems(
+  // Also the item playing its converted copy, and then that copy.
+  const removed = removeWatchedItems(
     dayObj.mediaSections,
-    (item) => item?.source === 'watched' && item?.fileUrl === targetUrl,
+    (item) => !!item && isWatchedItemOfFile(item, day, changedPath),
   );
+  removeOrphanedConversions(removed.map((item) => item.fileUrl));
   await handleUnlinkCleanup(changedPath);
 }
 
+/** Takes the items `predicate` picks off the list. @returns Those items. */
 function removeWatchedItems(
   sections: MediaSectionWithConfig[],
   predicate: (item: MediaItem) => boolean,
 ) {
+  const removed: MediaItem[] = [];
   for (const section of sections) {
     if (!section.items) continue;
+    removed.push(...section.items.filter(predicate));
     // reassign instead of splicing to reduce reactive churn
     section.items = section.items.filter((item) => !predicate(item));
   }
+  return removed;
 }
 
 function sortMediaItems(sections: MediaSectionWithConfig[]) {
@@ -736,7 +745,7 @@ const updateWatchFolderRef = async ({
         break;
 
       case 'unlink':
-        await handleUnlinkWatchFolderEvent(dayObj, changedPath);
+        await handleUnlinkWatchFolderEvent(dayObj, day, changedPath);
         break;
     }
   } catch (error) {

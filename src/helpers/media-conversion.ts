@@ -24,8 +24,8 @@ import { ref, watch } from 'vue';
 
 /**
  * Files that can't play on this computer, and converting them into ones that
- * can: H.264 / AAC MP4s, which play everywhere (see
- * src-electron/main/playback-conversion).
+ * can: H.264 / AAC MP4s, which play everywhere, or AAC M4As for sound-only
+ * files (see src-electron/main/playback-conversion).
  *
  * Whether a file plays depends on the computer, not just the file (HEVC only
  * decodes in hardware), so a file is checked when it's added, again in each
@@ -53,7 +53,7 @@ const {
   onMediaConversionProgress,
   pathToFileURL,
 } = globalThis.electronApi;
-const { ensureDir, move, pathExists, remove, stat } = fs;
+const { ensureDir, move, pathExists, remove, rename, stat } = fs;
 
 // A count picks the plural form; named values fill in the message.
 const t = (key: string, values?: number | Record<string, unknown>) =>
@@ -64,7 +64,7 @@ const t = (key: string, values?: number | Record<string, unknown>) =>
 
 // Extensions whose container holds the converted H.264 / AAC as is, so the
 // converted file can take the original's place, path and all.
-const IN_PLACE_EXTENSIONS = new Set(['m4v', 'mov', 'mp4']);
+const IN_PLACE_EXTENSIONS = new Set(['m4a', 'm4v', 'mov', 'mp4']);
 const DATE_FOLDER_NAME = /^\d{4}-\d{2}-\d{2}$/;
 const MEETING_SOON_MINUTES = 60;
 const NOTICE_GROUPING_MS = 1500;
@@ -72,8 +72,19 @@ const MOVE_RETRIES = 5;
 const MOVE_RETRY_DELAY_MS = 1000;
 const CHECK_CONCURRENCY = 2;
 
+/** Thrown where a conversion stops once it's cancelled. */
+class ConversionCancelled extends Error {}
+
 /** A failure the user can act on, already said in their language. */
 class ConversionFailure extends Error {}
+
+/**
+ * What a file converts into: an MP4, or an M4A for a sound-only file. The
+ * media window picks its player by the extension, and plays an MP4 in a
+ * video player, black where the yeartext should show.
+ */
+const getConvertedExtension = (sourcePath: string) =>
+  isAudio(sourcePath) ? '.m4a' : '.mp4';
 
 const sleep = (ms: number) =>
   new Promise((resolve) => {
@@ -108,6 +119,8 @@ const findItems = (match: (item: MediaItem) => boolean) => {
 
 const findItemsForFile = (path: string) =>
   findItems((item) => !!item.fileUrl && fileUrlToPath(item.fileUrl) === path);
+
+const hasItemsForFile = (path: string) => findItemsForFile(path).length > 0;
 
 /** Whether M³ can convert this item: a file imported into it, or a watched one. */
 export const canConvertMediaItem = (item: MediaItem) =>
@@ -152,6 +165,8 @@ const noticePaths = ref<string[]>([]);
 let pendingNotices: string[] = [];
 let noticeTimer: ReturnType<typeof setTimeout> | undefined;
 let updateNotice: ((props?: QNotifyUpdateOptions) => void) | undefined;
+// Which notice is the open one: one closed late mustn't forget a newer one.
+let noticeCount = 0;
 let stopWatchingNotice: (() => void) | undefined;
 
 const isWaitingForConversion = (item: MediaItem) => {
@@ -210,8 +225,14 @@ const refreshNotice = () => {
     updateNotice(getNoticeContent(items));
     return;
   }
+  const notice = ++noticeCount;
   updateNotice = createTemporaryNotification({
     ...getNoticeContent(items),
+    // Closed some other way too (switching profiles closes every notice):
+    // updating it then shows nothing, so the next file found opens a new one.
+    onDismiss: () => {
+      if (notice === noticeCount) forgetNotice();
+    },
     timeout: 0,
     type: 'warning',
   });
@@ -280,7 +301,8 @@ export const checkMediaPlayback = async (
 
 /**
  * Records a file that failed to play because this computer has no decoder
- * for it, and offers to convert it.
+ * for it, and offers to convert it. Playing it stays possible: that it
+ * failed once doesn't make it fail every time.
  */
 export const markUnplayable = async (fileUrl: string) => {
   const path = fileUrlToPath(fileUrl);
@@ -298,7 +320,11 @@ export const markUnplayable = async (fileUrl: string) => {
   }
   store.checks[path] = {
     key,
-    problem: { codec: 'unknown', missing: 'picture' },
+    problem: {
+      codec: 'unknown',
+      fromPlayback: true,
+      missing: isAudio(path) ? 'sound' : 'picture',
+    },
   };
   noticeUnplayable(path);
 };
@@ -319,19 +345,21 @@ const hashOf = async (text: string) => {
 /**
  * Where the converted copy of a watched-folder file goes: in the cache, in a
  * folder named after the watched file's date folder (so it's cleaned up with
- * it), named after the file and what makes it unique (its path, size and
- * modification time: a replaced file needs converting again).
+ * it), named after the file and what makes it unique (its path, and the size
+ * and modification time in `key`: a replaced file needs converting again).
  */
-const getWatchedConversionPath = async (sourcePath: string) => {
+const getWatchedConversionPath = async (sourcePath: string, key: string) => {
   const dateFolder = basename(dirname(sourcePath));
   const folder = DATE_FOLDER_NAME.test(dateFolder) ? dateFolder : 'undated';
   const name = basename(sourcePath, extname(sourcePath));
   // The same path either way: the folder watcher reports Windows paths with
   // backslashes, items carry them as file URLs.
-  const hash = await hashOf(
-    `${normalize(sourcePath)}|${await getFileKey(sourcePath)}`,
+  const hash = await hashOf(`${normalize(sourcePath)}|${key}`);
+  return join(
+    await getConvertedMediaPath(),
+    folder,
+    `${name}-${hash}${getConvertedExtension(sourcePath)}`,
   );
-  return join(await getConvertedMediaPath(), folder, `${name}-${hash}.mp4`);
 };
 
 /**
@@ -340,11 +368,62 @@ const getWatchedConversionPath = async (sourcePath: string) => {
  */
 export const findWatchedConversion = async (sourcePath: string) => {
   try {
-    const path = await getWatchedConversionPath(sourcePath);
+    const path = await getWatchedConversionPath(
+      sourcePath,
+      await getFileKey(sourcePath),
+    );
     return (await pathExists(path)) ? path : null;
   } catch {
     return null;
   }
+};
+
+const isInFolder = (path: string, folder: string) =>
+  normalize(path)
+    .toLowerCase()
+    .startsWith(`${normalize(folder).toLowerCase()}/`);
+
+// How long a converted copy outlives the item that played it. A sync tool
+// can take a file away and put it back, unchanged, a moment later: the item
+// it gets back then plays the same copy (see findWatchedConversion), which
+// is still there to play rather than converted again.
+const ORPHAN_GRACE_MS = 2 * 60_000;
+
+/** See removeOrphanedConversions: deletes those no item plays by now. */
+const deleteOrphanedConversions = async (fileUrls: string[]) => {
+  try {
+    const folder = await getConvertedMediaPath();
+    const orphans = fileUrls
+      .map((url) => fileUrlToPath(url))
+      .filter((path) => isInFolder(path, folder) && !hasItemsForFile(path));
+    await Promise.all(
+      orphans
+        .flatMap((path) => [path, changeExt(path, '.jpg')])
+        .map((path) => remove(path).catch(() => undefined)),
+    );
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: { count: fileUrls.length, name: 'removeOrphanedConversions' },
+      },
+    });
+  }
+};
+
+/**
+ * Deletes the converted copies these items played, and their thumbnails,
+ * if no item plays them two minutes later (see ORPHAN_GRACE_MS): their
+ * watched file left the folder (the items still playing it are gone), and
+ * didn't come back. Only ever files in the Converted Media folder. Never
+ * throws.
+ * @param fileUrls The files the items that were taken off played.
+ */
+export const removeOrphanedConversions = (fileUrls: (string | undefined)[]) => {
+  const urls = [...new Set(fileUrls)].filter((url): url is string => !!url);
+  if (!urls.length) return;
+  setTimeout(() => {
+    void deleteOrphanedConversions(urls);
+  }, ORPHAN_GRACE_MS);
 };
 
 // ─── Converting ──────────────────────────────────────────────────────────────
@@ -401,17 +480,23 @@ export const startMediaConversion = (items: MediaItem[]) => {
   void runQueue();
 };
 
+// Conversions past the point of no return: their file is going in place, so
+// cancelling can no longer take it back.
+const committedJobs = new Set<string>();
+
+/**
+ * Cancels a conversion, at any point before its file is in place: a queued
+ * one never starts, ffmpeg is stopped (or never started), and a finished one
+ * isn't put in place.
+ */
 export const cancelMediaConversion = async (id: string) => {
   const store = useMediaConversionStore();
   const job = store.jobs.find((j) => j.id === id);
-  if (!job) return;
-  if (job.status === 'converting') {
-    await cancelPlaybackConversion(id);
-    return;
-  }
-  if (isActiveConversion(job)) {
-    store.updateJob(id, { finishedAt: Date.now(), status: 'cancelled' });
-  }
+  if (!job || !isActiveConversion(job) || committedJobs.has(id)) return;
+  const wasConverting = job.status === 'converting';
+  // The conversion stops at its next step, and ffmpeg at once.
+  store.updateJob(id, { finishedAt: Date.now(), status: 'cancelled' });
+  if (wasConverting) await cancelPlaybackConversion(id);
 };
 
 let stopListening: (() => void) | undefined;
@@ -447,6 +532,10 @@ const isCancelled = (id: string) =>
   useMediaConversionStore().jobs.find((job) => job.id === id)?.status ===
   'cancelled';
 
+const stopIfCancelled = (id: string) => {
+  if (isCancelled(id)) throw new ConversionCancelled(id);
+};
+
 /** Its message, with the file's path and name taken out. */
 const withoutFileName = (error: unknown, paths: string[]) => {
   let message = error instanceof Error ? error.message : String(error);
@@ -458,41 +547,59 @@ const withoutFileName = (error: unknown, paths: string[]) => {
   return message;
 };
 
+/**
+ * Records why a conversion stopped: it was cancelled, or it failed (told to
+ * Sentry when that wasn't expected).
+ */
+const recordStop = (
+  job: MediaConversionJob,
+  error: unknown,
+  tempPath: string,
+) => {
+  const store = useMediaConversionStore();
+  if (
+    error instanceof ConversionCancelled ||
+    // The main process's, through IPC.
+    (error instanceof Error &&
+      error.message.includes('conversion-cancelled')) ||
+    isCancelled(job.id)
+  ) {
+    store.updateJob(job.id, { finishedAt: Date.now(), status: 'cancelled' });
+    return;
+  }
+  const expected = error instanceof ConversionFailure;
+  store.updateJob(job.id, {
+    error: expected ? error.message : t('media-conversion-failed-error'),
+    finishedAt: Date.now(),
+    status: 'failed',
+  });
+  if (expected) return;
+  errorCatcher(
+    new Error(
+      withoutFileName(error, [job.sourcePath, tempPath].filter(Boolean)),
+    ),
+    {
+      contexts: {
+        fn: {
+          codec: job.problem.codec,
+          extension: extname(job.sourcePath).toLowerCase().slice(1),
+          missing: job.problem.missing,
+          name: 'convertMediaForPlayback',
+          source: job.source,
+        },
+      },
+    },
+  );
+};
+
 const convertJob = async (id: string) => {
   const store = useMediaConversionStore();
   const job = store.jobs.find((j) => j.id === id);
   if (!job) return;
   store.updateJob(id, { startedAt: Date.now(), status: 'preparing' });
-  let tempPath = '';
+  const temp = { path: '' };
   try {
-    if (!(await pathExists(job.sourcePath))) {
-      throw new ConversionFailure(t('media-conversion-failed-missing'));
-    }
-    const ffmpegPath = await setupFFmpeg();
-    if (isCancelled(id)) return;
-    if (!ffmpegPath) {
-      throw new ConversionFailure(t('media-conversion-failed-no-converter'));
-    }
-    listenForProgress();
-    tempPath = join(await getTempPath(), `conversion-${id}.mp4`);
-    await ensureDir(dirname(tempPath));
-    store.updateJob(id, {
-      percent: job.durationSeconds ? 0 : null,
-      status: 'converting',
-    });
-    const { encoder } = await convertForPlayback(ffmpegPath, {
-      durationSeconds: job.durationSeconds,
-      id,
-      keepVideo: job.problem.missing === 'sound',
-      outputPath: tempPath,
-      sourcePath: job.sourcePath,
-    });
-    const finalPath = await placeConvertedFile(job, tempPath);
-    store.checks[finalPath] = {
-      key: await getFileKey(finalPath),
-      problem: null,
-    };
-    await updateConvertedItems(job, finalPath);
+    const encoder = await convertAndPlace(job, temp);
     store.updateJob(id, {
       finishedAt: Date.now(),
       percent: 100,
@@ -504,41 +611,65 @@ const convertJob = async (id: string) => {
       seconds: Math.round((Date.now() - (job.startedAt ?? Date.now())) / 1000),
     });
   } catch (error) {
-    if (String(error).includes('conversion-cancelled') || isCancelled(id)) {
-      store.updateJob(id, { finishedAt: Date.now(), status: 'cancelled' });
-      return;
-    }
-    const message =
-      error instanceof ConversionFailure
-        ? error.message
-        : t('media-conversion-failed-error');
-    store.updateJob(id, {
-      error: message,
-      finishedAt: Date.now(),
-      status: 'failed',
-    });
-    if (!(error instanceof ConversionFailure)) {
-      const extension = extname(job.sourcePath).toLowerCase().slice(1);
-      errorCatcher(
-        new Error(
-          withoutFileName(error, [job.sourcePath, tempPath].filter(Boolean)),
-        ),
-        {
-          contexts: {
-            fn: {
-              codec: job.problem.codec,
-              extension,
-              missing: job.problem.missing,
-              name: 'convertMediaForPlayback',
-              source: job.source,
-            },
-          },
-        },
-      );
-    }
+    recordStop(job, error, temp.path);
   } finally {
-    if (tempPath) await remove(tempPath).catch(() => undefined);
+    committedJobs.delete(id);
+    if (temp.path) await remove(temp.path).catch(() => undefined);
   }
+};
+
+/**
+ * Converts a job's file and puts the result in place, stopping wherever it's
+ * cancelled until then. Sets `temp.path` as soon as it's known, for the
+ * caller to delete whatever happens.
+ * @returns The video encoder used.
+ */
+const convertAndPlace = async (
+  job: MediaConversionJob,
+  temp: { path: string },
+) => {
+  const { id } = job;
+  const store = useMediaConversionStore();
+  // The version converted: a watched file's copy is filed under it, and a
+  // file that changes meanwhile isn't replaced with what it was.
+  const sourceKey = await getFileKey(job.sourcePath).catch(() => null);
+  if (!sourceKey) {
+    throw new ConversionFailure(t('media-conversion-failed-missing'));
+  }
+  const ffmpegPath = await setupFFmpeg();
+  stopIfCancelled(id);
+  if (!ffmpegPath) {
+    throw new ConversionFailure(t('media-conversion-failed-no-converter'));
+  }
+  listenForProgress();
+  temp.path = join(
+    await getTempPath(),
+    `conversion-${id}${getConvertedExtension(job.sourcePath)}`,
+  );
+  await ensureDir(dirname(temp.path));
+  // Nothing awaited from here to the request, so a cancel can't slip in
+  // between and be overwritten.
+  stopIfCancelled(id);
+  store.updateJob(id, {
+    percent: job.durationSeconds ? 0 : null,
+    status: 'converting',
+  });
+  const { encoder } = await convertForPlayback(ffmpegPath, {
+    durationSeconds: job.durationSeconds,
+    id,
+    keepVideo: job.problem.missing === 'sound',
+    outputPath: temp.path,
+    sourcePath: job.sourcePath,
+  });
+  // Cancelled just as ffmpeg finished.
+  stopIfCancelled(id);
+  const finalPath = await placeConvertedFile(job, temp.path, sourceKey);
+  store.checks[finalPath] = {
+    key: await getFileKey(finalPath),
+    problem: null,
+  };
+  await updateConvertedItems(job, finalPath);
+  return encoder;
 };
 
 const isPlaying = (path: string) => {
@@ -547,9 +678,40 @@ const isPlaying = (path: string) => {
 };
 
 /**
+ * Waits while `inUse` says a file plays. Given the conversion's id, a cancel
+ * meanwhile stops it.
+ */
+const waitWhilePlaying = async (inUse: () => boolean, id?: string) => {
+  while (inUse()) {
+    if (id) stopIfCancelled(id);
+    await sleep(MOVE_RETRY_DELAY_MS); // NOSONAR: waits for playback to stop
+  }
+};
+
+/**
+ * Stops a conversion whose file changed, or went away, while it converted:
+ * what it made is of what the file was.
+ */
+const assertUnchanged = async (job: MediaConversionJob, sourceKey: string) => {
+  const key = await getFileKey(job.sourcePath).catch(() => null);
+  if (key === sourceKey) return;
+  log(
+    'The file changed while it converted: not using the conversion',
+    'mediaProcessing',
+    'warn',
+    { before: sourceKey, now: key, source: job.source },
+  );
+  throw new ConversionFailure(
+    t(
+      key ? 'media-conversion-failed-error' : 'media-conversion-failed-missing',
+    ),
+  );
+};
+
+/**
  * Where an imported file's converted copy goes: its own path when its
- * container holds H.264 / AAC as is, otherwise an .mp4 beside it, never over
- * another file.
+ * container holds H.264 / AAC as is, otherwise an .mp4 (an .m4a for sound
+ * only) beside it, never over another file.
  */
 const getImportedDestination = async ({
   id,
@@ -558,17 +720,24 @@ const getImportedDestination = async ({
   const extension = extname(sourcePath).toLowerCase().slice(1);
   if (IN_PLACE_EXTENSIONS.has(extension)) return sourcePath;
   const name = basename(sourcePath, extname(sourcePath));
-  const beside = join(dirname(sourcePath), `${name}.mp4`);
+  const convertedExtension = getConvertedExtension(sourcePath);
+  const beside = join(dirname(sourcePath), `${name}${convertedExtension}`);
   return (await pathExists(beside))
-    ? join(dirname(sourcePath), `${name}-${id.slice(0, 8)}.mp4`)
+    ? join(
+        dirname(sourcePath),
+        `${name}-${id.slice(0, 8)}${convertedExtension}`,
+      )
     : beside;
 };
 
-/** Moves a file, retrying for a moment: a file just shown (its thumbnail, a preview) can stay locked. */
-const moveWithRetries = async (from: string, to: string) => {
+/**
+ * Runs a file operation, retrying for a moment: a file just shown (its
+ * thumbnail, a preview) or just written (antivirus) can stay locked.
+ */
+const withRetries = async (operation: () => Promise<unknown>) => {
   for (let attempt = 1; ; attempt++) {
     try {
-      await move(from, to, { overwrite: true }); // NOSONAR: retried in order
+      await operation(); // NOSONAR: retried in order
       return;
     } catch (error) {
       if (attempt >= MOVE_RETRIES) throw error;
@@ -578,38 +747,93 @@ const moveWithRetries = async (from: string, to: string) => {
 };
 
 /**
- * Moves the converted file where it belongs. An imported file is replaced
- * (it's M³'s own copy), waiting for it to stop playing first; a watched one
- * gets its converted copy in the cache.
+ * Puts the converted file at `destination` without losing what's there until
+ * it's fully replaced: the file is moved beside it first (a copy when the
+ * cache is on another drive, which can fail half-way, on a full disk or a
+ * dropped network share), then renamed over it in one step. If either
+ * fails, `destination` is left as it was. A cancel stops it until then.
+ */
+const putInPlace = async (
+  job: MediaConversionJob,
+  tempPath: string,
+  destination: string,
+) => {
+  // Not a media file's name, so nothing takes it for one meanwhile.
+  const staging = `${destination}.${job.id.slice(0, 8)}.converting`;
+  try {
+    await withRetries(() => move(tempPath, staging, { overwrite: true }));
+    stopIfCancelled(job.id);
+    committedJobs.add(job.id);
+    await withRetries(() => rename(staging, destination));
+  } catch (error) {
+    committedJobs.delete(job.id);
+    await remove(staging).catch(() => undefined);
+    throw error;
+  }
+};
+
+/**
+ * Deletes the thumbnails M³ saved beside the original and its replacement
+ * (see getThumbnailUrl): pictures of what the original showed, a black
+ * frame when its picture didn't play. A sound-only file has none, and a
+ * picture that's in the media list itself (an image named like the video)
+ * stays.
+ */
+const removeStaleThumbnails = async (
+  job: MediaConversionJob,
+  destination: string,
+) => {
+  if (isAudio(job.sourcePath)) return;
+  const thumbnails = new Set(
+    [job.sourcePath, destination].map((path) => changeExt(path, '.jpg')),
+  );
+  await Promise.all(
+    [...thumbnails]
+      .filter((path) => !hasItemsForFile(path))
+      .map((path) => remove(path).catch(() => undefined)),
+  );
+};
+
+/**
+ * Puts the converted file where it belongs, once the file stops playing. An
+ * imported file is replaced (it's M³'s own copy); a watched one gets its
+ * converted copy in the cache, filed under the version converted.
+ * @returns Where it went.
  */
 const placeConvertedFile = async (
   job: MediaConversionJob,
   tempPath: string,
+  sourceKey: string,
 ) => {
+  await waitWhilePlaying(() => isPlaying(job.sourcePath), job.id);
+  await assertUnchanged(job, sourceKey);
+
   if (job.source === 'watched') {
-    const destination = await getWatchedConversionPath(job.sourcePath);
+    const destination = await getWatchedConversionPath(
+      job.sourcePath,
+      sourceKey,
+    );
     await ensureDir(dirname(destination));
-    await moveWithRetries(tempPath, destination);
+    await putInPlace(job, tempPath, destination);
     return destination;
   }
 
   const destination = await getImportedDestination(job);
-  while (isPlaying(job.sourcePath)) await sleep(MOVE_RETRY_DELAY_MS); // NOSONAR: waits for playback to stop
-  await moveWithRetries(tempPath, destination);
+  await putInPlace(job, tempPath, destination);
   if (destination !== job.sourcePath) {
     await remove(job.sourcePath).catch(() => undefined);
   }
-  // The thumbnail saved next to the file is of what the original showed, a
-  // black frame when its picture didn't play.
-  await Promise.all(
-    [job.sourcePath, destination].map((path) =>
-      remove(changeExt(path, '.jpg')).catch(() => undefined),
-    ),
-  );
+  await removeStaleThumbnails(job, destination);
   return destination;
 };
 
-/** Points the converted item at its new file, with a fresh thumbnail. */
+/**
+ * Points the converted item at its new file, with a fresh thumbnail, once
+ * it's no longer playing the old one. An item added from the website
+ * becomes a local file like any other: its size is the new file's, and its
+ * stream (the original, which doesn't play here) is no longer played or
+ * downloaded again in its place.
+ */
 const updateConvertedItems = async (
   job: MediaConversionJob,
   finalPath: string,
@@ -620,9 +844,21 @@ const updateConvertedItems = async (
   const duration = items.some((item) => !item.duration)
     ? (await getMetadataFromMediaPath(finalPath)).format.duration || 0 // NOSONAR: NaN is unknown
     : 0;
+  const { size } = await stat(finalPath);
+  // Started again meanwhile: the item stays the one playing until it stops.
+  await waitWhilePlaying(() =>
+    items.some(
+      (item) =>
+        !!item.fileUrl &&
+        item.fileUrl !== fileUrl &&
+        isPlaying(fileUrlToPath(item.fileUrl)),
+    ),
+  );
   for (const item of items) {
     item.fileUrl = fileUrl;
     item.thumbnailUrl = thumbnailUrl;
     if (!item.duration && duration) item.duration = duration;
+    if (item.filesize !== undefined) item.filesize = size;
+    delete item.streamUrl;
   }
 };

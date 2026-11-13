@@ -1,7 +1,15 @@
-import type { MultimediaItem } from 'src/types';
+import type { MediaItem, MultimediaItem } from 'src/types';
 
 import { fetchRaw } from 'src/utils/api';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+  vi,
+} from 'vitest';
 
 const errorCatcherMock = vi.fn();
 const createTemporaryNotificationMock = vi.fn();
@@ -434,7 +442,9 @@ describe('jw-media helpers', () => {
           'End of central directory record signature not found. Either not a zip file, or file is truncated.',
         );
 
-      const mockContentsEntries = (...results: (Error | Record<string, number>)[]) => {
+      const mockContentsEntries = (
+        ...results: (Error | Record<string, number>)[]
+      ) => {
         let call = 0;
         getZipEntriesMock.mockImplementation(async (path: string) => {
           if (path === jwpubPath) return { contents: 100 };
@@ -1012,6 +1022,117 @@ describe('jw-media helpers', () => {
     ).resolves.toBe('');
 
     expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('takes an item converted to play here off the list when a file replaces the one it plays', async () => {
+    const { trimFilepathAsNeeded } = await import('src/utils/fs');
+    const { sanitizeId } = await import('src/utils/general');
+    vi.mocked(trimFilepathAsNeeded).mockImplementation((p: string) => p);
+    vi.mocked(sanitizeId).mockImplementation((value: string) => value);
+    formatDateMock.mockReturnValue('20261113');
+    vi.mocked(globalThis.electronApi.pathToFileURL).mockImplementation(
+      (path: string) => `file://${path}`,
+    );
+    const removeFromAdditionMediaMap = vi.fn();
+    Object.assign(jwStore, { removeFromAdditionMediaMap });
+    onTestFinished(() => {
+      Object.assign(currentStateStore, {
+        getDatedAdditionalMediaDirectory: undefined,
+        selectedDate: undefined,
+        selectedDateObject: undefined,
+      });
+    });
+    // talk.mkv, converted into talk.mp4: the item keeps the MKV's id.
+    const selectedDateObject = {
+      date: new Date(2026, 10, 13),
+      mediaSections: [
+        {
+          config: { uniqueId: 'imported-media' },
+          items: [
+            {
+              fileUrl: 'file:///dated/talk.mp4',
+              source: 'additional',
+              uniqueId: '20261113-file:///dated/talk.mkv',
+            },
+            {
+              fileUrl: 'file:///dated/other.mp4',
+              source: 'additional',
+              uniqueId: '20261113-file:///dated/other.mp4',
+            },
+          ],
+        },
+      ],
+    };
+    Object.assign(currentStateStore, {
+      currentCongregation: 'cong',
+      getDatedAdditionalMediaDirectory: vi.fn(async () => '/dated'),
+      selectedDate: '2026/11/13',
+      selectedDateObject,
+    });
+    pathExistsMock.mockResolvedValue(true);
+    copyMock.mockResolvedValue(undefined);
+
+    const { copyToDatedAdditionalMedia } = await import('../jw-media');
+    await expect(
+      copyToDatedAdditionalMedia('/import/talk.mp4', undefined),
+    ).resolves.toBe('/dated/talk.mp4');
+
+    expect(removeMock).toHaveBeenCalledWith('/dated/talk.mp4');
+    expect(removeFromAdditionMediaMap.mock.calls.map(([id]) => id)).toEqual([
+      '20261113-file:///dated/talk.mp4',
+      '20261113-file:///dated/talk.mkv',
+    ]);
+    expect(copyMock).toHaveBeenCalledWith(
+      '/import/talk.mp4',
+      '/dated/talk.mp4',
+    );
+  });
+
+  it("knows a watched file's item when it plays the file's converted copy", async () => {
+    const { sanitizeId } = await import('src/utils/general');
+    vi.mocked(sanitizeId).mockImplementation((value: string) => value);
+    formatDateMock.mockReturnValue('20261113');
+    vi.mocked(globalThis.electronApi.pathToFileURL).mockImplementation(
+      (path: string) => `file://${path}`,
+    );
+    const { isWatchedItemOfFile } = await import('../jw-media');
+    const watched = (fileUrl: string, uniqueId: string): MediaItem => ({
+      fileUrl,
+      source: 'watched',
+      title: 'Talk',
+      type: 'media',
+      uniqueId,
+    });
+    const path = '/watch/2026-11-13/talk.mkv';
+    const id = '20261113-file:///watch/2026-11-13/talk.mkv';
+
+    expect(
+      isWatchedItemOfFile(watched(`file://${path}`, id), '2026/11/13', path),
+    ).toBe(true);
+    expect(
+      isWatchedItemOfFile(
+        watched('file:///cache/Converted Media/2026-11-13/talk-0a1b.mp4', id),
+        '2026/11/13',
+        path,
+      ),
+    ).toBe(true);
+    expect(
+      isWatchedItemOfFile(
+        watched(
+          'file:///watch/2026-11-13/other.mp4',
+          '20261113-file:///watch/2026-11-13/other.mp4',
+        ),
+        '2026/11/13',
+        path,
+      ),
+    ).toBe(false);
+    expect(
+      isWatchedItemOfFile(
+        { ...watched(`file://${path}`, id), source: 'additional' },
+        '2026/11/13',
+        path,
+      ),
+    ).toBe(false);
   });
 
   it('creates watched folders for meeting days with dynamic media', async () => {

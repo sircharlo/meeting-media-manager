@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
-import { cleanupFfmpegConversions, createVideoFromNonVideo } from '../ffmpeg';
+import {
+  cleanupFfmpegConversions,
+  createVideoFromNonVideo,
+  type RunnableFfmpegCommand,
+  wasStoppedAtQuit,
+} from '../ffmpeg';
 
 vi.mock('fs-extra/esm', () => ({
   pathExists: vi.fn(async () => false),
@@ -50,6 +55,18 @@ vi.mock('src-electron/main/image-size', () => ({
   getImageDimensions: vi.fn(async () => ({ height: 3000, width: 4000 })),
 }));
 
+// The app's Temp folders: the shared one, and the per-user one.
+vi.mock('electron', () => ({
+  app: { getPath: vi.fn(() => '/user-data') },
+}));
+vi.mock('src-electron/main/fs', () => ({
+  getAppDataPath: vi.fn(async () => '/app-data'),
+}));
+const TEMP = '/app-data/Temp';
+// What a file converts into there: its name, and a hash of its path.
+const convertedIn = (folder: string, name: string) =>
+  expect.stringMatching(new RegExp(`^${folder}/${name}-[0-9a-f]{8}\\.mp4$`));
+
 // Reaching ffmpeg(...).on(...) goes through several chained awaits
 // (assertValidFfmpegPath, shouldUseExistingConversion, a real dynamic
 // import() of the mocked 'fluent-ffmpeg' module), which can take more than a
@@ -80,27 +97,72 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
       (p: string) => Promise<boolean>
     >;
     pathExistsMock.mockResolvedValue(true);
-    const out = await createVideoFromNonVideo('/tmp/a.mp3', '/bin/ffmpeg');
-    expect(out.endsWith('.mp4')).toBe(true);
-  });
-
-  it('writes converted files outside the source folder when outputDir is provided', async () => {
-    const { pathExists } = await import('fs-extra/esm');
-    const pathExistsMock = pathExists as unknown as Mock<
-      (p: string) => Promise<boolean>
-    >;
-    pathExistsMock.mockResolvedValue(true);
-
     const out = await createVideoFromNonVideo(
-      '/tmp/source/a.jpg',
+      '/tmp/a.mp3',
       '/bin/ffmpeg',
-      '/tmp/cache',
+      TEMP,
     );
-
-    expect(out.startsWith('/tmp/cache/')).toBe(true);
-    expect(out).not.toBe('/tmp/source/a.mp4');
-    expect(out.endsWith('.mp4')).toBe(true);
+    expect(out).toEqual(convertedIn(TEMP, 'a'));
   });
+
+  it.each([TEMP, `${TEMP}/`, '/user-data/Temp'])(
+    'writes the converted file into the app temp folder %s, not beside the source',
+    async (folder) => {
+      const { pathExists } = await import('fs-extra/esm');
+      (pathExists as unknown as Mock).mockResolvedValue(true);
+
+      const out = await createVideoFromNonVideo(
+        '/tmp/source/a.jpg',
+        '/bin/ffmpeg',
+        folder,
+      );
+
+      expect(out).toEqual(convertedIn(folder.replace(/\/$/, ''), 'a'));
+    },
+  );
+
+  // ffmpeg overwrites its output and a failed run deletes it: nothing is
+  // written, nor deleted, anywhere else.
+  it.each([
+    {
+      folder: undefined,
+      message:
+        "Refusing to convert: outputDir isn't an absolute path: undefined",
+      original: '/tmp/a.mp3',
+    },
+    {
+      folder: '/tmp/cache',
+      message:
+        "Refusing to convert into /tmp/cache, not the app's temp folder (/user-data/Temp, /app-data/Temp)",
+      original: '/tmp/a.mp3',
+    },
+    {
+      folder: `${TEMP}/sub`,
+      message: `Refusing to convert into ${TEMP}/sub, not the app's temp folder`,
+      original: '/tmp/a.mp3',
+    },
+    {
+      folder: TEMP,
+      message:
+        'Refusing to convert: originalFile isn\'t an absolute path: "a.mp3"',
+      original: 'a.mp3',
+    },
+  ])(
+    'refuses to convert $original into $folder',
+    async ({ folder, message, original }) => {
+      const { remove } = await import('fs-extra/esm');
+
+      await expect(
+        createVideoFromNonVideo(
+          original,
+          '/bin/ffmpeg',
+          folder as unknown as string,
+        ),
+      ).rejects.toThrow(message);
+      expect(ffmpegChain.save).not.toHaveBeenCalled();
+      expect(remove).not.toHaveBeenCalled();
+    },
+  );
 
   // Only .mp3 used to take the audio path: the others went down the image
   // path and failed there.
@@ -113,6 +175,7 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
       const conversion = createVideoFromNonVideo(
         `/tmp/audio-${extension}.${extension}`,
         '/bin/ffmpeg',
+        TEMP,
       );
       await waitUntil(() => !!ffmpegOnMap.end);
       ffmpegOnMap.end?.();
@@ -143,13 +206,13 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
       width: undefined,
     });
     await expect(
-      createVideoFromNonVideo('/tmp/a.jpg', '/bin/ffmpeg'),
+      createVideoFromNonVideo('/tmp/a.jpg', '/bin/ffmpeg', TEMP),
     ).rejects.toThrow('Could not determine dimensions of image.');
   });
 
   it('refuses to use a path that is not an FFmpeg binary', async () => {
     await expect(
-      createVideoFromNonVideo('/tmp/a.mp3', '/bin/some-other-tool'),
+      createVideoFromNonVideo('/tmp/a.mp3', '/bin/some-other-tool', TEMP),
     ).rejects.toThrow('Refusing to use non-FFmpeg path');
   });
 
@@ -161,7 +224,7 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     statMock.mockResolvedValueOnce({ isFile: () => false });
 
     await expect(
-      createVideoFromNonVideo('/tmp/a.mp3', '/bin/ffmpeg-directory'),
+      createVideoFromNonVideo('/tmp/a.mp3', '/bin/ffmpeg-directory', TEMP),
     ).rejects.toThrow('FFmpeg path is not a file');
   });
 
@@ -177,6 +240,7 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     const conversionPromise = createVideoFromNonVideo(
       '/tmp/be3-error.mp3',
       '/bin/ffmpeg',
+      TEMP,
     );
     // Let the async chain reach ffmpeg(...).save(...), registering onError.
     await waitUntil(() => typeof ffmpegOnMap.error === 'function');
@@ -184,7 +248,7 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     ffmpegOnMap.error?.(new Error('ffmpeg exploded'));
 
     await expect(conversionPromise).rejects.toThrow('ffmpeg exploded');
-    expect(remove).toHaveBeenCalledWith('/tmp/be3-error.mp4');
+    expect(remove).toHaveBeenCalledWith(convertedIn(TEMP, 'be3-error'));
   });
 
   // MMM-V2-3M7: AVERROR(ENOSPC), reported as 4294967268 on Windows and 228
@@ -195,6 +259,7 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
       const conversionPromise = createVideoFromNonVideo(
         `/tmp/disk-full-${exitCode}.mp3`,
         '/bin/ffmpeg',
+        TEMP,
       );
       await waitUntil(() => typeof ffmpegOnMap.error === 'function');
 
@@ -213,6 +278,7 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     const conversionPromise = createVideoFromNonVideo(
       '/tmp/out-of-memory.mp3',
       '/bin/ffmpeg',
+      TEMP,
     );
     await waitUntil(() => typeof ffmpegOnMap.error === 'function');
 
@@ -231,12 +297,15 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     const conversionPromise = createVideoFromNonVideo(
       '/tmp/be3-success.mp3',
       '/bin/ffmpeg',
+      TEMP,
     );
     await waitUntil(() => typeof ffmpegOnMap.end === 'function');
 
     ffmpegOnMap.end?.();
 
-    await expect(conversionPromise).resolves.toBe('/tmp/be3-success.mp4');
+    await expect(conversionPromise).resolves.toEqual(
+      convertedIn(TEMP, 'be3-success'),
+    );
   });
 
   it('kills every in-progress ffmpeg command on cleanupFfmpegConversions', async () => {
@@ -248,12 +317,17 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     const conversionPromise = createVideoFromNonVideo(
       '/tmp/be3-cleanup.mp3',
       '/bin/ffmpeg',
+      TEMP,
     );
     await waitUntil(() => typeof ffmpegOnMap.error === 'function');
+    const command = ffmpegChain as unknown as RunnableFfmpegCommand;
+    expect(wasStoppedAtQuit(command)).toBe(false);
 
     cleanupFfmpegConversions();
 
     expect(ffmpegChain.kill).toHaveBeenCalledWith('SIGKILL');
+    // Its run failing is the app quitting, not ffmpeg (see playback-conversion).
+    expect(wasStoppedAtQuit(command)).toBe(true);
 
     // Settle the still-pending conversion so it doesn't leak into other tests.
     ffmpegOnMap.error?.(new Error('killed'));
