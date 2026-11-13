@@ -44,7 +44,10 @@ jobs:
     runs-on: ubuntu-latest
     # Nothing new to scan in quality-only mode, and this job cannot gate a
     # merge anyway (continue-on-error below), so it stays out of that mode.
-    if: ${{ !inputs.quality-only }}
+    # Nor when building a given branch (`ref`, the automated updates' build
+    # gates): its checkout below is the triggering ref, master, so it would
+    # only scan master again rather than the branch.
+    if: ${{ !inputs.quality-only && inputs.ref == '' }}
     continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1

@@ -92,11 +92,14 @@ export const delay = (ms: number) =>
 // the path is preserved. A Windows path inside a JSON string has its
 // backslashes doubled (`C:\\Users\\<name>`), and details are sent to Sentry
 // as JSON strings so they don't get flattened (MMM-V2-3KM): any run of
-// backslashes counts as one separator.
+// backslashes counts as one separator. The name stops at a double quote too,
+// which no user name can contain: a path ending at the user's folder inside a
+// JSON string then keeps the rest of the JSON. Windows paths are matched
+// whatever their case (`c:\users\...`).
 const HOME_DIRECTORY_PATH_PATTERNS: RegExp[] = [
-  /([A-Za-z]:(?:\\+|\/)Users(?:\\+|\/))[^\\/]+/g,
-  /(\/Users\/)[^/]+/g,
-  /(\/home\/)[^/]+/g,
+  /([A-Z]:(?:\\+|\/)Users(?:\\+|\/))[^\\/"]+/gi,
+  /(\/Users\/)[^/"]+/g,
+  /(\/home\/)[^/"]+/g,
 ];
 
 /**

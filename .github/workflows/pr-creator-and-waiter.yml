@@ -126,6 +126,15 @@ jobs:
             exit 0
           fi
 
+          if [ "$checks_status" -ne 0 ] && ! echo "$checks_output" | grep -q $'\t'; then
+            # Not a single check row: the re-read itself failed (an API
+            # error, say), so nothing tells that only the ignorable check
+            # failed. Don't merge on that.
+            echo "Could not read the checks again after watching them:"
+            echo "$checks_output"
+            exit "$checks_status"
+          fi
+
           if [ "$checks_status" -ne 0 ]; then
             ignored_failure_pattern='^Queue: Embarked in merge queue[[:space:]]+fail([[:space:]]+|$)'
             real_failures=$(echo "$checks_output" \

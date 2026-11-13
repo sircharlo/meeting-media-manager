@@ -59,6 +59,29 @@ describe('scrubUserPaths', () => {
     expect(scrubUserPaths(JSON.stringify(detail))).not.toContain('Olivier');
   });
 
+  // A path that ends at the user's folder used to take the rest of the JSON
+  // with it, up to the next slash.
+  it('keeps the rest of a JSON string after a path ending at the user folder', () => {
+    const detail = JSON.stringify({
+      cache: String.raw`D:\M3\cache`,
+      home: String.raw`C:\Users\Olivier`,
+      mac: '/Users/olivier',
+      next: 'kept',
+    });
+    expect(JSON.parse(scrubUserPaths(detail))).toEqual({
+      cache: String.raw`D:\M3\cache`,
+      home: String.raw`C:\Users\<user>`,
+      mac: '/Users/<user>',
+      next: 'kept',
+    });
+  });
+
+  it('redacts Windows paths whatever their case', () => {
+    expect(scrubUserPaths(String.raw`c:\users\olivier\cache`)).toBe(
+      String.raw`c:\users\<user>\cache`,
+    );
+  });
+
   it('redacts every occurrence in a string with multiple paths', () => {
     expect(
       scrubUserPaths(
