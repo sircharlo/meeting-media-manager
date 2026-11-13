@@ -2443,9 +2443,10 @@ const setMediaPlaying = async (
     if (!shouldStartZoomManagerSharing) {
       triggerZoomScreenShare(true);
     }
-  } else if (isImage(mediaPlaying.value.url)) {
-    stopMedia(true);
   }
+  // Media already shown (a picture, say) is replaced as is, not stopped
+  // first: the media window then crossfades from one to the other, instead
+  // of fading out to the yeartext and back in.
   if (signLanguage) {
     if (marker) {
       updateMediaCustomDuration(getMarkerTimes(marker));
