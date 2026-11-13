@@ -45,7 +45,9 @@
         </div>
       </div>
 
-      <div v-if="checkRunning" class="action-popup__banner">
+      <!-- Not while the check only waits for the user's go-ahead, which Test
+           again gives (see runZoomStartupCheck) -->
+      <div v-if="checkingZoom" class="action-popup__banner">
         <LiquidSpinner color="primary" size="18px" />
         <div class="col text-caption text-weight-medium">
           {{ t('zoom-check-running') }}
@@ -469,7 +471,7 @@ const { currentSettings, mediaIsPlaying, zoomHelperLogs } =
   storeToRefs(currentState);
 
 const zoomState = useZoomStateStore();
-const { automationsPaused, checkDeclined, checkRunning, pause, relearnNeeded } =
+const { automationsPaused, checkDeclined, checkingZoom, pause, relearnNeeded } =
   storeToRefs(zoomState);
 
 const handAlert = useHandAlertStore();

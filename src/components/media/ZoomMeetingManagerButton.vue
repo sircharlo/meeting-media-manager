@@ -81,14 +81,16 @@ const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 const zoomState = useZoomStateStore();
-const { automationsPaused, checkRunning, meeting } = storeToRefs(zoomState);
+// Not while the check only waits for the user's go-ahead: it isn't checking
+// anything yet.
+const { automationsPaused, checkingZoom, meeting } = storeToRefs(zoomState);
 
 const zoomMeetingManagerPopup = defineModel<boolean>({ required: true });
 
 const aroundMeetingTime = ref(isAroundMeetingTime());
 
 const zoomStatus = computed<ZoomStatus>(() => {
-  if (checkRunning.value) return 'checking';
+  if (checkingZoom.value) return 'checking';
   if (automationsPaused.value) return 'paused';
   if (meeting.value?.found) return 'live';
   return aroundMeetingTime.value ? 'missing' : 'idle';

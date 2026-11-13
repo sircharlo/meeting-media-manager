@@ -366,6 +366,14 @@ export interface ZoomWindowState {
 type ZoomCommandBody =
   | {
       /**
+       * Only reads the participants panel if it's open already, pressing
+       * and bringing back nothing (no `participants` while it's closed).
+       */
+      peek?: boolean;
+      type: 'participants';
+    }
+  | {
+      /**
        * Zoom's plain Raise hand button's name, once learned (accounts without
        * reactions, where Zoom shows that button instead of React).
        */
@@ -456,7 +464,6 @@ type ZoomCommandBody =
   | { type: 'leave-audio' }
   | { type: 'mic-title' }
   | { type: 'panel-entries' }
-  | { type: 'participants' }
   | { type: 'share-entries' }
   | { type: 'share-participants' }
   | { type: 'share-toolbar-entries' }

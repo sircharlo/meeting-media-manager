@@ -131,6 +131,26 @@ describe.runIf(process.platform === 'win32')(
     );
 
     it(
+      'peeks at who is in the meeting whether or not Zoom is open, opening nothing',
+      async () => {
+        const helper = newHelper();
+        const result = await helper.request({
+          peek: true,
+          type: 'participants',
+        });
+
+        // Without Zoom's participants panel open, there's nothing to read.
+        expect(result.ok).toBe(true);
+        expect(
+          result.participants === undefined ||
+            Array.isArray(result.participants),
+        ).toBe(true);
+        helper.stop();
+      },
+      TIMEOUT,
+    );
+
+    it(
       'describes what Zoom shows whether or not Zoom is open',
       async () => {
         const helper = newHelper();

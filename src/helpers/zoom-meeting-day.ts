@@ -164,7 +164,10 @@ const runDue = async () => {
   const dueBefore = getSchedule(new Date());
   const outcome = await runZoomStartupCheck();
   const schedule = getSchedule(new Date());
-  // The check can take a while. The meeting settings, if due when it began,
+  // The check can take a while, though it only asks the user's go-ahead
+  // early enough for the question and the check to be over before the
+  // before/after-meeting settings' time is (see LAST_QUESTION_MS in
+  // zoom-startup-check.ts). The meeting settings, if due when it began,
   // still run after it, even once the meeting has started; the
   // before/after-meeting settings don't, if their time is over by then.
   const step = dueBefore?.step === 'meeting' ? dueBefore.step : schedule?.step;

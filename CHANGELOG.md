@@ -12,7 +12,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🛠️ Improvements and Tweaks
 
-- 🛠️ **Zoom Meeting Manager**: The check M³ runs before a meeting no longer starts on its own: M³ now asks first, in a short window that says what it needs to test and how long that takes (under 15 seconds), so it never presses Zoom's buttons while you're doing something else in Zoom. Skipping it, behind a confirmation, turns the Zoom automations off for that meeting; Test again turns them back on. If the question goes unanswered (its window never appears, for instance), the check gives up after two minutes and asks again later rather than waiting for ever, so Zoom is still checked before your meeting.
+- 🛠️ **Zoom Meeting Manager**: The check M³ runs before a meeting no longer presses Zoom's buttons on its own: before it opens the meeting, or tests everything with you alone in it, M³ now asks first, in a short window that says what it needs to test and how long that takes (under 15 seconds), so it never does while you're doing something else in Zoom. With others already in the meeting, it only looks, and asks nothing. The check now only runs in the hour and a quarter before the meeting, even with Zoom already open: never during or after the meeting, nor on other days, and its question never comes so close to the meeting that the check could hold up the meeting's Zoom settings. Skipping it, behind a confirmation, turns the Zoom automations off for that meeting only; Test again turns them back on, and also answers the question. If the question goes unanswered (its window never appears, for instance), the check gives up after two minutes and asks again a quarter of an hour later rather than waiting for ever, so Zoom is still checked before your meeting.
 - 🛠️ **Zoom Meeting Manager**: The check M³ runs before a meeting now always confirms that everything it automates works, instead of passing silently when it runs on its own.
 
 ### 🐞 Bug Fixes
@@ -21,13 +21,14 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Zoom Meeting Manager**: Zoom closes its audio menu as soon as its meeting window moves or changes size, as it can when a panel opens just after the meeting starts. The check M³ runs before a meeting then couldn't leave computer audio and paused your automations. M³ now opens the menu again when that happens.
 - 🐞 **Zoom Meeting Manager**: The check M³ runs before a meeting now presses Zoom's Share button again when Zoom ignores the first press, as it sometimes does with another of its own windows open (its poll window, or its "Change name" dialog), so it no longer pauses your automations over a share that never came.
 - 🐞 **Zoom Meeting Manager**: The window asking whether M³ may test Zoom before a meeting could stay open with buttons that did nothing, once the check had stopped waiting for the answer. Answering it now always closes it.
+- 🐞 **Zoom Meeting Manager**: Stopping the check M³ runs before a meeting while it waited for the meeting it had just opened didn't stop it: once the meeting opened, the check could still go on to press Zoom's buttons. It now stops at once.
 - 🐞 **Media Export**: With "Convert exported files to MP4" turned on, WAV, FLAC, OGG and M4A audio files couldn't be converted and were left out of the export. They're now converted like MP3 files.
 - 🐞 **Error Reports**: Some error reports about folders M³ couldn't create could include your Windows user name. It's now removed from those too, as it already was everywhere else.
 
 ### 🔧 Chores
 
 - 🔧 **Dependency Updates**: The automated lockfile update is now built before it merges, so a dependency change that no longer compiles is caught there instead of landing on master and breaking the next release.
-- 🔧 **Error Reporting**: When the Zoom meeting M³ opens for its before-meeting check doesn't appear, the error report now says what Zoom showed instead (its version, its open windows and their buttons), so we can find out why. Error reports also keep more of what happened just before a problem while background music is playing.
+- 🔧 **Error Reporting**: When the Zoom meeting M³ opens for its before-meeting check doesn't appear, the error report now says what Zoom showed instead (its version, its open windows and their buttons), so we can find out why. Testing Zoom again with no meeting open and no meeting ID set no longer sends an error report either: M³ just says so. Error reports also keep more of what happened just before a problem while background music is playing.
 
 ## v26.11.2
 

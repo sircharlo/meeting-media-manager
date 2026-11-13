@@ -1977,10 +1977,31 @@ namespace M3.ZoomHelper
             return result;
         }
 
-        public static Dictionary<string, object> Participants()
+        /// <summary>Who is in the meeting. With `peek`, only as the
+        /// participants panel shows it when it's open already, read without
+        /// pressing or bringing back anything (M3 asks before it presses
+        /// Zoom's buttons for its check, and this tells whether it will, see
+        /// zoom-startup-check.ts): nothing (no `participants`) while the panel
+        /// is closed, or while the meeting window can't be read as it is
+        /// (Zoom's mini view, or minimized).</summary>
+        public static Dictionary<string, object> Participants(bool peek)
         {
+            if (peek) return PeekParticipants();
             var window = RequireParticipantsWindow();
             OpenParticipantsPanel(window);
+            return ParticipantsReply(window);
+        }
+
+        static Dictionary<string, object> PeekParticipants()
+        {
+            var unknown = new Dictionary<string, object>();
+            var window = FindMeetingWindow();
+            if (window == null || Native.IsIconic(HandleOf(window)) || !ParticipantsPanelOpen(window)) return unknown;
+            return ParticipantsReply(window);
+        }
+
+        static Dictionary<string, object> ParticipantsReply(El window)
+        {
             var rows = new List<object>();
             foreach (var row in ParticipantRows(window))
             {
@@ -4093,7 +4114,7 @@ namespace M3.ZoomHelper
         {
             Known.Load(request);
             var type = GetString(request, "type");
-            var reply = type == "ping" || type == "window-layout" || type == "snapshot" || (type == "meeting" && !GetBool(request, "reveal"))
+            var reply = type == "ping" || type == "window-layout" || type == "snapshot" || (type == "meeting" && !GetBool(request, "reveal")) || (type == "participants" && GetBool(request, "peek"))
                 ? Run(type, request)
                 : RunRestoringInput(type, request);
             if (Known.Learned.Count > 0) reply["learned"] = new Dictionary<string, object>(Known.Learned);
@@ -4135,7 +4156,7 @@ namespace M3.ZoomHelper
                 case "mic-title": return MicTitle();
                 case "mute-all": return MuteAll(GetBool(request, "allowSelfUnmute"));
                 case "ask-all-to-unmute": return AskAllToUnmute();
-                case "participants": return Participants();
+                case "participants": return Participants(GetBool(request, "peek"));
                 case "admit": return Admit(GetStrings(request, "names"));
                 case "learn-hand-raised":
                     return LearnHandRaised(GetString(request, "reactButtonTitle"), GetString(request, "handRaiseTitle"));

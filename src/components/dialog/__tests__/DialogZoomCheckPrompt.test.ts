@@ -101,6 +101,23 @@ describe('DialogZoomCheckPrompt', () => {
     expect(dialogs().every((d) => !d.open)).toBe(true);
   });
 
+  it('closes, with the skip confirmation, when Test again answers it', async () => {
+    await mountPrompt();
+    const answer = askBeforeCheckingZoom(60_000);
+    await flushPromises();
+    dialog('zoom-check-prompt')?.vm.$emit('cancel');
+    await flushPromises();
+    expect(dialog('zoom-check-skip-confirm')?.props('modelValue')).toBe(true);
+
+    // Test again, from a notification above the question: the go-ahead (see
+    // runZoomStartupCheck).
+    answerZoomCheckPrompt('run');
+    await flushPromises();
+
+    expect(dialogs().every((d) => !d.open)).toBe(true);
+    expect(await answer).toBe('run');
+  });
+
   it('goes back to the question when the user keeps the automations on', async () => {
     await mountPrompt();
     const answer = askBeforeCheckingZoom(60_000);
