@@ -27,6 +27,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🔧 Chores
 
 - 🔧 **Dependency Updates**: The automated lockfile update is now built before it merges, so a dependency change that no longer compiles is caught there instead of landing on master and breaking the next release.
+- 🔧 **Build and Release**: The builds that check automated dependency, language and version updates now run with read-only access and without the error-reporting keys, and language updates are checked without packaging the app. The installed app now reads media tags with the same library version the tests use (it was a major version behind).
 - 🔧 **Error Reporting**: When the Zoom meeting M³ opens for its before-meeting check doesn't appear, the error report now says what Zoom showed instead (its version, its open windows and their buttons), so we can find out why. Error reports also keep more of what happened just before a problem while background music is playing.
 
 ## v26.11.2
