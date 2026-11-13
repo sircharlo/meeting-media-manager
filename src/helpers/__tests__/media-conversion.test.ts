@@ -782,23 +782,48 @@ describe('media-conversion', () => {
   });
 
   describe('removeOrphanedConversions', () => {
-    it('deletes the converted copies no item plays any more, and only those', async () => {
+    const GRACE_MS = 2 * 60_000;
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('deletes the converted copies no item plays any more, and only those, a little later', async () => {
+      vi.useFakeTimers();
       const kept = '/cache/Converted Media/2026-11-13/b-0123456789ab.mp4';
       const { helper } = await load([
         item(kept, { source: 'watched', uniqueId: 'b' }),
       ]);
 
-      await helper.removeOrphanedConversions([
+      helper.removeOrphanedConversions([
         fileUrl('/cache/Converted Media/2026-11-13/a-0123456789ab.mp4'),
         fileUrl(kept),
         fileUrl('/watch/2026-11-13/c.mp4'),
         undefined,
       ]);
+      await vi.advanceTimersByTimeAsync(GRACE_MS - 1000);
+      expect(fs.remove).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(1000);
 
       expect(fs.remove.mock.calls.map(([path]) => path)).toEqual([
         '/cache/Converted Media/2026-11-13/a-0123456789ab.mp4',
         '/cache/Converted Media/2026-11-13/a-0123456789ab.jpg',
       ]);
+    });
+
+    // A sync tool taking a file away and putting it back as it was: its item
+    // comes back playing the same copy.
+    it('keeps a copy whose file came back meanwhile', async () => {
+      vi.useFakeTimers();
+      const copy = '/cache/Converted Media/2026-11-13/a-0123456789ab.mp4';
+      const { helper, items } = await load([]);
+
+      helper.removeOrphanedConversions([fileUrl(copy)]);
+      await vi.advanceTimersByTimeAsync(30_000);
+      items.push(item(copy, { source: 'watched', uniqueId: 'a' }));
+      await vi.advanceTimersByTimeAsync(GRACE_MS);
+
+      expect(fs.remove).not.toHaveBeenCalled();
     });
   });
 });

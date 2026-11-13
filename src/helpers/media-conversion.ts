@@ -383,20 +383,17 @@ const isInFolder = (path: string, folder: string) =>
     .toLowerCase()
     .startsWith(`${normalize(folder).toLowerCase()}/`);
 
-/**
- * Deletes the converted copies these items played, and their thumbnails,
- * once no item plays them any more: their watched file left the folder (the
- * items still playing it are gone). Only ever files in the Converted Media
- * folder. Never throws.
- * @param fileUrls The files the items that were taken off played.
- */
-export const removeOrphanedConversions = async (
-  fileUrls: (string | undefined)[],
-) => {
+// How long a converted copy outlives the item that played it. A sync tool
+// can take a file away and put it back, unchanged, a moment later: the item
+// it gets back then plays the same copy (see findWatchedConversion), which
+// is still there to play rather than converted again.
+const ORPHAN_GRACE_MS = 2 * 60_000;
+
+/** See removeOrphanedConversions: deletes those no item plays by now. */
+const deleteOrphanedConversions = async (fileUrls: string[]) => {
   try {
     const folder = await getConvertedMediaPath();
-    const orphans = [...new Set(fileUrls)]
-      .filter((url): url is string => !!url)
+    const orphans = fileUrls
       .map((url) => fileUrlToPath(url))
       .filter((path) => isInFolder(path, folder) && !hasItemsForFile(path));
     await Promise.all(
@@ -411,6 +408,22 @@ export const removeOrphanedConversions = async (
       },
     });
   }
+};
+
+/**
+ * Deletes the converted copies these items played, and their thumbnails,
+ * if no item plays them two minutes later (see ORPHAN_GRACE_MS): their
+ * watched file left the folder (the items still playing it are gone), and
+ * didn't come back. Only ever files in the Converted Media folder. Never
+ * throws.
+ * @param fileUrls The files the items that were taken off played.
+ */
+export const removeOrphanedConversions = (fileUrls: (string | undefined)[]) => {
+  const urls = [...new Set(fileUrls)].filter((url): url is string => !!url);
+  if (!urls.length) return;
+  setTimeout(() => {
+    void deleteOrphanedConversions(urls);
+  }, ORPHAN_GRACE_MS);
 };
 
 // ─── Converting ──────────────────────────────────────────────────────────────

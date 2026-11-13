@@ -659,7 +659,7 @@ async function handleUnlinkWatchFolderEvent(
     dayObj.mediaSections,
     (item) => !!item && isWatchedItemOfFile(item, day, changedPath),
   );
-  await removeOrphanedConversions(removed.map((item) => item.fileUrl));
+  removeOrphanedConversions(removed.map((item) => item.fileUrl));
   await handleUnlinkCleanup(changedPath);
 }
 
