@@ -1155,6 +1155,7 @@
   "zoom-hand-unmuted": "{name} is gevraagd het dempen op te heffen. Als die klaar is:",
   "zoom-helper-error-generic": "Probeer het opnieuw. Blijft het gebeuren, start M³ dan opnieuw.",
   "zoom-helper-error-helper-missing": "Sommige bestanden van M³ om Zoom te bedienen ontbreken, misschien verwijderd door een antivirusprogramma. Als je M³ opnieuw installeert, zouden ze terug moeten komen.",
+  "zoom-helper-error-powershell-broken": "Windows PowerShell, dat M³ nodig heeft om Zoom te bedienen, start niet op deze computer: het stopt met een foutmelding zodra het opent. M³ kan Zoom pas bedienen als Windows PowerShell is gerepareerd.",
   "zoom-helper-error-powershell-not-found": "Windows PowerShell, dat M³ nodig heeft om Zoom te bedienen, is niet gevonden op deze computer.",
   "zoom-helper-error-powershell-restricted": "Windows PowerShell is op deze computer beperkt (bijvoorbeeld door het beveiligingsbeleid van een organisatie), waardoor M³ Zoom niet kan bedienen.",
   "zoom-helper-error-windows-only": "De Zoom-vergaderbeheerder is alleen beschikbaar op Windows.",
