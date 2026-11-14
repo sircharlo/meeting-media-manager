@@ -1155,6 +1155,7 @@
   "zoom-hand-unmuted": "已请求 {name} 解除静音。对方讲完后：",
   "zoom-helper-error-generic": "请重试。如果问题持续出现，请重新启动 M³。",
   "zoom-helper-error-helper-missing": "M³ 用于控制 Zoom 的部分文件丢失，可能已被杀毒软件删除。重新安装 M³ 应该可以恢复这些文件。",
+  "zoom-helper-error-powershell-broken": "M³ 控制 Zoom 所需的 Windows PowerShell 在此计算机上无法启动：它一打开就因错误而停止。在修复 Windows PowerShell 之前，M³ 无法控制 Zoom。",
   "zoom-helper-error-powershell-not-found": "在此计算机上找不到 M³ 控制 Zoom 所需的 Windows PowerShell。",
   "zoom-helper-error-powershell-restricted": "此计算机上的 Windows PowerShell 受到限制（例如受组织的安全策略限制），因此 M³ 无法控制 Zoom。",
   "zoom-helper-error-windows-only": "Zoom 会议管理器仅适用于 Windows。",

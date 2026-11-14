@@ -1155,6 +1155,7 @@
   "zoom-hand-unmuted": "Osalejal {name} paluti heli sisse lülitada. Kui ta on lõpetanud:",
   "zoom-helper-error-generic": "Palun proovi uuesti. Kui see kordub, taaskäivita M³.",
   "zoom-helper-error-helper-missing": "Mõned M³-e failid, mida on vaja Zoomi juhtimiseks, puuduvad – võib-olla eemaldas need viirusetõrje. M³-e uuesti installimine peaks need taastama.",
+  "zoom-helper-error-powershell-broken": "Windows PowerShell, mida M³ vajab Zoomi juhtimiseks, ei käivitu selles arvutis: see peatub kohe avamisel veaga. M³ ei saa Zoomi juhtida enne, kui Windows PowerShell on parandatud.",
   "zoom-helper-error-powershell-not-found": "Windows PowerShelli, mida M³ vajab Zoomi juhtimiseks, ei leitud selles arvutis.",
   "zoom-helper-error-powershell-restricted": "Windows PowerShell on selles arvutis piiratud (näiteks organisatsiooni turvapoliitikaga), seega ei saa M³ Zoomi juhtida.",
   "zoom-helper-error-windows-only": "Zoomi koosolekuhaldur on saadaval ainult Windowsis.",
