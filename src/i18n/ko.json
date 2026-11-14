@@ -1155,6 +1155,7 @@
   "zoom-hand-unmuted": "{name} 님에게 음소거 해제를 요청했습니다. 끝나면:",
   "zoom-helper-error-generic": "다시 시도해 주십시오. 문제가 계속되면 M³를 다시 시작하십시오.",
   "zoom-helper-error-helper-missing": "Zoom 제어에 필요한 M³ 파일 일부가 없습니다. 바이러스 백신 프로그램이 삭제했을 수 있습니다. M³를 다시 설치하면 복원됩니다.",
+  "zoom-helper-error-powershell-broken": "M³가 Zoom을 제어하는 데 필요한 Windows PowerShell이 이 컴퓨터에서 시작되지 않습니다. 열리자마자 오류와 함께 중지됩니다. Windows PowerShell을 복구할 때까지 M³는 Zoom을 제어할 수 없습니다.",
   "zoom-helper-error-powershell-not-found": "M³가 Zoom을 제어하는 데 필요한 Windows PowerShell을 이 컴퓨터에서 찾을 수 없습니다.",
   "zoom-helper-error-powershell-restricted": "이 컴퓨터에서는 Windows PowerShell 사용이 제한되어 있어(예: 조직의 보안 정책) M³가 Zoom을 제어할 수 없습니다.",
   "zoom-helper-error-windows-only": "Zoom 회의 관리자는 Windows에서만 사용할 수 있습니다.",
