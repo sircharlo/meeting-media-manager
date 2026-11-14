@@ -6,6 +6,8 @@ import type {
 
 import { i18n } from 'boot/i18n';
 import {
+  getZoomHelperErrorMessageKey,
+  isZoomHelperUnavailableHere,
   ZOOM_DIAGNOSIS_CHECKS,
   ZOOM_SETUP_ASSISTANT_DIALOG_ID,
 } from 'src/constants/zoom';
@@ -550,7 +552,40 @@ export const dismissFailedZoomCheckNotice = () => {
   dismissFailedCheckNotice = undefined;
 };
 
-const notifyFailedCheck = (problems: string[], namesChanged: boolean) => {
+/**
+ * Why the check failed when M³'s helper can't run on this computer at all
+ * (see isZoomHelperUnavailableHere): the helper was all that failed, and
+ * the last action said so. Undefined otherwise.
+ */
+const findUnavailableHelper = (
+  problems: string[],
+  failures: ZoomActionFailure[],
+) => {
+  if (problems.length !== 1 || problems[0] !== HELPER_PROBLEM) return;
+  const error = failures.at(-1)?.error;
+  return isZoomHelperUnavailableHere(error) ? error : undefined;
+};
+
+/** What the notification of a failed check says under its title. */
+const getFailedCheckCaption = (
+  problems: string[],
+  namesChanged: boolean,
+  unavailableHelper?: string,
+) => {
+  if (namesChanged) return t('zoom-check-names-changed');
+  if (unavailableHelper) {
+    return t(getZoomHelperErrorMessageKey(unavailableHelper));
+  }
+  return t('zoom-check-failed-caption', {
+    problems: problems.map((key) => t(key)).join(', '),
+  });
+};
+
+const notifyFailedCheck = (
+  problems: string[],
+  namesChanged: boolean,
+  unavailableHelper?: string,
+) => {
   dismissFailedCheckNotice = createTemporaryNotification({
     actions: [
       namesChanged
@@ -572,11 +607,7 @@ const notifyFailedCheck = (problems: string[], namesChanged: boolean) => {
           },
       { color: 'white', icon: 'close', round: true },
     ],
-    caption: namesChanged
-      ? t('zoom-check-names-changed')
-      : t('zoom-check-failed-caption', {
-          problems: problems.map((key) => t(key)).join(', '),
-        }),
+    caption: getFailedCheckCaption(problems, namesChanged, unavailableHelper),
     group: 'zoom-check',
     message: t('zoom-automations-paused'),
     timeout: 0,
@@ -593,13 +624,19 @@ const report = (
   if (problems.length) {
     const failures = takeZoomActionFailures();
     const namesChanged = failedOnChangedNames(failures);
+    const unavailableHelper = findUnavailableHelper(problems, failures);
     zoomState.pauseAutomations(congregationId, problems, namesChanged);
     log('Zoom check failed: automations paused', 'zoom', 'warn', {
       ...found,
+      helperDetail: failures.at(-1)?.detail,
       namesChanged,
+      unavailableHelper,
     });
-    void reportFailedCheck(found, failures, namesChanged);
-    notifyFailedCheck(problems, namesChanged);
+    // Down to this computer, which the user is told about: nothing to fix
+    // in M³ (MMM-V2-3NY).
+    if (!unavailableHelper)
+      void reportFailedCheck(found, failures, namesChanged);
+    notifyFailedCheck(problems, namesChanged, unavailableHelper);
     return 'failed';
   }
 

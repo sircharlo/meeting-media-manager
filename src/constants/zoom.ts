@@ -39,6 +39,7 @@ export const ZOOM_DIAGNOSIS_CHECKS = [
 // can't start, by the reason it reports.
 const ZOOM_HELPER_ERROR_MESSAGE_KEYS: Record<string, string> = {
   'helper-missing': 'zoom-helper-error-helper-missing',
+  'powershell-broken': 'zoom-helper-error-powershell-broken',
   'powershell-not-found': 'zoom-helper-error-powershell-not-found',
   'powershell-restricted': 'zoom-helper-error-powershell-restricted',
   'windows-only': 'zoom-helper-error-windows-only',
@@ -47,3 +48,16 @@ const ZOOM_HELPER_ERROR_MESSAGE_KEYS: Record<string, string> = {
 export const getZoomHelperErrorMessageKey = (error?: string) =>
   (error && ZOOM_HELPER_ERROR_MESSAGE_KEYS[error]) || // NOSONAR: '' means not set
   'zoom-helper-error-generic';
+
+// Why the helper can't run on this computer at all, whatever M³ does: it's
+// down to the computer (no Windows PowerShell, a locked-down one, or one
+// that doesn't start), so the user is told, and it isn't reported.
+const ZOOM_HELPER_UNAVAILABLE_ERRORS = new Set([
+  'powershell-broken',
+  'powershell-not-found',
+  'powershell-restricted',
+  'windows-only',
+]);
+
+export const isZoomHelperUnavailableHere = (error?: string) =>
+  !!error && ZOOM_HELPER_UNAVAILABLE_ERRORS.has(error);

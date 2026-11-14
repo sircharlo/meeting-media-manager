@@ -1,4 +1,4 @@
-import type { MediaItem, SongItem } from 'src/types';
+import type { JwLangCode, MediaItem, SongItem } from 'src/types';
 
 import {
   useBroadcastChannel,
@@ -25,7 +25,10 @@ import {
 } from 'src/helpers/date';
 import { getDemoSongLibrary } from 'src/helpers/demo-mode';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { downloadBackgroundMusic } from 'src/helpers/jw-media';
+import {
+  downloadBackgroundMusic,
+  isSongbookDownloadFailed,
+} from 'src/helpers/jw-media';
 import { getMusicStartMeetingConflict } from 'src/helpers/meeting-quick-actions';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { automateZoomSettingsOnMusicStart } from 'src/helpers/zoom';
@@ -51,6 +54,30 @@ export interface BackgroundMusicState {
 
 export type MusicState =
   '' | 'music.error' | 'music.playing' | 'music.starting' | 'music.stopping';
+
+/** What playMusic found when it had no song to play. */
+interface NoSongFound {
+  /** Songs in the songbook's library, before any were left out. */
+  librarySongs: number;
+  online: boolean;
+  queueLength: number;
+  /**
+   * The songbook's song list couldn't be downloaded (and none was saved
+   * earlier): there's no song for want of a connection, shown in the
+   * download status, not because of M³.
+   */
+  songbookDownloadFailed: boolean;
+}
+
+/**
+ * No song to play, even after waiting for the song library to appear. Its
+ * message is the one these were reported under (MMM-V2-3N2).
+ */
+class NoSongToPlayError extends Error {
+  constructor(readonly found: NoSongFound) {
+    super('No next song found');
+  }
+}
 
 const IGNORABLE_PLAYBACK_ERROR_MESSAGES = [
   'removed from the document',
@@ -404,18 +431,43 @@ export const useMusicStore = defineStore('music', () => {
     if (isStale()) return;
     musicState.value = 'music.error';
     logMusicStartTiming('start failed', 'warn');
-    errorCatcher(error, {
-      contexts: {
-        fn: {
-          lang: currentSettings.value?.lang,
-          name: 'playMusic',
-          pub: currentState.currentSongbook?.pub,
-          reason,
+    const found = error instanceof NoSongToPlayError ? error.found : undefined;
+    if (found?.songbookDownloadFailed) {
+      log(
+        'No song to play: the songbook could not be downloaded, and none was saved before',
+        'backgroundMusic',
+        'warn',
+        found,
+      );
+    } else {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            lang: currentSettings.value?.lang,
+            name: 'playMusic',
+            pub: currentState.currentSongbook?.pub,
+            reason,
+            ...found,
+          },
         },
-      },
-    });
+      });
+    }
     scheduleAutoStartRetry();
   };
+
+  /**
+   * What playMusic found when it had no song to play.
+   * @param librarySongs The song library's size at the last attempt.
+   * @param lang The language the songbook was asked for in.
+   */
+  const noSongToPlay = (librarySongs: number, lang: JwLangCode) =>
+    new NoSongToPlayError({
+      librarySongs,
+      online: currentState.online,
+      queueLength: songList.value.length,
+      songbookDownloadFailed:
+        !librarySongs && !demoMode.enabled && isSongbookDownloadFailed(lang),
+    });
 
   /**
    * Seeks the first song to the offset that lines it up with the meeting
@@ -487,13 +539,17 @@ export const useMusicStore = defineStore('music', () => {
       volume.value = 0;
       logMusicStartTiming('audio source attached and volume set to 0');
 
+      const lang = currentSettings.value?.lang || 'E';
+      // The last attempt's library size, for when no song is found.
+      let librarySongs = 0;
       const buildQueueAndGetNextSongUrl = async () => {
         if (!currentSettings.value) return '';
 
         const fetchLibraryStartedAt = performance.now();
         const rawSongLibrary = demoMode.enabled
           ? getDemoSongLibrary()
-          : await fetchSongLibrary(currentSettings.value?.lang || 'E');
+          : await fetchSongLibrary(lang);
+        librarySongs = rawSongLibrary.length;
         logMusicStartStep('song library fetched', fetchLibraryStartedAt, {
           songs: rawSongLibrary.length,
         });
@@ -577,7 +633,7 @@ export const useMusicStore = defineStore('music', () => {
       }
 
       if (isStale()) return;
-      if (!nextSongUrl) throw new Error('No next song found');
+      if (!nextSongUrl) throw noSongToPlay(librarySongs, lang);
 
       musicPlayerSource.value.src = nextSongUrl;
       log(`Playing music from ${nextSongUrl}`, 'backgroundMusic', 'info');

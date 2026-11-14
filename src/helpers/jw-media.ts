@@ -5986,16 +5986,32 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
   }
 };
 
+/** The songbook background music plays from, in `lang`. */
+const getSongbookPublication = (lang: JwLangCode): PublicationFetcher => {
+  const { currentSongbook } = useCurrentStateStore();
+  return {
+    fileformat: currentSongbook?.fileformat,
+    langwritten: lang || 'E',
+    maxTrack: MAX_SONGS,
+    pub: currentSongbook?.pub || 'sjjm',
+  };
+};
+
+/**
+ * Whether the songbook's song list couldn't be downloaded: getPubMediaLinks
+ * flags it in the download status, which the user sees. With no list saved
+ * from an earlier time either, background music then has nothing to play
+ * for want of a connection.
+ */
+export const isSongbookDownloadFailed = (lang: JwLangCode) =>
+  !!useCurrentStateStore().downloadProgress[
+    getPubId(getSongbookPublication(lang), true)
+  ]?.error;
+
 export const fetchBackgroundMusicSongLibrary = async (
   lang: JwLangCode,
 ): Promise<SongItem[]> => {
-  const currentStateStore = useCurrentStateStore();
-  const publication: PublicationFetcher = {
-    fileformat: currentStateStore.currentSongbook?.fileformat,
-    langwritten: lang || 'E',
-    maxTrack: MAX_SONGS,
-    pub: currentStateStore.currentSongbook?.pub || 'sjjm',
-  };
+  const publication = getSongbookPublication(lang);
   const cacheKey = getBackgroundMusicLibraryCacheKey(publication);
 
   if (!backgroundMusicLibraryCache.has(cacheKey)) {

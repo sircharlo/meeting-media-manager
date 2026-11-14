@@ -54,6 +54,33 @@ const COMMAND_TYPES = new Set<ZoomCommandType>([
   'window-layout',
 ]);
 
+// powershell.exe's exit code when its own shell fails to start, before it
+// runs any script ("The shell cannot be started", for example over a
+// damaged .NET Framework configuration): 0xFFFF0000, which Node reports
+// unsigned on Windows (MMM-V2-3NY).
+const POWERSHELL_INIT_FAILURE_CODES = new Set([-0x1_00_00, 0xff_ff_00_00]);
+// The most lines kept of what PowerShell printed before the helper was
+// ready, to say why it stopped.
+const MAX_START_OUTPUT_LINES = 10;
+// How long the helper's output may take to close once PowerShell exited.
+const OUTPUT_DRAIN_MS = 500;
+
+/**
+ * Why the helper stopped before it was ready: PowerShell itself didn't
+ * start, or the helper exited. With what PowerShell printed meanwhile.
+ */
+const describeEarlyExit = (
+  code: null | number,
+  output: string[],
+): ZoomHelperStartResult => ({
+  detail: [`exit code ${code}`, ...output].join(' | '),
+  error:
+    code !== null && POWERSHELL_INIT_FAILURE_CODES.has(code)
+      ? 'powershell-broken'
+      : 'helper-exited',
+  ok: false,
+});
+
 export const isZoomCommand = (value: unknown): value is ZoomCommand =>
   !!value &&
   typeof value === 'object' &&
@@ -109,7 +136,11 @@ export class ZoomHelperProcess {
       if (!this.running) {
         const started = await this.start();
         if (!started.ok) {
-          return { error: started.error ?? 'helper-not-started', ok: false };
+          return {
+            detail: started.detail,
+            error: started.error ?? 'helper-not-started',
+            ok: false,
+          };
         }
       }
       return this.send(command);
@@ -185,6 +216,14 @@ export class ZoomHelperProcess {
       this.child = child;
       this.ready = false;
 
+      // What PowerShell printed before the helper was ready: why it stopped,
+      // if it does (in Windows' language).
+      const startOutput: string[] = [];
+      const keepStartOutput = (line: string) => {
+        if (startResult || startOutput.length >= MAX_START_OUTPUT_LINES) return;
+        startOutput.push(line.trim());
+      };
+
       // Only ever read by finishStart, which runs once the helper answers.
       const startTimer = setTimeout(
         () => finishStart({ error: 'helper-start-timeout', ok: false }),
@@ -197,6 +236,7 @@ export class ZoomHelperProcess {
           message = JSON.parse(line) as Record<string, unknown>;
         } catch {
           onLog?.(line);
+          keepStartOutput(line);
           return;
         }
         if (!startResult && 'ready' in message) {
@@ -225,7 +265,9 @@ export class ZoomHelperProcess {
       });
 
       createInterface({ input: child.stderr }).on('line', (line) => {
-        if (line.trim()) onLog?.(line);
+        if (!line.trim()) return;
+        onLog?.(line);
+        keepStartOutput(line);
       });
 
       child.on('error', (error) => {
@@ -242,11 +284,17 @@ export class ZoomHelperProcess {
           this.ready = false;
           this.settle({ error: 'helper-exited', ok: false });
         }
-        finishStart({
-          detail: `exit code ${code}`,
-          error: 'helper-exited',
-          ok: false,
-        });
+        if (!startResult) {
+          // What PowerShell printed can still be on its way ('exit' can come
+          // before its output is read): wait for its output to close, or a
+          // moment, before saying why it stopped.
+          const finish = () => {
+            clearTimeout(drainTimer);
+            finishStart(describeEarlyExit(code, startOutput));
+          };
+          const drainTimer = setTimeout(finish, OUTPUT_DRAIN_MS);
+          child.once('close', finish);
+        }
         onExit?.(code);
       });
     });

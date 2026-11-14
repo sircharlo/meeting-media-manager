@@ -938,6 +938,55 @@ describe('Zoom startup check', () => {
     ]);
   });
 
+  // MMM-V2-3NY: Windows PowerShell itself didn't start on that computer.
+  it("says why when M³'s helper can't run on this computer, and doesn't report it", async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    zoom.getZoomMeetingState.mockResolvedValue(null);
+    zoom.takeZoomActionFailures.mockReturnValue([
+      {
+        action: 'meeting',
+        detail: 'exit code 4294901760 | El shell no se puede iniciar.',
+        error: 'powershell-broken',
+      },
+    ]);
+
+    expect(await runZoomStartupCheck()).toBe('failed');
+    expect(useZoomStateStore().pause?.problems).toEqual([
+      'zoom-check-problem-helper',
+    ]);
+    expect(notification()).toMatchObject({
+      caption:
+        "Windows PowerShell, which M³ needs to control Zoom, doesn't start on this computer: it stops with an error as soon as it opens. M³ can't control Zoom until Windows PowerShell is repaired.",
+      message: 'Zoom automations paused',
+      type: 'negative',
+    });
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+    expect(sentry.captureMessage).not.toHaveBeenCalled();
+  });
+
+  it('still reports a helper that stopped for another reason', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    zoom.getZoomMeetingState.mockResolvedValue(null);
+    zoom.takeZoomActionFailures.mockReturnValue([
+      { action: 'meeting', detail: 'exit code 3', error: 'helper-exited' },
+    ]);
+
+    expect(await runZoomStartupCheck()).toBe('failed');
+    expect(notification()?.caption).toContain("M³'s connection to Zoom");
+    await vi.waitFor(() =>
+      expect(sentry.captureMessage).toHaveBeenCalledWith(
+        'Zoom check failed: automations paused',
+        expect.objectContaining({
+          extra: expect.objectContaining({
+            failedActions: ['meeting: helper-exited'],
+          }),
+        }),
+      ),
+    );
+  });
+
   it("lets the setup assistant close a failed check's notification", async () => {
     const { dismissFailedZoomCheckNotice, runZoomStartupCheck } =
       await import('../zoom-startup-check');

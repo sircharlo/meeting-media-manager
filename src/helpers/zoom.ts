@@ -263,6 +263,8 @@ const leaveFailureBreadcrumb = async (
 /** A Zoom action that failed, with what Zoom showed then. */
 export interface ZoomActionFailure {
   action: ZoomCommandType;
+  /** Why the helper couldn't start, for the log (see ZoomCommandResult). */
+  detail?: string;
   error?: string;
   snapshot?: ZoomFailureSnapshot;
 }
@@ -276,6 +278,7 @@ const actionFailures: ZoomActionFailure[] = [];
 const keepFailure = (action: ZoomCommandType, result: ZoomCommandResult) => {
   actionFailures.push({
     action,
+    detail: result.detail,
     error: result.error,
     snapshot: result.snapshot,
   });

@@ -1825,3 +1825,47 @@ describe('jw-media helpers', () => {
     });
   });
 });
+
+// MMM-V2-3N2: the download status getPubMediaLinks flags, read for the
+// songbook background music plays from.
+describe('isSongbookDownloadFailed', () => {
+  const withSongbookProgress = (
+    downloadProgress: Record<string, { error?: boolean }>,
+  ) => {
+    Object.assign(currentStateStore, {
+      currentSongbook: { fileformat: 'MP3', pub: 'sjjm' },
+      downloadProgress,
+    });
+    onTestFinished(() => {
+      Object.assign(currentStateStore, {
+        currentSongbook: undefined,
+        downloadProgress: undefined,
+      });
+    });
+  };
+
+  it("is true once the songbook's song list failed to download", async () => {
+    withSongbookProgress({ sjjm_T_MP3: { error: true } });
+    const { getPubId } = await import('src/utils/jw');
+    vi.mocked(getPubId).mockReturnValue('sjjm_T_MP3');
+    const { isSongbookDownloadFailed } = await import('../jw-media');
+
+    expect(isSongbookDownloadFailed('T')).toBe(true);
+    expect(getPubId).toHaveBeenCalledWith(
+      { fileformat: 'MP3', langwritten: 'T', maxTrack: 0, pub: 'sjjm' },
+      true,
+    );
+  });
+
+  it('is false while it downloads, or for another publication', async () => {
+    withSongbookProgress({
+      sjjm_T_MP3: { error: false },
+      w_T_20261100_JWPUB: { error: true },
+    });
+    const { getPubId } = await import('src/utils/jw');
+    vi.mocked(getPubId).mockReturnValue('sjjm_T_MP3');
+    const { isSongbookDownloadFailed } = await import('../jw-media');
+
+    expect(isSongbookDownloadFailed('T')).toBe(false);
+  });
+});

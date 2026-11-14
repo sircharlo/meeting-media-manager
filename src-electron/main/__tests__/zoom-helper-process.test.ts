@@ -26,11 +26,18 @@ class FakeHelper extends EventEmitter {
   exit(code: number) {
     this.exitCode = code;
     this.emit('exit', code);
+    // As Node does once the process's output is closed.
+    this.emit('close', code);
   }
 
   kill() {
     this.exit(1);
     return true;
+  }
+
+  /** Prints a line that isn't a JSON message, as PowerShell's errors are. */
+  print(line: string, stream: 'stderr' | 'stdout' = 'stdout') {
+    this[stream].write(`${line}\n`);
   }
 
   reply(message: Record<string, unknown>) {
@@ -118,6 +125,58 @@ describe('ZoomHelperProcess', () => {
     });
     expect(helper.running).toBe(false);
     expect(onReady).not.toHaveBeenCalled();
+  });
+
+  // MMM-V2-3NY: "The shell cannot be started… The type initializer for
+  // 'System.Net.ServicePointManager' threw an exception", in Windows'
+  // language, and exit code 0xFFFF0000.
+  it.each([4_294_901_760, -65_536])(
+    "reports a PowerShell that doesn't start (exit code %i), with what it printed",
+    async (exitCode) => {
+      const onLog = vi.fn();
+      const { helper } = createHelper({ onLog });
+      const started = helper.start();
+      await vi.waitFor(() => expect(fakes).toHaveLength(1));
+      fakes[0]?.print('El shell no se puede iniciar.');
+      fakes[0]?.print(
+        "Se produjo una excepción en el inicializador de tipo de 'System.Net.ServicePointManager'.",
+        'stderr',
+      );
+      await vi.waitFor(() => expect(onLog).toHaveBeenCalledTimes(2));
+      fakes[0]?.exit(exitCode);
+
+      expect(await started).toEqual({
+        detail: `exit code ${exitCode} | El shell no se puede iniciar. | Se produjo una excepción en el inicializador de tipo de 'System.Net.ServicePointManager'.`,
+        error: 'powershell-broken',
+        ok: false,
+      });
+    },
+  );
+
+  it('says why it stopped to a command it was started for', async () => {
+    const { helper } = createHelper();
+    const result = helper.request({ type: 'meeting' });
+    await vi.waitFor(() => expect(fakes).toHaveLength(1));
+    fakes[0]?.exit(4_294_901_760);
+
+    expect(await result).toEqual({
+      detail: 'exit code 4294901760',
+      error: 'powershell-broken',
+      ok: false,
+    });
+  });
+
+  it('reports any other exit before it was ready as the helper exiting', async () => {
+    const { helper } = createHelper();
+    const started = helper.start();
+    await vi.waitFor(() => expect(fakes).toHaveLength(1));
+    fakes[0]?.exit(1);
+
+    expect(await started).toEqual({
+      detail: 'exit code 1',
+      error: 'helper-exited',
+      ok: false,
+    });
   });
 
   it('reports a missing PowerShell', async () => {
