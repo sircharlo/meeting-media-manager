@@ -24,6 +24,11 @@ export interface ZoomCommandResult {
   buttonTitle?: string;
   /** Whether the action changed anything (false: already in that state). */
   changed?: boolean;
+  /**
+   * Technical detail for logs, when the helper couldn't start: see
+   * ZoomHelperStartResult.
+   */
+  detail?: string;
   diagnosis?: ZoomDiagnosis;
   /** The `ping` command's echo, to check the helper's text encoding. */
   echo?: null | string;
@@ -128,11 +133,15 @@ export interface ZoomFailureSnapshot {
 }
 
 export interface ZoomHelperStartResult {
-  /** Technical detail for logs, e.g. a compiler error. */
+  /**
+   * Technical detail for logs, e.g. a compiler error, or the exit code and
+   * what PowerShell printed before it stopped.
+   */
   detail?: string;
   /**
    * Why the helper couldn't start: `windows-only`, `powershell-not-found`,
-   * `powershell-restricted`, `helper-not-compiled`, `helper-start-timeout`,
+   * `powershell-restricted`, `powershell-broken` (PowerShell itself fails
+   * to start), `helper-not-compiled`, `helper-start-timeout`,
    * `helper-exited`.
    */
   error?: string;

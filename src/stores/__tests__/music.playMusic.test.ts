@@ -5,9 +5,11 @@ import { createPinia, setActivePinia } from 'pinia';
 import { defaultSettings } from 'src/constants/settings';
 import {
   fetchSongLibrary,
+  getNextSongFromQueue,
   prepareMeetingDaySongQueue,
 } from 'src/helpers/background-music';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { isSongbookDownloadFailed } from 'src/helpers/jw-media';
 import { automateZoomSettingsOnMusicStart } from 'src/helpers/zoom';
 import { log } from 'src/shared/vanilla';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
@@ -34,7 +36,10 @@ vi.mock('src/helpers/background-music', () => ({
 
 vi.mock('src/helpers/error-catcher', () => ({ errorCatcher: vi.fn() }));
 
-vi.mock('src/helpers/jw-media', () => ({ downloadBackgroundMusic: vi.fn() }));
+vi.mock('src/helpers/jw-media', () => ({
+  downloadBackgroundMusic: vi.fn(),
+  isSongbookDownloadFailed: vi.fn(() => false),
+}));
 
 vi.mock('src/helpers/zoom', () => ({
   automateZoomSettingsOnMusicStart: vi.fn(async () => undefined),
@@ -197,6 +202,84 @@ describe('playMusic', () => {
       },
     });
     expect(vi.getTimerCount()).toBe(timersBefore + 1);
+  });
+
+  // MMM-V2-3N2: the song library stays empty when the songbook's song list
+  // can't be downloaded and none was saved earlier.
+  describe('with no song to play', () => {
+    const SONG_LIBRARY_RETRY_TIMEOUT_MS = 2 * 60 * 1000;
+
+    beforeEach(() => {
+      // The retry deadline goes by performance.now().
+      vi.useFakeTimers({
+        toFake: [
+          'setTimeout',
+          'clearTimeout',
+          'setInterval',
+          'clearInterval',
+          'Date',
+          'performance',
+        ],
+      });
+      vi.mocked(fetchSongLibrary).mockResolvedValue([]);
+      vi.mocked(getNextSongFromQueue).mockResolvedValue({
+        nextSongUrl: '',
+        secsFromEnd: 0,
+      });
+    });
+
+    afterEach(() => {
+      // Back to the implementations the module mocks were given.
+      vi.mocked(fetchSongLibrary).mockReset();
+      vi.mocked(getNextSongFromQueue).mockReset();
+      vi.mocked(isSongbookDownloadFailed).mockReset();
+    });
+
+    const playWithNoSong = async () => {
+      const music = useMusicStore();
+      const started = music.playMusic('auto');
+      await vi.advanceTimersByTimeAsync(SONG_LIBRARY_RETRY_TIMEOUT_MS + 15_000);
+      await started;
+      return music;
+    };
+
+    it("doesn't report it when the songbook couldn't be downloaded", async () => {
+      vi.mocked(isSongbookDownloadFailed).mockReturnValue(true);
+
+      const music = await playWithNoSong();
+
+      expect(music.musicState).toBe('music.error');
+      expect(errorCatcher).not.toHaveBeenCalled();
+      expect(isSongbookDownloadFailed).toHaveBeenCalledWith('E');
+      expect(logMessages()).toContain(
+        'No song to play: the songbook could not be downloaded, and none was saved before',
+      );
+    });
+
+    it('reports it with what was found otherwise', async () => {
+      vi.mocked(isSongbookDownloadFailed).mockReturnValue(false);
+
+      const music = await playWithNoSong();
+
+      expect(music.musicState).toBe('music.error');
+      expect(errorCatcher).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ message: 'No next song found' }),
+        {
+          contexts: {
+            fn: {
+              lang: 'E',
+              librarySongs: 0,
+              name: 'playMusic',
+              online: true,
+              pub: 'sjjm',
+              queueLength: 0,
+              reason: 'auto',
+              songbookDownloadFailed: false,
+            },
+          },
+        },
+      );
+    });
   });
 
   it('treats a failure that is not an Error as a real one', async () => {

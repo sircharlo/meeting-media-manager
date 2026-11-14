@@ -1155,6 +1155,7 @@
   "zoom-hand-unmuted": "{name} was asked to unmute. When they're done:",
   "zoom-helper-error-generic": "Please try again. If it keeps happening, restart M³.",
   "zoom-helper-error-helper-missing": "Some of M³'s files for controlling Zoom are missing, perhaps removed by an antivirus. Reinstalling M³ should restore them.",
+  "zoom-helper-error-powershell-broken": "Windows PowerShell, which M³ needs to control Zoom, doesn't start on this computer: it stops with an error as soon as it opens. M³ can't control Zoom until Windows PowerShell is repaired.",
   "zoom-helper-error-powershell-not-found": "Windows PowerShell, which M³ needs to control Zoom, wasn't found on this computer.",
   "zoom-helper-error-powershell-restricted": "Windows PowerShell is restricted on this computer (for example by an organization's security policy), so M³ can't control Zoom.",
   "zoom-helper-error-windows-only": "The Zoom Meeting Manager is only available on Windows.",
