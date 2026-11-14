@@ -1155,6 +1155,7 @@
   "zoom-hand-unmuted": "Osebo {name} sem prosil, naj si vklopi mikrofon. Ko bo končala:",
   "zoom-helper-error-generic": "Prosim, poskusi znova. Če se težava ponavlja, znova zaženi M³.",
   "zoom-helper-error-helper-missing": "Nekatere datoteke M³ za upravljanje Zooma manjkajo, morda jih je odstranil protivirusni program. Ponovna namestitev M³ jih bo obnovila.",
+  "zoom-helper-error-powershell-broken": "Windows PowerShell, ki ga M³ potrebuje za upravljanje Zooma, se na tem računalniku ne zažene: takoj ob odprtju se ustavi z napako. Dokler Windows PowerShell ne bo popravljen, M³ ne more upravljati Zooma.",
   "zoom-helper-error-powershell-not-found": "Windows PowerShell, ki ga M³ potrebuje za upravljanje Zooma, na tem računalniku ni bil najden.",
   "zoom-helper-error-powershell-restricted": "Windows PowerShell je na tem računalniku omejen (na primer zaradi varnostne politike organizacije), zato M³ ne more upravljati Zooma.",
   "zoom-helper-error-windows-only": "Upravitelj Zoom shoda je na voljo samo v sistemu Windows.",
