@@ -1155,6 +1155,7 @@
   "zoom-hand-unmuted": "{name} a reçu une demande de réactivation du micro. Une fois son intervention terminée :",
   "zoom-helper-error-generic": "Veuillez réessayer. Si le problème persiste, redémarrez M³.",
   "zoom-helper-error-helper-missing": "Certains fichiers de M³ servant à contrôler Zoom sont manquants ; ils ont peut-être été supprimés par un antivirus. La réinstallation de M³ devrait permettre de les restaurer.",
+  "zoom-helper-error-powershell-broken": "Le programme Windows PowerShell, dont M³ a besoin pour contrôler Zoom, ne démarre pas sur cet ordinateur : il s'arrête sur une erreur dès son ouverture. M³ ne pourra pas contrôler Zoom tant que Windows PowerShell n'aura pas été réparé.",
   "zoom-helper-error-powershell-not-found": "Le programme Windows PowerShell, dont M³ a besoin pour contrôler Zoom, n'a pas été trouvé sur cet ordinateur.",
   "zoom-helper-error-powershell-restricted": "L'utilisation de Windows PowerShell est restreinte sur cet ordinateur (par exemple en raison de la politique de sécurité d'une organisation) ; M³ ne peut donc pas contrôler Zoom.",
   "zoom-helper-error-windows-only": "Le gestionnaire de réunions Zoom n'est disponible que sous Windows.",
