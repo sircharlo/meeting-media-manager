@@ -1155,6 +1155,7 @@
   "zoom-hand-unmuted": "{name}: отправлен запрос на включение звука. Когда участник закончит:",
   "zoom-helper-error-generic": "Попробуйте еще раз. Если ошибка повторится, перезапустите M³.",
   "zoom-helper-error-helper-missing": "Некоторые файлы M³ для управления Zoom отсутствуют — возможно, их удалил антивирус. Переустановка M³ должна их восстановить.",
+  "zoom-helper-error-powershell-broken": "Windows PowerShell, который нужен M³ для управления Zoom, не запускается на этом компьютере: он завершается с ошибкой сразу после открытия. M³ не сможет управлять Zoom, пока Windows PowerShell не будет восстановлен.",
   "zoom-helper-error-powershell-not-found": "На этом компьютере не найден Windows PowerShell, который нужен M³ для управления Zoom.",
   "zoom-helper-error-powershell-restricted": "Использование Windows PowerShell на этом компьютере ограничено (например, политикой безопасности организации), поэтому M³ не может управлять Zoom.",
   "zoom-helper-error-windows-only": "Менеджер конференций Zoom доступен только в Windows.",
