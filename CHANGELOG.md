@@ -8,7 +8,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🔧 Chores
 
-- 🔧 **Error Reporting**: Error reports from v26.11.3 couldn't be traced back to M³'s code: an update of the build tools uploaded the information needed for that one line off. They're traced back again, from this version on.
+- 🔧 **Error Reporting**: Error reports from v26.11.3 couldn't be traced back to M³'s code at first: an update of the build tools uploaded the information needed for that one line off. That's fixed, for v26.11.3's reports too. Cleaning up the cache also no longer creates an empty folder for converted media on every computer, which on one computer that wouldn't allow it sent an error report each time.
 
 ## v26.11.3
 
