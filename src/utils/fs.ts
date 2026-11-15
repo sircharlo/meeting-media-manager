@@ -263,9 +263,12 @@ export const getPublicationsPath = () =>
 // Converted copies of watched-folder files this computer can't play, in a
 // folder per meeting date (cleaned up like the watched folder's own). Kept on
 // this computer: another one may play the originals, so syncing them through
-// a custom cache folder would only spread them around.
+// a custom cache folder would only spread them around. Not created here: a
+// conversion creates its date's folder as it places a copy, and cleaning up
+// or looking for a copy has no use for an empty one (on a computer where
+// creating folders there fails, cleaning up kept reporting it, MMM-V2-3P3).
 export const getConvertedMediaPath = () =>
-  getCachePath('Converted Media', true, { bypassCustomPath: true });
+  getCachePath('Converted Media', false, { bypassCustomPath: true });
 export const getAdditionalMediaPath = () =>
   getCachePath('Additional Media', false);
 

@@ -11,6 +11,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   betaUpdatesDisabled,
   getAdditionalMediaPath,
+  getConvertedMediaPath,
   getFileSizeIfExists,
   getFontsPath,
   getParentDirectory,
@@ -102,6 +103,19 @@ describe('Paths', () => {
     });
 
     await Promise.all(paths.map((path) => remove(path)));
+  });
+
+  // MMM-V2-3P3: cleaning up asks for it on every computer, converting or
+  // not; a conversion creates its date's folder itself.
+  it("doesn't create the Converted Media folder just to name it", async () => {
+    // Whatever an earlier run left there.
+    await remove(await getConvertedMediaPath());
+
+    const path = await getConvertedMediaPath();
+
+    expect(path).toContain(basePath);
+    expect(path.endsWith('/Converted Media')).toBe(true);
+    expect(await pathExists(path)).toBe(false);
   });
 
   it('should overwrite default cache location', async () => {
