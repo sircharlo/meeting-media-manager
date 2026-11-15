@@ -76,7 +76,7 @@ jobs:
         run: yarn quasar prepare
       - name: SonarQube Scan
         id: scan
-        uses: SonarSource/sonarqube-scan-action@e805d875275f728fac1885b413934be6d7c63f65
+        uses: SonarSource/sonarqube-scan-action@59202af334b4ba7b5db01b701b8e79f8b3bef0f4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       # CI-2: the job-level continue-on-error above means a broken SonarQube
