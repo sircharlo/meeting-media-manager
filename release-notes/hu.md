@@ -4,7 +4,7 @@
 
 A verziók közötti változások teljes listáját megtalálja a GitHubon található CHANGELOG.md fájlban.
 
-## KÖVETKEZŐ VERZIÓ
+## v26.11.3
 
 ### ✨ Új funkciók
 
