@@ -34,4 +34,15 @@ updates:
       # 7.0). Revisit once 7.1 is out and both tools support it.
       - dependency-name: 'typescript'
         versions: ['7.0.x']
+      # 11.12.0 uploads source maps with the new `sentry` CLI 0.49, which
+      # injects a second debug ID snippet as a new first line into the copies
+      # it uploads (and shifts their maps to match), while the app ships the
+      # files without it: every stack frame of v26.11.3 was a line off and
+      # unmapped. Pinned to 11.11.0 (CLI 0.45, uploads as is) in package.json.
+      # Before lifting this, check that a release build's uploaded copy lines
+      # up with the file it ships (see the PR that added this).
+      - dependency-name: '@sentry/vite-plugin'
+        versions: ['>= 11.12.0']
+      - dependency-name: '@sentry/rollup-plugin'
+        versions: ['>= 11.12.0']
     open-pull-requests-limit: 15
