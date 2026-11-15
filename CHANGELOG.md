@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### 🔧 Chores
+
+- 🔧 **Error Reporting**: Error reports from v26.11.3 couldn't be traced back to M³'s code: an update of the build tools uploaded the information needed for that one line off. They're traced back again, from this version on.
+
 ## v26.11.3
 
 ### ✨ New Features
