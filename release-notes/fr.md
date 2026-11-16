@@ -4,6 +4,12 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## VERSION À VENIR
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Déplacer vers une autre section** : Le menu d'un élément multimédia comporte désormais un sous-menu **Déplacer**, avec Déplacer vers le haut, Déplacer vers le bas et les autres sections du jour, pour envoyer l'élément dans une autre section en un clic au lieu de l'y faire glisser. Quand plusieurs éléments sont sélectionnés, **Déplacer vers la section** les regroupe tous à la fin de la section choisie ; une section où ils se trouvent déjà tous n'est pas proposée.
+
 ## v26.11.3
 
 ### ✨ Nouvelles fonctionnalités

@@ -4,6 +4,12 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## KOMMENDE VERSION
+
+### ✨ Neue Funktionen
+
+- ✨ **In einen anderen Abschnitt verschieben**: Das Menü eines Medienelements hat jetzt ein Untermenü **Bewegen** mit „Nach oben“, „Nach unten“ und den anderen Abschnitten des Tages, um das Element mit einem Klick in einen anderen Abschnitt zu verschieben, statt es dorthin zu ziehen. Sind mehrere Elemente ausgewählt, sammelt **In Abschnitt verschieben** sie alle am Ende des gewählten Abschnitts; ein Abschnitt, in dem sie sich schon alle befinden, wird nicht angeboten.
+
 ## v26.11.3
 
 ### ✨ Neue Funktionen
