@@ -9,6 +9,12 @@ vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: vi.fn(),
 }));
 
+const noticeUnopenableMedia = vi.fn();
+vi.mock('src/helpers/unopenable-media', () => ({
+  noticeUnopenableMedia: (...args: unknown[]) =>
+    noticeUnopenableMedia(...(args as [])),
+}));
+
 const ascii = (text: string) => new TextEncoder().encode(text);
 
 const concatBytes = (...parts: Uint8Array[]) => {
@@ -162,6 +168,7 @@ describe('getMetadataFromMediaPath for a file without a duration in its metadata
 
   beforeEach(() => {
     vi.mocked(errorCatcher).mockClear();
+    noticeUnopenableMedia.mockClear();
     stubFileWithoutDuration();
     vi.resetModules();
   });
@@ -207,7 +214,7 @@ describe('getMetadataFromMediaPath for a file without a duration in its metadata
     const pending = getMetadataFromMediaPath('C:/media/clip.webm');
     await vi.waitFor(() => expect(videos).toHaveLength(1));
     Object.defineProperty(videos[0], 'error', {
-      value: { code: 4, message: 'FFmpegDemuxer: open context failed' },
+      value: { code: 4, message: 'MEDIA_ELEMENT_ERROR: Format error' },
     });
     videos[0]?.onerror?.(new Event('error'));
     await pending;
@@ -218,10 +225,32 @@ describe('getMetadataFromMediaPath for a file without a duration in its metadata
         contexts: {
           fn: expect.objectContaining({
             code: 4,
-            mediaError: 'FFmpegDemuxer: open context failed',
+            mediaError: 'MEDIA_ELEMENT_ERROR: Format error',
           }),
         },
       }),
+    );
+    expect(noticeUnopenableMedia).not.toHaveBeenCalled();
+  });
+
+  // MMM-V2-3N6: MP4s with no duration in their metadata that Chromium can't
+  // open either, most likely cut short. The file's problem, not M³'s.
+  it('tells the user, not Sentry, about a video Chromium cannot open', async () => {
+    const videos = captureCreatedVideos();
+    const { getMetadataFromMediaPath } = await import('../media');
+
+    const pending = getMetadataFromMediaPath('C:/media/1 - Intro.mp4');
+    await vi.waitFor(() => expect(videos).toHaveLength(1));
+    const message =
+      'PipelineStatus::DEMUXER_ERROR_COULD_NOT_OPEN: FFmpegDemuxer: open context failed';
+    Object.defineProperty(videos[0], 'error', { value: { code: 4, message } });
+    videos[0]?.onerror?.(new Event('error'));
+
+    expect((await pending).format.duration).toBe(0);
+    expect(errorCatcher).not.toHaveBeenCalled();
+    expect(noticeUnopenableMedia).toHaveBeenCalledWith(
+      'C:/media/1 - Intro.mp4',
+      message,
     );
   });
 

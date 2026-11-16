@@ -6,6 +6,10 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ## UPCOMING VERSION
 
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Damaged Media Files**: When a video can't be opened at all, most often because it was only partly downloaded or copied, M³ now says so, naming the file, so there's time to get it again before the meeting. Before, its thumbnail just stayed blank and an error report was sent instead.
+
 ### 🔧 Chores
 
 - 🔧 **Error Reporting**: Error reports from v26.11.3 couldn't be traced back to M³'s code at first: an update of the build tools uploaded the information needed for that one line off. That's fixed, for v26.11.3's reports too. Cleaning up the cache also no longer creates an empty folder for converted media on every computer, which on one computer that wouldn't allow it sent an error report each time.

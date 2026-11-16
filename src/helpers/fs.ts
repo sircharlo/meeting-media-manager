@@ -13,6 +13,7 @@ import { Buffer } from 'buffer'; // NOSONAR: this is not nodejs Buffer, it's the
 import { Platform } from 'quasar';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { noticeUnopenableMedia } from 'src/helpers/unopenable-media';
 import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 import { fetchJson } from 'src/utils/api';
@@ -20,6 +21,7 @@ import { getCachedUserDataPath, getPublicationDirectory } from 'src/utils/fs';
 import {
   isAudio,
   isImage,
+  isUnopenableMediaError,
   isVideo,
   MediaElementTimeoutError,
   withMediaElementTimeout,
@@ -306,6 +308,39 @@ const getThumbnailFromVideoPath = async (
   }
 };
 
+/**
+ * Says why a file's thumbnail couldn't be made, to whoever can do something
+ * about it: Sentry for M³'s own failures, the user for a file that can't be
+ * opened, nobody for one that never loads.
+ */
+const reportThumbnailFailure = (
+  error: unknown,
+  filepath: string | undefined,
+  forceRefresh: boolean | undefined,
+) => {
+  if (error instanceof Event) return;
+  // Environmental (a video that never loads), not a bug: no report.
+  if (error instanceof MediaElementTimeoutError) {
+    log(error.message, 'mediaProcessing', 'warn');
+    return;
+  }
+  // The file's problem, not M³'s: the user is told instead (MMM-V2-3CF).
+  if (filepath && error instanceof Error && isUnopenableMediaError(error)) {
+    noticeUnopenableMedia(filepath, error.message);
+    return;
+  }
+  errorCatcher(error, {
+    contexts: {
+      fn: {
+        filepath,
+        forceRefresh,
+        name: 'getThumbnailUrl',
+        type: typeof error,
+      },
+    },
+  });
+};
+
 export const getThumbnailUrl = async (
   filepath?: string,
   forceRefresh?: boolean,
@@ -332,22 +367,7 @@ export const getThumbnailUrl = async (
     }
     return withCacheBust(thumbnailUrl, forceRefresh);
   } catch (error) {
-    if (error instanceof Event) return '';
-    // Environmental (a video that never loads), not a bug: no report.
-    if (error instanceof MediaElementTimeoutError) {
-      log(error.message, 'mediaProcessing', 'warn');
-      return '';
-    }
-    errorCatcher(error, {
-      contexts: {
-        fn: {
-          filepath,
-          forceRefresh,
-          name: 'getThumbnailUrl',
-          type: typeof error,
-        },
-      },
-    });
+    reportThumbnailFailure(error, filepath, forceRefresh);
     return '';
   }
 };

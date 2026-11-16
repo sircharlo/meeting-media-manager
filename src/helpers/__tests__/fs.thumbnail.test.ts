@@ -1,6 +1,42 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+const noticeUnopenableMedia = vi.fn();
+vi.mock('src/helpers/unopenable-media', () => ({
+  noticeUnopenableMedia: (...args: unknown[]) =>
+    noticeUnopenableMedia(...(args as [])),
+}));
+
+/** Fails the thumbnail's hidden <video> of `filepath` with `mediaError`. */
+const failThumbnailVideo = async (
+  filepath: string,
+  mediaError: { code: number; message: string },
+) => {
+  setActivePinia(createPinia());
+  const { fs } = globalThis.electronApi;
+  vi.spyOn(fs, 'pathExists').mockImplementation(
+    async (path) => !String(path).endsWith('.jpg'),
+  );
+  const videos: HTMLVideoElement[] = [];
+  const createElement = document.createElement.bind(document);
+  vi.spyOn(document, 'createElement').mockImplementation(((
+    tagName: string,
+    options?: ElementCreationOptions,
+  ) => {
+    const element = createElement(tagName, options);
+    if (element instanceof HTMLVideoElement) videos.push(element);
+    return element;
+  }) as typeof document.createElement);
+  const { getThumbnailUrl } = await import('../fs');
+
+  const pending = getThumbnailUrl(filepath);
+  await vi.waitFor(() => expect(videos).toHaveLength(1));
+  await vi.waitFor(() => expect(videos[0]?.getAttribute('src')).toBeTruthy());
+  Object.defineProperty(videos[0], 'error', { value: mediaError });
+  videos[0]?.dispatchEvent(new Event('error'));
+  return pending;
+};
+
 describe('getThumbnailUrl', () => {
   beforeEach(() => {
     // helpers/fs destructures electronApi.fs at import time, so spies must
@@ -37,38 +73,44 @@ describe('getThumbnailUrl', () => {
   // MMM-V2-3CF: a media element's 'error' event carries no message of its
   // own, so every failure was reported as "Unknown VideoRef Error".
   it("reports Chromium's reason for a video that fails to load", async () => {
-    setActivePinia(createPinia());
-    const { fs } = globalThis.electronApi;
-    vi.spyOn(fs, 'pathExists').mockImplementation(
-      async (path) => !String(path).endsWith('.jpg'),
-    );
-    const videos: HTMLVideoElement[] = [];
-    const createElement = document.createElement.bind(document);
-    vi.spyOn(document, 'createElement').mockImplementation(((
-      tagName: string,
-      options?: ElementCreationOptions,
-    ) => {
-      const element = createElement(tagName, options);
-      if (element instanceof HTMLVideoElement) videos.push(element);
-      return element;
-    }) as typeof document.createElement);
     const { errorCatcher } = await import('src/helpers/error-catcher');
-    const { getThumbnailUrl } = await import('../fs');
+    vi.mocked(errorCatcher).mockClear();
+    noticeUnopenableMedia.mockClear();
 
-    const pending = getThumbnailUrl('C:/media/clip.avi');
-    await vi.waitFor(() => expect(videos).toHaveLength(1));
-    await vi.waitFor(() => expect(videos[0]?.getAttribute('src')).toBeTruthy());
-    Object.defineProperty(videos[0], 'error', {
-      value: { code: 4, message: 'FFmpegDemuxer: open context failed' },
+    const url = await failThumbnailVideo('C:/media/clip.avi', {
+      code: 4,
+      message: 'MEDIA_ELEMENT_ERROR: Format error',
     });
-    videos[0]?.dispatchEvent(new Event('error'));
 
-    await expect(pending).resolves.toBe('');
+    expect(url).toBe('');
     expect(errorCatcher).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: 'FFmpegDemuxer: open context failed',
+        message: 'MEDIA_ELEMENT_ERROR: Format error',
       }),
       expect.anything(),
+    );
+    expect(noticeUnopenableMedia).not.toHaveBeenCalled();
+  });
+
+  // MMM-V2-3CF: MP4s Chromium can't open at all, most likely cut short by a
+  // download or copy that didn't finish. The file's problem, not M³'s.
+  it('tells the user, not Sentry, about a video Chromium cannot open', async () => {
+    const { errorCatcher } = await import('src/helpers/error-catcher');
+    vi.mocked(errorCatcher).mockClear();
+    noticeUnopenableMedia.mockClear();
+    const message =
+      'PipelineStatus::DEMUXER_ERROR_COULD_NOT_OPEN: FFmpegDemuxer: open context failed';
+
+    const url = await failThumbnailVideo('C:/media/2 - Talk.mp4', {
+      code: 4,
+      message,
+    });
+
+    expect(url).toBe('');
+    expect(errorCatcher).not.toHaveBeenCalled();
+    expect(noticeUnopenableMedia).toHaveBeenCalledWith(
+      'C:/media/2 - Talk.mp4',
+      message,
     );
   });
 
