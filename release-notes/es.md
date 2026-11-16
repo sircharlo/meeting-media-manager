@@ -4,6 +4,12 @@
 
 Para ver la lista completa de cambios entre versiones, consulta nuestro archivo CHANGELOG.md en GitHub.
 
+## PRÓXIMA VERSIÓN
+
+### ✨ Nuevas funciones
+
+- ✨ **Mover a otra sección**: El menú de un elemento multimedia ahora tiene un submenú **Mover** con Mover hacia arriba, Mover hacia abajo y las demás secciones del día, para enviar el elemento a otra sección con un solo clic en vez de arrastrarlo hasta allí. Con varios elementos seleccionados, **Mover a la sección** los reúne todos al final de la sección que elijas; no se ofrece una sección en la que ya estén todos.
+
 ## v26.11.3
 
 ### ✨ Nuevas funciones
