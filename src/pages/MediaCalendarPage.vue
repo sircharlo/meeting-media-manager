@@ -250,16 +250,8 @@ import { type QInput, useMeta, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
-import {
-  getMeetingSections,
-  MEDIA_STOP_FADE_DURATION_SECONDS,
-} from 'src/constants/media';
-import {
-  isCoWeek,
-  isMeetingDay,
-  isMemorialDay,
-  isWeMeetingDay,
-} from 'src/helpers/date';
+import { MEDIA_STOP_FADE_DURATION_SECONDS } from 'src/constants/media';
+import { isCoWeek, isMemorialDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import { getRendererPlatform } from 'src/helpers/fs';
@@ -284,6 +276,7 @@ import {
   addSection,
   defaultAdditionalSection,
   findMediaSection,
+  getDisplayedMediaSections,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
@@ -2444,64 +2437,18 @@ const shouldShowBannerColumn = computed(
     showEmptyState.value,
 );
 
-const mediaLists = computed(() => {
-  if (!selectedDateObject.value?.mediaSections) return [];
-
-  // Get the appropriate meeting sections based on meeting type (MW vs WE)
-  const meetingSections = getMeetingSections(
+// Shared with the media "Move to section" menu (MediaMoveMenuItem), which
+// offers exactly the sections shown here.
+const mediaLists = computed(() =>
+  getDisplayedMediaSections(
+    selectedDateObject.value,
     selectedDayMeetingType.value,
-    isCoWeek(selectedDateObject.value?.date),
-  );
-
-  // Create a list of all sections that should be displayed
-  const sectionsToShow: string[] = [...meetingSections];
-
-  // Add any custom sections that have items (not already in meeting sections)
-  selectedDateObject.value.mediaSections.forEach((sectionData) => {
-    const sectionId = sectionData.config.uniqueId;
-    const isMeetingToday = isMeetingDay(selectedDateObject.value?.date);
-    if (
-      !sectionsToShow.includes(sectionId) &&
-      ((!isMeetingToday && !meetingSections.includes(sectionId)) ||
-        (isMeetingToday && sectionData?.items?.length))
-    ) {
-      sectionsToShow.push(sectionId);
-    }
-  });
-
-  return selectedDateObject.value.mediaSections
-    .filter((m) => !!m.config)
-    .filter((m) => {
-      const sectionId = m.config?.uniqueId || '';
-      // Include if it's a meeting section OR if it has items
-      return sectionsToShow.includes(sectionId);
-    })
-    .sort((a, b) => {
-      const aId = a.config?.uniqueId || '';
-      const bId = b.config?.uniqueId || '';
-
-      // Get indices from our sectionsToShow array
-      const aIndex = sectionsToShow.indexOf(aId);
-      const bIndex = sectionsToShow.indexOf(bId);
-
-      // If both are in the list, sort by their position
-      if (aIndex !== -1 && bIndex !== -1) {
-        return aIndex - bIndex;
-      }
-
-      // If only one is in the list, prioritize the one in the list
-      if (aIndex !== -1) return -1;
-      if (bIndex !== -1) return 1;
-
-      // If neither is in the list, sort alphabetically
-      return aId.localeCompare(bId);
-    })
-    .map((sectionData) => ({
-      config: sectionData?.config,
-      items: sectionData?.items || [],
-      sectionId: (sectionData.config?.uniqueId || '') as MediaSectionIdentifier,
-    }));
-});
+  ).map((sectionData) => ({
+    config: sectionData.config,
+    items: sectionData.items || [],
+    sectionId: sectionData.config.uniqueId,
+  })),
+);
 
 const atRest: MediaPlayingState = {
   action: '',
@@ -2532,6 +2479,17 @@ function stopSlideshowPlayback() {
 
 const anchorId = ref<null | string>(null);
 
+// A right-click (forwarded by MediaItem's selectOnContextMenu) on an item
+// outside the selection makes that item the whole selection, as in a file
+// manager, so the menu that opens acts on it alone rather than on a
+// multi-selection it isn't part of. Modifier keys don't matter here: on
+// macOS a Ctrl-click is itself a right-click.
+const selectMediaItemForContextMenu = (mediaItemId: string) => {
+  if (selectedMediaItems.value.includes(mediaItemId)) return;
+  selectedMediaItems.value = [mediaItemId];
+  anchorId.value = mediaItemId;
+};
+
 // Handle item click events from MediaList components
 const handleMediaItemClick = (payload: {
   event: MouseEvent;
@@ -2539,6 +2497,10 @@ const handleMediaItemClick = (payload: {
   sectionId: string | undefined;
 }) => {
   log('Media item clicked:', 'mediaCalendar', 'log', payload.mediaItemId);
+  if (payload.event.type === 'contextmenu') {
+    selectMediaItemForContextMenu(payload.mediaItemId);
+    return;
+  }
   // Check if Ctrl/Cmd or Shift key is pressed for multiple selection
   const isCtrlPressed = payload.event.ctrlKey || payload.event.metaKey;
   const isShiftPressed = payload.event.shiftKey;

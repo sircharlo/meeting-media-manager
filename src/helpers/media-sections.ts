@@ -9,7 +9,7 @@ import type {
 
 import { i18n } from 'boot/i18n';
 import { getMeetingSections, standardSections } from 'src/constants/media';
-import { isCoWeek } from 'src/helpers/date';
+import { isCoWeek, isMeetingDay } from 'src/helpers/date';
 import { withLockRetry } from 'src/helpers/fs-retry';
 import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
@@ -142,6 +142,115 @@ export const deleteSection = (uniqueId: string) => {
       ),
     });
   }
+};
+
+// The sections the media calendar shows for a day, in display order: the
+// meeting's own sections (in meeting order), then the day's other sections
+// in their stored order - all of them on a non-meeting day, but only the
+// ones holding items on a meeting day.
+export const getDisplayedMediaSections = (
+  day: DateInfo | null | undefined,
+  meetingType: 'mw' | 'we' | null,
+): MediaSectionWithConfig[] => {
+  if (!day?.mediaSections) return [];
+
+  const sectionsToShow: MediaSectionIdentifier[] = [
+    ...getMeetingSections(meetingType, isCoWeek(day.date)),
+  ];
+  const isMeetingToday = isMeetingDay(day.date);
+  const sectionsWithConfig = day.mediaSections.filter(
+    (section) => !!section.config,
+  );
+
+  sectionsWithConfig.forEach((section) => {
+    const sectionId = section.config.uniqueId;
+    if (sectionsToShow.includes(sectionId)) return;
+    if (isMeetingToday && !section.items?.length) return;
+    sectionsToShow.push(sectionId);
+  });
+
+  return sectionsWithConfig
+    .filter((section) => sectionsToShow.includes(section.config.uniqueId))
+    .sort(
+      (a, b) =>
+        sectionsToShow.indexOf(a.config.uniqueId) -
+        sectionsToShow.indexOf(b.config.uniqueId),
+    );
+};
+
+// A section's display name: its own label if it was renamed, otherwise the
+// shared name of the custom sections or the meeting section's own name.
+export const getMediaSectionLabel = (section: MediaSection | undefined) => {
+  if (!section) return '';
+  if (section.label) return section.label;
+  if (
+    section.uniqueId === 'imported-media' ||
+    section.uniqueId.startsWith('custom-')
+  ) {
+    return i18n.global.t('imported-media');
+  }
+  return i18n.global.t(section.uniqueId);
+};
+
+// Hidden items and dividers can land in a Shift-click range without ever
+// being highlighted, so, as with a drag (see getDraggedNodes in
+// useMediaDragAndDrop), they never move along with a selection.
+const isMovableMediaItem = (item: MediaItem) =>
+  !item.hidden && item.type !== 'divider';
+
+const isMovableSelectedItem = (item: MediaItem, uniqueIds: Set<string>) =>
+  uniqueIds.has(item.uniqueId) && isMovableMediaItem(item);
+
+// The sections that the given items can be moved to: all of `sections`,
+// except one that already holds every one of them. Only top-level items
+// count, since a group's children never leave their group.
+export const getMoveToSectionTargets = (
+  sections: MediaSectionWithConfig[],
+  uniqueIds: readonly string[],
+): MediaSectionWithConfig[] => {
+  const ids = new Set(uniqueIds);
+  const sourceSections = sections.filter((section) =>
+    section.items?.some((item) => isMovableSelectedItem(item, ids)),
+  );
+
+  if (!sourceSections.length) return [];
+  if (sourceSections.length > 1) return sections;
+  return sections.filter((section) => section !== sourceSections[0]);
+};
+
+// Moves the given top-level items into one section, appending them in the
+// order `sections` lists them (pass the displayed order). Items already in
+// that section stay where they are. Returns the items that moved.
+export const moveMediaItemsToSection = (
+  sections: MediaSectionWithConfig[],
+  uniqueIds: readonly string[],
+  targetSectionId: MediaSectionIdentifier,
+): MediaItem[] => {
+  const targetSection = findMediaSection(sections, targetSectionId);
+  if (!targetSection) return [];
+
+  const ids = new Set(uniqueIds);
+  const movedItems: MediaItem[] = [];
+
+  sections.forEach((section) => {
+    if (section === targetSection || !section.items?.length) return;
+
+    const leavingItems = section.items.filter((item) =>
+      isMovableSelectedItem(item, ids),
+    );
+    if (!leavingItems.length) return;
+
+    section.items = section.items.filter(
+      (item) => !isMovableSelectedItem(item, ids),
+    );
+    movedItems.push(...leavingItems);
+  });
+
+  if (movedItems.length) {
+    targetSection.items = [...(targetSection.items ?? []), ...movedItems];
+  }
+
+  return movedItems;
 };
 
 export const getRandomColor = () => {

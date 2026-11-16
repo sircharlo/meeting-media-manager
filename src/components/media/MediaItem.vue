@@ -17,6 +17,7 @@
       'padding: 8px 6px': child,
       'flex-direction': 'column',
     }"
+    @contextmenu="selectOnContextMenu"
     @keydown.enter.space.prevent="(evt: KeyboardEvent) => emit('click', evt)"
     @mouseup.left.passive="(evt: MouseEvent) => emit('click', evt)"
   >
@@ -939,6 +940,7 @@
                 </q-item-label>
               </q-item-section>
             </q-item>
+            <MediaMoveMenuItem :media-ids="selectedMediaItems" />
             <q-item
               v-if="canDeleteSelected"
               v-close-popup
@@ -990,43 +992,27 @@
           <template v-else>
             <q-item-label header>{{ displayMediaTitle }}</q-item-label>
             <!--
-              UX-6 (full-audit-2026-09-04.md / full-audit backlog): keyboard/
-              screen-reader equivalent to the pointer-only drag handle -
-              placed here (rather than as always-visible row buttons, unlike
-              MediaDivider.vue/MediaGroup.vue) since this menu is already a
-              keyboard-focusable trigger and a media list can be dense
-              enough that two more always-visible icons per row would add
-              real clutter. Covers both top-level items and a group's own
+              UX-6 (full-audit-2026-09-04.md / full-audit backlog): Move up/
+              Move down are the keyboard/screen-reader equivalent to the
+              pointer-only drag handle - placed here (rather than as
+              always-visible row buttons, unlike MediaDivider.vue/
+              MediaGroup.vue) since this menu is already a keyboard-
+              focusable trigger and a media list can be dense enough that
+              two more always-visible icons per row would add real clutter.
+              They share one "Move" submenu with the other sections to move
+              the item to. Covers both top-level items and a group's own
               children (MediaGroup.vue passes the same can-move-up/
               can-move-down/@move contract for its children, reordering
-              only within the group - see moveChildItem there).
+              only within the group - see moveChildItem there), which never
+              leave their group, so they get no sections to move to.
             -->
-            <q-item
-              v-close-popup
-              clickable
-              :disable="!canMoveUp"
-              @click="emit('move', -1)"
-            >
-              <q-item-section avatar>
-                <q-icon name="mmm-up" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ t('move-up') }}</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              v-close-popup
-              clickable
-              :disable="!canMoveDown"
-              @click="emit('move', 1)"
-            >
-              <q-item-section avatar>
-                <q-icon name="mmm-down" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ t('move-down') }}</q-item-label>
-              </q-item-section>
-            </q-item>
+            <MediaMoveMenuItem
+              :can-move-down="canMoveDown"
+              :can-move-up="canMoveUp"
+              :media-ids="child ? [] : [media.uniqueId]"
+              reorder
+              @move="(delta) => emit('move', delta)"
+            />
             <q-item
               v-close-popup
               clickable
@@ -1485,6 +1471,7 @@ import {
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import MediaItemDownloadOverlay from 'components/media/MediaItemDownloadOverlay.vue';
+import MediaMoveMenuItem from 'components/media/MediaMoveMenuItem.vue';
 import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { type QBtn, type QImg, type QInput, QItem, useQuasar } from 'quasar';
@@ -1753,6 +1740,15 @@ const hoveringMediaItem = useElementHover(() => mediaItem.value?.$el, {
 const moreButton = useTemplateRef<QBtn>('moreButton');
 const contextMenu = ref(false);
 const menuTarget = ref<boolean | string | undefined>(true);
+
+// A right-click on an item outside the selection hands the contextmenu event
+// up the usual click path, where MediaCalendarPage's handleMediaItemClick
+// makes this item the whole selection. Without it, the multi-selection menu
+// opened for an item that wasn't part of the selection.
+const selectOnContextMenu = (event: MouseEvent) => {
+  if (props.selected) return;
+  emit('click', event);
+};
 
 const isEditingTitle = ref(false);
 const titleInput = ref<HTMLInputElement>();
