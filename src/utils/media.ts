@@ -749,6 +749,7 @@ export const getMetadataFromMediaPath = async (
       trackInfo: [],
     },
     native: {},
+    nativeTyped: {},
     quality: { warnings: [] },
   };
   try {
