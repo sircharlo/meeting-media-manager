@@ -20,6 +20,7 @@ import {
   ZIP_EXTENSIONS,
 } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { noticeUnopenableMedia } from 'src/helpers/unopenable-media';
 import { log } from 'src/shared/vanilla';
 
 const {
@@ -454,6 +455,21 @@ export const isNoDecoderError = (
 ) => /decoder_error_not_supported/i.test(error?.message ?? '');
 
 /**
+ * Whether Chromium couldn't open a media file at all: it found nothing it
+ * could read where the file's index should be (DEMUXER_ERROR_COULD_NOT_OPEN,
+ * "FFmpegDemuxer: open context failed"). Seen with MP4s that have no
+ * duration in their metadata either (MMM-V2-3CF, MMM-V2-3N6): most likely
+ * cut short by a download or copy that didn't finish. The file's problem,
+ * not M³'s, so the user is told (see noticeUnopenableMedia), not Sentry.
+ */
+export const isUnopenableMediaError = (
+  error: null | undefined | { message?: string },
+) =>
+  /demuxer_error_could_not_open|open context failed/i.test(
+    error?.message ?? '',
+  );
+
+/**
  * How long a hidden media element may take to read what's needed from a
  * file (its duration, or a frame for its thumbnail) before that's given up
  * on. A file that never loads and never errors - a cloud placeholder that
@@ -684,6 +700,35 @@ export const reportUnplayableMediaTracks = async (filepath: string) => {
 };
 
 /**
+ * Says why the hidden <video> couldn't read a file's duration: to the user
+ * when Chromium can't open the file at all, to Sentry otherwise.
+ * @param error The error the duration lookup rejects with.
+ * @param mediaError The element's own MediaError: the 'error' event itself
+ * is empty ({"isTrusted":true}), Chromium's reason is here (MMM-V2-3N6).
+ * @param mediaPath The file.
+ */
+const reportDurationLoadFailure = (
+  error: Error,
+  mediaError: MediaError | null,
+  mediaPath: string,
+) => {
+  if (isUnopenableMediaError(mediaError)) {
+    noticeUnopenableMedia(mediaPath, mediaError?.message);
+    return;
+  }
+  errorCatcher(error, {
+    contexts: {
+      fn: {
+        code: mediaError?.code,
+        mediaError: mediaError?.message,
+        mediaPath,
+        name: 'getMetadataFromMediaPath',
+      },
+    },
+  });
+};
+
+/**
  * Gets the metadata of a media file.
  * @param mediaPath The path to the media file.
  * @returns The metadata of the media file.
@@ -740,18 +785,7 @@ export const getMetadataFromMediaPath = async (
           const rejectionError = new Error(
             `Failed to load video: ${mediaPath}`,
           );
-          errorCatcher(rejectionError, {
-            contexts: {
-              fn: {
-                // The 'error' event itself is empty ({"isTrusted":true}):
-                // Chromium's reason is on the element's own MediaError.
-                code: video.error?.code,
-                mediaError: video.error?.message,
-                mediaPath,
-                name: 'getMetadataFromMediaPath',
-              },
-            },
-          });
+          reportDurationLoadFailure(rejectionError, video.error, mediaPath);
           reject(rejectionError);
         };
         video.load();
