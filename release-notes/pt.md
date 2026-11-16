@@ -4,6 +4,12 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## PRÓXIMA VERSÃO
+
+### ✨ Novos Recursos
+
+- ✨ **Mover para outra seção**: Agora o menu de um item de mídia tem um submenu **Mover** com Mover para cima, Mover para baixo e as outras seções do dia, para enviar o item para outra seção com um clique, em vez de arrastá-lo até lá. Com vários itens selecionados, **Mover para a seção** reúne todos eles no fim da seção que você escolher; uma seção em que todos já estão não é oferecida.
+
 ## v26.11.3
 
 ### ✨ Novos Recursos

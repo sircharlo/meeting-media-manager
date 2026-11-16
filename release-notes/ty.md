@@ -4,6 +4,12 @@
 
 No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera parau, a hi’o i ta māua pu’e parau CHANGELOG.md i ni’a i GitHub.
 
+## FAAOHIPARAA API TA MURI MAI
+
+### ✨ Te mau rave’a ‘āpī
+
+- ✨ **Fa’anu’u i roto i te tahi atu tuha’a**: I teie nei, e tāpura iti **Fa’anu’u** tō te tāpura o te hō’ē tuha’a media, e Fa’anu’u i ni’a, Fa’anu’u i raro ’e te tahi atu mau tuha’a o te mahana i roto, nō te tono i te reira i roto i te tahi atu tuha’a nā roto i te hō’ē noa pata, eiaha e tarī i te reira. ’Ia mā’iti-hia e rave rahi tuha’a media, e ha’aputuputu **Fa’anu’u i roto i te tuha’a** i te reira pauroa i te hope’a o te tuha’a ta ’oe e mā’iti; ’aita e fa’a’itehia te hō’ē tuha’a tei reira a’ena te reira pauroa.
+
 ## v26.11.3
 
 ### ✨ Te mau rave’a ‘āpī

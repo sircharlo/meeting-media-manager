@@ -4,6 +4,12 @@
 
 A verziók közötti változások teljes listáját megtalálja a GitHubon található CHANGELOG.md fájlban.
 
+## KÖVETKEZŐ VERZIÓ
+
+### ✨ Új funkciók
+
+- ✨ **Áthelyezés másik szakaszba**: A médiaelemek menüjében mostantól van egy **Mozgat** almenü, benne a Felfelé mozgat, a Lefelé mozgat és a nap többi szakasza, így az elem egy kattintással áthelyezhető egy másik szakaszba, nem kell odahúzni. Ha több elem van kiválasztva, az **Áthelyezés szakaszba** mindet a választott szakasz végére gyűjti; az a szakasz, amelyben már mind benne vannak, nem jelenik meg.
+
 ## v26.11.3
 
 ### ✨ Új funkciók
