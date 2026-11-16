@@ -4,6 +4,12 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## AANKOMENDE VERSIE
+
+### ✨ Nieuwe functies
+
+- ✨ **Naar een andere sectie verplaatsen**: Het menu van een media-item heeft nu een submenu **Verplaatsen** met Naar boven verplaatsen, Naar beneden verplaatsen en de andere secties van de dag, zodat je het item met één klik naar een andere sectie stuurt in plaats van het erheen te slepen. Als er meerdere items geselecteerd zijn, zet **Naar sectie verplaatsen** ze allemaal aan het einde van de gekozen sectie; een sectie waar ze allemaal al in staan, wordt niet aangeboden.
+
 ## v26.11.3
 
 ### ✨ Nieuwe functies
