@@ -4,6 +4,12 @@
 
 Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGELOG.md GitHubis.
 
+## TULEVANE VERSIOON
+
+### ✨ Uued funktsioonid
+
+- ✨ **Teise jaotisesse liigutamine**: Meediaelemendi menüüs on nüüd alammenüü **Liiguta**, kus on Liiguta üles, Liiguta alla ja päeva teised jaotised, et saaksid elemendi ühe klõpsuga teise jaotisesse saata, selle asemel et seda sinna lohistada. Kui valitud on mitu elementi, koondab **Liiguta jaotisesse** need kõik selle jaotise lõppu, mille valid; jaotist, kus need kõik juba on, ei pakuta.
+
 ## v26.11.3
 
 ### ✨ Uued funktsioonid
