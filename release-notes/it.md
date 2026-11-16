@@ -4,6 +4,12 @@
 
 Per l'elenco completo delle modifiche tra le versioni, consulta il file CHANGELOG.md su GitHub.
 
+## PROSSIMA VERSIONE
+
+### ✨ Nuove funzionalità
+
+- ✨ **Sposta in un'altra sezione**: il menu di un elemento multimediale ora ha un sottomenu **Sposta** con Sposta in alto, Sposta in basso e le altre sezioni del giorno, per mandare l'elemento in un'altra sezione con un clic invece di trascinarlo. Con più elementi selezionati, **Sposta nella sezione** li raccoglie tutti alla fine della sezione che scegli; una sezione in cui si trovano già tutti non viene proposta.
+
 ## v26.11.3
 
 ### ✨ Nuove funzionalità
