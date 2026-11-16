@@ -4,6 +4,12 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## PRIHAJAJOČA RAZLIČICA
+
+### ✨ Nove funkcije
+
+- ✨ **Premik v drug razdelek**: Meni multimedijskega elementa ima zdaj podmeni **Premakni** z možnostmi Premakni gor, Premakni dol in drugimi razdelki dneva, tako da element z enim klikom pošlješ v drug razdelek, namesto da ga povlečeš tja. Če je izbranih več elementov, jih **Premakni v razdelek** zbere na koncu razdelka, ki ga izbereš; razdelek, v katerem so že vsi, ni ponujen.
+
 ## v26.11.3
 
 ### ✨ Nove funkcije
