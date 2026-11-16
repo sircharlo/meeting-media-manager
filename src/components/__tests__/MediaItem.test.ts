@@ -1,7 +1,11 @@
+import type { DateInfo } from 'src/types';
+
 import { mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { useCurrentStateStore } from 'stores/current-state';
 import { useDemoModeStore } from 'stores/demo-mode';
+import { useJwStore } from 'stores/jw';
 import { afterEach, describe, expect, it } from 'vitest';
 import { nextTick } from 'vue';
 
@@ -186,6 +190,21 @@ describe('MediaItem Component', () => {
     expect(wrapper.text()).toContain('Test Media Item');
   });
 
+  const findMenuItem = (label: string) =>
+    [...document.body.querySelectorAll<HTMLElement>('.q-item__label')]
+      .find((el) => el.textContent?.trim() === label)
+      ?.closest<HTMLElement>('[role="menuitem"]');
+
+  // Move up/Move down sit in the context menu's "Move" submenu, next to the
+  // sections to move the item to.
+  const openMoveSubmenu = async (wrapper: ReturnType<typeof mount>) => {
+    await wrapper.get('button[aria-label="More options"]').trigger('click');
+    await nextTick();
+    findMenuItem('Move')?.click();
+    await nextTick();
+    await nextTick();
+  };
+
   // UX-6 (full-audit-2026-09-04.md): reordering media items was previously
   // drag-and-drop only (a pointer-driven handle with no tabindex/keyboard
   // handler) - Move up/Move down were added to the already-keyboard-focusable
@@ -201,13 +220,7 @@ describe('MediaItem Component', () => {
       },
     });
 
-    await wrapper.get('button[aria-label="More options"]').trigger('click');
-    await nextTick();
-
-    const findMenuItem = (label: string) =>
-      [...document.body.querySelectorAll<HTMLElement>('.q-item__label')]
-        .find((el) => el.textContent === label)
-        ?.closest<HTMLElement>('[role="menuitem"]');
+    await openMoveSubmenu(wrapper);
 
     const moveUpItem = findMenuItem('Move up');
     const moveDownItem = findMenuItem('Move down');
@@ -241,13 +254,7 @@ describe('MediaItem Component', () => {
       },
     });
 
-    await wrapper.get('button[aria-label="More options"]').trigger('click');
-    await nextTick();
-
-    const findMenuItem = (label: string) =>
-      [...document.body.querySelectorAll<HTMLElement>('.q-item__label')]
-        .find((el) => el.textContent === label)
-        ?.closest<HTMLElement>('[role="menuitem"]');
+    await openMoveSubmenu(wrapper);
 
     const moveUpItem = findMenuItem('Move up');
     const moveDownItem = findMenuItem('Move down');
@@ -261,6 +268,91 @@ describe('MediaItem Component', () => {
     expect(wrapper.emitted('move')).toEqual([[1]]);
 
     wrapper.unmount();
+  });
+
+  // A right-click on an item outside a multi-selection used to open the
+  // multi-selection menu for a selection the item wasn't even part of. It
+  // now goes up the click path, where MediaCalendarPage makes that item the
+  // whole selection.
+  it('passes a right-click on an unselected item up as a click', async () => {
+    const wrapper = mount(MediaItem, {
+      props: {
+        media: mockMediaItem,
+        repeat: false,
+        selected: false,
+        selectedMediaItems: ['other-1', 'other-2'],
+      },
+    });
+
+    await wrapper.get('.section-drag-handle').trigger('contextmenu');
+
+    const clicks = wrapper.emitted('click');
+    expect(clicks).toHaveLength(1);
+    expect((clicks?.[0]?.[0] as Event).type).toBe('contextmenu');
+  });
+
+  it('keeps the selection when right-clicking one of its items', async () => {
+    const wrapper = mount(MediaItem, {
+      props: {
+        media: mockMediaItem,
+        repeat: false,
+        selected: true,
+        selectedMediaItems: [mockMediaItem.uniqueId, 'other-1'],
+      },
+    });
+
+    await wrapper.get('.section-drag-handle').trigger('contextmenu');
+
+    expect(wrapper.emitted('click')).toBeUndefined();
+  });
+
+  it('offers Move to section in the multi-selection menu', async () => {
+    const currentState = useCurrentStateStore();
+    const jwStore = useJwStore();
+    currentState.currentCongregation = 'test-cong';
+    currentState.selectedDate = '2026-11-18';
+    jwStore.lookupPeriod['test-cong'] = [
+      {
+        date: new Date('2026-11-18T00:00:00'),
+        mediaSections: [
+          {
+            config: { label: 'Section A', uniqueId: 'custom-a' },
+            items: [mockMediaItem, { type: 'media', uniqueId: 'other-1' }],
+          },
+          { config: { label: 'Section B', uniqueId: 'custom-b' }, items: [] },
+        ],
+        status: 'complete',
+      } as unknown as DateInfo,
+    ];
+
+    const wrapper = mount(MediaItem, {
+      attachTo: document.body,
+      props: {
+        media: mockMediaItem,
+        repeat: false,
+        selected: true,
+        selectedMediaItems: [mockMediaItem.uniqueId, 'other-1'],
+      },
+    });
+
+    await wrapper.get('.section-drag-handle').trigger('contextmenu');
+    await nextTick();
+    await nextTick();
+
+    findMenuItem('Move to section')?.click();
+    await nextTick();
+    await nextTick();
+    findMenuItem('Section B')?.click();
+    await nextTick();
+
+    expect(
+      currentState.selectedDateObject?.mediaSections.map((section) =>
+        section.items?.map((media) => media.uniqueId),
+      ),
+    ).toEqual([[], [mockMediaItem.uniqueId, 'other-1']]);
+
+    wrapper.unmount();
+    delete jwStore.lookupPeriod['test-cong'];
   });
 
   it('hides thumbnail spinners reactively when demo mode is toggled at runtime', async () => {

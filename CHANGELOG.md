@@ -6,9 +6,17 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ## UPCOMING VERSION
 
+### ✨ New Features
+
+- ✨ **Move to Another Section**: A media item's menu now has a **Move** submenu with Move up, Move down and the day's other sections, to send the item to another section in one click instead of dragging it there. With several items selected, **Move to section** gathers them all at the end of the section you pick; a section they're all already in isn't offered.
+
 ### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Damaged Media Files**: When a video can't be opened at all, most often because it was only partly downloaded or copied, M³ now says so, naming the file, so there's time to get it again before the meeting. Before, its thumbnail just stayed blank and an error report was sent instead.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Selecting Media**: Right-clicking a media item outside a selection of several items opened the menu for that selection, whose actions then applied to the selected items instead of the one you right-clicked. The right-clicked item now becomes the selection, as in a file manager, and the menu acts on it alone.
 
 ### 🔧 Chores
 
