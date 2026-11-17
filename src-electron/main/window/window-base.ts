@@ -4,6 +4,7 @@ import {
   app,
   BrowserWindow,
   type BrowserWindowConstructorOptions,
+  type WebContents,
 } from 'electron';
 import {
   IS_BETA,
@@ -21,6 +22,21 @@ import {
 } from 'src-electron/main/window/window-state';
 import { log } from 'src/shared/vanilla';
 import { join, resolve } from 'upath';
+
+type WindowName = 'main' | 'media' | 'timer' | 'website';
+
+// Which of M³'s windows each webContents belongs to, for handlers that are
+// only given the webContents (e.g. the preload-error report in security.ts).
+const windowNames = new WeakMap<WebContents, WindowName>();
+
+/**
+ * Names the M³ window a webContents belongs to.
+ * @param contents The webContents to look up
+ * @returns The window's name, or undefined for any other webContents (a
+ * webview or a devtools page, say)
+ */
+export const getWindowName = (contents: WebContents) =>
+  windowNames.get(contents);
 
 export function closeOtherWindows(source: BrowserWindow) {
   try {
@@ -44,7 +60,7 @@ export function closeOtherWindows(source: BrowserWindow) {
  * @returns The created window
  */
 export function createWindow(
-  name: 'main' | 'media' | 'timer' | 'website' = 'main',
+  name: WindowName = 'main',
   options?: BrowserWindowConstructorOptions,
   websiteParams?: JwSiteParams,
 ) {
@@ -83,6 +99,7 @@ export function createWindow(
           configFilePath: app.getPath('userData'),
           ...opts,
         }).win;
+  windowNames.set(win.webContents, name);
 
   // Show the window when it's ready
   win.on('ready-to-show', () => {

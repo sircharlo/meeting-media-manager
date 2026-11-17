@@ -2,11 +2,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const {
   appOn,
+  captureElectronErrorMock,
+  getWindowNameMock,
   isSelfMock,
   isTrustedNavigationTargetMock,
   setPermissionRequestHandler,
 } = vi.hoisted(() => ({
   appOn: vi.fn(),
+  captureElectronErrorMock: vi.fn(),
+  getWindowNameMock: vi.fn(),
   isSelfMock: vi.fn(),
   isTrustedNavigationTargetMock: vi.fn(() => false),
   setPermissionRequestHandler: vi.fn(),
@@ -19,12 +23,13 @@ vi.mock('electron', () => ({
 }));
 
 vi.mock('src-electron/main/utils', () => ({
-  captureElectronError: vi.fn(),
+  captureElectronError: captureElectronErrorMock,
   isSelf: isSelfMock,
   isTrustedNavigationTarget: isTrustedNavigationTargetMock,
 }));
 
 vi.mock('src-electron/main/window/window-base', () => ({
+  getWindowName: getWindowNameMock,
   logToWindow: vi.fn(),
 }));
 
@@ -132,4 +137,74 @@ describe('permission request handler', () => {
       expect(callback).toHaveBeenCalledWith(expected);
     },
   );
+});
+
+type ContentsHandler = (...args: unknown[]) => void;
+
+const PAGE = 'file:///app/index.html#?page=media-player';
+const PRELOAD = '/app/electron-preload.cjs';
+
+/**
+ * A webContents just created, with the listeners security.ts attached to it.
+ * @param type What getType() answers
+ * @returns The webContents and its listeners, by event name
+ */
+const createContents = async (type = 'window') => {
+  const handlers = new Map<string, ContentsHandler>();
+  const contents = {
+    getType: () => type,
+    getURL: () => PAGE,
+    on: (event: string, handler: ContentsHandler) => {
+      handlers.set(event, handler);
+    },
+    setWindowOpenHandler: vi.fn(),
+  };
+  await import('../security');
+  const onCreated = appOn.mock.calls.find(
+    ([event]) => event === 'web-contents-created',
+  )?.[1];
+  onCreated?.({}, contents);
+  return handlers;
+};
+
+// MMM-V2-3DN: a preload that throws never exposes window.electronApi, and
+// the renderer's report only said electronApi was undefined.
+describe('preload errors', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+  });
+
+  it('reports what the preload threw, with its path, page and window', async () => {
+    getWindowNameMock.mockReturnValue('media');
+    const handlers = await createContents();
+    const error = new Error('The specified module could not be found.');
+
+    handlers.get('preload-error')?.({}, PRELOAD, error);
+
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(error, {
+      contexts: {
+        fn: {
+          name: 'preload-error',
+          preloadPath: PRELOAD,
+          url: PAGE,
+          window: 'media',
+        },
+      },
+    });
+  });
+
+  it("says what kind of page it was when it isn't one of M³'s windows", async () => {
+    getWindowNameMock.mockReturnValue(undefined);
+    const handlers = await createContents('webview');
+
+    handlers.get('preload-error')?.({}, PRELOAD, new Error('boom'));
+
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        contexts: { fn: expect.objectContaining({ window: 'webview' }) },
+      }),
+    );
+  });
 });

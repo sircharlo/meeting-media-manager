@@ -35,7 +35,8 @@ vi.mock('src-electron/main/window/window-state', () => ({
   StatefulBrowserWindow: vi.fn(),
 }));
 
-const { __testables, createWindow } = await import('../window/window-base');
+const { __testables, createWindow, getWindowName } =
+  await import('../window/window-base');
 const { buildWebsitePage } = __testables;
 const { captureElectronError } = await import('src-electron/main/utils');
 const { StatefulBrowserWindow } =
@@ -203,4 +204,18 @@ describe('createWindow - page load errors', () => {
       expect(captureElectronError).not.toHaveBeenCalled();
     },
   );
+});
+
+// security.ts names the window in a preload-error report (MMM-V2-3DN).
+describe('getWindowName', () => {
+  it("names the window a webContents belongs to, and nothing else's", () => {
+    mockWindowFailingToLoad(new Error('ERR_FAILED'));
+
+    const win = createWindow('timer');
+
+    expect(getWindowName(win.webContents)).toBe('timer');
+    expect(
+      getWindowName({} as unknown as typeof win.webContents),
+    ).toBeUndefined();
+  });
 });
