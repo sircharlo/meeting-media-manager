@@ -2420,7 +2420,7 @@ __metadata:
     heic-convert: "npm:^2.1.0"
     is-online: "npm:^12.0.2"
     mime: "npm:^4.1.2"
-    music-metadata: "npm:^12.4.0"
+    music-metadata: "npm:^12.5.0"
     robotjs: "npm:^0.9.1"
     upath: "npm:^3.0.8"
     yauzl: "npm:^3.4.0"
@@ -2548,7 +2548,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^12.4.0":
+"music-metadata@npm:^12.5.0":
   version: 12.5.0
   resolution: "music-metadata@npm:12.5.0"
   dependencies:
