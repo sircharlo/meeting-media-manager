@@ -4,7 +4,10 @@ import {
   isSelf,
   isTrustedNavigationTarget,
 } from 'src-electron/main/utils';
-import { logToWindow } from 'src-electron/main/window/window-base';
+import {
+  getWindowName,
+  logToWindow,
+} from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 
 app.on('ready', () => {
@@ -64,6 +67,24 @@ app.on('ready', () => {
 });
 
 app.on('web-contents-created', (_event, contents) => {
+  // A preload that throws never exposes window.electronApi, so the page
+  // can't start, and its own report only shows the result: "Cannot
+  // destructure property 'basename' of 'globalThis.electronApi' as it is
+  // undefined" (MMM-V2-3DN). Report what the preload itself threw.
+  contents.on('preload-error', (_e, preloadPath, error) => {
+    captureElectronError(error, {
+      contexts: {
+        fn: {
+          name: 'preload-error',
+          preloadPath,
+          url: contents.getURL(),
+          // Not one of M³'s windows: say what it is instead (a webview, say)
+          window: getWindowName(contents) ?? contents.getType(),
+        },
+      },
+    });
+  });
+
   // Verify WebView options before creation
   // See: https://www.electronjs.org/docs/latest/tutorial/security#12-verify-webview-options-before-creation
   contents.on('will-attach-webview', (event, webPreferences, params) => {
