@@ -1,6 +1,6 @@
 import type { DateInfo } from 'src/types';
 
-import { mount } from '@vue/test-utils';
+import { enableAutoUnmount, mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -22,6 +22,11 @@ describe('MediaItem Component', () => {
   afterEach(() => {
     document.body.innerHTML = '';
   });
+  // A menu left open keeps its transition timer, which could fire after this
+  // file's DOM is torn down and fail the whole run with "document is not
+  // defined" (merge queue, 2026-11-17). Unmounting clears it. Registered
+  // after the hook above so it runs first: after-hooks run in reverse.
+  enableAutoUnmount(afterEach);
 
   const mockMediaItem = {
     docid: '1011511',
@@ -232,8 +237,6 @@ describe('MediaItem Component', () => {
     await nextTick();
 
     expect(wrapper.emitted('move')).toEqual([[1]]);
-
-    wrapper.unmount();
   });
 
   // UX-6 follow-up (full-audit backlog): a group's own children were left
@@ -266,8 +269,6 @@ describe('MediaItem Component', () => {
     await nextTick();
 
     expect(wrapper.emitted('move')).toEqual([[1]]);
-
-    wrapper.unmount();
   });
 
   // A right-click on an item outside a multi-selection used to open the
@@ -351,7 +352,6 @@ describe('MediaItem Component', () => {
       ),
     ).toEqual([[], [mockMediaItem.uniqueId, 'other-1']]);
 
-    wrapper.unmount();
     delete jwStore.lookupPeriod['test-cong'];
   });
 
