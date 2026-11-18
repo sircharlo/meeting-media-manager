@@ -1133,3 +1133,74 @@ describe('cancelling also stops the read-only lookups', () => {
     expect(zoomCommandMock).not.toHaveBeenCalled();
   });
 });
+
+// The meeting checklist goes by these to tell the user what M³ will do in
+// Zoom, so they must match what the sequences themselves tick.
+describe('what the Zoom sequences leave Zoom in', () => {
+  /** Every checklist update the sequence made, merged in order. */
+  const reportedState = () =>
+    Object.assign(
+      {},
+      ...updateChecklistMock.mock.calls.map(([state]) => state as object),
+    );
+
+  const forgetButtonNames = () => {
+    Object.assign(currentSettings, {
+      zoomMicOffTitle: null,
+      zoomMicOnTitle: null,
+      zoomVideoOffTitle: null,
+      zoomVideoOnTitle: null,
+    });
+    failing = {
+      'set-mic': 'mic-titles-not-captured',
+      'set-video': 'video-titles-not-captured',
+    };
+  };
+
+  it.each([true, false])(
+    'the meeting settings, with the button names learned: %s',
+    async (learned) => {
+      if (!learned) forgetButtonNames();
+      const { getZoomMeetingSequenceOutcome, runZoomMeetingSequence } =
+        await import('../zoom');
+
+      await runZoomMeetingSequence();
+
+      expect(getZoomMeetingSequenceOutcome()).toEqual(reportedState());
+    },
+  );
+
+  it.each([
+    [true, true],
+    [true, false],
+    [false, true],
+  ])(
+    'the before/after-meeting settings, with the button names learned: %s, asking everyone to unmute: %s',
+    async (learned, askAllToUnmute) => {
+      if (!learned) forgetButtonNames();
+      currentSettings.zoomMeetingManagerPostMeetingAskToUnmute = askAllToUnmute;
+      const { getZoomPostMeetingSequenceOutcome, runZoomPostMeetingSequence } =
+        await import('../zoom');
+
+      await runZoomPostMeetingSequence();
+
+      expect(getZoomPostMeetingSequenceOutcome()).toEqual(reportedState());
+    },
+  );
+
+  it('remembers when music asked for the before/after-meeting settings once the meeting started', async () => {
+    const start = new Date(2026, 9, 15, 19, 30);
+    dateMocks.getMeetingStartToday.mockReturnValue(start);
+    const { automateZoomSettingsOnMusicStart, getAfterMeetingSettingsAskedAt } =
+      await import('../zoom');
+    expect(getAfterMeetingSettingsAskedAt()).toBeNull();
+
+    // Before the meeting, the meeting's own schedule applies them.
+    await automateZoomSettingsOnMusicStart(new Date(2026, 9, 15, 19, 0));
+    expect(getAfterMeetingSettingsAskedAt()).toBeNull();
+
+    const after = new Date(2026, 9, 15, 21, 20);
+    await automateZoomSettingsOnMusicStart(after);
+    expect(getAfterMeetingSettingsAskedAt()).toBe(after.getTime());
+  });
+});
