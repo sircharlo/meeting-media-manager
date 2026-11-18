@@ -34,7 +34,7 @@
           no-caps
           :text-color="isItemChecked(item.id) ? 'white' : undefined"
           :unelevated="isItemChecked(item.id)"
-          @click="toggleItemChecked(item.id)"
+          @click="onItemClick(item.id)"
         >
           <q-icon
             class="q-mr-sm"
@@ -55,6 +55,19 @@
         </q-btn>
       </q-card-section>
     </q-card>
+
+    <ConfirmDialog
+      v-model="zoomConfirmOpen"
+      :confirm-label="zoomConfirmLabel"
+      :dialog-id="`quick-actions-zoom-item-confirm-${props.mode}`"
+      icon="mmm-video-meeting"
+      icon-color="primary"
+      :message="zoomConfirm?.message"
+      persistent
+      :title="zoomConfirmTitle"
+      @cancel="zoomConfirmOpen = false"
+      @confirm="confirmZoomItem"
+    />
   </div>
 </template>
 
@@ -65,10 +78,16 @@ import type {
   SettingsValues,
 } from 'src/types';
 
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import { storeToRefs } from 'pinia';
+import {
+  getZoomChecklistNotice,
+  type ZoomChecklistNotice,
+} from 'src/helpers/zoom-checklist';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
-import { computed } from 'vue';
+import { useMusicStore } from 'stores/music';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{ mode: 'after' | 'before' }>();
@@ -79,6 +98,69 @@ const { currentSettings } = storeToRefs(currentState);
 const quickActions = useMeetingQuickActionsStore();
 const { isItemChecked, isItemCheckedAutomatically, toggleItemChecked } =
   quickActions;
+const { formatClockTime } = useMusicStore();
+
+// Items the Zoom Meeting Manager does itself are confirmed first: ticking
+// one M³ is about to do, or unticking one it did (which changes nothing in
+// Zoom), suggests the user doesn't know (see zoom-checklist.ts).
+const zoomConfirmOpen = ref(false);
+// What the dialog asks about: kept once it closes, so its text doesn't
+// change while it fades out.
+const zoomConfirm = ref<null | {
+  done: boolean;
+  itemId: string;
+  message: string;
+}>(null);
+
+const getZoomConfirmMessage = (notice: ZoomChecklistNotice, now: number) => {
+  if (notice.kind === 'done') return t('quick-actions-zoom-done-message');
+  if (notice.kind === 'music-start') {
+    return t('quick-actions-zoom-on-music-start');
+  }
+  // Once the music has stopped, M³ is at it (or about to be).
+  if (notice.at <= now) return t('quick-actions-zoom-on-music-stop-now');
+  return t('quick-actions-zoom-on-music-stop', {
+    time: formatClockTime(new Date(notice.at)),
+  });
+};
+
+const onItemClick = (itemId: string) => {
+  const now = Date.now();
+  const notice = getZoomChecklistNotice(itemId, props.mode, new Date(now));
+  if (!notice) {
+    toggleItemChecked(itemId);
+    return;
+  }
+  zoomConfirm.value = {
+    done: notice.kind === 'done',
+    itemId,
+    message: getZoomConfirmMessage(notice, now),
+  };
+  zoomConfirmOpen.value = true;
+};
+
+const confirmZoomItem = () => {
+  // A second click while the dialog fades out mustn't toggle it back.
+  if (!zoomConfirmOpen.value || !zoomConfirm.value) return;
+  zoomConfirmOpen.value = false;
+  toggleItemChecked(zoomConfirm.value.itemId);
+};
+
+const zoomConfirmTitle = computed(() =>
+  t(
+    zoomConfirm.value?.done
+      ? 'quick-actions-zoom-done-title'
+      : 'quick-actions-zoom-will-do-title',
+  ),
+);
+
+const zoomConfirmLabel = computed(() =>
+  t(
+    zoomConfirm.value?.done
+      ? 'quick-actions-zoom-mark-not-done'
+      : 'quick-actions-zoom-mark-done',
+  ),
+);
 
 const getCategories = (settings: SettingsValues) =>
   props.mode === 'before'

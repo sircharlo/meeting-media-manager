@@ -890,6 +890,46 @@ export const runZoomPostMeetingSequence = (
   );
 };
 
+const areTitlesLearned = (onTitle: null | string, offTitle: null | string) =>
+  !!onTitle && !!offTitle;
+
+/**
+ * What runZoomMeetingSequence leaves Zoom in, for the meeting checklist. The
+ * microphone and the video only change once their buttons' names are
+ * learned (see NOT_LEARNED_ERRORS): undefined until then.
+ */
+export const getZoomMeetingSequenceOutcome = (
+  titles: ZoomTitles = getZoomTitlesFromSettings(),
+): ZoomChecklistState => ({
+  audioJoined: true,
+  hostMicOn: areTitlesLearned(titles.micOnTitle, titles.micOffTitle)
+    ? true
+    : undefined,
+  hostVideoOn: areTitlesLearned(titles.videoOnTitle, titles.videoOffTitle)
+    ? true
+    : undefined,
+  participantsCanUnmute: false,
+  participantsMuted: true,
+});
+
+/**
+ * What runZoomPostMeetingSequence leaves Zoom in, for the meeting checklist
+ * (see getZoomMeetingSequenceOutcome).
+ */
+export const getZoomPostMeetingSequenceOutcome = (
+  titles: ZoomTitles = getZoomTitlesFromSettings(),
+  askAllToUnmute = getSettings()?.zoomMeetingManagerPostMeetingAskToUnmute ??
+    true,
+): ZoomChecklistState => ({
+  audioJoined: false,
+  hostMicOn: false,
+  hostVideoOn: areTitlesLearned(titles.videoOnTitle, titles.videoOffTitle)
+    ? false
+    : undefined,
+  participantsCanUnmute: true,
+  participantsMuted: !askAllToUnmute,
+});
+
 /**
  * Applies the in-meeting Zoom settings, if enabled.
  * (Triggered just before each meeting, when background music stops: see
@@ -916,6 +956,15 @@ export const automateZoomPostMeetingSettings = async () => {
   await runZoomPostMeetingSequence();
 };
 
+let afterMeetingSettingsAskedAt: null | number = null;
+
+/**
+ * When background music last asked for the before/after-meeting settings
+ * (ms since the epoch), if it has since M³ started: the meeting checklist
+ * tells from it whether they're still to come after today's meeting.
+ */
+export const getAfterMeetingSettingsAskedAt = () => afterMeetingSettingsAskedAt;
+
 /**
  * Background music started: applies the before/after-meeting settings,
  * unless today's meeting is still to come. Before it, the meeting's own
@@ -925,6 +974,7 @@ export const automateZoomPostMeetingSettings = async () => {
 export const automateZoomSettingsOnMusicStart = async (now = new Date()) => {
   const start = getMeetingStartToday(now);
   if (start && now < start) return;
+  afterMeetingSettingsAskedAt = now.getTime();
   await automateZoomPostMeetingSettings();
 };
 

@@ -387,3 +387,43 @@ describe('Zoom meeting day', () => {
     expect(zoomState.automationsPaused).toBe(true);
   });
 });
+
+// The meeting checklist asks the user first when they tick a task the
+// meeting settings are still to do (see zoom-checklist.ts).
+describe('when the meeting settings are still to come', () => {
+  const MUSIC_STOPS = MEETING_START.getTime() - MINUTE;
+
+  it('is when the music stops, until they are applied', async () => {
+    startAt(30 * MINUTE);
+    const { getPendingMeetingSettingsTime } = await startM3();
+    expect(getPendingMeetingSettingsTime()).toBe(MUSIC_STOPS);
+
+    await vi.advanceTimersByTimeAsync(29 * MINUTE + 10 * SECOND);
+    expect(actions()).toContain('meeting settings');
+    expect(getPendingMeetingSettingsTime()).toBeNull();
+  });
+
+  it('stays due while they wait for Zoom, and is over once the meeting started', async () => {
+    startAt(30 * MINUTE);
+    const context = await setup();
+    context.dialogState.openDialog(
+      'zoom-setup-assistant',
+      'DialogZoomSetupAssistant',
+    );
+    context.scheduleZoomAutomations();
+
+    await vi.advanceTimersByTimeAsync(29 * MINUTE + 30 * SECOND);
+    expect(actions()).not.toContain('meeting settings');
+    expect(context.getPendingMeetingSettingsTime()).toBe(MUSIC_STOPS);
+
+    await vi.advanceTimersByTimeAsync(30 * SECOND);
+    expect(context.getPendingMeetingSettingsTime()).toBeNull();
+  });
+
+  it('is never on a day without a meeting', async () => {
+    vi.setSystemTime(new Date(2026, 9, 14, 19, 0));
+    const { getPendingMeetingSettingsTime } = await setup();
+
+    expect(getPendingMeetingSettingsTime()).toBeNull();
+  });
+});

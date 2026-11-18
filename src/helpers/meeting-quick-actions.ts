@@ -300,6 +300,15 @@ const ZOOM_CHECKLIST_ITEMS = new Map<
   ],
 ]);
 
+/** Whether leaving Zoom in `state` does the given checklist item. */
+export const zoomStateDoesChecklistItem = (
+  itemId: string,
+  state: ZoomChecklistState,
+) => {
+  const doneWhen = ZOOM_CHECKLIST_ITEMS.get(itemId);
+  return !!doneWhen && state[doneWhen[0]] === doneWhen[1];
+};
+
 /**
  * Ticks the checklist items a Zoom action just did, and unticks the ones it
  * undid, on today's checklist for the part of the meeting it happened in -

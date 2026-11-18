@@ -13,6 +13,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Damaged Media Files**: When a video can't be opened at all, most often because it was only partly downloaded or copied, M³ now says so, naming the file, so there's time to get it again before the meeting. Before, its thumbnail just stayed blank and an error report was sent instead.
+- 🛠️ **Meeting Checklists and the Zoom Meeting Manager**: Marking a checklist task as done when the Zoom Meeting Manager will do it for you now asks first, and says when M³ does it: when background music stops before the meeting, or when you start background music after it. Marking a task M³ already did in Zoom as not done also asks first, since that changes nothing in Zoom.
 
 ### 🐞 Bug Fixes
 
