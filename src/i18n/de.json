@@ -1166,6 +1166,7 @@
   "zoom-hand-unmute-requested": "{name} wurde in Zoom gebeten, die Stummschaltung aufzuheben (oder sie wurde aufgehoben)",
   "zoom-hand-unmuted": "{name} wurde gebeten, die Stummschaltung aufzuheben. Wenn die Person fertig ist:",
   "zoom-helper-error-generic": "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin auftritt, starten Sie M³ neu.",
+  "zoom-helper-error-helper-blocked": "Windows blockiert eine Datei, die M³ zur Steuerung von Zoom benötigt: Die Intelligente App-Steuerung oder die Sicherheitsrichtlinie einer Organisation lässt sie auf diesem Computer nicht zu. Solange Windows sie blockiert, kann M³ Zoom nicht steuern.",
   "zoom-helper-error-helper-missing": "Einige Dateien, die M³ zur Steuerung von Zoom benötigt, fehlen – möglicherweise wurden sie von einem Antivirenprogramm entfernt. Eine Neuinstallation von M³ sollte sie wiederherstellen.",
   "zoom-helper-error-powershell-broken": "Windows PowerShell, das M³ zur Steuerung von Zoom benötigt, startet auf diesem Computer nicht: Es bricht gleich beim Öffnen mit einem Fehler ab. M³ kann Zoom erst wieder steuern, wenn Windows PowerShell repariert ist.",
   "zoom-helper-error-powershell-not-found": "Windows PowerShell, das M³ zur Steuerung von Zoom benötigt, wurde auf diesem Computer nicht gefunden.",

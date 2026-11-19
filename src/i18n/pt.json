@@ -1166,6 +1166,7 @@
   "zoom-hand-unmute-requested": "Foi pedido a {name} que ativasse o áudio (ou o áudio foi ativado) no Zoom",
   "zoom-hand-unmuted": "Foi pedido a {name} que ativasse o áudio. Quando terminar:",
   "zoom-helper-error-generic": "Tente novamente. Se continuar acontecendo, reinicie o M³.",
+  "zoom-helper-error-helper-blocked": "O Windows bloqueia um arquivo de que o M³ precisa para controlar o Zoom: o Controle Inteligente de Aplicativos, ou a política de segurança de uma organização, não deixa que ele seja executado neste computador. O M³ não vai conseguir controlar o Zoom enquanto o Windows o bloquear.",
   "zoom-helper-error-helper-missing": "Alguns arquivos do M³ para controlar o Zoom estão faltando, talvez removidos por um antivírus. Reinstalar o M³ deve restaurá-los.",
   "zoom-helper-error-powershell-broken": "O Windows PowerShell, de que o M³ precisa para controlar o Zoom, não inicia neste computador: ele para com um erro assim que abre. O M³ não vai conseguir controlar o Zoom até que o Windows PowerShell seja reparado.",
   "zoom-helper-error-powershell-not-found": "O Windows PowerShell, de que o M³ precisa para controlar o Zoom, não foi encontrado neste computador.",

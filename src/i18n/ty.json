@@ -1166,6 +1166,7 @@
   "zoom-hand-unmute-requested": "Ua anihia ia {name} ia iriti i to na reo (aore ra ua iritihia to na reo) i roto i te Zoom",
   "zoom-hand-unmuted": "Ua anihia ia {name} ia iriti i to na reo. Ia oti ana'e oia:",
   "zoom-helper-error-generic": "A tāmata faahou. Mai te peu e tupu noa â te reira, a tuu faahou ia M³ i nia.",
+  "zoom-helper-error-helper-blocked": "Te tapea nei o Windows i te hō‘ē pu‘ohu ta M³ e hinaaro nō te faatere ia Zoom: aita o Smart App Control, aore ra te ture paruru o te tahi pupu, e vaiiho ra ia ‘ohipa oia i ni‘a i teie roro uira. Eita M³ e nehenehe e faatere ia Zoom ia tapea noa o Windows i te reira.",
   "zoom-helper-error-helper-missing": "Ua moe te tahi mau pu‘ohu nō M³ nō te faatere ia Zoom, aita i pau i te tapeahia e te hō‘ē niuniu ha‘avare (antivirus). Ia tuu faahou ia M³ i ni‘a, e ho‘i mai ratou.",
   "zoom-helper-error-powershell-broken": "Eita o Windows PowerShell, ta M³ e hinaaro nō te faatere ia Zoom, e haamata i ni‘a i teie roro uira: e faaea oia ma te hape i te taime noa e matara ai. Eita M³ e nehenehe e faatere ia Zoom e tae roa i te taime e faaafaro-faahou-hia ai o Windows PowerShell.",
   "zoom-helper-error-powershell-not-found": "Aita o Windows PowerShell i itea, ta M³ e hinaaro nō te faatere ia Zoom, i ni‘a i teie roro uira.",

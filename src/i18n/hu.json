@@ -1166,6 +1166,7 @@
   "zoom-hand-unmute-requested": "{name} felkérve a némítás feloldására (vagy a némítása feloldva) a Zoomban",
   "zoom-hand-unmuted": "{name} felkérést kapott a némítás feloldására. Ha végzett:",
   "zoom-helper-error-generic": "Kérjük, próbálja újra. Ha a hiba továbbra is fennáll, indítsa újra az M³-at.",
+  "zoom-helper-error-helper-blocked": "A Windows letilt egy fájlt, amelyre az M³-nak a Zoom vezérléséhez szüksége van: az Intelligens alkalmazásvezérlés (Smart App Control) vagy egy szervezet biztonsági házirendje nem engedi futtatni ezen a számítógépen. Az M³ nem tudja vezérelni a Zoomot, amíg a Windows letiltja.",
   "zoom-helper-error-helper-missing": "Az M³ Zoom vezérléséhez szükséges fájljai közül néhány hiányzik, talán egy vírusirtó távolította el őket. Az M³ újratelepítése valószínűleg helyreállítja őket.",
   "zoom-helper-error-powershell-broken": "A Windows PowerShell, amelyre az M³-nak a Zoom vezérléséhez szüksége van, nem indul el ezen a számítógépen: megnyitáskor azonnal hibával leáll. Az M³ nem tudja vezérelni a Zoomot, amíg a Windows PowerShellt meg nem javítják.",
   "zoom-helper-error-powershell-not-found": "A Windows PowerShell, amelyre az M³-nak a Zoom vezérléséhez szüksége van, nem található ezen a számítógépen.",

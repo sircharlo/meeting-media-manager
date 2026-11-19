@@ -1166,6 +1166,7 @@
   "zoom-hand-unmute-requested": "{name}: Zoomis paluti heli sisse lülitada (või lülitati see sisse)",
   "zoom-hand-unmuted": "Osalejal {name} paluti heli sisse lülitada. Kui ta on lõpetanud:",
   "zoom-helper-error-generic": "Palun proovi uuesti. Kui see kordub, taaskäivita M³.",
+  "zoom-helper-error-helper-blocked": "Windows blokeerib faili, mida M³ vajab Zoomi juhtimiseks: Smart App Control või organisatsiooni turvapoliitika ei luba seda selles arvutis käivitada. M³ ei saa Zoomi juhtida, kuni Windows seda blokeerib.",
   "zoom-helper-error-helper-missing": "Mõned M³-e failid, mida on vaja Zoomi juhtimiseks, puuduvad – võib-olla eemaldas need viirusetõrje. M³-e uuesti installimine peaks need taastama.",
   "zoom-helper-error-powershell-broken": "Windows PowerShell, mida M³ vajab Zoomi juhtimiseks, ei käivitu selles arvutis: see peatub kohe avamisel veaga. M³ ei saa Zoomi juhtida enne, kui Windows PowerShell on parandatud.",
   "zoom-helper-error-powershell-not-found": "Windows PowerShelli, mida M³ vajab Zoomi juhtimiseks, ei leitud selles arvutis.",
