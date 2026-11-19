@@ -1073,6 +1073,7 @@
   "update-downloaded-short": "Posodobitev je pripravljena za namestitev",
   "update-downloading": "Na voljo je nova različica M³ in se prenaša v ozadju.",
   "update-downloading-short": "Prenašanje posodobitve",
+  "update-error-disk-full": "M³ ni mogel namestiti posodobitve, ker na disku tega računalnika ni več prostora. Sprosti nekaj prostora na disku in nato znova zaženi M³, da bo poskusil znova.",
   "update-error-read-only-volume": "M³ ni mogoče posodobiti, ker je shranjen v mapi, ki je samo za branje. Premesti M³ na drugo lokacijo, na primer v mapo Aplikacije.",
   "update-failed": "Posodobitev ni uspela",
   "update-install-asks-permission": "Windows bo zahteval dovoljenje za namestitev",
