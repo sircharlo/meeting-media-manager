@@ -1091,7 +1091,7 @@
   "watch-folder-error-caption": "Preveri, ali aplikacija, ki skrbi za sinhronizacijo, na primer Dropbox ali OneDrive, deluje in ali mapa še vedno obstaja ter ima M³ dovoljenje, da vanjo shranjuje datoteke.",
   "watch-folder-error-message": "M³ ne more brati mape v skupni rabi.",
   "watched-media-item-explain": "Ta multimedijska datoteka je bila dodana iz mape v skupni rabi",
-  "website-unreachable": "The website couldn’t be loaded because this computer couldn’t reach it. Check the internet connection, then refresh the page.",
+  "website-unreachable": "Spletnega mesta ni bilo mogoče naložiti, ker ga ta računalnik ni mogel doseči. Preveri internetno povezavo, nato osveži stran.",
   "websiteSelection": "Izbira spletnega mesta",
   "weDay": "Dan javnega shoda",
   "weDay-explain": "Izberi dan, ko imate javni shod.",
