@@ -1073,6 +1073,7 @@
   "update-downloaded-short": "업데이트 설치 준비 완료",
   "update-downloading": "백그라운드에서 M³ 업데이트 버전을 다운로드 중입니다.",
   "update-downloading-short": "업데이트 다운로드 중",
+  "update-error-disk-full": "이 컴퓨터의 디스크에 남은 공간이 없어 M³가 업데이트를 설치하지 못했습니다. 디스크 공간을 확보한 다음 M³를 다시 시작하여 다시 시도해 주십시오.",
   "update-error-read-only-volume": "M³가 읽기 전용 폴더에 설치되어 있어 애플리케이션을 업데이트할 수 없습니다. M³를 Applications 폴더 등으로 이동해 실행해 주십시오.",
   "update-failed": "업데이트 실패",
   "update-install-asks-permission": "Windows에서 설치 권한을 요청합니다",
