@@ -166,6 +166,7 @@ const electronApi: ElectronApi = {
     listen('video-capture-crash-detected', cb),
   onWatchFolderError: (cb) => listen('watchFolderError', cb),
   onWatchFolderUpdate: (cb) => listen('watchFolderUpdate', cb),
+  onWebsiteLoadFailed: (cb) => listen('websiteLoadFailed', cb),
   onWebsiteWindowClosed: (cb) => listen('websiteWindowClosed', cb),
   openDiscussion: (c, t, p) => send('openDiscussion', c, t, p),
   openExternal: (w) => send('openExternal', w),

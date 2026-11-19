@@ -17,6 +17,11 @@ import {
   sendToWindow,
 } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
+import {
+  CHROMIUM_NETWORK_ERROR_CODES,
+  isChromiumNetworkError,
+} from 'src/shared/network-errors';
+import { log } from 'src/shared/vanilla';
 
 export const websiteWindowInfo = {
   websiteWindow: null as BrowserWindow | null,
@@ -52,6 +57,23 @@ export function createWebsiteWindow(websiteParams?: JwSiteParams) {
   );
 
   websiteWindowInfo.websiteWindow?.center();
+
+  // A page the website window couldn't load for want of a network (no
+  // internet, a DNS that doesn't answer: MMM-V2-3P7) leaves it blank, on the
+  // first load as on a link or a refresh: the main window says so.
+  websiteWindowInfo.websiteWindow?.webContents.on(
+    'did-fail-load',
+    (_event, _errorCode, errorDescription, validatedURL, isMainFrame) => {
+      if (!isMainFrame || !CHROMIUM_NETWORK_ERROR_CODES.has(errorDescription))
+        return;
+      log(
+        `[createWebsiteWindow] ${validatedURL} couldn't load: ${errorDescription}`,
+        'electronWindow',
+        'warn',
+      );
+      sendToWindow(mainWindowInfo.mainWindow, 'websiteLoadFailed');
+    },
+  );
 
   websiteWindowInfo.websiteWindow?.webContents.on('did-finish-load', () => {
     const isJwStream = websiteParams?.site === 'stream';
@@ -99,6 +121,8 @@ export function createWebsiteWindow(websiteParams?: JwSiteParams) {
         websiteWindowInfo.websiteWindow
           ?.loadURL(details.url)
           .catch((error: unknown) => {
+            // did-fail-load above tells the user.
+            if (isChromiumNetworkError(error)) return;
             captureElectronError(error, {
               contexts: {
                 fn: { name: 'createWebsiteWindow.setWindowOpenHandler' },

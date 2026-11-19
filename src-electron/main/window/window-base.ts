@@ -20,6 +20,7 @@ import {
   StatefulBrowserWindow,
   type WindowState,
 } from 'src-electron/main/window/window-state';
+import { isChromiumNetworkError } from 'src/shared/network-errors';
 import { log } from 'src/shared/vanilla';
 import { join, resolve } from 'upath';
 
@@ -138,6 +139,17 @@ export function createWindow(
     // A window closed while its page was still loading (M³ quit, say) fails
     // the load with ERR_FAILED: nothing went wrong (MMM-V2-3MT).
     if (win.isDestroyed() || win.webContents.isDestroyed()) return;
+    // No internet, or a DNS that doesn't answer (MMM-V2-3P7): nothing M³
+    // can fix. The website window tells the user (see createWebsiteWindow).
+    if (isChromiumNetworkError(error)) {
+      log(
+        `[createWindow] The ${name} window's page couldn't load: no network`,
+        'electronWindow',
+        'warn',
+        error,
+      );
+      return;
+    }
     captureElectronError(error, {
       contexts: { fn: { name: 'createWindow', window: name } },
     });

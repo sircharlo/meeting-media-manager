@@ -20,6 +20,7 @@ import {
   isDiskFullError,
 } from 'src/shared/filesystem-errors';
 import {
+  CHROMIUM_NETWORK_ERROR_CODES,
   isFetchNetworkError,
   NETWORK_ERROR_CODES,
 } from 'src/shared/network-errors';
@@ -35,34 +36,19 @@ const UPDATER_FULL_DOWNLOAD_FALLBACK_IGNORE_MS = 5 * 60 * 1000;
 const UPDATER_PARTIAL_DOWNLOAD_NETWORK_ERRORS = ['ERR_NETWORK_IO_SUSPENDED'];
 const UPDATE_IGNORE_ERRORS: (string | string[])[] = [
   ...NETWORK_ERROR_CODES,
+  ...CHROMIUM_NETWORK_ERROR_CODES,
   'ENOSPC',
   'EPIPE',
-  'ERR_ADDRESS_UNREACHABLE',
   // The update server's certificate didn't check out on the user's
   // computer: an antivirus or proxy inspecting HTTPS with a root the
   // updater doesn't trust, or a wrong system clock. Chromium's take on
   // SELF_SIGNED_CERT_IN_CHAIN below (MMM-V2-AN).
   'ERR_CERT_AUTHORITY_INVALID',
   'ERR_CERT_DATE_INVALID',
-  'ERR_CONNECTION_CLOSED',
-  // Chromium's name for ECONNREFUSED: the user's firewall, filter or proxy
-  // refused the connection to the update server (MMM-V2-AN).
-  'ERR_CONNECTION_REFUSED',
-  'ERR_CONNECTION_RESET',
-  'ERR_CONNECTION_TIMED_OUT',
   // A mid-download HTTP/2 stream reset, seen as an unhandled rejection
   // from the updater's download (MMM-V2-AN).
   'ERR_HTTP2_PROTOCOL_ERROR',
   'ERR_HTTP2_SERVER_REFUSED_STREAM',
-  'ERR_INTERNET_DISCONNECTED',
-  'ERR_NAME_NOT_RESOLVED',
-  'ERR_NETWORK_CHANGED',
-  'ERR_NETWORK_IO_SUSPENDED',
-  'ERR_PROXY_CONNECTION_FAILED',
-  // Sibling of ERR_PROXY_CONNECTION_FAILED: a proxy that refuses or can't
-  // complete the HTTPS CONNECT tunnel to the update server (MMM-V2-AN).
-  'ERR_TUNNEL_CONNECTION_FAILED',
-  'ERR_TIMED_OUT',
   'SELF_SIGNED_CERT_IN_CHAIN',
   'YAMLException',
   'releases feed',

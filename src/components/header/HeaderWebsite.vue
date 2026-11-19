@@ -82,6 +82,7 @@
 import { useBroadcastChannel, watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -92,6 +93,7 @@ import { useRouter } from 'vue-router';
 const {
   closeWebsiteWindow,
   navigateWebsiteWindow,
+  onWebsiteLoadFailed,
   onWebsiteWindowClosed,
   openWebsiteWindow,
   zoomWebsiteWindow,
@@ -168,8 +170,28 @@ const { post: postWebStream } = useBroadcastChannel<
 const unsubscribeWebsiteWindowClosed = onWebsiteWindowClosed(() => {
   stopStreaming();
 });
+
+// The website window couldn't load a page for want of a network and stays
+// blank (MMM-V2-3P7): say why, and offer to try again.
+const unsubscribeWebsiteLoadFailed = onWebsiteLoadFailed(() => {
+  createTemporaryNotification({
+    actions: [
+      {
+        color: 'white',
+        handler: () => {
+          navigateWebsiteWindow('refresh');
+        },
+        label: t('refresh'),
+      },
+    ],
+    group: 'website-unreachable',
+    message: t('website-unreachable'),
+    type: 'negative',
+  });
+});
 onUnmounted(() => {
   unsubscribeWebsiteWindowClosed();
+  unsubscribeWebsiteLoadFailed();
 });
 
 const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<

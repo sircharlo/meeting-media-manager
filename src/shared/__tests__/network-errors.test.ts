@@ -1,6 +1,42 @@
 import { describe, expect, it } from 'vitest';
 
-import { isFetchNetworkError } from '../network-errors';
+import { isChromiumNetworkError, isFetchNetworkError } from '../network-errors';
+
+// MMM-V2-3P7: a website window load that failed because the computer
+// couldn't look the site up. Electron gives Chromium's net error name as
+// the rejection's `code`.
+describe('isChromiumNetworkError', () => {
+  const loadError = (code: string, errno: number) =>
+    Object.assign(
+      new Error(`${code} (${errno}) loading 'https://www.jw.org/am'`),
+      { code, errno },
+    );
+
+  it.each([
+    ['ERR_NAME_NOT_RESOLVED', -105],
+    ['ERR_INTERNET_DISCONNECTED', -106],
+    ['ERR_CONNECTION_TIMED_OUT', -118],
+  ])('is true for %s', (code, errno) => {
+    expect(isChromiumNetworkError(loadError(code, errno))).toBe(true);
+  });
+
+  it.each([
+    ['ERR_FAILED', -2],
+    ['ERR_ABORTED', -3],
+    ['ERR_CERT_AUTHORITY_INVALID', -202],
+  ])('is false for %s, which is not about the network', (code, errno) => {
+    expect(isChromiumNetworkError(loadError(code, errno))).toBe(false);
+  });
+
+  it('is false without a string code', () => {
+    expect(isChromiumNetworkError(new Error('ERR_NAME_NOT_RESOLVED'))).toBe(
+      false,
+    );
+    expect(isChromiumNetworkError(undefined)).toBe(false);
+    expect(isChromiumNetworkError(null)).toBe(false);
+    expect(isChromiumNetworkError({ code: -105 })).toBe(false);
+  });
+});
 
 describe('isFetchNetworkError', () => {
   it('returns false for non-Error values', () => {
