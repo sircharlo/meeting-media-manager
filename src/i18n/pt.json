@@ -1091,6 +1091,7 @@
   "watch-folder-error-caption": "Verifique se o aplicativo que a mantém sincronizada, como o Dropbox ou o OneDrive, está aberto, se a pasta ainda existe e se o M³ tem permissão para salvar arquivos nela.",
   "watch-folder-error-message": "O M³ não consegue ler a pasta compartilhada.",
   "watched-media-item-explain": "Este item de mídia foi adicionado da pasta compartilhada",
+  "website-unreachable": "The website couldn’t be loaded because this computer couldn’t reach it. Check the internet connection, then refresh the page.",
   "websiteSelection": "Seleção de site",
   "weDay": "Dia da reunião do fim de semana",
   "weDay-explain": "Escolha o dia.",
