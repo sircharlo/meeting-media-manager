@@ -1073,6 +1073,7 @@
   "update-downloaded-short": "Mise à jour prête à être installée",
   "update-downloading": "Une nouvelle version de M³ est disponible et en cours de téléchargement en arrière-plan.",
   "update-downloading-short": "Téléchargement de la mise à jour",
+  "update-error-disk-full": "M³ n'a pas pu installer sa mise à jour, car il n'y a plus d'espace sur le disque de cet ordinateur. Libérez de l'espace disque, puis redémarrez M³ pour réessayer.",
   "update-error-read-only-volume": "M³ n'a pas pu être mis à jour car il est stocké dans un répertoire en lecture seule. Veuillez déplacer M³ vers un autre emplacement, tel que le dossier Applications.",
   "update-failed": "Échec de mise à jour",
   "update-install-asks-permission": "Windows demandera l'autorisation de l'installer",

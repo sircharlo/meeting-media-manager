@@ -1073,6 +1073,7 @@
   "update-downloaded-short": "Actualización lista para instalarse",
   "update-downloading": "Hay una nueva versión de M³ disponible y se está descargando en segundo plano.",
   "update-downloading-short": "Descargando la actualización",
+  "update-error-disk-full": "M³ no pudo instalar su actualización porque no queda espacio en el disco de esta computadora. Libera algo de espacio en el disco y luego reinicia M³ para volver a intentarlo.",
   "update-error-read-only-volume": "M³ no se pudo actualizar porque está guardado en un directorio de solo lectura. Mueve M³ a otra ubicación, como la carpeta Aplicaciones.",
   "update-failed": "Error al actualizar",
   "update-install-asks-permission": "Windows pedirá permiso para instalarla",

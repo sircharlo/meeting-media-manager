@@ -1073,6 +1073,7 @@
   "update-downloaded-short": "Uuendus on valmis installimiseks",
   "update-downloading": "M³-e uus versioon on saadaval ja allalaadimine toimub taustal.",
   "update-downloading-short": "Uuenduse allalaadimine",
+  "update-error-disk-full": "M³ ei saanud uuendust paigaldada, sest selle arvuti kettal pole enam ruumi. Vabasta kettaruumi ja käivita seejärel M³ uuesti, et uuesti proovida.",
   "update-error-read-only-volume": "M³ ei saanud uuendada, kuna see on salvestatud ainult lugemiseks mõeldud kataloogis. Palun vii M³ teise asukohta, näiteks rakenduste kausta.",
   "update-failed": "Uuendamine ebaõnnestus",
   "update-install-asks-permission": "Windows küsib selle installimiseks luba",

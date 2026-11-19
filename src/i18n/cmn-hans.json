@@ -1073,6 +1073,7 @@
   "update-downloaded-short": "更新已准备好安装",
   "update-downloading": "正在后台下载 M³ 的新版本。",
   "update-downloading-short": "正在下载更新",
+  "update-error-disk-full": "此计算机的磁盘已没有剩余空间，M³ 无法安装更新。请释放一些磁盘空间，然后重新启动 M³ 以重试。",
   "update-error-read-only-volume": "无法更新 M³，因为它位于只读目录中。请将 M³ 移到其他位置，例如“应用程序”文件夹。",
   "update-failed": "更新失败",
   "update-install-asks-permission": "Windows 会请求安装权限",
