@@ -1091,7 +1091,7 @@
   "watch-folder-error-caption": "Переконайтеся, що програма, яка її синхронізує (наприклад, Dropbox чи OneDrive), запущена, папка ще існує і M³ має дозвіл зберігати в неї файли.",
   "watch-folder-error-message": "M³ не може прочитати спільну папку.",
   "watched-media-item-explain": "Цей медіаелемент додано зі спільної папки",
-  "website-unreachable": "The website couldn’t be loaded because this computer couldn’t reach it. Check the internet connection, then refresh the page.",
+  "website-unreachable": "Не вдалося завантажити сайт: цей комп'ютер не зміг до нього під'єднатися. Перевірте підключення до інтернету, а потім оновіть сторінку.",
   "websiteSelection": "Вибір веб-сайту",
   "weDay": "День зібрання у вихідні",
   "weDay-explain": "Оберіть день, коли проводиться зібрання на вихідних.",
