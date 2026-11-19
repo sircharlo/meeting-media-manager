@@ -1073,6 +1073,7 @@
   "update-downloaded-short": "A frissítés készen áll a telepítésre",
   "update-downloading": "Az M³ új verziója elérhető és a háttérben zajlik a letöltése.",
   "update-downloading-short": "Frissítés letöltése",
+  "update-error-disk-full": "Az M³ nem tudta telepíteni a frissítését, mert nincs több szabad hely a számítógép lemezén. Szabadítson fel lemezterületet, majd indítsa újra az M³-at az újbóli próbálkozáshoz.",
   "update-error-read-only-volume": "Az M³ nem frissíthető, mert csak olvasható könyvtárban található. Kérjük, helyezze át az M³-at egy másik helyre, például az Alkalmazások mappába.",
   "update-failed": "A frissítés nem sikerült",
   "update-install-asks-permission": "A Windows engedélyt kér a telepítéséhez",
