@@ -1091,7 +1091,7 @@
   "watch-folder-error-caption": "请确保负责同步该文件夹的应用程序（例如 Dropbox 或 OneDrive）正在运行，该文件夹仍然存在，并且 M³ 有权在其中保存文件。",
   "watch-folder-error-message": "M³ 无法读取共享文件夹。",
   "watched-media-item-explain": "此媒体项目是从共享文件夹添加的",
-  "website-unreachable": "The website couldn’t be loaded because this computer couldn’t reach it. Check the internet connection, then refresh the page.",
+  "website-unreachable": "无法加载网站，因为此计算机无法访问该网站。请检查互联网连接，然后刷新页面。",
   "websiteSelection": "网站选择",
   "weDay": "周末聚会日",
   "weDay-explain": "选择周末聚会在哪一天举行。",
