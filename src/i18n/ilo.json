@@ -1091,6 +1091,7 @@
   "watch-folder-error-caption": "Make sure the app that keeps it in sync, such as Dropbox or OneDrive, is running, and that the folder still exists and M³ is allowed to save files in it.",
   "watch-folder-error-message": "M³ can't read the shared folder.",
   "watched-media-item-explain": "This media item was added from the shared folder",
+  "website-unreachable": "The website couldn’t be loaded because this computer couldn’t reach it. Check the internet connection, then refresh the page.",
   "websiteSelection": "Website selection",
   "weDay": "Weekend meeting day",
   "weDay-explain": "Choose the day on which the weekend meeting takes place.",
