@@ -1091,7 +1091,7 @@
   "watch-folder-error-caption": "Zorg ervoor dat de app die de map synchroniseert, zoals Dropbox of OneDrive, actief is, dat de map nog bestaat en dat M³ er bestanden in mag opslaan.",
   "watch-folder-error-message": "M³ kan de gedeelde map niet lezen.",
   "watched-media-item-explain": "Dit media-item is toegevoegd vanuit de gedeelde map",
-  "website-unreachable": "The website couldn’t be loaded because this computer couldn’t reach it. Check the internet connection, then refresh the page.",
+  "website-unreachable": "De website kon niet worden geladen omdat deze computer hem niet kon bereiken. Controleer de internetverbinding en vernieuw daarna de pagina.",
   "websiteSelection": "Websiteselectie",
   "weDay": "Weekendvergaderdag",
   "weDay-explain": "Kies de dag waarop de weekendvergadering plaatsvindt.",

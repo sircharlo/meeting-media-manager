@@ -1091,7 +1091,7 @@
   "watch-folder-error-caption": "Veendu, et rakendus, mis seda sünkroonib (näiteks Dropbox või OneDrive), töötab ning et kaust on endiselt olemas ja M³-l on luba sinna faile salvestada.",
   "watch-folder-error-message": "M³ ei saa jagatud kausta lugeda.",
   "watched-media-item-explain": "See meediaüksus lisati jagatud kaustast",
-  "website-unreachable": "The website couldn’t be loaded because this computer couldn’t reach it. Check the internet connection, then refresh the page.",
+  "website-unreachable": "Veebisaiti ei õnnestunud laadida, sest see arvuti ei saanud sellega ühendust. Kontrolli internetiühendust ja seejärel värskenda lehte.",
   "websiteSelection": "Veebilehe valimine",
   "weDay": "Nädalavahetuse koosoleku päev",
   "weDay-explain": "Vali päev, mil toimub nädalavahetuse koosolek.",

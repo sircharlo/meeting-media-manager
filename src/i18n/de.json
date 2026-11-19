@@ -1091,7 +1091,7 @@
   "watch-folder-error-caption": "Stellen Sie sicher, dass die App, die ihn synchronisiert (zum Beispiel Dropbox oder OneDrive), ausgeführt wird, dass der Ordner noch existiert und dass M³ darin Dateien speichern darf.",
   "watch-folder-error-message": "M³ kann den geteilten Ordner nicht lesen.",
   "watched-media-item-explain": "Dieses Medienelement wurde aus dem geteilten Ordner hinzugefügt",
-  "website-unreachable": "The website couldn’t be loaded because this computer couldn’t reach it. Check the internet connection, then refresh the page.",
+  "website-unreachable": "Die Website konnte nicht geladen werden, weil dieser Computer sie nicht erreichen konnte. Überprüfen Sie die Internetverbindung und aktualisieren Sie dann die Seite.",
   "websiteSelection": "Webseitenauswahl",
   "weDay": "Tag der Zusammenkunft am Wochenende",
   "weDay-explain": "Wähle den Tag, an dem die Zusammenkunft am Wochenende stattfindet.",
