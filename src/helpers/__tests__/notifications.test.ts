@@ -161,6 +161,23 @@ describe('notifyDiskFull', () => {
     notifyDiskFull();
     expect(mocks.notifyCreate).toHaveBeenCalledTimes(2);
   });
+
+  // MMM-V2-3P8: the update couldn't be unpacked on a full disk.
+  it("tells the user the update couldn't be installed for want of space, and records the warning", async () => {
+    const { notifyUpdateDiskFull } = await import('../notifications');
+
+    notifyUpdateDiskFull();
+
+    expect(mocks.notifyCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        caption: 'update-failed',
+        message: 'update-error-disk-full',
+        type: 'negative',
+      }),
+    );
+    expect(mocks.markUserWarnedAboutDiskSpace).toHaveBeenCalled();
+    expect(mocks.markUserWarnedAboutDiskSpaceInMain).toHaveBeenCalled();
+  });
 });
 
 describe('createTemporaryNotification', () => {

@@ -642,6 +642,38 @@ describe('Zoom automations and the startup check', () => {
   });
 });
 
+// MMM-V2-3NC: the helper said which windows the Share press left open, but
+// that never reached the check's report.
+describe('testing the share window', () => {
+  it("passes on how Share was pressed and what Zoom showed when the share window didn't open", async () => {
+    zoomCommandMock.mockResolvedValue({
+      ok: true,
+      opened: false,
+      pickerError: 'share-picker-not-found',
+      pressedVia: 'more',
+      presses: 2,
+      snapshot: { windows: ['ZPContentViewWndClass'] },
+      windowListed: false,
+      windowsLeft: ['zBubbleBaseClass'],
+      windowsOpened: ['zBubbleBaseClass', 'ZPMoreMenuClass'],
+    });
+    const { testZoomShareEntry } = await import('../zoom');
+
+    expect(await testZoomShareEntry('Share')).toEqual({
+      error: undefined,
+      opened: false,
+      pickerError: 'share-picker-not-found',
+      pressedVia: 'more',
+      presses: 2,
+      snapshot: { windows: ['ZPContentViewWndClass'] },
+      windowListed: false,
+      windowSelected: false,
+      windowsLeft: ['zBubbleBaseClass'],
+      windowsOpened: ['zBubbleBaseClass', 'ZPMoreMenuClass'],
+    });
+  });
+});
+
 describe('Zoom setup assistant', () => {
   it('is only needed once the Manager is on and a button is unknown', async () => {
     const { isZoomSetupNeeded } = await import('../zoom');

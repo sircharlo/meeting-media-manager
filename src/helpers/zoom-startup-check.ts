@@ -82,6 +82,11 @@ interface Findings {
    * no action failed to leave a snapshot of its own (see meetingNotFound).
    */
   snapshot?: ZoomFailureSnapshot;
+  /**
+   * Classes of Zoom windows the check opened by pressing something and
+   * couldn't close: the user is asked to close them.
+   */
+  windowsInTheWay?: string[];
 }
 
 /**
@@ -181,6 +186,24 @@ const missingControls = (
   ).map((check) => check.label);
 
 /**
+ * Opens Zoom's share window and closes it again (see testZoomShareEntry):
+ * undefined if it offers the media window, else what's wrong. When the
+ * window didn't open, with what Zoom showed instead and the Zoom windows the
+ * press left open (MMM-V2-3NC).
+ */
+const checkSharePicker = async (): Promise<Findings | undefined> => {
+  const { snapshot, ...share } = await testZoomShareEntry(
+    getZoomTitlesFromSettings().shareButtonTitle,
+  );
+  if (share.opened && share.windowSelected) return undefined;
+  return {
+    ...findings([SHARE_PROBLEM], [`share-picker: ${JSON.stringify(share)}`]),
+    snapshot,
+    windowsInTheWay: share.windowsLeft,
+  };
+};
+
+/**
  * With others in the meeting: finds every control the automations use,
  * without pressing anything they'd notice.
  */
@@ -199,21 +222,14 @@ const checkWithoutPressing = async (signal: AbortSignal): Promise<Findings> => {
       ? ['toolbar', 'videoButton', 'participantsPanel', 'hostControls']
       : ['toolbar'],
   );
-  const details: string[] = [];
   // Zoom's share window only opens on the host's screen. The media window
   // has to be showing to be offered, and it isn't shown just for this, as
   // it might be on the congregation's screens.
   const mediaWindowShowing = useCurrentStateStore().mediaWindowVisible;
-  if (needs.sharing && mediaWindowShowing) {
-    const share = await testZoomShareEntry(
-      getZoomTitlesFromSettings().shareButtonTitle,
-    );
-    if (!share.opened || !share.windowSelected) {
-      problems.push(SHARE_PROBLEM);
-      details.push(`share-picker: ${JSON.stringify(share)}`);
-    }
-  }
-  return findings(problems, details);
+  const share =
+    needs.sharing && mediaWindowShowing ? await checkSharePicker() : undefined;
+  if (!share) return findings(problems);
+  return { ...share, problems: [...problems, ...share.problems] };
 };
 
 /** With nobody else in the meeting: tries each automated action. */
@@ -571,25 +587,32 @@ const findUnavailableHelper = (
   return isZoomHelperUnavailableHere(error) ? error : undefined;
 };
 
-/** What the notification of a failed check says under its title. */
+/**
+ * What the notification of a failed check says under its title. A Zoom
+ * window the check opened and couldn't close (`windowInTheWay`) is the
+ * user's to close (MMM-V2-3NC).
+ */
 const getFailedCheckCaption = (
   problems: string[],
   namesChanged: boolean,
   unavailableHelper?: string,
+  windowInTheWay = false,
 ) => {
   if (namesChanged) return t('zoom-check-names-changed');
   if (unavailableHelper) {
     return t(getZoomHelperErrorMessageKey(unavailableHelper));
   }
-  return t('zoom-check-failed-caption', {
+  const failed = t('zoom-check-failed-caption', {
     problems: problems.map((key) => t(key)).join(', '),
   });
+  return windowInTheWay ? `${failed} ${t('zoom-dialog-in-the-way')}` : failed;
 };
 
 const notifyFailedCheck = (
   problems: string[],
   namesChanged: boolean,
   unavailableHelper?: string,
+  windowInTheWay = false,
 ) => {
   dismissFailedCheckNotice = createTemporaryNotification({
     actions: [
@@ -612,7 +635,12 @@ const notifyFailedCheck = (
           },
       { color: 'white', icon: 'close', round: true },
     ],
-    caption: getFailedCheckCaption(problems, namesChanged, unavailableHelper),
+    caption: getFailedCheckCaption(
+      problems,
+      namesChanged,
+      unavailableHelper,
+      windowInTheWay,
+    ),
     group: 'zoom-check',
     message: t('zoom-automations-paused'),
     timeout: 0,
@@ -641,7 +669,12 @@ const report = (
     // in M³ (MMM-V2-3NY).
     if (!unavailableHelper)
       void reportFailedCheck(found, failures, namesChanged);
-    notifyFailedCheck(problems, namesChanged, unavailableHelper);
+    notifyFailedCheck(
+      problems,
+      namesChanged,
+      unavailableHelper,
+      !!found.windowsInTheWay?.length,
+    );
     return 'failed';
   }
 

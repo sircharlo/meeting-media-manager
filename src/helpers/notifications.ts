@@ -261,6 +261,21 @@ export const notifyDiskFull = (): void => {
   recordDiskSpaceWarning();
 };
 
+/**
+ * Tells the user that M³ couldn't install its update because the disk is full
+ * (MMM-V2-3P8). Like any disk-full warning, it stops disk-full errors from
+ * being reported from then on.
+ */
+export const notifyUpdateDiskFull = (): void => {
+  createTemporaryNotification({
+    caption: i18n.global.t('update-failed'),
+    message: i18n.global.t('update-error-disk-full'),
+    timeout: 15_000,
+    type: 'negative',
+  });
+  recordDiskSpaceWarning();
+};
+
 const EXPECTED_DOWNLOAD_ISSUE_WARNING_THROTTLE_MS = 5 * 60 * 1000;
 let lastExpectedDownloadIssueWarningAt = 0;
 

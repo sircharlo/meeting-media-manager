@@ -333,20 +333,27 @@ const watchForSessionEnd = () => {
 };
 
 /**
- * Surfaces an autoUpdater error to the user (read-only volume) and Sentry,
- * unless downloads are currently expected to fail (e.g. offline) or the
- * error is a known, ignorable one.
+ * Surfaces an autoUpdater error to the user (read-only volume, full disk)
+ * and Sentry, unless downloads are currently expected to fail (e.g. offline)
+ * or the error is a known, ignorable one.
  * @param error The error the autoUpdater emitted
  * @param message The message the autoUpdater emitted alongside it
  */
 const reportUpdaterError = async (error: Error, message?: string) => {
+  // No space left to download or unpack the update (MMM-V2-3P8: macOS's
+  // updater said so as it unpacked one): the user's to fix, so they're told.
+  if (isDiskFullError(error) || isDiskFullError({ message })) {
+    sendToWindow(mainWindowInfo.mainWindow, 'update-error', 'disk-full');
+    return;
+  }
+
   if (await isDownloadErrorExpected()) return;
 
   if (
     message?.includes('read-only volume') ||
     error?.message?.includes('read-only volume')
   ) {
-    sendToWindow(mainWindowInfo.mainWindow, 'update-error');
+    sendToWindow(mainWindowInfo.mainWindow, 'update-error', 'read-only-volume');
   }
 
   if (

@@ -1073,6 +1073,7 @@
   "update-downloaded-short": "Update ready to install",
   "update-downloading": "A new version of M³ is available and downloading in the background.",
   "update-downloading-short": "Downloading update",
+  "update-error-disk-full": "M³ couldn’t install its update because there’s no space left on this computer’s disk. Free up some disk space, then restart M³ to try again.",
   "update-error-read-only-volume": "M³ could not be updated because it is stored in a directory that is read-only. Please move M³ to a different location, such as the Applications folder.",
   "update-failed": "Update failed",
   "update-install-asks-permission": "Windows will ask for permission to install it",

@@ -1345,7 +1345,9 @@ export const joinZoomAudioForSetup = async (): Promise<
 /**
  * Checks that Zoom's share picker opens through the given Share entry (or
  * Zoom's default shortcut, if none) and offers M³'s media window, without
- * sharing anything.
+ * sharing anything. When the picker doesn't open, also says how Share was
+ * pressed, what Zoom showed instead and which of its windows the press left
+ * open (MMM-V2-3NC: the report only said the picker never came).
  */
 export const testZoomShareEntry = async (shareButtonTitle: null | string) => {
   const result = await runCommand({
@@ -1357,8 +1359,13 @@ export const testZoomShareEntry = async (shareButtonTitle: null | string) => {
     error: result.error,
     opened: !!result.opened,
     pickerError: result.pickerError,
+    pressedVia: result.pressedVia,
+    presses: result.presses,
+    snapshot: result.snapshot,
     windowListed: !!result.windowListed,
     windowSelected: !!result.windowSelected,
+    windowsLeft: result.windowsLeft,
+    windowsOpened: result.windowsOpened,
   };
 };
 
