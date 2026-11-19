@@ -1091,7 +1091,7 @@
   "watch-folder-error-caption": "Assicurati che l'app che la mantiene sincronizzata, come Dropbox o OneDrive, sia in esecuzione, che la cartella esista ancora e che M³ abbia il permesso di salvarvi dei file.",
   "watch-folder-error-message": "M³ non riesce a leggere la cartella condivisa.",
   "watched-media-item-explain": "Questo media è stato aggiunto dalla cartella condivisa",
-  "website-unreachable": "The website couldn’t be loaded because this computer couldn’t reach it. Check the internet connection, then refresh the page.",
+  "website-unreachable": "Impossibile caricare il sito web perché questo computer non è riuscito a raggiungerlo. Controlla la connessione a Internet, quindi aggiorna la pagina.",
   "websiteSelection": "Selezione del sito web",
   "weDay": "Giorno dell'adunanza del fine settimana",
   "weDay-explain": "Scegli il giorno dell'adunanza del fine settimana.",

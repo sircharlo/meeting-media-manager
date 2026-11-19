@@ -1091,7 +1091,7 @@
   "watch-folder-error-caption": "Győződjön meg róla, hogy a szinkronizáló alkalmazás (például a Dropbox vagy a OneDrive) fut, a mappa még létezik, és az M³ menthet bele fájlokat.",
   "watch-folder-error-message": "Az M³ nem tudja olvasni a megosztott mappát.",
   "watched-media-item-explain": "Ez a médiaelem a megosztott mappából lett hozzáadva",
-  "website-unreachable": "The website couldn’t be loaded because this computer couldn’t reach it. Check the internet connection, then refresh the page.",
+  "website-unreachable": "A weboldalt nem sikerült betölteni, mert ez a számítógép nem érte el. Ellenőrizze az internetkapcsolatot, majd frissítse az oldalt.",
   "websiteSelection": "Weboldal kiválasztása",
   "weDay": "Hétvégi összejövetel napja",
   "weDay-explain": "Válassza ki azt a napot, amelyen a hétvégi összejövetelre sor kerül.",
