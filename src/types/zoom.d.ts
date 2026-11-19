@@ -65,6 +65,13 @@ export interface ZoomCommandResult {
   placed?: ZoomPlacedWindows;
   /** `set-participant-mic`: whether the button was pressed at all. */
   pressed?: boolean;
+  /**
+   * `test-share-picker`, when the picker didn't open: how Share was pressed
+   * (`toolbar`, `more`, `shortcut`), or `open` for a picker already open.
+   */
+  pressedVia?: null | string;
+  /** `test-share-picker`, when the picker didn't open: how many times Share was pressed. */
+  presses?: number;
   /** `raised-hands`: who in the meeting has their hand raised. */
   raisedHands?: string[];
   /** `learn-hand-raised`: the Reactions button's name, when seen. */
@@ -82,6 +89,13 @@ export interface ZoomCommandResult {
   windowListed?: boolean;
   /** `test-share-picker`: whether sharing would select M³'s media window. */
   windowSelected?: boolean;
+  /**
+   * `test-share-picker`, when the picker didn't open: classes of the Zoom
+   * windows the press left open that couldn't be closed (in the user's way).
+   */
+  windowsLeft?: string[];
+  /** `test-share-picker`, when the picker didn't open: classes of the Zoom windows the press opened. */
+  windowsOpened?: string[];
 }
 
 export type ZoomCommandType = ZoomCommand['type'];

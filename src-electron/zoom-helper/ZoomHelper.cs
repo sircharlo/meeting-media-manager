@@ -3002,23 +3002,25 @@ namespace M3.ZoomHelper
             return new Dictionary<string, object> { { "entries", entries }, { "moreEntries", moreEntries } };
         }
 
-        static void OpenSharePicker(El window, string shareTitle)
+        /// <summary>Opens the share picker: "open" if one already was, else how
+        /// Share was pressed ("toolbar", "more" or "shortcut").</summary>
+        static string OpenSharePicker(El window, string shareTitle)
         {
-            if (TopWindows(SharePickerClass, true).Count > 0) return;
+            if (TopWindows(SharePickerClass, true).Count > 0) return "open";
             var wanted = FirstSegment(shareTitle);
             if (wanted.Length == 0)
             {
                 // Nothing captured: try Zoom's default share shortcut, Alt+S.
                 Focus(window);
                 AltKey('S');
-                return;
+                return "shortcut";
             }
             foreach (var button in ToolbarButtons(window))
             {
                 if (FirstSegment(button.Name) == wanted)
                 {
                     Press(button);
-                    return;
+                    return "toolbar";
                 }
             }
             var grid = OpenMoreGrid(window);
@@ -3028,11 +3030,20 @@ namespace M3.ZoomHelper
                 if (GridEntries(grid).TryGetValue(wanted, out entry))
                 {
                     Press(entry);
-                    return;
+                    return "more";
                 }
                 CloseAll(MoreGridClass);
             }
             throw new ZoomActionError("share-button-not-found");
+        }
+
+        /// <summary>How OpenSharePickerAndWait went: the picker (null if it
+        /// never opened), how Share was pressed and how many times.</summary>
+        sealed class SharePickerOpening
+        {
+            public El Picker;
+            public string PressedVia;
+            public int Presses;
         }
 
         /// <summary>Opens Zoom's share picker and waits for it. Zoom now and then
@@ -3040,21 +3051,26 @@ namespace M3.ZoomHelper
         /// SetButtonState), with another of its own windows in front: its poll
         /// window, its "Change name" dialog or its volume notice, say
         /// (MMM-V2-3NC). Press once more before giving up, over the same wait
-        /// the picker gets from StartShare. Null if it never opened.</summary>
-        static El OpenSharePickerAndWait(El window, string shareTitle)
+        /// the picker gets from StartShare. Its Picker is null if it never
+        /// opened.</summary>
+        static SharePickerOpening OpenSharePickerAndWait(El window, string shareTitle)
         {
             var pickersBefore = TopWindows(SharePickerClass, false);
-            OpenSharePicker(window, shareTitle);
-            var picker = WaitForWindow(SharePickerClass, ShareRepressAfterMs);
-            if (picker != null) return picker;
+            var opening = new SharePickerOpening { PressedVia = OpenSharePicker(window, shareTitle), Presses = 1 };
+            opening.Picker = WaitForWindow(SharePickerClass, ShareRepressAfterMs);
+            if (opening.Picker != null) return opening;
             // Leaves a picker that showed up meanwhile as it is (see the first
             // line of OpenSharePicker): pressing Share again would close it.
             // So too one Zoom created for the press but hasn't shown yet, as
             // on a slow computer: only a press that brought no new picker
             // window at all was ignored.
             if (!TopWindows(SharePickerClass, false).Exists(handle => !pickersBefore.Contains(handle)))
+            {
                 OpenSharePicker(window, shareTitle);
-            return WaitForWindow(SharePickerClass, WaitTimeoutMs - ShareRepressAfterMs);
+                opening.Presses = 2;
+            }
+            opening.Picker = WaitForWindow(SharePickerClass, WaitTimeoutMs - ShareRepressAfterMs);
+            return opening;
         }
 
         // Zoom's share picker lists the screens, then the open windows (most
@@ -3306,7 +3322,7 @@ namespace M3.ZoomHelper
             if (IsSharing()) return Changed(false);
             var window = RequireMeetingWindow();
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            var picker = OpenSharePickerAndWait(window, shareTitle);
+            var picker = OpenSharePickerAndWait(window, shareTitle).Picker;
             if (picker == null) throw new ZoomActionError("share-picker-not-found");
             var problem = SelectShareWindow(picker, windowTitle);
             if (problem != null)
@@ -3492,18 +3508,31 @@ namespace M3.ZoomHelper
             if (IsSharing()) throw new ZoomActionError("already-sharing");
             var window = RequireMeetingWindow();
             var before = ZoomWindows();
-            El picker = null;
+            SharePickerOpening opening = null;
             var pickerError = "share-picker-not-found";
             try
             {
                 // As long as sharing itself waits (see StartShare).
-                picker = OpenSharePickerAndWait(window, shareTitle);
+                opening = OpenSharePickerAndWait(window, shareTitle);
             }
             catch (ZoomActionError error) { pickerError = error.Message; }
+            var picker = opening == null ? null : opening.Picker;
             if (picker == null)
             {
-                // A wrong entry may have opened something else: close it.
-                return new Dictionary<string, object> { { "opened", false }, { "pickerError", pickerError }, { "windowListed", false }, { "windowsLeft", DismissNewWindows(before) } };
+                // Says how Share was pressed and what Zoom showed instead,
+                // before closing what a wrong entry may have opened
+                // (MMM-V2-3NC: the report only said the picker never came).
+                return new Dictionary<string, object>
+                {
+                    { "opened", false },
+                    { "pickerError", pickerError },
+                    { "pressedVia", opening == null ? null : opening.PressedVia },
+                    { "presses", opening == null ? 0 : opening.Presses },
+                    { "snapshot", Snapshot() },
+                    { "windowListed", false },
+                    { "windowsOpened", NewWindowClasses(before) },
+                    { "windowsLeft", DismissNewWindows(before) },
+                };
             }
             var problem = SelectShareWindow(picker, windowTitle);
             CloseSharePicker(picker);
@@ -4042,6 +4071,16 @@ namespace M3.ZoomHelper
             var classes = new List<object>();
             foreach (var className in ZoomWindows().Values)
                 if (!IsZoomMainWindow(className) && !classes.Contains(className)) classes.Add(className);
+            return classes;
+        }
+
+        /// <summary>The classes of Zoom's visible windows that weren't there
+        /// before, its own included (see DismissNewWindows for the dialogs).</summary>
+        static List<object> NewWindowClasses(Dictionary<IntPtr, string> before)
+        {
+            var classes = new List<object>();
+            foreach (var entry in ZoomWindows())
+                if (!before.ContainsKey(entry.Key)) classes.Add(entry.Value);
             return classes;
         }
 

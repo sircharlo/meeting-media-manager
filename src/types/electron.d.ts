@@ -343,7 +343,10 @@ export interface ElectronApi {
       transferred: number;
     }) => void,
   ) => void;
-  onUpdateError: (callback: () => void) => void;
+  /** An update M³ can't install, and why: the user can do something about it. */
+  onUpdateError: (
+    callback: (reason: 'disk-full' | 'read-only-volume') => void,
+  ) => void;
   onVideoCaptureCrashDetected: (callback: () => void) => void;
   onWatchFolderError: (
     callback: (args: {

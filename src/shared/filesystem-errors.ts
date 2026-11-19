@@ -125,7 +125,11 @@ const DISK_FULL_ERROR_CODES = new Set(['EDQUOT', 'ENOSPC']);
 // Also finds the code in an error an IPC invoke wrapped on its way to the
 // renderer, e.g. "Error invoking remote method 'unzip': Error: ENOSPC: no
 // space left on device, write" (MMM-V2-3M9), which no longer starts with it.
-const DISK_FULL_MESSAGE_PATTERN = /\b(?:EDQUOT|ENOSPC):/;
+// And the system's own wording, from a tool that has no error code to give:
+// macOS's updater unpacking an update said "ditto: <path>: No space left on
+// device" (MMM-V2-3P8). macOS says "Disc quota exceeded", Linux "Disk".
+const DISK_FULL_MESSAGE_PATTERN =
+  /\b(?:EDQUOT|ENOSPC):|No space left on device|Dis[ck] quota exceeded/i;
 
 /**
  * Whether an error means there was no disk space left to write to.

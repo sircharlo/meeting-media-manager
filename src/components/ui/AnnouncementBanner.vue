@@ -51,7 +51,10 @@ import UpdateProgressToast from 'components/ui/UpdateProgressToast.vue';
 import { useQuasar } from 'quasar';
 import { getMeetingStartToday } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { createTemporaryNotification } from 'src/helpers/notifications';
+import {
+  createTemporaryNotification,
+  notifyUpdateDiskFull,
+} from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { log } from 'src/shared/vanilla';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/utils/api';
@@ -359,7 +362,11 @@ onMounted(() => {
       }
     });
 
-    onUpdateError(() => {
+    onUpdateError((reason) => {
+      if (reason === 'disk-full') {
+        notifyUpdateDiskFull();
+        return;
+      }
       createTemporaryNotification({
         caption: t('update-failed'),
         message: t('update-error-read-only-volume'),

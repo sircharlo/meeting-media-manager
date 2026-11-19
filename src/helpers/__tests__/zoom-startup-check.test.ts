@@ -829,6 +829,61 @@ describe('Zoom startup check', () => {
     );
   });
 
+  // MMM-V2-3NC (26.11.3): Share was pressed and no share window came, and the
+  // report said nothing of what Zoom showed instead. A window the press left
+  // open is the user's to close.
+  it('reports what Zoom showed when the share window never came, and asks to close a window left open', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    zoom.countZoomMeetingParticipants.mockResolvedValue(17);
+    zoom.testZoomShareEntry.mockResolvedValueOnce({
+      opened: false,
+      pickerError: 'share-picker-not-found',
+      pressedVia: 'toolbar',
+      presses: 2,
+      snapshot: { windows: ['ZPContentViewWndClass', 'zBubbleBaseClass'] },
+      windowListed: false,
+      windowSelected: false,
+      windowsLeft: ['zBubbleBaseClass'],
+      windowsOpened: ['zBubbleBaseClass'],
+    });
+
+    expect(await runZoomStartupCheck()).toBe('failed');
+
+    expect(notification()?.caption).toContain(
+      "A Zoom window is open (a dialog or a popup) and may be in M³'s way. Close it in Zoom.",
+    );
+    await vi.waitFor(() =>
+      expect(sentry.captureMessage).toHaveBeenCalledWith(
+        'Zoom check failed: automations paused',
+        expect.objectContaining({
+          extra: expect.objectContaining({
+            failedSteps: [
+              'share-picker: {"opened":false,"pickerError":"share-picker-not-found","pressedVia":"toolbar","presses":2,"windowListed":false,"windowSelected":false,"windowsLeft":["zBubbleBaseClass"],"windowsOpened":["zBubbleBaseClass"]}',
+            ],
+            snapshotAction: 'snapshot',
+            windows: ['ZPContentViewWndClass', 'zBubbleBaseClass'],
+          }),
+        }),
+      ),
+    );
+  });
+
+  it("doesn't ask to close a Zoom window when the press left none open", async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    zoom.countZoomMeetingParticipants.mockResolvedValue(17);
+    zoom.testZoomShareEntry.mockResolvedValueOnce({
+      opened: false,
+      pickerError: 'share-picker-not-found',
+      windowListed: false,
+      windowSelected: false,
+      windowsLeft: [],
+    });
+
+    expect(await runZoomStartupCheck()).toBe('failed');
+
+    expect(notification()?.caption).not.toContain('Close it in Zoom');
+  });
+
   it('changes nothing when the user stops the check', async () => {
     const { runZoomStartupCheck } = await import('../zoom-startup-check');
     const zoomState = useZoomStateStore();

@@ -470,6 +470,66 @@ describe('updater install flow', () => {
     );
   });
 
+  // MMM-V2-3P8: macOS's updater ran out of disk space unpacking the update
+  // and said so only in the system's words, with no error code.
+  describe('an update that fails on a full disk', () => {
+    const flush = () =>
+      new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
+    it.each([
+      {
+        error: new Error(
+          'ditto: /Users/<user>/Library/Caches/sircharlo.meeting-media-manager.ShipIt/update.VNHyhxn/Meeting Media Manager.app/Contents/Frameworks/Electron Framework.framework/Versions/A/Resources/am_FEMININE.lproj: No space left on device',
+        ),
+        how: "macOS's updater",
+      },
+      {
+        error: Object.assign(
+          new Error('ENOSPC: no space left on device, write'),
+          { code: 'ENOSPC' },
+        ),
+        how: 'a download',
+      },
+    ])('tells the user instead of reporting it ($how)', async ({ error }) => {
+      const { sendToWindow } =
+        await import('src-electron/main/window/window-base');
+      const { captureElectronError } = await import('src-electron/main/utils');
+      const { initUpdater } = await import('../updater');
+
+      await initUpdater();
+      handlers.get('error')?.(error, undefined);
+      await flush();
+
+      expect(sendToWindow).toHaveBeenCalledWith(
+        null,
+        'update-error',
+        'disk-full',
+      );
+      expect(captureElectronError).not.toHaveBeenCalled();
+    });
+
+    it('still says so when M³ sits on a read-only volume', async () => {
+      const { sendToWindow } =
+        await import('src-electron/main/window/window-base');
+      const { initUpdater } = await import('../updater');
+
+      await initUpdater();
+      handlers.get('error')?.(
+        new Error('Cannot update while running on a read-only volume.'),
+        undefined,
+      );
+      await flush();
+
+      expect(sendToWindow).toHaveBeenCalledWith(
+        null,
+        'update-error',
+        'read-only-volume',
+      );
+    });
+  });
+
   const getAutoUpdater = async () =>
     (await import('electron-updater')).default.autoUpdater;
 

@@ -326,6 +326,15 @@ describe('isDiskFullError', () => {
     expect(isDiskFullError(wrapped)).toBe(true);
   });
 
+  // MMM-V2-3P8: macOS's updater gave only the system's wording, no code.
+  it.each([
+    'ditto: /Users/<user>/Library/Caches/sircharlo.meeting-media-manager.ShipIt/update.VNHyhxn/Meeting Media Manager.app/Contents/Frameworks/Electron Framework.framework/Versions/A/Resources/am_FEMININE.lproj: No space left on device',
+    'write /tmp/update.zip: Disc quota exceeded',
+    'write /tmp/update.zip: Disk quota exceeded',
+  ])('recognizes the system saying so: %s', (message) => {
+    expect(isDiskFullError(new Error(message))).toBe(true);
+  });
+
   it('leaves other errors alone', () => {
     const notFound = Object.assign(new Error('missing'), { code: 'ENOENT' });
 
