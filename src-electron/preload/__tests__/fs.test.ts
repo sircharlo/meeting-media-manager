@@ -60,7 +60,7 @@ describe('showFileOnWindows', () => {
     await showFileOnWindows('C:/cache/Publications/lmd_T_0/.last-used');
 
     expect(execFileMock).toHaveBeenCalledExactlyOnceWith(
-      String.raw`C:\Windows\System32\attrib.exe`,
+      'C:/Windows/System32/attrib.exe',
       ['-h', '-s', '-r', 'C:/cache/Publications/lmd_T_0/.last-used'],
       expect.any(Function),
     );
@@ -82,8 +82,22 @@ describe('hideFileOnWindows', () => {
     await hideFileOnWindows('C:/cache/Publications/lmd_T_0/.last-used');
 
     expect(execFileMock).toHaveBeenCalledExactlyOnceWith(
-      String.raw`C:\Windows\System32\attrib.exe`,
+      'C:/Windows/System32/attrib.exe',
       ['+h', 'C:/cache/Publications/lmd_T_0/.last-used'],
+      expect.any(Function),
+    );
+  });
+
+  it('builds the attrib path from a Windows folder ending in a separator', async () => {
+    process.env.SystemRoot = 'C:\\Windows\\';
+
+    const { hideFileOnWindows } = await loadFs();
+
+    await hideFileOnWindows('C:/cache/.last-used');
+
+    expect(execFileMock).toHaveBeenCalledExactlyOnceWith(
+      'C:/Windows/System32/attrib.exe',
+      ['+h', 'C:/cache/.last-used'],
       expect.any(Function),
     );
   });

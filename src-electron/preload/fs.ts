@@ -165,7 +165,7 @@ export const fileUrlToPath = (fileurl?: string) => {
 const getAttribCommand = () => {
   const windowsDir = process.env.SystemRoot || process.env.windir;
   if (!windowsDir) return 'attrib';
-  return String.raw`${windowsDir.replace(/[\\/]+$/, '')}\System32\attrib.exe`;
+  return join(windowsDir, 'System32', 'attrib.exe');
 };
 
 let attribUnavailable = false;
