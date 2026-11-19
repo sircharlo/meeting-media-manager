@@ -695,6 +695,23 @@ const verifyExistingFileReadable = async (filePath: string) => {
   }
 };
 
+/**
+ * Reads a file that was already in the folder (see
+ * verifyExistingFileReadable), when there is one.
+ */
+const verifySomeExistingFileReadable = async (basePath: string) => {
+  const existingFile = await findExistingProbeFile(basePath);
+  if (!existingFile) return;
+  try {
+    await verifyExistingFileReadable(existingFile);
+  } catch (error) {
+    // The file vanished between the scan and the open (a file another
+    // component was renaming, say) - that says nothing about the folder's
+    // permissions, so don't fail the probe.
+    if (getFilesystemErrorCode(error) !== 'ENOENT') throw error;
+  }
+};
+
 const isInvalidWindowsResolvedPath = (resolvedBase: string) => {
   if (process.platform !== 'win32') return false;
 
@@ -891,17 +908,7 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
 
         if (process.platform === 'darwin') {
           probeStage = 'read-existing';
-          const existingFile = await findExistingProbeFile(resolvedBase);
-          if (existingFile) {
-            try {
-              await verifyExistingFileReadable(existingFile);
-            } catch (error) {
-              // The file vanished between the scan and the open (a file
-              // another component was renaming, say) - that says nothing
-              // about the folder's permissions, so don't fail the probe.
-              if (getErrorCode(error) !== 'ENOENT') throw error;
-            }
-          }
+          await verifySomeExistingFileReadable(resolvedBase);
         }
 
         return true;

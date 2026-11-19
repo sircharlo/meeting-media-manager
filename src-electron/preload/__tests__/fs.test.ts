@@ -1,7 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 type ExecFileCallback = (
-  error: (Error & { code?: string }) | null,
+  error: (Error & { code?: number | string }) | null,
   stdout: string,
   stderr: string,
 ) => void;
@@ -157,6 +157,43 @@ describe('when attrib cannot run', () => {
         fn: {
           name: 'hideFileOnWindows',
           path: 'C:/cache/a/.last-used',
+        },
+      },
+    });
+  });
+
+  // MMM-V2-3P6: attrib exited with an error and printed nothing, and the
+  // report only said "Command failed": its numeric exit code was dropped.
+  it('reports what the failed run left: exit code, signal and output', async () => {
+    const failed = Object.assign(
+      new Error('Command failed: attrib +h C:/cache/a/.last-used\n'),
+      {
+        code: 3_221_225_794,
+        killed: false,
+        signal: null,
+        stderr: '',
+        stdout: '  \r\n',
+      },
+    );
+    execFileMock.mockImplementation((_file, _args, callback) =>
+      callback(failed, '', ''),
+    );
+
+    const { hideFileOnWindows } = await loadFs();
+
+    await hideFileOnWindows('C:/cache/a/.last-used');
+
+    expect(capturePreloadErrorMock).toHaveBeenCalledExactlyOnceWith(failed, {
+      contexts: {
+        fn: {
+          exitCode: 3_221_225_794,
+          exitCodeHex: '0xC0000142',
+          killed: false,
+          name: 'hideFileOnWindows',
+          path: 'C:/cache/a/.last-used',
+          signal: null,
+          stderr: '',
+          stdout: '',
         },
       },
     });

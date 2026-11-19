@@ -165,11 +165,43 @@ export const fileUrlToPath = (fileurl?: string) => {
 const getAttribCommand = () => {
   const windowsDir = process.env.SystemRoot || process.env.windir;
   if (!windowsDir) return 'attrib';
-  return `${windowsDir.replace(/[\\/]+$/, '')}\\System32\\attrib.exe`;
+  return String.raw`${windowsDir.replace(/[\\/]+$/, '')}\System32\attrib.exe`;
 };
 
 let attribUnavailable = false;
 const reportedAttribFailures = new Set<string>();
+
+const ATTRIB_OUTPUT_MAX_LENGTH = 500;
+
+const trimAttribOutput = (output: unknown) =>
+  typeof output === 'string'
+    ? output.trim().slice(0, ATTRIB_OUTPUT_MAX_LENGTH)
+    : undefined;
+
+/**
+ * What a failed attrib run left to go on. attrib prints its own errors
+ * ("Access denied", "File not found") on stdout and still exits 0, so a run
+ * that fails is attrib itself not running properly: its exit code (in hex, a
+ * Windows status such as 0xC0000142 when it couldn't start) or the signal
+ * that ended it says why. Neither reached Sentry in MMM-V2-3P6: a preload
+ * report only keeps an error's `code` when it's a string.
+ */
+const describeAttribFailure = (error: unknown) => {
+  const { code, killed, signal, stderr, stdout } = (error ?? {}) as Record<
+    string,
+    unknown
+  >;
+  return {
+    ...(typeof code === 'number' && {
+      exitCode: code,
+      exitCodeHex: `0x${code.toString(16).toUpperCase()}`,
+    }),
+    killed,
+    signal,
+    stderr: trimAttribOutput(stderr),
+    stdout: trimAttribOutput(stdout),
+  };
+};
 
 const setFileAttributes = async (
   operation: 'hideFileOnWindows' | 'showFileOnWindows',
@@ -204,6 +236,7 @@ const setFileAttributes = async (
         fn: {
           name: operation,
           path: filePath,
+          ...describeAttribFailure(error),
         },
       },
     });
