@@ -1073,6 +1073,7 @@
   "update-downloaded-short": "Update klaar om te worden geïnstalleerd",
   "update-downloading": "Er is een nieuwe versie van M³ beschikbaar en deze wordt op de achtergrond gedownload.",
   "update-downloading-short": "Update wordt gedownload",
+  "update-error-disk-full": "M³ kon de update niet installeren omdat er geen ruimte meer is op de schijf van deze computer. Maak wat schijfruimte vrij en start M³ daarna opnieuw om het nog eens te proberen.",
   "update-error-read-only-volume": "M³ kon niet worden bijgewerkt omdat het is opgeslagen in een map die alleen-lezen is. Verplaats M³ naar een andere locatie, zoals de map Programma's.",
   "update-failed": "Update mislukt",
   "update-install-asks-permission": "Windows vraagt toestemming om de update te installeren",
