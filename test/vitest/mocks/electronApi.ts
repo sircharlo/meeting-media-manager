@@ -201,6 +201,10 @@ export const electronApi: ElectronApi = {
   onWatchFolderUpdate: function (callback) {
     throw new Error('Function not implemented.');
   },
+  onWebsiteLoadFailed: function (callback) {
+    log('onWebsiteLoadFailed called but not implemented');
+    return () => undefined;
+  },
   onWebsiteWindowClosed: function (callback) {
     log('onWebsiteWindowClosed called but not implemented');
     return () => undefined;

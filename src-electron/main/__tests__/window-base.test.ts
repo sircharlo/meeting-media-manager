@@ -204,6 +204,24 @@ describe('createWindow - page load errors', () => {
       expect(captureElectronError).not.toHaveBeenCalled();
     },
   );
+
+  // MMM-V2-3P7: the computer couldn't look up the website's address. The
+  // website window tells the user instead (see createWebsiteWindow).
+  it("doesn't report a page that couldn't load for want of a network", async () => {
+    mockWindowFailingToLoad(
+      Object.assign(
+        new Error(
+          "ERR_NAME_NOT_RESOLVED (-105) loading 'file:///app/index.html#?page=media-player'",
+        ),
+        { code: 'ERR_NAME_NOT_RESOLVED', errno: -105 },
+      ),
+    );
+
+    createWindow('media');
+    await flushLoad();
+
+    expect(captureElectronError).not.toHaveBeenCalled();
+  });
 });
 
 // security.ts names the window in a preload-error report (MMM-V2-3DN).

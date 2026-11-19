@@ -358,6 +358,8 @@ export interface ElectronApi {
       event: string;
     }) => void,
   ) => void;
+  /** The website window couldn't load a page for want of a network. */
+  onWebsiteLoadFailed: (callback: () => void) => () => void;
   onWebsiteWindowClosed: (callback: () => void) => () => void;
   openDiscussion: (
     category: DiscussionCategory,
@@ -618,6 +620,7 @@ export type ElectronIpcListenKey =
   | 'video-capture-crash-detected'
   | 'watchFolderError'
   | 'watchFolderUpdate'
+  | 'websiteLoadFailed'
   | 'websiteWindowClosed';
 
 // ipcMain.on / ipcRenderer.send channels

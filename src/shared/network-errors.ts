@@ -13,6 +13,42 @@ export const NETWORK_ERROR_CODES = new Set([
   'UND_ERR_CONNECT_TIMEOUT',
 ]);
 
+/**
+ * Chromium's names (net::ERR_*) for a network that isn't there or doesn't
+ * get through: no internet, a DNS that doesn't answer, a firewall, filter
+ * or proxy in the way. Electron gives them as an error's `code` (a failed
+ * page load or download) or as did-fail-load's description.
+ */
+export const CHROMIUM_NETWORK_ERROR_CODES = new Set([
+  'ERR_ADDRESS_UNREACHABLE',
+  'ERR_CONNECTION_CLOSED',
+  // Chromium's name for ECONNREFUSED: the user's firewall, filter or proxy
+  // refused the connection (MMM-V2-AN, for the update server).
+  'ERR_CONNECTION_REFUSED',
+  'ERR_CONNECTION_RESET',
+  'ERR_CONNECTION_TIMED_OUT',
+  'ERR_INTERNET_DISCONNECTED',
+  // The computer couldn't look up the site's address (MMM-V2-3P7).
+  'ERR_NAME_NOT_RESOLVED',
+  'ERR_NAME_RESOLUTION_FAILED',
+  'ERR_NETWORK_CHANGED',
+  'ERR_NETWORK_IO_SUSPENDED',
+  'ERR_PROXY_CONNECTION_FAILED',
+  'ERR_TIMED_OUT',
+  // Sibling of ERR_PROXY_CONNECTION_FAILED: a proxy that refuses or can't
+  // complete the HTTPS CONNECT tunnel (MMM-V2-AN, for the update server).
+  'ERR_TUNNEL_CONNECTION_FAILED',
+]);
+
+/**
+ * Whether Electron failed for want of a network (see
+ * CHROMIUM_NETWORK_ERROR_CODES), rather than over the page or file itself.
+ */
+export const isChromiumNetworkError = (error: unknown): boolean => {
+  const code = (error as null | undefined | { code?: unknown })?.code;
+  return typeof code === 'string' && CHROMIUM_NETWORK_ERROR_CODES.has(code);
+};
+
 export function isFetchNetworkError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
 
