@@ -1073,6 +1073,7 @@
   "update-downloaded-short": "Aktualisierung bereit zur Installation",
   "update-downloading": "Eine neue Version von M³ steht im Hintergrund zur Verfügung.",
   "update-downloading-short": "Aktualisierung wird heruntergeladen",
+  "update-error-disk-full": "M³ konnte sein Update nicht installieren, weil auf dem Datenträger dieses Computers kein Speicherplatz mehr frei ist. Geben Sie etwas Speicherplatz frei und starten Sie M³ dann neu, um es erneut zu versuchen.",
   "update-error-read-only-volume": "M³ konnte nicht aktualisiert werden, da es in einem schreibgeschützten Verzeichnis gespeichert ist. Bitte verschiebe M³ an einen anderen Ort, z. B. in den Ordner \"Programme\".",
   "update-failed": "Aktualisierung fehlgeschlagen",
   "update-install-asks-permission": "Windows fragt vor der Installation nach der Erlaubnis",
