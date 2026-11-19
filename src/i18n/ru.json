@@ -1091,6 +1091,7 @@
   "watch-folder-error-caption": "Убедитесь, что приложение, которое ее синхронизирует (например, Dropbox или OneDrive), запущено, папка все еще существует и у M³ есть разрешение сохранять в нее файлы.",
   "watch-folder-error-message": "M³ не может прочитать общую папку.",
   "watched-media-item-explain": "Этот медиа-элемент добавлен из общей папки",
+  "website-unreachable": "The website couldn’t be loaded because this computer couldn’t reach it. Check the internet connection, then refresh the page.",
   "websiteSelection": "Выбор веб-сайта",
   "weDay": "День встречи в выходные дни",
   "weDay-explain": "Выберите день, в который проводится встреча в выходные дни.",
