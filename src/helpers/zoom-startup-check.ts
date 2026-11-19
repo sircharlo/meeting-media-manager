@@ -485,11 +485,13 @@ const findProblems = async (
 
 /**
  * Tells Sentry that a check failed, grouped by what failed, with what each
- * failed step and action ran into and what Zoom showed (version, windows,
- * button names) when the check gave up waiting, or else at the last failed
- * action, so a Zoom update or an untested language breaking the Zoom Meeting
- * Manager shows up as one issue with the details to fix it. Each failed
- * action also left its own breadcrumb.
+ * failed step and action ran into (and the helper's own detail, such as why
+ * it couldn't start: MMM-V2-3NY's only reached Sentry in a console
+ * breadcrumb), and what Zoom showed (version, windows, button names) when
+ * the check gave up waiting, or else at the last failed action, so a Zoom
+ * update or an untested language breaking the Zoom Meeting Manager shows up
+ * as one issue with the details to fix it. Each failed action also left its
+ * own breadcrumb.
  */
 const reportFailedCheck = async (
   { details, problems, snapshot }: Findings,
@@ -507,6 +509,9 @@ const reportFailedCheck = async (
       extra: {
         // Spread out: Sentry flattens the snapshot's lists if nested deeper.
         ...shown,
+        failedActionDetails: failures
+          .filter(({ detail }) => detail)
+          .map(({ action, detail }) => `${action}: ${detail}`),
         failedActions: failures.map(
           ({ action, error }) => `${action}: ${error ?? 'failed'}`,
         ),

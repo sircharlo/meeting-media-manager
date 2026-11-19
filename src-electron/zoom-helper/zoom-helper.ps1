@@ -22,6 +22,21 @@ function Write-StartupFailure([string]$reason, [string]$detail) {
   [Console]::Out.Flush()
 }
 
+# HRESULT 0x800711C7 (ERROR_SYSTEM_INTEGRITY_POLICY_VIOLATION, "An Application
+# Control policy has blocked this file"): Windows App Control (Smart App
+# Control, or an organization's App Control policy) refuses the files the
+# helper generates, as they aren't signed (MMM-V2-3NY). Written in decimal:
+# Windows PowerShell reads 0x800711C7 as this negative Int32 anyway.
+$appControlBlockedHResult = -2147020345
+
+# Whether the exception, or one it wraps, is Windows App Control's refusal.
+function Test-BlockedByAppControl([Exception]$exception) {
+  for ($inner = $exception; $inner; $inner = $inner.InnerException) {
+    if ($inner.HResult -eq $appControlBlockedHResult) { return $true }
+  }
+  return $false
+}
+
 if ($ExecutionContext.SessionState.LanguageMode -ne 'FullLanguage') {
   # Locked-down computers (AppLocker / Device Guard) run PowerShell in a
   # restricted mode that can't compile or call native code.
@@ -91,7 +106,8 @@ public static class M3TypeLibConverter
   Add-Type -Path (Join-Path $PSScriptRoot 'ZoomHelper.cs') `
     -ReferencedAssemblies $interop, 'System.Web.Extensions', 'WindowsBase'
 } catch {
-  Write-StartupFailure 'helper-not-compiled' "$_"
+  $reason = if (Test-BlockedByAppControl $_.Exception) { 'helper-blocked' } else { 'helper-not-compiled' }
+  Write-StartupFailure $reason "$_"
   exit 1
 }
 
