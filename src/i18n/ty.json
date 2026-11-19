@@ -1073,6 +1073,7 @@
   "update-downloaded-short": "Ua ineine te fa’ahoura’a nō te fa’ata’ahia",
   "update-downloading": "Te vai ra te hō’ē nē’ira’a ’āpī o te M³ e tē tōtarahia nei te reira.",
   "update-downloading-short": "Tē tōtarahia nei te fa’ahoura’a",
+  "update-error-disk-full": "’Aita i ti’a ia M³ ia tu’u i te fa’ahoura’a nō te mea ua î roa te vairaa i ni‘a i teie roro uira. A hohora i te vairaa, e a fa’aha’amata fa’ahou ia M³ nō te tamata fa’ahou.",
   "update-error-read-only-volume": "’Aita i ti’a ’ia fa’ahou te M³ nō te mea tē vai ra te reira i roto i te hō’ē pu’era’a parau e fā’ari’i noa i te tai’ora’a. ’A fa’anu’u i te M³ i te tahi atu vāhi, mai te pu’era’a parau Applications.",
   "update-failed": "’Aita te fa’ahoura’a i manu’ia",
   "update-install-asks-permission": "E ani o Windows i te parau fa’ati’a nō te fa’ata’a i te reira",
