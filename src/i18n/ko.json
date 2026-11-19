@@ -1091,7 +1091,7 @@
   "watch-folder-error-caption": "Dropbox나 OneDrive처럼 폴더를 동기화하는 앱이 실행 중인지, 폴더가 아직 있는지, M³에 이 폴더에 파일을 저장할 권한이 있는지 확인하십시오.",
   "watch-folder-error-message": "M³가 공유 폴더를 읽을 수 없습니다.",
   "watched-media-item-explain": "이 미디어 항목은 공유 폴더에서 추가되었습니다",
-  "website-unreachable": "The website couldn’t be loaded because this computer couldn’t reach it. Check the internet connection, then refresh the page.",
+  "website-unreachable": "이 컴퓨터에서 웹사이트에 연결할 수 없어 웹사이트를 불러오지 못했습니다. 인터넷 연결을 확인한 다음 페이지를 새로 고침하십시오.",
   "websiteSelection": "웹사이트 선택",
   "weDay": "공개 집회 요일",
   "weDay-explain": "공개 집회가 진행되는 요일을 선택하십시오.",
