@@ -38,6 +38,7 @@ export const ZOOM_DIAGNOSIS_CHECKS = [
 // What to tell the user when the Zoom helper (src-electron/zoom-helper)
 // can't start, by the reason it reports.
 const ZOOM_HELPER_ERROR_MESSAGE_KEYS: Record<string, string> = {
+  'helper-blocked': 'zoom-helper-error-helper-blocked',
   'helper-missing': 'zoom-helper-error-helper-missing',
   'powershell-broken': 'zoom-helper-error-powershell-broken',
   'powershell-not-found': 'zoom-helper-error-powershell-not-found',
@@ -50,9 +51,11 @@ export const getZoomHelperErrorMessageKey = (error?: string) =>
   'zoom-helper-error-generic';
 
 // Why the helper can't run on this computer at all, whatever M³ does: it's
-// down to the computer (no Windows PowerShell, a locked-down one, or one
-// that doesn't start), so the user is told, and it isn't reported.
+// down to the computer (no Windows PowerShell, a locked-down one, one that
+// doesn't start, or Windows App Control refusing the helper's files), so the
+// user is told, and it isn't reported.
 const ZOOM_HELPER_UNAVAILABLE_ERRORS = new Set([
+  'helper-blocked',
   'powershell-broken',
   'powershell-not-found',
   'powershell-restricted',

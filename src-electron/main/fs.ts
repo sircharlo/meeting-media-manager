@@ -8,7 +8,7 @@ import type {
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { app, dialog } from 'electron';
 import { ensureDir, type Stats } from 'fs-extra';
-import { createReadStream, createWriteStream } from 'node:fs';
+import { createReadStream, createWriteStream, type Dirent } from 'node:fs';
 import {
   chmod,
   copyFile,
@@ -630,6 +630,21 @@ const getProbePathContext = (basePath: string) => {
 
 const PROBE_EXISTING_FILE_MAX_DEPTH = 4;
 const PROBE_EXISTING_FILE_SCAN_LIMIT = 200;
+const PROBE_EXISTING_FILE_IGNORED_SUFFIXES = ['.tmp'];
+
+/**
+ * Whether a directory entry can be used as the pre-existing file to read.
+ * Hidden and *.tmp files are skipped: atomic writers create those and
+ * rename them away moments later, so opening one can fail with ENOENT
+ * through no fault of the folder's permissions (MMM-V2-3N4, where the
+ * probe picked a transient config temp file).
+ */
+const isProbeExistingFileCandidate = (dirent: Dirent) =>
+  dirent.isFile() &&
+  !dirent.name.startsWith('.') &&
+  !PROBE_EXISTING_FILE_IGNORED_SUFFIXES.some((suffix) =>
+    dirent.name.endsWith(suffix),
+  );
 
 /**
  * Finds a pre-existing regular file under basePath (bounded depth/breadth,
@@ -650,7 +665,7 @@ const findExistingProbeFile = async (
   const subdirs: string[] = [];
   for (const dirent of dirents.slice(0, PROBE_EXISTING_FILE_SCAN_LIMIT)) {
     const fullPath = join(basePath, dirent.name);
-    if (dirent.isFile()) return fullPath;
+    if (isProbeExistingFileCandidate(dirent)) return fullPath;
     if (dirent.isDirectory()) subdirs.push(fullPath);
   }
 
@@ -677,6 +692,23 @@ const verifyExistingFileReadable = async (filePath: string) => {
     await handle.read(Buffer.alloc(1), 0, 1, 0);
   } finally {
     await handle.close();
+  }
+};
+
+/**
+ * Reads a file that was already in the folder (see
+ * verifyExistingFileReadable), when there is one.
+ */
+const verifySomeExistingFileReadable = async (basePath: string) => {
+  const existingFile = await findExistingProbeFile(basePath);
+  if (!existingFile) return;
+  try {
+    await verifyExistingFileReadable(existingFile);
+  } catch (error) {
+    // The file vanished between the scan and the open (a file another
+    // component was renaming, say) - that says nothing about the folder's
+    // permissions, so don't fail the probe.
+    if (getFilesystemErrorCode(error) !== 'ENOENT') throw error;
   }
 };
 
@@ -876,10 +908,7 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
 
         if (process.platform === 'darwin') {
           probeStage = 'read-existing';
-          const existingFile = await findExistingProbeFile(resolvedBase);
-          if (existingFile) {
-            await verifyExistingFileReadable(existingFile);
-          }
+          await verifySomeExistingFileReadable(resolvedBase);
         }
 
         return true;

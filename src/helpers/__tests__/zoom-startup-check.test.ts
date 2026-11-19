@@ -562,6 +562,7 @@ describe('Zoom startup check', () => {
         expect.objectContaining({
           extra: {
             dialogs: { 'SomeZoomDialog 420x240': ['Join', 'Cancel'] },
+            failedActionDetails: [],
             failedActions: [],
             failedSteps: ['meeting: not open 90 s after opening it'],
             meeting: false,
@@ -698,6 +699,7 @@ describe('Zoom startup check', () => {
         expect.objectContaining({
           extra: {
             dialogs: { 'CVoiceActivityDetectedDlgCls 400x120': ['Unmute'] },
+            failedActionDetails: [],
             failedActions: ['set-video: video-not-changed'],
             failedSteps: ['video-off: Video button reads "x"'],
             namesChanged: false,
@@ -938,39 +940,53 @@ describe('Zoom startup check', () => {
     ]);
   });
 
-  // MMM-V2-3NY: Windows PowerShell itself didn't start on that computer.
-  it("says why when M³'s helper can't run on this computer, and doesn't report it", async () => {
-    const { runZoomStartupCheck } = await import('../zoom-startup-check');
-    zoom.getZoomMeetingState.mockResolvedValue(null);
-    zoom.takeZoomActionFailures.mockReturnValue([
-      {
-        action: 'meeting',
-        detail: 'exit code 4294901760 | El shell no se puede iniciar.',
-        error: 'powershell-broken',
-      },
-    ]);
-
-    expect(await runZoomStartupCheck()).toBe('failed');
-    expect(useZoomStateStore().pause?.problems).toEqual([
-      'zoom-check-problem-helper',
-    ]);
-    expect(notification()).toMatchObject({
+  // MMM-V2-3NY: Windows PowerShell itself didn't start on one computer, and
+  // on another Windows App Control refused the helper's generated files.
+  it.each([
+    {
       caption:
         "Windows PowerShell, which M³ needs to control Zoom, doesn't start on this computer: it stops with an error as soon as it opens. M³ can't control Zoom until Windows PowerShell is repaired.",
-      message: 'Zoom automations paused',
-      type: 'negative',
-    });
-    await new Promise((resolve) => {
-      setTimeout(resolve, 0);
-    });
-    expect(sentry.captureMessage).not.toHaveBeenCalled();
-  });
+      detail: 'exit code 4294901760 | El shell no se puede iniciar.',
+      error: 'powershell-broken',
+    },
+    {
+      caption:
+        "Windows blocks a file M³ needs to control Zoom: Smart App Control, or an organization's security policy, doesn't let it run on this computer. M³ can't control Zoom while Windows blocks it.",
+      detail:
+        'Exception calling "LoadFrom" with "1" argument(s): "An Application Control policy has blocked this file. (Exception from HRESULT: 0x800711C7)"',
+      error: 'helper-blocked',
+    },
+  ])(
+    "says why when M³'s helper can't run on this computer ($error), and doesn't report it",
+    async ({ caption, detail, error }) => {
+      const { runZoomStartupCheck } = await import('../zoom-startup-check');
+      zoom.getZoomMeetingState.mockResolvedValue(null);
+      zoom.takeZoomActionFailures.mockReturnValue([
+        { action: 'meeting', detail, error },
+      ]);
 
-  it('still reports a helper that stopped for another reason', async () => {
+      expect(await runZoomStartupCheck()).toBe('failed');
+      expect(useZoomStateStore().pause?.problems).toEqual([
+        'zoom-check-problem-helper',
+      ]);
+      expect(notification()).toMatchObject({
+        caption,
+        message: 'Zoom automations paused',
+        type: 'negative',
+      });
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+      expect(sentry.captureMessage).not.toHaveBeenCalled();
+    },
+  );
+
+  it('still reports a helper that stopped for another reason, with its detail', async () => {
     const { runZoomStartupCheck } = await import('../zoom-startup-check');
     zoom.getZoomMeetingState.mockResolvedValue(null);
     zoom.takeZoomActionFailures.mockReturnValue([
       { action: 'meeting', detail: 'exit code 3', error: 'helper-exited' },
+      { action: 'set-video', error: 'video-not-changed' },
     ]);
 
     expect(await runZoomStartupCheck()).toBe('failed');
@@ -980,7 +996,11 @@ describe('Zoom startup check', () => {
         'Zoom check failed: automations paused',
         expect.objectContaining({
           extra: expect.objectContaining({
-            failedActions: ['meeting: helper-exited'],
+            failedActionDetails: ['meeting: exit code 3'],
+            failedActions: [
+              'meeting: helper-exited',
+              'set-video: video-not-changed',
+            ],
           }),
         }),
       ),

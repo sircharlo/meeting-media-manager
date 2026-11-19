@@ -141,7 +141,8 @@ export interface ZoomHelperStartResult {
   /**
    * Why the helper couldn't start: `windows-only`, `powershell-not-found`,
    * `powershell-restricted`, `powershell-broken` (PowerShell itself fails
-   * to start), `helper-not-compiled`, `helper-start-timeout`,
+   * to start), `helper-blocked` (Windows App Control refuses the files the
+   * helper generates), `helper-not-compiled`, `helper-start-timeout`,
    * `helper-exited`.
    */
   error?: string;
