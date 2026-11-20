@@ -290,6 +290,11 @@ export interface ZoomMeetingState {
  */
 export interface ZoomOriginalSoundProbe {
   audioMenu?: ZoomProbedAudioMenu;
+  /**
+   * Whether Zoom showed its meeting bars: Zoom 6.5's Original sound button,
+   * in its top bar, is only listed then.
+   */
+  barsShown?: boolean;
   error?: string;
   /** Names of the meeting window's controls and texts, shown or hidden. */
   meetingControls?: string[];

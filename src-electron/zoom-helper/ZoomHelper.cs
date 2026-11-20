@@ -513,7 +513,7 @@ namespace M3.ZoomHelper
         // (e.g. "Strg" for Ctrl in German).
         // Japanese Zoom writes it with full-width brackets, "（Alt+I）".
         static readonly Regex TrailingHotkey = new Regex(@"[(（](?:[^()（）\s+]+\+)+[^()（）\s+]+[)）]\s*$");
-        // Zoom names its menu separators "4 of 17" in every language.
+        // Zoom 7 names its menu separators "4 of 17" in every language.
         static readonly Regex MenuSeparator = new Regex(@"^\d+ of \d+$");
         // "More" menu entries end with a translated "row R, column C N of M ..."
         static readonly Regex GridPositionSuffix = new Regex(@"^(.*?)\s+\S+\s+\d+,\s*\S+\s+\d+\s+\d+\s+\S+\s+\d+(?:\s.*)?$");
@@ -1083,13 +1083,15 @@ namespace M3.ZoomHelper
             return row;
         }
 
-        /// <summary>A menu's entries, in groups split at its separators.</summary>
-        static List<List<El>> MenuGroups(El menu)
+        /// <summary>A menu's entries, in groups split at its separators. Zoom
+        /// 6.5's audio menu has unnamed entries for separators instead
+        /// (`unnamedSeparate`); otherwise unnamed entries are just skipped.</summary>
+        static List<List<El>> MenuGroups(El menu, bool unnamedSeparate = false)
         {
             var groups = new List<List<El>> { new List<El>() };
             foreach (var item in Uia.Descendants(menu, Uia.MenuItemType))
             {
-                if (MenuSeparator.IsMatch(item.Name)) groups.Add(new List<El>());
+                if (MenuSeparator.IsMatch(item.Name) || (unnamedSeparate && item.Name.Length == 0)) groups.Add(new List<El>());
                 else if (item.Name.Length > 0) groups[groups.Count - 1].Add(item);
             }
             groups.RemoveAll(group => group.Count == 0);
@@ -1534,7 +1536,7 @@ namespace M3.ZoomHelper
                 // The menu's window can be up before its entries are.
                 WaitUntil(() =>
                 {
-                    groups = MenuGroups(menu);
+                    groups = MenuGroups(menu, true);
                     closed = !Native.IsWindowVisible(handle);
                     return closed || EntryCount(groups) >= 2;
                 }, 2000);
@@ -4157,12 +4159,17 @@ namespace M3.ZoomHelper
         // --- Original sound (diagnostics) ----------------------------------------------
 
         // Zoom's "Original sound for musicians", which some congregations keep
-        // on for the hall's sound, and which can turn off again. Zoom 7.2.1
-        // offers it among the audio menu's microphone modes ("Son d’origine
-        // pour les musiciens, Décoché": its state only in that translated
-        // suffix), and some older versions as a button at the top of the
-        // meeting. Where each version has it is to be learned before M3 can
-        // keep it on, so M3 reports what Zoom shows (OriginalSoundProbe).
+        // on for the hall's sound, and which can turn off again. Where each
+        // version has it is to be learned before M3 can keep it on, so M3
+        // reports what Zoom shows (OriginalSoundProbe). Seen so far (French):
+        // - 7.1.9 and 7.2.1: among the audio menu's microphone modes ("Son
+        //   d’origine pour les musiciens, Décoché"), its state only in that
+        //   translated suffix; 7.1.9 also says it's on in the microphone
+        //   button's name.
+        // - 6.5.12: a button in the meeting's top bar ("Son d’origine pour
+        //   les musiciens : désactivé"), which Invoke toggles, but which UI
+        //   Automation only lists while Zoom shows its bars (the mouse over
+        //   the meeting); its audio menu has no such entry.
 
         const int ProbeMaxNames = 60;
         const int ProbeBudgetMs = 2000;
@@ -4194,6 +4201,9 @@ namespace M3.ZoomHelper
                 if (sharing) probe["shareToolbar"] = ShareToolbarControlNames();
                 var people = new List<string>();
                 probe["meetingControls"] = MeetingControlNames(people);
+                // Whether Zoom showed its bars, and so its top bar's buttons.
+                var window = FindMeetingWindow();
+                probe["barsShown"] = window != null && Uia.FirstByClass(window, ControlPanelClass) != null;
                 probe["audioMenu"] = sharing ? ShareToolbarAudioMenu(people) : MeetingAudioMenu(people);
             }
             catch (Exception error)
@@ -4465,7 +4475,7 @@ namespace M3.ZoomHelper
 
         static List<List<El>> ReadMenuGroups(IntPtr menu)
         {
-            try { return MenuGroups(Uia.FromHandle(menu)); }
+            try { return MenuGroups(Uia.FromHandle(menu), true); }
             catch (Exception) { return new List<List<El>>(); } // closed meanwhile
         }
 
