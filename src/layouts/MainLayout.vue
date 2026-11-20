@@ -180,7 +180,10 @@ import {
 } from 'src/helpers/zoom-hand-alert';
 import { syncZoomLayoutWatcher } from 'src/helpers/zoom-layout';
 import { scheduleZoomAutomations } from 'src/helpers/zoom-meeting-day';
-import { watchZoomChanges } from 'src/helpers/zoom-startup-check';
+import {
+  runZoomStartupCheck,
+  watchZoomChanges,
+} from 'src/helpers/zoom-startup-check';
 import { localeOptions } from 'src/i18n';
 import { log, type LogPrefix } from 'src/shared/vanilla';
 import { useAppSettingsStore } from 'src/stores/app-settings';
@@ -372,6 +375,11 @@ useEventListener(globalThis, 'openZoomSetupAssistant', (event: Event) => {
   zoomSetupAssistantStep.value =
     detail?.step === 'layout' ? 'layout' : undefined;
   zoomSetupAssistantOpen.value = true;
+});
+// "Test again" on a notice that the Zoom automations are paused (see
+// src/helpers/zoom.ts, which the check is built on).
+useEventListener(globalThis, 'testZoomAgain', () => {
+  void runZoomStartupCheck({ manual: true });
 });
 const macosPermissionPromptTarget = ref<MacosFolderPermissionTarget | null>(
   null,

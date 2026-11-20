@@ -1145,13 +1145,24 @@ const setHostMicForMedia = async (on: boolean) => {
   return result;
 };
 
-/** Mutes the host microphone for media with sound (see above). */
+/**
+ * Mutes the host microphone for media with sound (see above). Says so if
+ * that failed, unless the host isn't joined to computer audio (the
+ * microphone then sends Zoom nothing) or the user stopped it.
+ */
 const muteHostMicForMedia = async (url: string) => {
   if (hostMicMutedForMedia || !hasSound(url) || !mutesHostMicForMedia()) {
     return;
   }
   const result = await setHostMicForMedia(false);
   hostMicMutedForMedia = result.ok && !!result.changed;
+  if (
+    !result.ok &&
+    result.error !== 'audio-not-joined' &&
+    result.error !== CANCELLED.error
+  ) {
+    notifyWarning('zoom-host', 'zoom-host-mic-mute-failed');
+  }
 };
 
 /** Unmutes the host microphone M³ muted for media, once that's finished. */
@@ -1195,8 +1206,45 @@ export const startZoomHostMicMediaSync = () => {
   );
 };
 
+/**
+ * Says the media wasn't shared in Zoom as a failed (or skipped) check paused
+ * the automations, offering what the check's own notice offers: to test Zoom
+ * again, or the setup assistant once Zoom's buttons no longer read as
+ * learned. By events (handled in MainLayout), as the check is built on this
+ * module.
+ */
+const notifyMediaNotSharedWhilePaused = () => {
+  if (feedbackMuted) return;
+  const relearn = useZoomStateStore().relearnNeeded;
+  createTemporaryNotification({
+    actions: [
+      {
+        color: 'white',
+        handler: () => {
+          globalThis.dispatchEvent(
+            new CustomEvent(
+              relearn ? 'openZoomSetupAssistant' : 'testZoomAgain',
+            ),
+          );
+        },
+        label: t(relearn ? 'zoom-setup-open' : 'zoom-check-test-again'),
+      },
+    ],
+    caption: t('zoom-sharing-failed-caption'),
+    group: 'zoom-sharing',
+    icon: 'mmm-warning',
+    message: t('zoom-sharing-paused'),
+    type: 'warning',
+  });
+};
+
 const startAutomatedMediaShare = async (mediaUrl: string) => {
-  if (!(await zoomAutomationsAllowed('Zoom media sharing'))) return false;
+  if (!(await zoomAutomationsAllowed('Zoom media sharing'))) {
+    // At meeting time, the media not being shared is said each time: the
+    // check's own notice may be closed by now.
+    if (isAroundMeetingTime()) notifyMediaNotSharedWhilePaused();
+    return false;
+  }
   const meeting = await getZoomMeetingState();
   if (!meeting?.found) {
     log('Zoom media sharing: skipped, no Zoom meeting found', 'zoom', 'info', {

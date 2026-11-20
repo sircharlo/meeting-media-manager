@@ -66,6 +66,7 @@ const zoomState = {
     }
   }),
   meeting: null as unknown,
+  relearnNeeded: false,
   requestCancel: vi.fn(() => {
     zoomState.cancelRequested = true;
   }),
@@ -124,6 +125,7 @@ beforeEach(() => {
   dateMocks.isMemorialDay.mockReturnValue(false);
   zoomState.meeting = null;
   zoomState.automationsPaused = false;
+  zoomState.relearnNeeded = false;
   zoomState.cancelRequested = false;
   zoomState.runDepth = 0;
   zoomState.runLabel = null;
@@ -611,6 +613,65 @@ describe('Zoom automations and the startup check', () => {
 
     expect(zoomCommandMock).not.toHaveBeenCalled();
     expect(launchZoomMeetingMock).not.toHaveBeenCalled();
+  });
+
+  // The check's own "automations paused" notice may have been closed by
+  // the time media is shown: the media not reaching Zoom is said each time.
+  // Like the check's own notice, it offers to test Zoom again, or the setup
+  // assistant once Zoom's buttons no longer read as learned.
+  it.each([
+    { event: 'testZoomAgain', label: 'Test again', relearnNeeded: false },
+    {
+      event: 'openZoomSetupAssistant',
+      label: 'Open setup assistant',
+      relearnNeeded: true,
+    },
+  ])(
+    'say the media was not shared in Zoom while paused, at meeting time, with "$label"',
+    async ({ event, label, relearnNeeded }) => {
+      const { automateZoomMediaSharing } = await import('../zoom');
+      zoomState.automationsPaused = true;
+      zoomState.relearnNeeded = relearnNeeded;
+      dateMocks.getMeetingStartToday.mockReturnValue(
+        new Date(Date.now() + 10 * 60 * 1000),
+      );
+      const dispatched: string[] = [];
+      const dispatch = vi
+        .spyOn(globalThis, 'dispatchEvent')
+        .mockImplementation((sent) => {
+          dispatched.push(sent.type);
+          return true;
+        });
+
+      expect(await automateZoomMediaSharing(true)).toBe(false);
+
+      expect(zoomCommandMock).not.toHaveBeenCalled();
+      expect(notifyMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          caption: 'Share the media window from Zoom yourself.',
+          group: 'zoom-sharing',
+          message:
+            "Zoom automations are paused, so the media wasn't shared in Zoom",
+          type: 'warning',
+        }),
+      );
+      const [{ actions }] = notifyMock.mock.calls[0] as [
+        { actions: { handler: () => void; label: string }[] },
+      ];
+      expect(actions.map((action) => action.label)).toEqual([label]);
+      actions[0]?.handler();
+      expect(dispatched).toEqual([event]);
+      dispatch.mockRestore();
+    },
+  );
+
+  it('say nothing of it while paused outside meeting time', async () => {
+    const { automateZoomMediaSharing } = await import('../zoom');
+    zoomState.automationsPaused = true;
+
+    expect(await automateZoomMediaSharing(true)).toBe(false);
+
+    expect(notifyMock).not.toHaveBeenCalled();
   });
 
   it('wait for a check in progress, which uses Zoom too', async () => {
@@ -1153,6 +1214,36 @@ describe('the host microphone while media plays', () => {
 
     expect(micCommands()).toEqual([]);
   });
+
+  it("says so when it can't mute it, and shares all the same", async () => {
+    failing = { 'set-mic': 'share-toolbar-mic-button-not-found' };
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    expect(await automateZoomMediaSharing(true, VIDEO)).toBe(true);
+
+    expect(commandTypes()).toContain('start-share');
+    expect(notifyMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        group: 'zoom-host',
+        message: expect.stringContaining('couldn’t mute the host microphone'),
+        type: 'warning',
+      }),
+    );
+  });
+
+  it.each(['audio-not-joined', 'cancelled'])(
+    'says nothing when it could not mute it for %s',
+    async (error) => {
+      failing = { 'set-mic': error };
+      const { automateZoomMediaSharing } = await import('../zoom');
+
+      await automateZoomMediaSharing(true, VIDEO);
+
+      expect(notifyMock).not.toHaveBeenCalledWith(
+        expect.objectContaining({ group: 'zoom-host' }),
+      );
+    },
+  );
 
   it("says so when it can't unmute it after the media", async () => {
     const { automateZoomMediaSharing } = await import('../zoom');
