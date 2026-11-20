@@ -1204,6 +1204,8 @@
   "zoom-meeting-window-time-not-found": "Está na hora da reunião, mas nenhuma janela de reunião do Zoom foi detectada",
   "zoom-no-raised-hands": "Nenhuma mão levantada",
   "zoom-out": "Diminuir o zoom",
+  "zoom-outdated-version": "Zoom {version} is older than Zoom {tested}, the version M³ is tested with",
+  "zoom-outdated-version-caption": "Some features may be less reliable with it. Update Zoom at your earliest convenience.",
   "zoom-participants-asked-to-unmute": "Os participantes foram solicitados a ativar o áudio",
   "zoom-participants-muted": "Áudio dos participantes desativado",
   "zoom-participants-unmute-allowed": "Os participantes podem ativar o áudio",
