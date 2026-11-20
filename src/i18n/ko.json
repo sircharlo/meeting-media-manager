@@ -1204,6 +1204,8 @@
   "zoom-meeting-window-time-not-found": "집회 시간이지만 Zoom 회의 창이 감지되지 않습니다",
   "zoom-no-raised-hands": "손 든 참여자 없음",
   "zoom-out": "축소",
+  "zoom-outdated-version": "Zoom {version} is older than Zoom {tested}, the version M³ is tested with",
+  "zoom-outdated-version-caption": "Some features may be less reliable with it. Update Zoom at your earliest convenience.",
   "zoom-participants-asked-to-unmute": "참가자에게 음소거 해제 요청함",
   "zoom-participants-muted": "참가자 음소거 됨",
   "zoom-participants-unmute-allowed": "참가자 음소거 해제 허용됨",
