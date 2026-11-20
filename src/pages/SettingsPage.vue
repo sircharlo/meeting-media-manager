@@ -193,8 +193,9 @@
                 </q-item>
               </div>
 
+              <!-- Only update toggles: a store build's store updates it. -->
               <div
-                v-if="groupId === 'advanced'"
+                v-if="groupId === 'advanced' && !appStore"
                 class="subgroup-card subgroup-card--global"
               >
                 <q-item-label class="settings-subgroup-label" header>
@@ -489,6 +490,7 @@ let settingsFilterClosedAt = 0;
 // the normal settingsDefinitions/BaseInput v-model pattern.
 const autoUpdateEnabled = ref(true);
 const betaUpdatesEnabled = ref(false);
+const { appStore } = globalThis.electronApi;
 
 // Set while loadGlobalPreferences() syncs the refs above from disk, so the
 // watch(betaUpdatesEnabled, ...) below can tell a user-initiated toggle

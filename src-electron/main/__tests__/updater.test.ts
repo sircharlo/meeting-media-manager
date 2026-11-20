@@ -14,6 +14,7 @@ const getVersionMock = vi.fn(() => '26.6.0');
 const powerMonitorOnMock = vi.fn();
 const isMachineWideInstallationMock = vi.fn(() => false);
 const constants = {
+  APP_STORE: null as null | string,
   IS_DEMO_MODE: false,
   IS_TEST: false,
   PLATFORM: 'linux' as NodeJS.Platform,
@@ -110,6 +111,7 @@ describe('updater install flow', () => {
     pathExistsMock.mockResolvedValue(false);
     Object.assign(autoUpdaterMock, autoUpdaterDefaults);
     constants.IS_DEMO_MODE = false;
+    constants.APP_STORE = null;
     // Linux installs on quit, as every platform used to: the tests for
     // Windows, which never does, switch to it themselves.
     constants.PLATFORM = 'linux';
@@ -902,6 +904,16 @@ describe('updater install flow', () => {
           constants.IS_DEMO_MODE = true;
         },
       },
+      // The store delivers the updates (and refuses an app that updates
+      // itself).
+      ...['flathub', 'mac-app-store', 'microsoft-store', 'snap-store'].map(
+        (store) => ({
+          reason: `${store} build`,
+          turnOff: () => {
+            constants.APP_STORE = store;
+          },
+        }),
+      ),
     ])(
       'never checks, nor sets the updater up: $reason',
       async ({ reason, turnOff }) => {

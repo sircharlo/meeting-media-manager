@@ -1,7 +1,12 @@
 import type { ElectronApi, ElectronIpcInvokeKey } from 'src/types/electron';
 
 import { contextBridge, webUtils } from 'electron/renderer';
-import { IS_DEMO_MODE, IS_DEV, PLATFORM } from 'src-electron/constants';
+import {
+  APP_STORE,
+  IS_DEMO_MODE,
+  IS_DEV,
+  PLATFORM,
+} from 'src-electron/constants';
 import { initCloseListeners } from 'src-electron/preload/close';
 import {
   fileUrlToPath,
@@ -76,6 +81,7 @@ const invokeWithoutResult = (
 };
 
 const electronApi: ElectronApi = {
+  appStore: APP_STORE,
   askForMediaAccess: () => send('askForMediaAccess'),
   basename,
   cancelAllDownloads: () => send('cancelAllDownloads'),

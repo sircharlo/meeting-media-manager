@@ -30,6 +30,7 @@ const fakePath = async (path: string, create = true) => {
 };
 
 export const electronApi: ElectronApi = {
+  appStore: null,
   askForMediaAccess: function () {
     throw new Error('Function not implemented.');
   },

@@ -274,3 +274,19 @@ describe('beta updates', () => {
     expect(await betaUpdatesDisabled()).toBe(true);
   });
 });
+
+describe('updates in a store build', () => {
+  it("leaves them to the store: M³'s own switches don't apply, and there are no betas", async () => {
+    await toggleAutoUpdates(false);
+    await toggleBetaUpdates(true);
+    globalThis.electronApi.appStore = 'microsoft-store';
+    try {
+      expect(await updatesDisabled()).toBe(false);
+      expect(await betaUpdatesDisabled()).toBe(true);
+    } finally {
+      globalThis.electronApi.appStore = null;
+      await toggleAutoUpdates(true);
+      await toggleBetaUpdates(false);
+    }
+  });
+});
