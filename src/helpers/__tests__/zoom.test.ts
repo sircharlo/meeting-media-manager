@@ -13,6 +13,7 @@ const currentSettings = {
   zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
   zoomMeetingManagerEnable: true,
   zoomMeetingManagerMeetingId: '123 456' as null | string,
+  zoomMeetingManagerMuteHostMicDuringMedia: false,
   zoomMeetingManagerPostMeetingAskToUnmute: true,
   zoomMicOffTitle: 'Unmute' as null | string,
   zoomMicOnTitle: 'Mute' as null | string,
@@ -130,6 +131,7 @@ beforeEach(() => {
     zoomMeetingManagerAutoLaunchMeeting: false,
     zoomMeetingManagerAutomateMeetingAudioSettings: false,
     zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
+    zoomMeetingManagerMuteHostMicDuringMedia: false,
     zoomMeetingManagerPostMeetingAskToUnmute: true,
     zoomMicOffTitle: 'Unmute',
     zoomMicOnTitle: 'Mute',
@@ -1030,6 +1032,143 @@ describe('Zoom setup assistant', () => {
       ).toBe(changed);
     },
   );
+});
+
+// Shared videos sounded muffled or choppy to Zoom participants in a hall
+// whose sound desk sends the media computer's own output back to it as
+// Zoom's microphone: Zoom got the media's sound twice.
+describe('the host microphone while media plays', () => {
+  const VIDEO = 'file:///C:/Media/video.mp4';
+  const SONG = 'file:///C:/Media/song.mp3';
+  const PICTURE = 'file:///C:/Media/picture.jpg';
+
+  const micCommands = () =>
+    zoomCommandMock.mock.calls
+      .map(([command]) => command)
+      .filter((command) => command.type === 'set-mic')
+      .map((command) => ('on' in command ? command.on : null));
+
+  beforeEach(() => {
+    Object.assign(currentSettings, {
+      zoomMeetingManagerAutomateMediaSharing: true,
+      zoomMeetingManagerMuteHostMicDuringMedia: true,
+    });
+  });
+
+  it.each([VIDEO, SONG])(
+    'mutes it before sharing media with sound, and unmutes it once the share stops (%s)',
+    async (url) => {
+      const { automateZoomMediaSharing } = await import('../zoom');
+
+      expect(await automateZoomMediaSharing(true, url)).toBe(true);
+      expect(await automateZoomMediaSharing(false)).toBe(true);
+
+      // Muted while Zoom still shows its meeting window, which sharing hides.
+      expect(commandTypes()).toEqual([
+        'meeting',
+        'set-mic',
+        'start-share',
+        'meeting',
+        'stop-share',
+        'set-mic',
+      ]);
+      expect(micCommands()).toEqual([false, true]);
+      // Only for the media's time: the meeting checklist stays as it was.
+      expect(updateChecklistMock).not.toHaveBeenCalled();
+      expect(notifyMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          group: 'zoom-host',
+          message: 'Host microphone muted while the media plays',
+        }),
+      );
+    },
+  );
+
+  it('leaves it alone for a picture', async () => {
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    await automateZoomMediaSharing(true, PICTURE);
+    await automateZoomMediaSharing(false);
+
+    expect(micCommands()).toEqual([]);
+  });
+
+  it("doesn't unmute a microphone the host had muted already", async () => {
+    const respond = zoomCommandMock.getMockImplementation();
+    zoomCommandMock.mockImplementation(async (command) =>
+      command.type === 'set-mic'
+        ? { changed: false, ok: true }
+        : (respond?.(command) ?? { ok: false }),
+    );
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    await automateZoomMediaSharing(true, VIDEO);
+    await automateZoomMediaSharing(false);
+
+    expect(micCommands()).toEqual([false]);
+  });
+
+  it("unmutes it again when the share doesn't start", async () => {
+    failing = { 'start-share': 'share-picker-not-found' };
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    expect(await automateZoomMediaSharing(true, VIDEO)).toBe(false);
+
+    expect(micCommands()).toEqual([false, true]);
+  });
+
+  it('follows the media while the share goes on: a picture unmutes it, a video mutes it again', async () => {
+    const { automateZoomMediaSharing, followZoomHostMicWithMedia } =
+      await import('../zoom');
+
+    await automateZoomMediaSharing(true, VIDEO);
+    await followZoomHostMicWithMedia(VIDEO);
+    await followZoomHostMicWithMedia(PICTURE);
+    await followZoomHostMicWithMedia(PICTURE);
+    await followZoomHostMicWithMedia(SONG);
+
+    expect(micCommands()).toEqual([false, true, false]);
+  });
+
+  it("does nothing with a share the user started, nor once M³'s has stopped", async () => {
+    zoomSharing = true;
+    const { automateZoomMediaSharing, followZoomHostMicWithMedia } =
+      await import('../zoom');
+
+    await automateZoomMediaSharing(true, VIDEO);
+    await followZoomHostMicWithMedia(VIDEO);
+    await automateZoomMediaSharing(false);
+
+    expect(micCommands()).toEqual([]);
+  });
+
+  it('does nothing with the setting off', async () => {
+    currentSettings.zoomMeetingManagerMuteHostMicDuringMedia = false;
+    const { automateZoomMediaSharing, followZoomHostMicWithMedia } =
+      await import('../zoom');
+
+    await automateZoomMediaSharing(true, VIDEO);
+    await followZoomHostMicWithMedia(SONG);
+    await automateZoomMediaSharing(false);
+
+    expect(micCommands()).toEqual([]);
+  });
+
+  it("says so when it can't unmute it after the media", async () => {
+    const { automateZoomMediaSharing } = await import('../zoom');
+    await automateZoomMediaSharing(true, VIDEO);
+    failing = { 'set-mic': 'share-toolbar-mic-button-not-found' };
+
+    await automateZoomMediaSharing(false);
+
+    expect(notifyMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        group: 'zoom-host',
+        message: expect.stringContaining('couldn’t unmute the host microphone'),
+        type: 'negative',
+      }),
+    );
+  });
 });
 
 describe('stopping Zoom sharing after media', () => {

@@ -169,7 +169,11 @@ import {
 } from 'src/helpers/notifications';
 import { syncTimerRemote } from 'src/helpers/timer-remote';
 import { createWatchFolderEventQueue } from 'src/helpers/watch-folder-event-queue';
-import { cancelZoomRun, stopZoomSharingAfterMedia } from 'src/helpers/zoom';
+import {
+  cancelZoomRun,
+  startZoomHostMicMediaSync,
+  stopZoomSharingAfterMedia,
+} from 'src/helpers/zoom';
 import {
   startHandAlertDisplaySync,
   syncZoomHandAlertWatcher,
@@ -1914,6 +1918,10 @@ watchImmediate(
     syncZoomHandAlertWatcher();
   },
 );
+
+// While M³ shares media in Zoom, mute the host microphone for a video or an
+// audio file, and unmute it after (see followZoomHostMicWithMedia).
+startZoomHostMicMediaSync();
 
 // Keep Zoom's meeting window (and M³'s) where the window layout says.
 watchImmediate(

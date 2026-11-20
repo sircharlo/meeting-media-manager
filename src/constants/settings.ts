@@ -732,6 +732,16 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomMeetingManager',
     type: 'toggle',
   },
+  zoomMeetingManagerMuteHostMicDuringMedia: {
+    depends: [
+      'zoomMeetingManagerEnable',
+      'zoomMeetingManagerAutomateMediaSharing',
+    ],
+    group: 'integrations',
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'toggle',
+  },
   zoomCancelAutomationShortcut: {
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
@@ -1360,6 +1370,7 @@ export const defaultSettings: SettingsValues = {
   zoomMeetingManagerHandAlert: false,
   zoomMeetingManagerHandAlertNotifyOnly: false,
   zoomMeetingManagerMeetingId: null,
+  zoomMeetingManagerMuteHostMicDuringMedia: true,
   zoomMeetingManagerPostMeetingAskToUnmute: true,
   zoomMeetingManagerSetupAssistant: null,
   zoomMeetingManagerStartupCheck: true,

@@ -12,6 +12,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🛠️ Improvements and Tweaks
 
+- 🛠️ **Zoom Meeting Manager**: While M³ shares a video or an audio file in Zoom, it now mutes the host microphone, and unmutes it once the media is finished. In halls whose sound desk sends the computer's own sound back to it as Zoom's microphone, Zoom got the media's sound twice, which could make it sound muffled or choppy for Zoom participants. It can be turned off in Settings (**Mute the host microphone while videos and audio play**).
 - 🛠️ **Damaged Media Files**: When a video can't be opened at all, most often because it was only partly downloaded or copied, M³ now says so, naming the file, so there's time to get it again before the meeting. Before, its thumbnail just stayed blank and an error report was sent instead.
 - 🛠️ **Meeting Checklists and the Zoom Meeting Manager**: Marking a checklist task as done when the Zoom Meeting Manager will do it for you now asks first, and says when M³ does it: when background music stops before the meeting, or when you start background music after it. Marking a task M³ already did in Zoom as not done also asks first, since that changes nothing in Zoom.
 
