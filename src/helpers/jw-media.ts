@@ -4919,7 +4919,7 @@ const getBibleVerseDuration = (
 ) => {
   let min = 0;
   let max = 0;
-  const verses = media.VerseNumbers?.sort((a, b) => a - b);
+  const verses = media.VerseNumbers?.toSorted((a, b) => a - b);
   if (!verses) return { max, min };
 
   min = timeToSeconds(

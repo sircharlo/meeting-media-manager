@@ -89,7 +89,7 @@ jobs:
       - name: Install dependencies
         env:
           YARN_ENABLE_SCRIPTS: 'false'
-        run: yarn install --mode=skip-build
+        run: yarn install --immutable --mode=skip-build
 
       - name: Repair Crowdin translations at the source
         env:
@@ -190,7 +190,7 @@ jobs:
         if: steps.branch.outputs.exists == 'true'
         env:
           YARN_ENABLE_SCRIPTS: 'false'
-        run: yarn install --mode=skip-build
+        run: yarn install --immutable --mode=skip-build
 
       - name: Repair the exported files
         if: steps.branch.outputs.exists == 'true'
