@@ -207,6 +207,34 @@ describe.skipIf(!canRunLive)('Zoom helper, live share', () => {
     },
   );
 
+  it("reads Zoom's audio menu from the share toolbar, without stopping the share or leaving the menu open", async () => {
+    expect(await startShare()).toMatchObject({ changed: true, ok: true });
+
+    const startedAt = Date.now();
+    const probe = (await helper.request({ type: 'original-sound-probe' }))
+      .originalSound;
+    print(
+      `    original-sound-probe while sharing: ${Date.now() - startedAt} ms, audio menu ${JSON.stringify(probe?.audioMenu)}`,
+    );
+
+    expect(probe).toMatchObject({
+      sharing: true,
+      zoomVersion: expect.any(String),
+    });
+    expect(probe?.error).toBeFalsy();
+    expect(probe?.audioMenu?.via).toBe('share-toolbar');
+    expect(probe?.audioMenu?.unread).toBeUndefined();
+    expect(probe?.audioMenu?.names?.length).toBeGreaterThan(0);
+    expect(probe?.audioMenu?.leftOpen).toBeUndefined();
+    expect(probe?.shareToolbar?.length).toBeGreaterThan(0);
+    expect(await sharing()).toBe(true);
+    const shown = (await helper.request({ type: 'snapshot' })).snapshot;
+    expect(shown?.windows).not.toContain('WCN_ModelessWnd');
+
+    expect(await stopShare()).toMatchObject({ changed: true, ok: true });
+    await sleep(1000);
+  });
+
   it('reports nothing to do when it is already sharing, or not sharing at all', async () => {
     expect(await startShare()).toMatchObject({ changed: true, ok: true });
 

@@ -33,7 +33,12 @@ const { dateMocks, notifyMock, sentryMocks, updateChecklistMock } = vi.hoisted(
       isMemorialDay: vi.fn(() => false),
     },
     notifyMock: vi.fn(),
-    sentryMocks: { addBreadcrumb: vi.fn(), captureMessage: vi.fn() },
+    sentryMocks: {
+      addBreadcrumb: vi.fn(),
+      captureMessage: vi.fn(),
+      // Sentry isn't set up unless a test says so.
+      getClient: vi.fn((): object | undefined => undefined),
+    },
     updateChecklistMock: vi.fn(),
   }),
 );
@@ -129,6 +134,7 @@ beforeEach(() => {
   zoomState.cancelRequested = false;
   zoomState.runDepth = 0;
   zoomState.runLabel = null;
+  sentryMocks.getClient.mockReturnValue(undefined);
   Object.assign(currentSettings, {
     zoomMeetingManagerAutoLaunchMeeting: false,
     zoomMeetingManagerAutomateMeetingAudioSettings: false,
@@ -1382,6 +1388,108 @@ describe('describing Zoom for error reports', () => {
     const { getZoomSnapshot } = await import('../zoom');
 
     expect(await getZoomSnapshot()).toBeNull();
+  });
+});
+
+describe("reporting Zoom's Original sound controls", () => {
+  const probe = {
+    audioMenu: {
+      groups: [3, 4, 4, 2, 1],
+      names: [
+        'Mic modes',
+        'Noise suppression (default), Checked',
+        'Original sound for musicians, Unchecked',
+      ],
+      via: 'share-toolbar' as const,
+    },
+    meetingControls: ['Mute, Alt+A', 'End, Alt+Q'],
+    sharing: true,
+    zoomVersion: '7.2.1.48556',
+  };
+
+  // Whether the overlay was up as each probe reached the helper.
+  let overlayDuringProbes: boolean[] = [];
+
+  /** Answers the probe as `result`, and everything else as before. */
+  const answerProbe = (result: ZoomCommandResult) => {
+    overlayDuringProbes = [];
+    const respond = zoomCommandMock.getMockImplementation();
+    zoomCommandMock.mockImplementation(async (command) => {
+      if (command.type !== 'original-sound-probe') {
+        return respond?.(command) ?? { ok: false };
+      }
+      overlayDuringProbes.push(zoomState.runActive);
+      return result;
+    });
+  };
+
+  const probes = () =>
+    commandTypes().filter((type) => type === 'original-sound-probe');
+
+  it('reports what Zoom shows once, after the first share M³ started, without the overlay', async () => {
+    sentryMocks.getClient.mockReturnValue({});
+    answerProbe({ ok: true, originalSound: probe });
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    await automateZoomMediaSharing(true);
+    await vi.waitFor(() =>
+      expect(sentryMocks.captureMessage).toHaveBeenCalled(),
+    );
+    await automateZoomMediaSharing(false);
+    await automateZoomMediaSharing(true);
+    await automateZoomMediaSharing(false);
+
+    expect(probes()).toHaveLength(1);
+    expect(sentryMocks.captureMessage).toHaveBeenCalledTimes(1);
+    expect(sentryMocks.captureMessage).toHaveBeenCalledWith(
+      'Zoom original sound controls',
+      {
+        extra: probe,
+        fingerprint: ['zoom-original-sound-controls'],
+        level: 'info',
+        tags: { feature: 'zoom-meeting-manager', zoomVersion: '7.2.1.48556' },
+      },
+    );
+    expect(overlayDuringProbes).toEqual([false]);
+  });
+
+  it("doesn't open Zoom's audio menu when Sentry isn't set up", async () => {
+    answerProbe({ ok: true, originalSound: probe });
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    expect(await automateZoomMediaSharing(true)).toBe(true);
+    await automateZoomMediaSharing(false);
+
+    expect(probes()).toEqual([]);
+    expect(sentryMocks.captureMessage).not.toHaveBeenCalled();
+  });
+
+  it("doesn't look while M³ hasn't shared anything, nor for a share the user started", async () => {
+    sentryMocks.getClient.mockReturnValue({});
+    answerProbe({ ok: true, originalSound: probe });
+    failing = { 'start-share': 'share-not-started' };
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    expect(await automateZoomMediaSharing(true)).toBe(false);
+    failing = {};
+    zoomSharing = true;
+    expect(await automateZoomMediaSharing(true)).toBe(true);
+
+    expect(probes()).toEqual([]);
+  });
+
+  it("reports nothing, and doesn't look again, when the helper doesn't answer", async () => {
+    sentryMocks.getClient.mockReturnValue({});
+    answerProbe({ error: 'helper-not-running', ok: false });
+    const { automateZoomMediaSharing } = await import('../zoom');
+
+    await automateZoomMediaSharing(true);
+    await vi.waitFor(() => expect(probes()).toHaveLength(1));
+    await automateZoomMediaSharing(false);
+    await automateZoomMediaSharing(true);
+
+    expect(probes()).toHaveLength(1);
+    expect(sentryMocks.captureMessage).not.toHaveBeenCalled();
   });
 });
 
