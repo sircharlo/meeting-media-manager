@@ -64,9 +64,8 @@ describe('exeFileVersion', () => {
 
     expect(exeFileVersion(Buffer.alloc(256, 0x4d))).toBeNull();
     // Cut short right after the signature.
-    expect(exeFileVersion(exeWithVersion([7, 2, 1, 1]).subarray(0, 70))).toBe(
-      null,
-    );
+    const cutShort = exeWithVersion([7, 2, 1, 1]).subarray(0, 70);
+    expect(exeFileVersion(cutShort)).toBeNull();
   });
 });
 
