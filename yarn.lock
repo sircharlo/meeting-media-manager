@@ -1070,24 +1070,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/core-base@npm:11.4.20":
-  version: 11.4.20
-  resolution: "@intlify/core-base@npm:11.4.20"
+"@intlify/core-base@npm:11.4.21":
+  version: 11.4.21
+  resolution: "@intlify/core-base@npm:11.4.21"
   dependencies:
-    "@intlify/devtools-types": "npm:11.4.20"
-    "@intlify/message-compiler": "npm:11.4.20"
-    "@intlify/shared": "npm:11.4.20"
-  checksum: 10c0/17d261402c2e7d995837e2c50ed10737d138f19d404d799f6947690762e3aec1c24b33796e38b3985822bba7e96cc7c8fd813f96351d7264ceb44affdea1a6dd
+    "@intlify/devtools-types": "npm:11.4.21"
+    "@intlify/message-compiler": "npm:11.4.21"
+    "@intlify/shared": "npm:11.4.21"
+  checksum: 10c0/0abe6945cec98fb73f14c7513829e7b1b9fb936d974a7a78ab79cf638a513ccebf86fb3fcdf1d428871c6fc71a8c9b56b2f968f9923950b67e943e6167209d69
   languageName: node
   linkType: hard
 
-"@intlify/devtools-types@npm:11.4.20":
-  version: 11.4.20
-  resolution: "@intlify/devtools-types@npm:11.4.20"
+"@intlify/devtools-types@npm:11.4.21":
+  version: 11.4.21
+  resolution: "@intlify/devtools-types@npm:11.4.21"
   dependencies:
-    "@intlify/core-base": "npm:11.4.20"
-    "@intlify/shared": "npm:11.4.20"
-  checksum: 10c0/1180b9258549b34efeb4bb38e78451ac0b9b36e436f0ffc587ba654f9f7b824162ebb34609a394c4e3828be6a0676f56561f80dd9255e360b17873fd1d38e0e0
+    "@intlify/core-base": "npm:11.4.21"
+    "@intlify/shared": "npm:11.4.21"
+  checksum: 10c0/5ec14ed5706434e39ad4d4fab4776b597cb9f9d3ea5e1da588915edfd48cb5ae03376aef0fad413e6aff0c64631866faa7d4a946dbf6c0071d417a2daa8344d1
   languageName: node
   linkType: hard
 
@@ -1098,6 +1098,16 @@ __metadata:
     "@intlify/shared": "npm:11.4.20"
     source-map-js: "npm:^1.0.2"
   checksum: 10c0/47068d938fef5354bd330fa5af0b5826ada041010530fafa3c923c574f6253f2d9d2f3f23956828d7a796a1fdb628518a50ed7ab04b0eb7fa312592fd214b1cc
+  languageName: node
+  linkType: hard
+
+"@intlify/message-compiler@npm:11.4.21":
+  version: 11.4.21
+  resolution: "@intlify/message-compiler@npm:11.4.21"
+  dependencies:
+    "@intlify/shared": "npm:11.4.21"
+    source-map-js: "npm:^1.0.2"
+  checksum: 10c0/a073a5931a03ac403368f5c0ad9398ce1180df48858d424ea7eb4c77a0f34c2874cd3fc5f4c2d019e3f00ea7da37d2c05bd02cb7a3512288dc68a691866f9927
   languageName: node
   linkType: hard
 
@@ -1122,6 +1132,13 @@ __metadata:
   version: 11.4.20
   resolution: "@intlify/shared@npm:11.4.20"
   checksum: 10c0/68d8645bccbf0e50220c7525ad8903a09a4b3e0dc4ddaa6f40fad975614fe029252f04fc5c0b0d5b80409bc81f51867217f13f38a34212fc15e76a7106954198
+  languageName: node
+  linkType: hard
+
+"@intlify/shared@npm:11.4.21":
+  version: 11.4.21
+  resolution: "@intlify/shared@npm:11.4.21"
+  checksum: 10c0/e785b13798457286bd565064cc5038c09dd454a7228b546495b98f99e6047aef2b69b3ff0901e23933218b1368522d014c73e6f6f2bb572de280eeeec966dbf9
   languageName: node
   linkType: hard
 
@@ -8399,7 +8416,7 @@ __metadata:
     vitest: "npm:^5.1.0"
     vue: "npm:^3.5.45"
     vue-eslint-parser: "npm:^10.4.2"
-    vue-i18n: "npm:^11.4.20"
+    vue-i18n: "npm:^11.4.21"
     vue-router: "npm:^5.5.1"
     vue-tsc: "npm:^3.3.14"
     vue-zoomable: "npm:^1.2.8"
@@ -12340,17 +12357,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-i18n@npm:^11.4.20":
-  version: 11.4.20
-  resolution: "vue-i18n@npm:11.4.20"
+"vue-i18n@npm:^11.4.21":
+  version: 11.4.21
+  resolution: "vue-i18n@npm:11.4.21"
   dependencies:
-    "@intlify/core-base": "npm:11.4.20"
-    "@intlify/devtools-types": "npm:11.4.20"
-    "@intlify/shared": "npm:11.4.20"
+    "@intlify/core-base": "npm:11.4.21"
+    "@intlify/devtools-types": "npm:11.4.21"
+    "@intlify/shared": "npm:11.4.21"
     "@vue/devtools-api": "npm:^6.5.0"
   peerDependencies:
     vue: ^3.0.0
-  checksum: 10c0/ec0ea190ac66cef97bcb3cf68af34e2b1b337de8bdfe511985b2a228a75ff301030e9b7cfa39abd975e9c81389d454a640ef3e05a457fff1c4c61bacc73dc0cd
+  checksum: 10c0/e473fd028d31aecb117efc0291b09c746b9da49faa7d9af7146060baade16af88fd3b6a29ecbbc6af0d047a38bfe8b9bbe9e2370104cdcf108691adc302a8cb8
   languageName: node
   linkType: hard
 
