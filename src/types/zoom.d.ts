@@ -56,6 +56,8 @@ export interface ZoomCommandResult {
   ok: boolean;
   /** `test-share-picker`: whether Zoom's share picker opened. */
   opened?: boolean;
+  /** `original-sound-probe`: what Zoom shows that could be its Original sound control. */
+  originalSound?: ZoomOriginalSoundProbe;
   participants?: ZoomParticipantRow[];
   /** `learn-hand-raised`: how Zoom marks a raised hand, in its language. */
   phrase?: null | string;
@@ -279,6 +281,29 @@ export interface ZoomMeetingState {
   zoomVersion?: null | string;
 }
 
+/**
+ * What Zoom shows that could be its "Original sound for musicians" control
+ * (the `original-sound-probe` command), reported once a session to learn
+ * where each Zoom version offers it before M³ can keep it on. Zoom's own
+ * labels only: no device names, nothing in a video tile or a list, no name
+ * with a participant's in it, nothing from the meeting details.
+ */
+export interface ZoomOriginalSoundProbe {
+  audioMenu?: ZoomProbedAudioMenu;
+  /**
+   * Whether Zoom showed its meeting bars: Zoom 6.5's Original sound button,
+   * in its top bar, is only listed then.
+   */
+  barsShown?: boolean;
+  error?: string;
+  /** Names of the meeting window's controls and texts, shown or hidden. */
+  meetingControls?: string[];
+  /** While sharing: names of the share toolbar's controls. */
+  shareToolbar?: string[];
+  sharing?: boolean;
+  zoomVersion?: null | string;
+}
+
 export interface ZoomParticipantRow {
   /** Everything Zoom says about the row, in the user's Zoom language. */
   details: string;
@@ -297,6 +322,26 @@ export interface ZoomPlacedWindows {
   /** Whether Windows' own snapping put Zoom and M³ side by side. */
   snapped: boolean;
   zoom?: ZoomScreenRect;
+}
+
+/**
+ * Zoom's audio menu, opened by the probe and closed again: how many entries
+ * each group has (microphones, speakers, then Zoom's own), and the names of
+ * all but the first two groups, whole: Zoom puts an option's state at the
+ * end of its name (Zoom 7.2.1: "Original sound for musicians, Unchecked").
+ */
+export interface ZoomProbedAudioMenu {
+  /** Whether Zoom closed the menu itself before the probe did. */
+  closedByZoom?: boolean;
+  groups?: number[];
+  /** Whether the menu was still open after the probe's Escape. */
+  leftOpen?: boolean;
+  names?: string[];
+  /** How long the menu took to open, from the share toolbar. */
+  openedAfterMs?: number;
+  /** Why the menu wasn't read, e.g. `audio not joined`. */
+  unread?: string;
+  via?: 'meeting-toolbar' | 'share-toolbar';
 }
 
 /** A rectangle on screen, in physical pixels (not Electron's DIPs). */
@@ -487,6 +532,7 @@ type ZoomCommandBody =
   | { type: 'join-audio' }
   | { type: 'leave-audio' }
   | { type: 'mic-title' }
+  | { type: 'original-sound-probe' }
   | { type: 'panel-entries' }
   | { type: 'share-entries' }
   | { type: 'share-participants' }

@@ -31,6 +31,7 @@ const COMMAND_TYPES = new Set<ZoomCommandType>([
   'meeting',
   'mic-title',
   'mute-all',
+  'original-sound-probe',
   'panel-entries',
   'participants',
   'ping',

@@ -85,6 +85,10 @@ export const getZoomTitlesFromSettings = (): ZoomTitles => {
 // which brings Zoom forward for a moment, and may, as a last resort when
 // Zoom ignores the quieter ways, move the mouse.
 const SILENT_COMMANDS = new Set<ZoomCommandType>([
+  // Opens and closes Zoom's audio menu, once a session, while M³'s media is
+  // being shared (see reportOriginalSoundControlsOnce): the overlay would
+  // cover M³ just then.
+  'original-sound-probe',
   'participants',
   'ping',
   'raised-hands',
@@ -1238,6 +1242,54 @@ const notifyMediaNotSharedWhilePaused = () => {
   });
 };
 
+// --- Original sound (diagnostics) --------------------------------------------
+
+// Whether this session has looked for Zoom's Original sound control.
+let originalSoundProbed = false;
+
+/**
+ * Tells Sentry, once a session, what Zoom shows that could be its "Original
+ * sound for musicians" control (see the helper's OriginalSoundProbe), which
+ * some congregations keep on for the hall's sound and which can turn off
+ * again. Zoom versions offer it in different places (the audio menu's
+ * microphone modes in 7.2.1, a button at the top of the meeting in some
+ * older ones), to be learned before M³ can keep it on. Run once M³'s own
+ * share has started, from the share toolbar, and only when Sentry is set up
+ * (there's no point opening Zoom's audio menu otherwise). One issue, tagged
+ * with Zoom's version.
+ */
+const reportOriginalSoundControlsOnce = async () => {
+  if (originalSoundProbed) return;
+  try {
+    const { captureMessage, getClient } = await import('@sentry/vue');
+    if (!getClient()) return;
+    originalSoundProbed = true;
+    const result = await runCommand({ type: 'original-sound-probe' });
+    const probe = result.originalSound;
+    if (!result.ok || !probe) {
+      log('Zoom original sound probe: no answer', 'zoom', 'info', {
+        error: result.error ?? null,
+      });
+      return;
+    }
+    captureMessage('Zoom original sound controls', {
+      // A copy: `extra` takes a plain record, which an interface isn't. The
+      // menu's lists stay within Sentry's depth (as the check's dialogs do).
+      extra: { ...probe },
+      fingerprint: ['zoom-original-sound-controls'],
+      level: 'info',
+      tags: {
+        feature: 'zoom-meeting-manager',
+        zoomVersion: probe.zoomVersion ?? 'unknown',
+      },
+    });
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'reportOriginalSoundControlsOnce' } },
+    });
+  }
+};
+
 const startAutomatedMediaShare = async (mediaUrl: string) => {
   if (!(await zoomAutomationsAllowed('Zoom media sharing'))) {
     // At meeting time, the media not being shared is said each time: the
@@ -1278,6 +1330,8 @@ const startAutomatedMediaShare = async (mediaUrl: string) => {
       return started;
     },
   );
+  // Not waited for: the media plays meanwhile.
+  if (mediaShareStartedByM3) void reportOriginalSoundControlsOnce();
   return mediaShareStartedByM3;
 };
 
