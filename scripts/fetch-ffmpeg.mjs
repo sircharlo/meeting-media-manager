@@ -92,46 +92,52 @@ const exists = async (path) => {
 const run = (command, args) => {
   const result = spawnSync(command, args, { encoding: 'utf8' });
   if (result.status !== 0) {
+    const why = result.error?.message ?? `exit code ${result.status}`;
     throw new Error(
-      `${command} ${args.join(' ')} failed (${result.error?.message ?? `exit code ${result.status}`}): ${result.stderr}`,
+      `${command} ${args.join(' ')} failed (${why}): ${result.stderr}`,
     );
   }
   return result.stdout;
 };
 
+/** Downloads `url` to `file` once, and returns its SHA-256. */
+const downloadOnce = async (url, file) => {
+  const response = await fetch(url);
+  if (!response.ok || !response.body) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+  const hash = createHash('sha256');
+  await pipeline(
+    Readable.fromWeb(response.body),
+    new Transform({
+      transform(chunk, _encoding, callback) {
+        hash.update(chunk);
+        callback(null, chunk);
+      },
+    }),
+    createWriteStream(file),
+  );
+  return hash.digest('hex');
+};
+
 /**
- * Downloads `url` to `file`, trying a few times, and returns its SHA-256.
+ * Downloads `url` to `file`, trying again a few times, waiting a bit longer
+ * each time, and returns its SHA-256.
  */
-const download = async (url, file) => {
-  for (let attempt = 1; ; attempt++) {
-    try {
-      const response = await fetch(url);
-      if (!response.ok || !response.body) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      const hash = createHash('sha256');
-      await pipeline(
-        Readable.fromWeb(response.body),
-        new Transform({
-          transform(chunk, _encoding, callback) {
-            hash.update(chunk);
-            callback(null, chunk);
-          },
-        }),
-        createWriteStream(file),
+const download = async (url, file, attempt = 1) => {
+  try {
+    return await downloadOnce(url, file);
+  } catch (error) {
+    if (attempt >= DOWNLOAD_TRIES) {
+      throw new Error(
+        `Couldn't download ${url} (${attempt} tries): ${error.message}`,
+        { cause: error },
       );
-      return hash.digest('hex');
-    } catch (error) {
-      if (attempt >= DOWNLOAD_TRIES) {
-        throw new Error(
-          `Couldn't download ${url} (${attempt} tries): ${error.message}`,
-          { cause: error },
-        );
-      }
-      await new Promise((resolve) => {
-        setTimeout(resolve, 2000 * attempt);
-      });
     }
+    await new Promise((resolve) => {
+      setTimeout(resolve, 2000 * attempt);
+    });
+    return download(url, file, attempt + 1);
   }
 };
 
@@ -152,6 +158,23 @@ const extract = (archive, member, dir) => {
       : 'tar';
   run(tar, ['-xf', archive, '-C', dir, member]);
   return join(dir, ...member.split('/'));
+};
+
+/**
+ * Downloads one build's archive into `dir`, checks its SHA-256, and extracts
+ * its FFmpeg binary there. Returns where that binary is.
+ */
+const fetchBuild = async (build, dir) => {
+  await mkdir(dir);
+  const archive = join(dir, build.url.split('/').pop());
+  console.log(`FFmpeg: downloading ${build.url}`);
+  const sha256 = await download(build.url, archive);
+  if (sha256 !== build.sha256) {
+    throw new Error(
+      `${build.url} has SHA-256 ${sha256}, not the pinned ${build.sha256}`,
+    );
+  }
+  return extract(archive, build.member, dir);
 };
 
 const fetchFFmpeg = async () => {
@@ -180,20 +203,12 @@ const fetchFFmpeg = async () => {
   await mkdir(OUT_DIR, { recursive: true });
   const work = await mkdtemp(join(tmpdir(), 'm3-ffmpeg-'));
   try {
-    const extracted = [];
-    for (const [index, build] of builds.entries()) {
-      const archive = join(work, `${index}-${build.url.split('/').pop()}`);
-      console.log(`FFmpeg: downloading ${build.url}`);
-      const sha256 = await download(build.url, archive);
-      if (sha256 !== build.sha256) {
-        throw new Error(
-          `${build.url} has SHA-256 ${sha256}, not the pinned ${build.sha256}`,
-        );
-      }
-      const dir = join(work, String(index));
-      await mkdir(dir);
-      extracted.push(extract(archive, build.member, dir));
-    }
+    // macOS's two archives download side by side.
+    const extracted = await Promise.all(
+      builds.map((build, index) =>
+        fetchBuild(build, join(work, String(index))),
+      ),
+    );
 
     if (process.platform === 'darwin') {
       run('lipo', ['-create', '-output', binary, ...extracted]);
