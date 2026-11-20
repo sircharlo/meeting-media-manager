@@ -1204,6 +1204,8 @@
   "zoom-meeting-window-time-not-found": "Čas je za shod, vendar Zoomovo okno shoda ni zaznano",
   "zoom-no-raised-hands": "Nihče nima dvignjene roke",
   "zoom-out": "Pomanjšaj",
+  "zoom-outdated-version": "Zoom {version} is older than Zoom {tested}, the version M³ is tested with",
+  "zoom-outdated-version-caption": "Some features may be less reliable with it. Update Zoom at your earliest convenience.",
   "zoom-participants-asked-to-unmute": "Udeležence sem prosil, naj vklopijo svoj mikrofon",
   "zoom-participants-muted": "Udeleženci so utišani",
   "zoom-participants-unmute-allowed": "Udeležencem je dovoljeno, da si vklopijo mikrofon",

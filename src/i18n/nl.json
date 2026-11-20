@@ -1204,6 +1204,8 @@
   "zoom-meeting-window-time-not-found": "Het is tijd voor de vergadering, maar er is geen venster van een Zoom-vergadering gevonden",
   "zoom-no-raised-hands": "Geen opgestoken handen",
   "zoom-out": "Uitzoomen",
+  "zoom-outdated-version": "Zoom {version} is older than Zoom {tested}, the version M³ is tested with",
+  "zoom-outdated-version-caption": "Some features may be less reliable with it. Update Zoom at your earliest convenience.",
   "zoom-participants-asked-to-unmute": "Deelnemers gevraagd hun dempen op te heffen",
   "zoom-participants-muted": "Deelnemers gedempt",
   "zoom-participants-unmute-allowed": "Deelnemers mogen hun dempen opheffen",

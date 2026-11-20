@@ -1204,6 +1204,8 @@
   "zoom-meeting-window-time-not-found": "Настав час зібрання, але вікно конференції Zoom не виявлено",
   "zoom-no-raised-hands": "Піднятих рук немає",
   "zoom-out": "Віддалити",
+  "zoom-outdated-version": "Zoom {version} is older than Zoom {tested}, the version M³ is tested with",
+  "zoom-outdated-version-caption": "Some features may be less reliable with it. Update Zoom at your earliest convenience.",
   "zoom-participants-asked-to-unmute": "Учасників попрошено ввімкнути звук",
   "zoom-participants-muted": "Звук учасників вимкнено",
   "zoom-participants-unmute-allowed": "Учасникам дозволено вмикати звук",

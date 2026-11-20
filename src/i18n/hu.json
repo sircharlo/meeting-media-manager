@@ -1204,6 +1204,8 @@
   "zoom-meeting-window-time-not-found": "Elérkezett az összejövetel ideje, de nem észlelhető Zoom-értekezletablak",
   "zoom-no-raised-hands": "Nincs felemelt kéz",
   "zoom-out": "Kicsinyítés",
+  "zoom-outdated-version": "Zoom {version} is older than Zoom {tested}, the version M³ is tested with",
+  "zoom-outdated-version-caption": "Some features may be less reliable with it. Update Zoom at your earliest convenience.",
   "zoom-participants-asked-to-unmute": "A résztvevők felkérve a némítás feloldására",
   "zoom-participants-muted": "Résztvevők némítva",
   "zoom-participants-unmute-allowed": "A résztvevők feloldhatják a némítást",
