@@ -76,6 +76,7 @@ const {
   extname,
   fileUrlToPath,
   fs,
+  getBundledFfmpegPath,
   join,
   parseMediaFile,
   pathToFileURL,
@@ -453,7 +454,9 @@ export const watchExternalFolder = async (folder?: string) => {
 /**
  * Sets up FFmpeg.
  *
- * Downloads and extracts the latest version of FFmpeg if needed, and stores the path to the executable in the current state store.
+ * Uses the FFmpeg that ships with M³, or else (in development, or a build
+ * made without it) downloads and extracts the latest version if needed, and
+ * stores the path to the executable in the current state store.
  *
  * @returns The path to the FFmpeg executable, or an empty string if the setup failed.
  */
@@ -484,6 +487,13 @@ const runFFmpegSetup = async (): Promise<string> => {
   const currentState = useCurrentStateStore();
   try {
     if (currentState.ffmpegPath) return currentState.ffmpegPath;
+
+    const bundledPath = await getBundledFfmpegPath();
+    if (bundledPath) {
+      currentState.ffmpegPath = bundledPath;
+      void removeDownloadedFFmpeg();
+      return bundledPath;
+    }
 
     const ffmpegReleases = await fetchLatestRelease();
     const target =
@@ -532,6 +542,20 @@ const runFFmpegSetup = async (): Promise<string> => {
       errorCatcher(e, { contexts: { fn: { name: 'setupFFmpeg' } } });
     }
     return '';
+  }
+};
+
+/**
+ * Deletes the FFmpeg that an earlier version downloaded (its zip is kept
+ * too: about 180 MB on Windows), once the one that ships with M³ is used
+ * instead.
+ */
+const removeDownloadedFFmpeg = async () => {
+  try {
+    const ffmpegDir = await getFFmpegDirectory();
+    if (await pathExists(ffmpegDir)) await fs.remove(ffmpegDir);
+  } catch (error) {
+    log('Downloaded FFmpeg not removed', 'mediaProcessing', 'warn', error);
   }
 };
 

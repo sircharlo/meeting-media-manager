@@ -43,7 +43,10 @@ import {
   pauseAllDownloads,
   resumeAllDownloads,
 } from 'src-electron/main/downloads';
-import { createVideoFromNonVideo } from 'src-electron/main/ffmpeg';
+import {
+  createVideoFromNonVideo,
+  getBundledFfmpegPath,
+} from 'src-electron/main/ffmpeg';
 import {
   ensureMacosFolderPermission,
   extractNestedZipEntry,
@@ -491,6 +494,7 @@ function handleIpcInvoke<T = unknown>(
 
 handleIpcInvoke('getAppDataPath', async () => getAppDataPath());
 handleIpcInvoke('getBetaUpdatesPath', async () => getBetaUpdatesPath());
+handleIpcInvoke('getBundledFfmpegPath', () => getBundledFfmpegPath());
 handleIpcInvoke('getLowDiskSpaceStatus', async () => getLowDiskSpaceStatus());
 handleIpcInvoke('getUpdatesDisabledPath', async () => getUpdatesDisabledPath());
 handleIpcInvoke('getUpdaterState', () => getUpdaterState());
