@@ -388,7 +388,7 @@ export const getZoomMeetingState = async (
   // What the action island's Zoom button shows.
   useZoomStateStore().setMeeting(meeting);
   noticeZoomChanges(meeting);
-  warnIfZoomOutdated(meeting);
+  warnIfZoomOutdated(meeting?.zoomVersion);
   return meeting;
 };
 
@@ -474,15 +474,30 @@ const noticeZoomChanges = (meeting: null | ZoomMeetingState) => {
 let warnedZoomVersion: null | string = null;
 
 /**
- * Warns that this Zoom is older than the version the Zoom Meeting Manager
- * is tested with (ZOOM_TESTED_VERSION), and suggests updating it: once a
- * session for each version, as soon as M³ sees its meeting. Zoom only says
- * its version once its meeting window is found.
+ * Whether one of M³'s integrations that involve Zoom is on: the Zoom
+ * Meeting Manager, the Zoom shortcuts, or OBS Studio (whose picture halls
+ * often send into Zoom).
  */
-const warnIfZoomOutdated = (meeting: null | ZoomMeetingState) => {
-  const version = meeting?.zoomVersion;
+const zoomIntegrationOn = () => {
+  const settings = getSettings();
+  return !!(
+    settings?.zoomMeetingManagerEnable ||
+    settings?.zoomEnable ||
+    settings?.obsEnable
+  );
+};
+
+/**
+ * Warns that this Zoom (`version`) is older than the version M³ is tested
+ * with (ZOOM_TESTED_VERSION), and recommends updating it: once a session
+ * for each version, while one of the integrations that involve Zoom is on.
+ * The version comes from the installed Zoom's files (see
+ * warnIfInstalledZoomOutdated), or from the Zoom helper once it finds a
+ * meeting, which also catches a Zoom run from elsewhere.
+ */
+const warnIfZoomOutdated = (version: null | string | undefined) => {
   if (!version || version === warnedZoomVersion) return;
-  if (!getSettings()?.zoomMeetingManagerEnable) return;
+  if (!zoomIntegrationOn()) return;
   if (!isOlderZoomVersion(version, ZOOM_TESTED_VERSION)) return;
   warnedZoomVersion = version;
   log('Zoom is older than the version M³ is tested with', 'zoom', 'warn', {
@@ -491,6 +506,7 @@ const warnIfZoomOutdated = (meeting: null | ZoomMeetingState) => {
   });
   createTemporaryNotification({
     caption: t('zoom-outdated-version-caption'),
+    deferWhileDialogOpen: true,
     group: 'zoom-outdated-version',
     icon: 'mmm-warning',
     message: t('zoom-outdated-version', {
@@ -500,6 +516,22 @@ const warnIfZoomOutdated = (meeting: null | ZoomMeetingState) => {
     timeout: 15_000,
     type: 'warning',
   });
+};
+
+/**
+ * Warns about an older installed Zoom (see warnIfZoomOutdated), whether or
+ * not it's running: when a congregation's settings load, and when one of
+ * the integrations that involve Zoom is turned on. Silent when the version
+ * can't be told (Zoom installed elsewhere, Linux, any error): it's only a
+ * recommendation.
+ */
+export const warnIfInstalledZoomOutdated = async () => {
+  try {
+    if (!zoomIntegrationOn()) return;
+    warnIfZoomOutdated(await globalThis.electronApi.getInstalledZoomVersion());
+  } catch (error) {
+    log('Installed Zoom version not read', 'zoom', 'info', error);
+  }
 };
 
 /** Remembers Zoom's version as the one the learned names work with. */

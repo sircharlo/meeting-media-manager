@@ -173,6 +173,7 @@ import {
   cancelZoomRun,
   startZoomHostMicMediaSync,
   stopZoomSharingAfterMedia,
+  warnIfInstalledZoomOutdated,
 } from 'src/helpers/zoom';
 import {
   startHandAlertDisplaySync,
@@ -1592,6 +1593,22 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     errorCatcher(error);
   }
 });
+
+// An installed Zoom older than the version M³ is tested with gets a
+// warning, once a session, as soon as an integration that involves Zoom is
+// on (see warnIfInstalledZoomOutdated).
+watch(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.obsEnable,
+    currentSettings.value?.zoomEnable,
+    currentSettings.value?.zoomMeetingManagerEnable,
+  ],
+  () => {
+    void warnIfInstalledZoomOutdated();
+  },
+  { immediate: true },
+);
 
 watch(
   () => [currentCongregation.value, currentSettings.value?.congregationName],

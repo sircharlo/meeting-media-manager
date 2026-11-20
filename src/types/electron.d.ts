@@ -193,6 +193,11 @@ export interface ElectronApi {
   getAllScreens: () => Promise<Display[]>;
   getAppDataPath: () => Promise<string>;
   getBetaUpdatesPath: () => Promise<string>;
+  /**
+   * The installed Zoom's version, from its files (Windows and macOS); null
+   * where it can't be told.
+   */
+  getInstalledZoomVersion: () => Promise<null | string>;
   getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
   getLowDiskSpaceStatus: () => Promise<boolean>;
@@ -561,6 +566,7 @@ export type ElectronIpcInvokeKey =
   | 'getAllScreens'
   | 'getAppDataPath'
   | 'getBetaUpdatesPath'
+  | 'getInstalledZoomVersion'
   | 'getLocales'
   | 'getLowDiskSpaceStatus'
   | 'getMediaWindowCaptureSize'
