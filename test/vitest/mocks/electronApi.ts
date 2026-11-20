@@ -80,6 +80,7 @@ export const electronApi: ElectronApi = {
   },
   getAppDataPath: async () => fakePath('app'),
   getBetaUpdatesPath: async () => fakePath('app/beta-updates', false),
+  getBundledFfmpegPath: async () => null,
   getInstalledZoomVersion: async () => null,
   getLocales: async () => [],
   getLocalPathFromFileObject: function (fileObject) {

@@ -193,6 +193,8 @@ export interface ElectronApi {
   getAllScreens: () => Promise<Display[]>;
   getAppDataPath: () => Promise<string>;
   getBetaUpdatesPath: () => Promise<string>;
+  /** The FFmpeg that ships with M³, if any (see src-electron/main/ffmpeg.ts). */
+  getBundledFfmpegPath: () => Promise<null | string>;
   /**
    * The installed Zoom's version, from its files (Windows and macOS); null
    * where it can't be told.
@@ -566,6 +568,7 @@ export type ElectronIpcInvokeKey =
   | 'getAllScreens'
   | 'getAppDataPath'
   | 'getBetaUpdatesPath'
+  | 'getBundledFfmpegPath'
   | 'getInstalledZoomVersion'
   | 'getLocales'
   | 'getLowDiskSpaceStatus'

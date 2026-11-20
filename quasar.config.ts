@@ -158,6 +158,21 @@ export default defineConfig((ctx) => {
         appId: APP_ID,
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: APP_NAME + '-${version}-${arch}.${ext}',
+        // FFmpeg, for media conversions, with its license and where its
+        // source is (see scripts/fetch-ffmpeg.mjs, which `yarn build` runs).
+        // An absolute path, like the Zoom helper's below.
+        extraResources: [
+          {
+            filter: [
+              'bin/ffmpeg',
+              'bin/ffmpeg.exe',
+              'COPYING.GPLv3',
+              'README.md',
+            ],
+            from: fileURLToPath(new URL('./build/ffmpeg', import.meta.url)),
+            to: 'ffmpeg',
+          },
+        ],
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',

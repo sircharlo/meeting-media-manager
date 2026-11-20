@@ -92,6 +92,8 @@ build/win*-unpacked
 build/*.yml
 build/*.blockmap
 build/*.exe
+# Fetched by scripts/fetch-ffmpeg.mjs when building
+build/ffmpeg/bin/
 src/main
 src/renderer
 

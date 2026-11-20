@@ -1,6 +1,6 @@
 import { pathExists, remove } from 'fs-extra/esm';
 import { createHash } from 'node:crypto';
-import { stat } from 'node:fs/promises';
+import { access, constants, stat } from 'node:fs/promises';
 import {
   assertAbsolutePath,
   assertAppTempFolder,
@@ -117,6 +117,28 @@ export const cleanupFfmpegConversions = () => {
  */
 export const wasStoppedAtQuit = (command: RunnableFfmpegCommand) =>
   commandsStoppedAtQuit.has(command);
+
+/**
+ * The FFmpeg that ships with M³ (resources/ffmpeg/bin, see
+ * scripts/fetch-ffmpeg.mjs), if it's there and can be run. Null otherwise
+ * (in development, or a build made without it): M³ then downloads FFmpeg the
+ * first time it needs it.
+ */
+export const getBundledFfmpegPath = async (): Promise<null | string> => {
+  const isWindows = process.platform === 'win32';
+  const ffmpegPath = join(
+    process.resourcesPath,
+    'ffmpeg',
+    'bin',
+    isWindows ? 'ffmpeg.exe' : 'ffmpeg',
+  );
+  try {
+    await access(ffmpegPath, isWindows ? constants.F_OK : constants.X_OK);
+    return ffmpegPath;
+  } catch {
+    return null;
+  }
+};
 
 /**
  * Sanity-checks that `ffmpegPath` actually looks like the app's own

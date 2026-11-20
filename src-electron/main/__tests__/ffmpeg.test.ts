@@ -1,11 +1,22 @@
-import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vi,
+} from 'vitest';
 
 import {
   cleanupFfmpegConversions,
   createVideoFromNonVideo,
+  getBundledFfmpegPath,
   type RunnableFfmpegCommand,
   wasStoppedAtQuit,
 } from '../ffmpeg';
+
+const { accessMock } = vi.hoisted(() => ({ accessMock: vi.fn() }));
 
 vi.mock('fs-extra/esm', () => ({
   pathExists: vi.fn(async () => false),
@@ -13,6 +24,8 @@ vi.mock('fs-extra/esm', () => ({
 }));
 
 vi.mock('node:fs/promises', () => ({
+  access: accessMock,
+  constants: { F_OK: 0, X_OK: 1 },
   stat: vi.fn(async (p: string) => {
     if (p.endsWith('.mp4')) {
       return { isFile: () => true, mtimeMs: 200, size: 100 };
@@ -332,5 +345,56 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     // Settle the still-pending conversion so it doesn't leak into other tests.
     ffmpegOnMap.error?.(new Error('killed'));
     await expect(conversionPromise).rejects.toThrow('killed');
+  });
+});
+
+describe('getBundledFfmpegPath', () => {
+  const platform = process.platform;
+  const resourcesPath = process.resourcesPath;
+
+  const runningOn = (os: NodeJS.Platform) => {
+    Object.defineProperty(process, 'platform', { value: os });
+    Object.defineProperty(process, 'resourcesPath', {
+      configurable: true,
+      value: '/app/resources',
+    });
+  };
+
+  beforeEach(() => {
+    accessMock.mockReset();
+  });
+
+  afterEach(() => {
+    Object.defineProperty(process, 'platform', { value: platform });
+    Object.defineProperty(process, 'resourcesPath', {
+      configurable: true,
+      value: resourcesPath,
+    });
+  });
+
+  it.each([
+    ['win32', '/app/resources/ffmpeg/bin/ffmpeg.exe', 0],
+    ['darwin', '/app/resources/ffmpeg/bin/ffmpeg', 1],
+    ['linux', '/app/resources/ffmpeg/bin/ffmpeg', 1],
+  ] as const)(
+    'finds the FFmpeg that ships with M³ on %s, checking it can run',
+    async (os, path, mode) => {
+      runningOn(os);
+      accessMock.mockResolvedValue(undefined);
+
+      expect(await getBundledFfmpegPath()).toBe(path);
+      expect(accessMock).toHaveBeenCalledWith(path, mode);
+    },
+  );
+
+  it("gives null when there's none, or it can't run", async () => {
+    runningOn('linux');
+    accessMock.mockRejectedValue(
+      Object.assign(new Error('EACCES: permission denied'), {
+        code: 'EACCES',
+      }),
+    );
+
+    expect(await getBundledFfmpegPath()).toBeNull();
   });
 });
