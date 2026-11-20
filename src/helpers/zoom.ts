@@ -13,11 +13,15 @@ import type {
 import { i18n } from 'boot/i18n';
 import { AUTO_START_WINDOW_HOURS } from 'src/constants/date';
 import { AUDIO_EXTENSIONS, VIDEO_EXTENSIONS } from 'src/constants/media';
-import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
+import { MEDIA_WINDOW_TITLE, ZOOM_TESTED_VERSION } from 'src/constants/zoom';
 import { getMeetingStartToday, isMemorialDay } from 'src/helpers/date';
 import { MEETING_SCHEDULED_DURATION_MINUTES } from 'src/helpers/meeting-parts';
 import { log } from 'src/shared/vanilla';
-import { areZoomButtonsLearned } from 'src/utils/zoom';
+import {
+  areZoomButtonsLearned,
+  isOlderZoomVersion,
+  zoomReleaseOf,
+} from 'src/utils/zoom';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useZoomStateStore } from 'stores/zoom-state';
 import { watch } from 'vue';
@@ -384,6 +388,7 @@ export const getZoomMeetingState = async (
   // What the action island's Zoom button shows.
   useZoomStateStore().setMeeting(meeting);
   noticeZoomChanges(meeting);
+  warnIfZoomOutdated(meeting);
   return meeting;
 };
 
@@ -463,6 +468,38 @@ const noticeZoomChanges = (meeting: null | ZoomMeetingState) => {
   globalThis.dispatchEvent(
     new CustomEvent(ZOOM_CHANGED_EVENT, { detail: { reason } }),
   );
+};
+
+// The older Zoom version the user was last warned about this session.
+let warnedZoomVersion: null | string = null;
+
+/**
+ * Warns that this Zoom is older than the version the Zoom Meeting Manager
+ * is tested with (ZOOM_TESTED_VERSION), and suggests updating it: once a
+ * session for each version, as soon as M³ sees its meeting. Zoom only says
+ * its version once its meeting window is found.
+ */
+const warnIfZoomOutdated = (meeting: null | ZoomMeetingState) => {
+  const version = meeting?.zoomVersion;
+  if (!version || version === warnedZoomVersion) return;
+  if (!getSettings()?.zoomMeetingManagerEnable) return;
+  if (!isOlderZoomVersion(version, ZOOM_TESTED_VERSION)) return;
+  warnedZoomVersion = version;
+  log('Zoom is older than the version M³ is tested with', 'zoom', 'warn', {
+    testedVersion: ZOOM_TESTED_VERSION,
+    zoomVersion: version,
+  });
+  createTemporaryNotification({
+    caption: t('zoom-outdated-version-caption'),
+    group: 'zoom-outdated-version',
+    icon: 'mmm-warning',
+    message: t('zoom-outdated-version', {
+      tested: ZOOM_TESTED_VERSION,
+      version: zoomReleaseOf(version),
+    }),
+    timeout: 15_000,
+    type: 'warning',
+  });
 };
 
 /** Remembers Zoom's version as the one the learned names work with. */

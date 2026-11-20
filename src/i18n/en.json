@@ -1204,6 +1204,8 @@
   "zoom-meeting-window-time-not-found": "It's meeting time, but no Zoom meeting window is detected",
   "zoom-no-raised-hands": "No hands raised",
   "zoom-out": "Zoom out",
+  "zoom-outdated-version": "Zoom {version} is older than Zoom {tested}, the version M³ is tested with",
+  "zoom-outdated-version-caption": "Some Zoom Meeting Manager features may be less reliable with it. Update Zoom at your earliest convenience.",
   "zoom-participants-asked-to-unmute": "Asked participants to unmute",
   "zoom-participants-muted": "Participants muted",
   "zoom-participants-unmute-allowed": "Participants allowed to unmute",

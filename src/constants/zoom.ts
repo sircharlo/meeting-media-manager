@@ -1,5 +1,13 @@
 export const MEDIA_WINDOW_TITLE = 'Media Player - M³';
 
+/**
+ * The Zoom version the Zoom Meeting Manager is tested with (test/zoom-live).
+ * An older Zoom gets a warning: its controls can differ (Original sound
+ * moved from 6.5's top bar to 7's audio menu, for one). Raise it once a
+ * newer Zoom passes the live tests.
+ */
+export const ZOOM_TESTED_VERSION = '7.2.1';
+
 /** The setup assistant's id in the dialog-state store. */
 export const ZOOM_SETUP_ASSISTANT_DIALOG_ID = 'zoom-setup-assistant';
 

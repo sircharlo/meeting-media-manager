@@ -1357,6 +1357,81 @@ describe('telling the user while M³ operates Zoom', () => {
   });
 });
 
+describe('warning about an older Zoom', () => {
+  /** Has the helper say this Zoom version for the meeting it finds. */
+  const zoomSays = (zoomVersion: string) => {
+    zoomCommandMock.mockImplementation(async () => ({
+      meeting: { found: true, sharing: false, zoomVersion },
+      ok: true,
+    }));
+  };
+
+  const versionWarnings = () =>
+    notifyMock.mock.calls.filter(
+      ([props]) => props.group === 'zoom-outdated-version',
+    );
+
+  it('warns once a session that an older Zoom may be less reliable, and suggests updating it', async () => {
+    zoomSays('6.5.12.14128');
+    const { getZoomMeetingState } = await import('../zoom');
+
+    await getZoomMeetingState();
+    await getZoomMeetingState();
+
+    expect(versionWarnings()).toEqual([
+      [
+        {
+          caption:
+            'Some Zoom Meeting Manager features may be less reliable with it. Update Zoom at your earliest convenience.',
+          group: 'zoom-outdated-version',
+          icon: 'mmm-warning',
+          message:
+            'Zoom 6.5.12 is older than Zoom 7.2.1, the version M³ is tested with',
+          timeout: 15_000,
+          type: 'warning',
+        },
+      ],
+    ]);
+  });
+
+  it('warns again for another older version, such as after an update that still falls short', async () => {
+    const { getZoomMeetingState } = await import('../zoom');
+
+    zoomSays('6.5.12.14128');
+    await getZoomMeetingState();
+    zoomSays('7.1.9.48550');
+    await getZoomMeetingState();
+
+    expect(versionWarnings()).toHaveLength(2);
+  });
+
+  it.each(['7.2.1.48556', '7.3.0.100'])(
+    'says nothing about Zoom %s',
+    async (version) => {
+      zoomSays(version);
+      const { getZoomMeetingState } = await import('../zoom');
+
+      await getZoomMeetingState();
+
+      expect(versionWarnings()).toEqual([]);
+    },
+  );
+
+  it('says nothing while the Zoom Meeting Manager is off', async () => {
+    currentSettings.zoomMeetingManagerEnable = false;
+    zoomSays('6.5.12.14128');
+    const { getZoomMeetingState } = await import('../zoom');
+
+    try {
+      await getZoomMeetingState();
+    } finally {
+      currentSettings.zoomMeetingManagerEnable = true;
+    }
+
+    expect(versionWarnings()).toEqual([]);
+  });
+});
+
 describe('describing Zoom for error reports', () => {
   it('reads what Zoom shows, without the overlay', async () => {
     const snapshot = {

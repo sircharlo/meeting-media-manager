@@ -15,6 +15,33 @@ export const areZoomButtonsLearned = (
     settings.zoomVideoOffTitle
   );
 
+// A Zoom version's release numbers, before its build: "6.5.12" in
+// "6.5.12.14128".
+const ZOOM_RELEASE = /^(\d+)\.(\d+)\.(\d+)/;
+
+/**
+ * A Zoom version as Zoom shows it, without its build number: "6.5.12" for
+ * "6.5.12.14128". As it is if it doesn't read as a version.
+ */
+export const zoomReleaseOf = (version: string) =>
+  ZOOM_RELEASE.exec(version)?.[0] ?? version;
+
+/**
+ * Whether Zoom `version` ("6.5.12.14128") is an older release than `than`
+ * ("7.2.1"), comparing their first three numbers. False if either doesn't
+ * read as a version.
+ */
+export const isOlderZoomVersion = (version: string, than: string) => {
+  const mine = ZOOM_RELEASE.exec(version);
+  const theirs = ZOOM_RELEASE.exec(than);
+  if (!mine || !theirs) return false;
+  for (let part = 1; part <= 3; part++) {
+    const difference = Number(mine[part]) - Number(theirs[part]);
+    if (difference !== 0) return difference < 0;
+  }
+  return false;
+};
+
 // Zoom meeting IDs are 9 to 11 digits ("123 4567 8901"); invitation links
 // carry them after /j/ or /s/ (https://us02web.zoom.us/j/12345678901?pwd=...).
 const MEETING_ID_DIGITS = /^\d{9,11}$/;
