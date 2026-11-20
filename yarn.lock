@@ -8424,7 +8424,7 @@ __metadata:
     robotjs: "npm:^0.9.1"
     rollup-plugin-visualizer: "npm:^7.1.3"
     sharp: "npm:^0.35.5"
-    type-fest: "npm:^6.0.0"
+    type-fest: "npm:^6.0.1"
     typescript: "npm:6.0.3"
     upath: "npm:^3.0.8"
     vite: "npm:^8.3.8"
@@ -11665,12 +11665,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "type-fest@npm:6.0.0"
+"type-fest@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "type-fest@npm:6.0.1"
   dependencies:
     tagged-tag: "npm:^1.0.0"
-  checksum: 10c0/f5f780b38a49e46d0757b3c4c6ac67c0fc0121f4bf9223c2701a947c68be9b9e6b115ce6648b4fab089b4f33a7bfde21ac26681068580b046cfdf9ca6cb23af5
+  checksum: 10c0/5155be8e4c6053c70f11496b8df5535b425df00c5db9a0ea830bf7bd9d3f27f69f36b5937bd97da0af304f492d01e4dbb4412827f742b103562223ae9af891f3
   languageName: node
   linkType: hard
 
