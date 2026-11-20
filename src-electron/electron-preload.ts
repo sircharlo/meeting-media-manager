@@ -110,6 +110,7 @@ const electronApi: ElectronApi = {
   getAllScreens: () => invoke('getAllScreens'),
   getAppDataPath: () => invoke('getAppDataPath'),
   getBetaUpdatesPath: () => invoke('getBetaUpdatesPath'),
+  getInstalledZoomVersion: () => invoke('getInstalledZoomVersion'),
   getLocales: () => invoke('getLocales'),
   getLocalPathFromFileObject: (fo) => getPathFromFileObject(fo),
   getLowDiskSpaceStatus: () => invoke('getLowDiskSpaceStatus'),

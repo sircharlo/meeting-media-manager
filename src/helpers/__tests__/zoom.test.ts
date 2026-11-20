@@ -1,9 +1,11 @@
 import type { ZoomCommand, ZoomCommandResult } from 'src/types';
 
 import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const currentSettings = {
+  obsEnable: false,
+  zoomEnable: false,
   zoomHandButtonTitle: null as null | string,
   zoomHandRaisedPhrase: null as null | string,
   zoomJoinAudioTitle: null as null | string,
@@ -112,6 +114,9 @@ const zoomCommandMock =
   vi.fn<(command: ZoomCommand) => Promise<ZoomCommandResult>>();
 const launchZoomMeetingMock = vi.fn();
 const restartZoomHelperMock = vi.fn(async () => ({ ok: true }));
+const getInstalledZoomVersionMock = vi.fn(
+  async (): Promise<null | string> => null,
+);
 
 let meetingFound = true;
 let zoomSharing = false;
@@ -159,8 +164,10 @@ beforeEach(() => {
     if (command.type === 'stop-share') zoomSharing = false;
     return { changed: true, ok: true };
   });
+  getInstalledZoomVersionMock.mockResolvedValue(null);
   vi.stubGlobal('electronApi', {
     focusMediaWindow: vi.fn(),
+    getInstalledZoomVersion: getInstalledZoomVersionMock,
     launchZoomMeeting: launchZoomMeetingMock,
     restartZoomHelper: restartZoomHelperMock,
     zoomCommand: zoomCommandMock,
@@ -1360,6 +1367,163 @@ describe('telling the user while M³ operates Zoom', () => {
     expect(commandTypes()).toEqual(['meeting', 'join-audio']);
     expect(restartZoomHelperMock).toHaveBeenCalled();
     expect(zoomState.runActive).toBe(false);
+  });
+});
+
+describe('warning about an older Zoom', () => {
+  /** Has the helper say this Zoom version for the meeting it finds. */
+  const zoomSays = (zoomVersion: string) => {
+    zoomCommandMock.mockImplementation(async () => ({
+      meeting: { found: true, sharing: false, zoomVersion },
+      ok: true,
+    }));
+  };
+
+  const versionWarnings = () =>
+    notifyMock.mock.calls.filter(
+      ([props]) => props.group === 'zoom-outdated-version',
+    );
+
+  it('warns once a session that an older Zoom may be less reliable, and suggests updating it', async () => {
+    zoomSays('6.5.12.14128');
+    const { getZoomMeetingState } = await import('../zoom');
+
+    await getZoomMeetingState();
+    await getZoomMeetingState();
+
+    expect(versionWarnings()).toEqual([
+      [
+        {
+          caption:
+            'Some features may be less reliable with it. Update Zoom at your earliest convenience.',
+          deferWhileDialogOpen: true,
+          group: 'zoom-outdated-version',
+          icon: 'mmm-warning',
+          message:
+            'Zoom 6.5.12 is older than Zoom 7.2.1, the version M³ is tested with',
+          timeout: 15_000,
+          type: 'warning',
+        },
+      ],
+    ]);
+  });
+
+  it('warns again for another older version, such as after an update that still falls short', async () => {
+    const { getZoomMeetingState } = await import('../zoom');
+
+    zoomSays('6.5.12.14128');
+    await getZoomMeetingState();
+    zoomSays('7.1.9.48550');
+    await getZoomMeetingState();
+
+    expect(versionWarnings()).toHaveLength(2);
+  });
+
+  it.each(['7.2.1.48556', '7.3.0.100'])(
+    'says nothing about Zoom %s',
+    async (version) => {
+      zoomSays(version);
+      const { getZoomMeetingState } = await import('../zoom');
+
+      await getZoomMeetingState();
+
+      expect(versionWarnings()).toEqual([]);
+    },
+  );
+
+  it('says nothing while no integration that involves Zoom is on', async () => {
+    currentSettings.zoomMeetingManagerEnable = false;
+    zoomSays('6.5.12.14128');
+    getInstalledZoomVersionMock.mockResolvedValue('6.5.12.14128');
+    const { getZoomMeetingState, warnIfInstalledZoomOutdated } =
+      await import('../zoom');
+
+    try {
+      await getZoomMeetingState();
+      await warnIfInstalledZoomOutdated();
+    } finally {
+      currentSettings.zoomMeetingManagerEnable = true;
+    }
+
+    expect(versionWarnings()).toEqual([]);
+    expect(getInstalledZoomVersionMock).not.toHaveBeenCalled();
+  });
+
+  describe("from the installed Zoom's files", () => {
+    const integrations = [
+      'obsEnable',
+      'zoomEnable',
+      'zoomMeetingManagerEnable',
+    ] as const;
+
+    /** Only `on` among the integrations that involve Zoom. */
+    const onlyOn = (on: (typeof integrations)[number]) => {
+      for (const key of integrations) currentSettings[key] = key === on;
+    };
+
+    afterEach(() => {
+      onlyOn('zoomMeetingManagerEnable');
+    });
+
+    it.each(integrations)(
+      'warns with only %s on, whether or not Zoom runs',
+      async (on) => {
+        onlyOn(on);
+        getInstalledZoomVersionMock.mockResolvedValue('6.5.12.14128');
+        const { warnIfInstalledZoomOutdated } = await import('../zoom');
+
+        await warnIfInstalledZoomOutdated();
+
+        expect(versionWarnings()).toHaveLength(1);
+        expect(versionWarnings()[0]?.[0]).toMatchObject({
+          message:
+            'Zoom 6.5.12 is older than Zoom 7.2.1, the version M³ is tested with',
+        });
+        expect(commandTypes()).toEqual([]);
+      },
+    );
+
+    it('takes a macOS version as Zoom gives it', async () => {
+      getInstalledZoomVersionMock.mockResolvedValue('6.5.12 (63187)');
+      const { warnIfInstalledZoomOutdated } = await import('../zoom');
+
+      await warnIfInstalledZoomOutdated();
+
+      expect(versionWarnings()[0]?.[0]).toMatchObject({
+        message:
+          'Zoom 6.5.12 is older than Zoom 7.2.1, the version M³ is tested with',
+      });
+    });
+
+    it("doesn't warn twice when the meeting shows the same Zoom", async () => {
+      getInstalledZoomVersionMock.mockResolvedValue('6.5.12.14128');
+      zoomSays('6.5.12.14128');
+      const { getZoomMeetingState, warnIfInstalledZoomOutdated } =
+        await import('../zoom');
+
+      await warnIfInstalledZoomOutdated();
+      await warnIfInstalledZoomOutdated();
+      await getZoomMeetingState();
+
+      expect(versionWarnings()).toHaveLength(1);
+    });
+
+    it.each([
+      ['Zoom not found', async () => null],
+      [
+        'reading it failed',
+        async () => {
+          throw new Error('IPC failed');
+        },
+      ],
+    ])('stays silent when %s', async (_why, answer) => {
+      getInstalledZoomVersionMock.mockImplementation(answer);
+      const { warnIfInstalledZoomOutdated } = await import('../zoom');
+
+      await expect(warnIfInstalledZoomOutdated()).resolves.toBeUndefined();
+
+      expect(versionWarnings()).toEqual([]);
+    });
   });
 });
 
