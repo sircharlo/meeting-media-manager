@@ -1204,6 +1204,8 @@
   "zoom-meeting-window-time-not-found": "Es ist Zeit für die Zusammenkunft, aber es wurde kein Zoom-Meetingfenster erkannt",
   "zoom-no-raised-hands": "Keine erhobenen Hände",
   "zoom-out": "Herauszoomen",
+  "zoom-outdated-version": "Zoom {version} is older than Zoom {tested}, the version M³ is tested with",
+  "zoom-outdated-version-caption": "Some features may be less reliable with it. Update Zoom at your earliest convenience.",
   "zoom-participants-asked-to-unmute": "Teilnehmer wurden gebeten, die Stummschaltung aufzuheben",
   "zoom-participants-muted": "Teilnehmer stummgeschaltet",
   "zoom-participants-unmute-allowed": "Teilnehmer dürfen die Stummschaltung aufheben",

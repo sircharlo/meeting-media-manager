@@ -1204,6 +1204,8 @@
   "zoom-meeting-window-time-not-found": "Ua tae i te hora putuputuraa, eita râ te haamārama putuputuraa o te Zoom e itehia",
   "zoom-no-raised-hands": "’Aita e rima i fa’ateiteihia",
   "zoom-out": "Fa’aiti i te hi’ora’a",
+  "zoom-outdated-version": "Zoom {version} is older than Zoom {tested}, the version M³ is tested with",
+  "zoom-outdated-version-caption": "Some features may be less reliable with it. Update Zoom at your earliest convenience.",
   "zoom-participants-asked-to-unmute": "Ua ani i te feia i putuputuraa ia faatae mai i to ratou reo",
   "zoom-participants-muted": "Ua tapeahia te reo o te feia i putuputuraa",
   "zoom-participants-unmute-allowed": "Ua vaihohia te feia i putuputuraa ia faatae mai i to ratou reo",
