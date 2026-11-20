@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         env:
           YARN_ENABLE_SCRIPTS: 'false'
-        run: yarn install --mode=skip-build
+        run: yarn install --immutable --mode=skip-build
 
       - name: Run refresh-jw-icons-fallbacks script
         run: yarn refresh:jw-icons-fallbacks

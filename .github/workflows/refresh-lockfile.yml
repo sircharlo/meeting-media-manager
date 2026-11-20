@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies
         env:
           YARN_ENABLE_SCRIPTS: 'false'
-        run: yarn install --no-immutable --mode=skip-build
+        run: yarn install --no-immutable --mode=skip-build # NOSONAR: this workflow exists to re-resolve and rewrite yarn.lock, so the install can't be locked to it; dependency scripts stay off
 
       - name: Commit and push lockfile branch
         id: commit

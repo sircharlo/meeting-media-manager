@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         env:
           YARN_ENABLE_SCRIPTS: 'false'
-        run: yarn install --mode=skip-build
+        run: yarn install --immutable --mode=skip-build
       # The lockfile-pinned playwright devDependency, never an on-demand
       # download like npx could fall back to.
       - name: Install Chromium runtime dependencies (Linux only)
