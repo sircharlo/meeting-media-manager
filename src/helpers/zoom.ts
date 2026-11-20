@@ -12,6 +12,7 @@ import type {
 
 import { i18n } from 'boot/i18n';
 import { AUTO_START_WINDOW_HOURS } from 'src/constants/date';
+import { AUDIO_EXTENSIONS, VIDEO_EXTENSIONS } from 'src/constants/media';
 import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { getMeetingStartToday, isMemorialDay } from 'src/helpers/date';
 import { MEETING_SCHEDULED_DURATION_MINUTES } from 'src/helpers/meeting-parts';
@@ -19,6 +20,7 @@ import { log } from 'src/shared/vanilla';
 import { areZoomButtonsLearned } from 'src/utils/zoom';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useZoomStateStore } from 'stores/zoom-state';
+import { watch } from 'vue';
 
 import { errorCatcher } from './error-catcher';
 import { sendKeyboardShortcut } from './keyboard-shortcuts';
@@ -1087,8 +1089,162 @@ export const isAroundMeetingTime = (now = new Date()) => {
 let mediaShareStartedByM3 = false;
 let mediaShareStarting: null | Promise<boolean> = null;
 
-const startAutomatedMediaShare = async () => {
-  if (!(await zoomAutomationsAllowed('Zoom media sharing'))) return false;
+// --- Host microphone during media -------------------------------------------
+//
+// While M³'s share carries a video's or an audio file's sound to Zoom, the
+// host microphone can carry it too: a hall whose sound desk feeds the media
+// computer's own output back to it as Zoom's microphone sends Zoom the same
+// sound twice, which its echo cancellation and noise suppression then make
+// muffled or choppy for Zoom participants. So the host microphone is muted
+// while that media plays, and unmuted once it's finished. M³ only unmutes a
+// microphone it muted: one the host had muted already stays muted.
+
+let hostMicMutedForMedia = false;
+
+const SOUND_EXTENSIONS = new Set([...AUDIO_EXTENSIONS, ...VIDEO_EXTENSIONS]);
+
+/**
+ * Whether media M³ shows has sound to share: a video or an audio file, by
+ * its file or stream URL's extension (src/utils/media's isVideo needs
+ * electronApi's fs as soon as it's loaded, which this module doesn't).
+ */
+const hasSound = (url: string) => {
+  const path = url.split(/[?#]/, 1).at(0) ?? '';
+  const name = path.slice(path.lastIndexOf('/') + 1);
+  const dot = name.lastIndexOf('.');
+  return dot > 0 && SOUND_EXTENSIONS.has(name.slice(dot + 1).toLowerCase());
+};
+
+const mutesHostMicForMedia = () => {
+  const settings = getSettings();
+  return (
+    !!settings?.zoomMeetingManagerEnable &&
+    !!settings.zoomMeetingManagerAutomateMediaSharing &&
+    !!settings.zoomMeetingManagerMuteHostMicDuringMedia
+  );
+};
+
+/**
+ * Switches the host microphone for the media's time only: the meeting
+ * checklist, which says how the meeting was set up, is left as it is.
+ */
+const setHostMicForMedia = async (on: boolean) => {
+  const titles = getZoomTitlesFromSettings();
+  const result = await runCommand({
+    offTitle: titles.micOffTitle,
+    on,
+    onTitle: titles.micOnTitle,
+    type: 'set-mic',
+  });
+  if (result.ok && result.changed) {
+    notifyInfo(
+      'zoom-host',
+      on ? 'zoom-host-mic-on' : 'zoom-host-mic-off-for-media',
+    );
+  }
+  return result;
+};
+
+/**
+ * Mutes the host microphone for media with sound (see above). Says so if
+ * that failed, unless the host isn't joined to computer audio (the
+ * microphone then sends Zoom nothing) or the user stopped it.
+ */
+const muteHostMicForMedia = async (url: string) => {
+  if (hostMicMutedForMedia || !hasSound(url) || !mutesHostMicForMedia()) {
+    return;
+  }
+  const result = await setHostMicForMedia(false);
+  hostMicMutedForMedia = result.ok && !!result.changed;
+  if (
+    !result.ok &&
+    result.error !== 'audio-not-joined' &&
+    result.error !== CANCELLED.error
+  ) {
+    notifyWarning('zoom-host', 'zoom-host-mic-mute-failed');
+  }
+};
+
+/** Unmutes the host microphone M³ muted for media, once that's finished. */
+const unmuteHostMicAfterMedia = async () => {
+  if (!hostMicMutedForMedia) return;
+  hostMicMutedForMedia = false;
+  const result = await setHostMicForMedia(true);
+  // The hall can't be heard in Zoom until someone unmutes it.
+  if (!result.ok) {
+    notifyFailure('zoom-host', 'zoom-host-mic-unmute-failed');
+  }
+};
+
+/**
+ * Follows the media M³'s share shows while it goes on: a video or an audio
+ * file mutes the host microphone, a picture after it unmutes it (see
+ * muteHostMicForMedia). The share's start and end see to the rest (see
+ * startAutomatedMediaShare and stopAutomatedMediaShare).
+ */
+export const followZoomHostMicWithMedia = async (url: string) => {
+  if (!url || mediaShareStarting || !mediaShareStartedByM3) return;
+  if (!hasSound(url)) {
+    await unmuteHostMicAfterMedia();
+    return;
+  }
+  if (useZoomStateStore().automationsPaused) return;
+  await muteHostMicForMedia(url);
+};
+
+let stopFollowingMediaWithHostMic: (() => void) | undefined;
+
+/** Starts following the media shown with the host microphone (see above). */
+export const startZoomHostMicMediaSync = () => {
+  if (stopFollowingMediaWithHostMic) return;
+  const currentState = useCurrentStateStore();
+  stopFollowingMediaWithHostMic = watch(
+    () => currentState.mediaPlaying.url,
+    (url) => {
+      void followZoomHostMicWithMedia(url);
+    },
+  );
+};
+
+/**
+ * Says the media wasn't shared in Zoom as a failed (or skipped) check paused
+ * the automations, offering what the check's own notice offers: to test Zoom
+ * again, or the setup assistant once Zoom's buttons no longer read as
+ * learned. By events (handled in MainLayout), as the check is built on this
+ * module.
+ */
+const notifyMediaNotSharedWhilePaused = () => {
+  if (feedbackMuted) return;
+  const relearn = useZoomStateStore().relearnNeeded;
+  createTemporaryNotification({
+    actions: [
+      {
+        color: 'white',
+        handler: () => {
+          globalThis.dispatchEvent(
+            new CustomEvent(
+              relearn ? 'openZoomSetupAssistant' : 'testZoomAgain',
+            ),
+          );
+        },
+        label: t(relearn ? 'zoom-setup-open' : 'zoom-check-test-again'),
+      },
+    ],
+    caption: t('zoom-sharing-failed-caption'),
+    group: 'zoom-sharing',
+    icon: 'mmm-warning',
+    message: t('zoom-sharing-paused'),
+    type: 'warning',
+  });
+};
+
+const startAutomatedMediaShare = async (mediaUrl: string) => {
+  if (!(await zoomAutomationsAllowed('Zoom media sharing'))) {
+    // At meeting time, the media not being shared is said each time: the
+    // check's own notice may be closed by now.
+    if (isAroundMeetingTime()) notifyMediaNotSharedWhilePaused();
+    return false;
+  }
   const meeting = await getZoomMeetingState();
   if (!meeting?.found) {
     log('Zoom media sharing: skipped, no Zoom meeting found', 'zoom', 'info', {
@@ -1113,7 +1269,14 @@ const startAutomatedMediaShare = async () => {
   }
   mediaShareStartedByM3 = await withZoomRun(
     'zoom-run-media-sharing-start',
-    () => startSharingMediaInZoom(),
+    async () => {
+      // While Zoom still shows its meeting window, which sharing hides.
+      await muteHostMicForMedia(mediaUrl);
+      const started = await startSharingMediaInZoom();
+      // Without the share, the microphone may be all that carries the media.
+      if (!started) await unmuteHostMicAfterMedia();
+      return started;
+    },
   );
   return mediaShareStartedByM3;
 };
@@ -1125,25 +1288,32 @@ const stopAutomatedMediaShare = async () => {
   // Already stopped in Zoom, or the meeting was left.
   if (meeting && !meeting.sharing) {
     mediaShareStartedByM3 = false;
+    await unmuteHostMicAfterMedia();
     return true;
   }
   const stopped = await withZoomRun('zoom-run-media-sharing-stop', () =>
     stopSharingMediaInZoom(),
   );
   if (stopped) mediaShareStartedByM3 = false;
+  // The media is finished whether or not the share stopped.
+  await unmuteHostMicAfterMedia();
   return stopped;
 };
 
 /**
  * Starts sharing the media window in Zoom as media starts, if a Zoom meeting
  * is open and the Zoom automations aren't paused, or stops the share it
- * started as media stops. Resolves to whether Zoom is sharing (or, when
- * stopping, no longer sharing M³'s media).
+ * started as media stops. For media with sound (`mediaUrl`), the host
+ * microphone is muted for its time (see muteHostMicForMedia). Resolves to
+ * whether Zoom is sharing (or, when stopping, no longer sharing M³'s media).
  */
-export const automateZoomMediaSharing = async (start: boolean) => {
+export const automateZoomMediaSharing = async (
+  start: boolean,
+  mediaUrl = '',
+) => {
   if (!start) return stopAutomatedMediaShare();
   // Known at once, so a stop right behind it waits for it.
-  const starting = startAutomatedMediaShare();
+  const starting = startAutomatedMediaShare(mediaUrl);
   mediaShareStarting = starting;
   try {
     return await starting;

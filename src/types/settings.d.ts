@@ -371,6 +371,11 @@ export interface SettingsValues {
   zoomMeetingManagerHandAlert: boolean;
   zoomMeetingManagerHandAlertNotifyOnly: boolean;
   zoomMeetingManagerMeetingId: null | string;
+  /**
+   * While M³ shares a video or an audio file in Zoom, mute the host
+   * microphone, and unmute it once the media is finished.
+   */
+  zoomMeetingManagerMuteHostMicDuringMedia: boolean;
   zoomMeetingManagerPostMeetingAskToUnmute: boolean;
   /** No value: the setting is the button opening the setup assistant. */
   zoomMeetingManagerSetupAssistant: null;

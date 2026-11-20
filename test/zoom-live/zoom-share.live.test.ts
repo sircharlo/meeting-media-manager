@@ -148,6 +148,65 @@ describe.skipIf(!canRunLive)('Zoom helper, live share', () => {
     expect(await sharing()).toBe(false);
   });
 
+  // M³ mutes the host microphone while a shared video or audio file plays,
+  // and unmutes it after; a picture shown during the same share unmutes it
+  // too. While sharing hides the meeting window (Zoom's single window), the
+  // share toolbar's own button does it (see SetMic in ZoomHelper.cs), without
+  // bringing the meeting window back over the share or stopping it.
+  it.runIf(titles.micOnTitle && titles.micOffTitle)(
+    "mutes and unmutes the host microphone while sharing, with the share toolbar's button",
+    async () => {
+      const micCommand = (on: boolean) => ({
+        offTitle: titles.micOffTitle,
+        on,
+        onTitle: titles.micOnTitle,
+        type: 'set-mic' as const,
+      });
+      const meetingWindowShown = async () =>
+        (await helper.request({ type: 'snapshot' })).snapshot?.meeting;
+
+      // Unmuted, as during a meeting.
+      expect((await helper.request(micCommand(true))).ok).toBe(true);
+      expect(await startShare()).toMatchObject({ changed: true, ok: true });
+      const shownWhileSharing = await meetingWindowShown();
+      const toolbar = (await helper.request({ type: 'snapshot' })).snapshot
+        ?.shareToolbar;
+      print(
+        `    while sharing: meeting window shown ${shownWhileSharing}, share toolbar ${JSON.stringify(toolbar)}`,
+      );
+
+      expect(await helper.request(micCommand(false))).toMatchObject({
+        changed: true,
+        ok: true,
+      });
+      expect(await helper.request(micCommand(false))).toMatchObject({
+        changed: false,
+        ok: true,
+      });
+      expect(await sharing()).toBe(true);
+      expect(await meetingWindowShown()).toBe(shownWhileSharing);
+
+      expect(await helper.request(micCommand(true))).toMatchObject({
+        changed: true,
+        ok: true,
+      });
+      expect(await sharing()).toBe(true);
+      expect(await meetingWindowShown()).toBe(shownWhileSharing);
+
+      expect(await stopShare()).toMatchObject({ changed: true, ok: true });
+      await sleep(1000);
+      // And with the meeting window back, its own toolbar does it again.
+      expect(await helper.request(micCommand(false))).toMatchObject({
+        changed: true,
+        ok: true,
+      });
+      expect(await helper.request(micCommand(true))).toMatchObject({
+        changed: true,
+        ok: true,
+      });
+    },
+  );
+
   it('reports nothing to do when it is already sharing, or not sharing at all', async () => {
     expect(await startShare()).toMatchObject({ changed: true, ok: true });
 

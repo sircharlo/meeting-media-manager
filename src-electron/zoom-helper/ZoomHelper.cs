@@ -1630,9 +1630,15 @@ namespace M3.ZoomHelper
         }
 
         /// <summary>Unmutes or mutes the host's microphone, which only exists
-        /// once joined to computer audio.</summary>
+        /// once joined to computer audio. While sharing hides the meeting
+        /// window (in Zoom's single window, its default), with the share
+        /// toolbar's microphone button instead: going for the meeting window
+        /// then would bring it back over what's shared (see
+        /// RequireMeetingWindow's mini view).</summary>
         public static Dictionary<string, object> SetMic(bool on, string onTitle, string offTitle)
         {
+            if (FindMeetingWindow() == null && IsSharing())
+                return SetButtonState(() => ShareToolbarMicButton(onTitle, offTitle), "share-toolbar-mic", on, onTitle, offTitle);
             var window = RequireMeetingWindow();
             if (!AudioJoined(window)) throw new ZoomActionError("audio-not-joined");
             return SetButtonState(() => MicButton(window), "mic", on, onTitle, offTitle);
@@ -3379,6 +3385,16 @@ namespace M3.ZoomHelper
             var toolbar = ShareToolbarWindow(true);
             if (toolbar == IntPtr.Zero) throw new ZoomActionError("not-sharing");
             return Named(Uia.Descendants(Uia.FromHandle(toolbar), Uia.ButtonType));
+        }
+
+        /// <summary>While sharing: the share toolbar's microphone button, found
+        /// only by the names the setup assistant learned for the meeting
+        /// toolbar's (null if neither shows: then nothing is pressed). Not
+        /// joined to computer audio, the toolbar has no such button.</summary>
+        static El ShareToolbarMicButton(string onTitle, string offTitle)
+        {
+            var buttons = ShareToolbarButtons();
+            return ByName(buttons, FirstSegment(onTitle ?? "")) ?? ByName(buttons, FirstSegment(offTitle ?? ""));
         }
 
         /// <summary>The share toolbar's buttons while sharing, for the user to
