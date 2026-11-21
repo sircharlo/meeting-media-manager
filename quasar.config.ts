@@ -16,6 +16,9 @@ import { dependencies as electronDependencies } from './src-electron/package.jso
 const IS_DEV = process.env.NODE_ENV === 'development';
 const IS_BETA = version.includes('beta');
 const IS_TEST = process.env.TEST_VERSION === 'true';
+// The Snap Store build (the snap job in .github/workflows/build.yml): a snap
+// instead of the AppImage.
+const IS_SNAP = process.env.M3_SNAP === 'true';
 
 // App
 const APP_NAME = `${name}${IS_TEST ? '-test' : ''}`;
@@ -177,7 +180,7 @@ export default defineConfig((ctx) => {
         linux: {
           category: 'Utility',
           icon: getIconPath('png'),
-          target: 'AppImage',
+          target: IS_SNAP ? 'snap' : 'AppImage',
         },
         mac: {
           // Unlike other resource paths in this config, mac.entitlements is read
@@ -230,6 +233,47 @@ export default defineConfig((ctx) => {
         },
         productName: PRODUCT_NAME,
         publish: ['github'],
+        // The snap (M3_SNAP=true, see IS_SNAP): core24 with snapcraft's gnome
+        // extension, which supplies GTK and the desktop, desktop-legacy,
+        // gsettings, opengl, wayland and x11 plugs. Built by snapcraft in an
+        // LXD container. Strict confinement, so M³ reaches only what a plug
+        // below grants.
+        snapcraft: {
+          base: 'core24',
+          core24: {
+            grade: 'stable',
+            plugs: [
+              'audio-playback',
+              // Chromium's own needs. Without allow-sandbox, which the Snap
+              // Store keeps for browsers, electron-builder starts M³ with
+              // --no-sandbox: snap confinement is the sandbox then.
+              'browser-support',
+              // A sign-language congregation's camera feed.
+              'camera',
+              // Media and backup folders in the user's home folder.
+              'home',
+              // Downloads, and OBS Studio's WebSocket.
+              'network',
+              // The timer remote's web server.
+              'network-bind',
+              // safeStorage, which encrypts the OBS password with the
+              // keyring. Without it, the password is saved as plain text,
+              // and M³ says so.
+              'password-manager-service',
+              // Folders on USB drives and other disks, in /media and /mnt.
+              'removable-media',
+              // Keeps the screen awake while a video plays.
+              'screen-inhibit-control',
+              // robotjs' key presses to Zoom go through XTest.
+              'x11',
+            ],
+            // Libraries Electron and robotjs link to that the gnome extension's
+            // runtime (gnome-46-2404) doesn't supply.
+            stagePackages: ['libasound2t64', 'libnspr4', 'libnss3', 'libxtst6'],
+            summary: 'Download and present media for congregation meetings',
+            useLXD: true,
+          },
+        },
         win: {
           // The Zoom Meeting Manager's UI Automation helper, compiled at
           // runtime by Windows PowerShell. An absolute path: a relative one
