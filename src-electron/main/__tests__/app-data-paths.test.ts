@@ -1,3 +1,4 @@
+import { resolve } from 'upath';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const setPathMock = vi.fn();
@@ -39,14 +40,16 @@ describe('configureAppDataPaths', () => {
   });
 
   it('keeps everything next to the portable executable', () => {
-    vi.stubEnv('PORTABLE_EXECUTABLE_DIR', 'D:/M3');
+    vi.stubEnv('PORTABLE_EXECUTABLE_DIR', 'M3 portable');
+    // Made absolute, as on the test machine's own file system.
+    const folder = resolve('M3 portable');
 
     configureAppDataPaths();
 
     expect(setPathMock.mock.calls).toEqual([
-      ['appData', 'D:/M3'],
-      ['userData', 'D:/M3/Meeting Media Manager - User Data'],
-      ['temp', 'D:/M3/Meeting Media Manager - Temporary Files'],
+      ['appData', folder],
+      ['userData', `${folder}/Meeting Media Manager - User Data`],
+      ['temp', `${folder}/Meeting Media Manager - Temporary Files`],
     ]);
   });
 
