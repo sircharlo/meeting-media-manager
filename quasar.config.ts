@@ -267,9 +267,11 @@ export default defineConfig((ctx) => {
               // robotjs' key presses to Zoom go through XTest.
               'x11',
             ],
-            // Libraries Electron and robotjs link to that the gnome extension's
-            // runtime (gnome-46-2404) doesn't supply.
-            stagePackages: ['libasound2t64', 'libnspr4', 'libnss3', 'libxtst6'],
+            // No stage-packages: the gnome extension's runtimes already
+            // supply what Electron and robotjs link to (NSS, ALSA and libXtst
+            // in gnome-46-2404, X11 and GBM in mesa-2404), and get their
+            // security updates from them. A staged copy would come first
+            // on the library path and stay as old as the snap.
             summary: 'Download and present media for congregation meetings',
             useLXD: true,
           },
