@@ -24,7 +24,7 @@ vi.mock('src-electron/main/msix', () => ({
 }));
 
 const PACKAGE_DATA_DIR =
-  'C:/Users/user/AppData/Local/Packages/sircharlo.MeetingMediaManager_8j3eq9eme6ctt';
+  'C:/Users/user/AppData/Local/Packages/CharlesOlivierSavignac.MeetingMediaManager_zrn6pgj3w6nkw';
 
 const { configureAppDataPaths } = await import('../app-data-paths');
 

@@ -29,12 +29,12 @@ const PRODUCT_NAME = `${productName}${IS_TEST ? ' - Test' : ''}`;
 const APP_ID = `sircharlo.${APP_NAME}`;
 
 // M³'s package identity in the Microsoft Store, from the product's Product
-// identity page in Partner Center. Public: every installed package shows it.
-// A test build gets its own name, so it installs next to the Store's.
-// Placeholders until the name is reserved in Partner Center.
-const MSIX_IDENTITY_NAME = `sircharlo.MeetingMediaManager${IS_TEST ? '.Test' : ''}`;
-const MSIX_PUBLISHER = 'CN=sircharlo';
-const MSIX_PUBLISHER_DISPLAY_NAME = 'sircharlo';
+// identity page in Partner Center (Store ID 9PDC5BZ593BM). Public: every
+// installed package shows it. A test build gets its own name, so it installs
+// next to the Store's.
+const MSIX_IDENTITY_NAME = `CharlesOlivierSavignac.MeetingMediaManager${IS_TEST ? '.Test' : ''}`;
+const MSIX_PUBLISHER = 'CN=EA85FE0C-CB16-4547-83BB-237BB2238CA4';
+const MSIX_PUBLISHER_DISPLAY_NAME = 'Charles Olivier Savignac';
 
 // Sentry
 const SENTRY_ORG = 'jw-projects';

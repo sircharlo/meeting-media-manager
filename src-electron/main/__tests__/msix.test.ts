@@ -5,8 +5,8 @@ const execFileMock = vi.fn();
 vi.mock('node:child_process', () => ({ execFile: execFileMock }));
 
 vi.mock('src-electron/constants', () => ({
-  MSIX_IDENTITY_NAME: 'sircharlo.MeetingMediaManager',
-  MSIX_PUBLISHER: 'CN=EB51A5DA-0E72-4863-82E4-EA21C1F8DFE3',
+  MSIX_IDENTITY_NAME: 'CharlesOlivierSavignac.MeetingMediaManager',
+  MSIX_PUBLISHER: 'CN=EA85FE0C-CB16-4547-83BB-237BB2238CA4',
 }));
 
 const { getPackageDataDir, getPublisherId, setStartupTaskEnabled } =
@@ -34,7 +34,7 @@ const getScript = () => {
 };
 
 describe('getPublisherId', () => {
-  // Both checked against packages installed on Windows (Get-AppxPackage).
+  // Each checked against a package installed on Windows (Get-AppxPackage).
   it.each([
     [
       'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US',
@@ -42,6 +42,8 @@ describe('getPublisherId', () => {
     ],
     // A Partner Center publisher, the kind M³ has.
     ['CN=EB51A5DA-0E72-4863-82E4-EA21C1F8DFE3', '8j3eq9eme6ctt'],
+    // M³'s own.
+    ['CN=EA85FE0C-CB16-4547-83BB-237BB2238CA4', 'zrn6pgj3w6nkw'],
   ])('gives %s the ID Windows gives it', (publisher, id) => {
     expect(getPublisherId(publisher)).toBe(id);
   });
@@ -56,7 +58,7 @@ describe('getPackageDataDir', () => {
     vi.stubEnv('LOCALAPPDATA', 'C:/Users/user/AppData/Local');
 
     expect(getPackageDataDir()).toBe(
-      'C:/Users/user/AppData/Local/Packages/sircharlo.MeetingMediaManager_8j3eq9eme6ctt',
+      'C:/Users/user/AppData/Local/Packages/CharlesOlivierSavignac.MeetingMediaManager_zrn6pgj3w6nkw',
     );
   });
 

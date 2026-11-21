@@ -59,7 +59,7 @@ describe('isMachineWideInstallation', () => {
   it('never counts the Microsoft Store build, in WindowsApps', () => {
     constants.APP_STORE = 'microsoft-store';
     getPathMock.mockReturnValue(
-      String.raw`C:\Program Files\WindowsApps\sircharlo.MeetingMediaManager_26.11.4.0_x64__8j3eq9eme6ctt\app\Meeting Media Manager.exe`,
+      String.raw`C:\Program Files\WindowsApps\CharlesOlivierSavignac.MeetingMediaManager_26.11.4.0_x64__zrn6pgj3w6nkw\app\Meeting Media Manager.exe`,
     );
 
     expect(isMachineWideInstallation()).toBe(false);
