@@ -1,3 +1,6 @@
+import type { AppStore } from 'src/types';
+
+import { existsSync } from 'node:fs';
 import os from 'node:os';
 
 // Environment
@@ -8,6 +11,23 @@ export const IS_TEST = import.meta.env.IS_TEST;
 export const IS_DEMO_MODE =
   process.env.M3_DEMO_MODE === '1' ||
   process.env.M3_DEMO_MODE?.toLowerCase() === 'true';
+
+/**
+ * The app store this copy of M³ was installed from, if any: Electron flags
+ * Mac App Store and Microsoft Store (MSIX) builds itself, snapd sets SNAP for
+ * a snap, and Flatpak sets FLATPAK_ID (and puts /.flatpak-info in its
+ * sandbox). Null for M³'s own installers, the AppImage and the portable
+ * build. The store then delivers the updates, so M³'s own updater stays off
+ * (see findUpdatesOffReason in main/updater.ts).
+ */
+export const detectAppStore = (): AppStore | null => {
+  if (process.mas) return 'mac-app-store';
+  if (process.windowsStore) return 'microsoft-store';
+  if (process.env.SNAP) return 'snap-store';
+  if (process.env.FLATPAK_ID || existsSync('/.flatpak-info')) return 'flathub';
+  return null;
+};
+export const APP_STORE = detectAppStore();
 
 // App
 export const APP_ID = import.meta.env.APP_ID;

@@ -8,7 +8,12 @@ import { app, powerMonitor } from 'electron';
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
 import { pathExists } from 'fs-extra/esm';
-import { IS_DEMO_MODE, IS_TEST, PLATFORM } from 'src-electron/constants';
+import {
+  APP_STORE,
+  IS_DEMO_MODE,
+  IS_TEST,
+  PLATFORM,
+} from 'src-electron/constants';
 import { isDownloadErrorExpected } from 'src-electron/main/downloads';
 import { getAppDataPath } from 'src-electron/main/fs';
 import {
@@ -222,12 +227,15 @@ export const getBetaUpdatesPath = async () =>
 const isPortable = () => !!process.env.PORTABLE_EXECUTABLE_DIR;
 
 /**
- * Why the app doesn't update, if it doesn't: never in demo mode or as a
- * portable build, nor while the user has turned updates off.
+ * Why the app doesn't update, if it doesn't: never in demo mode, as a store
+ * build (the store delivers its updates, and every store refuses an app that
+ * updates itself) or as a portable build, nor while the user has turned
+ * updates off.
  * @returns The reason, or null when the app updates
  */
 const findUpdatesOffReason = async (): Promise<null | string> => {
   if (IS_DEMO_MODE) return 'demo mode';
+  if (APP_STORE) return `${APP_STORE} build`;
   if (isPortable()) return 'portable build';
   if (await pathExists(await getUpdatesDisabledPath())) {
     return 'turned off by the user';

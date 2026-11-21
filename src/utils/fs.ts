@@ -426,11 +426,14 @@ export const trimFilepathAsNeeded = (filepath: string, maxBytes = 230) => {
 };
 
 /**
- * Checks if auto updates are disabled.
+ * Checks if auto updates are disabled. Never in a store build: its store
+ * updates it, whatever M³'s own setting says.
  * @returns Whether auto updates are disabled.
  */
-export const updatesDisabled = async () =>
-  pathExists(await getUpdatesDisabledPath());
+export const updatesDisabled = async () => {
+  if (globalThis.electronApi.appStore) return false;
+  return pathExists(await getUpdatesDisabledPath());
+};
 
 /**
  * Toggles auto updates.
@@ -458,11 +461,14 @@ export const toggleAutoUpdates = async (enable: boolean) => {
 };
 
 /**
- * Checks if beta updates are disabled.
+ * Checks if beta updates are disabled. Always in a store build: stores only
+ * ship M³'s releases.
  * @returns Wether beta updates are disabled.
  */
-export const betaUpdatesDisabled = async () =>
-  !(await pathExists(await getBetaUpdatesPath()));
+export const betaUpdatesDisabled = async () => {
+  if (globalThis.electronApi.appStore) return true;
+  return !(await pathExists(await getBetaUpdatesPath()));
+};
 
 /**
  * Toggles beta updates

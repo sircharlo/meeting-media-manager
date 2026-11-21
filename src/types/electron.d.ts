@@ -37,6 +37,13 @@ import type {
 
 import type { TimerData } from './timer';
 
+/**
+ * The app store a copy of M³ was installed from, which then delivers its
+ * updates (see APP_STORE in src-electron/constants.ts).
+ */
+export type AppStore =
+  'flathub' | 'mac-app-store' | 'microsoft-store' | 'snap-store';
+
 export interface ConversionOptions {
   /**
    * the HEIC file buffer
@@ -96,6 +103,11 @@ export type Display = Electron.Display & {
 };
 
 export interface ElectronApi {
+  /**
+   * The app store this copy of M³ came from, which updates it; null for M³'s
+   * own installers, the AppImage and the portable build.
+   */
+  appStore: AppStore | null;
   askForMediaAccess: () => void;
   basename: typeof basename;
   cancelAllDownloads: () => void;
