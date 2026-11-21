@@ -109,6 +109,44 @@ def apply_pending_changelog(new_version: str) -> bool:
     return True
 
 
+METAINFO_PATH = Path("build/linux/io.github.sircharlo.meeting-media-manager.metainfo.xml")
+
+
+def add_metainfo_release(new_version: str) -> bool:
+    """Add the release to the AppStream metadata, newest first.
+
+    Flathub builds M³ from a release's tag, and its listing shows the
+    releases in this file (see build/flatpak). Returns True when the release
+    was added.
+    """
+    if not METAINFO_PATH.exists():
+        print(f"Warning: {METAINFO_PATH} not found; cannot add the release to it.")
+        return False
+
+    text = METAINFO_PATH.read_text(encoding="utf-8")
+    if f'<release version="{new_version}"' in text:
+        print(f"Release {new_version} already in {METAINFO_PATH}; skipping.")
+        return False
+
+    marker = "  <releases>\n"
+    if marker not in text:
+        print(f"Warning: no <releases> element in {METAINFO_PATH}; release not added.")
+        return False
+
+    today = datetime.date.today().isoformat()
+    entry = (
+        f'    <release version="{new_version}" date="{today}">\n'
+        "      <url type=\"details\">https://github.com/sircharlo/meeting-media-manager"
+        f"/releases/tag/v{new_version}</url>\n"
+        "    </release>\n"
+    )
+    METAINFO_PATH.write_text(
+        text.replace(marker, marker + entry, 1), encoding="utf-8", newline="\n"
+    )
+    print(f"Added release {new_version} to {METAINFO_PATH}.")
+    return True
+
+
 if __name__ == "__main__":
     latest_tag = get_latest_tag()
     if latest_tag.startswith("v"):
@@ -123,6 +161,7 @@ if __name__ == "__main__":
     else:
         update_package_json(new_version)
         apply_pending_changelog(new_version)
+        add_metainfo_release(new_version)
     
     # Export for GitHub Actions
     if "GITHUB_OUTPUT" in os.environ:

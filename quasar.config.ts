@@ -22,6 +22,9 @@ const IS_SNAP = process.env.M3_SNAP === 'true';
 // The Microsoft Store build (the msix job in .github/workflows/build.yml): an
 // MSIX package instead of the installer and the portable build.
 const IS_MSIX = process.env.M3_MSIX === 'true';
+// The Flathub build (build/flatpak): the unpacked app, which the Flatpak
+// manifest installs itself, instead of the AppImage.
+const IS_FLATPAK = process.env.M3_FLATPAK === 'true';
 
 // App
 const APP_NAME = `${name}${IS_TEST ? '-test' : ''}`;
@@ -53,6 +56,12 @@ const getIconPath = (iconType: 'icns' | 'ico' | 'png' | 'splash') => {
     return `../build/logos/splash-portable.bmp`;
   }
   return `electron-assets/icons/${IS_BETA ? 'beta' : 'icon'}.${iconType}`;
+};
+
+const getLinuxTarget = () => {
+  if (IS_SNAP) return 'snap';
+  if (IS_FLATPAK) return 'dir';
+  return 'AppImage';
 };
 
 export default defineConfig((ctx) => {
@@ -217,7 +226,7 @@ export default defineConfig((ctx) => {
         linux: {
           category: 'Utility',
           icon: getIconPath('png'),
-          target: IS_SNAP ? 'snap' : 'AppImage',
+          target: getLinuxTarget(),
         },
         mac: {
           // Unlike other resource paths in this config, mac.entitlements is read

@@ -95,6 +95,10 @@ build/*.blockmap
 build/*.exe
 # Fetched by scripts/fetch-ffmpeg.mjs when building
 build/ffmpeg/bin/
+# A local Flatpak build (build/flatpak): flatpak-node-generator's sources and
+# flatpak-builder's state
+build/flatpak/generated-sources*.json
+.flatpak-builder/
 src/main
 src/renderer
 
