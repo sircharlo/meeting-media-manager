@@ -378,3 +378,61 @@ jobs:
         if: failure()
         run: |
           echo "::error::The snap job failed - see its log. It doesn't fail the workflow (continue-on-error), so pull requests and the GitHub release aren't held up, but the Snap Store didn't get this build."
+
+  # The Microsoft Store build: the same app as the Windows build's installer,
+  # packed as an MSIX instead (M3_MSIX, see quasar.config.ts). The Store signs
+  # it, so it isn't signed here. A job of its own, like the snap's, that can't
+  # fail the workflow: the Microsoft Store is a new channel, and its failure
+  # mustn't hold up a pull request or the GitHub release. Its failure is
+  # reported loudly instead (last step).
+  msix:
+    name: build (msix)
+    runs-on: windows-latest
+    needs: [quality]
+    if: ${{ !inputs.quality-only }}
+    continue-on-error: true
+    timeout-minutes: 45
+    steps:
+      - name: Check out master branch
+        if: ${{ inputs.checkout-latest == true }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.ref || 'master' }}
+      - name: Check out Git repository
+        if: ${{ inputs.checkout-latest == false }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Setup Node
+        if: ${{ !inputs.publish-release }}
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24
+          cache: 'yarn'
+      - name: Setup Node without cache for release publishing
+        if: ${{ inputs.publish-release }}
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: yarn install # NOSONAR: the same install as the Windows build's (dependency build scripts on, for the robotjs native addon); CI only installs the immutable, checksum-verified yarn.lock
+      - name: Build the MSIX
+        shell: bash
+        run: |
+          yarn generate:icons
+          yarn generate:logos
+          yarn build --publish=never
+        env:
+          M3_MSIX: 'true'
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          TEST_VERSION: ${{ !inputs.publish-release }}
+      # A release's MSIX is what goes to Partner Center, by hand for now: the
+      # first submission has to be made there anyway, with the Store listing.
+      - name: Upload artifacts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: ${{ inputs.publish-release && 'M³ for the Microsoft Store' || 'M³ test build for Windows (MSIX)' }}
+          path: dist/electron/Packaged/*.appx
+      - name: Surface a failed MSIX build
+        if: failure()
+        run: |
+          echo "::error::The MSIX job failed - see its log. It doesn't fail the workflow (continue-on-error), so pull requests and the GitHub release aren't held up, but there's no MSIX for the Microsoft Store from this build."

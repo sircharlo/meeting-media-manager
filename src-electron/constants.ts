@@ -33,6 +33,10 @@ export const APP_STORE = detectAppStore();
 export const APP_ID = import.meta.env.APP_ID;
 export const APP_NAME = import.meta.env.APP_NAME;
 export const PRODUCT_NAME = import.meta.env.PRODUCT_NAME;
+// The Microsoft Store build's package identity (see quasar.config.ts), set
+// in every build.
+export const MSIX_IDENTITY_NAME = import.meta.env.MSIX_IDENTITY_NAME;
+export const MSIX_PUBLISHER = import.meta.env.MSIX_PUBLISHER;
 
 // Sentry
 const getSentryEnvironment = () => {

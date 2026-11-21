@@ -1,5 +1,6 @@
 import { app } from 'electron';
 import { APP_STORE, IS_TEST, PRODUCT_NAME } from 'src-electron/constants';
+import { getPackageDataDir } from 'src-electron/main/msix';
 import { join, resolve } from 'upath';
 
 /**
@@ -11,9 +12,15 @@ import { join, resolve } from 'upath';
  *   and keeps the last few, so the media cache in it would be copied, and
  *   kept several times over, with each update. $SNAP_USER_COMMON is shared
  *   by all revisions;
+ * - the Microsoft Store build keeps userData in its package's own data
+ *   folder, where Windows would put what it writes to AppData anyway
+ *   (LocalCache\Roaming): Windows virtualizes AppData for a packaged app, so
+ *   a folder M³ opened there in File Explorer would look empty;
  * - a test build keeps its own userData, apart from the release's.
  */
 export function configureAppDataPaths() {
+  const packageDataDir =
+    APP_STORE === 'microsoft-store' ? getPackageDataDir() : undefined;
   if (process.env.PORTABLE_EXECUTABLE_DIR) {
     const portableExecutableDir = resolve(process.env.PORTABLE_EXECUTABLE_DIR);
     app.setPath('appData', portableExecutableDir);
@@ -27,6 +34,11 @@ export function configureAppDataPaths() {
     );
   } else if (APP_STORE === 'snap-store' && process.env.SNAP_USER_COMMON) {
     app.setPath('userData', join(process.env.SNAP_USER_COMMON, PRODUCT_NAME));
+  } else if (packageDataDir) {
+    app.setPath(
+      'userData',
+      join(packageDataDir, 'LocalCache', 'Roaming', PRODUCT_NAME),
+    );
   } else if (IS_TEST && PRODUCT_NAME) {
     app.setPath('userData', join(app.getPath('appData'), PRODUCT_NAME));
   }

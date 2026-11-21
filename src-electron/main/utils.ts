@@ -5,6 +5,7 @@ import { version } from 'app/package.json';
 import { app } from 'electron';
 import { fileURLToPath } from 'node:url';
 import {
+  APP_STORE,
   IS_DEV,
   JW_DOMAINS,
   NAVIGABLE_TRUSTED_DOMAINS,
@@ -168,10 +169,13 @@ export function isJwDomain(url: string): boolean {
 }
 
 /**
- * Checks if the current installation is machine-wide
+ * Checks if the current installation is machine-wide. Never a store build:
+ * a store installs M³ for each user, even when its files are in Program
+ * Files (the Microsoft Store's WindowsApps) or /Applications.
  * @returns Whether the installation is machine-wide
  */
 export function isMachineWideInstallation(): boolean {
+  if (APP_STORE) return false;
   const exe = app.getPath('exe');
   if (PLATFORM === 'win32') {
     return (
