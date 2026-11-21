@@ -352,11 +352,12 @@ handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin: boolean) => {
   }
   setStartupTaskEnabled(openAtLogin)
     .then((state) => {
+      const askedState = openAtLogin ? 'Enabled' : 'Disabled';
       logToWindow(
         mainWindowInfo.mainWindow,
-        `[Startup task] ${openAtLogin ? 'Turned on' : 'Turned off'}: now ${state}`,
+        `[Startup task] Turned ${openAtLogin ? 'on' : 'off'}: now ${state}`,
         {},
-        state === (openAtLogin ? 'Enabled' : 'Disabled') ? 'info' : 'warn',
+        state === askedState ? 'info' : 'warn',
       );
     })
     .catch((error: unknown) => {

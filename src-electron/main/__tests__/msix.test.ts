@@ -70,6 +70,12 @@ describe('getPackageDataDir', () => {
 describe('setStartupTaskEnabled', () => {
   beforeEach(() => {
     execFileMock.mockReset();
+    vi.stubEnv('SystemRoot', String.raw`C:\Windows`);
+    vi.stubEnv('windir', String.raw`C:\Windows`);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it('asks Windows PowerShell to turn the startup task on', async () => {
@@ -78,7 +84,7 @@ describe('setStartupTaskEnabled', () => {
     await expect(setStartupTaskEnabled(true)).resolves.toBe('Enabled');
 
     expect(execFileMock).toHaveBeenCalledWith(
-      'powershell.exe',
+      'C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe',
       ['-NoProfile', '-NonInteractive', '-EncodedCommand', expect.any(String)],
       { timeout: 30_000, windowsHide: true },
       expect.any(Function),
@@ -87,6 +93,16 @@ describe('setStartupTaskEnabled', () => {
     expect(script).toContain("GetAsync('M3Startup')");
     expect(script).toContain('RequestEnableAsync()');
     expect(script).not.toContain('Disable()');
+  });
+
+  it('falls back to its bare name without SystemRoot or windir', async () => {
+    vi.stubEnv('SystemRoot', '');
+    vi.stubEnv('windir', '');
+    answerWith(null, 'Enabled\r\n');
+
+    await setStartupTaskEnabled(true);
+
+    expect(execFileMock.mock.calls[0]?.[0]).toBe('powershell.exe');
   });
 
   it('turns it off', async () => {

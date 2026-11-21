@@ -83,6 +83,23 @@ const getStartupTaskScript = (enable: boolean) =>
   ].join('\n');
 
 /**
+ * Windows PowerShell, by its full path in System32: by bare name, it would be
+ * whatever PATH finds first.
+ * @returns The path, or the bare name without SystemRoot or windir.
+ */
+const getPowerShellPath = () => {
+  const windowsDir = process.env.SystemRoot || process.env.windir;
+  if (!windowsDir) return 'powershell.exe';
+  return join(
+    windowsDir,
+    'System32',
+    'WindowsPowerShell',
+    'v1.0',
+    'powershell.exe',
+  );
+};
+
+/**
  * Turns the Microsoft Store build's startup task, its "Start at login", on or
  * off. Windows PowerShell runs as M³'s child process, so with its package
  * identity, which the StartupTask API needs.
@@ -93,7 +110,7 @@ const getStartupTaskScript = (enable: boolean) =>
 export const setStartupTaskEnabled = (enable: boolean) =>
   new Promise<string>((resolve, reject) => {
     execFile(
-      'powershell.exe',
+      getPowerShellPath(),
       [
         '-NoProfile',
         '-NonInteractive',
