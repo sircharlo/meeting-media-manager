@@ -13,6 +13,7 @@ import {
 } from 'electron';
 import {
   APP_ID,
+  APP_STORE,
   IS_DEV,
   IS_TEST,
   PLATFORM,
@@ -453,7 +454,9 @@ if (gotTheLock) {
   });
 
   if (PLATFORM === 'win32') {
-    app.setAppUserModelId(`${APP_ID}`);
+    // Not in the Microsoft Store build: Windows gives a packaged app its own
+    // ID, which its Start menu entry and taskbar pin go by.
+    if (APP_STORE !== 'microsoft-store') app.setAppUserModelId(`${APP_ID}`);
   } else if (PLATFORM === 'linux') {
     app.commandLine.appendSwitch('gtk-version', '3'); // Force GTK 3 on Linux (Workaround for https://github.com/electron/electron/issues/46538)
   }

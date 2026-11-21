@@ -29,7 +29,7 @@ import {
   shell,
   systemPreferences,
 } from 'electron';
-import { PLATFORM } from 'src-electron/constants';
+import { APP_STORE, PLATFORM } from 'src-electron/constants';
 import { updateDevMenuState } from 'src-electron/main/dev-menu';
 import {
   getLowDiskSpaceStatus,
@@ -64,6 +64,7 @@ import {
   watchFolder,
 } from 'src-electron/main/fs';
 import { convertHeic } from 'src-electron/main/heic';
+import { setStartupTaskEnabled } from 'src-electron/main/msix';
 import { openFolder } from 'src-electron/main/open-folder';
 import { exportHtmlToPdf } from 'src-electron/main/pdf';
 import {
@@ -343,7 +344,26 @@ handleIpcSend('authorizedClose', () => {
 });
 
 handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin: boolean) => {
-  app.setLoginItemSettings({ openAtLogin });
+  // The Microsoft Store build's Run registry key would be virtualized, so
+  // Windows would never see it: it has a startup task instead.
+  if (APP_STORE !== 'microsoft-store') {
+    app.setLoginItemSettings({ openAtLogin });
+    return;
+  }
+  setStartupTaskEnabled(openAtLogin)
+    .then((state) => {
+      logToWindow(
+        mainWindowInfo.mainWindow,
+        `[Startup task] ${openAtLogin ? 'Turned on' : 'Turned off'}: now ${state}`,
+        {},
+        state === (openAtLogin ? 'Enabled' : 'Disabled') ? 'info' : 'warn',
+      );
+    })
+    .catch((error: unknown) => {
+      captureElectronError(error, {
+        contexts: { fn: { name: 'setStartupTaskEnabled', openAtLogin } },
+      });
+    });
 });
 
 handleIpcSend(

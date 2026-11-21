@@ -17,6 +17,15 @@ vi.mock('electron', () => ({
 
 vi.mock('src-electron/constants', () => constants);
 
+const getPackageDataDirMock = vi.fn<() => string | undefined>();
+
+vi.mock('src-electron/main/msix', () => ({
+  getPackageDataDir: getPackageDataDirMock,
+}));
+
+const PACKAGE_DATA_DIR =
+  'C:/Users/user/AppData/Local/Packages/sircharlo.MeetingMediaManager_8j3eq9eme6ctt';
+
 const { configureAppDataPaths } = await import('../app-data-paths');
 
 describe('configureAppDataPaths', () => {
@@ -27,6 +36,7 @@ describe('configureAppDataPaths', () => {
     constants.PRODUCT_NAME = 'Meeting Media Manager';
     vi.stubEnv('PORTABLE_EXECUTABLE_DIR', '');
     vi.stubEnv('SNAP_USER_COMMON', '');
+    getPackageDataDirMock.mockReset().mockReturnValue(PACKAGE_DATA_DIR);
   });
 
   afterEach(() => {
@@ -95,6 +105,50 @@ describe('configureAppDataPaths', () => {
     configureAppDataPaths();
 
     expect(setPathMock).not.toHaveBeenCalled();
+  });
+
+  it("keeps the Microsoft Store build's data in its package's own folder", () => {
+    constants.APP_STORE = 'microsoft-store';
+
+    configureAppDataPaths();
+
+    expect(setPathMock.mock.calls).toEqual([
+      [
+        'userData',
+        `${PACKAGE_DATA_DIR}/LocalCache/Roaming/Meeting Media Manager`,
+      ],
+    ]);
+  });
+
+  it('keeps a test MSIX’s data apart from the release’s', () => {
+    constants.APP_STORE = 'microsoft-store';
+    constants.IS_TEST = true;
+    constants.PRODUCT_NAME = 'Meeting Media Manager - Test';
+    getPackageDataDirMock.mockReturnValue(`${PACKAGE_DATA_DIR}.Test`);
+
+    configureAppDataPaths();
+
+    expect(setPathMock.mock.calls).toEqual([
+      [
+        'userData',
+        `${PACKAGE_DATA_DIR}.Test/LocalCache/Roaming/Meeting Media Manager - Test`,
+      ],
+    ]);
+  });
+
+  it('leaves a Microsoft Store build without LOCALAPPDATA to the defaults', () => {
+    constants.APP_STORE = 'microsoft-store';
+    getPackageDataDirMock.mockReturnValue(undefined);
+
+    configureAppDataPaths();
+
+    expect(setPathMock).not.toHaveBeenCalled();
+  });
+
+  it("doesn't look for a package's folder outside the Microsoft Store build", () => {
+    configureAppDataPaths();
+
+    expect(getPackageDataDirMock).not.toHaveBeenCalled();
   });
 
   it("gives a test build its own userData, apart from the release's", () => {

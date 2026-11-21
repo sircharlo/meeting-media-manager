@@ -83,6 +83,7 @@ docs/src/public/icons/*.png
 docs/src/public/favicon.ico
 src-electron/electron-assets/icons/*
 !src-electron/electron-assets/icons/.gitkeep
+src-electron/appx/
 
 # Custom dep helper script
 depChecker.js

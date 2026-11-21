@@ -20,6 +20,9 @@ async function generateFromProfile(profilePath) {
       case 'png':
         await generatePng(sourceBuffer, asset);
         break;
+      case 'tiles':
+        await generateTiles(sourceBuffer, asset);
+        break;
       default:
         throw new Error(`Unknown icon generator: ${asset.generator}`);
     }
@@ -44,6 +47,32 @@ async function generatePng(sourceBuffer, asset) {
       .png()
       .toBuffer();
     await writeFile(join(asset.folder, name), buffer);
+  }
+}
+
+/**
+ * Images of any width and height, with the icon centered on a transparent
+ * background, at `logo` times the image's smaller side (the MSIX's tiles).
+ */
+async function generateTiles(sourceBuffer, asset) {
+  for (const tile of asset.tiles) {
+    const logoSize = Math.round(Math.min(tile.width, tile.height) * tile.logo);
+    const logo = await sharp(sourceBuffer)
+      .resize(logoSize, logoSize, { fit: 'contain' })
+      .png()
+      .toBuffer();
+    const buffer = await sharp({
+      create: {
+        background: { alpha: 0, b: 0, g: 0, r: 0 },
+        channels: 4,
+        height: tile.height,
+        width: tile.width,
+      },
+    })
+      .composite([{ gravity: 'center', input: logo }])
+      .png()
+      .toBuffer();
+    await writeFile(join(asset.folder, tile.name), buffer);
   }
 }
 
