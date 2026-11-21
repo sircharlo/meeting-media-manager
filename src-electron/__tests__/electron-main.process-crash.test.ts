@@ -75,6 +75,7 @@ vi.mock('electron', () => ({
 
 vi.mock('src-electron/constants', () => ({
   APP_ID: 'test.app',
+  APP_STORE: null,
   IS_DEMO_MODE: true,
   IS_DEV: false,
   IS_TEST: false,

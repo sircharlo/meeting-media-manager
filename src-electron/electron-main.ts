@@ -16,10 +16,10 @@ import {
   IS_DEV,
   IS_TEST,
   PLATFORM,
-  PRODUCT_NAME,
   SENTRY_DSN,
   SENTRY_ENVIRONMENT,
 } from 'src-electron/constants';
+import { configureAppDataPaths } from 'src-electron/main/app-data-paths';
 import {
   markCleanExit,
   recordStartupCrashCount,
@@ -63,7 +63,7 @@ import {
 import 'src-electron/main/ipc';
 import 'src-electron/main/security';
 import { log, scrubUserPathsDeep } from 'src/shared/vanilla';
-import { join, resolve } from 'upath';
+import { join } from 'upath';
 
 import { registerQuasarRuntime } from '#q-app/electron/main';
 
@@ -199,23 +199,6 @@ async function captureGpuCrash(
     extra: { ...details, gpuInfo: basicGpuInfo },
     tags: { reason: details.reason, type },
   });
-}
-
-function configureAppDataPaths() {
-  if (process.env.PORTABLE_EXECUTABLE_DIR) {
-    const portableExecutableDir = resolve(process.env.PORTABLE_EXECUTABLE_DIR);
-    app.setPath('appData', portableExecutableDir);
-    app.setPath(
-      'userData',
-      join(portableExecutableDir, `${PRODUCT_NAME} - User Data`),
-    );
-    app.setPath(
-      'temp',
-      join(portableExecutableDir, `${PRODUCT_NAME} - Temporary Files`),
-    );
-  } else if (IS_TEST && PRODUCT_NAME) {
-    app.setPath('userData', join(app.getPath('appData'), PRODUCT_NAME));
-  }
 }
 
 function configureChromiumGpuDiagnostics() {
