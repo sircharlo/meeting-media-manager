@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The Microsoft Store build's package manifest (appx.customManifestPath in
+  quasar.config.ts): electron-builder's template
+  (app-builder-lib/templates/appx/appxmanifest.xml), which fills in each
+  dollar-and-braces macro, with a startup task in place of the macro for its
+  own extensions. Those (protocols, file associations, electron-builder's
+  always-on startup task) are none M³ uses, and a second Extensions element
+  would make the manifest invalid.
+-->
+<!--suppress XmlUnusedNamespaceDeclaration -->
+<Package
+   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
+  <Identity Name="${identityName}"
+    ProcessorArchitecture="${arch}"
+    Publisher="${publisher}"
+    Version="${version}" />
+  <Properties>
+    <DisplayName>${displayName}</DisplayName>
+    <PublisherDisplayName>${publisherDisplayName}</PublisherDisplayName>
+    <Description>${description}</Description>
+    <Logo>${logo}</Logo>
+  </Properties>
+  <Resources>
+    ${resourceLanguages}
+  </Resources>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="${minVersion}" MaxVersionTested="${maxVersionTested}" />
+  </Dependencies>
+  ${capabilities}
+  <Applications>
+    <Application Id="${applicationId}" Executable="${executable}" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+       BackgroundColor="${backgroundColor}"
+       DisplayName="${displayName}"
+       Square150x150Logo="${square150x150Logo}"
+       Square44x44Logo="${square44x44Logo}"
+       Description="${description}">
+        ${lockScreen}
+        ${defaultTile}
+        ${splashScreen}
+      </uap:VisualElements>
+      <Extensions>
+        <!--
+          M³'s "Start at login" setting. A packaged app's own Run registry
+          key is virtualized, so Windows never sees it: this task replaces
+          it. Off until it's turned on, from M³ (src-electron/main/msix.ts)
+          or from Windows' startup apps settings, which list it.
+        -->
+        <desktop:Extension Category="windows.startupTask" Executable="${executable}" EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask TaskId="M3Startup" Enabled="false" DisplayName="${displayName}" />
+        </desktop:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+</Package>

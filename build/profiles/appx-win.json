@@ -1,0 +1,145 @@
+{
+  "params": {
+    "icon": "build/logos/icon-512-Windows.png"
+  },
+  "assets": [
+    {
+      "generator": "tiles",
+      "folder": "src-electron/appx",
+      "tiles": [
+        {
+          "name": "StoreLogo.scale-100.png",
+          "width": 50,
+          "height": 50,
+          "logo": 1
+        },
+        {
+          "name": "StoreLogo.scale-200.png",
+          "width": 100,
+          "height": 100,
+          "logo": 1
+        },
+        {
+          "name": "Square44x44Logo.scale-100.png",
+          "width": 44,
+          "height": 44,
+          "logo": 1
+        },
+        {
+          "name": "Square44x44Logo.scale-200.png",
+          "width": 88,
+          "height": 88,
+          "logo": 1
+        },
+        {
+          "name": "Square44x44Logo.targetsize-16.png",
+          "width": 16,
+          "height": 16,
+          "logo": 1
+        },
+        {
+          "name": "Square44x44Logo.targetsize-24.png",
+          "width": 24,
+          "height": 24,
+          "logo": 1
+        },
+        {
+          "name": "Square44x44Logo.targetsize-32.png",
+          "width": 32,
+          "height": 32,
+          "logo": 1
+        },
+        {
+          "name": "Square44x44Logo.targetsize-48.png",
+          "width": 48,
+          "height": 48,
+          "logo": 1
+        },
+        {
+          "name": "Square44x44Logo.targetsize-256.png",
+          "width": 256,
+          "height": 256,
+          "logo": 1
+        },
+        {
+          "name": "Square44x44Logo.altform-unplated_targetsize-16.png",
+          "width": 16,
+          "height": 16,
+          "logo": 1
+        },
+        {
+          "name": "Square44x44Logo.altform-unplated_targetsize-24.png",
+          "width": 24,
+          "height": 24,
+          "logo": 1
+        },
+        {
+          "name": "Square44x44Logo.altform-unplated_targetsize-32.png",
+          "width": 32,
+          "height": 32,
+          "logo": 1
+        },
+        {
+          "name": "Square44x44Logo.altform-unplated_targetsize-48.png",
+          "width": 48,
+          "height": 48,
+          "logo": 1
+        },
+        {
+          "name": "Square44x44Logo.altform-unplated_targetsize-256.png",
+          "width": 256,
+          "height": 256,
+          "logo": 1
+        },
+        {
+          "name": "SmallTile.scale-100.png",
+          "width": 71,
+          "height": 71,
+          "logo": 0.7
+        },
+        {
+          "name": "SmallTile.scale-200.png",
+          "width": 142,
+          "height": 142,
+          "logo": 0.7
+        },
+        {
+          "name": "Square150x150Logo.scale-100.png",
+          "width": 150,
+          "height": 150,
+          "logo": 0.6
+        },
+        {
+          "name": "Square150x150Logo.scale-200.png",
+          "width": 300,
+          "height": 300,
+          "logo": 0.6
+        },
+        {
+          "name": "Wide310x150Logo.scale-100.png",
+          "width": 310,
+          "height": 150,
+          "logo": 0.6
+        },
+        {
+          "name": "Wide310x150Logo.scale-200.png",
+          "width": 620,
+          "height": 300,
+          "logo": 0.6
+        },
+        {
+          "name": "LargeTile.scale-100.png",
+          "width": 310,
+          "height": 310,
+          "logo": 0.5
+        },
+        {
+          "name": "LargeTile.scale-200.png",
+          "width": 620,
+          "height": 620,
+          "logo": 0.5
+        }
+      ]
+    }
+  ]
+}

@@ -19,11 +19,22 @@ const IS_TEST = process.env.TEST_VERSION === 'true';
 // The Snap Store build (the snap job in .github/workflows/build.yml): a snap
 // instead of the AppImage.
 const IS_SNAP = process.env.M3_SNAP === 'true';
+// The Microsoft Store build (the msix job in .github/workflows/build.yml): an
+// MSIX package instead of the installer and the portable build.
+const IS_MSIX = process.env.M3_MSIX === 'true';
 
 // App
 const APP_NAME = `${name}${IS_TEST ? '-test' : ''}`;
 const PRODUCT_NAME = `${productName}${IS_TEST ? ' - Test' : ''}`;
 const APP_ID = `sircharlo.${APP_NAME}`;
+
+// M³'s package identity in the Microsoft Store, from the product's Product
+// identity page in Partner Center (Store ID 9PDC5BZ593BM). Public: every
+// installed package shows it. A test build gets its own name, so it installs
+// next to the Store's.
+const MSIX_IDENTITY_NAME = `CharlesOlivierSavignac.MeetingMediaManager${IS_TEST ? '.Test' : ''}`;
+const MSIX_PUBLISHER = 'CN=EA85FE0C-CB16-4547-83BB-237BB2238CA4';
+const MSIX_PUBLISHER_DISPLAY_NAME = 'Charles Olivier Savignac';
 
 // Sentry
 const SENTRY_ORG = 'jw-projects';
@@ -91,6 +102,8 @@ export default defineConfig((ctx) => {
         IS_BETA,
         IS_DEV,
         IS_TEST,
+        MSIX_IDENTITY_NAME,
+        MSIX_PUBLISHER,
         PRODUCT_NAME,
         repository: repoURL,
         SENTRY_DSN,
@@ -159,6 +172,30 @@ export default defineConfig((ctx) => {
     electron: {
       builder: {
         appId: APP_ID,
+        // The MSIX (M3_MSIX=true, see IS_MSIX) for the Microsoft Store, which
+        // signs it. A desktop app's full trust (runFullTrust), as always.
+        appx: {
+          applicationId: 'MeetingMediaManager',
+          // The tiles' background: none, so the icon keeps its own shape.
+          backgroundColor: 'transparent',
+          // A sign-language congregation's camera feed: a packaged app only
+          // gets the camera if it declares it.
+          capabilities: ['webcam'],
+          // electron-builder's manifest, plus the startup task that "Start
+          // at login" turns on (see the file). An absolute path, like the
+          // extraResources below.
+          customManifestPath: fileURLToPath(
+            new URL('./build/appxmanifest.xml', import.meta.url),
+          ),
+          displayName: PRODUCT_NAME,
+          identityName: MSIX_IDENTITY_NAME,
+          // Windows 10 1809, the oldest version Microsoft still supports
+          // (LTSC 2019), and Windows 11 24H2.
+          maxVersionTested: '10.0.26100.0',
+          minVersion: '10.0.17763.0',
+          publisher: MSIX_PUBLISHER,
+          publisherDisplayName: MSIX_PUBLISHER_DISPLAY_NAME,
+        },
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: APP_NAME + '-${version}-${arch}.${ext}',
         // FFmpeg, for media conversions, with its license and where its
@@ -291,7 +328,11 @@ export default defineConfig((ctx) => {
             },
           ],
           icon: getIconPath('ico'),
-          target: [{ arch: 'x64', target: 'nsis' }, 'portable'],
+          // The MSIX's tiles come from src-electron/appx, which
+          // `yarn generate:logos` fills (build/profiles/appx-win.json).
+          target: IS_MSIX
+            ? [{ arch: 'x64', target: 'appx' }]
+            : [{ arch: 'x64', target: 'nsis' }, 'portable'],
         },
       },
       bundler: 'builder', // 'packager' or 'builder'
