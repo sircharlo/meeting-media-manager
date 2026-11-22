@@ -360,6 +360,8 @@ Igen! Az M³-at a biztonságot és az adatvédelmet szem előtt tartva tervezté
 - **Nyílt forráskód**: A kód nyílt, így ellenőrizhető és megtekinthető
 - **Hibabejelentések**: A hibabejelentések céljából korlátozott mennyiségű adat gyűjthető
 
+A részletekért olvassa el az M³ [adatvédelmi szabályzatát](privacy).
+
 ### :arrows_clockwise: Milyen gyakran ellenőrzi az M³ a frissítéseket? {#update-frequency}
 
 Az M³ frissítéseket keres:
