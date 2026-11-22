@@ -360,6 +360,8 @@ Da! M³ je zasnovan z mislijo na varnost in zasebnost:
 - **Odprta koda**: izvorna koda je na voljo za pregled in preverjanje
 - **Poročila o napakah**: za namen poročanja o napakah se lahko zbere omejena količina podatkov
 
+Za podrobnosti preberi [pravilnik o zasebnosti](privacy) M³.
+
 ### :arrows_clockwise: Kako pogosto M³ preverja posodobitve? {#update-frequency}
 
 M³ preverja posodobitve na naslednje načine:
