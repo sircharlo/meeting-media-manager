@@ -360,6 +360,8 @@ El uso normal varía entre 2 y 10 GB según la configuración y el uso.
 - **Código abierto**: El código está disponible para revisarlo y verificarlo
 - **Reportes de errores**: Puede recopilarse una cantidad limitada de datos para reportar errores
 
+Para más detalles, lee la [política de privacidad](privacy) de M³.
+
 ### :arrows_clockwise: ¿Con qué frecuencia busca actualizaciones M³? {#update-frequency}
 
 M³ busca actualizaciones de esta manera:

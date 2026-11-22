@@ -360,6 +360,8 @@ Ja! M³ wurde mit Blick auf Sicherheit und Privatsphäre entwickelt:
 - **Open Source**: Der Code ist offen für Überprüfung und Verifizierung
 - **Fehlerberichte**: Für Fehlerberichterstattungszwecke können begrenzte Daten gesammelt werden
 
+Einzelheiten dazu finden Sie in der [Datenschutzerklärung](privacy) von M³.
+
 ### :arrows_clockwise: Wie oft sucht M³ nach Updates? {#update-frequency}
 
 M³ sucht nach Updates:

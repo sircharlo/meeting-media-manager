@@ -360,6 +360,8 @@ Jah! M³ on loodud turvalisust ja privaatsust silmas pidades:
 - **Avatud lähtekood**: Kood on avatud läbivaatamiseks ja kontrollimiseks
 - **Veateated**: Veateadete esitamiseks võidakse koguda piiratud hulgal andmeid
 
+Üksikasju loe M³ [privaatsuspoliitikast](privacy).
+
 ### :arrows_clockwise: Kui tihti kontrollib M³ uuendusi? {#update-frequency}
 
 M³ kontrollib uuendusi:
