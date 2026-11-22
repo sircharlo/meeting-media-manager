@@ -360,6 +360,8 @@ Sì! M³ è progettato pensando alla sicurezza e alla privacy:
 - **Open source**: il codice è aperto alla revisione e alla verifica
 - **Segnalazioni di bug**: potrebbero essere raccolti dati limitati a scopo di segnalazione dei bug
 
+Per i dettagli, leggi l'[informativa sulla privacy](privacy) di M³.
+
 ### :arrows_clockwise: Ogni quanto M³ controlla gli aggiornamenti? {#update-frequency}
 
 M³ controlla gli aggiornamenti:
