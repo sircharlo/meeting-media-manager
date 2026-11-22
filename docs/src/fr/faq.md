@@ -360,6 +360,8 @@ Oui ! M³ est conçu en tenant compte de la sécurité et de la confidentialité
 - **Code source ouvert** : Le code est ouvert pour examen et vérification
 - **Rapports de bogues** : Peu de données peuvent être collectées à des fins de dépannage
 
+Pour plus de détails, lisez la [politique de confidentialité](privacy) de M³.
+
 ### :arrows_clockwise: À quelle fréquence M³ vérifie-t-il les mises à jour ? {#update-frequency}
 
 M³ vérifie les mises à jour :

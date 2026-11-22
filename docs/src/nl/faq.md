@@ -360,6 +360,8 @@ Ja! M³ is ontworpen met beveiliging en privacy in gedachten:
 - **Open Source**: De code is open voor inspectie en verificatie
 - **Bugreports**: Er kunnen beperkte gegevens worden verzameld voor het rapporteren van bugs
 
+Lees voor de details het [privacybeleid](privacy) van M³.
+
 ### :arrows_clockwise: Hoe vaak controleert M³ op updates? {#update-frequency}
 
 M³ controleert op updates:

@@ -360,6 +360,8 @@ Te fa’a’ohipara’a matauhia e vai noa ïa i rotopū i te 2 e te 10GB, ia au
 - **Puna Matara**: E matara te reni porotarama nō te hi’opo’ara’a e te ha’apāpūra’a
 - **Te mau parau nō te hapa**: E nehenehe te tahi mau ha’amāramaramara’a iti e ha’aputu-maitai-hia nō te fa’a’ite-ra’a i te mau hapa
 
+Nō te mau ha’amāramaramara’a hu’ahu’a, ’a tai’o i te [fa’aturera’a a M³ nō te mau ha’amāramaramara’a nō ni’a iā ’oe](privacy).
+
 ### :arrows_clockwise: Ehia te taime i te M³ a hi’opo’a ai i te mau ha’amaita’ira’a? {#update-frequency}
 
 E hi’opo’a te M³ i te mau ha’amaita’ira’a:
