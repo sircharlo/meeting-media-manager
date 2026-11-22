@@ -1,7 +1,7 @@
 import { createSentryPiniaPlugin } from '@sentry/vue';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
-import { log } from 'src/shared/vanilla';
+import { redactStateForSentry } from 'src/stores/sentry-state';
 
 import { defineStore } from '#q-app';
 
@@ -67,67 +67,10 @@ export default defineStore(() => {
   pinia.use(
     createSentryPiniaPlugin({
       actionTransformer: piniaBreadcrumbActionTransformer,
+      // Only leaves out the state as an attachment: the plugin still adds it
+      // to every report, as its "state" context, hence the redaction.
       attachPiniaState: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      stateTransformer: (state: Record<string, any>) => {
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const jwStore: Record<string, any> = state['jw-store'] || {};
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const congregationSettings: Record<string, any> =
-            state['congregation-settings'] || {};
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const congregations: Record<string, any> =
-            congregationSettings.congregations || {};
-
-          // Transform the state to remove unneeded/sensitive information
-          return {
-            ...state,
-            'congregation-settings': {
-              ...congregationSettings,
-              congregations: Object.fromEntries(
-                Object.entries(congregations).map(([id, settings]) => [
-                  id,
-                  {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    ...(settings as Record<string, any>),
-                    obsPassword: (settings as { obsPassword?: string })
-                      ?.obsPassword
-                      ? 'REDACTED'
-                      : null,
-                  },
-                ]),
-              ),
-            },
-            'jw-store': {
-              ...jwStore,
-              jwBibleFiles:
-                'FILTERED (length: ' +
-                Object.keys(jwStore.jwBibleFiles || {}).length +
-                ')',
-              jwLanguages:
-                'FILTERED (length: ' +
-                (jwStore.jwLanguages?.list?.length || 0) +
-                ')',
-              jwMepsLanguages:
-                'FILTERED (length: ' +
-                (jwStore.jwMepsLanguages?.list?.length || 0) +
-                ')',
-              jwSongs:
-                'FILTERED (length: ' +
-                (Object.keys(jwStore.jwSongs || {}).length || 0) +
-                ')',
-              yeartexts:
-                'FILTERED (length: ' +
-                (Object.keys(jwStore.yeartexts || {}).length || 0) +
-                ')',
-            },
-          };
-        } catch (error) {
-          log(error, 'stores', 'error');
-          return state;
-        }
-      },
+      stateTransformer: redactStateForSentry,
     }),
   );
 

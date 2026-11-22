@@ -53,6 +53,11 @@ export default defineBoot(({ app, router }) => {
         });
         return scrubbedEvent;
       },
+      // The SDK's defaults have Sentry record the user's IP address, and
+      // the requests' cookies and bodies: none of these, like the main
+      // process (src-electron/electron-main.ts). See the privacy policy
+      // (docs/src/en/privacy.md).
+      dataCollection: { cookies: false, httpBodies: [], userInfo: false },
       dsn,
       environment,
       integrations: [

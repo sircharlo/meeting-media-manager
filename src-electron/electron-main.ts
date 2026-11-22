@@ -142,9 +142,11 @@ if (SENTRY_DSN) {
     },
     // @sentry/electron v8 replaced sendDefaultPii with dataCollection, whose
     // defaults now have Sentry record the user's IP address on events,
-    // sessions and native crash reports. Keep the v7 behavior of not
-    // collecting it.
-    dataCollection: { userInfo: false },
+    // sessions and native crash reports, and the requests' cookies and
+    // bodies (M³'s downloads, the timer remote's web server). Keep the v7
+    // behavior of collecting none of these, like the renderer
+    // (src/boot/sentry.ts). See the privacy policy (docs/src/en/privacy.md).
+    dataCollection: { cookies: false, httpBodies: [], userInfo: false },
     dsn: SENTRY_DSN,
     environment: SENTRY_ENVIRONMENT,
     release: sentryRelease,

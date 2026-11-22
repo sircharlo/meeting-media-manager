@@ -18,6 +18,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🛠️ **Zoom Meeting Manager**: When a failed check has paused the Zoom automations, M³ now says so each time it doesn't share media in Zoom at meeting time, instead of skipping it silently, with a **Test again** button to check Zoom again.
 - 🛠️ **Damaged Media Files**: When a video can't be opened at all, most often because it was only partly downloaded or copied, M³ now says so, naming the file, so there's time to get it again before the meeting. Before, its thumbnail just stayed blank and an error report was sent instead.
 - 🛠️ **Meeting Checklists and the Zoom Meeting Manager**: Marking a checklist task as done when the Zoom Meeting Manager will do it for you now asks first, and says when M³ does it: when background music stops before the meeting, or when you start background music after it. Marking a task M³ already did in Zoom as not done also asks first, since that changes nothing in Zoom.
+- 🛠️ **Privacy**: The error reports M³ sends its developers no longer include your IP address, your congregation's name, its Zoom meeting ID, the names of Zoom participants, the settings PIN, or the names of the folders and files you use. A new [privacy policy](https://sircharlo.github.io/meeting-media-manager/privacy) on M³'s website explains what M³ sends, and what it leaves out.
 
 ### 🐞 Bug Fixes
 
