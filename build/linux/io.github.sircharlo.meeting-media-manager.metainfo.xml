@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  M³'s AppStream metadata, for Flathub (and any Linux software center that
+  reads it). The Flatpak build installs it as
+  /app/share/metainfo/io.github.sircharlo.meeting-media-manager.metainfo.xml.
+  Each release needs its release entry, newest first. Check the file with
+  the appstream check of flatpak-builder-lint, which Flathub runs on it too
+  (in the org.flatpak.Builder app).
+-->
+<component type="desktop-application">
+  <id>io.github.sircharlo.meeting-media-manager</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>AGPL-3.0-or-later</project_license>
+
+  <name>Meeting Media Manager</name>
+  <summary>Download and present meeting media</summary>
+  <developer id="io.github.sircharlo">
+    <name>sircharlo</name>
+  </developer>
+
+  <description>
+    <p>
+      Meeting Media Manager (M³) automatically downloads the pictures, videos and audio files for the congregation meetings of Jehovah’s Witnesses, in any language available on the official website of Jehovah’s Witnesses, and helps present them on a second screen.
+    </p>
+    <ul>
+      <li>Downloads, organizes and keeps meeting media up to date</li>
+      <li>Play, pause and stop buttons, thumbnails with zoom and pan, and custom start and end times</li>
+      <li>Background music that stops by itself before the meeting starts</li>
+      <li>Finds and manages external monitors for the media window</li>
+      <li>Screen sharing in Zoom and scene switching in OBS Studio for hybrid meetings</li>
+      <li>Adds media from JWPUB and JWLPLAYLIST files, or from the official website, in a few clicks</li>
+      <li>Several congregations or groups in one app, with its interface in many languages</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">io.github.sircharlo.meeting-media-manager.desktop</launchable>
+
+  <url type="homepage">https://sircharlo.github.io/meeting-media-manager/</url>
+  <url type="help">https://sircharlo.github.io/meeting-media-manager/</url>
+  <url type="bugtracker">https://github.com/sircharlo/meeting-media-manager/issues</url>
+  <url type="vcs-browser">https://github.com/sircharlo/meeting-media-manager</url>
+  <url type="translate">https://crowdin.com/project/meeting-media-manager</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>A meeting’s media, ready to present</caption>
+      <image>https://raw.githubusercontent.com/sircharlo/meeting-media-manager/master/docs/src/assets/m3-preview.png</image>
+    </screenshot>
+  </screenshots>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#4786F5</color>
+    <color type="primary" scheme_preference="dark">#0F5CEC</color>
+  </branding>
+
+  <content_rating type="oars-1.1" />
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+  <recommends>
+    <display_length compare="ge">768</display_length>
+  </recommends>
+
+  <releases>
+    <release version="26.11.3" date="2026-11-15">
+      <url type="details">https://github.com/sircharlo/meeting-media-manager/releases/tag/v26.11.3</url>
+    </release>
+  </releases>
+</component>

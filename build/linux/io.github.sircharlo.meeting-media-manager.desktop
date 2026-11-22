@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Meeting Media Manager
+GenericName=Meeting Media
+Comment=Download and present meeting media
+Exec=meeting-media-manager
+Icon=io.github.sircharlo.meeting-media-manager
+Terminal=false
+Categories=AudioVideo;Video;
+Keywords=media;meeting;congregation;presentation;
+StartupWMClass=Meeting Media Manager

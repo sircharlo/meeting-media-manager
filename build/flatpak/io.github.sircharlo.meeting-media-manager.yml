@@ -1,0 +1,156 @@
+# M³'s Flatpak manifest. Flathub builds everything from source and offline:
+# the Node packages, Electron and its headers come from generated-sources.json
+# (flatpak-node-generator, from both yarn.lock files), and FFmpeg is built
+# here, with the encoder and filters M³ uses (x264, zimg's zscale, NVENC).
+# Flathub keeps its own copy of this file, pointing at a release tag.
+app-id: io.github.sircharlo.meeting-media-manager
+runtime: org.freedesktop.Platform
+runtime-version: '26.08'
+sdk: org.freedesktop.Sdk
+base: org.electronjs.Electron2.BaseApp
+base-version: '26.08'
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.node24
+command: meeting-media-manager
+separate-locales: false
+finish-args:
+  - --share=ipc
+  # X11, through XWayland on Wayland: robotjs' key presses to Zoom go through
+  # XTest.
+  - --socket=x11
+  - --socket=pulseaudio
+  # Downloads, OBS Studio's WebSocket, and the timer remote's web server.
+  - --share=network
+  # The GPU, and a sign-language congregation's camera feed.
+  - --device=all
+  # The folders M³ works in (its cache, the watched folder, exports) are
+  # chosen by the user, often on another disk, and watched for changes,
+  # which the document portal's folders can't be.
+  - --filesystem=home
+  - --filesystem=/media
+  - --filesystem=/run/media
+  - --filesystem=/mnt
+  # safeStorage, which encrypts the OBS password with the keyring.
+  - --talk-name=org.freedesktop.secrets
+  # Keeps the screen awake while a video plays.
+  - --talk-name=org.freedesktop.ScreenSaver
+cleanup:
+  - /include
+  - /lib/pkgconfig
+  - /share/doc
+  - /share/man
+  - '*.a'
+  - '*.la'
+modules:
+  - name: zimg
+    sources:
+      - type: git
+        url: https://github.com/sekrit-twc/zimg.git
+        tag: release-3.0.6
+        commit: f819b14e8f39d1282400b0d9543e8ef73c1b2bbd
+    config-opts:
+      - --disable-static
+
+  - name: x264
+    sources:
+      # The head of x264's stable branch (it has no release tags).
+      - type: git
+        url: https://code.videolan.org/videolan/x264.git
+        commit: b35605ace3ddf7c1a5d67a2eb553f034aef41d55
+    config-opts:
+      - --disable-cli
+      - --enable-pic
+      - --enable-shared
+
+  - name: nv-codec-headers
+    no-autogen: true
+    make-install-args:
+      - PREFIX=/app
+    sources:
+      - type: git
+        url: https://github.com/FFmpeg/nv-codec-headers.git
+        tag: n13.0.19.0
+        commit: e844e5b26f46bb77479f063029595293aa8f812d
+
+  # The same FFmpeg version as the other builds' (scripts/fetch-ffmpeg.mjs),
+  # under the GPL v3 like theirs. M³ only runs the ffmpeg command.
+  - name: ffmpeg
+    config-opts:
+      - --disable-debug
+      - --disable-doc
+      - --disable-ffplay
+      - --disable-ffprobe
+      - --enable-gpl
+      - --enable-libx264
+      - --enable-libzimg
+      - --enable-nvenc
+      - --enable-vaapi
+      - --enable-version3
+    cleanup:
+      - /bin/ffmpeg
+    sources:
+      - type: archive
+        url: https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz
+        sha256: 8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e
+
+  - name: meeting-media-manager
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/node24/bin
+      # GCC 15 compiles C as C23, where robotjs' src/xdisplay.c calling
+      # strdup() without <string.h> is an error: the same preinclude as the
+      # Linux build's in .github/workflows/build.yml.
+      cflags: -include string.h
+      env:
+        XDG_CACHE_HOME: /run/build/meeting-media-manager/flatpak-node/cache
+        ELECTRON_CACHE: /run/build/meeting-media-manager/flatpak-node/cache/electron
+        YARN_ENABLE_GLOBAL_CACHE: '0'
+        YARN_ENABLE_NETWORK: '0'
+        YARN_ENABLE_TELEMETRY: '0'
+        YARN_GLOBAL_FOLDER: /run/build/meeting-media-manager/flatpak-node/yarn-berry
+        # quasar.config.ts: the unpacked app instead of the AppImage.
+        M3_FLATPAK: 'true'
+        # scripts/fetch-ffmpeg.mjs: FFmpeg is the one built above.
+        M3_SKIP_FFMPEG_BUNDLE: '1'
+        SENTRYCLI_SKIP_DOWNLOAD: '1'
+    build-commands:
+      # The generated sources' Yarn plugin, which turns the downloaded
+      # packages into Yarn 4's offline cache. Its argument is a Yarn 1, for
+      # git dependencies: the Node SDK's, which runs M³'s own Yarn 4
+      # (yarnPath in .yarnrc.yml) everywhere else.
+      - yarn plugin import $FLATPAK_BUILDER_BUILDDIR/flatpak-node/flatpak-yarn.js
+      - yarn convertToZip $(which yarn)
+      - yarn install --immutable
+      - cd src-electron && yarn install --immutable
+      - install -Dm755 /app/bin/ffmpeg build/ffmpeg/bin/ffmpeg
+      - yarn generate:icons
+      - yarn generate:logos
+      # electron-builder rebuilds robotjs for the Electron it packages,
+      # src-electron's, with that version's headers from the generated
+      # sources: @electron/rebuild gives node-gyp a headers folder of its own
+      # (~/.electron-gyp), and nodedir takes precedence over it.
+      - >-
+        npm_config_nodedir="$FLATPAK_BUILDER_BUILDDIR/flatpak-node/cache/node-gyp/$(node -p "require('./src-electron/node_modules/electron/package.json').version")"
+        yarn build --publish=never
+      - cp -a dist/electron/Packaged/linux-unpacked /app/main
+      - install -Dm755 meeting-media-manager.sh /app/bin/meeting-media-manager
+      - install -Dm644 build/linux/${FLATPAK_ID}.desktop /app/share/applications/${FLATPAK_ID}.desktop
+      - install -Dm644 build/linux/${FLATPAK_ID}.metainfo.xml /app/share/metainfo/${FLATPAK_ID}.metainfo.xml
+      - install -Dm644 src/assets/img/logo.svg /app/share/icons/hicolor/scalable/apps/${FLATPAK_ID}.svg
+    sources:
+      # Flathub's copy: type git, with the release's tag and commit. This
+      # one builds the checkout it's in (run from a clean clone).
+      - type: dir
+        path: ../..
+        skip:
+          - .git
+          - .quasar
+          - dist
+          - node_modules
+          - src-electron/node_modules
+      - generated-sources.json
+      # Electron's Chromium sandbox works through Zypak in a Flatpak.
+      - type: script
+        dest-filename: meeting-media-manager.sh
+        commands:
+          - exec zypak-wrapper /app/main/meeting-media-manager "$@"
