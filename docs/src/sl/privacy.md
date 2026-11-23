@@ -2,7 +2,7 @@
 
 Datum začetka veljavnosti: 22. november 2026
 
-Meeting Media Manager (M³) je brezplačna odprtokodna aplikacija, ki so jo izdelali prostovoljci. Ta pravilnik pojasnjuje, katere podatke M³ obdeluje in kam gredo. Velja za vse različice M³: namestitvene programe in prenosno različico s tega spletnega mesta ter različice v trgovinah Microsoft Store, Snap Store in Flathub.
+Meeting Media Manager (M³) je brezplačna odprtokodna aplikacija, ki so jo izdelali prostovoljci. Ta pravilnik pojasnjuje, katere podatke M³ obdeluje in kam gredo. It applies to every version of M³: the installers and portable version from this website, and the versions in the Microsoft Store and the Snap Store.
 
 **Na kratko:** M³ nima uporabniških računov, nima oglasov in nima sledilnikov za oglaševanje ali trženje. Tvoje nastavitve in multimedijska vsebina ostanejo na tvojem računalniku. Za iskanje in odpravljanje težav M³ svojim razvijalcem pošilja diagnostične podatke: poročila o napakah ter podatke o vsaki seji in o tem, kako hitro M³ deluje. Iz njih M³ izpusti vse, kar bi lahko identificiralo tebe ali tvojo občino, tvoj naslov IP pa se ne shranjuje.
 
@@ -19,7 +19,7 @@ Poročila o napakah vsebujejo nekatere od teh nastavitev (glej spodaj), nikoli p
 
 Če v multimedijskem oknu prikazuješ sliko s kamere (možnost za občine v znakovnem jeziku), se ta samo prikazuje: M³ je ne snema, ne shranjuje in ne pošilja. Predogled multimedijskega okna, ki ti ga M³ prikazuje, se zajema na tvojem računalniku in se prav tako ne shranjuje in ne pošilja.
 
-Vse to lahko kadar koli izbrišeš tako, da izbrišeš podatkovno mapo M³. V sistemu Windows jo izbriše tudi odstranitev M³. Različici iz trgovin Snap Store in Flathub jo ob odstranitvi obdržita, razen če jima naročiš, naj je ne obdržita (`snap remove --purge` ali `flatpak uninstall --delete-data`).
+Vse to lahko kadar koli izbrišeš tako, da izbrišeš podatkovno mapo M³. V sistemu Windows jo izbriše tudi odstranitev M³. The Snap Store version keeps it when you uninstall it, unless you ask it not to (`snap remove --purge`).
 
 ## Diagnostični podatki {#error-reports}
 
@@ -56,7 +56,7 @@ Vzdrževalci M³ te podatke uporabljajo samo za iskanje in odpravljanje težav. 
 Za svoje delovanje se M³ povezuje s spodaj navedenimi strežniki. Kot pri vsakem spletnem mestu, ki ga obiščeš, lahko ti strežniki vidijo naslov IP tvojega računalnika.
 
 - **Uradno spletno mesto Jehovovih prič** in njegovi strežniki za prenos, za prenašanje multimedijske vsebine za shode in publikacij ter podatkov o njih. Za to, kar to spletno mesto prejme, velja njegov lastni pravilnik o zasebnosti.
-- **GitHub**, kjer je M³ objavljen, za preverjanje in prenos posodobitev M³ ter za prikaz novosti v njem. Različice iz trgovin Microsoft Store, Snap Store in Flathub namesto tega posodobitve prejemajo iz svoje trgovine.
+- **GitHub**, kjer je M³ objavljen, za preverjanje in prenos posodobitev M³ ter za prikaz novosti v njem. The Microsoft Store and Snap Store versions get their updates from their store instead.
 - **jsDelivr**, za prenos pisav, ki jih potrebujejo nekateri jeziki, in komponente, ki jo M³ uporablja za branje datotek PDF.
 - **Apple, Cloudflare, icanhazip.com in ipify.org**, za preverjanje, ali je tvoj računalnik povezan z internetom.
 - **Sentry**, za pošiljanje zgoraj opisanih diagnostičnih podatkov.
@@ -71,7 +71,7 @@ Ko uradno spletno mesto Jehovovih prič prikažeš v oknu spletnega mesta v M³,
 
 ## Trgovine {#stores}
 
-Če M³ namestiš iz trgovine Microsoft Store, Snap Store ali Flathub, za njegovo namestitev in posodobitve skrbi ta trgovina, in sicer v skladu s svojim pravilnikom o zasebnosti. M³ sam deluje enako v vseh različicah.
+If you install M³ from the Microsoft Store or the Snap Store, that store handles its installation and updates, under its own privacy policy. M³ sam deluje enako v vseh različicah.
 
 ## Spremembe tega pravilnika {#changes}
 
