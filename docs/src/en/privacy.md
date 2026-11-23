@@ -2,7 +2,7 @@
 
 Effective date: November 22, 2026
 
-Meeting Media Manager (M³) is a free, open-source app made by volunteers. This policy explains what data M³ handles and where it goes. It applies to every version of M³: the installers and portable version from this website, and the versions in the Microsoft Store, the Snap Store and Flathub.
+Meeting Media Manager (M³) is a free, open-source app made by volunteers. This policy explains what data M³ handles and where it goes. It applies to every version of M³: the installers and portable version from this website, and the versions in the Microsoft Store and the Snap Store.
 
 **In short:** M³ has no accounts, no ads, and no advertising or marketing trackers. Your settings and media stay on your computer. To find and fix problems, M³ sends its developers diagnostic data: error reports, and information about each session and about how fast M³ runs. M³ leaves out of it what could identify you or your congregation, and your IP address isn't stored.
 
@@ -19,7 +19,7 @@ Error reports include some of these settings (see below), but never the ones tha
 
 If you show a camera's feed on the media window (an option for sign-language congregations), it's only displayed: M³ doesn't record, save or send it. The preview of the media window that M³ shows you is captured on your computer and isn't saved or sent either.
 
-You can delete all of this at any time by deleting M³'s data folder. On Windows, uninstalling M³ deletes it too. The Snap Store and Flathub versions keep it when you uninstall them, unless you ask them not to (`snap remove --purge`, or `flatpak uninstall --delete-data`).
+You can delete all of this at any time by deleting M³'s data folder. On Windows, uninstalling M³ deletes it too. The Snap Store version keeps it when you uninstall it, unless you ask it not to (`snap remove --purge`).
 
 ## Diagnostic data {#error-reports}
 
@@ -56,7 +56,7 @@ M³'s maintainers use this data only to find and fix problems. Sentry stores it 
 To do its job, M³ connects to the servers below. As with any website you visit, these servers can see your computer's IP address.
 
 - **The official website of Jehovah's Witnesses** and its download servers, to download meeting media and publications, and their information. That website's own privacy policy applies to what it receives.
-- **GitHub**, where M³ is published, to check for and download updates of M³ and to show what's new in it. The Microsoft Store, Snap Store and Flathub versions get their updates from their store instead.
+- **GitHub**, where M³ is published, to check for and download updates of M³ and to show what's new in it. The Microsoft Store and Snap Store versions get their updates from their store instead.
 - **jsDelivr**, to download the fonts some languages need, and the component M³ uses to read PDF files.
 - **Apple, Cloudflare, icanhazip.com and ipify.org**, to check whether your computer is connected to the internet.
 - **Sentry**, to send the diagnostic data above.
@@ -71,7 +71,7 @@ When you display the official website of Jehovah's Witnesses in M³'s website wi
 
 ## Stores {#stores}
 
-If you install M³ from the Microsoft Store, the Snap Store or Flathub, that store handles its installation and updates, under its own privacy policy. M³ itself works the same way in every version.
+If you install M³ from the Microsoft Store or the Snap Store, that store handles its installation and updates, under its own privacy policy. M³ itself works the same way in every version.
 
 ## Changes to this policy {#changes}
 

@@ -4,10 +4,12 @@ name: Store Release
 # draft), the app stores get it too:
 # - Snap Store: the release build uploaded the snap without releasing it
 #   (build.yml); this releases that revision to the stable channel.
-# - Flathub: Flathub builds M³ from source, from its own repository. This
-#   makes that repository's files for the release (the manifest, pointing at
-#   the release's tag and commit, and the offline sources generated from its
-#   lockfiles) and opens the pull request that updates it there.
+# - Flathub (on hold): Flathub's Generative AI policy accepts no
+#   AI-generated or AI-assisted manifest, and no automated submission pull
+#   request, so nothing goes to Flathub from here (see build/flatpak's
+#   README). This only makes the files a Flathub build would use (the
+#   manifest, pointing at the release's tag and commit, and the offline
+#   sources generated from its lockfiles) and keeps them as an artifact.
 # - Microsoft Store: this submits the release's MSIX with Microsoft's Store
 #   CLI (msstore), as Partner Center's Microsoft Entra application "M³ Store
 #   publishing" (Manager role). Its four secrets are MSSTORE_TENANT_ID,
@@ -115,43 +117,6 @@ jobs:
         with:
           name: Flathub files for ${{ env.TAG }}
           path: flathub/
-      # FLATHUB_TOKEN: a token of a maintainer of M³'s Flathub repository
-      # (classic, public_repo), to push a branch there and open the pull
-      # request. Flathub test-builds it; merging it publishes the update.
-      - name: Open the update pull request on Flathub
-        env:
-          GH_TOKEN: ${{ secrets.FLATHUB_TOKEN }}
-        run: |
-          if [ -z "$GH_TOKEN" ]; then
-            echo "::notice::No FLATHUB_TOKEN secret: the files for Flathub are in this run's artifacts, for its first submission."
-            exit 0
-          fi
-          if ! base=$(gh api "repos/flathub/$APP_ID" --jq .default_branch 2> /dev/null); then
-            echo "::notice::flathub/$APP_ID doesn't exist yet (M³ isn't on Flathub): the files are in this run's artifacts."
-            exit 0
-          fi
-          version="${TAG#v}"
-          branch="update-$version"
-          git clone --quiet --depth 1 "https://x-access-token:$GH_TOKEN@github.com/flathub/$APP_ID.git" flathub-repo
-          cp flathub/* flathub-repo/
-          cd flathub-repo
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git checkout --quiet -b "$branch"
-          git add -A
-          if git diff --staged --quiet; then
-            echo "::notice::Flathub's repository already has these files for $version."
-            exit 0
-          fi
-          git commit --quiet -m "Update to $version"
-          git push --quiet --force origin "$branch"
-          if [ -n "$(gh pr list --repo "flathub/$APP_ID" --head "$branch" --json number --jq '.[].number')" ]; then
-            echo "::notice::The pull request for $branch was already open; its branch is updated."
-            exit 0
-          fi
-          gh pr create --repo "flathub/$APP_ID" --base "$base" --head "$branch" \
-            --title "Update to $version" \
-            --body "M³ $version: https://github.com/sircharlo/meeting-media-manager/releases/tag/$TAG. Made by the Store Release workflow of sircharlo/meeting-media-manager (manifest from build/flatpak, sources from flatpak-node-generator)."
 
   microsoft-store:
     name: Microsoft Store
