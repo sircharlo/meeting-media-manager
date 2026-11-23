@@ -18,7 +18,7 @@
   >
     <q-card-section
       v-if="meetingSoonMinutes !== null"
-      class="row items-center no-wrap text-warning q-pt-none"
+      class="row items-center no-wrap text-notice-warning q-pt-none"
     >
       <q-icon class="q-mr-sm" name="mmm-warning" size="sm" />
       {{ t('convert-media-meeting-soon', meetingSoonMinutes) }}

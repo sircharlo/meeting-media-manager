@@ -89,7 +89,7 @@
       v-if="groupedByDateEntries.length === 0 && !conversionJobs.length"
     >
       <div class="column flex-center q-px-md q-py-lg text-center">
-        <q-icon color="positive" name="mmm-cloud-done" size="48px" />
+        <q-icon color="notice-positive" name="mmm-cloud-done" size="48px" />
         <div class="text-weight-medium q-mt-sm">
           {{ t('all-caught-up') }}
         </div>
@@ -184,8 +184,8 @@
                         v-if="item.error"
                         :color="
                           itemErrorSeverity(item) === 'error'
-                            ? 'negative'
-                            : 'info'
+                            ? 'notice-negative'
+                            : 'notice-info'
                         "
                         :name="
                           itemErrorSeverity(item) === 'error'
@@ -200,7 +200,7 @@
                       </q-icon>
                       <q-icon
                         v-else-if="item.complete"
-                        color="positive"
+                        color="notice-positive"
                         name="mmm-cloud-done"
                         size="sm"
                       />
@@ -603,13 +603,15 @@ const summaryText = computed(() => {
   return t('up-to-date');
 });
 
+// Only failures within a week count (see erroredCount), which the list
+// shows as errors: the summary says so the same way.
 const summaryIcon = computed(() => {
-  if (erroredCount.value > 0) return 'mmm-warning';
+  if (erroredCount.value > 0) return 'mmm-error';
   return 'mmm-cloud-done';
 });
 
 const summaryColor = computed(() => {
-  if (erroredCount.value > 0) return 'warning';
+  if (erroredCount.value > 0) return 'negative';
   return 'positive';
 });
 

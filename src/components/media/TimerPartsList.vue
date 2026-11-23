@@ -14,7 +14,7 @@
       </q-item-label>
       <q-item
         :class="{
-          'text-warning': part.warning,
+          'text-notice-warning': part.warning,
           'timer-parts-list__item--active':
             currentPart === part.value && timerRunning,
         }"
@@ -30,7 +30,7 @@
             {{ part.name ?? part.label }}
             <q-icon
               v-if="part.warning"
-              color="warning"
+              color="notice-warning"
               name="mmm-warning"
               size="xs"
             >

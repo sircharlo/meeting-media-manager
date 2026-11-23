@@ -4,6 +4,19 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Notifications**: Notifications and notices are easier to read. The notifications that pop up now use deeper shades of green, blue, orange and red, so their white text stands out on each of them (orange warnings had dark text), and all their buttons are white. The notices on the page and in popups, such as the ones about OBS Studio, hidden media or the Zoom Meeting Manager, now follow the light or dark theme: a soft tint of their color behind the usual text, with a colored icon and edge, instead of white text on a bright color that was hard to read. Colored hints, like a setting's warning or the reason it's turned off, use the same shades. Some notifications also changed color to match what they say: red when something failed (such as a video that couldn't be played, or a JWPUB file that couldn't be read), orange when something needs a look (such as updates being turned off, or the circuit overseer's visit date not being set), blue for information (such as the media preview switching to a lighter mode), and green when something is done.
+- 🛠️ **Hidden Media**: During the circuit overseer's visit, the notice that some media items are hidden is now blue, for information, instead of orange, a warning: that week, M³ itself hides the closing song and the Congregation Bible Study's media, so it's expected. Otherwise, it stays orange.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Zoom Meeting Manager**: The notification that media wasn't shared in Zoom because the Zoom automations are paused had no close button, unlike other notifications, and was orange while the similar one about a failed share was red. It now has a close button, and it's red too.
+- 🐞 **Yeartext Preview**: When next year's yeartext couldn't be fetched for its preview, the notification showed "{year}" instead of the year. It now names the year.
+- 🐞 **Before-Meeting Panel**: The before-meeting panel, and the notice left when it's dismissed, showed an empty space where their icon should be. They now show a clock.
+
 ## v26.11.4
 
 ### ✨ New Features

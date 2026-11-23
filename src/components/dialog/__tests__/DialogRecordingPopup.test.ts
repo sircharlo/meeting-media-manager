@@ -63,7 +63,7 @@ describe('DialogRecordingPopup', () => {
     await mountPopup();
 
     expect(getStatus()?.textContent).toContain('Recording · 12:04');
-    expect(getStatus()?.querySelector('.text-negative')).not.toBeNull();
+    expect(getStatus()?.querySelector('.text-red')).not.toBeNull();
     expect(getFooter()?.firstElementChild?.textContent).toContain(
       'Stop Recording',
     );

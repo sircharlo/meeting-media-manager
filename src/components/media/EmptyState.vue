@@ -100,7 +100,7 @@
             <LiquidSpinner v-if="shouldShowSpinner" color="primary" size="lg" />
             <div
               v-else-if="isErrorState"
-              class="icon-chip text-negative empty-state-error-icon"
+              class="icon-chip text-notice-negative empty-state-error-icon"
             >
               <q-icon name="mmm-cloud-error" size="1.5em" />
             </div>

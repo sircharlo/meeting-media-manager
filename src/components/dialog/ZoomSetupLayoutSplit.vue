@@ -117,7 +117,7 @@
 
     <div
       v-if="!alone && !fitsBoth(range)"
-      class="row items-center no-wrap q-mt-sm text-caption text-warning"
+      class="row items-center no-wrap q-mt-sm text-caption text-notice-warning"
     >
       <q-icon class="q-mr-xs" name="mmm-warning" size="14px" />
       <div class="col">{{ t('zoom-setup-layout-too-small') }}</div>

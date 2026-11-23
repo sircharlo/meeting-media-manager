@@ -925,7 +925,7 @@ describe('jw-media helpers', () => {
     );
   });
 
-  it('warns without reporting when a user-provided jwpub cannot be staged', async () => {
+  it('says so, without reporting it, when a user-provided jwpub cannot be staged', async () => {
     const error = Object.assign(new Error('missing source'), {
       code: 'ENOENT',
     });
@@ -939,13 +939,13 @@ describe('jw-media helpers', () => {
     expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
       expect.objectContaining({
         group: 'jwpubFileUnavailable',
-        type: 'warning',
+        type: 'negative',
       }),
     );
     expect(errorCatcherMock).not.toHaveBeenCalled();
   });
 
-  it('warns with phone-specific advice when a jwpub on a phone shown by Windows Cross Device cannot be copied', async () => {
+  it('says so with phone-specific advice when a jwpub on a phone shown by Windows Cross Device cannot be copied', async () => {
     const phoneJwpub = String.raw`C:\Users\PC\CrossDevice\Redmi 12\storage\Download\S-34_T_029.jwpub`;
     // fs.copy crosses Electron's contextBridge, which strips `code` - only
     // the message survives (MMM-V2-3M1).
@@ -965,13 +965,13 @@ describe('jw-media helpers', () => {
       expect.objectContaining({
         caption: 'jwpub-file-unavailable-caption-phone',
         group: 'jwpubFileUnavailable',
-        type: 'warning',
+        type: 'negative',
       }),
     );
     expect(errorCatcherMock).not.toHaveBeenCalled();
   });
 
-  it('warns without reporting when a staged jwpub becomes unavailable while extracting', async () => {
+  it('says so, without reporting it, when a staged jwpub becomes unavailable while extracting', async () => {
     const error = Object.assign(new Error('missing during extraction'), {
       code: 'ENOENT',
     });
@@ -985,7 +985,7 @@ describe('jw-media helpers', () => {
     expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
       expect.objectContaining({
         group: 'jwpubFileUnavailable',
-        type: 'warning',
+        type: 'negative',
       }),
     );
     expect(errorCatcherMock).not.toHaveBeenCalled();

@@ -11,7 +11,7 @@
         class="timer-quick-controls__time"
         :class="{
           blink: timerPaused,
-          'text-negative': timerRunning && formattedTime.startsWith('-'),
+          'text-notice-negative': timerRunning && formattedTime.startsWith('-'),
         }"
       >
         {{ timerRunning ? formattedTime : '--:--' }}

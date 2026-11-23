@@ -190,7 +190,6 @@ export const cancelZoomRun = async () => {
   }
   createTemporaryNotification({
     group: 'zoom-run',
-    icon: 'mmm-info',
     message: t('zoom-run-cancelled'),
     type: 'warning',
   });
@@ -745,7 +744,7 @@ export const unmuteZoomParticipant = async (name: string) => {
         : 'zoom-hand-already-unmuted',
       { name },
     ),
-    type: 'info',
+    type: result.pressed ? 'positive' : 'info',
   });
   return result;
 };
@@ -789,7 +788,7 @@ export const muteZoomParticipantAndLowerHand = async (name: string) => {
     group: 'zoom-participants',
     icon: 'mmm-microphone-off',
     message: t('zoom-hand-muted-and-lowered', { name }),
-    type: 'info',
+    type: 'positive',
   });
   return lowered;
 };
@@ -1302,12 +1301,12 @@ const notifyMediaNotSharedWhilePaused = () => {
         },
         label: t(relearn ? 'zoom-setup-open' : 'zoom-check-test-again'),
       },
+      { color: 'white', icon: 'close', round: true },
     ],
     caption: t('zoom-sharing-failed-caption'),
     group: 'zoom-sharing',
-    icon: 'mmm-warning',
     message: t('zoom-sharing-paused'),
-    type: 'warning',
+    type: 'negative',
   });
 };
 

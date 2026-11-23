@@ -27,7 +27,7 @@
           {{ t('quick-actions-before-title') }}
         </div>
       </div>
-      <q-icon name="mmm-timer" size="28px" />
+      <q-icon name="mmm-time" size="28px" />
     </q-card-section>
 
     <q-card-section class="meeting-quick-actions-panel__countdown">
@@ -52,7 +52,12 @@
       v-if="unplayableItems.length"
       class="row items-center no-wrap q-py-none"
     >
-      <q-icon class="q-mr-sm" color="warning" name="mmm-warning" size="sm" />
+      <q-icon
+        class="q-mr-sm"
+        color="notice-warning"
+        name="mmm-warning"
+        size="sm"
+      />
       <div class="col">
         {{ t('quick-actions-media-cannot-play', unplayableItems.length) }}
       </div>

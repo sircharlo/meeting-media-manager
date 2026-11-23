@@ -747,7 +747,7 @@ const fallBackPreviewToVideoMode = () => {
     group: 'media-preview-fallback',
     message: t('media-preview-fallback'),
     timeout: 15_000,
-    type: 'warning',
+    type: 'info',
   });
 };
 
@@ -770,7 +770,7 @@ const disablePreviewForPerformance = () => {
   createTemporaryNotification({
     actions: [
       {
-        color: 'dark',
+        color: 'white',
         handler: () => {
           if (currentSettings.value) {
             currentSettings.value.enableMediaPreview = true;
@@ -783,7 +783,7 @@ const disablePreviewForPerformance = () => {
     group: 'media-preview-auto-disabled',
     message: t('media-preview-auto-disabled'),
     timeout: 15_000,
-    type: 'warning',
+    type: 'info',
   });
 
   errorCatcher(

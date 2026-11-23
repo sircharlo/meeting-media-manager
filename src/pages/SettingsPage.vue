@@ -75,7 +75,7 @@
               <q-badge
                 v-if="invalidSettingsByGroup[groupId]"
                 class="settings-rail-item__badge"
-                color="negative"
+                color="notice-negative"
                 rounded
               >
                 {{ invalidSettingsByGroup[groupId] }}
@@ -345,7 +345,7 @@
                           !isSecretEncryptionAvailable
                         "
                         caption
-                        class="text-warning"
+                        class="text-notice-warning"
                       >
                         <q-icon name="mmm-warning" size="xs" />
                         {{ t('obs-password-not-encrypted-warning') }}
@@ -353,7 +353,7 @@
                       <q-item-label
                         v-if="isSettingDisabled(settingId)"
                         caption
-                        class="text-primary"
+                        class="text-notice-info"
                       >
                         <q-icon name="mmm-info" size="xs" />
                         {{ getBlockingSettingsMessage(settingId) }}
@@ -1102,7 +1102,7 @@ watch(autoUpdateEnabled, (enabled) => {
     dismissUpdatesDisabledWarning = createTemporaryNotification({
       message: t('updates-disabled-warning'),
       timeout: 10_000,
-      type: 'info',
+      type: 'warning',
     });
   }
 });

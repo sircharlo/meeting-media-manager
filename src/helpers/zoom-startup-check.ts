@@ -740,7 +740,7 @@ const turnOffForMeeting = (congregationId: string): ZoomStartupCheckOutcome => {
     group: 'zoom-check',
     message: t('zoom-automations-off-for-meeting'),
     timeout: 10_000,
-    type: 'warning',
+    type: 'info',
   });
   return 'declined';
 };

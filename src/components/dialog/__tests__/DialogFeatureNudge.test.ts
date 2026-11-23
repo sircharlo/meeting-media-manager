@@ -163,6 +163,7 @@ describe('DialogFeatureNudge', () => {
     expect(answers()?.responses.obs?.response).toBe('snoozed');
     expect(createTemporaryNotification).toHaveBeenCalledWith({
       message: 'No problem, M³ will remind you about this later.',
+      type: 'info',
     });
     expect(text()).not.toContain('Did you know?');
   });
@@ -185,6 +186,7 @@ describe('DialogFeatureNudge', () => {
     expect(answers()?.responses.obs?.response).toBe('declined');
     expect(createTemporaryNotification).toHaveBeenCalledWith({
       message: "Got it, M³ won't suggest this again.",
+      type: 'info',
     });
   });
 

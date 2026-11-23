@@ -233,6 +233,13 @@ body.body--light {
 }
 
 body.body--dark {
+  // The notices' dark-theme shades and tint (see "Notices" below).
+  --notice-positive-strong: #{$notice-positive-dark};
+  --notice-info-strong: #{$notice-info-dark};
+  --notice-warning-strong: #{$notice-warning-dark};
+  --notice-negative-strong: #{$notice-negative-dark};
+  --notice-tint: 24%;
+
   background: $primary-bg-dark;
 
   .bg-primary-light {
@@ -349,6 +356,45 @@ body.body--dark {
     box-shadow:
       0 2px 10px rgba(0, 0, 0, 0.35),
       0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+}
+
+// Notices (see $notice-* in quasar.variables.scss). .bg-notice-<type> is
+// the solid fill of a toast (boot/notify-types.ts gives each Notify type its
+// own) or of a badge, with white text on it, the same in both themes.
+//
+// On a tint or straight on the page, a notice's icon, edge, buttons or text
+// take the strong shade of its color instead: darker than the solid in the
+// light theme, lighter in the dark theme. .text-notice-<type> is that shade
+// for an icon or a line of text. The tint behind a banner (NoticeBanner.vue)
+// is stronger in the dark theme (body.body--dark above sets both).
+//
+// Like Quasar's own .bg-* and .text-* classes, both win over a component's
+// own colors, and a Quasar color prop takes them as 'notice-<type>'.
+body {
+  --notice-positive-strong: #{$notice-positive-light};
+  --notice-info-strong: #{$notice-info-light};
+  --notice-warning-strong: #{$notice-warning-light};
+  --notice-negative-strong: #{$notice-negative-light};
+  --notice-tint: 14%;
+}
+
+$notice-solids: (
+  'positive': $notice-positive,
+  'info': $notice-info,
+  'warning': $notice-warning,
+  'negative': $notice-negative,
+);
+
+@each $type, $solid in $notice-solids {
+  .bg-notice-#{$type} {
+    background: $solid !important; /* NOSONAR: like Quasar's !important .bg-* colors, so a color prop wins */
+  }
+
+  .text-notice-#{$type} {
+    color: var(
+      --notice-#{$type}-strong
+    ) !important; /* NOSONAR: like Quasar's !important .text-* colors, so a color prop wins */
   }
 }
 
@@ -715,26 +761,10 @@ a {
   gap: 8px;
 }
 
-// Under the status line: blue for information, or orange or red to match
-// what it reports (--warning / --negative). Tints rather than the accent
-// palette, which turns a flat grey in dark mode that hides a blue link.
+// A banner (NoticeBanner.vue, dense) under the status line, inset like the
+// popup's other content.
 .action-popup__banner {
-  align-items: center;
-  background: color-mix(in srgb, $primary 12%, transparent);
-  border-radius: 10px;
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 8px;
   margin: 0 16px 8px;
-  padding: 8px;
-}
-
-.action-popup__banner--warning {
-  background: color-mix(in srgb, $warning 16%, transparent);
-}
-
-.action-popup__banner--negative {
-  background: color-mix(in srgb, $negative 14%, transparent);
 }
 
 // The same blue tint, for a panel in a popup's body.

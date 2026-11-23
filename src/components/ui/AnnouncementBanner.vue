@@ -3,13 +3,12 @@
     v-for="announcement in activeAnnouncements"
     :key="announcement.id"
   >
-    <q-banner :class="`q-ma-md ${bgColor(announcement.type)}`" rounded>
+    <NoticeBanner
+      class="q-ma-md"
+      :icon="announcement.icon && `mmm-${announcement.icon}`"
+      :type="noticeType(announcement.type)"
+    >
       {{ t(announcement.message) }}
-      <template #avatar>
-        <q-icon
-          :name="`mmm-${announcement.icon || announcement.type || 'info'}`"
-        />
-      </template>
       <template #action>
         <q-btn flat :label="t('dismiss')" @click="dismiss(announcement.id)" />
         <q-btn
@@ -20,7 +19,7 @@
           @click="actionDefs[action].onClick"
         />
       </template>
-    </q-banner>
+    </NoticeBanner>
   </q-slide-transition>
   <Teleport to="body">
     <Transition appear name="update-toast">
@@ -42,11 +41,13 @@
 import type {
   Announcement,
   AnnouncementAction,
+  NoticeType,
   UpdaterProgressInfo,
   UpdateVersionInfo,
 } from 'src/types';
 
 import { useIntervalFn, whenever } from '@vueuse/core';
+import NoticeBanner from 'components/ui/NoticeBanner.vue';
 import UpdateProgressToast from 'components/ui/UpdateProgressToast.vue';
 import { useQuasar } from 'quasar';
 import { getMeetingStartToday } from 'src/helpers/date';
@@ -105,13 +106,17 @@ const dismiss = (id: string) => {
   );
 };
 
-const typeToBg: Record<NonNullable<Announcement['type']>, string> = {
-  error: 'bg-negative',
-  info: 'bg-info',
-  warning: 'bg-warning',
+// Announcements come with the types of the remote announcements file.
+const ANNOUNCEMENT_NOTICE_TYPES: Record<
+  NonNullable<Announcement['type']>,
+  NoticeType
+> = {
+  error: 'negative',
+  info: 'info',
+  warning: 'warning',
 };
-const bgColor = (type?: Announcement['type']) =>
-  type ? typeToBg[type] : typeToBg.info;
+const noticeType = (type: Announcement['type'] = 'info') =>
+  ANNOUNCEMENT_NOTICE_TYPES[type];
 
 const announcements = ref<Announcement[]>([]);
 
@@ -473,7 +478,7 @@ const testVersionAnnouncement = computed((): Announcement => {
     message: 'this-is-a-test-version',
     persistent: true,
     platform: isTestVersion ? 'all' : 'none',
-    type: 'error',
+    type: 'warning',
   };
 });
 
@@ -486,6 +491,7 @@ const newUpdateAnnouncement = computed((): Announcement => {
     message: 'update-available-please-update',
     persistent: true,
     platform: !updatesEnabled.value && !isTestVersion ? 'all' : 'none',
+    type: 'warning',
   };
 });
 

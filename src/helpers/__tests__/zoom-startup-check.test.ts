@@ -228,7 +228,7 @@ describe('Zoom startup check', () => {
     const zoomState = useZoomStateStore();
     expect(zoomState.automationsPaused).toBe(true);
     expect(zoomState.checkDeclined).toBe(true);
-    expect(notification()?.type).toBe('warning');
+    expect(notification()?.type).toBe('info');
     // And it doesn't ask again: Test again is the way back.
     zoomState.checkedCongregations = [];
     expect(await runZoomStartupCheck()).toBe('skipped');

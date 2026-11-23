@@ -99,9 +99,9 @@
             />
             <p
               v-if="!meetingIdInput"
-              class="text-caption text-warning row items-center no-wrap"
+              class="text-caption text-notice-warning row items-center no-wrap"
             >
-              <q-icon class="q-mr-xs" name="mmm-info" size="14px" />
+              <q-icon class="q-mr-xs" name="mmm-warning" size="14px" />
               {{ t('zoom-setup-meeting-id-missing') }}
             </p>
             <q-btn
@@ -153,7 +153,7 @@
               />
               <p
                 v-if="participantsEntryFailed"
-                class="text-caption text-negative q-mb-none"
+                class="text-caption text-notice-negative q-mb-none"
               >
                 {{ t('zoom-setup-participants-not-opened') }}
               </p>
@@ -175,7 +175,7 @@
               />
               <p
                 v-if="muteAllEntryFailed"
-                class="text-caption text-negative q-mb-none"
+                class="text-caption text-notice-negative q-mb-none"
               >
                 {{ t('zoom-setup-mute-all-not-opened') }}
               </p>
@@ -456,9 +456,9 @@
                   !currentSettings.enableMusicButton &&
                   currentSettings.zoomMeetingManagerAutomatePostMeetingAudioSettings
                 "
-                class="row items-center no-wrap q-mt-sm text-caption text-warning"
+                class="row items-center no-wrap q-mt-sm text-caption text-notice-warning"
               >
-                <q-icon class="q-mr-xs" name="mmm-info" size="14px" />
+                <q-icon class="q-mr-xs" name="mmm-warning" size="14px" />
                 <div class="col">
                   {{ t('zoom-setup-music-needed-after-meeting') }}
                 </div>
@@ -473,9 +473,9 @@
               </div>
               <div
                 v-if="obsShowsMedia"
-                class="row items-center no-wrap q-mt-sm text-caption text-warning"
+                class="row items-center no-wrap q-mt-sm text-caption text-notice-warning"
               >
-                <q-icon class="q-mr-xs" name="mmm-info" size="14px" />
+                <q-icon class="q-mr-xs" name="mmm-warning" size="14px" />
                 <div class="col">{{ t('zoom-setup-obs-sharing-off') }}</div>
                 <q-btn
                   color="primary"
@@ -553,7 +553,7 @@
               />
               <p
                 v-if="stopShareEntryFailed"
-                class="text-caption text-negative q-mb-none"
+                class="text-caption text-notice-negative q-mb-none"
               >
                 {{ t('zoom-setup-stop-share-not-opened') }}
               </p>
@@ -594,7 +594,7 @@
 
           <!-- Done -->
           <div v-else key="done" class="column items-center text-center">
-            <div class="zoom-setup__done-icon text-positive q-my-md">
+            <div class="zoom-setup__done-icon text-notice-positive q-my-md">
               <q-icon name="mmm-check" size="lg" />
             </div>
             <div class="text-h6 q-mb-sm">{{ t('zoom-setup-done-title') }}</div>

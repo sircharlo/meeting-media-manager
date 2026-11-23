@@ -106,7 +106,7 @@ const notifyHandRaised = (name: string) => {
   const actions = isZoomHandAlertNotifyOnly()
     ? [
         {
-          color: 'dark',
+          color: 'white',
           handler: () => {
             forgetHandNotification(name);
           },
@@ -116,7 +116,7 @@ const notifyHandRaised = (name: string) => {
       ]
     : [
         {
-          color: 'dark',
+          color: 'white',
           handler: () => {
             forgetHandNotification(name);
             void unmuteZoomParticipant(name).then((result) => {
@@ -127,7 +127,7 @@ const notifyHandRaised = (name: string) => {
           noCaps: true,
         },
         {
-          color: 'dark',
+          color: 'white',
           handler: () => {
             forgetHandNotification(name);
             void muteZoomParticipantAndLowerHand(name);
@@ -136,7 +136,7 @@ const notifyHandRaised = (name: string) => {
           noCaps: true,
         },
         {
-          color: 'dark',
+          color: 'white',
           handler: () => {
             forgetHandNotification(name);
           },

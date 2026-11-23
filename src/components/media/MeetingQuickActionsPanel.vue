@@ -41,55 +41,37 @@
         <MeetingQuickActionsBeforePanel :now="now" />
       </div>
     </q-slide-transition>
-    <q-banner
+    <NoticeBanner
       v-if="
         location === 'before' && beforePanelWindowActive && dismissedBeforePanel
       "
-      class="meeting-quick-actions__dismissed-banner"
+      :actions="[
+        { label: t('quick-actions-show-panel'), onClick: undismissBefore },
+      ]"
       dense
-      rounded
+      icon="mmm-time"
+      type="neutral"
     >
-      <template #avatar>
-        <q-icon color="primary" name="mmm-timer" />
-      </template>
       {{ t('quick-actions-before-dismissed') }}
-      <template #action>
-        <q-btn
-          color="primary"
-          dense
-          flat
-          :label="t('quick-actions-show-panel')"
-          @click="undismissBefore"
-        />
-      </template>
-    </q-banner>
+    </NoticeBanner>
     <q-slide-transition>
       <div v-if="location === 'after' && showAfter" ref="afterPanel">
         <MeetingQuickActionsAfterPanel :now="now" />
       </div>
     </q-slide-transition>
-    <q-banner
+    <NoticeBanner
       v-if="
         location === 'after' && afterPanelWindowActive && dismissedAfterPanel
       "
-      class="meeting-quick-actions__dismissed-banner"
+      :actions="[
+        { label: t('quick-actions-show-panel'), onClick: undismissAfter },
+      ]"
       dense
-      rounded
+      icon="mmm-check"
+      type="neutral"
     >
-      <template #avatar>
-        <q-icon color="positive" name="mmm-check" />
-      </template>
       {{ t('quick-actions-after-dismissed') }}
-      <template #action>
-        <q-btn
-          color="positive"
-          dense
-          flat
-          :label="t('quick-actions-show-panel')"
-          @click="undismissAfter"
-        />
-      </template>
-    </q-banner>
+    </NoticeBanner>
   </div>
 </template>
 
@@ -97,6 +79,7 @@
 import { useIntervalFn } from '@vueuse/core';
 import MeetingQuickActionsAfterPanel from 'components/media/MeetingQuickActionsAfterPanel.vue';
 import MeetingQuickActionsBeforePanel from 'components/media/MeetingQuickActionsBeforePanel.vue';
+import NoticeBanner from 'components/ui/NoticeBanner.vue';
 import { storeToRefs } from 'pinia';
 import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
 import {
@@ -356,9 +339,5 @@ watch(
 .meeting-quick-actions {
   margin: 0 auto 1rem;
   max-width: 900px;
-}
-
-.meeting-quick-actions__dismissed-banner {
-  background: color-mix(in srgb, currentColor 6%, transparent);
 }
 </style>

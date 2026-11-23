@@ -196,14 +196,14 @@ const getNoticeContent = (items: MediaItem[]) => {
   return {
     actions: [
       {
-        color: 'dark',
+        color: 'white',
         handler: () => {
           requestMediaConversion(getNoticeItems());
           forgetNotice();
         },
         label: t(items.length === 1 ? 'convert-media' : 'convert-all-media'),
       },
-      { color: 'dark', handler: forgetNotice, icon: 'close', round: true },
+      { color: 'white', handler: forgetNotice, icon: 'close', round: true },
     ],
     caption: t('media-cannot-play-here-notice-caption', items.length),
     message:

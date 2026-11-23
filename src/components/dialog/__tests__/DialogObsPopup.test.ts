@@ -271,7 +271,7 @@ describe('DialogObsPopup - status line', () => {
 
     const status = document.querySelector('.action-popup__status');
     expect(status?.textContent).toContain('OBS Studio: Connected');
-    expect(status?.querySelector('.text-positive')).not.toBeNull();
+    expect(status?.querySelector('.text-notice-positive')).not.toBeNull();
   });
 
   it('warns when the scene list could not be loaded', async () => {
@@ -286,7 +286,7 @@ describe('DialogObsPopup - status line', () => {
 
     const status = document.querySelector('.action-popup__status');
     expect(status?.textContent).toContain("OBS Studio: Couldn't load scenes");
-    expect(status?.querySelector('.text-warning')).not.toBeNull();
+    expect(status?.querySelector('.text-notice-warning')).not.toBeNull();
   });
 });
 
