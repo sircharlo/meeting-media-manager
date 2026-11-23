@@ -1,0 +1,194 @@
+name: Store Release
+
+# When a release is published on GitHub (by hand, from the manual release's
+# draft), the app stores get it too:
+# - Snap Store: the release build uploaded the snap without releasing it
+#   (build.yml); this releases that revision to the stable channel.
+# - Flathub: Flathub builds M³ from source, from its own repository. This
+#   makes that repository's files for the release (the manifest, pointing at
+#   the release's tag and commit, and the offline sources generated from its
+#   lockfiles) and opens the pull request that updates it there.
+# - Microsoft Store: an individual Partner Center account can't use the
+#   Store's submission API (it has no Microsoft Entra applications), so the
+#   release's MSIX is uploaded by hand: this opens an issue with the link
+#   to it and the steps.
+#
+# A release published by a workflow's GITHUB_TOKEN starts no workflow, so
+# betas (published by beta-release.yml) never get here; the prerelease check
+# is for one published by hand. workflow_dispatch reruns one store for a
+# release, or makes the Flathub files for any release tag (for the first
+# submission).
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag, for example v26.11.4
+        required: true
+      store:
+        description: Which store
+        type: choice
+        options:
+          - flathub
+          - snap
+          - microsoft-store
+          - all
+        default: flathub
+
+permissions:
+  contents: read
+
+env:
+  APP_ID: io.github.sircharlo.meeting-media-manager
+  SNAP_NAME: meeting-media-manager
+  TAG: ${{ github.event.release.tag_name || inputs.tag }}
+
+jobs:
+  snap:
+    name: Snap Store
+    runs-on: ubuntu-latest
+    if: >-
+      github.repository == 'sircharlo/meeting-media-manager' &&
+      (github.event_name == 'release' && !github.event.release.prerelease ||
+      github.event_name == 'workflow_dispatch' && contains(fromJSON('["snap", "all"]'), inputs.store))
+    timeout-minutes: 15
+    steps:
+      - name: Install Snapcraft
+        run: sudo snap install snapcraft --classic --channel=8.x/stable
+      - name: Release the uploaded revision to stable
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        run: |
+          if [ -z "$SNAPCRAFT_STORE_CREDENTIALS" ]; then
+            echo "::error::The repository has no SNAPCRAFT_STORE_CREDENTIALS secret."
+            exit 1
+          fi
+          version="${TAG#v}"
+          revisions=$(snapcraft revisions "$SNAP_NAME")
+          # The newest revision of this version (a rebuilt draft uploads it
+          # again).
+          revision=$(awk -v version="$version" 'NR > 1 { for (i = 2; i <= NF; i++) if ($i == version) { print $1; break } }' <<< "$revisions" | sort -n | tail -n 1)
+          if [ -z "$revision" ]; then
+            echo "::error::The Snap Store has no revision of $version. Its newest revisions:"
+            head -n 6 <<< "$revisions"
+            exit 1
+          fi
+          echo "Releasing revision $revision ($version) to stable"
+          snapcraft release "$SNAP_NAME" "$revision" stable
+
+  flathub:
+    name: Flathub
+    runs-on: ubuntu-latest
+    if: >-
+      github.repository == 'sircharlo/meeting-media-manager' &&
+      (github.event_name == 'release' && !github.event.release.prerelease ||
+      github.event_name == 'workflow_dispatch' && contains(fromJSON('["flathub", "all"]'), inputs.store))
+    timeout-minutes: 30
+    steps:
+      - name: Check out the release
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ env.TAG }}
+      # Pinned: it writes every source Flathub's offline build downloads.
+      - name: Install flatpak-node-generator
+        run: pipx install "git+https://github.com/flatpak/flatpak-builder-tools.git@9d86d336a39b9af38b86f114b6ce5820fe260f91#subdirectory=node"
+      - name: Make Flathub's files
+        run: |
+          mkdir -p flathub
+          # The same command as in build/flatpak/README.md: both lockfiles,
+          # and the headers of the Electron that robotjs is rebuilt for.
+          flatpak-node-generator yarn -r yarn.lock -R yarn.lock -R src-electron/yarn.lock \
+            --electron-node-headers -o flathub/generated-sources.json
+          node build/flatpak/flathub-manifest.mjs "$TAG" "$(git rev-parse HEAD)" "flathub/$APP_ID.yml"
+          # Only built and tested on x86_64, like the AppImage.
+          printf '{\n  "only-arches": ["x86_64"]\n}\n' > flathub/flathub.json
+          ls -l flathub
+      - name: Keep the files
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: Flathub files for ${{ env.TAG }}
+          path: flathub/
+      # FLATHUB_TOKEN: a token of a maintainer of M³'s Flathub repository
+      # (classic, public_repo), to push a branch there and open the pull
+      # request. Flathub test-builds it; merging it publishes the update.
+      - name: Open the update pull request on Flathub
+        env:
+          GH_TOKEN: ${{ secrets.FLATHUB_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::notice::No FLATHUB_TOKEN secret: the files for Flathub are in this run's artifacts, for its first submission."
+            exit 0
+          fi
+          if ! base=$(gh api "repos/flathub/$APP_ID" --jq .default_branch 2> /dev/null); then
+            echo "::notice::flathub/$APP_ID doesn't exist yet (M³ isn't on Flathub): the files are in this run's artifacts."
+            exit 0
+          fi
+          version="${TAG#v}"
+          branch="update-$version"
+          git clone --quiet --depth 1 "https://x-access-token:$GH_TOKEN@github.com/flathub/$APP_ID.git" flathub-repo
+          cp flathub/* flathub-repo/
+          cd flathub-repo
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --quiet -b "$branch"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "::notice::Flathub's repository already has these files for $version."
+            exit 0
+          fi
+          git commit --quiet -m "Update to $version"
+          git push --quiet --force origin "$branch"
+          if [ -n "$(gh pr list --repo "flathub/$APP_ID" --head "$branch" --json number --jq '.[].number')" ]; then
+            echo "::notice::The pull request for $branch was already open; its branch is updated."
+            exit 0
+          fi
+          gh pr create --repo "flathub/$APP_ID" --base "$base" --head "$branch" \
+            --title "Update to $version" \
+            --body "M³ $version: https://github.com/sircharlo/meeting-media-manager/releases/tag/$TAG. Made by the Store Release workflow of sircharlo/meeting-media-manager (manifest from build/flatpak, sources from flatpak-node-generator)."
+
+  microsoft-store:
+    name: Microsoft Store
+    runs-on: ubuntu-latest
+    if: >-
+      github.repository == 'sircharlo/meeting-media-manager' &&
+      (github.event_name == 'release' && !github.event.release.prerelease ||
+      github.event_name == 'workflow_dispatch' && contains(fromJSON('["microsoft-store", "all"]'), inputs.store))
+    permissions:
+      actions: read
+      issues: write
+    timeout-minutes: 5
+    steps:
+      - name: Open an issue to upload the MSIX
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          version="${TAG#v}"
+          # The release's MSIX: the newest "M³ for the Microsoft Store"
+          # artifact made after the release's commit.
+          since=$(gh api "repos/$REPOSITORY/releases/tags/$TAG" --jq .created_at)
+          artifact=$(gh api "repos/$REPOSITORY/actions/artifacts?name=M%C2%B3%20for%20the%20Microsoft%20Store&per_page=20" \
+            --jq "[.artifacts[] | select(.created_at > \"$since\" and (.expired | not))] | sort_by(.created_at) | last | select(.) | \"https://github.com/$REPOSITORY/actions/runs/\(.workflow_run.id)/artifacts/\(.id)\"")
+          if [ -z "$artifact" ]; then
+            artifact="(not found: no \"M³ for the Microsoft Store\" artifact newer than the release's commit, $since; see the release's manual release run)"
+          fi
+          title="Upload $version to the Microsoft Store"
+          if [ -n "$(gh issue list --repo "$REPOSITORY" --state open --search "\"$title\" in:title" --json number --jq '.[].number')" ]; then
+            echo "::notice::An issue \"$title\" is already open."
+            exit 0
+          fi
+          body=$(cat <<EOF
+          The Microsoft Store doesn't update itself from GitHub: its MSIX goes to Partner Center by hand.
+
+          1. Download the MSIX: $artifact (a zip with the \`.appx\` inside; unzip it).
+          2. In [Partner Center](https://partner.microsoft.com/dashboard/apps-and-games/overview), open **Meeting Media Manager** and select **Start update** (or **Update** on the current submission).
+          3. In **Packages**, remove the previous package and upload the new one.
+          4. Optionally, in each **Store listing**, fill in **What's new in this version** from the [release notes](https://github.com/$REPOSITORY/releases/tag/$TAG).
+          5. Select **Submit to the Store**, then close this issue.
+
+          Made by the Store Release workflow.
+          EOF
+          )
+          gh issue create --repo "$REPOSITORY" --title "$title" --assignee sircharlo --body "$body"

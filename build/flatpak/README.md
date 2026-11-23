@@ -8,6 +8,28 @@ commit, plus the `generated-sources.json` made from that release's lockfiles.
 The app's AppStream metadata and desktop file are in `build/linux`, because
 Flathub wants them in the app's own repository.
 
+## Releases on Flathub
+
+When a release is published on GitHub, the Store Release workflow
+(`.github/workflows/store-release.yml`) makes Flathub's files for it:
+
+- the manifest, from `flathub-manifest.mjs`: this folder's, with M³'s source
+  as the release's tag and commit;
+- `generated-sources.json`, from the release's lockfiles;
+- `flathub.json`, for x86_64 only.
+
+It keeps them as the run's artifact. With the `FLATHUB_TOKEN` secret, it
+also opens the pull request that updates Flathub's repository. That secret
+is a classic token, with the `public_repo` scope, of a maintainer of that
+repository. Flathub test-builds the pull request, and merging it publishes
+the update.
+
+For the first submission, run the workflow by hand (**Actions → Store
+Release → Run workflow**, with the release's tag and the store `flathub`).
+Then submit its files to `flathub/flathub` as Flathub's
+[submission guide](https://docs.flathub.org/docs/for-app-authors/submission)
+describes.
+
 ## Build it locally
 
 You need Linux (or WSL) with `flatpak`, `flatpak-builder` and `pipx`.
