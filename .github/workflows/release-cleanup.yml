@@ -1,0 +1,131 @@
+name: Clean Up Old Releases
+
+# Once a month, deletes the stable releases published before the first day
+# of the previous month (on December 1st, the ones from before November
+# 1st), so the releases page keeps the last month or two of them. Their git
+# tags stay: the history, and comparisons between versions, still work.
+#
+# Never deleted:
+# - a release whose title or notes say not to delete it ("Do not delete",
+#   "Don't delete", "Keep this release"), such as the last version for an
+#   older system, which the download page links to;
+# - the latest release;
+# - drafts, and prereleases (beta-release.yml prunes the betas).
+#
+# Run by hand, it previews by default (dry run) and takes another cutoff
+# date. Each run's summary lists what it deleted, or would delete, and what
+# it kept and why.
+
+on:
+  schedule:
+    - cron: '17 7 1 * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only list what would be deleted
+        type: boolean
+        default: true
+      before:
+        description: Delete the releases published before this date (YYYY-MM-DD); empty for the first day of the previous month
+        required: false
+        default: ''
+
+permissions: {}
+
+concurrency:
+  group: release-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    name: Delete old releases
+    runs-on: ubuntu-latest
+    if: github.repository == 'sircharlo/meeting-media-manager'
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Delete the stable releases older than the cutoff
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          # A scheduled run has no inputs, and deletes.
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          BEFORE: ${{ inputs.before }}
+          # Matched in the title and notes, ignoring case.
+          KEEP_PATTERN: "do\\s*n[o'’]?t\\s*(delete|remove)|keep this release"
+        run: |
+          set -euo pipefail
+
+          if [ -n "$BEFORE" ]; then
+            if ! CUTOFF=$(date -u -d "$BEFORE" +%Y-%m-%dT00:00:00Z 2>/dev/null); then
+              echo "::error::The cutoff date \"$BEFORE\" isn't a date (YYYY-MM-DD)."
+              exit 1
+            fi
+          else
+            CUTOFF=$(date -u -d "$(date -u +%Y-%m-01) -1 month" +%Y-%m-%dT00:00:00Z)
+          fi
+
+          LATEST=$(gh api "repos/$GH_REPO/releases/latest" --jq .tag_name 2>/dev/null || true)
+          RELEASES=$(gh api --paginate "repos/$GH_REPO/releases?per_page=100" --jq '.[]' | jq -s .)
+          TOTAL=$(jq length <<< "$RELEASES")
+
+          # One line per stable release published before the cutoff: its id,
+          # tag, date and, if it's kept, why.
+          PLAN=$(jq -r --arg cutoff "$CUTOFF" --arg latest "$LATEST" --arg keep "$KEEP_PATTERN" '
+            .[]
+            | select((.draft | not) and (.prerelease | not))
+            | select(.published_at != null and .published_at < $cutoff)
+            | [ .id, .tag_name, .published_at[0:10],
+                (if .tag_name == $latest then "the latest release"
+                 elif (((.name // "") + "\n" + (.body // "")) | test($keep; "i")) then "its notes say to keep it"
+                 else "" end) ]
+            | @tsv' <<< "$RELEASES")
+
+          deleted=()
+          kept=()
+          failed=()
+          while IFS=$'\t' read -r id tag date reason; do
+            [ -n "$id" ] || continue
+            if [ -n "$reason" ]; then
+              kept+=("$tag ($date): $reason")
+            elif [ "$DRY_RUN" = "true" ]; then
+              deleted+=("$tag ($date)")
+            elif gh api -X DELETE "repos/$GH_REPO/releases/$id" --silent; then
+              deleted+=("$tag ($date)")
+            else
+              failed+=("$tag ($date)")
+            fi
+          done <<< "$PLAN"
+
+          if [ "$DRY_RUN" = "true" ]; then
+            verb="Would delete"
+          else
+            verb="Deleted"
+          fi
+
+          {
+            echo "## Release cleanup"
+            echo
+            echo "Stable releases published before ${CUTOFF%T*} (UTC), out of $TOTAL releases. The latest release is ${LATEST:-none}."
+            if [ "$DRY_RUN" = "true" ]; then
+              echo
+              echo "**Dry run:** nothing was deleted."
+            fi
+            echo
+            echo "### $verb (${#deleted[@]})"
+            for line in "${deleted[@]}"; do echo "- $line"; done
+            echo
+            echo "### Kept (${#kept[@]})"
+            for line in "${kept[@]}"; do echo "- $line"; done
+            if [ "${#failed[@]}" -gt 0 ]; then
+              echo
+              echo "### Couldn't delete (${#failed[@]})"
+              for line in "${failed[@]}"; do echo "- $line"; done
+            fi
+          } | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}"
+
+          if [ "${#failed[@]}" -gt 0 ]; then
+            echo "::error::Couldn't delete ${#failed[@]} of the $(( ${#deleted[@]} + ${#failed[@]} )) releases to delete: ${failed[*]}"
+            exit 1
+          fi
