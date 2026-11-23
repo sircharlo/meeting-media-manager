@@ -219,6 +219,13 @@ jobs:
 
   build:
     needs: [bump-version, draft-release, debug-before-build]
+    # Explicit: a job without `if:` only runs when every job before it
+    # succeeded, and a re-run for an existing draft skips the bump's own
+    # jobs (build-version-bump, merge-version-bump). Without it, that re-run
+    # cleared the draft's files and then built nothing (v26.11.4, run
+    # 45105281587). draft-release only succeeds once the bump gate passed
+    # or had nothing to gate, so it's the condition to build on.
+    if: ${{ !cancelled() && needs.draft-release.result == 'success' }}
     uses: ./.github/workflows/build.yml
     with:
       checkout-latest: true
