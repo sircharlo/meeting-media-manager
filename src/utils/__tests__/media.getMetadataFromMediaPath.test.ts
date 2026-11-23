@@ -119,6 +119,28 @@ describe('getMetadataFromMediaPath', () => {
     },
   );
 
+  // MMM-V2-3PB: every imported AVI sent the parser's "Guessed MIME-type not
+  // supported" error, although the import already offers to convert it.
+  it.each(['clip.avi', 'CLIP.AVI'])(
+    'leaves %s to the conversion, without parsing or reporting it',
+    async (fileName) => {
+      makeParseErrorMock(
+        new Error('Guessed MIME-type not supported: video/vnd.avi'),
+      );
+      vi.resetModules();
+      const { getMetadataFromMediaPath } = await import('../media');
+
+      const metadata = await getMetadataFromMediaPath(
+        `C:/Users/test/Additional Media/${fileName}`,
+      );
+
+      expect(metadata.format.duration).toBe(0);
+      expect(globalThis.electronApi.parseMediaFile).not.toHaveBeenCalled();
+      expect(errorCatcher).not.toHaveBeenCalled();
+      expect(noticeUnopenableMedia).not.toHaveBeenCalled();
+    },
+  );
+
   it('still reports genuine metadata-parse failures', async () => {
     makeParseErrorMock(new Error('boom'));
     vi.resetModules();

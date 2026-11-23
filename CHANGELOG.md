@@ -17,6 +17,10 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Yeartext Preview**: When next year's yeartext couldn't be fetched for its preview, the notification showed "{year}" instead of the year. It now names the year.
 - 🐞 **Before-Meeting Panel**: The before-meeting panel, and the notice left when it's dismissed, showed an empty space where their icon should be. They now show a clock.
 
+### 🔧 Chores
+
+- 🔧 **Error Reporting**: Importing an AVI video no longer sends an error report saying its details can't be read. M³ already knows it can't read those files, and offers to convert them. And when M³ can't open a publication's database, it now reports it once instead of once for each lookup, saying whether the file and its folder were still there.
+
 ## v26.11.4
 
 ### ✨ New Features
