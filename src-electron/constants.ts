@@ -1,6 +1,5 @@
 import type { AppStore } from 'src/types';
 
-import { existsSync } from 'node:fs';
 import os from 'node:os';
 
 // Environment
@@ -12,19 +11,30 @@ export const IS_DEMO_MODE =
   process.env.M3_DEMO_MODE === '1' ||
   process.env.M3_DEMO_MODE?.toLowerCase() === 'true';
 
+// The name of M³'s snap (electron-builder names it after package.json's
+// name, in test builds too) and its Flatpak's app ID (build/flatpak).
+const SNAP_NAME = 'meeting-media-manager';
+const FLATPAK_ID = 'io.github.sircharlo.meeting-media-manager';
+
 /**
  * The app store this copy of M³ was installed from, if any: Electron flags
- * Mac App Store and Microsoft Store (MSIX) builds itself, snapd sets SNAP for
- * a snap, and Flatpak sets FLATPAK_ID (and puts /.flatpak-info in its
- * sandbox). Null for M³'s own installers, the AppImage and the portable
- * build. The store then delivers the updates, so M³'s own updater stays off
- * (see findUpdatesOffReason in main/updater.ts).
+ * Mac App Store and Microsoft Store (MSIX) builds itself, snapd sets
+ * SNAP_NAME for a snap, and Flatpak sets FLATPAK_ID. Null for M³'s own
+ * installers, the AppImage and the portable build. The store then delivers
+ * the updates, so M³'s own updater stays off (see findUpdatesOffReason in
+ * main/updater.ts), and a snap keeps its data elsewhere (app-data-paths.ts).
+ *
+ * Only M³'s own snap and Flatpak count: a program started from another snap
+ * or Flatpak inherits its variables (a classic snap's terminal, like VS
+ * Code's, passes SNAP_NAME and SNAP_USER_COMMON to everything it starts),
+ * and the AppImage started from there must still update itself and keep its
+ * data where it was.
  */
 export const detectAppStore = (): AppStore | null => {
   if (process.mas) return 'mac-app-store';
   if (process.windowsStore) return 'microsoft-store';
-  if (process.env.SNAP) return 'snap-store';
-  if (process.env.FLATPAK_ID || existsSync('/.flatpak-info')) return 'flathub';
+  if (process.env.SNAP_NAME === SNAP_NAME) return 'snap-store';
+  if (process.env.FLATPAK_ID === FLATPAK_ID) return 'flathub';
   return null;
 };
 export const APP_STORE = detectAppStore();

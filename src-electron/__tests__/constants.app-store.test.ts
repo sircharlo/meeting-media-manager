@@ -1,19 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { existsSyncMock } = vi.hoisted(() => ({
-  existsSyncMock: vi.fn<(path: string) => boolean>(() => false),
-}));
-
-vi.mock('node:fs', () => ({ existsSync: existsSyncMock }));
-
 // What Electron sets on process for a store build.
 type StoreProcess = NodeJS.Process & { mas?: boolean; windowsStore?: boolean };
 const storeProcess = process as StoreProcess;
 
 describe('detectAppStore', () => {
   beforeEach(() => {
-    existsSyncMock.mockReturnValue(false);
     vi.stubEnv('SNAP', '');
+    vi.stubEnv('SNAP_NAME', '');
+    vi.stubEnv('SNAP_USER_COMMON', '');
     vi.stubEnv('FLATPAK_ID', '');
   });
 
@@ -43,9 +38,18 @@ describe('detectAppStore', () => {
         storeProcess.windowsStore = true;
       },
     ],
-    ['snap-store', () => vi.stubEnv('SNAP', '/snap/meeting-media-manager/12')],
-    ['flathub', () => vi.stubEnv('FLATPAK_ID', 'io.github.sircharlo.M3')],
-    ['flathub', () => existsSyncMock.mockReturnValue(true)],
+    [
+      'snap-store',
+      () => {
+        vi.stubEnv('SNAP', '/snap/meeting-media-manager/12');
+        vi.stubEnv('SNAP_NAME', 'meeting-media-manager');
+      },
+    ],
+    [
+      'flathub',
+      () =>
+        vi.stubEnv('FLATPAK_ID', 'io.github.sircharlo.meeting-media-manager'),
+    ],
   ])('tells a %s build', async (store, install) => {
     install();
     const { detectAppStore } = await import('../constants');
@@ -53,11 +57,20 @@ describe('detectAppStore', () => {
     expect(detectAppStore()).toBe(store);
   });
 
-  it("looks for Flatpak's sandbox info file", async () => {
+  it.each([
+    [
+      'a classic snap (VS Code) whose terminal started the AppImage',
+      () => {
+        vi.stubEnv('SNAP', '/snap/code/212');
+        vi.stubEnv('SNAP_NAME', 'code');
+        vi.stubEnv('SNAP_USER_COMMON', '/home/user/snap/code/common');
+      },
+    ],
+    ['another Flatpak', () => vi.stubEnv('FLATPAK_ID', 'org.mozilla.firefox')],
+  ])("isn't a store build when started from %s", async (_from, install) => {
+    install();
     const { detectAppStore } = await import('../constants');
 
-    detectAppStore();
-
-    expect(existsSyncMock).toHaveBeenCalledWith('/.flatpak-info');
+    expect(detectAppStore()).toBeNull();
   });
 });
