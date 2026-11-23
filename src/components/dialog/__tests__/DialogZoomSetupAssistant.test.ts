@@ -418,6 +418,39 @@ describe('DialogZoomSetupAssistant', () => {
     expect(text()).not.toContain('Which of these opens the participants list');
   });
 
+  it("asks which button opens the participants list when it's open but M³ can't find that button (MMM-V2-3MJ)", async () => {
+    // The panel is open, its button's name was lost and Zoom's shortcut for
+    // it changed: only opening the panel through its button tells.
+    zoom.diagnoseZoom.mockImplementation(async (options) =>
+      options?.reopenParticipants
+        ? {
+            ...ALL_GOOD,
+            participantsButtonMissing: true,
+            participantsPanel: false,
+          }
+        : ALL_GOOD,
+    );
+    zoom.getZoomShareEntries.mockResolvedValue({
+      more: [],
+      toolbar: ['Participant·es', 'Partager'],
+    });
+    await mountAssistant();
+    await click('Continue'); // welcome
+    await typeMeetingId('987 654 3210');
+    await vi.waitFor(() =>
+      expect(text()).toContain('Connected to your Zoom meeting'),
+    );
+    await click('Continue'); // meeting: the checks run
+
+    await vi.waitFor(() =>
+      expect(text()).toContain('Which of these opens the participants list'),
+    );
+    expect(zoom.diagnoseZoom).toHaveBeenCalledWith({
+      reopenParticipants: true,
+    });
+    expect(isDisabled(button('Continue'))).toBe(true);
+  });
+
   it('lets the host point out the "Mute all" button when M³ doesn\'t recognize it', async () => {
     zoom.diagnoseZoom.mockResolvedValue({
       ...ALL_GOOD,

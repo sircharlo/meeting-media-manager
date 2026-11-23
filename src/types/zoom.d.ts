@@ -439,7 +439,20 @@ type ZoomCommandBody =
        * and bringing back nothing (no `participants` while it's closed).
        */
       peek?: boolean;
+      /**
+       * Opens the panel through its button even if it's open: closed
+       * through it first (the setup assistant's test of a picked entry).
+       */
+      reopen?: boolean;
       type: 'participants';
+    }
+  | {
+      /**
+       * Opens the participants panel through its button even if it's open:
+       * closed through it first (the setup assistant's own checks).
+       */
+      reopenParticipants?: boolean;
+      type: 'diagnose';
     }
   | {
       /**
@@ -523,7 +536,6 @@ type ZoomCommandBody =
   | { title: string; type: 'test-mute-all-entry' }
   | { title: string; type: 'test-stop-share-entry' }
   | { type: 'ask-all-to-unmute' }
-  | { type: 'diagnose' }
   /**
    * `reveal` brings the meeting window back from Zoom's mini view to read
    * the audio and video states (Zoom's toolbar is read even while hidden);
