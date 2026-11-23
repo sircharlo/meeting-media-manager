@@ -1505,19 +1505,29 @@ export const isZoomSetupNeeded = () => {
   );
 };
 
-/** Everything the Zoom Meeting Manager relies on, as found in Zoom now. */
-export const diagnoseZoom = async (): Promise<null | ZoomDiagnosis> => {
-  const result = await runCommand({ type: 'diagnose' });
+/**
+ * Everything the Zoom Meeting Manager relies on, as found in Zoom now. With
+ * `reopenParticipants` (the setup assistant's checks), Zoom's participants
+ * panel is opened through its button even if it's open, closed through it
+ * first: an open panel hid a button M³ couldn't find, which the assistant
+ * then never asked about (MMM-V2-3MJ).
+ */
+export const diagnoseZoom = async (
+  options: { reopenParticipants?: boolean } = {},
+): Promise<null | ZoomDiagnosis> => {
+  const result = await runCommand({ ...options, type: 'diagnose' });
   return result.ok ? (result.diagnosis ?? null) : null;
 };
 
 /**
  * Tries an entry the user picked as Zoom's Participants button (named in
  * their Zoom language, and sometimes kept in Zoom's "More" menu), and keeps
- * it once it has opened the participants panel.
+ * it once it has opened the participants panel: through the entry, closing
+ * the panel through it first if it's open.
  */
 export const tryZoomParticipantsEntry = async (entry: string) => {
   const result = await runCommand({
+    reopen: true,
     titles: { participants: entry },
     type: 'participants',
   });

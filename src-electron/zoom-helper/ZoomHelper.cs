@@ -1875,29 +1875,64 @@ namespace M3.ZoomHelper
             if (string.IsNullOrEmpty(Known.Participants)) return false;
             var grid = OpenMoreGrid(window);
             if (grid == null) return false;
-            El entry;
-            if (GridEntries(grid).TryGetValue(Known.Participants, out entry))
+            foreach (var entry in GridEntries(grid))
             {
-                Press(entry);
+                if (!IsParticipantsName(entry.Key, Known.Participants)) continue;
+                Press(entry.Value);
                 return true;
             }
             CloseAll(MoreGridClass);
             return false;
         }
 
+        /// <summary>Whether a control's name is the Participants button's,
+        /// whatever its case: French Zoom 7.2 starts it with a capital only
+        /// while the panel is open ("Participant·es, fermer le panneau, …"
+        /// then, "participant·es, ouvrir le panneau, …" once
+        /// closed).</summary>
+        static bool IsParticipantsName(string name, string title)
+        {
+            return !string.IsNullOrEmpty(title) && string.Equals(name, title, StringComparison.OrdinalIgnoreCase);
+        }
+
         /// <summary>Which of the toolbar's buttons (their names, left to
         /// right) is Participants: the one with Zoom's Alt+U, else the one
-        /// named as learned; its name is then learned. -1 if none is.</summary>
+        /// named as learned (whatever its case, see IsParticipantsName); its
+        /// name is learned when new. -1 if none is.</summary>
         public static int FindParticipantsButton(IList<string> names)
         {
             var index = -1;
             for (var i = 0; i < names.Count; i++)
                 if (HasHotkey(names[i], HotkeyParticipants)) index = i;
             var known = Known.Participants;
-            for (var i = 0; index < 0 && !string.IsNullOrEmpty(known) && i < names.Count; i++)
-                if (FirstSegment(names[i]) == known) index = i;
-            if (index >= 0) Known.Learn("participants", FirstSegment(names[index]));
+            for (var i = 0; index < 0 && i < names.Count; i++)
+                if (IsParticipantsName(FirstSegment(names[i]), known)) index = i;
+            if (index < 0) return index;
+            var name = FirstSegment(names[index]);
+            if (!IsParticipantsName(name, known)) Known.Learn("participants", name);
             return index;
+        }
+
+        /// <summary>For the setup assistant's check (`reopen`): closes the
+        /// participants panel through its button (see PressParticipantsButton,
+        /// never Zoom's Alt+U, which the user may have given to something
+        /// else), so the check then opens it through that same button rather
+        /// than finding it open. A panel the user had open hid a button M3
+        /// couldn't find, which the assistant then never asked about
+        /// (MMM-V2-3MJ). Nothing is closed while the panel is closed, or
+        /// popped out into a window of its own, which is left as it is. No
+        /// button: participants-button-not-found, for the user to point M3 to
+        /// it; one pressed that didn't close the panel isn't it either
+        /// (participants-panel-not-closed), and whatever it opened is
+        /// dismissed.</summary>
+        static void CloseParticipantsPanelFirst(El window)
+        {
+            if (!ParticipantsPanelOpen(window) || PoppedOutPanel() != null) return;
+            var before = ZoomWindows();
+            if (!PressParticipantsButton(window)) throw new ZoomActionError("participants-button-not-found");
+            if (WaitUntil(() => !ParticipantsPanelOpen(window), 5000)) return;
+            DismissNewWindows(before);
+            throw new ZoomActionError("participants-panel-not-closed");
         }
 
         /// <summary>Remembers the open participants panel's title
@@ -2032,11 +2067,15 @@ namespace M3.ZoomHelper
         /// Zoom's buttons for its check, and this tells whether it will, see
         /// zoom-startup-check.ts): nothing (no `participants`) while the panel
         /// is closed, or while the meeting window can't be read as it is
-        /// (Zoom's mini view, or minimized).</summary>
-        public static Dictionary<string, object> Participants(bool peek)
+        /// (Zoom's mini view, or minimized). With `reopen`, an open panel is
+        /// closed and opened again through its button first (see
+        /// CloseParticipantsPanelFirst): the setup assistant's test of the
+        /// entry the user picked as the Participants button.</summary>
+        public static Dictionary<string, object> Participants(bool peek, bool reopen)
         {
             if (peek) return PeekParticipants();
             var window = RequireParticipantsWindow();
+            if (reopen) CloseParticipantsPanelFirst(window);
             OpenParticipantsPanel(window);
             return ParticipantsReply(window);
         }
@@ -3472,8 +3511,12 @@ namespace M3.ZoomHelper
         // --- Setup assistant -------------------------------------------------------------
 
         /// <summary>Whether everything the Zoom Meeting Manager relies on can be
-        /// found in this Zoom, for the setup assistant to report.</summary>
-        public static Dictionary<string, object> Diagnose()
+        /// found in this Zoom, for the setup assistant to report. With
+        /// `reopenParticipants` (the assistant's own checks), the participants
+        /// panel is opened through its button even when it was open already:
+        /// closed through it first (see CloseParticipantsPanelFirst), then
+        /// opened again, as the user had it.</summary>
+        public static Dictionary<string, object> Diagnose(bool reopenParticipants)
         {
             var result = new Dictionary<string, object>();
             var window = FindMeetingWindow() ?? ExitMiniView();
@@ -3496,16 +3539,21 @@ namespace M3.ZoomHelper
             result["videoTitle"] = video == null ? null : FirstSegment(video.Name);
 
             // Opening the panel also learns the names to open it by next time.
+            var buttonMissing = false;
             try
             {
+                if (reopenParticipants) CloseParticipantsPanelFirst(window);
                 OpenParticipantsPanel(window);
             }
             catch (ZoomActionError error)
             {
                 // The user can then point M3 to the Participants button.
-                result["participantsButtonMissing"] = error.Message == "participants-button-not-found";
+                buttonMissing = error.Message == "participants-button-not-found" || error.Message == "participants-panel-not-closed";
+                result["participantsButtonMissing"] = buttonMissing;
             }
-            result["participantsPanel"] = ParticipantsPanelOpen(window);
+            // Open, but not through a button M3 found: it's still to be shown
+            // which one opens it.
+            result["participantsPanel"] = ParticipantsPanelOpen(window) && !buttonMissing;
             // Only the host and co-hosts can mute everyone.
             result["hostControls"] = MuteAllButton(window) != null;
             // The user can then point M3 to the "Mute all" button, if any.
@@ -4607,7 +4655,7 @@ namespace M3.ZoomHelper
                 case "mic-title": return MicTitle();
                 case "mute-all": return MuteAll(GetBool(request, "allowSelfUnmute"));
                 case "ask-all-to-unmute": return AskAllToUnmute();
-                case "participants": return Participants(GetBool(request, "peek"));
+                case "participants": return Participants(GetBool(request, "peek"), GetBool(request, "reopen"));
                 case "admit": return Admit(GetStrings(request, "names"));
                 case "learn-hand-raised":
                     return LearnHandRaised(GetString(request, "reactButtonTitle"), GetString(request, "handRaiseTitle"));
@@ -4628,7 +4676,7 @@ namespace M3.ZoomHelper
                     return StartShare(GetString(request, "windowTitle") ?? "", GetString(request, "shareButtonTitle"));
                 case "stop-share": return StopShare();
                 case "diagnose":
-                    return new Dictionary<string, object> { { "diagnosis", Diagnose() } };
+                    return new Dictionary<string, object> { { "diagnosis", Diagnose(GetBool(request, "reopenParticipants")) } };
                 // What Zoom shows when no action failed, e.g. instead of the
                 // meeting M3 opened.
                 case "snapshot":

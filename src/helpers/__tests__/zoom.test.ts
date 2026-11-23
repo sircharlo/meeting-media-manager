@@ -924,11 +924,32 @@ describe('Zoom setup assistant', () => {
     expect(currentSettings.zoomParticipantsButtonTitle).toBeNull();
 
     expect(await tryZoomParticipantsEntry('Participants')).toBe(true);
+    // Through the entry even if the panel was open: closed, then opened.
     expect(zoomCommandMock).toHaveBeenLastCalledWith({
+      reopen: true,
       titles: expect.objectContaining({ participants: 'Participants' }),
       type: 'participants',
     });
     expect(currentSettings.zoomParticipantsButtonTitle).toBe('Participants');
+  });
+
+  it("has the setup assistant's checks open the participants panel through its button, even when it's open", async () => {
+    zoomCommandMock.mockResolvedValue({
+      diagnosis: { meeting: true },
+      ok: true,
+    });
+    const { diagnoseZoom } = await import('../zoom');
+
+    await diagnoseZoom({ reopenParticipants: true });
+    expect(zoomCommandMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ reopenParticipants: true, type: 'diagnose' }),
+    );
+
+    // The check before a meeting leaves an open panel as it is.
+    await diagnoseZoom();
+    expect(zoomCommandMock).toHaveBeenLastCalledWith(
+      expect.not.objectContaining({ reopenParticipants: true }),
+    );
   });
 
   it('keeps a "Mute all" or "Stop share" pick only once Zoom confirmed it', async () => {

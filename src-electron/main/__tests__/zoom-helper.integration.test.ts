@@ -38,6 +38,15 @@ const MOVED_SHORTCUTS_TOOLBAR = [
   'Partager, Ctrl+Z',
   'Fin, Alt+Q',
 ];
+// The same toolbar with the panel open: French Zoom then starts the button's
+// name with a capital and says it closes the panel, as MMM-V2-3NC's and
+// MMM-V2-3MF's reports showed (with Alt+U there).
+const PANEL_OPEN_MOVED_SHORTCUTS_TOOLBAR = MOVED_SHORTCUTS_TOOLBAR.map(
+  (name) =>
+    name.startsWith('participant·es')
+      ? 'Participant·es, fermer le panneau, 5 participant·es, Ctrl+4'
+      : name,
+);
 // The same toolbar with Zoom's own shortcuts.
 const ZOOM_SHORTCUTS_TOOLBAR = [
   'Couper le son, son actuellement rétabli, Alt+A',
@@ -50,31 +59,36 @@ const PANEL_HEADING = 'Participants (5)';
 
 /**
  * What came of a request (see ParticipantsRequest): the button's place in
- * the toolbar (-1: not found), the name the helper learned, and the one M³
- * keeps.
+ * the toolbar (-1: not found), and in the toolbar to open the panel again
+ * with (`reopened`), the name the helper learned, and the one M³ keeps.
  */
 interface ParticipantsReply {
   found: null | number;
   learned: null | string;
+  reopened?: null | number;
   saved: null | string;
 }
 
 /**
- * One request to the helper, as far as the Participants button goes: with
- * the panel closed, it looks for the button in the toolbar (`toolbar`); once
- * the panel is open, it reads its heading (`heading`). `entry` is the one
- * the user picked in the setup assistant.
+ * One request to the helper, as far as the Participants button goes: it
+ * looks for the button in the toolbar (`toolbar`), and once the panel is
+ * open, it reads its heading (`heading`). For the setup assistant, which
+ * has an open panel closed through that button and opened again through it
+ * (see CloseParticipantsPanelFirst), `toolbar` is the toolbar with the
+ * panel open, and `reopenToolbar` the toolbar once it closed. `entry` is
+ * the one the user picked in the setup assistant.
  */
 interface ParticipantsRequest {
   entry?: string;
   heading?: string;
+  reopenToolbar?: string[];
   toolbar?: string[];
 }
 
 // Sends each request as M³ does (see sendCommand and
 // tryZoomParticipantsEntry in src/helpers/zoom.ts): with the name kept, or
 // the picked entry instead, then keeps what the helper learned, then the
-// picked entry once it found the button.
+// picked entry once it found the button (to close and reopen the panel).
 const PARTICIPANTS_PROBE = String.raw`
 param([string]$Interop, [string]$Source, [string]$In, [string]$Out)
 $ErrorActionPreference = 'Stop'
@@ -94,12 +108,22 @@ foreach ($scenario in $scenarios) {
     [M3.ZoomHelper.Known]::Load($json.DeserializeObject($json.Serialize(@{ titles = @{ participants = $sent } })))
     $found = $null
     if ($request.ContainsKey('toolbar')) { $found = [M3.ZoomHelper.Helper]::FindParticipantsButton([string[]]$request['toolbar']) }
+    $opened = $found -ge 0
+    $reply = @{}
+    if ($request.ContainsKey('reopenToolbar')) {
+      $reopened = [M3.ZoomHelper.Helper]::FindParticipantsButton([string[]]$request['reopenToolbar'])
+      $reply['reopened'] = $reopened
+      $opened = $opened -and $reopened -ge 0
+    }
     if ($request.ContainsKey('heading')) { [M3.ZoomHelper.Helper]::LearnPanelHeading([string]$request['heading']) }
     $learned = $null
     if ([M3.ZoomHelper.Known]::Learned.ContainsKey('participants')) { $learned = [M3.ZoomHelper.Known]::Learned['participants'] }
     if ($learned) { $saved = $learned }
-    if ($request.ContainsKey('entry') -and $found -ge 0) { $saved = $request['entry'] }
-    [void]$scenarioReplies.Add(@{ found = $found; learned = $learned; saved = $saved })
+    if ($request.ContainsKey('entry') -and $opened) { $saved = $request['entry'] }
+    $reply['found'] = $found
+    $reply['learned'] = $learned
+    $reply['saved'] = $saved
+    [void]$scenarioReplies.Add($reply)
   }
   [void]$replies.Add($scenarioReplies)
 }
@@ -155,6 +179,60 @@ const PARTICIPANTS_SCENARIOS: {
     name: "learns the heading's title while no name is known for the button (the panel opened by hand)",
     requests: [{ heading: PANEL_HEADING }],
     saved: null,
+  },
+  {
+    expected: [
+      { found: -1, learned: null, saved: 'Participants' },
+      {
+        found: 4,
+        learned: null,
+        reopened: 4,
+        saved: 'Participant·es',
+      },
+      {
+        found: 4,
+        learned: null,
+        reopened: 4,
+        saved: 'Participant·es',
+      },
+      { found: 4, learned: null, saved: 'Participant·es' },
+    ],
+    name: 'with the panel open, the name lost and the shortcut moved, finds no button to close it, then closes and reopens it through the one the user picks (MMM-V2-3MJ)',
+    requests: [
+      // The setup assistant's checks: no button to close the panel with,
+      // so it asks which one opens the participants list.
+      { toolbar: PANEL_OPEN_MOVED_SHORTCUTS_TOOLBAR },
+      // The user picks it from the toolbar as it is with the panel open.
+      {
+        entry: 'Participant·es',
+        heading: PANEL_HEADING,
+        reopenToolbar: MOVED_SHORTCUTS_TOOLBAR,
+        toolbar: PANEL_OPEN_MOVED_SHORTCUTS_TOOLBAR,
+      },
+      // The checks, run again.
+      {
+        heading: PANEL_HEADING,
+        reopenToolbar: MOVED_SHORTCUTS_TOOLBAR,
+        toolbar: PANEL_OPEN_MOVED_SHORTCUTS_TOOLBAR,
+      },
+      // The startup check, with the panel closed.
+      { toolbar: MOVED_SHORTCUTS_TOOLBAR },
+    ],
+    saved: 'Participants',
+  },
+  {
+    expected: [
+      { found: 4, learned: null, reopened: 4, saved: 'participant·es' },
+    ],
+    name: 'with the panel open, closes and reopens it through a button the user picked with the panel closed',
+    requests: [
+      {
+        heading: PANEL_HEADING,
+        reopenToolbar: MOVED_SHORTCUTS_TOOLBAR,
+        toolbar: PANEL_OPEN_MOVED_SHORTCUTS_TOOLBAR,
+      },
+    ],
+    saved: 'participant·es',
   },
 ];
 

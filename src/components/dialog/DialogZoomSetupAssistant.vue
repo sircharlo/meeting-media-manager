@@ -861,8 +861,9 @@ const checksPassed = computed(
 
 // Zoom's Participants button is named in the user's Zoom language and is
 // sometimes kept in Zoom's "More" menu. When M³ can't find it, the user
-// picks it from Zoom's entries, as for Share; opening the panel by hand in
-// Zoom works too (the checks then learn the names from the open panel).
+// picks it from Zoom's entries, as for Share. The checks open the panel
+// through it even if the user opened it, which would hide a button M³
+// can't find.
 const participantsEntries = ref<{ more: string[]; toolbar: string[] }>({
   more: [],
   toolbar: [],
@@ -891,7 +892,11 @@ const hasChecksPicker = computed(
 const runChecks = async () => {
   checking.value = true;
   try {
-    diagnosis.value = (await diagnoseZoom()) ?? { meeting: false };
+    // Even with the participants panel open, M³ opens it through its button,
+    // so a button it can't find is asked about.
+    diagnosis.value = (await diagnoseZoom({ reopenParticipants: true })) ?? {
+      meeting: false,
+    };
     participantsEntries.value = diagnosis.value.participantsButtonMissing
       ? await getZoomShareEntries()
       : { more: [], toolbar: [] };
