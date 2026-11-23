@@ -24,8 +24,9 @@ $dark: #1d1d1d;
 $dark-page: #121212;
 
 $positive: #21ba45;
-// A deeper green for "finished" fills, where white sits on it.
-$positive-strong: #178a36;
+// A deeper green for "finished" fills, where white sits on it: the positive
+// notice's own (see $notice-positive below).
+$positive-strong: #157f33;
 $info: #31ccec;
 
 $whiteTransparent: rgba(255, 255, 255, 0.25);
@@ -43,7 +44,7 @@ $error-semi-transparent: rgba(196, 63, 63, 0.24);
 // keeps it readable (4.5:1 or more) in both themes. On a tint or the page,
 // its icon, border or text takes the same shade in the light theme and a
 // lighter one in the dark theme.
-$notice-positive: #157f33;
+$notice-positive: $positive-strong;
 $notice-info: #2563eb;
 $notice-warning: #b4570b;
 $notice-negative: #c43f3f;

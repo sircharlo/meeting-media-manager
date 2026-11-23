@@ -52,7 +52,12 @@
       v-if="unplayableItems.length"
       class="row items-center no-wrap q-py-none"
     >
-      <q-icon class="q-mr-sm" color="warning" name="mmm-warning" size="sm" />
+      <q-icon
+        class="q-mr-sm"
+        color="notice-warning"
+        name="mmm-warning"
+        size="sm"
+      />
       <div class="col">
         {{ t('quick-actions-media-cannot-play', unplayableItems.length) }}
       </div>

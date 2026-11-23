@@ -8,7 +8,8 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🛠️ Improvements and Tweaks
 
-- 🛠️ **Notifications**: Notifications are easier to read: their green, blue, orange and red are now deeper shades, so their white text stands out on each of them, orange warnings included (their text was dark), and all their buttons are white too.
+- 🛠️ **Notifications**: Notifications and notices are easier to read. The notifications that pop up now use deeper shades of green, blue, orange and red, so their white text stands out on each of them (orange warnings had dark text), and all their buttons are white. The notices on the page and in popups, such as the ones about OBS Studio, hidden media or the Zoom Meeting Manager, now follow the light or dark theme: a soft tint of their color behind the usual text, with a colored icon and edge, instead of white text on a bright color that was hard to read. Colored hints, like a setting's warning or the reason it's turned off, use the same shades.
+- 🛠️ **Hidden Media**: During the circuit overseer's visit, the notice that some media items are hidden is now blue, for information, instead of orange, a warning: that week, M³ itself hides the closing song and the Congregation Bible Study's media, so it's expected. Otherwise, it stays orange.
 
 ## v26.11.4
 

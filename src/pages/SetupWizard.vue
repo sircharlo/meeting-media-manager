@@ -522,7 +522,7 @@
           :title="t('zoom-setup-title')"
         >
           <p>{{ t('setup-wizard-zoom-manager-setup-explain') }}</p>
-          <p v-if="zoomManagerReady" class="text-positive">
+          <p v-if="zoomManagerReady" class="text-notice-positive">
             <q-icon class="q-mr-xs" name="mmm-check" />
             {{ t('setup-wizard-zoom-manager-ready') }}
           </p>
@@ -602,7 +602,7 @@
               )
             }}
           </p>
-          <p v-if="zoomSharesMedia" class="text-warning">
+          <p v-if="zoomSharesMedia" class="text-notice-warning">
             {{ t('setup-wizard-obs-replaces-zoom-sharing') }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
@@ -652,26 +652,14 @@
             :actions="['obsConnect']"
             :label="t('obsPassword')"
           />
-          <q-banner
+          <NoticeBanner
             v-if="obsMessage"
             class="q-mt-md"
-            :class="obsConnectionBannerClass"
-            rounded
+            :loading="obsConnectionState === 'connecting'"
+            :type="obsConnectionBannerType"
           >
             {{ t(obsConnectionBannerTextKey) }}
-            <template #avatar>
-              <LiquidSpinner
-                v-if="obsConnectionState === 'connecting'"
-                color="white"
-              />
-              <q-icon
-                v-else
-                :name="
-                  obsConnectionState === 'connected' ? 'mmm-check' : 'mmm-clear'
-                "
-              />
-            </template>
-          </q-banner>
+          </NoticeBanner>
           <!-- UX-9 (full-audit-2026-09-04.md) -->
           <p
             v-if="!currentSettings.obsPort || !currentSettings.obsPassword"
@@ -821,7 +809,7 @@
 
 <script setup lang="ts">
 import type { LanguageValue } from 'src/constants/locales';
-import type { FeatureNudgeId } from 'src/types';
+import type { FeatureNudgeId, NoticeType } from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
@@ -833,7 +821,7 @@ import TextInput from 'components/form-inputs/TextInput.vue';
 import TimeInput from 'components/form-inputs/TimeInput.vue';
 import ConfettiBurst from 'components/ui/ConfettiBurst.vue';
 import LiquidFill from 'components/ui/LiquidFill.vue';
-import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
+import NoticeBanner from 'components/ui/NoticeBanner.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
@@ -872,10 +860,10 @@ const { currentCongregation, currentLangObject, currentSettings, online } =
 // until a connection attempt has actually happened - a user who's typed
 // nothing yet shouldn't see an alarming red banner.
 const { obsConnectionState, obsMessage } = storeToRefs(useObsStateStore());
-const obsConnectionBannerClass = computed(() => {
-  if (obsConnectionState.value === 'connected') return 'bg-positive text-white';
-  if (obsConnectionState.value === 'connecting') return 'bg-warning text-white';
-  return 'bg-negative text-white';
+const obsConnectionBannerType = computed((): NoticeType => {
+  if (obsConnectionState.value === 'connected') return 'positive';
+  if (obsConnectionState.value === 'connecting') return 'warning';
+  return 'negative';
 });
 const obsConnectionBannerTextKey = computed(() => {
   if (obsConnectionState.value === 'connected') return 'obs.connected';

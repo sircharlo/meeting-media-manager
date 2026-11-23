@@ -35,7 +35,7 @@
           </q-img>
           <q-badge
             v-if="updatesAreDisabled"
-            color="warning"
+            color="notice-warning"
             floating
             style="top: -1px; right: 0px"
           >

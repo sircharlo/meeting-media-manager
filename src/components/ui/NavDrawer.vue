@@ -118,11 +118,11 @@
       </q-tooltip>
       <q-item-section avatar>
         <q-icon
-          :color="invalidSettings() ? 'negative' : ''"
+          :color="invalidSettings() ? 'notice-negative' : ''"
           name="mmm-settings"
         />
       </q-item-section>
-      <q-item-section :class="invalidSettings() ? 'text-negative' : ''">
+      <q-item-section :class="invalidSettings() ? 'text-notice-negative' : ''">
         {{ t('settings') }}
       </q-item-section>
     </q-item>

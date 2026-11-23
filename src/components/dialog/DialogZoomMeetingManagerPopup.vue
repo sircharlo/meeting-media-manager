@@ -22,44 +22,59 @@
     </template>
 
     <template #banners>
-      <div v-if="setupNeeded" class="action-popup__banner">
-        <q-icon color="primary" name="mmm-cog-sparkles" size="18px" />
-        <div class="col text-caption text-weight-medium">
+      <NoticeBanner
+        v-if="setupNeeded"
+        class="action-popup__banner"
+        dense
+        icon="mmm-cog-sparkles"
+        inline-actions
+        type="info"
+      >
+        <div class="text-caption text-weight-medium">
           {{ t('zoom-setup-banner') }}
         </div>
-        <q-btn
-          color="primary"
-          dense
-          flat
-          :label="t('zoom-setup-open')"
-          no-caps
-          @click="openSetupAssistant"
-        />
-      </div>
+        <template #action>
+          <q-btn
+            dense
+            flat
+            :label="t('zoom-setup-open')"
+            no-caps
+            @click="openSetupAssistant"
+          />
+        </template>
+      </NoticeBanner>
 
       <!-- A Zoom dialog or popup (an invite window, say) may block M³'s actions -->
-      <div v-if="meeting?.dialogs?.length" class="action-popup__banner">
-        <q-icon color="warning" name="mmm-warning" size="18px" />
-        <div class="col text-caption">
-          {{ t('zoom-dialog-in-the-way') }}
-        </div>
-      </div>
+      <NoticeBanner
+        v-if="meeting?.dialogs?.length"
+        class="action-popup__banner"
+        dense
+        type="warning"
+      >
+        <div class="text-caption">{{ t('zoom-dialog-in-the-way') }}</div>
+      </NoticeBanner>
 
       <!-- Not while the check only waits for the user's go-ahead, which Test
            again gives (see runZoomStartupCheck) -->
-      <div v-if="checkingZoom" class="action-popup__banner">
-        <LiquidSpinner color="primary" size="18px" />
-        <div class="col text-caption text-weight-medium">
+      <NoticeBanner
+        v-if="checkingZoom"
+        class="action-popup__banner"
+        dense
+        loading
+        type="info"
+      >
+        <div class="text-caption text-weight-medium">
           {{ t('zoom-check-running') }}
         </div>
-      </div>
+      </NoticeBanner>
       <!-- Its explanation is long: the button goes under it, not beside it. -->
-      <div
+      <NoticeBanner
         v-else-if="automationsPaused"
-        class="action-popup__banner action-popup__banner--negative zoom-popup__banner--stacked"
+        class="action-popup__banner"
+        dense
+        type="negative"
       >
-        <q-icon color="negative" name="mmm-error" size="18px" />
-        <div class="col text-caption">
+        <div class="text-caption">
           <div class="text-weight-medium">
             {{ t('zoom-automations-paused') }}
           </div>
@@ -72,10 +87,10 @@
               t('zoom-automations-paused-failed', { problems: pausedProblems })
             }}
           </div>
+        </div>
+        <template #action>
           <q-btn
             v-if="relearnNeeded"
-            class="zoom-popup__banner-action"
-            color="primary"
             dense
             flat
             :label="t('zoom-setup-open')"
@@ -84,16 +99,14 @@
           />
           <q-btn
             v-else
-            class="zoom-popup__banner-action"
-            color="primary"
             dense
             flat
             :label="t('zoom-check-test-again')"
             no-caps
             @click="testAgain"
           />
-        </div>
-      </div>
+        </template>
+      </NoticeBanner>
     </template>
 
     <template v-if="showMeetingSettingsSection">
@@ -158,23 +171,25 @@
       <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
         {{ t('zoom-raised-hands') }}
       </p>
-      <div
+      <NoticeBanner
         v-if="!currentSettings?.zoomHandRaisedPhrase"
         class="action-popup__banner"
+        dense
+        icon="mmm-cog-sparkles"
+        inline-actions
+        type="info"
       >
-        <q-icon color="primary" name="mmm-cog-sparkles" size="18px" />
-        <div class="col text-caption">
-          {{ t('zoom-hand-setup-needed') }}
-        </div>
-        <q-btn
-          color="primary"
-          dense
-          flat
-          :label="t('zoom-setup-open')"
-          no-caps
-          @click="openSetupAssistant"
-        />
-      </div>
+        <div class="text-caption">{{ t('zoom-hand-setup-needed') }}</div>
+        <template #action>
+          <q-btn
+            dense
+            flat
+            :label="t('zoom-setup-open')"
+            no-caps
+            @click="openSetupAssistant"
+          />
+        </template>
+      </NoticeBanner>
       <template v-else>
         <div
           v-if="raisedHands.length === 0"
@@ -409,6 +424,7 @@ import type { SettingsValues, ZoomMeetingState } from 'src/types';
 import ZoomSelfTestPanel from 'components/dialog/ZoomSelfTestPanel.vue';
 import ActionPopup from 'components/ui/ActionPopup.vue';
 import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
+import NoticeBanner from 'components/ui/NoticeBanner.vue';
 import { storeToRefs } from 'pinia';
 import { getZoomHelperErrorMessageKey } from 'src/constants/zoom';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -652,15 +668,5 @@ onBeforeUnmount(() => {
 .zoom-helper-logs__line {
   overflow-wrap: anywhere;
   padding: 0.1em 0;
-}
-
-/* A banner whose button goes under its text: the icon stays by the first line. */
-.zoom-popup__banner--stacked {
-  align-items: flex-start;
-}
-
-/* Under the banner's text, its label lined up with it. */
-.zoom-popup__banner-action {
-  margin: 4px 0 0 -6px;
 }
 </style>

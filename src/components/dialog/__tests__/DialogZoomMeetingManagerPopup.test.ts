@@ -184,7 +184,7 @@ describe('DialogZoomMeetingManagerPopup', () => {
     await flushPromises();
     const dispatch = vi.spyOn(globalThis, 'dispatchEvent');
 
-    const banner = document.querySelector('.action-popup__banner--negative');
+    const banner = document.querySelector('.notice--negative');
     expect(banner?.textContent).toContain(
       "Zoom's language was changed or Zoom was updated",
     );

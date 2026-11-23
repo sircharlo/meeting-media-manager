@@ -82,25 +82,15 @@
   >
     <div v-if="bannerColumnVisible" class="col">
       <q-slide-transition v-for="b in pageBanners" :key="b.key">
-        <div class="row">
-          <q-banner :class="b.className" rounded>
+        <div class="row q-pb-sm">
+          <NoticeBanner
+            :actions="b.actions"
+            class="full-width"
+            :icon="b.icon"
+            :type="b.type"
+          >
             {{ t(b.textKey) }}
-            <template #avatar>
-              <q-avatar v-if="b.avatarClass" :class="b.avatarClass" size="lg">
-                <q-icon :name="b.icon" size="sm" />
-              </q-avatar>
-              <q-icon v-else :name="b.icon" size="lg" />
-            </template>
-            <template #action>
-              <q-btn
-                v-for="a in b.actions || []"
-                :key="a.labelKey"
-                flat
-                :label="t(a.labelKey)"
-                @click="a.onClick()"
-              />
-            </template>
-          </q-banner>
+          </NoticeBanner>
         </div>
       </q-slide-transition>
       <EmptyState
@@ -242,6 +232,7 @@ import DialogSectionPicker from 'components/dialog/DialogSectionPicker.vue';
 import EmptyState from 'components/media/EmptyState.vue';
 import MediaList from 'components/media/MediaList.vue';
 import MeetingQuickActionsPanel from 'components/media/MeetingQuickActionsPanel.vue';
+import NoticeBanner from 'components/ui/NoticeBanner.vue';
 import QuickStartGuide from 'components/ui/QuickStartGuide.vue';
 import DOMPurify from 'dompurify';
 import Mousetrap from 'mousetrap';
@@ -282,6 +273,7 @@ import {
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { getPageBanners } from 'src/helpers/page-banners';
 import { withPendingSectionImport } from 'src/helpers/pending-section-imports';
 import { updateLastUsedDate } from 'src/helpers/usage';
 import { stopZoomSharingAfterMedia } from 'src/helpers/zoom';
@@ -632,66 +624,26 @@ const customDuration = computed(() => {
   );
 });
 
-const pageBanners = computed(() => {
-  const banners: {
-    actions?: { labelKey: string; onClick: () => void }[];
-    avatarClass?: string;
-    className: string;
-    icon: string;
-    key: string;
-    textKey: string;
-  }[] = [];
-
-  if (showObsBanner.value) {
-    banners.push({
-      className: 'bg-negative text-white full-width',
-      icon: 'mmm-obs-studio',
-      key: 'obs',
-      textKey: 'obs-studio-disconnected-banner',
-    });
-  }
-
-  if (showObsSceneListErrorBanner.value) {
-    banners.push({
-      className: 'bg-warning text-white full-width',
-      icon: 'mmm-obs-studio',
-      key: 'obs-scene-list-error',
-      textKey: 'obs-studio-scene-list-error-banner',
-    });
-  }
-
-  if (someItemsHiddenForSelectedDate.value) {
-    banners.push({
-      actions: [
-        {
-          labelKey: 'show-all-media',
-          onClick: () =>
-            showHiddenMediaForSelectedDate(
-              currentCongregation.value,
-              selectedDateObject.value,
-            ),
-        },
-      ],
-      avatarClass: 'bg-white text-warning',
-      className: 'bg-warning text-white full-width',
-      icon: 'mmm-file-hidden',
-      key: 'hidden-items',
-      textKey: 'some-media-items-are-hidden',
-    });
-  }
-
-  if (duplicateSongsForWeMeeting.value) {
-    banners.push({
-      avatarClass: 'bg-white text-warning',
-      className: 'bg-warning text-white full-width',
-      icon: 'mmm-music-note',
-      key: 'duplicate-songs',
-      textKey: 'some-songs-are-duplicated',
-    });
-  }
-
-  return banners;
-});
+const pageBanners = computed(() =>
+  getPageBanners({
+    coWeek: isCoWeek(selectedDateObject.value?.date),
+    duplicateSongs: duplicateSongsForWeMeeting.value,
+    obsDisconnected: !!showObsBanner.value,
+    obsSceneListError: !!showObsSceneListErrorBanner.value,
+    showAllMedia: () =>
+      showHiddenMediaForSelectedDate(
+        currentCongregation.value,
+        selectedDateObject.value,
+      ),
+    someItemsHidden: someItemsHiddenForSelectedDate.value,
+  }).map(({ actions, ...banner }) => ({
+    ...banner,
+    actions: actions?.map(({ labelKey, onClick }) => ({
+      label: t(labelKey),
+      onClick,
+    })),
+  })),
+);
 
 const { post: postZoomPan } = useBroadcastChannel<
   Partial<Record<string, number>>,
