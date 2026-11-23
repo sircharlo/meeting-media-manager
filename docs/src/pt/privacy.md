@@ -2,7 +2,7 @@
 
 Data de vigência: 22 de novembro de 2026
 
-O Meeting Media Manager (M³) é um aplicativo gratuito e de código aberto feito por voluntários. Esta política explica com quais dados o M³ lida e para onde eles vão. Ela se aplica a todas as versões do M³: os instaladores e a versão portátil deste site, e as versões da Microsoft Store, da Snap Store e do Flathub.
+O Meeting Media Manager (M³) é um aplicativo gratuito e de código aberto feito por voluntários. Esta política explica com quais dados o M³ lida e para onde eles vão. It applies to every version of M³: the installers and portable version from this website, and the versions in the Microsoft Store and the Snap Store.
 
 **Em resumo:** o M³ não tem contas, nem anúncios, nem rastreadores de publicidade ou de marketing. Suas configurações e mídias ficam no seu computador. Para encontrar e corrigir problemas, o M³ envia dados de diagnóstico para os desenvolvedores dele: relatórios de erros e informações sobre cada sessão e sobre a velocidade com que o M³ funciona. O M³ deixa de fora desses dados o que poderia identificar você ou sua congregação, e seu endereço IP não é armazenado.
 
@@ -19,7 +19,7 @@ Os relatórios de erros incluem algumas dessas configurações (veja abaixo), ma
 
 Se você mostrar a imagem de uma câmera na janela de mídia (uma opção para congregações de língua de sinais), ela é apenas exibida: o M³ não a grava, não a salva nem a envia. A prévia da janela de mídia que o M³ mostra a você é capturada no seu computador e também não é salva nem enviada.
 
-Você pode excluir tudo isso a qualquer momento excluindo a pasta de dados do M³. No Windows, desinstalar o M³ também a exclui. As versões da Snap Store e do Flathub a mantêm quando você as desinstala, a menos que você peça o contrário (`snap remove --purge` ou `flatpak uninstall --delete-data`).
+Você pode excluir tudo isso a qualquer momento excluindo a pasta de dados do M³. No Windows, desinstalar o M³ também a exclui. The Snap Store version keeps it when you uninstall it, unless you ask it not to (`snap remove --purge`).
 
 ## Dados de diagnóstico {#error-reports}
 
@@ -56,7 +56,7 @@ Os mantenedores do M³ usam esses dados apenas para encontrar e corrigir problem
 Para fazer seu trabalho, o M³ se conecta aos servidores abaixo. Como acontece com qualquer site que você visita, esses servidores podem ver o endereço IP do seu computador.
 
 - **O site oficial das Testemunhas de Jeová** e os servidores de download dele, para baixar as mídias das reuniões e as publicações, e as informações sobre elas. A própria política de privacidade desse site se aplica ao que ele recebe.
-- **GitHub**, onde o M³ é publicado, para verificar se há atualizações do M³, baixá-las e mostrar o que há de novo nele. Já as versões da Microsoft Store, da Snap Store e do Flathub recebem as atualizações da respectiva loja.
+- **GitHub**, onde o M³ é publicado, para verificar se há atualizações do M³, baixá-las e mostrar o que há de novo nele. The Microsoft Store and Snap Store versions get their updates from their store instead.
 - **jsDelivr**, para baixar as fontes de que alguns idiomas precisam e o componente que o M³ usa para ler arquivos PDF.
 - **Apple, Cloudflare, icanhazip.com e ipify.org**, para verificar se o seu computador está conectado à internet.
 - **Sentry**, para enviar os dados de diagnóstico descritos acima.
@@ -71,7 +71,7 @@ Quando você exibe o site oficial das Testemunhas de Jeová na janela do site do
 
 ## Lojas de aplicativos {#stores}
 
-Se você instalar o M³ pela Microsoft Store, pela Snap Store ou pelo Flathub, essa loja cuida da instalação e das atualizações do M³, de acordo com a própria política de privacidade. O M³ em si funciona da mesma forma em todas as versões.
+If you install M³ from the Microsoft Store or the Snap Store, that store handles its installation and updates, under its own privacy policy. O M³ em si funciona da mesma forma em todas as versões.
 
 ## Alterações nesta política {#changes}
 

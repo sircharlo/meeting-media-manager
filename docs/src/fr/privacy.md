@@ -2,7 +2,7 @@
 
 Date d'entrée en vigueur : 22 novembre 2026
 
-Meeting Media Manager (M³) est une application gratuite à code source ouvert, créée par des bénévoles. Cette politique explique quelles données M³ traite et où elles vont. Elle s'applique à toutes les versions de M³ : les programmes d'installation et la version portable proposés sur ce site, ainsi que les versions du Microsoft Store, du Snap Store et de Flathub.
+Meeting Media Manager (M³) est une application gratuite à code source ouvert, créée par des bénévoles. Cette politique explique quelles données M³ traite et où elles vont. It applies to every version of M³: the installers and portable version from this website, and the versions in the Microsoft Store and the Snap Store.
 
 **En bref :** M³ n'a ni comptes, ni publicités, ni traceurs publicitaires ou marketing. Vos paramètres et vos médias restent sur votre ordinateur. Pour repérer et corriger les problèmes, M³ envoie à ses développeurs des données de diagnostic : des rapports d'erreurs, ainsi que des informations sur chaque session et sur la rapidité de fonctionnement de M³. M³ en exclut ce qui pourrait vous identifier, vous ou votre assemblée, et votre adresse IP n'est pas conservée.
 
@@ -19,7 +19,7 @@ Les rapports d'erreurs contiennent certains de ces paramètres (voir ci-dessous)
 
 Si vous affichez le flux d'une caméra dans la fenêtre multimédia (une option destinée aux assemblées en langue des signes), il est uniquement affiché : M³ ne l'enregistre pas, ne le conserve pas et ne l'envoie pas. L'aperçu de la fenêtre multimédia que M³ vous montre est capturé sur votre ordinateur et n'est pas non plus conservé ni envoyé.
 
-Vous pouvez supprimer tout cela à tout moment en supprimant le dossier de données de M³. Sous Windows, la désinstallation de M³ le supprime aussi. Les versions du Snap Store et de Flathub le conservent lorsque vous les désinstallez, sauf si vous leur demandez de ne pas le faire (`snap remove --purge` ou `flatpak uninstall --delete-data`).
+Vous pouvez supprimer tout cela à tout moment en supprimant le dossier de données de M³. Sous Windows, la désinstallation de M³ le supprime aussi. The Snap Store version keeps it when you uninstall it, unless you ask it not to (`snap remove --purge`).
 
 ## Données de diagnostic {#error-reports}
 
@@ -56,7 +56,7 @@ Les responsables de M³ n'utilisent ces données que pour repérer et corriger l
 Pour faire son travail, M³ se connecte aux serveurs ci-dessous. Comme pour tout site web que vous visitez, ces serveurs peuvent voir l'adresse IP de votre ordinateur.
 
 - **Le site web officiel des Témoins de Jéhovah** et ses serveurs de téléchargement, pour télécharger les médias des réunions et les publications, ainsi que les informations qui s'y rapportent. La politique de confidentialité propre à ce site s'applique à ce qu'il reçoit.
-- **GitHub**, où M³ est publié, pour vérifier et télécharger les mises à jour de M³, et pour afficher ses nouveautés. Les versions du Microsoft Store, du Snap Store et de Flathub obtiennent plutôt leurs mises à jour depuis leur boutique.
+- **GitHub**, où M³ est publié, pour vérifier et télécharger les mises à jour de M³, et pour afficher ses nouveautés. The Microsoft Store and Snap Store versions get their updates from their store instead.
 - **jsDelivr**, pour télécharger les polices dont certaines langues ont besoin, et le composant que M³ utilise pour lire les fichiers PDF.
 - **Apple, Cloudflare, icanhazip.com et ipify.org**, pour vérifier si votre ordinateur est connecté à Internet.
 - **Sentry**, pour envoyer les données de diagnostic décrites ci-dessus.
@@ -71,7 +71,7 @@ Lorsque vous affichez le site web officiel des Témoins de Jéhovah dans la fen�
 
 ## Boutiques d'applications {#stores}
 
-Si vous installez M³ depuis le Microsoft Store, le Snap Store ou Flathub, cette boutique gère l'installation et les mises à jour de M³, selon sa propre politique de confidentialité. M³ lui-même fonctionne de la même façon dans toutes les versions.
+If you install M³ from the Microsoft Store or the Snap Store, that store handles its installation and updates, under its own privacy policy. M³ lui-même fonctionne de la même façon dans toutes les versions.
 
 ## Modifications de cette politique {#changes}
 
