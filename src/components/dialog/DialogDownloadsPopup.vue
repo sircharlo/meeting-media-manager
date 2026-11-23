@@ -603,13 +603,15 @@ const summaryText = computed(() => {
   return t('up-to-date');
 });
 
+// Only failures within a week count (see erroredCount), which the list
+// shows as errors: the summary says so the same way.
 const summaryIcon = computed(() => {
-  if (erroredCount.value > 0) return 'mmm-warning';
+  if (erroredCount.value > 0) return 'mmm-error';
   return 'mmm-cloud-done';
 });
 
 const summaryColor = computed(() => {
-  if (erroredCount.value > 0) return 'warning';
+  if (erroredCount.value > 0) return 'negative';
   return 'positive';
 });
 

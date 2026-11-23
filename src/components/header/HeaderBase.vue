@@ -61,13 +61,8 @@
             <div v-if="route.meta.title" class="ellipsis">
               {{ t(route.meta.title.toString()) }}
             </div>
-            <q-badge
-              v-if="showDemoBadge"
-              class="q-ml-sm"
-              color="warning"
-              outline
-            >
-              <q-icon class="q-mr-xs" name="mmm-warning" size="xs" />
+            <q-badge v-if="showDemoBadge" class="q-ml-sm" color="white" outline>
+              <q-icon class="q-mr-xs" name="mmm-info" size="xs" />
               <span class="no-wrap">{{ t('demo-mode-active') }}</span>
               <span v-if="stageLabel" class="no-wrap">· {{ stageLabel }}</span>
               <span v-if="virtualClock" class="no-wrap">

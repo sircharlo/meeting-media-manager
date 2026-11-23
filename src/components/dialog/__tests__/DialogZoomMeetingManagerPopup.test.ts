@@ -155,6 +155,28 @@ describe('DialogZoomMeetingManagerPopup', () => {
     expect(startupCheckMock).toHaveBeenCalledWith({ manual: true });
   });
 
+  // A failed check is an error; skipping it was the user's own choice, which
+  // its notification gives as information too.
+  it('shows a failed check in red, and a skipped one as information', async () => {
+    await mountPopup({ meeting: MEETING });
+    const zoomState = useZoomStateStore();
+
+    zoomState.pauseAutomations(CONGREGATION_ID, [
+      'zoom-self-test-step-video-off',
+    ]);
+    await flushPromises();
+    expect(document.querySelector('.notice--negative')?.textContent).toContain(
+      'Zoom automations paused',
+    );
+
+    zoomState.pauseAutomations(CONGREGATION_ID, [], false, true);
+    await flushPromises();
+    expect(document.querySelector('.notice--negative')).toBeNull();
+    expect(document.querySelector('.notice--info')?.textContent).toContain(
+      'You skipped the Zoom check',
+    );
+  });
+
   it("offers Test again, rather than saying it's checking, while a check only waits for the go-ahead", async () => {
     await mountPopup({ meeting: MEETING });
     const zoomState = useZoomStateStore();

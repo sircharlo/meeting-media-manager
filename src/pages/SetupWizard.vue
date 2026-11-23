@@ -602,7 +602,7 @@
               )
             }}
           </p>
-          <p v-if="zoomSharesMedia" class="text-notice-warning">
+          <p v-if="zoomSharesMedia" class="text-notice-info">
             {{ t('setup-wizard-obs-replaces-zoom-sharing') }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
@@ -862,7 +862,7 @@ const { currentCongregation, currentLangObject, currentSettings, online } =
 const { obsConnectionState, obsMessage } = storeToRefs(useObsStateStore());
 const obsConnectionBannerType = computed((): NoticeType => {
   if (obsConnectionState.value === 'connected') return 'positive';
-  if (obsConnectionState.value === 'connecting') return 'warning';
+  if (obsConnectionState.value === 'connecting') return 'info';
   return 'negative';
 });
 const obsConnectionBannerTextKey = computed(() => {

@@ -264,6 +264,17 @@ export const notifyUpdateDiskFull = (): void => {
   recordDiskSpaceWarning();
 };
 
+/**
+ * Tells the user that next year's yeartext couldn't be fetched for its
+ * preview, naming the year (the message used to show "{year}" as is).
+ */
+export const notifyYeartextPreviewFailed = (year: number): void => {
+  createTemporaryNotification({
+    message: i18n.global.t('yeartext-preview-failed', { year }),
+    type: 'negative',
+  });
+};
+
 const EXPECTED_DOWNLOAD_ISSUE_WARNING_THROTTLE_MS = 5 * 60 * 1000;
 let lastExpectedDownloadIssueWarningAt = 0;
 

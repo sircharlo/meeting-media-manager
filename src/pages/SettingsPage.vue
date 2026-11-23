@@ -1102,7 +1102,7 @@ watch(autoUpdateEnabled, (enabled) => {
     dismissUpdatesDisabledWarning = createTemporaryNotification({
       message: t('updates-disabled-warning'),
       timeout: 10_000,
-      type: 'info',
+      type: 'warning',
     });
   }
 });

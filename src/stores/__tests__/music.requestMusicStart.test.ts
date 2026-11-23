@@ -136,7 +136,7 @@ describe('requestMusicStart', () => {
     expect(music.pendingMusicStart).toBeNull();
     expect(music.musicState).toBe('');
     expect(createTemporaryNotification).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'warning' }),
+      expect.objectContaining({ type: 'info' }),
     );
   });
 

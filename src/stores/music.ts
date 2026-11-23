@@ -748,7 +748,7 @@ export const useMusicStore = defineStore('music', () => {
         caption: t('background-music-meeting-about-to-start-explain'),
         group: 'background-music-start-guard',
         message: t('background-music-meeting-about-to-start'),
-        type: 'warning',
+        type: 'info',
       });
       return;
     }

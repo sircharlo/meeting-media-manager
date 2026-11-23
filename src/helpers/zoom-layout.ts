@@ -198,7 +198,6 @@ const noticeFallback = () => {
   log('Zoom layout: its screen is not available, sharing M³’s', 'zoom', 'warn');
   createTemporaryNotification({
     group: 'zoom-layout',
-    icon: 'mmm-info',
     message: t('zoom-layout-screen-missing'),
     type: 'warning',
   });

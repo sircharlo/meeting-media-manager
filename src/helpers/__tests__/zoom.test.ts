@@ -665,13 +665,20 @@ describe('Zoom automations and the startup check', () => {
           group: 'zoom-sharing',
           message:
             "Zoom automations are paused, so the media wasn't shared in Zoom",
-          type: 'warning',
+          // Red, like the other "not shared in Zoom" failure with this caption.
+          type: 'negative',
         }),
       );
       const [{ actions }] = notifyMock.mock.calls[0] as [
         { actions: { handler: () => void; label: string }[] },
       ];
-      expect(actions.map((action) => action.label)).toEqual([label]);
+      expect(actions.map((action) => action.label)).toEqual([label, undefined]);
+      // Its own actions replace the default close button: it gets one again.
+      expect(actions[1]).toEqual({
+        color: 'white',
+        icon: 'close',
+        round: true,
+      });
       actions[0]?.handler();
       expect(dispatched).toEqual([event]);
       dispatch.mockRestore();
@@ -1318,6 +1325,35 @@ describe('stopping Zoom sharing after media', () => {
     stopZoomSharingAfterMedia();
     await Promise.resolve();
     expect(commandTypes()).not.toContain('stop-share');
+  });
+});
+
+describe("acting on a raised hand's participant", () => {
+  const participantNotices = () =>
+    notifyMock.mock.calls
+      .map(([options]) => options as { group?: string; type?: string })
+      .filter((options) => options.group === 'zoom-participants');
+
+  it('says it unmuted them (or asked them to) as done, and an already unmuted one as information', async () => {
+    const { unmuteZoomParticipant } = await import('../zoom');
+
+    zoomCommandMock.mockResolvedValueOnce({ ok: true, pressed: true });
+    await unmuteZoomParticipant('Ann');
+    zoomCommandMock.mockResolvedValueOnce({ ok: true, pressed: false });
+    await unmuteZoomParticipant('Ann');
+
+    expect(participantNotices().map(({ type }) => type)).toEqual([
+      'positive',
+      'info',
+    ]);
+  });
+
+  it('says it muted them and lowered their hand as done', async () => {
+    const { muteZoomParticipantAndLowerHand } = await import('../zoom');
+
+    await muteZoomParticipantAndLowerHand('Ann');
+
+    expect(participantNotices().map(({ type }) => type)).toEqual(['positive']);
   });
 });
 

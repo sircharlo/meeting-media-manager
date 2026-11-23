@@ -180,6 +180,27 @@ describe('notifyDiskFull', () => {
   });
 });
 
+describe('notifyYeartextPreviewFailed', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.resetModules();
+  });
+
+  // Its message used to show "{year}" as is: t() got no year to put in it.
+  it('names the year whose yeartext could not be fetched', async () => {
+    const { notifyYeartextPreviewFailed } = await import('../notifications');
+
+    notifyYeartextPreviewFailed(2027);
+
+    expect(mocks.tMock).toHaveBeenCalledWith('yeartext-preview-failed', {
+      year: 2027,
+    });
+    expect(mocks.notifyCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'negative' }),
+    );
+  });
+});
+
 describe('createTemporaryNotification', () => {
   beforeEach(() => {
     vi.resetModules();

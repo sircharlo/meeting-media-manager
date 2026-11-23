@@ -28,7 +28,7 @@
         dense
         icon="mmm-cog-sparkles"
         inline-actions
-        type="info"
+        type="warning"
       >
         <div class="text-caption text-weight-medium">
           {{ t('zoom-setup-banner') }}
@@ -72,7 +72,7 @@
         v-else-if="automationsPaused"
         class="action-popup__banner"
         dense
-        type="negative"
+        :type="pausedBannerType"
       >
         <div class="text-caption">
           <div class="text-weight-medium">
@@ -177,7 +177,7 @@
         dense
         icon="mmm-cog-sparkles"
         inline-actions
-        type="info"
+        type="warning"
       >
         <div class="text-caption">{{ t('zoom-hand-setup-needed') }}</div>
         <template #action>
@@ -419,7 +419,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SettingsValues, ZoomMeetingState } from 'src/types';
+import type { NoticeType, SettingsValues, ZoomMeetingState } from 'src/types';
 
 import ZoomSelfTestPanel from 'components/dialog/ZoomSelfTestPanel.vue';
 import ActionPopup from 'components/ui/ActionPopup.vue';
@@ -489,6 +489,12 @@ const { currentSettings, mediaIsPlaying, zoomHelperLogs } =
 const zoomState = useZoomStateStore();
 const { automationsPaused, checkDeclined, checkingZoom, pause, relearnNeeded } =
   storeToRefs(zoomState);
+
+// Skipping the check was the user's own choice, which its notification says
+// as information too; a failed check, or Zoom's changed names, is an error.
+const pausedBannerType = computed((): NoticeType =>
+  checkDeclined.value && !relearnNeeded.value ? 'info' : 'negative',
+);
 
 const handAlert = useHandAlertStore();
 const { raisedHands } = storeToRefs(handAlert);

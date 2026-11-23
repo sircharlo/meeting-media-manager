@@ -478,7 +478,7 @@ const testVersionAnnouncement = computed((): Announcement => {
     message: 'this-is-a-test-version',
     persistent: true,
     platform: isTestVersion ? 'all' : 'none',
-    type: 'error',
+    type: 'warning',
   };
 });
 
@@ -491,6 +491,7 @@ const newUpdateAnnouncement = computed((): Announcement => {
     message: 'update-available-please-update',
     persistent: true,
     platform: !updatesEnabled.value && !isTestVersion ? 'all' : 'none',
+    type: 'warning',
   };
 });
 

@@ -560,7 +560,7 @@ const warnJwpubUnavailable = (jwpubPath: string, error: unknown) => {
     group: 'jwpubFileUnavailable',
     message: t('jwpub-file-unavailable-message'),
     timeout: 15_000,
-    type: 'warning',
+    type: 'negative',
   });
 
   return true;
