@@ -2,7 +2,7 @@
 
 生效日期：2026年11月22日
 
-Meeting Media Manager（M³）是一款由志愿者开发的免费开源应用程序。本政策说明 M³ 会处理哪些数据，以及这些数据的去向。 It applies to every version of M³: the installers and portable version from this website, and the versions in the Microsoft Store and the Snap Store.
+Meeting Media Manager（M³）是一款由志愿者开发的免费开源应用程序。本政策说明 M³ 会处理哪些数据，以及这些数据的去向。本政策适用于 M³ 的所有版本：本网站提供的安装程序和便携版，以及 Microsoft Store 和 Snap Store 中的版本。
 
 \*\*简而言之：\*\*M³ 没有账户，没有广告，也没有广告或营销跟踪器。你的设置和媒体都保留在你的计算机上。为了发现和修复问题，M³ 会向其开发者发送诊断数据：错误报告，以及有关每次会话和 M³ 运行速度的信息。 M³ 会从中排除可能识别出你或你的会众的信息，你的 IP 地址也不会被存储。
 
@@ -19,7 +19,7 @@ M³ 会把以下内容保存在你计算机上的 M³ 数据文件夹中：
 
 如果你在媒体窗口上显示摄像头画面（这是为手语会众提供的选项），该画面只会被显示：M³ 不会录制、保存或发送它。 M³ 向你显示的媒体窗口预览是在你的计算机上捕获的，同样不会被保存或发送。
 
-你可以随时删除 M³ 的数据文件夹，从而删除以上所有内容。在 Windows 上，卸载 M³ 也会将其删除。 The Snap Store version keeps it when you uninstall it, unless you ask it not to (`snap remove --purge`).
+你可以随时删除 M³ 的数据文件夹，从而删除以上所有内容。在 Windows 上，卸载 M³ 也会将其删除。 Snap Store 版本在你卸载它时会保留这些内容，除非你要求它不要保留（`snap remove --purge`）。
 
 ## 诊断数据 {#error-reports}
 
@@ -56,7 +56,7 @@ M³ 的维护者只会将这些数据用于发现和修复问题。 Sentry 将�
 为了完成工作，M³ 会连接到下列服务器。就像你访问的任何网站一样，这些服务器可以看到你计算机的 IP 地址。
 
 - **耶和华见证人官方网站**及其下载服务器，用于下载聚会媒体和出版物，以及它们的相关信息。该网站自己的隐私政策适用于它收到的内容。
-- **GitHub**，即 M³ 的发布平台，用于检查和下载 M³ 的更新，以及显示 M³ 的新内容。 The Microsoft Store and Snap Store versions get their updates from their store instead.
+- **GitHub**，即 M³ 的发布平台，用于检查和下载 M³ 的更新，以及显示 M³ 的新内容。 Microsoft Store 和 Snap Store 版本则从各自的商店获取更新。
 - **jsDelivr**，用于下载某些语言需要的字体，以及 M³ 用来读取 PDF 文件的组件。
 - **Apple、Cloudflare、icanhazip.com 和 ipify.org**，用于检查你的计算机是否已连接到互联网。
 - **Sentry**，用于发送上述诊断数据。
@@ -71,7 +71,7 @@ M³ 的维护者只会将这些数据用于发现和修复问题。 Sentry 将�
 
 ## 应用商店 {#stores}
 
-If you install M³ from the Microsoft Store or the Snap Store, that store handles its installation and updates, under its own privacy policy. M³ 本身在每个版本中的运作方式都相同。
+如果你从 Microsoft Store 或 Snap Store 安装 M³，该商店会按照它自己的隐私政策处理 M³ 的安装和更新。 M³ 本身在每个版本中的运作方式都相同。
 
 ## 本政策的变更 {#changes}
 

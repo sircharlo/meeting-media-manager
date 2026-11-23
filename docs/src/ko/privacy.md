@@ -2,7 +2,7 @@
 
 시행일: 2026년 11월 22일
 
-Meeting Media Manager(M³)는 자원봉사자들이 만든 무료 오픈 소스 프로그램입니다. 이 방침은 M³가 어떤 데이터를 처리하며 그 데이터가 어디로 가는지 설명합니다. It applies to every version of M³: the installers and portable version from this website, and the versions in the Microsoft Store and the Snap Store.
+Meeting Media Manager(M³)는 자원봉사자들이 만든 무료 오픈 소스 프로그램입니다. 이 방침은 M³가 어떤 데이터를 처리하며 그 데이터가 어디로 가는지 설명합니다. 이 방침은 이 웹사이트의 설치 프로그램과 포터블 버전은 물론 Microsoft Store와 Snap Store의 버전까지 M³의 모든 버전에 적용됩니다.
 
 **요약하면:** M³에는 계정도, 광고도, 광고나 마케팅 목적의 추적 도구도 없습니다. 설정과 미디어는 사용자의 컴퓨터에 그대로 남아 있습니다. M³는 문제를 찾아 해결할 수 있도록 오류 보고서, 그리고 각 세션과 M³의 실행 속도에 관한 정보로 이루어진 진단 데이터를 개발자에게 보냅니다. 이때 M³는 사용자나 사용자의 회중을 식별할 수 있는 정보를 제외하며, 사용자의 IP 주소는 저장되지 않습니다.
 
@@ -19,7 +19,7 @@ M³는 사용자의 컴퓨터에 있는 자체 데이터 폴더에 다음 정보
 
 미디어 창에 카메라 영상을 표시하는 경우(수어 회중을 위한 옵션), 그 영상은 표시되기만 할 뿐 M³가 녹화하거나 저장하거나 전송하지 않습니다. M³가 보여 주는 미디어 창 미리 보기는 사용자의 컴퓨터에서 캡처되며, 이 역시 저장되거나 전송되지 않습니다.
 
-M³의 데이터 폴더를 삭제하면 언제든지 이 모든 정보를 삭제할 수 있습니다. Windows에서는 M³를 제거할 때도 데이터 폴더가 삭제됩니다. The Snap Store version keeps it when you uninstall it, unless you ask it not to (`snap remove --purge`).
+M³의 데이터 폴더를 삭제하면 언제든지 이 모든 정보를 삭제할 수 있습니다. Windows에서는 M³를 제거할 때도 데이터 폴더가 삭제됩니다. Snap Store 버전은 제거해도 데이터 폴더가 남지만, 남기지 않도록 지정하면 함께 삭제됩니다(`snap remove --purge`).
 
 ## 진단 데이터 {#error-reports}
 
@@ -56,7 +56,7 @@ M³ 개발진은 문제를 찾아 해결하는 목적으로만 이 데이터를 
 M³는 작업을 수행하기 위해 아래 서버에 연결합니다. 사용자가 방문하는 모든 웹사이트와 마찬가지로, 이 서버들은 사용자 컴퓨터의 IP 주소를 볼 수 있습니다.
 
 - **여호와의 증인 공식 웹사이트**와 그 다운로드 서버: 집회 미디어와 출판물 및 관련 정보를 다운로드합니다. 이 웹사이트가 받는 정보에는 해당 웹사이트의 자체 개인정보 처리방침이 적용됩니다.
-- **GitHub**: M³가 게시되는 곳으로, M³의 업데이트를 확인하고 다운로드하며 M³의 새로운 점을 보여 줍니다. The Microsoft Store and Snap Store versions get their updates from their store instead.
+- **GitHub**: M³가 게시되는 곳으로, M³의 업데이트를 확인하고 다운로드하며 M³의 새로운 점을 보여 줍니다. Microsoft Store와 Snap Store 버전은 대신 해당 스토어에서 업데이트를 받습니다.
 - **jsDelivr**: 일부 언어에 필요한 글꼴과 M³가 PDF 파일을 읽는 데 사용하는 구성 요소를 다운로드합니다.
 - **Apple, Cloudflare, icanhazip.com 및 ipify.org**: 컴퓨터가 인터넷에 연결되어 있는지 확인합니다.
 - **Sentry**: 위에서 설명한 진단 데이터를 보냅니다.
@@ -71,7 +71,7 @@ M³의 웹사이트 창에 여호와의 증인 공식 웹사이트를 표시하�
 
 ## 스토어 {#stores}
 
-If you install M³ from the Microsoft Store or the Snap Store, that store handles its installation and updates, under its own privacy policy. M³ 자체는 모든 버전에서 똑같이 작동합니다.
+Microsoft Store 또는 Snap Store에서 M³를 설치하면 해당 스토어가 자체 개인정보 처리방침에 따라 M³의 설치와 업데이트를 처리합니다. M³ 자체는 모든 버전에서 똑같이 작동합니다.
 
 ## 이 방침의 변경 {#changes}
 
