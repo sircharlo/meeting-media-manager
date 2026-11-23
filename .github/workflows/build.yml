@@ -431,8 +431,9 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           TEST_VERSION: ${{ !inputs.publish-release }}
-      # A release's MSIX is what goes to Partner Center, by hand for now: the
-      # first submission has to be made there anyway, with the Store listing.
+      # A release's MSIX is what goes to Partner Center: store-release.yml
+      # submits it once the release is published (the first submission, with
+      # the Store listing, is made there by hand).
       - name: Upload artifacts
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
