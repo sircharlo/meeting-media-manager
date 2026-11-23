@@ -15,6 +15,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 - 🐞 **Zoom Meeting Manager**: The notification that media wasn't shared in Zoom because the Zoom automations are paused had no close button, unlike other notifications, and was orange while the similar one about a failed share was red. It now has a close button, and it's red too.
 - 🐞 **Yeartext Preview**: When next year's yeartext couldn't be fetched for its preview, the notification showed "{year}" instead of the year. It now names the year.
+- 🐞 **Before-Meeting Panel**: The before-meeting panel, and the notice left when it's dismissed, showed an empty space where their icon should be. They now show a clock.
 
 ## v26.11.4
 

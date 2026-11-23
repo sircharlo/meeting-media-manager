@@ -27,7 +27,7 @@
           {{ t('quick-actions-before-title') }}
         </div>
       </div>
-      <q-icon name="mmm-timer" size="28px" />
+      <q-icon name="mmm-time" size="28px" />
     </q-card-section>
 
     <q-card-section class="meeting-quick-actions-panel__countdown">

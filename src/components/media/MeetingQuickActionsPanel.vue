@@ -49,7 +49,7 @@
         { label: t('quick-actions-show-panel'), onClick: undismissBefore },
       ]"
       dense
-      icon="mmm-timer"
+      icon="mmm-time"
       type="neutral"
     >
       {{ t('quick-actions-before-dismissed') }}
