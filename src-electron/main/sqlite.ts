@@ -1,9 +1,11 @@
 import type { QueryResponseItem } from 'src/types';
 
+import { readdir, stat } from 'node:fs/promises';
 import { Worker } from 'node:worker_threads';
 import { captureElectronError } from 'src-electron/main/utils';
 import { getCloudStorageProvider } from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
+import { dirname } from 'upath';
 
 // These lookups run in the main process (via the `executeQuery` IPC handler in
 // ipc.ts), but the actual `node:sqlite` work is dispatched to a worker thread
@@ -354,26 +356,77 @@ const reportedCorruptDbPaths = new Set<string>();
 // right before deleting or replacing the file.
 const corruptDbPaths = new Set<string>();
 
+// SQLite's primary result code for a file it can't open at all: a missing
+// file or folder, a folder it may not read, or no file handles left. Every
+// query in the burst fails the same way: MMM-V2-3JJ had 3 in one second, on
+// a .db the same session had already opened.
+const SQLITE_CANTOPEN = 14;
+const reportedCantOpenPaths = new Set<string>();
+
 const getSqliteErrcode = (error: unknown) => {
   const errcode = (error as undefined | { errcode?: unknown })?.errcode;
   return typeof errcode === 'number' ? errcode : undefined;
 };
 
+// Extended result codes share the primary code in their low byte.
+const getPrimaryErrcode = (errcode: number | undefined) =>
+  errcode === undefined ? undefined : errcode & 0xff;
+
 const isCorruptionErrcode = (errcode: number | undefined) => {
-  if (errcode === undefined) return false;
-  // Extended result codes share the primary code in their low byte.
-  const primaryErrcode = errcode & 0xff;
+  const primaryErrcode = getPrimaryErrcode(errcode);
   return primaryErrcode === SQLITE_CORRUPT || primaryErrcode === SQLITE_NOTADB;
+};
+
+const getFsErrorCode = (error: unknown) =>
+  (error as undefined | { code?: unknown })?.code ?? String(error);
+
+// The handles this process has open, where the system lists them (Linux
+// and macOS); undefined on Windows or if it can't be read.
+const countOpenFiles = async () => {
+  if (process.platform === 'win32') return undefined;
+  return (await readdir('/dev/fd').catch(() => undefined))?.length;
+};
+
+/**
+ * What a database SQLite couldn't open looks like on disk, for the report:
+ * the file's size or why it can't be read (ENOENT: gone), the same for its
+ * folder with the .db files in it, and how many files this process has
+ * open. Flat values: Sentry shows anything nested under `contexts.fn` as
+ * "[Object]" or "[Array]". Never throws.
+ * @param dbPath The database file
+ */
+const describeUnopenableDb = async (dbPath: string) => {
+  const [file, folder, openFiles] = await Promise.all([
+    stat(dbPath).then(
+      (stats) => ({ size: stats.size }),
+      (error: unknown) => ({ error: getFsErrorCode(error) }),
+    ),
+    readdir(dirname(dbPath)).then(
+      (entries) => ({ entries }),
+      (error: unknown) => ({ error: getFsErrorCode(error) }),
+    ),
+    countOpenFiles(),
+  ]);
+  const entries = 'entries' in folder ? folder.entries : undefined;
+  return {
+    fileError: 'error' in file ? file.error : undefined,
+    fileSize: 'size' in file ? file.size : undefined,
+    folderDbFiles: entries?.filter((name) => name.endsWith('.db')).join(', '),
+    folderEntries: entries?.length,
+    folderError: 'error' in folder ? folder.error : undefined,
+    openFiles,
+  };
 };
 
 /**
  * Reports a failed query to Sentry, unless it's environmental or a repeat
  * of a failure already reported for the same database (then it's logged).
  */
-const handleQueryError = (e: unknown, dbPath: string, query: string) => {
+const handleQueryError = async (e: unknown, dbPath: string, query: string) => {
   const errcode = getSqliteErrcode(e);
+  const primaryErrcode = getPrimaryErrcode(errcode);
   const cloudProvider = getCloudStorageProvider(dbPath);
-  const isIoError = errcode !== undefined && (errcode & 0xff) === SQLITE_IOERR;
+  const isIoError = primaryErrcode === SQLITE_IOERR;
 
   // A cloud-sync client (OneDrive, ...) locking or hydrating the file
   // makes opening/reading it fail with SQLITE_IOERR - environmental, not
@@ -404,9 +457,23 @@ const handleQueryError = (e: unknown, dbPath: string, query: string) => {
     reportedCorruptDbPaths.add(dbPath);
   }
 
+  // Once per db per session too, with what was on disk there: the error
+  // alone can't tell a deleted file from running out of file handles.
+  const isCantOpen = primaryErrcode === SQLITE_CANTOPEN;
+  if (isCantOpen && reportedCantOpenPaths.has(dbPath)) {
+    log('SQLite cannot open the database', 'sqlite', 'warn', {
+      errcode,
+      path: dbPath,
+    });
+    return;
+  }
+  if (isCantOpen) reportedCantOpenPaths.add(dbPath);
+  const onDisk = isCantOpen ? await describeUnopenableDb(dbPath) : undefined;
+
   captureElectronError(e, {
     contexts: {
       fn: {
+        ...onDisk,
         cloudProvider,
         errcode,
         errstr: (e as { errstr?: unknown }).errstr,
@@ -462,7 +529,7 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
   } catch (e) {
     // The worker dropped the connection it used when a query fails, so a
     // later query reopens it fresh.
-    handleQueryError(e, dbPath, query);
+    await handleQueryError(e, dbPath, query);
     return [];
   }
 };

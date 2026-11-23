@@ -757,6 +757,13 @@ export const getMetadataFromMediaPath = async (
     if (!mediaPath || !(await pathExists(mediaPath))) {
       return defaultMetadata;
     }
+    // The parser can't read these containers ("Guessed MIME-type not
+    // supported: video/vnd.avi", for every imported AVI: MMM-V2-3PB) and
+    // Chromium can't open them either: the import offers to convert the file
+    // instead, and the converted copy's metadata is read then.
+    if (isFileOfType(mediaPath, UNPLAYABLE_VIDEO_CONTAINERS)) {
+      return defaultMetadata;
+    }
 
     let metadata = defaultMetadata;
     if (isFileOfType(mediaPath, ['mov', '3gp'])) {

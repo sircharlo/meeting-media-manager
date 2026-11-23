@@ -1,6 +1,9 @@
 import type { EventEmitter as EventEmitterType } from 'node:events';
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join, toUnix } from 'upath';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 interface WorkerReply {
   cached?: boolean;
@@ -224,6 +227,87 @@ describe('executeQuery other errors', () => {
       { errcode: 267, path: dbPath },
     );
     await expect(isDbCorrupt(dbPath)).resolves.toBe(true);
+  });
+});
+
+// MMM-V2-3JJ: 3 "unable to open database file" reports (errcode 14) in the
+// same second on Linux, for a .db the session had already opened, and none
+// said whether the file was still there.
+describe('executeQuery on a database it cannot open', () => {
+  let folder: string;
+
+  beforeEach(async () => {
+    vi.mocked(captureElectronError).mockClear();
+    vi.mocked(log).mockClear();
+    worker.reply = sqliteError(14, 'unable to open database file');
+    folder = toUnix(await mkdtemp(join(tmpdir(), 'mmm-cantopen-')));
+  });
+
+  afterEach(async () => {
+    await rm(folder, { force: true, recursive: true });
+  });
+
+  const reportedFn = () =>
+    (
+      vi.mocked(captureElectronError).mock.calls[0]?.[1] as {
+        contexts: { fn: Record<string, unknown> };
+      }
+    ).contexts.fn;
+
+  it('reports it once per database, saying the file is gone and what its folder holds', async () => {
+    await writeFile(join(folder, 'mwb_S_202610.db'), '');
+    await writeFile(join(folder, 'cover.jpg'), '');
+    const dbPath = join(folder, 'mwb_S_202611.db');
+
+    await Promise.all([
+      executeQuery(dbPath, 'SELECT 1'),
+      executeQuery(dbPath, 'SELECT 2'),
+      executeQuery(dbPath, 'SELECT 3'),
+    ]);
+
+    expect(captureElectronError).toHaveBeenCalledTimes(1);
+    expect(reportedFn()).toMatchObject({
+      errcode: 14,
+      errstr: 'unable to open database file',
+      fileError: 'ENOENT',
+      folderDbFiles: 'mwb_S_202610.db',
+      folderEntries: 2,
+      path: dbPath,
+    });
+    expect(reportedFn().fileSize).toBeUndefined();
+    expect(reportedFn().folderError).toBeUndefined();
+    expect(log).toHaveBeenCalledWith(
+      'SQLite cannot open the database',
+      'sqlite',
+      'warn',
+      { errcode: 14, path: dbPath },
+    );
+  });
+
+  it('says when its folder is gone too', async () => {
+    const dbPath = join(folder, 'gone', 'mwb_S_202611.db');
+
+    await executeQuery(dbPath, 'SELECT 1');
+
+    expect(reportedFn()).toMatchObject({
+      fileError: 'ENOENT',
+      folderError: 'ENOENT',
+    });
+    expect(reportedFn().folderEntries).toBeUndefined();
+    expect(reportedFn().folderDbFiles).toBeUndefined();
+  });
+
+  it('gives the size of a file that is there', async () => {
+    const dbPath = join(folder, 'w_S_202611.db');
+    await writeFile(dbPath, 'abc');
+
+    await executeQuery(dbPath, 'SELECT 1');
+
+    expect(reportedFn()).toMatchObject({
+      fileSize: 3,
+      folderDbFiles: 'w_S_202611.db',
+    });
+    expect(reportedFn().fileError).toBeUndefined();
   });
 });
 
