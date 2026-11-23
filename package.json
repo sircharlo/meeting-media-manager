@@ -51,7 +51,7 @@
     "@quasar/extras": "^2.1.0",
     "@sentry/core": "^11.13.0",
     "@sentry/electron": "^8.4.0",
-    "@sentry/vue": "^11.13.0",
+    "@sentry/vue": "^11.16.0",
     "@vueuse/core": "^15.0.0",
     "@vueuse/router": "^15.0.0",
     "buffer": "^6.0.3",
