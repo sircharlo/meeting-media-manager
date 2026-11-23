@@ -3786,19 +3786,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/compiler-core@npm:3.5.45":
-  version: 3.5.45
-  resolution: "@vue/compiler-core@npm:3.5.45"
-  dependencies:
-    "@babel/parser": "npm:^7.29.12"
-    "@vue/shared": "npm:3.5.45"
-    entities: "npm:^7.0.1"
-    estree-walker: "npm:^2.0.2"
-    source-map-js: "npm:^1.2.2"
-  checksum: 10c0/8b0b0502bf2d54fef851331d5552719c46b0d824c3ec4d25250260073bddc6e471ace5dc4753458c38c1815eb28883dcca2752e128c7845d0d1ddf611752a45b
-  languageName: node
-  linkType: hard
-
 "@vue/compiler-core@npm:3.5.46":
   version: 3.5.46
   resolution: "@vue/compiler-core@npm:3.5.46"
@@ -3822,23 +3809,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/compiler-dom@npm:3.5.46":
+"@vue/compiler-dom@npm:3.5.46, @vue/compiler-dom@npm:^3.5.46":
   version: 3.5.46
   resolution: "@vue/compiler-dom@npm:3.5.46"
   dependencies:
     "@vue/compiler-core": "npm:3.5.46"
     "@vue/shared": "npm:3.5.46"
   checksum: 10c0/9a517d846a2151966571ee943a475e195ac3195e0f685e859ac0d753acc4bfcf30403de9bafe8f25d5813154c44fb0d6d83a7a78413713d4f68f1a4add0f0b10
-  languageName: node
-  linkType: hard
-
-"@vue/compiler-dom@npm:^3.5.45":
-  version: 3.5.45
-  resolution: "@vue/compiler-dom@npm:3.5.45"
-  dependencies:
-    "@vue/compiler-core": "npm:3.5.45"
-    "@vue/shared": "npm:3.5.45"
-  checksum: 10c0/86c0c6f49d3f563d396f443b10a96e5a73581c0cc18025619c3c645f759d21ff1e08f3843a17a741c0d99723615ea6c50af6ccad678919a6cae74bf495e12493
   languageName: node
   linkType: hard
 
@@ -4068,13 +4045,6 @@ __metadata:
   version: 3.5.44
   resolution: "@vue/shared@npm:3.5.44"
   checksum: 10c0/d33082cb159b1c8c38fb7e7d9747d9ba1909f80f5883b82dd0000412366048aa369b96acfa332cb32bfeeeee504b7c96f1103eb45b9b4543e95ec360b0047342
-  languageName: node
-  linkType: hard
-
-"@vue/shared@npm:3.5.45":
-  version: 3.5.45
-  resolution: "@vue/shared@npm:3.5.45"
-  checksum: 10c0/19db97b4dcefe751462b13d4f9a7685833fc5f9817122979542ae42e4f18e0cf7bb828e7561b220c5ba48983fb4d1a17894e57f5a8b0de389a40a376ec2f9dac
   languageName: node
   linkType: hard
 
@@ -8396,7 +8366,7 @@ __metadata:
     "@types/yauzl": "npm:^3.4.0"
     "@vitejs/plugin-vue": "npm:^6.0.11"
     "@vitest/eslint-plugin": "npm:^1.6.28"
-    "@vue/compiler-dom": "npm:^3.5.45"
+    "@vue/compiler-dom": "npm:^3.5.46"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.9.0"
     "@vue/test-utils": "npm:^2.6.0"
