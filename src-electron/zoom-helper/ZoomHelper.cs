@@ -1864,14 +1864,12 @@ namespace M3.ZoomHelper
         static bool PressParticipantsButton(El window)
         {
             var buttons = ToolbarButtons(window);
-            El button = null;
-            foreach (var candidate in buttons)
-                if (HasHotkey(candidate.Name, HotkeyParticipants)) button = candidate;
-            if (button == null) button = ByName(buttons, Known.Participants);
-            if (button != null)
+            var names = new List<string>();
+            foreach (var button in buttons) names.Add(button.Name);
+            var index = FindParticipantsButton(names);
+            if (index >= 0)
             {
-                Known.Learn("participants", FirstSegment(button.Name));
-                Press(button);
+                Press(buttons[index]);
                 return true;
             }
             if (string.IsNullOrEmpty(Known.Participants)) return false;
@@ -1887,13 +1885,43 @@ namespace M3.ZoomHelper
             return false;
         }
 
+        /// <summary>Which of the toolbar's buttons (their names, left to
+        /// right) is Participants: the one with Zoom's Alt+U, else the one
+        /// named as learned; its name is then learned. -1 if none is.</summary>
+        public static int FindParticipantsButton(IList<string> names)
+        {
+            var index = -1;
+            for (var i = 0; i < names.Count; i++)
+                if (HasHotkey(names[i], HotkeyParticipants)) index = i;
+            var known = Known.Participants;
+            for (var i = 0; index < 0 && !string.IsNullOrEmpty(known) && i < names.Count; i++)
+                if (FirstSegment(names[i]) == known) index = i;
+            if (index >= 0) Known.Learn("participants", FirstSegment(names[index]));
+            return index;
+        }
+
+        /// <summary>Remembers the open participants panel's title
+        /// ("Participants" in "Participants (5)") as the Participants button's
+        /// name, only while none is known: the panel may have been opened by
+        /// hand. The button isn't always named like the panel (in French
+        /// Zoom 7.2, "participant·es, ouvrir le panneau, …" above a
+        /// "Participants (5)" heading), so the name it was found by, or the
+        /// one the user picked in the setup assistant, stays: replaced by the
+        /// heading's, the button was found only by Zoom's Alt+U from then on,
+        /// and not at all once that shortcut was changed (MMM-V2-3MJ).</summary>
+        public static void LearnPanelHeading(string heading)
+        {
+            if (!string.IsNullOrEmpty(Known.Participants)) return;
+            Known.Learn("participants", CountedTitle.Match(heading ?? "").Groups[1].Value.Trim());
+        }
+
         /// <summary>Remembers what the open participants panel shows: its
-        /// title (the Participants button's name, wherever Zoom keeps the
-        /// button) and the "Mute all" button's name.</summary>
+        /// title (see LearnPanelHeading) and the "Mute all" button's
+        /// name.</summary>
         static void LearnParticipantsNames(El window)
         {
             var heading = ParticipantsHeading(window);
-            if (heading != null) Known.Learn("participants", CountedTitle.Match(heading.Name).Groups[1].Value.Trim());
+            if (heading != null) LearnPanelHeading(heading.Name);
             MuteAllButton(window);
         }
 

@@ -1,10 +1,17 @@
 import { spawn } from 'node:child_process';
-import { copyFileSync, mkdtempSync, readdirSync } from 'node:fs';
+import {
+  copyFileSync,
+  existsSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
 import { rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { ZoomHelperProcess } from '../zoom-helper-process';
 
@@ -14,7 +21,157 @@ import { ZoomHelperProcess } from '../zoom-helper-process';
 // depends on Zoom's state is covered by `yarn test:zoom-live`.
 
 const SCRIPT = join(process.cwd(), 'src-electron/zoom-helper/zoom-helper.ps1');
+const SOURCE = join(process.cwd(), 'src-electron/zoom-helper/ZoomHelper.cs');
 const TIMEOUT = 120_000;
+
+// --- The Participants button's name --------------------------------------
+// Zoom's toolbar as MMM-V2-3MJ's reports showed it (Zoom 7.2.1 in French),
+// with the panel closed: its Participants button reads "participant·es",
+// under a panel heading "Participants (5)", and was moved to Ctrl+4, so
+// Zoom's own Alt+U finds nothing.
+const MOVED_SHORTCUTS_TOOLBAR = [
+  'Couper le son, son actuellement rétabli, Ctrl+5, La suppression du bruit est activée. Couper mon audio (Ctrl+5)',
+  'Démarrer ma vidéo, Alt+V',
+  'Outils de l’hôte, ouvrir le panneau',
+  'Lever la main',
+  'participant·es, ouvrir le panneau, 5 participant·es, Ctrl+4',
+  'Partager, Ctrl+Z',
+  'Fin, Alt+Q',
+];
+// The same toolbar with Zoom's own shortcuts.
+const ZOOM_SHORTCUTS_TOOLBAR = [
+  'Couper le son, son actuellement rétabli, Alt+A',
+  'Démarrer ma vidéo, Alt+V',
+  'participant·es, ouvrir le panneau, 5 participant·es, Alt+U',
+  'Chat, ouvrir le panneau, Alt+H',
+  'Fin, Alt+Q',
+];
+const PANEL_HEADING = 'Participants (5)';
+
+/**
+ * What came of a request (see ParticipantsRequest): the button's place in
+ * the toolbar (-1: not found), the name the helper learned, and the one M³
+ * keeps.
+ */
+interface ParticipantsReply {
+  found: null | number;
+  learned: null | string;
+  saved: null | string;
+}
+
+/**
+ * One request to the helper, as far as the Participants button goes: with
+ * the panel closed, it looks for the button in the toolbar (`toolbar`); once
+ * the panel is open, it reads its heading (`heading`). `entry` is the one
+ * the user picked in the setup assistant.
+ */
+interface ParticipantsRequest {
+  entry?: string;
+  heading?: string;
+  toolbar?: string[];
+}
+
+// Sends each request as M³ does (see sendCommand and
+// tryZoomParticipantsEntry in src/helpers/zoom.ts): with the name kept, or
+// the picked entry instead, then keeps what the helper learned, then the
+// picked entry once it found the button.
+const PARTICIPANTS_PROBE = String.raw`
+param([string]$Interop, [string]$Source, [string]$In, [string]$Out)
+$ErrorActionPreference = 'Stop'
+[Reflection.Assembly]::LoadFrom($Interop) | Out-Null
+Add-Type -Path $Source -ReferencedAssemblies $Interop, 'System.Web.Extensions', 'WindowsBase'
+Add-Type -AssemblyName System.Web.Extensions
+$json = New-Object System.Web.Script.Serialization.JavaScriptSerializer
+$scenarios = $json.DeserializeObject([IO.File]::ReadAllText($In, [Text.Encoding]::UTF8))
+$replies = New-Object System.Collections.ArrayList
+foreach ($scenario in $scenarios) {
+  $saved = $scenario['saved']
+  $scenarioReplies = New-Object System.Collections.ArrayList
+  foreach ($request in $scenario['requests']) {
+    $sent = if ($request.ContainsKey('entry')) { $request['entry'] } else { $saved }
+    # Deserialized like the helper's own requests: PowerShell would wrap a
+    # dictionary built here, which the helper then wouldn't read.
+    [M3.ZoomHelper.Known]::Load($json.DeserializeObject($json.Serialize(@{ titles = @{ participants = $sent } })))
+    $found = $null
+    if ($request.ContainsKey('toolbar')) { $found = [M3.ZoomHelper.Helper]::FindParticipantsButton([string[]]$request['toolbar']) }
+    if ($request.ContainsKey('heading')) { [M3.ZoomHelper.Helper]::LearnPanelHeading([string]$request['heading']) }
+    $learned = $null
+    if ([M3.ZoomHelper.Known]::Learned.ContainsKey('participants')) { $learned = [M3.ZoomHelper.Known]::Learned['participants'] }
+    if ($learned) { $saved = $learned }
+    if ($request.ContainsKey('entry') -and $found -ge 0) { $saved = $request['entry'] }
+    [void]$scenarioReplies.Add(@{ found = $found; learned = $learned; saved = $saved })
+  }
+  [void]$replies.Add($scenarioReplies)
+}
+[IO.File]::WriteAllText($Out, $json.Serialize($replies), (New-Object Text.UTF8Encoding $false))
+`;
+
+const PARTICIPANTS_SCENARIOS: {
+  expected: ParticipantsReply[];
+  name: string;
+  requests: ParticipantsRequest[];
+  saved: null | string;
+}[] = [
+  {
+    expected: [
+      { found: -1, learned: null, saved: 'Participants' },
+      { found: 4, learned: null, saved: 'participant·es' },
+      { found: null, learned: null, saved: 'participant·es' },
+      { found: 4, learned: null, saved: 'participant·es' },
+    ],
+    name: 'opens the panel by the button the setup assistant was shown, for the startup check and the assistant run again, though the panel heading reads otherwise (MMM-V2-3MJ)',
+    requests: [
+      // The startup check, with the panel closed: the name kept is the
+      // heading's, and Alt+U isn't Zoom's shortcut for it any more.
+      { toolbar: MOVED_SHORTCUTS_TOOLBAR },
+      // The setup assistant: the user picks the button, which opens the panel.
+      {
+        entry: 'participant·es',
+        heading: PANEL_HEADING,
+        toolbar: MOVED_SHORTCUTS_TOOLBAR,
+      },
+      // Its checks, run again with the panel open.
+      { heading: PANEL_HEADING },
+      // The next startup check, or the assistant run again, with the panel
+      // closed again.
+      { toolbar: MOVED_SHORTCUTS_TOOLBAR },
+    ],
+    saved: 'Participants',
+  },
+  {
+    expected: [
+      { found: 2, learned: 'participant·es', saved: 'participant·es' },
+      { found: null, learned: null, saved: 'participant·es' },
+    ],
+    name: "goes by Zoom's own shortcut first, keeping the button's own name over the heading's",
+    requests: [
+      { heading: PANEL_HEADING, toolbar: ZOOM_SHORTCUTS_TOOLBAR },
+      { heading: PANEL_HEADING },
+    ],
+    saved: 'Participants',
+  },
+  {
+    expected: [{ found: null, learned: 'Participants', saved: 'Participants' }],
+    name: "learns the heading's title while no name is known for the button (the panel opened by hand)",
+    requests: [{ heading: PANEL_HEADING }],
+    saved: null,
+  },
+];
+
+/** Runs PowerShell to the end: its exit code and what it wrote to stderr. */
+const runPowerShell = (args: string[]) =>
+  new Promise<{ code: null | number; stderr: string }>((resolve) => {
+    const child = spawn(
+      'powershell.exe',
+      ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', ...args],
+      { windowsHide: true },
+    );
+    let stderr = '';
+    child.stderr.on('data', (chunk: Buffer) => {
+      stderr += chunk.toString('utf8');
+    });
+    child.on('exit', (code) => resolve({ code, stderr }));
+  });
 
 /** Talks to the helper directly, to send what ZoomHelperProcess never would. */
 const rawSession = async (cacheDir: string, lines: string[]) => {
@@ -213,5 +370,81 @@ describe.runIf(process.platform === 'win32')(
       },
       TIMEOUT,
     );
+
+    describe("the name of Zoom's Participants button", () => {
+      let replies: ParticipantsReply[][] = [];
+
+      /** The interop the helper generated, generated now if it isn't yet. */
+      const findInterop = async () => {
+        const find = () =>
+          readdirSync(cacheDir)
+            .map((folder) =>
+              join(cacheDir, folder, 'Interop.UIAutomationClient.dll'),
+            )
+            .find((file) => existsSync(file));
+        if (!find()) {
+          const helper = newHelper();
+          await helper.start();
+          helper.stop();
+        }
+        return find();
+      };
+
+      // Compiles the helper's C# once for every scenario.
+      beforeAll(async () => {
+        const interop = await findInterop();
+        if (!interop) {
+          throw new Error(
+            `No UI Automation interop in ${cacheDir}, which holds: ${readdirSync(cacheDir).join(', ') || 'nothing'}`,
+          );
+        }
+        const probeDir = mkdtempSync(join(tmpdir(), 'm3-zoom-helper-names-'));
+        try {
+          const probe = join(probeDir, 'probe.ps1');
+          const input = join(probeDir, 'scenarios.json');
+          const output = join(probeDir, 'replies.json');
+          writeFileSync(probe, PARTICIPANTS_PROBE, 'utf8');
+          writeFileSync(
+            input,
+            JSON.stringify(
+              PARTICIPANTS_SCENARIOS.map(({ requests, saved }) => ({
+                requests,
+                saved,
+              })),
+            ),
+            'utf8',
+          );
+          const { code, stderr } = await runPowerShell([
+            '-File',
+            probe,
+            '-Interop',
+            interop,
+            '-Source',
+            SOURCE,
+            '-In',
+            input,
+            '-Out',
+            output,
+          ]);
+          if (code !== 0) {
+            throw new Error(`The probe exited with ${code}: ${stderr}`);
+          }
+          replies = JSON.parse(
+            readFileSync(output, 'utf8'),
+          ) as ParticipantsReply[][];
+        } finally {
+          await removeWhenReleased(probeDir);
+        }
+      }, TIMEOUT);
+
+      it.each(
+        PARTICIPANTS_SCENARIOS.map((scenario, index) => ({
+          ...scenario,
+          index,
+        })),
+      )('$name', ({ expected, index }) => {
+        expect(replies[index]).toEqual(expected);
+      });
+    });
   },
 );
