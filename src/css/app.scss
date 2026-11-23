@@ -233,6 +233,13 @@ body.body--light {
 }
 
 body.body--dark {
+  // The notices' dark-theme shades and tint (see "Notices" below).
+  --notice-positive-strong: #{$notice-positive-dark};
+  --notice-info-strong: #{$notice-info-dark};
+  --notice-warning-strong: #{$notice-warning-dark};
+  --notice-negative-strong: #{$notice-negative-dark};
+  --notice-tint: 24%;
+
   background: $primary-bg-dark;
 
   .bg-primary-light {
@@ -360,7 +367,7 @@ body.body--dark {
 // take the strong shade of its color instead: the solid itself in the light
 // theme, a lighter one in the dark theme. .text-notice-<type> is that shade
 // for an icon or a line of text. The tint behind a banner (NoticeBanner.vue)
-// is stronger in the dark theme.
+// is stronger in the dark theme (body.body--dark above sets both).
 //
 // Like Quasar's own .bg-* and .text-* classes, both win over a component's
 // own colors, and a Quasar color prop takes them as 'notice-<type>'.
@@ -370,14 +377,6 @@ body {
   --notice-warning-strong: #{$notice-warning};
   --notice-negative-strong: #{$notice-negative};
   --notice-tint: 14%;
-}
-
-body.body--dark {
-  --notice-positive-strong: #{$notice-positive-dark};
-  --notice-info-strong: #{$notice-info-dark};
-  --notice-warning-strong: #{$notice-warning-dark};
-  --notice-negative-strong: #{$notice-negative-dark};
-  --notice-tint: 24%;
 }
 
 $notice-solids: (
