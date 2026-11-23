@@ -8,10 +8,15 @@ name: Store Release
 #   makes that repository's files for the release (the manifest, pointing at
 #   the release's tag and commit, and the offline sources generated from its
 #   lockfiles) and opens the pull request that updates it there.
-# - Microsoft Store: an individual Partner Center account can't use the
-#   Store's submission API (it has no Microsoft Entra applications), so the
-#   release's MSIX is uploaded by hand: this opens an issue with the link
-#   to it and the steps.
+# - Microsoft Store: this submits the release's MSIX with Microsoft's Store
+#   CLI (msstore), as Partner Center's Microsoft Entra application "M³ Store
+#   publishing" (Manager role). Its four secrets are MSSTORE_TENANT_ID,
+#   MSSTORE_CLIENT_ID, MSSTORE_CLIENT_SECRET (the application's key, which
+#   expires: Partner Center → Account settings → User management →
+#   Microsoft Entra applications) and MSSTORE_SELLER_ID. The CLI only
+#   updates an app that's live in the Store: until then, or without the
+#   secrets, or if the submission fails, this opens an issue with a link to
+#   the MSIX and the steps to upload it by hand.
 #
 # A release published by a workflow's GITHUB_TOKEN starts no workflow, so
 # betas (published by beta-release.yml) never get here; the prerelease check
@@ -150,7 +155,7 @@ jobs:
 
   microsoft-store:
     name: Microsoft Store
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     if: >-
       github.repository == 'sircharlo/meeting-media-manager' &&
       (github.event_name == 'release' && !github.event.release.prerelease ||
@@ -158,21 +163,109 @@ jobs:
     permissions:
       actions: read
       issues: write
-    timeout-minutes: 5
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # The Store ID of M³'s app in Partner Center (see quasar.config.ts).
+      MSSTORE_PRODUCT_ID: 9PDC5BZ593BM
+      REPOSITORY: ${{ github.repository }}
     steps:
-      - name: Open an issue to upload the MSIX
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
+      # The release's MSIX: the newest "M³ for the Microsoft Store" artifact
+      # made after the release's commit.
+      - name: Find the release's MSIX
+        id: msix
+        shell: bash
         run: |
-          version="${TAG#v}"
-          # The release's MSIX: the newest "M³ for the Microsoft Store"
-          # artifact made after the release's commit.
           since=$(gh api "repos/$REPOSITORY/releases/tags/$TAG" --jq .created_at)
-          artifact=$(gh api "repos/$REPOSITORY/actions/artifacts?name=M%C2%B3%20for%20the%20Microsoft%20Store&per_page=20" \
-            --jq "[.artifacts[] | select(.created_at > \"$since\" and (.expired | not))] | sort_by(.created_at) | last | select(.) | \"https://github.com/$REPOSITORY/actions/runs/\(.workflow_run.id)/artifacts/\(.id)\"")
+          found=$(gh api "repos/$REPOSITORY/actions/artifacts?name=M%C2%B3%20for%20the%20Microsoft%20Store&per_page=20" \
+            --jq "[.artifacts[] | select(.created_at > \"$since\" and (.expired | not))] | sort_by(.created_at) | last | select(.) | \"\(.workflow_run.id) \(.id)\"")
+          if [ -z "$found" ]; then
+            echo "::warning::No \"M³ for the Microsoft Store\" artifact newer than the release's commit ($since)."
+            exit 0
+          fi
+          read -r run_id artifact_id <<< "$found"
+          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+          echo "url=https://github.com/$REPOSITORY/actions/runs/$run_id/artifacts/$artifact_id" >> "$GITHUB_OUTPUT"
+      - name: Check for the Partner Center credentials
+        id: credentials
+        shell: bash
+        env:
+          MSSTORE_CLIENT_ID: ${{ secrets.MSSTORE_CLIENT_ID }}
+          MSSTORE_CLIENT_SECRET: ${{ secrets.MSSTORE_CLIENT_SECRET }}
+          MSSTORE_SELLER_ID: ${{ secrets.MSSTORE_SELLER_ID }}
+          MSSTORE_TENANT_ID: ${{ secrets.MSSTORE_TENANT_ID }}
+        run: |
+          missing=()
+          for name in MSSTORE_TENANT_ID MSSTORE_CLIENT_ID MSSTORE_CLIENT_SECRET MSSTORE_SELLER_ID; do
+            [ -n "${!name}" ] || missing+=("$name")
+          done
+          if [ ${#missing[@]} -gt 0 ]; then
+            reason="the repository has no $(IFS=,; echo "${missing[*]}" | sed 's/,/, /g') secret"
+            [ ${#missing[@]} -gt 1 ] && reason+="s"
+            echo "::notice::Not submitted automatically: $reason."
+            echo "reason=$reason" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+      # electron-builder's appx target writes an .appx; the CLI takes the
+      # same package as an .msix.
+      - name: Download the MSIX
+        id: download
+        if: steps.credentials.outputs.ready == 'true' && steps.msix.outputs.run_id != ''
+        continue-on-error: true
+        shell: bash
+        env:
+          RUN_ID: ${{ steps.msix.outputs.run_id }}
+        run: |
+          gh run download "$RUN_ID" --repo "$REPOSITORY" --name "M³ for the Microsoft Store" --dir msix
+          packages=(msix/*.appx)
+          if [ ${#packages[@]} -ne 1 ] || [ ! -f "${packages[0]}" ]; then
+            echo "::error::Expected one .appx in the artifact, found: $(ls msix)"
+            exit 1
+          fi
+          mv "${packages[0]}" msix/package.msix
+          echo "path=$(cygpath -w "$PWD/msix/package.msix")" >> "$GITHUB_OUTPUT"
+      - name: Set up the Microsoft Store CLI
+        if: steps.download.outcome == 'success'
+        uses: microsoft/microsoft-store-apppublisher@cc9910a8d59f2eb55cbb83df0a3800cf3b5300e0 # v1.4
+        with:
+          version: v0.4.4
+      # It uploads the package to a new submission made from the published
+      # one (same listing) and submits it; the Store publishes it once it
+      # passes certification.
+      - name: Submit the MSIX
+        id: submit
+        if: steps.download.outcome == 'success'
+        continue-on-error: true
+        shell: pwsh
+        env:
+          MSIX_PATH: ${{ steps.download.outputs.path }}
+          MSSTORE_CLIENT_ID: ${{ secrets.MSSTORE_CLIENT_ID }}
+          MSSTORE_CLIENT_SECRET: ${{ secrets.MSSTORE_CLIENT_SECRET }}
+          MSSTORE_SELLER_ID: ${{ secrets.MSSTORE_SELLER_ID }}
+          MSSTORE_TENANT_ID: ${{ secrets.MSSTORE_TENANT_ID }}
+        run: |
+          msstore settings --enableTelemetry false
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          msstore reconfigure --tenantId $env:MSSTORE_TENANT_ID --sellerId $env:MSSTORE_SELLER_ID --clientId $env:MSSTORE_CLIENT_ID --clientSecret $env:MSSTORE_CLIENT_SECRET
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          msstore publish $env:MSIX_PATH --appId $env:MSSTORE_PRODUCT_ID
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          "Submitted $($env:TAG) to the Microsoft Store: it's published once it passes certification (Partner Center shows its progress)." >> $env:GITHUB_STEP_SUMMARY
+      # Whatever failed before it (but not when the run is cancelled).
+      - name: Open an issue to upload the MSIX by hand
+        if: ${{ !cancelled() && steps.submit.outcome != 'success' }}
+        shell: bash
+        env:
+          ARTIFACT_URL: ${{ steps.msix.outputs.url }}
+          REASON: ${{ steps.credentials.outputs.reason || (steps.msix.outputs.run_id == '' && 'the release''s MSIX artifact wasn''t found') || (steps.download.outcome == 'failure' && 'the MSIX couldn''t be downloaded') || 'the submission failed' }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          echo "::warning::Not submitted to the Microsoft Store automatically: $REASON."
+          version="${TAG#v}"
+          artifact="$ARTIFACT_URL"
           if [ -z "$artifact" ]; then
-            artifact="(not found: no \"M³ for the Microsoft Store\" artifact newer than the release's commit, $since; see the release's manual release run)"
+            artifact="(not found: see the manual release run that built the release)"
           fi
           title="Upload $version to the Microsoft Store"
           if [ -n "$(gh issue list --repo "$REPOSITORY" --state open --search "\"$title\" in:title" --json number --jq '.[].number')" ]; then
@@ -180,7 +273,7 @@ jobs:
             exit 0
           fi
           body=$(cat <<EOF
-          The Microsoft Store doesn't update itself from GitHub: its MSIX goes to Partner Center by hand.
+          This release wasn't submitted to the Microsoft Store automatically: $REASON ([run]($RUN_URL)). Its MSIX goes to Partner Center by hand this time.
 
           1. Download the MSIX: $artifact (a zip with the \`.appx\` inside; unzip it).
           2. In [Partner Center](https://partner.microsoft.com/dashboard/apps-and-games/overview), open **Meeting Media Manager** and select **Start update** (or **Update** on the current submission).
