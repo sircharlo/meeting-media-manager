@@ -1128,10 +1128,9 @@ const checkCoDate = () => {
       ],
       caption: t('dont-forget-to-add-circuit-overseer-date'),
       deferWhileDialogOpen: true,
-      icon: 'mmm-error',
       message: t('no-circuit-overseer-date-set'),
       timeout: 30_000,
-      type: 'primary',
+      type: 'warning',
     });
   }
 };
@@ -1482,6 +1481,7 @@ const notifySingleImportFile = (captionKey: string, filePath: string) => {
   createTemporaryNotification({
     caption: t(captionKey),
     message: t('processing') + ' ' + basename(filePath),
+    type: 'ongoing',
   });
 };
 
@@ -3303,7 +3303,7 @@ function notifyBackgroundMusicStillPlaying() {
   createTemporaryNotification({
     actions: [
       {
-        color: 'dark',
+        color: 'white',
         handler: () => {
           postBackgroundMusicAction({
             action: 'stop',
@@ -3314,7 +3314,7 @@ function notifyBackgroundMusicStillPlaying() {
         label: t('stop-music'),
       },
       {
-        color: 'dark',
+        color: 'white',
         icon: 'close',
         round: true,
       },

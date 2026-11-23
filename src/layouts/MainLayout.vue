@@ -944,12 +944,12 @@ const initListeners = () => {
     createTemporaryNotification({
       actions: [
         {
-          color: 'dark',
+          color: 'white',
           handler: goToHardwareAccelerationSetting,
           label: t('go-to-settings'),
         },
         {
-          color: 'dark',
+          color: 'white',
           icon: 'close',
           round: true,
         },
@@ -977,12 +977,12 @@ const initListeners = () => {
     createTemporaryNotification({
       actions: [
         {
-          color: 'dark',
+          color: 'white',
           handler: goToHardwareAccelerationSetting,
           label: t('go-to-settings'),
         },
         {
-          color: 'dark',
+          color: 'white',
           icon: 'close',
           round: true,
         },
@@ -1233,21 +1233,21 @@ const checkYeartextPreview = () => {
     createTemporaryNotification({
       actions: [
         {
-          color: 'primary',
+          color: 'white',
           handler: () => {
             // Session dismissal handled by not showing again until app restart
           },
           label: t('later'),
         },
         {
-          color: 'negative',
+          color: 'white',
           handler: () => {
             appSettingsStore.yeartextPreviewDismissed[nextYear] = true;
           },
           label: t('no'),
         },
         {
-          color: 'positive',
+          color: 'white',
           handler: () => {
             void previewNextYearYeartext();
           },
@@ -1256,6 +1256,7 @@ const checkYeartextPreview = () => {
       ],
       message: t('yeartext-preview-next-year', { year: nextYear }),
       timeout: 0, // Don't auto-dismiss
+      type: 'info',
     });
   } catch (error) {
     errorCatcher(error);

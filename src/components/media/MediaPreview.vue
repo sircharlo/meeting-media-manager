@@ -770,7 +770,7 @@ const disablePreviewForPerformance = () => {
   createTemporaryNotification({
     actions: [
       {
-        color: 'dark',
+        color: 'white',
         handler: () => {
           if (currentSettings.value) {
             currentSettings.value.enableMediaPreview = true;

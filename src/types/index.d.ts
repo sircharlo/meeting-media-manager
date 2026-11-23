@@ -12,6 +12,7 @@ export * from './jw/sqlite';
 export * from './media';
 export * from './media-conversion';
 export * from './meeting-quick-actions';
+export * from './notices';
 export * from './obs';
 export * from './search';
 export * from './settings';

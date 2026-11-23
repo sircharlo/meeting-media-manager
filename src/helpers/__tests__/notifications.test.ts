@@ -211,7 +211,7 @@ describe('createTemporaryNotification', () => {
     expect(mocks.useDialogStateStore).not.toHaveBeenCalled();
   });
 
-  it("passes the optional fields through and uses the type's icon", async () => {
+  it('passes the optional fields through', async () => {
     const { createTemporaryNotification } = await import('../notifications');
 
     createTemporaryNotification({
@@ -225,11 +225,10 @@ describe('createTemporaryNotification', () => {
     });
 
     expect(lastNotifyOptions()).toStrictEqual({
-      actions: [{ color: 'dark', icon: 'close', round: true }],
+      actions: [{ color: 'white', icon: 'close', round: true }],
       caption: 'Caption',
       classes: 'extra',
       group: 'my-group',
-      icon: 'mmm-warning',
       message: 'Careful',
       position: 'bottom',
       timeout: 0,
@@ -250,19 +249,23 @@ describe('createTemporaryNotification', () => {
     );
   });
 
-  it.each([
-    ['info', 'mmm-info'],
-    ['negative', 'mmm-error'],
-    ['ongoing', 'mmm-loading'],
-    ['positive', 'mmm-check'],
-    ['primary', 'mmm-info'],
-  ] as const)('gives a %s notification the %s icon', async (type, icon) => {
-    const { createTemporaryNotification } = await import('../notifications');
+  // Every type's text is white (see boot/notify-types.ts), warning too: its
+  // close button used to be dark, for Quasar's own dark-on-orange warning.
+  it.each(['info', 'negative', 'ongoing', 'positive', 'warning'] as const)(
+    'gives a %s notification a white close button, and leaves its icon to its type',
+    async (type) => {
+      const { createTemporaryNotification } = await import('../notifications');
 
-    createTemporaryNotification({ message: 'x', type });
+      createTemporaryNotification({ message: 'x', type });
 
-    expect(lastNotifyOptions()).toMatchObject({ icon, type });
-  });
+      expect(lastNotifyOptions()).toMatchObject({
+        actions: [{ color: 'white', icon: 'close', round: true }],
+        type,
+      });
+      // An icon given as undefined would replace the type's own.
+      expect(lastNotifyOptions()).not.toHaveProperty('icon');
+    },
+  );
 
   it('prefers an explicit icon and explicit actions', async () => {
     const actions = [{ label: 'Undo' }];
@@ -293,20 +296,24 @@ describe('createTemporaryNotification', () => {
     expect(lastNotifyOptions()).not.toHaveProperty('actions');
   });
 
-  it('reports an unknown type instead of showing anything', async () => {
-    const { createTemporaryNotification } = await import('../notifications');
+  // 'primary' was a type of its own, until its one toast became a warning.
+  it.each(['bogus', 'primary'])(
+    'reports an unknown type (%s) instead of showing anything',
+    async (type) => {
+      const { createTemporaryNotification } = await import('../notifications');
 
-    const dismiss = createTemporaryNotification({
-      message: 'x',
-      type: 'bogus' as 'info',
-    });
+      const dismiss = createTemporaryNotification({
+        message: 'x',
+        type: type as 'info',
+      });
 
-    expect(dismiss).toBeUndefined();
-    expect(mocks.notifyCreate).not.toHaveBeenCalled();
-    expect(mocks.errorCatcher).toHaveBeenCalledWith(
-      new Error('Unknown notify type: "bogus"'),
-    );
-  });
+      expect(dismiss).toBeUndefined();
+      expect(mocks.notifyCreate).not.toHaveBeenCalled();
+      expect(mocks.errorCatcher).toHaveBeenCalledWith(
+        new Error(`Unknown notify type: "${type}"`),
+      );
+    },
+  );
 
   it('reports a failure to create the notification', async () => {
     const error = new Error('Notify failed');

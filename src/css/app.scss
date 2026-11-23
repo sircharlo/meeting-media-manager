@@ -352,6 +352,53 @@ body.body--dark {
   }
 }
 
+// Notices (see $notice-* in quasar.variables.scss). .bg-notice-<type> is
+// the solid fill of a toast (boot/notify-types.ts gives each Notify type its
+// own) or of a badge, with white text on it, the same in both themes.
+//
+// On a tint or straight on the page, a notice's icon, edge, buttons or text
+// take the strong shade of its color instead: the solid itself in the light
+// theme, a lighter one in the dark theme. .text-notice-<type> is that shade
+// for an icon or a line of text. The tint behind a banner (NoticeBanner.vue)
+// is stronger in the dark theme.
+//
+// Like Quasar's own .bg-* and .text-* classes, both win over a component's
+// own colors, and a Quasar color prop takes them as 'notice-<type>'.
+body {
+  --notice-positive-strong: #{$notice-positive};
+  --notice-info-strong: #{$notice-info};
+  --notice-warning-strong: #{$notice-warning};
+  --notice-negative-strong: #{$notice-negative};
+  --notice-tint: 14%;
+}
+
+body.body--dark {
+  --notice-positive-strong: #{$notice-positive-dark};
+  --notice-info-strong: #{$notice-info-dark};
+  --notice-warning-strong: #{$notice-warning-dark};
+  --notice-negative-strong: #{$notice-negative-dark};
+  --notice-tint: 24%;
+}
+
+$notice-solids: (
+  'positive': $notice-positive,
+  'info': $notice-info,
+  'warning': $notice-warning,
+  'negative': $notice-negative,
+);
+
+@each $type, $solid in $notice-solids {
+  .bg-notice-#{$type} {
+    background: $solid !important; /* NOSONAR: like Quasar's !important .bg-* colors, so a color prop wins */
+  }
+
+  .text-notice-#{$type} {
+    color: var(
+      --notice-#{$type}-strong
+    ) !important; /* NOSONAR: like Quasar's !important .text-* colors, so a color prop wins */
+  }
+}
+
 .list-droppable {
   min-height: 3em;
 }

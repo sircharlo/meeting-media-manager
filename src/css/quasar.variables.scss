@@ -37,6 +37,21 @@ $warning: rgb(233, 144, 61);
 
 $error-semi-transparent: rgba(196, 63, 63, 0.24);
 
+// Notices: toasts, banners and inline alerts (see boot/notify-types.ts and
+// NoticeBanner.vue). The brand colours above stay for buttons and text; a
+// notice's solid fill, where white text sits on it, is a deeper shade that
+// keeps it readable (4.5:1 or more) in both themes. On a tint or the page,
+// its icon, border or text takes the same shade in the light theme and a
+// lighter one in the dark theme.
+$notice-positive: #157f33;
+$notice-info: #2563eb;
+$notice-warning: #b4570b;
+$notice-negative: #c43f3f;
+$notice-positive-dark: #4dc86a;
+$notice-info-dark: #8db3f8;
+$notice-warning-dark: #f0a35e;
+$notice-negative-dark: #e77c7c;
+
 $accent-100: rgb(237, 243, 255);
 $accent-100-transparent: rgba(237, 243, 255, 0.5);
 $accent-200: rgb(218, 229, 251);

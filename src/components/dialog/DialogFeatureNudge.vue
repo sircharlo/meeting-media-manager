@@ -151,12 +151,18 @@ const accept = () => {
 
 const remindLater = () => {
   respond('snoozed');
-  createTemporaryNotification({ message: t('feature-nudge-snoozed') });
+  createTemporaryNotification({
+    message: t('feature-nudge-snoozed'),
+    type: 'info',
+  });
 };
 
 const decline = () => {
   respond('declined');
-  createTemporaryNotification({ message: t('feature-nudge-declined') });
+  createTemporaryNotification({
+    message: t('feature-nudge-declined'),
+    type: 'info',
+  });
 };
 
 const stopSuggesting = () => {
@@ -164,7 +170,10 @@ const stopSuggesting = () => {
   answered = true;
   congregationSettingsStore.stopFeatureNudges(shownFor.value);
   open.value = false;
-  createTemporaryNotification({ message: t('feature-nudge-stopped') });
+  createTemporaryNotification({
+    message: t('feature-nudge-stopped'),
+    type: 'info',
+  });
 };
 
 // Closing it without an answer (Esc, the close button) is "remind me later".

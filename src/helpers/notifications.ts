@@ -7,14 +7,14 @@ import {
 import { useDialogStateStore } from 'stores/dialog-state';
 import { watch } from 'vue';
 
-// 1. Strict allowed types
+// 1. Strict allowed types: the four registered in boot/notify-types.ts, each
+// with its own color and icon, and Quasar's own 'ongoing' (with a spinner)
 const allowedTypes = [
   'positive',
   'negative',
   'warning',
   'info',
   'ongoing',
-  'primary',
 ] as const;
 
 // 2. Interface with strict type
@@ -100,15 +100,12 @@ const waitForOpenDialogsToClose = (show: () => void) => {
   return true;
 };
 
-/** The default actions of a closable notification: just a close button. */
-const getCloseActions = (
-  type: AllowedNotifyType | undefined,
-): QNotifyCreateOptions['actions'] => [
-  {
-    color: type === 'warning' ? 'dark' : 'white',
-    icon: 'close',
-    round: true,
-  },
+/**
+ * The default actions of a closable notification: just a close button,
+ * white like the text of every type of notification.
+ */
+const getCloseActions = (): QNotifyCreateOptions['actions'] => [
+  { color: 'white', icon: 'close', round: true },
 ];
 
 /**
@@ -169,17 +166,8 @@ export const createTemporaryNotification = (
       throw new Error(`Unknown notify type: "${type}"`);
     }
 
-    const typeIcons: Record<string, string> = {
-      info: 'mmm-info',
-      negative: 'mmm-error',
-      ongoing: 'mmm-loading',
-      positive: 'mmm-check',
-      primary: 'mmm-info',
-      warning: 'mmm-warning',
-    };
-
-    const resolvedIcon = icon ?? (type ? typeIcons[type] : undefined);
-
+    // Without an icon of its own, it gets its type's (see
+    // boot/notify-types.ts): one given as undefined would replace it.
     const dismiss = Notify.create({
       group: false,
       message,
@@ -187,8 +175,8 @@ export const createTemporaryNotification = (
       timeout,
       ...getOptionalOptions(props),
       ...(type && { type }),
-      ...(resolvedIcon && { icon: resolvedIcon }),
-      ...(!noClose && { actions: actions ?? getCloseActions(type) }),
+      ...(icon && { icon }),
+      ...(!noClose && { actions: actions ?? getCloseActions() }),
     });
 
     // Track the dismiss function if it exists, unless it's protected from

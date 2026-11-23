@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Notifications**: Notifications are easier to read: their green, blue, orange and red are now deeper shades, so their white text stands out on each of them, orange warnings included (their text was dark), and all their buttons are white too.
+
 ## v26.11.4
 
 ### ✨ New Features
