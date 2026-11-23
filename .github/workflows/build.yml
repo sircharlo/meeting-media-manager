@@ -349,8 +349,10 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           TEST_VERSION: ${{ !inputs.publish-release }}
-      # A beta goes to the beta channel, a release to stable. Until the
-      # repository has the credentials, the snap is only built.
+      # A beta goes straight to the beta channel, like its GitHub release. A
+      # release is only uploaded: it's built for a draft, so it reaches the
+      # stable channel when the draft is published (store-release.yml).
+      # Until the repository has the credentials, the snap is only built.
       - name: Upload to the Snap Store
         if: ${{ inputs.publish-release }}
         env:
@@ -361,13 +363,17 @@ jobs:
             exit 0
           fi
           version=$(node -p "require('./package.json').version")
-          case "$version" in
-            *-beta*) channel=beta ;;
-            *) channel=stable ;;
-          esac
           snaps=(dist/electron/Packaged/*.snap)
-          echo "Uploading ${snaps[*]} ($version) to the $channel channel"
-          snapcraft upload --release="$channel" "${snaps[@]}"
+          case "$version" in
+            *-beta*)
+              echo "Uploading ${snaps[*]} ($version) to the beta channel"
+              snapcraft upload --release=beta "${snaps[@]}"
+              ;;
+            *)
+              echo "Uploading ${snaps[*]} ($version), to be released to stable with the GitHub release"
+              snapcraft upload "${snaps[@]}"
+              ;;
+          esac
       - name: Upload artifacts
         if: ${{ !inputs.publish-release }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
