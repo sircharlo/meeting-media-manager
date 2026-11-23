@@ -202,7 +202,7 @@
         <q-list v-else class="full-width" dense>
           <q-item v-for="name in raisedHands" :key="name" class="q-px-md">
             <q-item-section avatar top>
-              <q-icon color="warning" name="mmm-groups" />
+              <q-icon color="notice-warning" name="mmm-groups" />
             </q-item-section>
             <q-item-section>
               <q-item-label class="ellipsis">{{ name }}</q-item-label>

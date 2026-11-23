@@ -364,18 +364,18 @@ body.body--dark {
 // own) or of a badge, with white text on it, the same in both themes.
 //
 // On a tint or straight on the page, a notice's icon, edge, buttons or text
-// take the strong shade of its color instead: the solid itself in the light
-// theme, a lighter one in the dark theme. .text-notice-<type> is that shade
+// take the strong shade of its color instead: darker than the solid in the
+// light theme, lighter in the dark theme. .text-notice-<type> is that shade
 // for an icon or a line of text. The tint behind a banner (NoticeBanner.vue)
 // is stronger in the dark theme (body.body--dark above sets both).
 //
 // Like Quasar's own .bg-* and .text-* classes, both win over a component's
 // own colors, and a Quasar color prop takes them as 'notice-<type>'.
 body {
-  --notice-positive-strong: #{$notice-positive};
-  --notice-info-strong: #{$notice-info};
-  --notice-warning-strong: #{$notice-warning};
-  --notice-negative-strong: #{$notice-negative};
+  --notice-positive-strong: #{$notice-positive-light};
+  --notice-info-strong: #{$notice-info-light};
+  --notice-warning-strong: #{$notice-warning-light};
+  --notice-negative-strong: #{$notice-negative-light};
   --notice-tint: 14%;
 }
 

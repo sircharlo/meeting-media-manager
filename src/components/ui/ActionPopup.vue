@@ -27,7 +27,7 @@
         <LiquidSpinner v-if="statusLoading" color="primary" size="16px" />
         <q-icon
           v-else-if="statusIcon"
-          :color="statusColor"
+          :color="statusIconColor"
           :name="statusIcon"
           size="16px"
         />
@@ -63,10 +63,14 @@
 import type { QMenu } from 'quasar';
 
 import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
-import { onBeforeUnmount, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, useTemplateRef, watch } from 'vue';
 
-defineProps<{
-  /** Quasar color of the status icon. */
+const props = defineProps<{
+  /**
+   * Quasar color of the status icon. A notice type (positive, info, warning
+   * or negative) takes the notice's shade, readable on the popup in both
+   * themes (see $notice-* in quasar.variables.scss).
+   */
   statusColor?: string;
   statusIcon?: string;
   /** Shows a sloshing glass in place of the status icon. */
@@ -77,6 +81,14 @@ defineProps<{
 }>();
 
 const open = defineModel<boolean>({ default: false });
+
+const NOTICE_COLORS = new Set(['info', 'negative', 'positive', 'warning']);
+
+const statusIconColor = computed(() =>
+  props.statusColor && NOTICE_COLORS.has(props.statusColor)
+    ? `notice-${props.statusColor}`
+    : props.statusColor,
+);
 
 const menu = useTemplateRef<QMenu>('menu');
 const content = useTemplateRef<HTMLElement>('content');

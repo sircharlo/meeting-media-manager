@@ -56,7 +56,9 @@ const statusText = computed(() =>
     : t('recording-status-idle'),
 );
 
-const statusColor = computed(() => (isRecording.value ? 'negative' : 'grey'));
+// A recording light, not an error: Quasar's own bright red, which the popup
+// would otherwise turn into the error notice's shade (see ActionPopup.vue).
+const statusColor = computed(() => (isRecording.value ? 'red' : 'grey'));
 
 const openRecordingFolder = () => {
   if (!currentSettings.value?.recordingFolder) return;
