@@ -1,34 +1,30 @@
 # M³'s Flatpak
 
-Flathub builds M³ from source and offline, from its own repository,
-`flathub/io.github.sircharlo.meeting-media-manager`. That repository holds a
-copy of this folder's manifest, whose M³ source is a release's tag and
-commit, plus the `generated-sources.json` made from that release's lockfiles.
+This folder builds M³ as a Flatpak, from source and offline, the way
+Flathub would. M³ isn't on Flathub: its submission is on hold (see below).
 
 The app's AppStream metadata and desktop file are in `build/linux`, because
 Flathub wants them in the app's own repository.
 
-## Releases on Flathub
+## Flathub: on hold
+
+[Flathub's Generative AI policy](https://docs.flathub.org/docs/for-app-authors/requirements)
+accepts no manifest with AI-generated or AI-assisted content, even
+disclosed. It also forbids AI tools from opening or automating submission
+pull requests, or writing their text or replies, and asks for disclosure of
+AI-generated code in the app. This folder's manifest was written with AI, so
+it can't be submitted as it is. M³ on Flathub would need a manifest and a
+submission written by hand.
 
 When a release is published on GitHub, the Store Release workflow
-(`.github/workflows/store-release.yml`) makes Flathub's files for it:
+(`.github/workflows/store-release.yml`) still makes the files a Flathub
+build uses, and keeps them as the run's artifact, but sends nothing to
+Flathub:
 
 - the manifest, from `flathub-manifest.mjs`: this folder's, with M³'s source
   as the release's tag and commit;
-- `generated-sources.json`, from the release's lockfiles;
+- `generated-sources.json`, from the release's lockfiles (flatpak-node-generator);
 - `flathub.json`, for x86_64 only.
-
-It keeps them as the run's artifact. With the `FLATHUB_TOKEN` secret, it
-also opens the pull request that updates Flathub's repository. That secret
-is a classic token, with the `public_repo` scope, of a maintainer of that
-repository. Flathub test-builds the pull request, and merging it publishes
-the update.
-
-For the first submission, run the workflow by hand (**Actions → Store
-Release → Run workflow**, with the release's tag and the store `flathub`).
-Then submit its files to `flathub/flathub` as Flathub's
-[submission guide](https://docs.flathub.org/docs/for-app-authors/submission)
-describes.
 
 ## Build it locally
 
