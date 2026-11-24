@@ -86,6 +86,7 @@
           <NoticeBanner
             :actions="b.actions"
             class="full-width"
+            :details="b.details"
             :icon="b.icon"
             :type="b.type"
           >
@@ -504,6 +505,7 @@ const {
   currentSettings,
   currentSongbook,
   downloadProgress,
+  hiddenMediaNamesForSelectedDate,
   isSelectedDayToday,
   mediaIsPlaying,
   mediaPaused,
@@ -628,6 +630,7 @@ const pageBanners = computed(() =>
   getPageBanners({
     coWeek: isCoWeek(selectedDateObject.value?.date),
     duplicateSongs: duplicateSongsForWeMeeting.value,
+    hiddenMediaNames: hiddenMediaNamesForSelectedDate.value,
     obsDisconnected: !!showObsBanner.value,
     obsSceneListError: !!showObsSceneListErrorBanner.value,
     showAllMedia: () =>

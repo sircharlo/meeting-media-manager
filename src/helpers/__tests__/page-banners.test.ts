@@ -5,6 +5,7 @@ import { getPageBanners, type PageBannerState } from '../page-banners';
 const state = (changes: Partial<PageBannerState> = {}): PageBannerState => ({
   coWeek: false,
   duplicateSongs: false,
+  hiddenMediaNames: [],
   obsDisconnected: false,
   obsSceneListError: false,
   showAllMedia: vi.fn(),
@@ -42,6 +43,20 @@ describe('getPageBanners', () => {
     );
 
     expect(banner?.type).toBe('info');
+  });
+
+  it('lists the hidden media items under its ⓘ', () => {
+    const banner = find(
+      getPageBanners(
+        state({
+          hiddenMediaNames: ['Song 12', 'Picture 1'],
+          someItemsHidden: true,
+        }),
+      ),
+      'hidden-items',
+    );
+
+    expect(banner?.details).toEqual(['Song 12', 'Picture 1']);
   });
 
   it('shows all the hidden media items again from its button', () => {

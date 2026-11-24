@@ -980,7 +980,9 @@
             </q-item>
           </template>
           <template v-else>
-            <q-item-label header>{{ displayMediaTitle }}</q-item-label>
+            <q-item-label class="media-item__menu-title ellipsis" header>
+              {{ displayMediaTitle }}
+            </q-item-label>
             <!--
               UX-6 (full-audit-2026-09-04.md / full-audit backlog): Move up/
               Move down are the keyboard/screen-reader equivalent to the
@@ -3582,6 +3584,13 @@ watch(
 // before wrapping/crowding its segment.
 .tag-edit-card {
   min-width: 320px;
+}
+
+// The item's name, at the top of its right-click menu: one line, as wide as
+// the menu's own items make it (its length doesn't count toward the menu's
+// width), and ending in "…" when it's longer.
+.media-item__menu-title {
+  contain: inline-size;
 }
 
 .media-filter-filename-match {
