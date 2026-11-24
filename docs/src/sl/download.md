@@ -129,4 +129,4 @@ onMounted(async () => {
 
 - **x86_64 (AppImage)**: <a :href="downloads.linux">Prenesi</a>
 
-<ul v-if="downloads.linuxArm64" style="margin-top: -8px;"><li><strong>arm64 (AppImage)</strong>: <a :href="downloads.linuxArm64">Download</a></li></ul>
+<ul v-if="downloads.linuxArm64" style="margin-top: -8px;"><li><strong>arm64 (AppImage)</strong>: <a :href="downloads.linuxArm64">Prenesi</a></li></ul>
