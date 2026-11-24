@@ -257,10 +257,13 @@ jobs:
           MSSTORE_CLIENT_SECRET: ${{ secrets.MSSTORE_CLIENT_SECRET }}
           MSSTORE_SELLER_ID: ${{ secrets.MSSTORE_SELLER_ID }}
           MSSTORE_TENANT_ID: ${{ secrets.MSSTORE_TENANT_ID }}
+        # reconfigure comes first: every other msstore command (settings
+        # included) stops with "SellerId is not set." until the CLI is
+        # configured, which a fresh runner never is.
         run: |
-          msstore settings --enableTelemetry false
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           msstore reconfigure --tenantId $env:MSSTORE_TENANT_ID --sellerId $env:MSSTORE_SELLER_ID --clientId $env:MSSTORE_CLIENT_ID --clientSecret $env:MSSTORE_CLIENT_SECRET
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          msstore settings --enableTelemetry false
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           msstore publish $env:MSIX_PATH --appId $env:MSSTORE_PRODUCT_ID
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
