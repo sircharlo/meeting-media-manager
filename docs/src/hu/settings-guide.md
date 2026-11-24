@@ -32,11 +32,11 @@ Az M³ külső megjelenésének vezérlése.
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
+Állítsa be, hogy a beállítások dátummezőiben, például a körzetfelvigyázó látogatásának dátumánál, melyik napot kell a hét első napjának tekinteni. Az ablak tetején lévő naptár mindig hétfőtől vasárnapig mutatja a heteket, az összejöveteli hetekhez hasonlóan.
 
 **Opciók**: vasárnaptól szombatig
 
-**Default**: Monday
+**Alapértelmezett**: hétfő
 
 ### Dátumformátum {#date-format}
 

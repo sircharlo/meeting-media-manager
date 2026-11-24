@@ -32,11 +32,11 @@
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
+Укажіть, який день вважати першим днем тижня в полях дат у налаштуваннях, наприклад у полі дати візиту районного наглядача. Календар у верхній частині вікна завжди показує тижні з понеділка до неділі, як і тижні зібрань.
 
 **Варіанти**: Від неділі до суботи
 
-**Default**: Monday
+**За замовчуванням**: Понеділок
 
 ### Формат дати {#date-format}
 

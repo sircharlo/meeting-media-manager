@@ -32,11 +32,11 @@ E fa’atere i te huru o te M³.
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
+Fa’anaho i te mahana mātāmua o te hepetoma nō te mau ta’io mahana i roto i te mau fa’anahora’a, mai te ta’io mahana o te fārereira’a a te ti’a’au ha’a’ati. E fa’a’ite noa te tarena i te pae ni’a o te matapihi i te mau hepetoma mai te Monire e tae atu i te Tāpati, mai te mau hepetoma putuputura’a.
 
 **Mau mā’itira’a**: Tapati e tae atu i te Mahana mā’a
 
-**Default**: Monday
+**Fa’anahora’a tumu**: Monire
 
 ### Hurura’a o te mahana {#date-format}
 

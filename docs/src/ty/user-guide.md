@@ -38,12 +38,12 @@ Te vāhi matapihi mātāmua o te M³ e rave rahi ïa tu’u vāhi faufa’a rahi
 
 ### Te maramarama-ra’a i te hi’ora’a tarena {#calendar-view}
 
-Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
+’A pata i ni’a i te ta’io mahana i te pae ni’a o te matapihi nō te ’iriti i te tarena. E fa’a’ite te reira i te mau hepetoma ato’a e fa’aineine ai M³ i te media, ma te ha’amata i teie hepetoma:
 
-- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
-- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
-- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
-- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
+- **Te mau hepetoma** - E fa’a’ite te rēni tāta’itahi i te hō’ē hepetoma mai te Monire e tae atu i te Tāpati, ’e tōna i’oa (« Teie hepetoma », « Te hepetoma i muri nei », « I roto i te 2 hepetoma », e te tahi atu) ’e tōna mau ta’io mahana
+- **Te mau mahana putuputura’a** - E ’ū tō te mau mahana putuputura’a ’ia au i tō rātou huru: matie ’ia ineine tō rātou media, ’ānani ’ia ’ore ā i ineine, ’e ’ute’ute mai te peu ’aita i nehenehe e huti mai i te reira. E vare’au te mau mahana e vai ai te media tā ’oe iho i tāpiri. E fa’ata’a te hō’ē tapura iti i raro a’e i te tarena i te mau ’ū
+- **Te mau hepetoma ta’a ’ē** - I te roara’a o te fārereira’a a te ti’a’au ha’a’ati ’e o te hepetoma o te Oro’a Ha’amana’ora’a, e fa’a’ite te mau mahana putuputura’a o taua hepetoma ra i te ’ū o te hepetoma, ’e e pāpa’ihia te i’oa o te hepetoma i raro a’e i tōna mau ta’io mahana. E fa’a’ite te hō’ē tāpa’o i piha’iho i te ta’io mahana i te pae ni’a o te matapihi i te mea ta’a ’ē i te mahana i mā’itihia
+- **Te mau taviri** - ’A fa’a’ohipa i te mau taviri te’a nō te haere mai te tahi mahana i te tahi atu, ’e i te taviri Enter nō te mā’iti i te hō’ē
 
 ### Te fa’anahora’a i te mau rorouira {#organizing-media}
 

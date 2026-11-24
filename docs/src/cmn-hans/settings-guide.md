@@ -32,11 +32,11 @@
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
+设置“设置”中的日期字段（例如分区监督探访日期）以哪一天作为每周的第一天。窗口顶部的日历始终以星期一到星期日为一周，与聚会周相同。
 
 **选项**：星期日至星期六
 
-**Default**: Monday
+**默认**：星期一
 
 ### 日期格式 {#date-format}
 

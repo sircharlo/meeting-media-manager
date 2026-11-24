@@ -32,11 +32,11 @@ Steuern Sie das Erscheinungsbild von M³.
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
+Legen Sie fest, welcher Tag in den Datumsfeldern der Einstellungen, etwa beim Datum des Besuchs des Kreisaufsehers, als erster Tag der Woche gelten soll. Der Kalender oben im Fenster zeigt die Wochen immer von Montag bis Sonntag an, so wie die Wochen der Zusammenkünfte.
 
 **Optionen**: Sonntag bis Samstag
 
-**Default**: Monday
+**Standard**: Montag
 
 ### Datumsformat {#date-format}
 
@@ -136,7 +136,7 @@ Die Woche des nächsten Besuchs des Kreisaufsehers.
 
 **Standard**: Keine
 
-### Gedächtnismahl-Datum {#memorial-date}
+### Datum des Gedächtnismahls {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 

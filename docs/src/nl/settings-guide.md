@@ -32,11 +32,11 @@ Bepaal het weergavethema van M³.
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
+Stel in welke dag in de datumvelden in Instellingen, zoals de datum van het bezoek van de kringopziener, als eerste dag van de week geldt. De kalender bovenaan het venster toont de weken altijd van maandag tot en met zondag, net als de vergaderweken.
 
-**Opties**: Sunday through Saturday
+**Opties**: Zondag tot en met zaterdag
 
-**Default**: Monday
+**Standaard**: Maandag
 
 ### Datumnotatie {#date-format}
 
@@ -72,7 +72,7 @@ De naam van je gemeente. Dit wordt gebruikt voor organisatie en weergave.
 
 De primaire taal voor mediadownloads. Dit moet overeenkomen met de taal die in je gemeentevergaderingen wordt gebruikt.
 
-**Opties**: All available languages from the official website of Jehovah's Witnesses
+**Opties**: Alle beschikbare talen van de officiële website van Jehovah's Getuigen
 
 **Standaard**: Engels (E)
 
@@ -82,7 +82,7 @@ De primaire taal voor mediadownloads. Dit moet overeenkomen met de taal die in j
 
 Een secundaire taal die wordt gebruikt wanneer media niet beschikbaar is in de primaire taal.
 
-**Opties**: All available languages from the official website of Jehovah's Witnesses
+**Opties**: Alle beschikbare talen van de officiële website van Jehovah's Getuigen
 
 **Standaard**: Geen
 
@@ -92,9 +92,9 @@ Een secundaire taal die wordt gebruikt wanneer media niet beschikbaar is in de p
 
 De dag van de week waarop je doordeweekse vergadering wordt gehouden.
 
-**Opties**: Sunday through Saturday
+**Opties**: Zondag tot en met zaterdag
 
-**Standaard**: Geen (must be set during setup)
+**Standaard**: Geen (moet tijdens de installatie worden ingesteld)
 
 ### Doordeweekse vergadertijd {#midweek-meeting-time}
 
@@ -104,7 +104,7 @@ De begintijd van je doordeweekse vergadering.
 
 **Formaat**: UU:MM (24-uursnotatie)
 
-**Standaard**: Geen (must be set during setup)
+**Standaard**: Geen (moet tijdens de installatie worden ingesteld)
 
 ### Weekendvergaderdag {#weekend-meeting-day}
 
@@ -112,9 +112,9 @@ De begintijd van je doordeweekse vergadering.
 
 De dag van de week waarop je weekendvergadering wordt gehouden.
 
-**Opties**: Sunday through Saturday
+**Opties**: Zondag tot en met zaterdag
 
-**Standaard**: Geen (must be set during setup)
+**Standaard**: Geen (moet tijdens de installatie worden ingesteld)
 
 ### Weekendvergadertijd {#weekend-meeting-time}
 
@@ -124,7 +124,7 @@ De begintijd van je weekendvergadering.
 
 **Formaat**: UU:MM (24-uursnotatie)
 
-**Standaard**: Geen (must be set during setup)
+**Standaard**: Geen (moet tijdens de installatie worden ingesteld)
 
 ### Week van het bezoek van de kringopziener {#circuit-overseer-week}
 
@@ -344,7 +344,7 @@ Schakel ondersteuning voor ondertiteling in bij het afspelen van media.
 
 Taal voor ondertiteling (kan verschillen van de mediataal).
 
-**Opties**: All available languages from the official website of Jehovah's Witnesses
+**Opties**: Alle beschikbare talen van de officiële website van Jehovah's Getuigen
 
 **Standaard**: Geen
 

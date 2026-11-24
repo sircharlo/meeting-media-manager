@@ -8,7 +8,7 @@
 
 ### ✨ 새로운 기능
 
-- ✨ **Circuit Overseer's Visit and Memorial Week**: During the circuit overseer's visit and the week of the Memorial, a label next to the date at the top of the window says so. Point at it to see what's different on the selected day, such as the midweek meeting moving to Tuesday, the media M³ hides then, or the meeting the Memorial replaces. On the usual midweek day of the visit, or the meeting day the Memorial replaces, the empty page now explains why there's no meeting, with a button that goes to Tuesday or to the Memorial. In the calendar, that week's meeting days take the week's color, and the week is named under its dates.
+- ✨ **순회 감독자 방문 및 기념식 주간**: 순회 감독자 방문 주간과 기념식 주간에는 창 상단의 날짜 옆에 라벨이 표시되어 이를 알려 줍니다. 이 라벨에 마우스를 올리면 평일 집회가 화요일로 옮겨지는 것, 그때 M³가 숨기는 미디어, 기념식으로 대체되는 집회 등 선택한 날에 무엇이 다른지 확인할 수 있습니다. 순회 감독자 방문 주간의 원래 평일 집회 요일이나 기념식으로 대체되는 집회일에는 이제 빈 페이지에 집회가 없는 이유가 표시되며, 화요일이나 기념식으로 이동하는 버튼도 함께 나타납니다. 달력에서는 그 주의 집회일이 해당 주간의 색으로 표시되고, 날짜 아래에 주간 이름이 나타납니다.
 - ✨ **ARM용 Linux**: 이제 64비트 ARM 프로세서(arm64)를 사용하는 Linux 컴퓨터(예: 64비트 시스템을 사용하는 Raspberry Pi 4 또는 5, Linux를 실행하는 Snapdragon 프로세서 노트북)에서도 M³를 사용할 수 있습니다. x86_64용과 마찬가지로 스스로 업데이트되는 AppImage로 제공되며, Snap Store에서도 받을 수 있습니다. 새로 추가된 기능이므로 사용하시는 컴퓨터에서 제대로 작동하지 않는 것이 있으면 알려 주세요.
 
 ## v26.11.4

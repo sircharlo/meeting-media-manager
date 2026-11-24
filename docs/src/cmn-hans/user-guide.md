@@ -38,12 +38,12 @@ M³ 主界面包含以下主要区域：
 
 ### 认识日历视图 {#calendar-view}
 
-Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
+点击窗口顶部的日期即可打开日历。日历会列出 M³ 准备媒体的每一周，从本周开始：
 
-- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
-- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
-- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
-- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
+- **周** —— 每一行是从星期一到星期日的一周，标有名称（“本周”、“下周”、“2 周后”等）和日期
+- **聚会日** —— 聚会日会按状态显示不同的颜色：媒体已就绪时为绿色，尚未就绪时为橙色，无法获取时为红色。包含你手动添加的媒体的日期显示为紫色。日历下方的图例说明了各种颜色的含义
+- **特别周** —— 在分区监督探访期间和纪念聚会那一周，该周的聚会日会显示为该周的颜色，并在日期下方标出该周的名称。窗口顶部日期旁边的标签会说明所选日期有什么不同
+- **键盘** —— 使用方向键在日期之间移动，按 Enter 键选择日期
 
 ### 整理媒体 {#organizing-media}
 

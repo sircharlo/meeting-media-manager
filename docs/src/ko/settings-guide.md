@@ -32,11 +32,11 @@ M³의 화면 테마를 설정합니다.
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
+설정의 날짜 입력란(예: 순회 감독자 방문 날짜)에서 한 주의 첫째 날로 사용할 요일을 설정합니다. 창 상단의 달력은 집회 주간과 마찬가지로 항상 월요일부터 일요일까지를 한 주로 표시합니다.
 
 **옵션**: 일요일~토요일
 
-**Default**: Monday
+**기본값**: 월요일
 
 ### 날짜 형식 {#date-format}
 
@@ -553,7 +553,7 @@ Zoom 회의 관리자(베타, Windows 전용)는 매 집회 전후에 Zoom 데�
 
 <!-- **Setting**: `zoomCancelAutomationShortcut` -->
 
-Zoom에는 제대로 된 자동화 인터페이스가 없으므로 M³는 Zoom의 접근성 인터페이스를 통해 Zoom 앱을 조작합니다. 이 방식은 Zoom이 도구 모음을 숨긴 상태에서도 마우스를 움직이지 않고 작동합니다. 그래도 M³가 Zoom의 버튼을 누르면 Zoom이 잠시 자기 창을 앞으로 가져오며, 마우스는 Zoom이 다른 모든 방법에 반응하지 않을 때에만 최후의 수단으로 움직입니다. M³는 Zoom을 조작할 때마다 진행 중인 작업을 알려 주는 ‘M³이 Zoom을 실행 중입니다’ 알림으로 자체 창을 덮고, **이 자동화 취소** 버튼을 함께 표시합니다. 설정 도우미의 확인 과정과 자체 테스트 중에도 같은 알림이 표시됩니다. 자동화가 실행되는 동안에만 활성화되는 전역 키보드 단축키(기본값 `Ctrl+Alt+Escape`)를 사용하면 Zoom에 포커스가 있을 때도 어디서든 자동화를 취소할 수 있습니다. 취소하면 M³가 즉시 중지되며, Zoom이 작업 도중의 상태로 남을 수 있으므로 Zoom을 확인하십시오.
+Zoom에는 제대로 된 자동화 인터페이스가 없으므로 M³는 Zoom의 접근성 인터페이스를 통해 Zoom 앱을 조작합니다. 이 방식은 Zoom이 도구 모음을 숨긴 상태에서도 마우스를 움직이지 않고 작동합니다. 그래도 M³가 Zoom의 버튼을 누르면 Zoom이 잠시 자기 창을 앞으로 가져오며, 마우스는 Zoom이 다른 모든 방법에 반응하지 않을 때에만 최후의 수단으로 움직입니다. M³는 Zoom을 조작할 때마다 진행 중인 작업을 알려 주는 ‘M³가 Zoom을 실행 중입니다’ 알림으로 자체 창을 덮고, **이 자동화 취소** 버튼을 함께 표시합니다. 설정 도우미의 확인 과정과 자체 테스트 중에도 같은 알림이 표시됩니다. 자동화가 실행되는 동안에만 활성화되는 전역 키보드 단축키(기본값 `Ctrl+Alt+Escape`)를 사용하면 Zoom에 포커스가 있을 때도 어디서든 자동화를 취소할 수 있습니다. 취소하면 M³가 즉시 중지되며, Zoom이 작업 도중의 상태로 남을 수 있으므로 Zoom을 확인하십시오.
 
 **기본값**: `Ctrl+Alt+Escape`
 

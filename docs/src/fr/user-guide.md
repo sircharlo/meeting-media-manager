@@ -38,12 +38,12 @@ L'interface principale de M³ se compose de plusieurs zones clés :
 
 ### Comprendre la vue calendrier {#calendar-view}
 
-Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
+Cliquez sur la date en haut de la fenêtre pour ouvrir le calendrier. Il affiche toutes les semaines pour lesquelles M³ prépare des médias, à commencer par la semaine en cours :
 
-- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
-- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
-- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
-- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
+- **Semaines** - Chaque ligne est une semaine du lundi au dimanche, nommée « Cette semaine », « La semaine prochaine », « Dans 2 semaines » et ainsi de suite, avec ses dates
+- **Jours de réunion** - Les jours de réunion sont colorés selon leur état : en vert quand leurs médias sont prêts, en orange quand ils ne le sont pas encore, et en rouge s'ils n'ont pas pu être récupérés. Les jours avec des médias que vous avez ajoutés vous-même apparaissent en violet. Une légende sous le calendrier explique les couleurs
+- **Semaines spéciales** - Pendant la visite du responsable de circonscription et la semaine du Mémorial, les jours de réunion de la semaine prennent sa couleur, et son nom s'affiche sous ses dates. Une étiquette à côté de la date, en haut de la fenêtre, indique ce qui change le jour sélectionné
+- **Clavier** - Utilisez les touches fléchées pour naviguer entre les jours, et Entrée pour en sélectionner un
 
 ### Organiser les médias {#organizing-media}
 
