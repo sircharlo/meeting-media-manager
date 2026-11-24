@@ -38,11 +38,11 @@ The main M³ interface consists of several key areas:
 
 ### Understanding the Calendar View {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
+- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
+- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
 
 ### Organizing Media {#organizing-media}
 

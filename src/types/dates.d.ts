@@ -6,6 +6,13 @@ import type {
   TimerPartCounts,
 } from './timer';
 
+/**
+ * How a day is shown in the header's date picker: `ready` once its meeting
+ * media was fetched, `pending` before that, `error` if fetching failed, and
+ * `added` for a day that only has media the user added.
+ */
+export type CalendarDayStatus = 'added' | 'error' | 'pending' | 'ready';
+
 export interface DateInfo {
   date: Date;
   mediaSections: MediaSectionWithConfig[];
