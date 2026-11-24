@@ -8,7 +8,7 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Linux on ARM**: M³ now also comes for Linux computers with a 64-bit ARM processor (arm64), such as a Raspberry Pi 4 or 5 with its 64-bit system, or a laptop with a Snapdragon processor running Linux: as an AppImage, which updates itself like the x86_64 one, and in the Snap Store. It's new, so please report anything that doesn't work on yours.
+- ✨ **Linux i ni’a i te ARM**: I teie nei, e vai ato’a mai o M³ nō te mau roro uira Linux e te tāmoni ARM 64 bits (arm64), mai te Raspberry Pi 4 ’aore ra 5 e tōna fa’anahora’a 64 bits, ’aore ra te hō’ē roro uira ’āfa’ifa’i e te tāmoni Snapdragon e fa’a’ohipa ra i te Linux: ei AppImage, o te fa’ahou iāna iho mai tō te x86_64, ’e i roto i te Snap Store. E mea ’āpī teie, nō reira, ’a fa’a’ite mai i te mau mea ato’a e ’ore e ’ohipa maita’i i ni’a i tā ’oe roro uira.
 
 ## v26.11.4
 
