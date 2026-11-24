@@ -38,7 +38,26 @@ const daysAgoText = computed(() => {
 type Rec = { href: string; label: string }
 const recommended = ref<Rec | null>(null)
 
-onMounted(() => {
+// Firefox names the processor in its user agent ("Linux aarch64"), but
+// Chromium browsers say "Linux x86_64" on every Linux computer, and tell
+// only through their client hints.
+async function isArm64Linux(ua: string, platform: string) {
+  if (/aarch64|arm64/i.test(ua) || /aarch64|arm64/i.test(platform)) return true
+  const uaData = (navigator as Navigator & {
+    userAgentData?: {
+      getHighEntropyValues: (hints: string[]) => Promise<{ architecture?: string; bitness?: string }>
+    }
+  }).userAgentData
+  if (!uaData) return false
+  try {
+    const { architecture, bitness } = await uaData.getHighEntropyValues(['architecture', 'bitness'])
+    return architecture === 'arm' && bitness === '64'
+  } catch {
+    return false
+  }
+}
+
+onMounted(async () => {
   const ua = navigator.userAgent || ''
   const platform = navigator.platform || ''
   const isMobile = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(ua)
@@ -72,6 +91,12 @@ onMounted(() => {
 
   if (isLinux) {
     recommended.value = { href: downloads.linux, label: msg.value.linux }
+    if (downloads.linuxArm64 && (await isArm64Linux(ua, platform))) {
+      recommended.value = {
+        href: downloads.linuxArm64,
+        label: msg.value.linuxArm64 || messages.en?.linuxArm64,
+      }
+    }
     return
   }
 
@@ -103,3 +128,5 @@ onMounted(() => {
 ## Linux
 
 - **x86_64 (AppImage)** : <a :href="downloads.linux">Télécharger</a>
+
+<ul v-if="downloads.linuxArm64" style="margin-top: -8px;"><li><strong>arm64 (AppImage)</strong>: <a :href="downloads.linuxArm64">Download</a></li></ul>

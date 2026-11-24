@@ -4,6 +4,12 @@
 
 버전별 전체 변경 사항은 GitHub의 CHANGELOG.md 파일을 확인해 주세요.
 
+## 출시 예정 버전
+
+### ✨ 새로운 기능
+
+- ✨ **Linux on ARM**: M³ now also comes for Linux computers with a 64-bit ARM processor (arm64), such as a Raspberry Pi 4 or 5 with its 64-bit system, or a laptop with a Snapdragon processor running Linux: as an AppImage, which updates itself like the x86_64 one, and in the Snap Store. It's new, so please report anything that doesn't work on yours.
+
 ## v26.11.4
 
 ### ✨ 새로운 기능

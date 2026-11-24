@@ -1,6 +1,6 @@
 # Pravilnik o zasebnosti {#privacy-policy}
 
-Datum začetka veljavnosti: 22. november 2026
+Datum začetka veljavnosti: 24. november 2026
 
 Meeting Media Manager (M³) je brezplačna odprtokodna aplikacija, ki so jo izdelali prostovoljci. Ta pravilnik pojasnjuje, katere podatke M³ obdeluje in kam gredo. Velja za vse različice M³: namestitvene programe in prenosno različico s tega spletnega mesta ter različici v trgovinah Microsoft Store in Snap Store.
 
@@ -28,7 +28,7 @@ M³ pošilja diagnostične podatke storitvi [Sentry](https://sentry.io), ki jo n
 **Poročila o napakah**, ko gre v M³ kaj narobe. Poročilo lahko vsebuje:
 
 - napako in mesto v kodi M³, kjer se je zgodila;
-- različico M³, tvoj operacijski sistem in njegovo različico, tvoj jezik in časovni pas ter osnovne podatke o tvoji strojni opremi, na primer o grafični kartici;
+- različico M³ in način namestitve, tvoj operacijski sistem in njegovo različico, tvoj jezik in časovni pas ter osnovne podatke o tvoji strojni opremi, na primer o grafični kartici;
 - korake, ki so pripeljali do napake, na primer strani, odprte v M³, in datoteke, ki jih je M³ prenašal;
 - stanje M³ v tistem trenutku: njegove nastavitve in to, kar je počel, na primer predvajano multimedijsko vsebino ali shod, ki ga je pripravljal;
 - kadar se sesuje kateri od delov M³, poročilo o sesutju tega dela, ki lahko vključuje del njegovega pomnilnika v trenutku sesutja.

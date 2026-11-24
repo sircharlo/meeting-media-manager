@@ -1,6 +1,6 @@
 # Política de privacidad {#privacy-policy}
 
-Fecha de entrada en vigor: 22 de noviembre de 2026
+Fecha de entrada en vigor: 24 de noviembre de 2026
 
 Meeting Media Manager (M³) es una aplicación gratuita y de código abierto creada por voluntarios. Esta política explica qué datos maneja M³ y adónde van. Se aplica a todas las versiones de M³: los instaladores y la versión portátil de este sitio web, y las versiones de Microsoft Store y Snap Store.
 
@@ -28,7 +28,7 @@ M³ envía datos de diagnóstico a [Sentry](https://sentry.io), el servicio que 
 **Informes de errores**, cuando algo falla en M³. Un informe puede contener:
 
 - el error y en qué parte del código de M³ se produjo;
-- la versión de M³, tu sistema operativo y su versión, tu idioma y tu zona horaria, e información básica sobre tu hardware, como tu tarjeta gráfica;
+- la versión de M³ y la forma en que lo instalaste, tu sistema operativo y su versión, tu idioma y tu zona horaria, e información básica sobre tu hardware, como tu tarjeta gráfica;
 - los pasos que llevaron al error, como las páginas abiertas en M³ y los archivos que estaba descargando;
 - el estado de M³ en ese momento: su configuración y lo que estaba haciendo, como el archivo multimedia que se estaba reproduciendo o la reunión que estaba preparando;
 - cuando una parte de M³ falla, un informe del fallo de esa parte, que puede incluir una porción de su memoria en el momento del fallo.
