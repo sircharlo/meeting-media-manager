@@ -20,12 +20,15 @@ export const fetchLatestVersion = async (): Promise<string> => {
 };
 
 interface GithubRelease {
+  assets?: { name: string }[];
   prerelease: boolean;
   published_at: string;
   tag_name: string;
 }
 
 export const fetchLatestRelease = async (): Promise<{
+  /** The names of the release's files. */
+  assetNames: string[];
   publishedAt: string;
   tag: string;
 }> => {
@@ -35,14 +38,15 @@ export const fetchLatestRelease = async (): Promise<{
     );
     const result: GithubRelease[] = await response.json();
     if (!Array.isArray(result) || !result.length)
-      return { publishedAt: '', tag: fallbackVersion };
+      return { assetNames: [], publishedAt: '', tag: fallbackVersion };
     const latest = result.find((r) => !r.prerelease);
     return {
+      assetNames: latest?.assets?.map((asset) => asset.name) ?? [],
       publishedAt: latest?.published_at || '',
       tag: latest?.tag_name || fallbackVersion,
     };
   } catch (e) {
     console.error(e);
-    return { publishedAt: '', tag: fallbackVersion };
+    return { assetNames: [], publishedAt: '', tag: fallbackVersion };
   }
 };
