@@ -1,6 +1,6 @@
 # Adatvédelmi szabályzat {#privacy-policy}
 
-Hatálybalépés napja: 2026. november 22.
+Hatálybalépés napja: 2026. november 24.
 
 A Meeting Media Manager (M³) egy ingyenes, nyílt forráskódú alkalmazás, amelyet önkéntesek készítettek. Ez a szabályzat elmagyarázza, milyen adatokat kezel az M³, és hová kerülnek ezek. Az M³ minden verziójára vonatkozik: az erről a weboldalról letölthető telepítőkre és hordozható verzióra, valamint a Microsoft Store-ban és a Snap Store-ban elérhető verziókra.
 
@@ -28,7 +28,7 @@ Az M³ diagnosztikai adatokat küld a [Sentry](https://sentry.io) szolgáltatás
 **Hibajelentések**, amikor valami rosszul sül el az M³-ban. Egy jelentés a következőket tartalmazhatja:
 
 - a hiba, és az, hogy az M³ kódjának melyik pontján történt;
-- az M³ verziója, az operációs rendszere és annak verziója, a nyelve és az időzónája, valamint alapvető információk a hardveréről, például a videokártyájáról;
+- az M³ verziója és telepítésének módja, az operációs rendszere és annak verziója, a nyelve és az időzónája, valamint alapvető információk a hardveréről, például a videokártyájáról;
 - a hibához vezető lépések, például az M³-ban megnyitott oldalak és azok a fájlok, amelyeket éppen letöltött;
 - az M³ akkori állapota: a beállításai, és az, hogy éppen mit csinált, például melyik médiát játszotta le, vagy melyik összejövetelt készítette elő;
 - ha az M³ egy része összeomlik, az adott rész összeomlási jelentése, amely a memóriája egy részét is tartalmazhatja az összeomlás pillanatából.
