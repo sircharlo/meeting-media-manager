@@ -645,12 +645,18 @@ const specialWeekFallbackIcon = computed(() =>
   specialWeek.value?.kind === 'co' ? 'mmm-lectern' : 'mmm-calendar-month',
 );
 
+// A date's first entry, the one the page shows (see selectedDateObject), in
+// case the lookup period still holds a later duplicate of it.
 const dayStatuses = computed(() => {
   const statuses: Partial<Record<string, CalendarDayStatus>> = {};
+  const seen = new Set<string>();
   try {
     for (const day of lookupDays.value) {
+      const key = formatDate(day.date, 'YYYY/MM/DD');
+      if (seen.has(key)) continue;
+      seen.add(key);
       const status = getDayStatus(day);
-      if (status) statuses[formatDate(day.date, 'YYYY/MM/DD')] = status;
+      if (status) statuses[key] = status;
     }
   } catch (error) {
     errorCatcher(error, { contexts: { fn: { name: 'dayStatuses' } } });

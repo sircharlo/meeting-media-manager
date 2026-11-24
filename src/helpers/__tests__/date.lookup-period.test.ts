@@ -9,7 +9,7 @@ const { currentStateMock, jwStoreMock } = vi.hoisted(() => ({
   currentStateMock: {
     currentCongregation: 'congregation-1',
     currentSettings: {} as Partial<SettingsValues>,
-    getMeetingType: () => null,
+    getMeetingType: (): 'mw' | 'we' | null => null,
   },
   jwStoreMock: {
     lookupPeriod: {} as Partial<Record<string, DateInfo[]>>,
@@ -41,6 +41,7 @@ describe('updateLookupPeriod', () => {
     vi.useFakeTimers({ toFake: ['Date'] });
     jwStoreMock.lookupPeriod = { 'congregation-1': [] };
     currentStateMock.currentSettings = { meteredConnection: false };
+    currentStateMock.getMeetingType = () => null;
   });
 
   afterEach(() => {
@@ -60,6 +61,31 @@ describe('updateLookupPeriod', () => {
       expect(keys.at(-1)).toBe('2027/01/03');
     },
   );
+
+  // A meeting day still waiting for its media used to get a second, empty
+  // entry, which the date picker showed as "not ready yet".
+  it("doesn't add a second entry for a day that has no media yet", () => {
+    vi.setSystemTime(new Date(2026, 10, 24, 12));
+    const waiting: DateInfo = {
+      date: new Date(2026, 10, 26),
+      mediaSections: [],
+      status: null,
+    };
+    jwStoreMock.lookupPeriod = { 'congregation-1': [waiting] };
+    currentStateMock.getMeetingType = () => 'mw';
+
+    updateLookupPeriod();
+    updateLookupPeriod();
+
+    const keys = lookupKeys();
+    expect(keys).toHaveLength(42);
+    expect(new Set(keys).size).toBe(42);
+    expect(
+      jwStoreMock.lookupPeriod['congregation-1']?.filter(
+        (day) => formatDate(day.date, 'YYYY/MM/DD') === '2026/11/26',
+      ),
+    ).toEqual([waiting]);
+  });
 
   it('holds just the current week on a metered connection', () => {
     vi.setSystemTime(new Date(2026, 10, 24, 12));

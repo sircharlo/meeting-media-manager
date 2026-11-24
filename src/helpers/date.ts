@@ -316,20 +316,18 @@ function extendLookupPeriod(
   lookupPeriod: Partial<Record<string, DateInfo[]>>,
 ) {
   if (!lookupPeriod?.[congregation]) return;
-  const { getMeetingType } = useCurrentStateStore();
   // Whole weeks from this week's Monday, whatever today's weekday is. A
   // metered connection keeps just the current week: meetings after tomorrow
   // still aren't fetched there (see shouldSkipMeteredMeeting in jw-media.ts).
   const DAYS_AHEAD = (settings.meteredConnection ? 1 : WEEKS_TO_FETCH) * 7;
 
+  // Every date already there, whatever it holds. A meeting day still waiting
+  // for its media used to get a second, empty entry each time this ran
+  // during a fetch: the page shows a date's first entry, but the date picker
+  // read the empty one as "not ready yet", until fetchMedia's dedupeDays
+  // cleaned it up at its next run.
   const existingDates = new Set(
-    lookupPeriod[congregation]
-      .filter((d) => {
-        if (!getMeetingType(d.date)) return true;
-        const items = d.mediaSections?.flatMap((s) => s.items || []);
-        return items?.length > 0;
-      })
-      .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
+    lookupPeriod[congregation].map((d) => formatDate(d.date, 'YYYY/MM/DD')),
   );
 
   const newDays = Array.from({ length: DAYS_AHEAD }, (_, i) => {
