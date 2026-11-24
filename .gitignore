@@ -95,6 +95,8 @@ build/*.blockmap
 build/*.exe
 # Fetched by scripts/fetch-ffmpeg.mjs when building
 build/ffmpeg/bin/
+# Compiled by scripts/build-startup-task-helper.mjs for an MSIX build
+build/startup-task-helper/
 # A local Flatpak build (build/flatpak): flatpak-node-generator's sources and
 # flatpak-builder's state
 build/flatpak/generated-sources*.json

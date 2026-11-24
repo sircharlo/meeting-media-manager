@@ -335,6 +335,20 @@ export default defineConfig((ctx) => {
               ),
               to: 'zoom-helper',
             },
+            // The MSIX's startup task helper (src-electron/main/msix.ts), which
+            // scripts/build-startup-task-helper.mjs compiles for it: inside
+            // the package, so that it keeps M³'s package identity.
+            ...(IS_MSIX
+              ? [
+                  {
+                    filter: ['StartupTaskHelper.exe'],
+                    from: fileURLToPath(
+                      new URL('./build/startup-task-helper', import.meta.url),
+                    ),
+                    to: 'startup-task-helper',
+                  },
+                ]
+              : []),
           ],
           icon: getIconPath('ico'),
           // The MSIX's tiles come from src-electron/appx, which
