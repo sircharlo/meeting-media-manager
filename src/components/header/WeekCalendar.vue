@@ -289,8 +289,9 @@ const onKeydown = (event: KeyboardEvent) => {
   min-inline-size: 0;
   padding: 8px 10px 10px;
   user-select: none;
-  // As wide as the grid: the legend wraps under it rather than widening it.
-  width: min-content;
+  // As wide as the grid at its natural width. The legend doesn't count (see
+  // below), so it wraps under the grid rather than widening it.
+  width: max-content;
   --status-tint: 18%;
 }
 
@@ -344,9 +345,14 @@ body.body--dark .week-calendar {
   opacity: 0.7;
 }
 
+// Some languages have no short name for a special week (Russian's is about
+// 30 characters). Past this width the caption wraps instead of widening the
+// label column, and so the whole popup.
 .week-calendar__label-special {
   font-size: 11px;
   font-weight: 600;
+  max-width: 8.5rem;
+  white-space: normal;
 }
 
 .week-calendar__label-special--co {
@@ -445,6 +451,8 @@ body.body--dark .week-calendar__status--memorial {
 
 .week-calendar__legend {
   border-top: 1px solid rgba(128, 128, 128, 0.25);
+  // Takes the grid's width instead of setting the popup's.
+  contain: inline-size;
   display: flex;
   flex-wrap: wrap;
   font-size: 11.5px;
