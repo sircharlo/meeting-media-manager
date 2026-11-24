@@ -1,6 +1,6 @@
 # Fa’aturera’a o te mau ha’amāramaramara’a nō ni’a iā ’oe {#privacy-policy}
 
-Taio mahana e mana ai: 22 nō Novema 2026
+Taio mahana e mana ai: 24 nō Novema 2026
 
 E porotarama tāmoni ’ore ’e puna matara te Meeting Media Manager (M³), tei hāmanihia e te mau rima tauturu. Te fa’ata’a nei teie fa’aturera’a e aha te mau ha’amāramaramara’a tā M³ e ha’apa’o ’e i hea te reira e haere ai. E mana teie fa’aturera’a i ni’a i te mau version ato’a o M³: te mau porotarama fa’atā’atira’a ’e te version Portable nō ni’a mai i teie reni natirara, ’e te mau version i roto i te Microsoft Store ’e te Snap Store.
 
@@ -28,7 +28,7 @@ E hāpono M³ i te mau ha’amāramaramara’a hi’opo’ara’a iā [Sentry](h
 **Te mau parau nō te hapa**, ’ia tupu te hō’ē fifi i roto iā M³. I roto i te hō’ē parau, e nehenehe e vai:
 
 - te hapa, ’e te vāhi i roto i te reni porotarama a M³ i tupu ai te reira;
-- te version o M³, tā ’oe fa’anahora’a tōna’o ’e tōna version, tō ’oe reo ’e tō ’oe tuha’a hora, ’e te tahi mau ha’amāramaramara’a tumu nō ni’a i tā ’oe matini, mai tā ’oe kāta hōho’a;
+- te version o M³ ’e te huru i fa’ata’ahia ai, tā ’oe fa’anahora’a tōna’o ’e tōna version, tō ’oe reo ’e tō ’oe tuha’a hora, ’e te tahi mau ha’amāramaramara’a tumu nō ni’a i tā ’oe matini, mai tā ’oe kāta hōho’a;
 - te mau ta’ahira’a nā mua a’e i te hapa, mai te mau ’api i ’iritihia i roto iā M³ ’e te mau dosie tāna e tātari ra;
 - te huru o M³ i taua taime ra: tōna mau fa’anahora’a, ’e te ’ohipa tāna e rave ra, mai te media e ha’utihia ra ’aore rā te putuputura’a tāna e fa’aineine ra;
 - ’ia fa’aea tā’ue noa te hō’ē tuha’a o M³, te hō’ē parau nō te fa’aeara’a tā’ue o taua tuha’a ra, e nehenehe e vai i roto te tahi tuha’a o tōna ha’amana’ora’a (memory) i te taime mau o te fa’aeara’a tā’ue.
