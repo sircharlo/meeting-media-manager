@@ -64,6 +64,9 @@
   </recommends>
 
   <releases>
+    <release version="26.11.5" date="2026-11-24">
+      <url type="details">https://github.com/sircharlo/meeting-media-manager/releases/tag/v26.11.5</url>
+    </release>
     <release version="26.11.4" date="2026-11-23">
       <url type="details">https://github.com/sircharlo/meeting-media-manager/releases/tag/v26.11.4</url>
     </release>
