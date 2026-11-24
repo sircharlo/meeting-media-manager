@@ -32,11 +32,11 @@
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Укажіть, який день у календарі вважати першим днем тижня.
+Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
 
 **Варіанти**: Від неділі до суботи
 
-**За замовчуванням**: Неділя
+**Default**: Monday
 
 ### Формат дати {#date-format}
 
