@@ -23,6 +23,7 @@
   "lastUpdated": "Mise à jour",
   "lightModeSwitchTitle": "Basculer vers le thème clair",
   "linux": "Linux (AppImage x86_64)",
+  "linuxArm64": "Linux (AppImage arm64)",
   "macUniversal": "macOS (universel)",
   "navigateText": "pour parcourir",
   "noResultsText": "Aucun résultat pour",
