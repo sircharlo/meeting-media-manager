@@ -15,7 +15,7 @@ Ko boš prvič zagnal M³, te bo vodil čarovnik za nastavitev, ki bo nastavil b
 1. **Izberi jezik vmesnika** – to določa, v katerem jeziku se bodo prikazovali meniji in gumbi v M³.
 2. **Izberi vrsto profila** – izberi »Običajno« za običajno občinsko uporabo ali »Drugo« za posebne dogodke.
 3. **Nastavi občinske podatke** - vnesi podatke o vaši občini ali uporabi funkcijo samodejnega iskanja.
-4. **Nastavi urnik shodov** – nastavi urnik shodov med tednom in ob koncu tedna.
+4. **Nastavi urnik shodov** – nastavi urnik shoda med tednom in javnega shoda.
 5. **Izbirne funkcije** – nastavi povezovanje s programom OBS, glasbo v ozadju in druge napredne funkcije.
 
 :::tip Namig
@@ -38,12 +38,12 @@ Glavni vmesnik M³ je sestavljen iz več ključnih področij:
 
 ### Razumevanje pogleda koledarja {#calendar-view}
 
-Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
+Klikni datum na vrhu okna, da odpreš koledar. Prikazuje vse tedne, za katere M³ pripravlja multimedijsko vsebino, začenši s trenutnim:
 
-- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
-- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
-- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
-- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
+- **Tedni** - vsaka vrstica je en teden od ponedeljka do nedelje, poimenovan »Ta teden«, »Naslednji teden«, »Čez 2 tedn.« in tako naprej, skupaj z datumi
+- **Dnevi shodov** - dnevi shodov so obarvani glede na stanje: zeleno, ko je multimedijska vsebina pripravljena, oranžno, ko še ni pripravljena, in rdeče, če je ni bilo mogoče pridobiti. Dnevi z ročno dodano multimedijsko vsebino so vijolični. Legenda pod koledarjem pojasnjuje barve
+- **Posebni tedni** - med obiskom okrajnega nadzornika in v tednu spominske slovesnosti so dnevi shodov tega tedna obarvani v njegovi barvi, pod njegovimi datumi pa je napisano, za kateri teden gre. Oznaka poleg datuma na vrhu okna pove, kaj je na izbrani dan drugače
+- **Tipkovnica** - za premikanje med dnevi uporabi smerne tipke, za izbiro dneva pa tipko Enter
 
 ### Organiziranje multimedijske vsebine {#organizing-media}
 
