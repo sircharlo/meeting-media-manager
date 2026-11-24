@@ -32,11 +32,11 @@ Kontrolli M³ välimuse teemat.
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
+Määra, millist päeva tuleks seadete kuupäevaväljadel, näiteks ringkonnaülevaataja külastuse kuupäeva juures, pidada nädala esimeseks päevaks. Akna ülaosas olev kalender näitab nädalaid alati esmaspäevast pühapäevani, nagu kestavad ka koosolekunädalad.
 
 **Valikud**: pühapäevast laupäevani
 
-**Default**: Monday
+**Vaikimisi**: esmaspäev
 
 ### Kuupäeva vorming {#date-format}
 
