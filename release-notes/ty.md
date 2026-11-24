@@ -8,6 +8,7 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
+- ✨ **Circuit Overseer's Visit and Memorial Week**: During the circuit overseer's visit and the week of the Memorial, a label next to the date at the top of the window says so. Point at it to see what's different on the selected day, such as the midweek meeting moving to Tuesday, the media M³ hides then, or the meeting the Memorial replaces. On the usual midweek day of the visit, or the meeting day the Memorial replaces, the empty page now explains why there's no meeting, with a button that goes to Tuesday or to the Memorial. In the calendar, that week's meeting days take the week's color, and the week is named under its dates.
 - ✨ **Linux i ni’a i te ARM**: I teie nei, e vai ato’a mai o M³ nō te mau roro uira Linux e te tāmoni ARM 64 bits (arm64), mai te Raspberry Pi 4 ’aore ra 5 e tōna fa’anahora’a 64 bits, ’aore ra te hō’ē roro uira ’āfa’ifa’i e te tāmoni Snapdragon e fa’a’ohipa ra i te Linux: ei AppImage, o te fa’ahou iāna iho mai tō te x86_64, ’e i roto i te Snap Store. E mea ’āpī teie, nō reira, ’a fa’a’ite mai i te mau mea ato’a e ’ore e ’ohipa maita’i i ni’a i tā ’oe roro uira.
 
 ## v26.11.4

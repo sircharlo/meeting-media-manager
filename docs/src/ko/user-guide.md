@@ -38,11 +38,12 @@ M³의 메인 인터페이스는 다음과 같은 주요 영역으로 구성됩�
 
 ### 달력 보기 이해하기 {#calendar-view}
 
-달력 보기에는 집회 일정과 사용 가능한 미디어가 표시됩니다.
+Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
 
-- **집회일** - 집회가 예정된 날짜가 강조 표시됩니다.
-- **미디어 표시기** - 아이콘으로 사용 가능한 미디어의 유형을 알려 줍니다.
-- **날짜 이동** - 화살표 키를 사용하여 다른 달로 이동합니다.
+- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
+- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
+- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
+- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
 
 ### 미디어 정리 {#organizing-media}
 

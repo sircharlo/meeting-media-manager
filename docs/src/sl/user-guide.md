@@ -38,11 +38,12 @@ Glavni vmesnik M³ je sestavljen iz več ključnih področij:
 
 ### Razumevanje pogleda koledarja {#calendar-view}
 
-V pogledu koledarja so prikazani urnik shodov in razpoložljiva multimedijska vsebina:
+Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
 
-- **Dnevi shodov** - označeni dnevi kažejo, kdaj so na razporedu shodi.
-- **Indikatorji multimedijske vsebine** - ikone prikazujejo, katera vrsta multimedijske vsebine je na voljo.
-- **Navigacija po datumu** - za premikanje med meseci uporabi smerne tipke.
+- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
+- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
+- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
+- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
 
 ### Organiziranje multimedijske vsebine {#organizing-media}
 

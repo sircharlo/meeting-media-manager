@@ -32,11 +32,11 @@ Kontrolli M³ välimuse teemat.
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Määra, millist päeva tuleks kalendri vaates pidada nädala esimeseks päevaks.
+Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
 
 **Valikud**: pühapäevast laupäevani
 
-**Vaikimisi**: Pühapäev
+**Default**: Monday
 
 ### Kuupäeva vorming {#date-format}
 

@@ -32,11 +32,11 @@ M³의 화면 테마를 설정합니다.
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-달력 보기에서 한 주의 첫째 날로 사용할 요일을 설정합니다.
+Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
 
 **옵션**: 일요일~토요일
 
-**기본값**: 일요일
+**Default**: Monday
 
 ### 날짜 형식 {#date-format}
 
