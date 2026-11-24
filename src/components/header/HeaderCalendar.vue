@@ -1,4 +1,41 @@
 <template>
+  <!-- First, before the buttons: it describes the selected week. -->
+  <div
+    v-if="specialWeek"
+    class="special-week-chip"
+    :class="[
+      `special-week-chip--${specialWeek.kind}`,
+      { 'special-week-chip--icon-only': !$q.screen.gt.sm },
+    ]"
+  >
+    <span
+      v-if="specialWeekGlyph"
+      aria-hidden="true"
+      class="jw-icon special-week-chip__glyph"
+    >
+      {{ specialWeekGlyph }}
+    </span>
+    <q-icon v-else :name="specialWeekFallbackIcon" size="18px" />
+    <span v-if="$q.screen.gt.sm" class="special-week-chip__label">
+      {{ specialWeekChipLabel }}
+    </span>
+    <q-tooltip :delay="300" max-width="320px">
+      <div class="text-weight-bold">
+        {{ specialWeekTitle }} ({{ specialWeekRange }})
+      </div>
+      <div v-for="line in specialWeekMessage" :key="line">{{ line }}</div>
+      <template v-if="specialWeekHiddenNames.length">
+        <div class="q-mt-xs">{{ t('special-week-hidden-items') }}</div>
+        <div
+          v-for="name in specialWeekHiddenNames"
+          :key="name"
+          class="ellipsis"
+        >
+          · {{ name }}
+        </div>
+      </template>
+    </q-tooltip>
+  </div>
   <transition
     appear
     enter-active-class="animated fadeIn"
@@ -280,40 +317,6 @@
       mediaDeleteAllPending = false;
     "
   />
-  <div
-    v-if="specialWeek"
-    class="special-week-chip"
-    :class="[
-      `special-week-chip--${specialWeek.kind}`,
-      { 'special-week-chip--icon-only': !$q.screen.gt.sm },
-    ]"
-  >
-    <span
-      v-if="specialWeekGlyph"
-      aria-hidden="true"
-      class="jw-icon special-week-chip__glyph"
-    >
-      {{ specialWeekGlyph }}
-    </span>
-    <q-icon v-else :name="specialWeekFallbackIcon" size="18px" />
-    <span v-if="$q.screen.gt.sm">{{ specialWeekChipLabel }}</span>
-    <q-tooltip :delay="300" max-width="320px">
-      <div class="text-weight-bold">
-        {{ specialWeekTitle }} ({{ specialWeekRange }})
-      </div>
-      <div v-for="line in specialWeekMessage" :key="line">{{ line }}</div>
-      <template v-if="specialWeekHiddenNames.length">
-        <div class="q-mt-xs">{{ t('special-week-hidden-items') }}</div>
-        <div
-          v-for="name in specialWeekHiddenNames"
-          :key="name"
-          class="ellipsis"
-        >
-          · {{ name }}
-        </div>
-      </template>
-    </q-tooltip>
-  </div>
   <q-btn color="white-transparent" :disable="mediaIsPlaying" unelevated>
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
@@ -1327,6 +1330,15 @@ watchImmediate(
 
 .special-week-chip--memorial {
   color: $memorial-week-strong;
+}
+
+// A long name (some languages have no short one) ends in "…" rather than
+// crowding the header: the tooltip names the week in full.
+.special-week-chip__label {
+  max-width: 14em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .special-week-chip__glyph {
