@@ -641,6 +641,16 @@ $notice-solids: (
   color: $additional;
 }
 
+// The Memorial week's colour, for color="memorial-week" on Quasar components
+// (the empty state's "Go to the Memorial" button).
+.bg-memorial-week {
+  background: $memorial-week !important;
+}
+
+.text-memorial-week {
+  color: $memorial-week !important;
+}
+
 .text-bigger {
   font-size: 135%;
 }

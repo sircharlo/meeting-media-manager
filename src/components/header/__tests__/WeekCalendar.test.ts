@@ -1,4 +1,4 @@
-import type { CalendarDayStatus } from 'src/types';
+import type { CalendarDayStatus, SpecialWeekKind } from 'src/types';
 
 import { mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
@@ -21,6 +21,7 @@ const mountCalendar = (
     max: Date;
     min: Date;
     modelValue: string;
+    specialWeeks: Partial<Record<string, SpecialWeekKind>>;
   }> = {},
 ) =>
   mount(WeekCalendar, {
@@ -169,6 +170,37 @@ describe('WeekCalendar', () => {
     await nextTick();
     expect((document.activeElement as HTMLElement).dataset.date).toBe(
       '2026/12/02',
+    );
+  });
+
+  it('names a special week under its dates and adds its colour to the legend', () => {
+    const plain = mountCalendar();
+    expect(plain.find('.week-calendar__label-special').exists()).toBe(false);
+    expect(plain.get('.week-calendar__legend').text()).not.toContain(
+      "Circuit overseer's visit",
+    );
+
+    const wrapper = mountCalendar({
+      dayStatuses: { '2026/12/08': 'co', '2026/12/13': 'co' },
+      specialWeeks: { '2026/12/07': 'co' },
+    });
+
+    const captions = wrapper.findAll('.week-calendar__label-special');
+    expect(captions.map((caption) => caption.text())).toEqual(['CO visit']);
+    expect(captions[0]?.classes()).toContain(
+      'week-calendar__label-special--co',
+    );
+    expect(dayButton(wrapper, '2026/12/08').classes()).toContain(
+      'week-calendar__status--co',
+    );
+    expect(dayButton(wrapper, '2026/12/08').attributes('aria-label')).toMatch(
+      /, Circuit overseer's visit$/,
+    );
+    expect(wrapper.get('.week-calendar__legend').text()).toContain(
+      "Circuit overseer's visit",
+    );
+    expect(wrapper.get('.week-calendar__legend').text()).not.toContain(
+      'Memorial week',
     );
   });
 

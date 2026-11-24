@@ -25,6 +25,13 @@
         <div class="week-calendar__label">
           <div class="week-calendar__label-title">{{ week.title }}</div>
           <div class="week-calendar__label-range">{{ week.range }}</div>
+          <div
+            v-if="week.special"
+            class="week-calendar__label-special"
+            :class="`week-calendar__label-special--${week.special}`"
+          >
+            {{ specialCaptions[week.special] }}
+          </div>
         </div>
         <button
           v-for="day in week.days"
@@ -47,7 +54,7 @@
     </div>
     <div class="week-calendar__legend">
       <span
-        v-for="status in STATUS_ORDER"
+        v-for="status in legendStatuses"
         :key="status"
         class="week-calendar__legend-item"
       >
@@ -63,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CalendarDayStatus } from 'src/types';
+import type { CalendarDayStatus, SpecialWeekKind } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
@@ -104,6 +111,7 @@ const STATUS_ORDER: CalendarDayStatus[] = [
   'error',
   'added',
 ];
+const SPECIAL_WEEK_KINDS: SpecialWeekKind[] = ['co', 'memorial'];
 
 const props = defineProps<{
   /** Status of each day that has one, keyed by `YYYY/MM/DD`. */
@@ -112,13 +120,15 @@ const props = defineProps<{
   max?: Date;
   /** First selectable day. Defaults to this week's Monday. */
   min?: Date;
+  /** The circuit overseer's visit or the Memorial, keyed by its Monday. */
+  specialWeeks?: Partial<Record<string, SpecialWeekKind>>;
 }>();
 
 /** The selected day, as `YYYY/MM/DD`. */
 const model = defineModel<string>({ required: true });
 
-const { locale, t } = useI18n();
-const { dateLocale } = useLocale();
+const { t } = useI18n();
+const { dateLocale, formatDayMonthRange } = useLocale();
 const { currentSettings } = storeToRefs(useCurrentStateStore());
 
 const root = useTemplateRef<HTMLElement>('root');
@@ -144,9 +154,16 @@ const isInBounds = (date: Date) =>
 
 const statusLabels = computed<Record<CalendarDayStatus, string>>(() => ({
   added: t('imported-media'),
+  co: t('special-week-co-title'),
   error: t('error'),
+  memorial: t('special-week-memorial-title'),
   pending: t('calendar-status-pending'),
   ready: t('calendar-status-ready'),
+}));
+
+const specialCaptions = computed<Record<SpecialWeekKind, string>>(() => ({
+  co: t('special-week-co-chip'),
+  memorial: t('special-week-memorial-title'),
 }));
 
 // Meeting weeks always run Monday to Sunday, whatever the first-day-of-week
@@ -155,35 +172,6 @@ const weekdayNames = computed(() => {
   const [sunday, ...others] = dateLocale.value.daysShort;
   return [...others, sunday];
 });
-
-const dayMonthFormatter = computed(() => {
-  try {
-    // Only trust Intl when it knows the UI language: otherwise it would
-    // silently fall back to another language's month names.
-    if (!Intl.DateTimeFormat.supportedLocalesOf(locale.value).length) {
-      return undefined;
-    }
-    return new Intl.DateTimeFormat(locale.value, {
-      day: 'numeric',
-      month: 'short',
-    });
-  } catch {
-    // An invalid language tag: use the app's own month names instead.
-    return undefined;
-  }
-});
-
-const formatRange = (start: Date, end: Date) => {
-  const formatter = dayMonthFormatter.value;
-  // formatRange shortens "Nov 23 – Nov 29" to "Nov 23 – 29", but adds both
-  // years to a week that spans New Year, too wide for a row label.
-  if (formatter && start.getFullYear() === end.getFullYear()) {
-    return formatter.formatRange(start, end);
-  }
-  const format = (date: Date) =>
-    formatter?.format(date) ?? formatDate(date, 'D MMM', dateLocale.value);
-  return `${format(start)} – ${format(end)}`;
-};
 
 const weekTitle = (offset: number) =>
   offset < 0 ? t('weeks-ago', -offset) : t('weeks-from-now', offset);
@@ -218,16 +206,32 @@ const weeks = computed(() => {
     const offset = Math.round(
       getDateDiff(monday, thisMonday, 'days') / DAYS_IN_WEEK,
     );
+    const key = toKey(monday);
     return {
       days: Array.from({ length: DAYS_IN_WEEK }, (_, day) =>
         buildDay(addToDate(monday, { day })),
       ),
-      key: toKey(monday),
+      key,
       offset,
-      range: formatRange(monday, addToDate(monday, { day: DAYS_IN_WEEK - 1 })),
+      range: formatDayMonthRange(
+        monday,
+        addToDate(monday, { day: DAYS_IN_WEEK - 1 }),
+      ),
+      special: props.specialWeeks?.[key],
       title: weekTitle(offset),
     };
   });
+});
+
+// The usual statuses, then a special week's colour while one is in view.
+const legendStatuses = computed<CalendarDayStatus[]>(() => {
+  const shownKinds = new Set(
+    weeks.value.map((week) => week.special).filter((kind) => !!kind),
+  );
+  return [
+    ...STATUS_ORDER,
+    ...SPECIAL_WEEK_KINDS.filter((kind) => shownKinds.has(kind)),
+  ];
 });
 
 const enabledKeys = computed(() =>
@@ -340,6 +344,27 @@ body.body--dark .week-calendar {
   opacity: 0.7;
 }
 
+.week-calendar__label-special {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.week-calendar__label-special--co {
+  color: $co-week-strong;
+}
+
+.week-calendar__label-special--memorial {
+  color: $memorial-week-strong;
+}
+
+body.body--dark .week-calendar__label-special--co {
+  color: $co-week-strong-dark;
+}
+
+body.body--dark .week-calendar__label-special--memorial {
+  color: $memorial-week-strong-dark;
+}
+
 .week-calendar__day {
   background: transparent;
   border: 0;
@@ -404,6 +429,18 @@ body.body--dark .week-calendar {
 
 .week-calendar__status--added {
   --status-color: #{$additional};
+}
+
+.week-calendar__status--co {
+  --status-color: #{$co-week};
+}
+
+.week-calendar__status--memorial {
+  --status-color: #{$memorial-week};
+}
+
+body.body--dark .week-calendar__status--memorial {
+  --status-color: #{$memorial-week-dark};
 }
 
 .week-calendar__legend {
