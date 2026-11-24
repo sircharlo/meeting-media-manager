@@ -24,8 +24,20 @@
       size="xs"
     >
       <q-tooltip max-width="360px">
-        <div v-for="(line, index) in detailLines" :key="index" class="ellipsis">
-          {{ line }}
+        <div v-if="detailsTitle" class="notice__details-title">
+          {{ detailsTitle }}
+        </div>
+        <ul class="notice__details-list">
+          <li
+            v-for="(line, index) in detailLines"
+            :key="index"
+            class="ellipsis"
+          >
+            {{ line }}
+          </li>
+        </ul>
+        <div v-if="moreDetails" class="notice__details-more">
+          +{{ moreDetails }}
         </div>
       </q-tooltip>
     </q-icon>
@@ -65,10 +77,12 @@ const props = withDefaults(
     /** Smaller, as in a popup. */
     dense?: boolean;
     /**
-     * Listed, one per line, in a tooltip on an ⓘ after the text (the names
-     * of the hidden media items, say). A long line ends in "…".
+     * Listed as bullets in a tooltip on an ⓘ after the text (the names of
+     * the hidden media items, say). A long line ends in "…".
      */
     details?: string[];
+    /** A heading over the details' list, e.g. "Hidden media:". */
+    detailsTitle?: string;
     /** An icon in place of the type's own. */
     icon?: string;
     /** Buttons beside the text, rather than under it. */
@@ -77,7 +91,12 @@ const props = withDefaults(
     loading?: boolean;
     type: NoticeType;
   }>(),
-  { actions: () => [], details: () => [], icon: undefined },
+  {
+    actions: () => [],
+    details: () => [],
+    detailsTitle: undefined,
+    icon: undefined,
+  },
 );
 
 const iconSize = computed(() => (props.dense ? '20px' : '28px'));
@@ -86,13 +105,16 @@ const iconSize = computed(() => (props.dense ? '20px' : '28px'));
 // says how many more there are ("+5") rather than naming just one more.
 const MAX_DETAIL_LINES = 12;
 
+const isOverflowing = computed(() => props.details.length > MAX_DETAIL_LINES);
+
 const detailLines = computed(() =>
-  props.details.length > MAX_DETAIL_LINES
-    ? [
-        ...props.details.slice(0, MAX_DETAIL_LINES - 1),
-        `+${props.details.length - (MAX_DETAIL_LINES - 1)}`,
-      ]
+  isOverflowing.value
+    ? props.details.slice(0, MAX_DETAIL_LINES - 1)
     : props.details,
+);
+
+const moreDetails = computed(() =>
+  isOverflowing.value ? props.details.length - (MAX_DETAIL_LINES - 1) : 0,
 );
 </script>
 
@@ -118,6 +140,25 @@ const detailLines = computed(() =>
 .notice__details {
   cursor: help;
   vertical-align: text-bottom;
+}
+
+// The ⓘ's tooltip: a heading, then the details as a bulleted list.
+.notice__details-title {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+// The bullets go inside each line: its ellipsis (overflow: hidden) would
+// clip ones drawn outside it.
+.notice__details-list {
+  list-style-position: inside;
+  margin: 0;
+  padding-inline-start: 0.25em;
+}
+
+.notice__details-more {
+  opacity: 0.8;
+  padding-inline-start: 1.1em;
 }
 
 .notice--positive {

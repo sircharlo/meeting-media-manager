@@ -74,6 +74,7 @@ describe('getPageBanners', () => {
     );
 
     expect(banner?.details).toEqual(['Song 12', 'Picture 1']);
+    expect(banner?.detailsTitleKey).toBe('special-week-hidden-items');
   });
 
   it('shows all the hidden media items again from its button', () => {

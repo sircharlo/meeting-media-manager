@@ -7,6 +7,8 @@ export interface PageBanner {
   captionKey?: string;
   /** Listed under the banner's ⓘ (see NoticeBanner.vue). */
   details?: string[];
+  /** The heading over the details' list. */
+  detailsTitleKey?: string;
   icon: string;
   key: string;
   textKey: string;
@@ -72,6 +74,7 @@ export const getPageBanners = (state: PageBannerState): PageBanner[] => {
       actions: [{ labelKey: 'show-all-media', onClick: state.showAllMedia }],
       captionKey: getCoWeekHiddenMediaReason(state),
       details: state.hiddenMediaNames,
+      detailsTitleKey: 'special-week-hidden-items',
       icon: 'mmm-file-hidden',
       key: 'hidden-items',
       textKey: 'some-media-items-are-hidden',

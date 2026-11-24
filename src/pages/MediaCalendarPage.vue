@@ -87,6 +87,9 @@
             :actions="b.actions"
             class="full-width"
             :details="b.details"
+            :details-title="
+              b.detailsTitleKey ? t(b.detailsTitleKey) : undefined
+            "
             :icon="b.icon"
             :type="b.type"
           >

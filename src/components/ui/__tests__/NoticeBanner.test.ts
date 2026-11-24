@@ -116,19 +116,19 @@ describe('NoticeBanner', () => {
 
   describe('details', () => {
     // The tooltip only renders on hover: the stub shows what it lists.
-    const mountWithDetails = (details?: string[]) =>
+    const mountWithDetails = (details?: string[], detailsTitle?: string) =>
       mount(NoticeBanner, {
         global: {
           stubs: {
             QTooltip: { template: '<div class="tooltip-stub"><slot /></div>' },
           },
         },
-        props: { details, type: 'warning' },
+        props: { details, detailsTitle, type: 'warning' },
         slots: { default: () => 'Some media items have been hidden.' },
       });
 
     const listed = (wrapper: ReturnType<typeof mountWithDetails>) =>
-      wrapper.findAll('.tooltip-stub .ellipsis').map((line) => line.text());
+      wrapper.findAll('.tooltip-stub li.ellipsis').map((line) => line.text());
 
     it('has no ⓘ without any', () => {
       const wrapper = mountWithDetails([]);
@@ -148,19 +148,29 @@ describe('NoticeBanner', () => {
       expect(listed(wrapper)).toEqual(['Song 12', 'Picture 1']);
     });
 
+    it('puts its heading over the list', () => {
+      const wrapper = mountWithDetails(['Song 12'], 'Hidden media:');
+
+      expect(wrapper.get('.notice__details-title').text()).toBe(
+        'Hidden media:',
+      );
+      expect(listed(wrapper)).toEqual(['Song 12']);
+    });
+
     it('lists up to 12 of them', () => {
       const details = Array.from({ length: 12 }, (_, i) => `Picture ${i + 1}`);
+      const wrapper = mountWithDetails(details);
 
-      expect(listed(mountWithDetails(details))).toEqual(details);
+      expect(listed(wrapper)).toEqual(details);
+      expect(wrapper.find('.notice__details-more').exists()).toBe(false);
     });
 
     it('past 12, lists 11 and how many more there are', () => {
       const details = Array.from({ length: 15 }, (_, i) => `Picture ${i + 1}`);
+      const wrapper = mountWithDetails(details);
 
-      expect(listed(mountWithDetails(details))).toEqual([
-        ...details.slice(0, 11),
-        '+4',
-      ]);
+      expect(listed(wrapper)).toEqual(details.slice(0, 11));
+      expect(wrapper.get('.notice__details-more').text()).toBe('+4');
     });
   });
 });
