@@ -38,11 +38,12 @@ Te vāhi matapihi mātāmua o te M³ e rave rahi ïa tu’u vāhi faufa’a rahi
 
 ### Te maramarama-ra’a i te hi’ora’a tarena {#calendar-view}
 
-’A fa’a’ite te hi’ora’a tarena i tō ’oe porotarama nō te mau putuputura’a e te mau rorouira e vai nei:
+Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
 
-- **Te mau mahana putuputura’a** — ’A fa’a’ite te mau mahana i tātarahia i te mau mahana i fa’anahohia ai te mau putuputura’a
-- **Te mau tai’o rorouira** — ’A fa’a’ite te mau hoho’a i te huru o te mau rorouira e vai nei
-- **Te fa’aterera’a i te mau rā’i** — ’A fa’a’ohipa i te mau taviri te’a nō te haere mai te tahi ’āva’e i te tahi atu
+- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
+- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
+- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
+- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
 
 ### Te fa’anahora’a i te mau rorouira {#organizing-media}
 
