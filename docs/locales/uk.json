@@ -23,6 +23,7 @@
   "lastUpdated": "Оновлено",
   "lightModeSwitchTitle": "Увімкнути світлу тему",
   "linux": "Linux (AppImage x86_64)",
+  "linuxArm64": "Linux (AppImage arm64)",
   "macUniversal": "macOS (Universal)",
   "navigateText": "для навігації",
   "noResultsText": "Немає результатів для",

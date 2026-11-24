@@ -1,6 +1,6 @@
 # Privaatsuspoliitika {#privacy-policy}
 
-Jõustumise kuupäev: 22. november 2026
+Jõustumise kuupäev: 24. november 2026
 
 Meeting Media Manager (M³) on tasuta avatud lähtekoodiga rakendus, mille on loonud vabatahtlikud. Selles poliitikas selgitatakse, milliseid andmeid M³ töötleb ja kuhu need lähevad. See kehtib M³ kõigi versioonide kohta: sellelt veebisaidilt saadavad installifailid ja kaasaskantav versioon ning versioonid Microsoft Store'is ja Snap Store'is.
 
@@ -28,7 +28,7 @@ M³ saadab diagnostikaandmeid teenusele [Sentry](https://sentry.io), mida M³ ar
 **Veaaruanded**, kui M³-s midagi valesti läheb. Aruanne võib sisaldada:
 
 - viga ja kohta M³ koodis, kus see tekkis;
-- M³ versiooni, sinu operatsioonisüsteemi ja selle versiooni, sinu keelt ja ajavööndit ning põhiteavet sinu riistvara kohta, näiteks sinu graafikakaardi kohta;
+- M³ versiooni ja paigaldusviisi, sinu operatsioonisüsteemi ja selle versiooni, sinu keelt ja ajavööndit ning põhiteavet sinu riistvara kohta, näiteks sinu graafikakaardi kohta;
 - samme, mis viisid veani, näiteks M³-s avatud lehti ja faile, mida M³ parajasti alla laadis;
 - M³ olekut sel hetkel: selle seadeid ja seda, mida see parajasti tegi, näiteks esitatavat meediat või koosolekut, mida see ette valmistas;
 - kui mõni M³ osa jookseb kokku, selle osa krahhiaruannet, mis võib sisaldada osa selle mälust krahhi hetkel.
