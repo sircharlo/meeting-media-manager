@@ -25,14 +25,18 @@
       </div>
       <div v-for="line in specialWeekMessage" :key="line">{{ line }}</div>
       <template v-if="specialWeekHiddenNames.length">
-        <div class="q-mt-xs">{{ t('special-week-hidden-items') }}</div>
-        <div
-          v-for="name in specialWeekHiddenNames"
-          :key="name"
-          class="ellipsis"
-        >
-          · {{ name }}
+        <div class="special-week-chip__hidden-title">
+          {{ t('special-week-hidden-items') }}
         </div>
+        <ul class="special-week-chip__hidden-list">
+          <li
+            v-for="name in specialWeekHiddenNames"
+            :key="name"
+            class="ellipsis"
+          >
+            {{ name }}
+          </li>
+        </ul>
       </template>
     </q-tooltip>
   </div>
@@ -1339,6 +1343,21 @@ watchImmediate(
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+// The tooltip's hidden media, as in the hidden-media notice's ⓘ
+// (NoticeBanner.vue): a heading, then a bulleted list.
+.special-week-chip__hidden-title {
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+// The bullets go inside each line: its ellipsis (overflow: hidden) would
+// clip ones drawn outside it.
+.special-week-chip__hidden-list {
+  list-style-position: inside;
+  margin: 0;
+  padding-inline-start: 0.25em;
 }
 
 .special-week-chip__glyph {

@@ -45,6 +45,23 @@ describe('getPageBanners', () => {
     expect(banner?.type).toBe('info');
   });
 
+  it.each([
+    [true, 'mw', 'hidden-media-co-week-mw'],
+    [true, 'we', 'hidden-media-co-week-we'],
+    [true, null, undefined],
+    [false, 'mw', undefined],
+  ] as const)(
+    'says why media items are hidden (circuit overseer week: %s, meeting: %s)',
+    (coWeek, meetingType, captionKey) => {
+      const banner = find(
+        getPageBanners(state({ coWeek, meetingType, someItemsHidden: true })),
+        'hidden-items',
+      );
+
+      expect(banner?.captionKey).toBe(captionKey);
+    },
+  );
+
   it('lists the hidden media items under its ⓘ', () => {
     const banner = find(
       getPageBanners(
@@ -57,6 +74,7 @@ describe('getPageBanners', () => {
     );
 
     expect(banner?.details).toEqual(['Song 12', 'Picture 1']);
+    expect(banner?.detailsTitleKey).toBe('special-week-hidden-items');
   });
 
   it('shows all the hidden media items again from its button', () => {
