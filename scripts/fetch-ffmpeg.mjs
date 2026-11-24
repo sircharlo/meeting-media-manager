@@ -1,4 +1,5 @@
-// Puts the FFmpeg that M³ ships for the platform being built in
+// Puts the FFmpeg that M³ ships for the platform being built (this machine's
+// platform and processor: electron-builder builds for it too) in
 // build/ffmpeg/bin, which electron-builder copies to resources/ffmpeg (see
 // extraResources in quasar.config.ts). Run by `yarn build`.
 //
@@ -11,10 +12,10 @@
 // - Windows: gyan.dev's "essentials" build (static), from its GitHub mirror.
 // - macOS: Martin Riedl's Apple Silicon and Intel builds, joined with lipo
 //   into one universal binary, which @electron/universal leaves as it is.
-// - Linux: BtbN's build (glibc 2.28 and later, with NVIDIA's encoder), a
-//   month-end one, which BtbN keeps for two years.
+// - Linux: BtbN's x64 and arm64 builds (glibc 2.28 and later, the x64 one
+//   with NVIDIA's encoder), a month-end one, which BtbN keeps for two years.
 //
-// All three are FFmpeg 9.0.2, under the GPL v3: build/ffmpeg/README.md (the
+// All of them are FFmpeg 9.0.2, under the GPL v3: build/ffmpeg/README.md (the
 // sources) and COPYING.GPLv3 ship with it. To update FFmpeg, change the
 // builds below and that README.
 
@@ -38,6 +39,8 @@ import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
 
+// By platform and processor (process.arch), but macOS's universal binary,
+// which every Mac gets, by platform only.
 const BUILDS = {
   darwin: [
     {
@@ -55,7 +58,15 @@ const BUILDS = {
       url: 'https://ffmpeg.martin-riedl.de/download/macos/amd64/1789931006_9.0.2/ffmpeg.zip',
     },
   ],
-  linux: [
+  'linux-arm64': [
+    {
+      member: 'ffmpeg-n9.0.2-39-g7adfbe40dc-linuxarm64-gpl-9.0/bin/ffmpeg',
+      sha256:
+        '6cad88ae5bcec356cfc5d7979a036cc4007128201928a0cf243df3db483276cc',
+      url: 'https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-10-31-12-59/ffmpeg-n9.0.2-39-g7adfbe40dc-linuxarm64-gpl-9.0.tar.xz',
+    },
+  ],
+  'linux-x64': [
     {
       member: 'ffmpeg-n9.0.2-39-g7adfbe40dc-linux64-gpl-9.0/bin/ffmpeg',
       sha256:
@@ -63,7 +74,7 @@ const BUILDS = {
       url: 'https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-10-31-12-59/ffmpeg-n9.0.2-39-g7adfbe40dc-linux64-gpl-9.0.tar.xz',
     },
   ],
-  win32: [
+  'win32-x64': [
     {
       member: 'ffmpeg-9.0.2-essentials_build/bin/ffmpeg.exe',
       sha256:
@@ -182,8 +193,16 @@ const fetchFFmpeg = async () => {
     console.log('FFmpeg: not bundled (M3_SKIP_FFMPEG_BUNDLE=1)');
     return;
   }
-  const builds = BUILDS[process.platform];
-  if (!builds) throw new Error(`No FFmpeg build for ${process.platform}`);
+  const target =
+    process.platform === 'darwin'
+      ? 'darwin'
+      : `${process.platform}-${process.arch}`;
+  const builds = BUILDS[target];
+  if (!builds) {
+    throw new Error(
+      `No FFmpeg build for ${target}, only for ${Object.keys(BUILDS).join(', ')}`,
+    );
+  }
 
   const binary = join(
     OUT_DIR,

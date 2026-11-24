@@ -6,6 +6,10 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ## UPCOMING VERSION
 
+### ✨ New Features
+
+- ✨ **Linux on ARM**: M³ now also comes for Linux computers with a 64-bit ARM processor (arm64), such as a Raspberry Pi 4 or 5 with its 64-bit system, or a laptop with a Snapdragon processor running Linux: as an AppImage, which updates itself like the x86_64 one, and in the Snap Store. It's new, so please report anything that doesn't work on yours.
+
 ### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Notifications**: Notifications and notices are easier to read. The notifications that pop up now use deeper shades of green, blue, orange and red, so their white text stands out on each of them (orange warnings had dark text), and all their buttons are white. The notices on the page and in popups, such as the ones about OBS Studio, hidden media or the Zoom Meeting Manager, now follow the light or dark theme: a soft tint of their color behind the usual text, with a colored icon and edge, instead of white text on a bright color that was hard to read. Colored hints, like a setting's warning or the reason it's turned off, use the same shades. Some notifications also changed color to match what they say: red when something failed (such as a video that couldn't be played, or a JWPUB file that couldn't be read), orange when something needs a look (such as updates being turned off, or the circuit overseer's visit date not being set), blue for information (such as the media preview switching to a lighter mode), and green when something is done.

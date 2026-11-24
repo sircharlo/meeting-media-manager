@@ -2,8 +2,9 @@ name: Store Release
 
 # When a release is published on GitHub (by hand, from the manual release's
 # draft), the app stores get it too:
-# - Snap Store: the release build uploaded the snap without releasing it
-#   (build.yml); this releases that revision to the stable channel.
+# - Snap Store: the release build uploaded the snaps (amd64 and arm64)
+#   without releasing them (build.yml); this releases those revisions to the
+#   stable channel.
 # - Flathub (on hold): Flathub's Generative AI policy accepts no
 #   AI-generated or AI-assisted manifest, and no automated submission pull
 #   request, so nothing goes to Flathub from here (see build/flatpak's
@@ -64,7 +65,7 @@ jobs:
     steps:
       - name: Install Snapcraft
         run: sudo snap install snapcraft --classic --channel=8.x/stable
-      - name: Release the uploaded revision to stable
+      - name: Release the uploaded revisions to stable
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
         run: |
@@ -74,16 +75,24 @@ jobs:
           fi
           version="${TAG#v}"
           revisions=$(snapcraft revisions "$SNAP_NAME")
-          # The newest revision of this version (a rebuilt draft uploads it
-          # again).
-          revision=$(awk -v version="$version" 'NR > 1 { for (i = 2; i <= NF; i++) if ($i == version) { print $1; break } }' <<< "$revisions" | sort -n | tail -n 1)
-          if [ -z "$revision" ]; then
-            echo "::error::The Snap Store has no revision of $version. Its newest revisions:"
+          # The newest revision of this version for each architecture (a
+          # rebuilt draft uploads it again), from the columns Rev., Uploaded,
+          # Arches, Version and Channels: "amd64 12" and "arm64 13".
+          newest=$(awk -v version="$version" 'NR > 1 { for (i = 3; i <= NF; i++) if ($i == version) { arch = $(i - 1); if ($1 + 0 > rev[arch] + 0) rev[arch] = $1; break } } END { for (arch in rev) print arch, rev[arch] }' <<< "$revisions" | sort)
+          if ! grep -q '^amd64 ' <<< "$newest"; then
+            echo "::error::The Snap Store has no amd64 revision of $version. Its newest revisions:"
             head -n 6 <<< "$revisions"
             exit 1
           fi
-          echo "Releasing revision $revision ($version) to stable"
-          snapcraft release "$SNAP_NAME" "$revision" stable
+          # The arm64 snap's build can fail without holding up the release
+          # (build.yml).
+          if ! grep -q '^arm64 ' <<< "$newest"; then
+            echo "::warning::The Snap Store has no arm64 revision of $version, so only the amd64 one goes to stable."
+          fi
+          while read -r arch revision; do
+            echo "Releasing revision $revision ($version, $arch) to stable"
+            snapcraft release "$SNAP_NAME" "$revision" stable < /dev/null
+          done <<< "$newest"
 
   flathub:
     name: Flathub
