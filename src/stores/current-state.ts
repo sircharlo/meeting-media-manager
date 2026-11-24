@@ -23,6 +23,7 @@ import { getZoomHelperErrorMessageKey } from 'src/constants/zoom';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getRendererPlatform } from 'src/helpers/fs';
+import { getHiddenMediaNames } from 'src/helpers/hidden-media';
 import { dismissAllTemporaryNotifications } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { datesAreSame, formatDate } from 'src/utils/date';
@@ -575,6 +576,10 @@ export const useCurrentStateStore = defineStore('current-state', {
         return true;
       }
       return this.hasActiveDownloads;
+    },
+    /** The names of the selected day's hidden media items (see getHiddenMediaNames). */
+    hiddenMediaNamesForSelectedDate(): string[] {
+      return getHiddenMediaNames(this.selectedDateObject?.mediaSections);
     },
     isSelectedDayToday(): boolean {
       try {

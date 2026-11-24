@@ -17,6 +17,18 @@
       />
     </template>
     <slot />
+    <q-icon
+      v-if="details.length"
+      class="notice__details q-ml-xs"
+      name="mmm-info"
+      size="xs"
+    >
+      <q-tooltip max-width="360px">
+        <div v-for="(line, index) in detailLines" :key="index" class="ellipsis">
+          {{ line }}
+        </div>
+      </q-tooltip>
+    </q-icon>
     <template v-if="actions.length || $slots.action" #action>
       <slot name="action">
         <q-btn
@@ -52,6 +64,11 @@ const props = withDefaults(
     actions?: NoticeAction[];
     /** Smaller, as in a popup. */
     dense?: boolean;
+    /**
+     * Listed, one per line, in a tooltip on an ⓘ after the text (the names
+     * of the hidden media items, say). A long line ends in "…".
+     */
+    details?: string[];
     /** An icon in place of the type's own. */
     icon?: string;
     /** Buttons beside the text, rather than under it. */
@@ -60,10 +77,23 @@ const props = withDefaults(
     loading?: boolean;
     type: NoticeType;
   }>(),
-  { actions: () => [], icon: undefined },
+  { actions: () => [], details: () => [], icon: undefined },
 );
 
 const iconSize = computed(() => (props.dense ? '20px' : '28px'));
+
+// A tooltip that stays on the screen: past this many lines, the last one
+// says how many more there are ("+5") rather than naming just one more.
+const MAX_DETAIL_LINES = 12;
+
+const detailLines = computed(() =>
+  props.details.length > MAX_DETAIL_LINES
+    ? [
+        ...props.details.slice(0, MAX_DETAIL_LINES - 1),
+        `+${props.details.length - (MAX_DETAIL_LINES - 1)}`,
+      ]
+    : props.details,
+);
 </script>
 
 <style lang="scss" scoped>
@@ -80,8 +110,14 @@ const iconSize = computed(() => (props.dense ? '20px' : '28px'));
 // Its buttons take the strong shade too (white or dark text on the tint
 // would hardly look like buttons).
 .notice__icon,
+.notice__details,
 .notice :deep(.q-banner__actions) .q-btn {
   color: var(--notice-strong);
+}
+
+.notice__details {
+  cursor: help;
+  vertical-align: text-bottom;
 }
 
 .notice--positive {

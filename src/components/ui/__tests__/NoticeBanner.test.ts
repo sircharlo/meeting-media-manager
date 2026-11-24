@@ -113,4 +113,54 @@ describe('NoticeBanner', () => {
     expect(wrapper.classes()).toContain('q-banner--dense');
     expect(wrapper.findComponent(QIcon).props('size')).toBe('20px');
   });
+
+  describe('details', () => {
+    // The tooltip only renders on hover: the stub shows what it lists.
+    const mountWithDetails = (details?: string[]) =>
+      mount(NoticeBanner, {
+        global: {
+          stubs: {
+            QTooltip: { template: '<div class="tooltip-stub"><slot /></div>' },
+          },
+        },
+        props: { details, type: 'warning' },
+        slots: { default: () => 'Some media items have been hidden.' },
+      });
+
+    const listed = (wrapper: ReturnType<typeof mountWithDetails>) =>
+      wrapper.findAll('.tooltip-stub .ellipsis').map((line) => line.text());
+
+    it('has no ⓘ without any', () => {
+      const wrapper = mountWithDetails([]);
+
+      expect(wrapper.find('.notice__details').exists()).toBe(false);
+      expect(wrapper.find('.tooltip-stub').exists()).toBe(false);
+    });
+
+    it('lists them in a tooltip on an ⓘ after the text, each on a line that ends in "…" when too long', () => {
+      const wrapper = mountWithDetails(['Song 12', 'Picture 1']);
+
+      const info = wrapper.find('.notice__details');
+      expect(info.exists()).toBe(true);
+      expect(wrapper.findAllComponents(QIcon).at(-1)?.props('name')).toBe(
+        'mmm-info',
+      );
+      expect(listed(wrapper)).toEqual(['Song 12', 'Picture 1']);
+    });
+
+    it('lists up to 12 of them', () => {
+      const details = Array.from({ length: 12 }, (_, i) => `Picture ${i + 1}`);
+
+      expect(listed(mountWithDetails(details))).toEqual(details);
+    });
+
+    it('past 12, lists 11 and how many more there are', () => {
+      const details = Array.from({ length: 15 }, (_, i) => `Picture ${i + 1}`);
+
+      expect(listed(mountWithDetails(details))).toEqual([
+        ...details.slice(0, 11),
+        '+4',
+      ]);
+    });
+  });
 });

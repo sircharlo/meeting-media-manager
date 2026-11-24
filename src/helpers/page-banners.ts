@@ -3,6 +3,8 @@ import type { NoticeType } from 'src/types';
 /** A banner over the media list (see MediaCalendarPage.vue). */
 export interface PageBanner {
   actions?: { labelKey: string; onClick: () => void }[];
+  /** Listed under the banner's ⓘ (see NoticeBanner.vue). */
+  details?: string[];
   icon: string;
   key: string;
   textKey: string;
@@ -15,6 +17,8 @@ export interface PageBannerState {
   coWeek: boolean;
   /** Some songs appear more than once on the selected weekend day. */
   duplicateSongs: boolean;
+  /** The names of the selected day's hidden media items. */
+  hiddenMediaNames: string[];
   /** OBS Studio is to be used today, but M³ isn't connected to it. */
   obsDisconnected: boolean;
   /** M³ is connected to OBS Studio, but couldn't get its scenes. */
@@ -50,6 +54,7 @@ export const getPageBanners = (state: PageBannerState): PageBanner[] => {
   if (state.someItemsHidden) {
     banners.push({
       actions: [{ labelKey: 'show-all-media', onClick: state.showAllMedia }],
+      details: state.hiddenMediaNames,
       icon: 'mmm-file-hidden',
       key: 'hidden-items',
       textKey: 'some-media-items-are-hidden',
