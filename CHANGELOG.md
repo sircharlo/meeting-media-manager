@@ -20,6 +20,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🐞 Bug Fixes
 
+- 🐞 **Start at Login (Microsoft Store version)**: In the Microsoft Store version, turning **Automatically start M³ on computer startup** on or off didn't work, and M³ sent an error report each time it started. It now works.
 - 🐞 **Zoom Meeting Manager**: The notification that media wasn't shared in Zoom because the Zoom automations are paused had no close button, unlike other notifications, and was orange while the similar one about a failed share was red. It now has a close button, and it's red too.
 - 🐞 **Yeartext Preview**: When next year's yeartext couldn't be fetched for its preview, the notification showed "{year}" instead of the year. It now names the year.
 - 🐞 **Before-Meeting Panel**: The before-meeting panel, and the notice left when it's dismissed, showed an empty space where their icon should be. They now show a clock.

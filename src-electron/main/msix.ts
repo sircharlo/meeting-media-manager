@@ -47,62 +47,21 @@ export const getPackageDataDir = () => {
   );
 };
 
-// The startup task in the package manifest (build/appxmanifest.xml).
-const STARTUP_TASK_ID = 'M3Startup';
-
 /**
- * Windows PowerShell that turns the startup task on or off and prints its
- * state. A packaged app has to ask the StartupTask WinRT API: RequestEnable
- * doesn't turn on a task the user turned off in Windows' settings (only the
- * user can, there), and then says so.
- * @param enable Whether to turn the task on.
- * @returns The script.
+ * The startup task helper (src-electron/startup-task-helper), which
+ * electron-builder puts inside the MSIX. The StartupTask API needs M³'s
+ * package identity, and a child process only keeps it when its executable is
+ * inside the package: Windows PowerShell, in System32, loses it, and the API
+ * then answers "Element not found".
+ * @returns The helper's path.
  */
-const getStartupTaskScript = (enable: boolean) =>
-  [
-    "$ErrorActionPreference = 'Stop'",
-    'Add-Type -AssemblyName System.Runtime.WindowsRuntime',
-    // WindowsRuntimeSystemExtensions.AsTask(IAsyncOperation<T>), to wait for
-    // a WinRT operation.
-    '$asTask = [System.WindowsRuntimeSystemExtensions].GetMethods() | Where-Object {',
-    "  $_.Name -eq 'AsTask' -and $_.IsGenericMethod -and $_.GetParameters().Count -eq 1 -and",
-    "  $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncOperation`1'",
-    '} | Select-Object -First 1',
-    'function Wait-Operation($operation, [Type] $resultType) {',
-    '  $task = $asTask.MakeGenericMethod($resultType).Invoke($null, @($operation))',
-    '  $null = $task.Wait(-1)',
-    '  $task.Result',
-    '}',
-    '$taskType = [Windows.ApplicationModel.StartupTask, Windows.ApplicationModel, ContentType = WindowsRuntime]',
-    '$stateType = [Windows.ApplicationModel.StartupTaskState, Windows.ApplicationModel, ContentType = WindowsRuntime]',
-    `$startupTask = Wait-Operation ($taskType::GetAsync('${STARTUP_TASK_ID}')) $taskType`,
-    enable
-      ? '$state = Wait-Operation ($startupTask.RequestEnableAsync()) $stateType'
-      : '$startupTask.Disable(); $state = $startupTask.State',
-    'Write-Output "$state"',
-  ].join('\n');
-
-/**
- * Windows PowerShell, by its full path in System32: by bare name, it would be
- * whatever PATH finds first.
- * @returns The path, or the bare name without SystemRoot or windir.
- */
-const getPowerShellPath = () => {
-  const windowsDir = process.env.SystemRoot || process.env.windir;
-  if (!windowsDir) return 'powershell.exe';
-  return join(
-    windowsDir,
-    'System32',
-    'WindowsPowerShell',
-    'v1.0',
-    'powershell.exe',
-  );
-};
+const getStartupTaskHelperPath = () =>
+  join(process.resourcesPath, 'startup-task-helper', 'StartupTaskHelper.exe');
 
 /**
  * Turns the Microsoft Store build's startup task, its "Start at login", on or
- * off. Windows PowerShell runs as M³'s child process, so with its package
- * identity, which the StartupTask API needs.
+ * off (TaskId "M3Startup" in build/appxmanifest.xml). Turning it on doesn't
+ * undo the user turning it off in Windows' settings: only the user can, there.
  * @param enable Whether M³ should start at login.
  * @returns The task's state afterwards: Enabled, Disabled, DisabledByUser
  * (turned off in Windows' settings) or DisabledByPolicy.
@@ -110,13 +69,8 @@ const getPowerShellPath = () => {
 export const setStartupTaskEnabled = (enable: boolean) =>
   new Promise<string>((resolve, reject) => {
     execFile(
-      getPowerShellPath(),
-      [
-        '-NoProfile',
-        '-NonInteractive',
-        '-EncodedCommand',
-        Buffer.from(getStartupTaskScript(enable), 'utf16le').toString('base64'),
-      ],
+      getStartupTaskHelperPath(),
+      [enable ? 'enable' : 'disable'],
       { timeout: 30_000, windowsHide: true },
       (error, stdout, stderr) => {
         if (error) {

@@ -18,19 +18,13 @@ type ExecFileCallback = (
   stderr: string,
 ) => void;
 
-/** Makes powershell.exe answer with the given output. */
+/** Makes the startup task helper answer with the given output. */
 const answerWith = (error: Error | null, stdout: string, stderr = '') => {
   execFileMock.mockImplementation(
     (_file: string, _args: string[], _options: object, callback) => {
       (callback as ExecFileCallback)(error, stdout, stderr);
     },
   );
-};
-
-/** The script M³ ran, decoded from -EncodedCommand. */
-const getScript = () => {
-  const args = execFileMock.mock.calls[0]?.[1] as string[];
-  return Buffer.from(args.at(-1) ?? '', 'base64').toString('utf16le');
 };
 
 describe('getPublisherId', () => {
@@ -70,41 +64,30 @@ describe('getPackageDataDir', () => {
 });
 
 describe('setStartupTaskEnabled', () => {
+  const resourcesPath = String.raw`C:\Program Files\WindowsApps\M3\app\resources`;
+  // upath's join writes it with forward slashes.
+  const helper =
+    'C:/Program Files/WindowsApps/M3/app/resources/startup-task-helper/StartupTaskHelper.exe';
+
   beforeEach(() => {
     execFileMock.mockReset();
-    vi.stubEnv('SystemRoot', String.raw`C:\Windows`);
-    vi.stubEnv('windir', String.raw`C:\Windows`);
+    Object.defineProperty(process, 'resourcesPath', {
+      configurable: true,
+      value: resourcesPath,
+    });
   });
 
-  afterEach(() => {
-    vi.unstubAllEnvs();
-  });
-
-  it('asks Windows PowerShell to turn the startup task on', async () => {
+  it('asks the helper inside the package to turn the startup task on', async () => {
     answerWith(null, 'Enabled\r\n');
 
     await expect(setStartupTaskEnabled(true)).resolves.toBe('Enabled');
 
     expect(execFileMock).toHaveBeenCalledWith(
-      'C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe',
-      ['-NoProfile', '-NonInteractive', '-EncodedCommand', expect.any(String)],
+      helper,
+      ['enable'],
       { timeout: 30_000, windowsHide: true },
       expect.any(Function),
     );
-    const script = getScript();
-    expect(script).toContain("GetAsync('M3Startup')");
-    expect(script).toContain('RequestEnableAsync()');
-    expect(script).not.toContain('Disable()');
-  });
-
-  it('falls back to its bare name without SystemRoot or windir', async () => {
-    vi.stubEnv('SystemRoot', '');
-    vi.stubEnv('windir', '');
-    answerWith(null, 'Enabled\r\n');
-
-    await setStartupTaskEnabled(true);
-
-    expect(execFileMock.mock.calls[0]?.[0]).toBe('powershell.exe');
   });
 
   it('turns it off', async () => {
@@ -112,9 +95,7 @@ describe('setStartupTaskEnabled', () => {
 
     await expect(setStartupTaskEnabled(false)).resolves.toBe('Disabled');
 
-    const script = getScript();
-    expect(script).toContain('$startupTask.Disable()');
-    expect(script).not.toContain('RequestEnableAsync');
+    expect(execFileMock.mock.calls[0]?.[1]).toEqual(['disable']);
   });
 
   it("passes on a state other than the one asked for, e.g. the user's", async () => {
@@ -123,23 +104,23 @@ describe('setStartupTaskEnabled', () => {
     await expect(setStartupTaskEnabled(true)).resolves.toBe('DisabledByUser');
   });
 
-  it("fails with what PowerShell said when it couldn't", async () => {
+  it("fails with what the helper said when it couldn't", async () => {
     answerWith(
-      new Error('Command failed: powershell.exe'),
+      new Error('Command failed: StartupTaskHelper.exe enable'),
       '',
-      'Exception calling "GetAsync": The process has no package identity.\r\n',
+      'Element not found. (Exception from HRESULT: 0x80070490) (0x80070490)\r\n',
     );
 
     await expect(setStartupTaskEnabled(true)).rejects.toThrow(
-      `Couldn't turn the startup task on: Exception calling "GetAsync": The process has no package identity.`,
+      "Couldn't turn the startup task on: Element not found. (Exception from HRESULT: 0x80070490) (0x80070490)",
     );
   });
 
-  it('fails with the error itself when PowerShell said nothing', async () => {
-    answerWith(new Error('spawn powershell.exe ENOENT'), '');
+  it('fails with the error itself when the helper said nothing', async () => {
+    answerWith(new Error('spawn StartupTaskHelper.exe ENOENT'), '');
 
     await expect(setStartupTaskEnabled(false)).rejects.toThrow(
-      "Couldn't turn the startup task off: spawn powershell.exe ENOENT",
+      "Couldn't turn the startup task off: spawn StartupTaskHelper.exe ENOENT",
     );
   });
 });
