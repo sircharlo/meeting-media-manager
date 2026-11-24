@@ -38,12 +38,12 @@ De hoofdinterface van M³ bestaat uit een aantal belangrijke onderdelen:
 
 ### De kalenderweergave begrijpen {#calendar-view}
 
-Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
+Klik op de datum bovenaan het venster om de kalender te openen. Deze toont elke week waarvoor M³ media voorbereidt, te beginnen met de huidige:
 
-- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
-- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
-- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
-- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
+- **Weken** - Elke rij is een week van maandag tot en met zondag, met een naam als "Deze week", "Volgende week" of "Over 2 weken" en met de datums
+- **Vergaderdagen** - Vergaderdagen zijn gekleurd volgens hun status: groen als de media klaar is, oranje als die nog niet klaar is en rood als die niet kon worden opgehaald. Dagen met media die je zelf hebt toegevoegd, zijn paars. Een legenda onder de kalender legt de kleuren uit
+- **Speciale weken** - Tijdens het bezoek van de kringopziener en in de week van de Herdenking krijgen de vergaderdagen van die week de kleur van die week, en staat de naam van de week onder de datums. Een label naast de datum bovenaan het venster laat zien wat er op de geselecteerde dag anders is
+- **Toetsenbord** - Gebruik de pijltjestoetsen om tussen dagen te wisselen en Enter om er een te selecteren
 
 ### Media organiseren {#organizing-media}
 

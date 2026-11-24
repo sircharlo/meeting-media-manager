@@ -38,12 +38,12 @@ A interface principal do M³ é formada por várias áreas importantes:
 
 ### Entendendo a visualização do calendário {#calendar-view}
 
-Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
+Clique na data na parte superior da janela para abrir o calendário. Ele mostra todas as semanas para as quais o M³ prepara mídia, começando pela semana atual:
 
-- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
-- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
-- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
-- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
+- **Semanas** - Cada linha é uma semana de segunda-feira a domingo, chamada "Esta semana", "Próxima semana", "Daqui a 2 semanas" e assim por diante, com as suas datas
+- **Dias de reunião** - Os dias de reunião ficam coloridos de acordo com o status: verde quando a mídia está pronta, laranja quando ainda não está pronta e vermelho se não foi possível buscá-la. Os dias com mídia que você mesmo adicionou ficam roxos. Uma legenda abaixo do calendário explica as cores
+- **Semanas especiais** - Durante a visita do superintendente de circuito e a semana da Celebração, os dias de reunião dessa semana ficam com a cor da semana, e o nome dela aparece abaixo das datas. Uma etiqueta ao lado da data, na parte superior da janela, indica o que muda no dia selecionado
+- **Teclado** - Use as teclas de seta para navegar entre os dias e Enter para selecionar um
 
 ### Organizando a mídia {#organizing-media}
 

@@ -8,7 +8,7 @@
 
 ### ✨ 新功能
 
-- ✨ **Circuit Overseer's Visit and Memorial Week**: During the circuit overseer's visit and the week of the Memorial, a label next to the date at the top of the window says so. Point at it to see what's different on the selected day, such as the midweek meeting moving to Tuesday, the media M³ hides then, or the meeting the Memorial replaces. On the usual midweek day of the visit, or the meeting day the Memorial replaces, the empty page now explains why there's no meeting, with a button that goes to Tuesday or to the Memorial. In the calendar, that week's meeting days take the week's color, and the week is named under its dates.
+- ✨ **分区监督探访和纪念聚会周**：在分区监督探访期间和纪念聚会那一周，窗口顶部的日期旁边会显示一个标签加以提示。将鼠标指针移到标签上，就能查看所选日期有什么不同，例如周中聚会改到星期二举行、M³ 届时隐藏的媒体，或纪念聚会所取代的聚会。在探访期间原本举行周中聚会的那一天，或被纪念聚会取代的聚会日，空白页面现在会说明为什么没有聚会，并提供一个按钮，可以前往星期二或纪念聚会。在日历中，那一周的聚会日会显示为该周的颜色，并在日期下方标出该周的名称。
 - ✨ **ARM 上的 Linux**：M³ 现在也支持搭载 64 位 ARM 处理器（arm64）的 Linux 电脑，例如运行 64 位系统的 Raspberry Pi 4 或 5，或运行 Linux 的 Snapdragon 处理器笔记本电脑：提供 AppImage（会像 x86_64 版本一样自动更新），也可以在 Snap Store 获取。这是新功能，如果在你的电脑上有任何问题，请告诉我们。
 
 ## v26.11.4

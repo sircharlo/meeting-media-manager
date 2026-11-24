@@ -38,12 +38,12 @@ M³의 메인 인터페이스는 다음과 같은 주요 영역으로 구성됩�
 
 ### 달력 보기 이해하기 {#calendar-view}
 
-Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
+창 상단의 날짜를 클릭하면 달력이 열립니다. 달력에는 M³가 미디어를 준비하는 모든 주가 이번 주부터 표시됩니다:
 
-- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
-- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
-- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
-- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
+- **주간** - 각 행은 월요일부터 일요일까지의 한 주이며, ‘이번 주’, ‘다음 주’, ‘2주 후’ 등의 이름과 함께 날짜가 표시됩니다
+- **집회일** - 집회일은 상태에 따라 미디어가 준비되었으면 녹색, 아직 준비되지 않았으면 주황색, 미디어를 다운로드하지 못했으면 빨간색으로 표시됩니다. 직접 추가한 미디어가 있는 날은 보라색으로 표시됩니다. 달력 아래의 범례에서 각 색의 의미를 확인할 수 있습니다
+- **특별 주간** - 순회 감독자 방문 주간과 기념식 주간에는 그 주의 집회일이 해당 주간의 색으로 표시되고, 날짜 아래에 주간 이름이 나타납니다. 창 상단의 날짜 옆에 있는 라벨은 선택한 날에 무엇이 다른지 알려 줍니다
+- **키보드** - 화살표 키로 날짜 사이를 이동하고, Enter 키로 날짜를 선택합니다
 
 ### 미디어 정리 {#organizing-media}
 

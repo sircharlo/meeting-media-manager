@@ -38,12 +38,12 @@ L'interfaccia principale di M³ è composta da diverse aree chiave:
 
 ### Capire la vista calendario {#calendar-view}
 
-Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
+Fai clic sulla data in alto nella finestra per aprire il calendario. Mostra tutte le settimane per cui M³ prepara i media, a partire da quella corrente:
 
-- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
-- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
-- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
-- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
+- **Settimane** - Ogni riga è una settimana da lunedì a domenica, con le sue date e un nome come "Questa settimana", "Settimana prossima", "Tra 2 settimane" e così via
+- **Giorni delle adunanze** - I giorni delle adunanze sono colorati in base al loro stato: verde quando i media sono pronti, arancione quando non sono ancora pronti e rosso se non è stato possibile scaricarli. I giorni con media che hai aggiunto tu sono viola. Una legenda sotto il calendario spiega i colori
+- **Settimane speciali** - Durante la visita del sorvegliante di circoscrizione e la settimana della Commemorazione, i giorni delle adunanze di quella settimana prendono il colore della settimana e sotto le date compare il nome della settimana. Un'etichetta accanto alla data in alto nella finestra indica cosa cambia nel giorno selezionato
+- **Tastiera** - Usa i tasti freccia per spostarti tra i giorni e Invio per selezionarne uno
 
 ### Organizzazione dei media {#organizing-media}
 
