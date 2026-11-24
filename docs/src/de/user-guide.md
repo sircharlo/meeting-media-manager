@@ -38,12 +38,12 @@ Die Hauptoberfläche von M³ besteht aus mehreren Schlüsselbereichen:
 
 ### Verständnis der Kalenderansicht {#calendar-view}
 
-Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
+Klicken Sie oben im Fenster auf das Datum, um den Kalender zu öffnen. Er zeigt jede Woche, für die M³ Medien vorbereitet, beginnend mit der aktuellen:
 
-- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
-- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
-- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
-- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
+- **Wochen** - Jede Zeile ist eine Woche von Montag bis Sonntag, mit Namen wie "Diese Woche", "Nächste Woche" oder "In 2 Wochen" und mit ihren Daten
+- **Zusammenkunftstage** - Zusammenkunftstage sind nach ihrem Status eingefärbt: grün, wenn ihre Medien bereit sind, orange, wenn sie noch nicht bereit sind, und rot, wenn sie nicht abgerufen werden konnten. Tage mit Medien, die Sie selbst hinzugefügt haben, sind lila. Eine Legende unter dem Kalender erklärt die Farben
+- **Besondere Wochen** - Während des Besuchs des Kreisaufsehers und in der Woche des Gedächtnismahls erscheinen die Zusammenkunftstage dieser Woche in der Farbe der Woche, deren Name unter ihren Daten steht. Ein Label neben dem Datum oben im Fenster zeigt, was am ausgewählten Tag anders ist
+- **Tastatur** - Verwenden Sie die Pfeiltasten, um zwischen den Tagen zu wechseln, und die Eingabetaste, um einen Tag auszuwählen
 
 ### Medien organisieren {#organizing-media}
 
