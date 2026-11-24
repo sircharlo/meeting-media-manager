@@ -124,6 +124,7 @@ const electronApi: ElectronApi = {
   getMediaWindowCaptureSize: () => invoke('getMediaWindowCaptureSize'),
   getMediaWindowCaptureSourceId: () => invoke('getMediaWindowCaptureSourceId'),
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
+  getSentryTags: () => sendSync('getSentryTagsSync') ?? {},
   getSharedDataPath: () => invoke('getSharedDataPath'),
   getUpdaterState: () => invoke('getUpdaterState'),
   getUpdatesDisabledPath: () => invoke('getUpdatesDisabledPath'),

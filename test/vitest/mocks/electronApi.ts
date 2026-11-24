@@ -97,6 +97,7 @@ export const electronApi: ElectronApi = {
   getScreenAccessStatus: function () {
     throw new Error('Function not implemented.');
   },
+  getSentryTags: () => ({}),
   getSharedDataPath: async () => fakePath('/app/shared'),
   getUpdaterState: async () => ({
     phase: null,

@@ -232,6 +232,11 @@ export interface ElectronApi {
    */
   getMediaWindowCaptureSourceId: () => Promise<null | string>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
+  /**
+   * The main process's tags for Sentry events (see getSentryTags in
+   * src-electron/main/sentry-tags.ts), for the renderer's events too.
+   */
+  getSentryTags: () => Record<string, string>;
   getSharedDataPath: () => Promise<null | string>;
   /**
    * Returns the auto-updater's current lifecycle state (downloading /
@@ -685,7 +690,10 @@ export type ElectronIpcSendKey =
 
 // ipcMain.on with event.returnValue / ipcRenderer.sendSync channels
 export type ElectronIpcSendSyncKey =
-  'decryptSecretSync' | 'encryptSecretSync' | 'isSecretEncryptionAvailableSync';
+  | 'decryptSecretSync'
+  | 'encryptSecretSync'
+  | 'getSentryTagsSync'
+  | 'isSecretEncryptionAvailableSync';
 
 export interface ExportPdfResult {
   /** The user closed the save dialog without choosing a file. */

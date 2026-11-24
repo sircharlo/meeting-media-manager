@@ -77,6 +77,7 @@ import {
   encryptSecret,
   isSecretEncryptionAvailable,
 } from 'src-electron/main/secrets';
+import { getSentryTags } from 'src-electron/main/sentry-tags';
 import {
   quitStatus,
   setElectronUrlVariables,
@@ -249,6 +250,8 @@ handleIpcSendSync('decryptSecretSync', (_e, cipherText: string) =>
 handleIpcSendSync('isSecretEncryptionAvailableSync', () =>
   isSecretEncryptionAvailable(),
 );
+
+handleIpcSendSync('getSentryTagsSync', () => getSentryTags());
 
 handleIpcSend(
   'toggleMediaWindow',
