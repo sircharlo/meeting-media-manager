@@ -428,27 +428,6 @@ export function getDateDiff(
   }
 }
 
-export function getMaxDate(
-  date: PotentialDate,
-  ...args: PotentialDate[]
-): Date {
-  let t = new Date(date);
-  Array.prototype.slice.call(args, 1).forEach((d) => {
-    // @ts-expect-error: Date is not Number
-    t = Math.max(t, new Date(d));
-  });
-  return t;
-}
-
-export function getMinDate(date: PotentialDate, ...args: PotentialDate[]) {
-  let t = new Date(date);
-  Array.prototype.slice.call(args, 1).forEach((d) => {
-    // @ts-expect-error: Date is not Number
-    t = Math.min(t, new Date(d));
-  });
-  return t;
-}
-
 export function subtractFromDate(date: PotentialDate, mod: DateOptions) {
   return getChange(date, mod, -1);
 }

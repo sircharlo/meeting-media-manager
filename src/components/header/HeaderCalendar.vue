@@ -291,17 +291,11 @@
     </q-tooltip>
     {{ $q.screen.gt.xs ? calendarDateLabel : '' }}
     <q-popup-proxy v-model="datePickerActive" :offset="[0, 11]">
-      <q-date
+      <WeekCalendar
         v-model="selectedDate"
-        :event-color="getEventDayColor"
-        :events="getEventDates()"
-        :first-day-of-week="friendlyDayToJsDay(currentSettings?.firstDayOfWeek)"
-        :locale="dateLocale"
-        minimal
-        :navigation-max-year-month="maxDate()"
-        :navigation-min-year-month="minDate()"
-        no-unset
-        :options="dateOptions"
+        :day-statuses="dayStatuses"
+        :max="lookupBounds?.max"
+        :min="lookupBounds?.min"
       />
     </q-popup-proxy>
   </q-btn>
@@ -386,6 +380,8 @@
 <script setup lang="ts">
 import type { QMenu } from 'quasar';
 import type {
+  CalendarDayStatus,
+  DateInfo,
   DialogImportPayload,
   DocumentItem,
   MediaItem,
@@ -407,6 +403,7 @@ import DialogRemoteVideo from 'components/dialog/DialogRemoteVideo.vue';
 import DialogSectionPicker from 'components/dialog/DialogSectionPicker.vue';
 import DialogSongPicker from 'components/dialog/DialogSongPicker.vue';
 import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
+import WeekCalendar from 'components/header/WeekCalendar.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
@@ -421,15 +418,7 @@ import {
 } from 'src/helpers/jw-media';
 import { withPendingSectionImport } from 'src/helpers/pending-section-imports';
 import { convertImageIfNeeded } from 'src/utils/converters';
-import {
-  datesAreSame,
-  formatDate,
-  friendlyDayToJsDay,
-  getDateDiff,
-  getLocalDate,
-  getMaxDate,
-  getMinDate,
-} from 'src/utils/date';
+import { formatDate, getLocalDate } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useDemoModeStore } from 'stores/demo-mode';
 import { useJwStore } from 'stores/jw';
@@ -543,42 +532,48 @@ const openFileImportDialog = () => {
   );
 };
 
-const additionalMediaDates = computed(() =>
-  (
-    lookupPeriod.value?.[currentCongregation.value]?.filter((day) => {
-      if (!day.mediaSections) return false;
-      return Object.values(day.mediaSections).some((sectionMedia) =>
-        sectionMedia.items?.some((media) => media.source !== 'dynamic'),
-      );
-    }) || []
-  ).map((day) => formatDate(day.date, 'YYYY/MM/DD')),
+const lookupDays = computed(
+  () => lookupPeriod.value?.[currentCongregation.value] ?? [],
 );
 
-const additionalMediaForDayExists = (lookupDate: string) => {
-  try {
-    const day = lookupPeriod.value?.[currentCongregation.value]?.find((day) =>
-      datesAreSame(lookupDate, day.date),
-    );
+// The date picker's selectable range: every day M³ holds for this
+// congregation, which is whole weeks from this week's Monday.
+const lookupBounds = computed(() => {
+  const times = lookupDays.value
+    .map((day) => new Date(day.date).getTime())
+    .filter((time) => !Number.isNaN(time));
+  if (!times.length) return undefined;
+  return {
+    max: new Date(Math.max(...times)),
+    min: new Date(Math.min(...times)),
+  };
+});
 
-    if (!day?.mediaSections) return false;
+const hasAddedMedia = (day: DateInfo) =>
+  day.mediaSections?.some((sectionMedia) =>
+    sectionMedia.items?.some((media) => media.source !== 'dynamic'),
+  ) ?? false;
 
-    const additionalMediaCount = Object.values(day.mediaSections).reduce(
-      (total, sectionMedia) => {
-        return (
-          total +
-          (sectionMedia.items?.filter((media) => media.source !== 'dynamic')
-            .length ?? 0)
-        );
-      },
-      0,
-    );
-
-    return additionalMediaCount > 0;
-  } catch (error) {
-    errorCatcher(error);
-    return false;
-  }
+const getDayStatus = (day: DateInfo): CalendarDayStatus | undefined => {
+  const addedMedia = hasAddedMedia(day);
+  if (!getMeetingType(day.date) && !addedMedia) return undefined;
+  if (day.status === 'error') return 'error';
+  if (day.status === 'complete' || isMemorialDay(day.date)) return 'ready';
+  return addedMedia ? 'added' : 'pending';
 };
+
+const dayStatuses = computed(() => {
+  const statuses: Partial<Record<string, CalendarDayStatus>> = {};
+  try {
+    for (const day of lookupDays.value) {
+      const status = getDayStatus(day);
+      if (status) statuses[formatDate(day.date, 'YYYY/MM/DD')] = status;
+    }
+  } catch (error) {
+    errorCatcher(error, { contexts: { fn: { name: 'dayStatuses' } } });
+  }
+  return statuses;
+});
 
 const additionalMediaForSelectedDayExists = computed(() => {
   if (!selectedDateObject.value?.mediaSections) return false;
@@ -592,50 +587,6 @@ const additionalMediaForSelectedDayExists = computed(() => {
 });
 
 const mediaDeleteAllPending = ref(false);
-
-const getEventDates = () => {
-  try {
-    if (!lookupPeriod.value || !currentCongregation.value) return [];
-    const meetingDates =
-      lookupPeriod.value[currentCongregation.value]
-        ?.filter((day) => getMeetingType(day.date))
-        .map((day) => formatDate(day.date, 'YYYY/MM/DD')) || [];
-    return meetingDates.concat(additionalMediaDates.value);
-  } catch (error) {
-    errorCatcher(error);
-    return [];
-  }
-};
-
-const minDate = () => {
-  try {
-    if (!lookupPeriod.value || !currentCongregation.value) return undefined;
-    const dateArray: Date[] =
-      lookupPeriod.value[currentCongregation.value]?.map((day) => day.date) ||
-      [];
-    if (!dateArray[0]) return undefined;
-    const minDate = getMinDate(dateArray[0], ...dateArray.slice(1));
-    return formatDate(minDate, 'YYYY/MM');
-  } catch (error) {
-    errorCatcher(error);
-    return undefined;
-  }
-};
-
-const maxDate = () => {
-  try {
-    if (!lookupPeriod.value || !currentCongregation.value) return undefined;
-    const dateArray: Date[] =
-      lookupPeriod.value[currentCongregation.value]?.map((day) => day.date) ||
-      [];
-    if (!dateArray[0]) return undefined;
-    const maxDate = getMaxDate(dateArray[0], ...dateArray.slice(1));
-    return formatDate(maxDate, 'YYYY/MM');
-  } catch (error) {
-    errorCatcher(error);
-    return undefined;
-  }
-};
 
 const importMenu = useTemplateRef<QMenu>('importMenu');
 // Set alongside `section` whenever openImportMenu is given a real section,
@@ -665,45 +616,6 @@ const handleImportMenuBeforeShow = () => {
     return;
   }
   section.value = undefined;
-};
-
-const dateOptions = (lookupDate: string) => {
-  try {
-    if (!lookupPeriod.value || !currentCongregation.value) return true;
-    const dateArray: Date[] =
-      lookupPeriod.value[currentCongregation.value]?.map((day) => day.date) ||
-      [];
-    if (!dateArray[0]) return true;
-    const minDate = getMinDate(dateArray[0], ...dateArray.slice(1));
-    const maxDate = getMaxDate(dateArray[0], ...dateArray.slice(1));
-    return (
-      getDateDiff(lookupDate, minDate, 'days') >= 0 &&
-      getDateDiff(lookupDate, maxDate, 'days') <= 0
-    );
-  } catch (error) {
-    errorCatcher(error);
-    return true;
-  }
-};
-
-const getEventDayColor = (eventDate: string) => {
-  try {
-    if (!lookupPeriod.value || !currentCongregation.value)
-      throw new Error('No congregation or lookup period');
-    const lookupDate = lookupPeriod.value[currentCongregation.value]?.find(
-      (d) => datesAreSame(eventDate, d.date),
-    );
-    if (lookupDate?.status === 'error') {
-      return 'negative';
-    } else if (lookupDate?.status === 'complete' || isMemorialDay(eventDate)) {
-      return 'positive';
-    }
-    if (additionalMediaForDayExists(eventDate)) return 'imported-media';
-  } catch (error) {
-    errorCatcher(error);
-    return 'negative';
-  }
-  return 'warning';
 };
 
 useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(

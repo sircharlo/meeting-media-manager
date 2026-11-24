@@ -1,4 +1,7 @@
-export const DAYS_IN_FUTURE = 35; // How many days in the future to fetch data for by default
+// How many full weeks (Monday to Sunday), starting with the current one, to
+// fetch data for by default. The header's date picker shows one row per week,
+// so every row it shows is complete.
+export const WEEKS_TO_FETCH = 6;
 
 // How far ahead of the meeting start background music is allowed to
 // auto-start. The before-meeting quick-actions panel shows itself over the

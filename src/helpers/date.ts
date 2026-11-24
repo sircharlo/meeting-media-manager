@@ -1,7 +1,7 @@
 import type { DateInfo, SettingsValues } from 'src/types';
 
 import { i18n } from 'boot/i18n';
-import { DAYS_IN_FUTURE } from 'src/constants/date';
+import { WEEKS_TO_FETCH } from 'src/constants/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
 import {
@@ -281,8 +281,10 @@ function extendLookupPeriod(
 ) {
   if (!lookupPeriod?.[congregation]) return;
   const { getMeetingType } = useCurrentStateStore();
-  const DAYS_AHEAD =
-    (settings.meteredConnection ? 1 : DAYS_IN_FUTURE) + currentDate.getDay();
+  // Whole weeks from this week's Monday, whatever today's weekday is. A
+  // metered connection keeps just the current week: meetings after tomorrow
+  // still aren't fetched there (see shouldSkipMeteredMeeting in jw-media.ts).
+  const DAYS_AHEAD = (settings.meteredConnection ? 1 : WEEKS_TO_FETCH) * 7;
 
   const existingDates = new Set(
     lookupPeriod[congregation]
