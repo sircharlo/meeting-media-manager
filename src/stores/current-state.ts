@@ -579,7 +579,11 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     /** The names of the selected day's hidden media items (see getHiddenMediaNames). */
     hiddenMediaNamesForSelectedDate(): string[] {
-      return getHiddenMediaNames(this.selectedDateObject?.mediaSections);
+      const t = i18n.global.t as (key: string) => string;
+      return getHiddenMediaNames(
+        this.selectedDateObject?.mediaSections,
+        (songNumber, name) => `${t('song')} ${songNumber}: ${name}`,
+      );
     },
     isSelectedDayToday(): boolean {
       try {

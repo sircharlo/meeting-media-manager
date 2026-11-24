@@ -23,6 +23,55 @@ describe('getHiddenMediaNames', () => {
     );
   });
 
+  it("names an item whose title is a publication's HTML in plain text", () => {
+    expect(
+      getHiddenMediaNames([
+        section([
+          item({
+            hidden: true,
+            title:
+              '<span class="eloc">wcg p. 90-93</span> <span class="etitle">Les enfants sont un don sacré</span>',
+          }),
+          item({ hidden: true, title: 'Q&amp;A' }),
+        ]),
+      ]),
+    ).toEqual(['wcg p. 90-93 Les enfants sont un don sacré', 'Q&A']);
+  });
+
+  it('names a song with its number, from its tag', () => {
+    const formatSong = (songNumber: string, name: string) =>
+      `Song ${songNumber}: ${name}`;
+
+    expect(
+      getHiddenMediaNames(
+        [
+          section([
+            item({
+              hidden: true,
+              tag: { type: 'song', value: 162 },
+              title: 'Mes besoins spirituels',
+            }),
+            item({
+              hidden: true,
+              tag: { type: 'song', value: 94 },
+              title: 'Song 94 (closing)',
+            }),
+            item({
+              hidden: true,
+              tag: { type: 'paragraph', value: 10 },
+              title: 'Picture 1',
+            }),
+          ]),
+        ],
+        formatSong,
+      ),
+    ).toEqual([
+      'Song 162: Mes besoins spirituels',
+      'Song 94 (closing)',
+      'Picture 1',
+    ]);
+  });
+
   it('lists the hidden items in the order of their sections and items', () => {
     expect(
       getHiddenMediaNames([

@@ -91,6 +91,7 @@
             :type="b.type"
           >
             {{ t(b.textKey) }}
+            <template v-if="b.captionKey">{{ t(b.captionKey) }}</template>
           </NoticeBanner>
         </div>
       </q-slide-transition>
@@ -631,6 +632,7 @@ const pageBanners = computed(() =>
     coWeek: isCoWeek(selectedDateObject.value?.date),
     duplicateSongs: duplicateSongsForWeMeeting.value,
     hiddenMediaNames: hiddenMediaNamesForSelectedDate.value,
+    meetingType: selectedDayMeetingType.value,
     obsDisconnected: !!showObsBanner.value,
     obsSceneListError: !!showObsSceneListErrorBanner.value,
     showAllMedia: () =>
