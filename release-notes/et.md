@@ -8,7 +8,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Linux on ARM**: M³ now also comes for Linux computers with a 64-bit ARM processor (arm64), such as a Raspberry Pi 4 or 5 with its 64-bit system, or a laptop with a Snapdragon processor running Linux: as an AppImage, which updates itself like the x86_64 one, and in the Snap Store. It's new, so please report anything that doesn't work on yours.
+- ✨ **Linux ARM-il**: M³ on nüüd saadaval ka 64-bitise ARM-protsessoriga (arm64) Linuxi arvutitele, näiteks 64-bitise süsteemiga Raspberry Pi 4 või 5 või Linuxit kasutav Snapdragoni protsessoriga sülearvuti: AppImage'ina, mis uuendab end ise nagu x86_64 oma, ja Snap Store'is. See on uus, seega anna palun teada kõigest, mis sinu arvutis ei tööta.
 
 ## v26.11.4
 
