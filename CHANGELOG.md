@@ -21,6 +21,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🔧 Chores
 
+- 🔧 **Error Reporting**: Error reports now say how M³ was installed (with its installer, as the portable version or the AppImage, or from an app store), and, on Windows and macOS, whether it runs under emulation on a computer with an ARM processor. This shows how many people would benefit from a Windows version made for ARM processors. The [privacy policy](https://sircharlo.github.io/meeting-media-manager/privacy) says so too.
 - 🔧 **Error Reporting**: Importing an AVI video no longer sends an error report saying its details can't be read. M³ already knows it can't read those files, and offers to convert them. And when M³ can't open a publication's database, it now reports it once instead of once for each lookup, saying whether the file and its folder were still there.
 
 ## v26.11.4

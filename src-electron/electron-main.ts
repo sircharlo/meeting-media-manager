@@ -40,6 +40,7 @@ import {
   writeJsonResilientSync,
 } from 'src-electron/main/resilient-storage';
 import { initScreenListeners } from 'src-electron/main/screen';
+import { getSentryTags } from 'src-electron/main/sentry-tags';
 import {
   initSessionListeners,
   setAppQuitting,
@@ -149,6 +150,9 @@ if (SENTRY_DSN) {
     dataCollection: { cookies: false, httpBodies: [], userInfo: false },
     dsn: SENTRY_DSN,
     environment: SENTRY_ENVIRONMENT,
+    // How M³ was installed, and whether it runs under emulation on an ARM
+    // computer. The renderer gets the same tags (src/boot/sentry.ts).
+    initialScope: { tags: getSentryTags() },
     release: sentryRelease,
     // v8 streams spans by default, which turns every main-process request
     // (each media download, update check, etc.) into its own root span sent

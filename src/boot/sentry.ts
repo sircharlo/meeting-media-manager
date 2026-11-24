@@ -60,6 +60,10 @@ export default defineBoot(({ app, router }) => {
       dataCollection: { cookies: false, httpBodies: [], userInfo: false },
       dsn,
       environment,
+      // The main process's tags (how M³ was installed, and whether it runs
+      // under emulation on an ARM computer), which it puts on its own events
+      // too (src-electron/electron-main.ts).
+      initialScope: { tags: globalThis.electronApi?.getSentryTags() ?? {} },
       integrations: [
         vueIntegration({ app }),
         browserSessionIntegration(),
