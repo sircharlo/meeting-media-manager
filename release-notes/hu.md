@@ -8,6 +8,7 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ### ✨ Új funkciók
 
+- ✨ **Circuit Overseer's Visit and Memorial Week**: During the circuit overseer's visit and the week of the Memorial, a label next to the date at the top of the window says so. Point at it to see what's different on the selected day, such as the midweek meeting moving to Tuesday, the media M³ hides then, or the meeting the Memorial replaces. On the usual midweek day of the visit, or the meeting day the Memorial replaces, the empty page now explains why there's no meeting, with a button that goes to Tuesday or to the Memorial. In the calendar, that week's meeting days take the week's color, and the week is named under its dates.
 - ✨ **Linux ARM-on**: Az M³ mostantól a 64 bites ARM processzoros (arm64) linuxos számítógépekre is elérhető, például a 64 bites rendszert futtató Raspberry Pi 4-re vagy 5-re, vagy a Linuxot futtató, Snapdragon processzoros laptopokra: AppImage formátumban, amely az x86_64-es változathoz hasonlóan magától frissül, valamint a Snap Store-ban. Ez újdonság, ezért kérjük, jelezze, ha valami nem működik az Ön gépén.
 
 ## v26.11.4

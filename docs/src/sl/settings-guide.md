@@ -32,11 +32,11 @@ Nadzorujte temo aplikacije M³.
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Nastavite, kateri dan naj se v koledarju šteje za prvi dan v tednu.
+Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
 
 **Možnosti**: od nedelje do sobote
 
-**Privzeto**: nedelja
+**Default**: Monday
 
 ### Oblika datuma {#date-format}
 

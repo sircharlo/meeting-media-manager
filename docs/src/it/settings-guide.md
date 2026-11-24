@@ -32,11 +32,11 @@ Controlla il tema dell'aspetto di M³.
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Imposta quale giorno deve essere considerato il primo giorno della settimana nella vista calendario.
+Set which day should be considered the first day of the week in the date fields in Settings, such as the date of the circuit overseer's visit. The calendar at the top of the window always shows weeks from Monday to Sunday, like meeting weeks.
 
 **Opzioni**: da domenica a sabato
 
-**Predefinito**: domenica
+**Default**: Monday
 
 ### Formato della data {#date-format}
 

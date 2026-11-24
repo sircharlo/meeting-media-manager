@@ -8,6 +8,7 @@
 
 ### ✨ Нові функції
 
+- ✨ **Circuit Overseer's Visit and Memorial Week**: During the circuit overseer's visit and the week of the Memorial, a label next to the date at the top of the window says so. Point at it to see what's different on the selected day, such as the midweek meeting moving to Tuesday, the media M³ hides then, or the meeting the Memorial replaces. On the usual midweek day of the visit, or the meeting day the Memorial replaces, the empty page now explains why there's no meeting, with a button that goes to Tuesday or to the Memorial. In the calendar, that week's meeting days take the week's color, and the week is named under its dates.
 - ✨ **Linux на ARM**: Тепер M³ доступна й для комп’ютерів з Linux і 64-бітним процесором ARM (arm64), наприклад Raspberry Pi 4 або 5 з 64-бітною системою чи ноутбука з процесором Snapdragon під Linux: як AppImage, що оновлюється сам, як і версія для x86_64, і в Snap Store. Це новинка, тож, будь ласка, повідомляйте про все, що не працює на вашому комп’ютері.
 
 ## v26.11.4

@@ -38,11 +38,12 @@
 
 ### Как устроен календарь {#calendar-view}
 
-В календаре отображаются расписание встреч и доступные медиа:
+Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
 
-- **Дни встреч** — выделенные дни показывают, когда запланированы встречи
-- **Индикаторы медиа** — значки показывают, какие типы медиа доступны
-- **Переход по датам** — используйте клавиши со стрелками для перехода между месяцами
+- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
+- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
+- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
+- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
 
 ### Упорядочивание медиа {#organizing-media}
 
