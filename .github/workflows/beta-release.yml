@@ -184,20 +184,42 @@ jobs:
       SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  # Reruns the failed builds once. A build that no runner picked up (GitHub
-  # short of macOS runners: "The job was not acquired by Runner of type
-  # hosted even after multiple attempts") ends cancelled, not failed, so a
-  # cancelled build is rerun too; a run someone cancelled is not.
+  # Reruns the failed builds once, and a build that no runner picked up
+  # (GitHub short of macOS runners). That build ends cancelled, not failed,
+  # and a cancelled build makes cancelled() true for the jobs after it, as a
+  # run someone cancelled does, so this job runs always() and tells the two
+  # apart by the cancelled build's annotation: "The job was not acquired by
+  # Runner of type hosted even after multiple attempts".
   rerun-on-failure:
     needs: [build]
-    if: ${{ !cancelled() && (failure() || needs.build.result == 'cancelled') && fromJSON(github.run_attempt) < 2 }}
+    if: ${{ always() && (needs.build.result == 'failure' || needs.build.result == 'cancelled') && fromJSON(github.run_attempt) < 2 }}
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      checks: read
     steps:
       - env:
+          BUILD_RESULT: ${{ needs.build.result }}
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
-          GH_DEBUG: api
-        run: gh workflow run rerun.yml -F run_id=${{ github.run_id }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          if [ "$BUILD_RESULT" = cancelled ]; then
+            cancelled_jobs=$(gh api "repos/$GH_REPO/actions/runs/$RUN_ID/jobs?filter=latest&per_page=100" --jq '.jobs[] | select(.conclusion == "cancelled") | .id')
+            not_acquired=0
+            for job in $cancelled_jobs; do
+              annotations=$(gh api "repos/$GH_REPO/check-runs/$job/annotations" --jq '.[].message')
+              if grep -q 'was not acquired by Runner' <<< "$annotations"; then
+                echo "Job $job was cancelled because no runner picked it up."
+                not_acquired=1
+              fi
+            done
+            if [ "$not_acquired" -eq 0 ]; then
+              echo "The build was cancelled (cancelled jobs: ${cancelled_jobs:-none}), not left without a runner, so it isn't rerun."
+              exit 0
+            fi
+          fi
+          gh workflow run rerun.yml -F run_id="$RUN_ID"
 
   publish-release:
     name: 'Publish release'
