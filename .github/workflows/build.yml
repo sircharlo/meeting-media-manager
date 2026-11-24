@@ -289,7 +289,7 @@ jobs:
           "$app" --appimage-extract > /dev/null
           file squashfs-root/meeting-media-manager squashfs-root/resources/ffmpeg/bin/ffmpeg
           squashfs-root/resources/ffmpeg/bin/ffmpeg -hide_banner -version | head -n 1
-          find squashfs-root -name '*.node' -exec file {} ;
+          find squashfs-root -name '*.node' -exec file {} +
           sudo apt-get install -y xvfb > /dev/null
           ELECTRON_RUN_AS_NODE=1 xvfb-run -a squashfs-root/meeting-media-manager -e "const r = require('$RUNNER_TEMP/squashfs-root/resources/app.asar/node_modules/robotjs'); console.log('robotjs loaded:', typeof r.keyTap, JSON.stringify(r.getScreenSize()))"
           set +e
@@ -420,7 +420,7 @@ jobs:
           sudo apt-get install -y squashfs-tools xvfb > /dev/null
           unsquashfs -n -d "$RUNNER_TEMP/snap" "$snap" > /dev/null
           head -n 30 "$RUNNER_TEMP/snap/meta/snap.yaml"
-          find "$RUNNER_TEMP/snap" ( -name meeting-media-manager -o -name ffmpeg -o -name '*.node' ) -type f -exec file {} ;
+          for name in meeting-media-manager ffmpeg '*.node'; do find "$RUNNER_TEMP/snap" -type f -name "$name" -exec file {} +; done
           sudo snap install --dangerous "$snap"
           snap list meeting-media-manager
           set +e
