@@ -94,6 +94,18 @@ $secondary-contrast-dark: black;
 $generic-border-radius: 8px !default;
 $button-border-radius: 6px !default;
 
+// Special weeks: the circuit overseer's visit takes the app's blue, the
+// Memorial a wine colour. The base shades are for fills and tints. The
+// strong ones are for text, readable at 4.5:1 or more: on the page or on a
+// white chip (light), or on the dark page (dark).
+$co-week: $primary;
+$co-week-strong: $notice-info-light;
+$co-week-strong-dark: $notice-info-dark;
+$memorial-week: #9b3f80;
+$memorial-week-dark: #b85a9c;
+$memorial-week-strong: #7d2c66;
+$memorial-week-strong-dark: #e7a9d6;
+
 $treasures: rgb(60, 127, 139);
 $apply: rgb(214, 143, 0);
 $living: rgb(191, 47, 19);

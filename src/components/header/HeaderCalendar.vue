@@ -280,6 +280,40 @@
       mediaDeleteAllPending = false;
     "
   />
+  <div
+    v-if="specialWeek"
+    class="special-week-chip"
+    :class="[
+      `special-week-chip--${specialWeek.kind}`,
+      { 'special-week-chip--icon-only': !$q.screen.gt.sm },
+    ]"
+  >
+    <span
+      v-if="specialWeekGlyph"
+      aria-hidden="true"
+      class="jw-icon special-week-chip__glyph"
+    >
+      {{ specialWeekGlyph }}
+    </span>
+    <q-icon v-else :name="specialWeekFallbackIcon" size="18px" />
+    <span v-if="$q.screen.gt.sm">{{ specialWeekChipLabel }}</span>
+    <q-tooltip :delay="300" max-width="320px">
+      <div class="text-weight-bold">
+        {{ specialWeekTitle }} ({{ specialWeekRange }})
+      </div>
+      <div v-for="line in specialWeekMessage" :key="line">{{ line }}</div>
+      <template v-if="specialWeekHiddenNames.length">
+        <div class="q-mt-xs">{{ t('special-week-hidden-items') }}</div>
+        <div
+          v-for="name in specialWeekHiddenNames"
+          :key="name"
+          class="ellipsis"
+        >
+          · {{ name }}
+        </div>
+      </template>
+    </q-tooltip>
+  </div>
   <q-btn color="white-transparent" :disable="mediaIsPlaying" unelevated>
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
@@ -296,6 +330,7 @@
         :day-statuses="dayStatuses"
         :max="lookupBounds?.max"
         :min="lookupBounds?.min"
+        :special-weeks="specialWeeks"
       />
     </q-popup-proxy>
   </q-btn>
@@ -390,6 +425,7 @@ import type {
   MediaSectionIdentifier,
   MultimediaItem,
   PublicationFetcher,
+  SpecialWeekKind,
 } from 'src/types';
 
 import { useEventListener, watchImmediate } from '@vueuse/core';
@@ -406,9 +442,11 @@ import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
 import WeekCalendar from 'components/header/WeekCalendar.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { useSpecialWeek } from 'src/composables/useSpecialWeek';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMemorialDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import {
   addJwpubDocumentMediaToFiles,
   createMediaItemFromPath,
@@ -417,6 +455,7 @@ import {
   getPubMediaLinks,
 } from 'src/helpers/jw-media';
 import { withPendingSectionImport } from 'src/helpers/pending-section-imports';
+import { getSpecialWeek } from 'src/helpers/special-weeks';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import { formatDate, getLocalDate } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -554,13 +593,54 @@ const hasAddedMedia = (day: DateInfo) =>
     sectionMedia.items?.some((media) => media.source !== 'dynamic'),
   ) ?? false;
 
+// A meeting day of the circuit overseer's visit or the Memorial week takes
+// the week's colour, unless fetching its media failed.
 const getDayStatus = (day: DateInfo): CalendarDayStatus | undefined => {
   const addedMedia = hasAddedMedia(day);
-  if (!getMeetingType(day.date) && !addedMedia) return undefined;
+  const isEventDay = !!getMeetingType(day.date) || isMemorialDay(day.date);
+  if (!isEventDay && !addedMedia) return undefined;
   if (day.status === 'error') return 'error';
+  const specialWeek = isEventDay ? getSpecialWeek(day.date) : undefined;
+  if (specialWeek) return specialWeek.kind;
   if (day.status === 'complete' || isMemorialDay(day.date)) return 'ready';
   return addedMedia ? 'added' : 'pending';
 };
+
+// The date picker's special weeks, keyed by their Monday.
+const specialWeeks = computed(() => {
+  const weeks: Partial<Record<string, SpecialWeekKind>> = {};
+  try {
+    for (const day of lookupDays.value) {
+      const week = getSpecialWeek(day.date);
+      if (week) weeks[formatDate(week.monday, 'YYYY/MM/DD')] = week.kind;
+    }
+  } catch (error) {
+    errorCatcher(error, { contexts: { fn: { name: 'specialWeeks' } } });
+  }
+  return weeks;
+});
+
+const {
+  chipLabel: specialWeekChipLabel,
+  hiddenNames: specialWeekHiddenNames,
+  messageLines: specialWeekMessage,
+  range: specialWeekRange,
+  specialWeek,
+  title: specialWeekTitle,
+} = useSpecialWeek();
+
+// The JW icons font draws the chip's icon, like the section headers'. It
+// can't load in demo mode (no network), so a bundled icon stands in there.
+const specialWeekGlyph = computed(() => {
+  if (!specialWeek.value || demoMode.enabled) return '';
+  return getJwIconFromKeyword(
+    specialWeek.value.kind === 'co' ? 'circuit-overseer' : 'memorial',
+  );
+});
+
+const specialWeekFallbackIcon = computed(() =>
+  specialWeek.value?.kind === 'co' ? 'mmm-lectern' : 'mmm-calendar-month',
+);
 
 const dayStatuses = computed(() => {
   const statuses: Partial<Record<string, CalendarDayStatus>> = {};
@@ -1220,3 +1300,37 @@ watchImmediate(
   },
 );
 </script>
+
+<style lang="scss" scoped>
+// A white pill on the blue header in both themes, so its text keeps the
+// light theme's strong shades (see quasar.variables.scss).
+.special-week-chip {
+  align-items: center;
+  background: white;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 600;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px 0 8px;
+  vertical-align: middle;
+}
+
+.special-week-chip--icon-only {
+  padding: 0 6px;
+}
+
+.special-week-chip--co {
+  color: $co-week-strong;
+}
+
+.special-week-chip--memorial {
+  color: $memorial-week-strong;
+}
+
+.special-week-chip__glyph {
+  font-size: 18px;
+  line-height: 1;
+}
+</style>

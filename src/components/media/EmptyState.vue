@@ -157,6 +157,18 @@
               {{ t('try-again') }}
             </q-btn>
             <q-btn
+              v-if="showMovedMeeting"
+              :color="
+                specialWeek?.kind === 'memorial' ? 'memorial-week' : 'primary'
+              "
+              unelevated
+              @click="goToKeyDate"
+            >
+              <q-icon class="q-mr-sm" name="mmm-go-to-date" size="xs" />
+              {{ goToLabel }}
+            </q-btn>
+            <q-btn
+              v-else
               class="btn-tonal"
               color="primary"
               flat
@@ -187,6 +199,7 @@ import type { DateInfo, MediaSectionIdentifier } from 'src/types';
 import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
+import { useSpecialWeek } from 'src/composables/useSpecialWeek';
 import { TINY_SCREEN_WIDTH } from 'src/constants/general';
 import { isWeMeetingDay } from 'src/helpers/date';
 import { formatDate, getDateDiff } from 'src/utils/date';
@@ -377,6 +390,24 @@ const emptyStateFlags = computed(() => {
   };
 });
 
+const {
+  goToKeyDate,
+  goToLabel,
+  isMovedDay,
+  movedDayExplanation,
+  movedDayTitle,
+  specialWeek,
+} = useSpecialWeek();
+
+// The usual midweek day of the circuit overseer's visit, or the meeting day
+// the Memorial replaces: say why there's no meeting, and offer the right day.
+const showMovedMeeting = computed(
+  () =>
+    isMovedDay.value &&
+    !selectedDayMeetingType.value &&
+    !currentSettings.value?.disableMediaFetching,
+);
+
 const primaryEmptyStateMessage = computed(() => {
   const f = emptyStateFlags.value;
 
@@ -391,6 +422,8 @@ const primaryEmptyStateMessage = computed(() => {
     }
     return t('please-wait');
   }
+
+  if (showMovedMeeting.value) return movedDayTitle.value;
 
   return t('there-are-no-media-items-for-the-selected-date');
 });
@@ -408,6 +441,8 @@ const secondaryEmptyStateMessage = computed(() => {
     }
     return t('currently-loading');
   }
+
+  if (showMovedMeeting.value) return movedDayExplanation.value;
 
   return t(
     'use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media',
