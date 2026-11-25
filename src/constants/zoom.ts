@@ -17,6 +17,12 @@ export const HOST_MIC_MUTE_AFTER_MEDIA_START_SECONDS = 5;
 /** ...until this many seconds before it ends (src/helpers/zoom.ts). */
 export const HOST_MIC_UNMUTE_BEFORE_MEDIA_END_SECONDS = 10;
 
+/**
+ * Media that plays for less than this many seconds, from where it started
+ * to its end, leaves the host microphone on throughout.
+ */
+export const HOST_MIC_MIN_MEDIA_SECONDS = 30;
+
 /** The setup assistant's id in the dialog-state store. */
 export const ZOOM_SETUP_ASSISTANT_DIALOG_ID = 'zoom-setup-assistant';
 

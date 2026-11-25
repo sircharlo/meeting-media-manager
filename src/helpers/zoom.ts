@@ -15,6 +15,7 @@ import { i18n } from 'boot/i18n';
 import { AUTO_START_WINDOW_HOURS } from 'src/constants/date';
 import { AUDIO_EXTENSIONS, VIDEO_EXTENSIONS } from 'src/constants/media';
 import {
+  HOST_MIC_MIN_MEDIA_SECONDS,
   HOST_MIC_MUTE_AFTER_MEDIA_START_SECONDS,
   HOST_MIC_UNMUTE_BEFORE_MEDIA_END_SECONDS,
   MEDIA_WINDOW_TITLE,
@@ -1343,8 +1344,9 @@ const hostMicMediaStart = { played: false, position: Number.NaN, url: '' };
  * Whether the media playing is where the host microphone is muted for it
  * (see above): a video or an audio file, playing, from a few seconds after
  * it started (where it started: a trim's start, or where the user cued it)
- * until a few seconds before it ends. Media that starts over at its end
- * has none: it stays muted, its start played once.
+ * until a few seconds before it ends. Short media leaves it on throughout
+ * (HOST_MIC_MIN_MEDIA_SECONDS). Media that starts over at its end has none:
+ * however short, it stays muted, its start played once.
  */
 const isHostMicMutedForPlayback = (playback: HostMicPlayback) => {
   const start = hostMicMediaStart;
@@ -1366,6 +1368,12 @@ const isHostMicMutedForPlayback = (playback: HostMicPlayback) => {
     HOST_MIC_MUTE_AFTER_MEDIA_START_SECONDS;
   if (!start.played) return false;
   if (playback.loops || !playback.end) return true;
+  if (
+    (playback.end - start.position) / playback.rate <
+    HOST_MIC_MIN_MEDIA_SECONDS
+  ) {
+    return false;
+  }
   return (
     (playback.end - playback.position) / playback.rate >
     HOST_MIC_UNMUTE_BEFORE_MEDIA_END_SECONDS

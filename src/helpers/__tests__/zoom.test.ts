@@ -1337,13 +1337,33 @@ describe('the host microphone while media plays', () => {
     expect(micCommands()).toEqual([false, true]);
   });
 
-  it('leaves it on for media too short to be muted for', async () => {
+  it('leaves it on for media that plays less than 30 seconds', async () => {
     const { automateZoomMediaSharing, play } = await loadZoom();
     await automateZoomMediaSharing(true);
 
-    await play(VIDEO, [0, 5, 10, 14], { end: 15 });
+    await play(VIDEO, [0, 5, 10, 19.9, 29.8], { end: 29.9 });
+    // A clip trimmed (or cued) out of a longer file: what plays is short.
+    await play(SONG, [100, 106, 115], { end: 120 });
 
     expect(micCommands()).toEqual([]);
+  });
+
+  it('mutes it for media that plays 30 seconds', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+
+    await play(VIDEO, [0, 5, 20], { end: 30 });
+
+    expect(micCommands()).toEqual([false, true]);
+  });
+
+  it('mutes it for short media that starts over at its end', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+
+    await play(VIDEO, [0, 5, 9, 0, 3], { end: 10, loops: true });
+
+    expect(micCommands()).toEqual([false]);
   });
 
   it('counts in seconds of playback at another speed', async () => {
@@ -1596,8 +1616,8 @@ describe('the host microphone while media plays', () => {
     // Stops the watcher with the test (each test loads the module afresh).
     const scope = effectScope();
     try {
-      // Trimmed to its first 30 seconds.
-      const item = { customDuration: { max: 30, min: 0 }, duration: 60 };
+      // Trimmed to its first 45 seconds.
+      const item = { customDuration: { max: 45, min: 0 }, duration: 60 };
       scope.run(() => startZoomHostMicMediaSync(() => item));
 
       Object.assign(mediaPlaying, {
@@ -1611,7 +1631,7 @@ describe('the host microphone while media plays', () => {
       mediaPlaying.currentPosition = 6;
       await vi.waitFor(() => expect(micCommands()).toEqual([false]));
 
-      mediaPlaying.currentPosition = 20;
+      mediaPlaying.currentPosition = 35;
       await vi.waitFor(() => expect(micCommands()).toEqual([false, true]));
     } finally {
       scope.stop();
