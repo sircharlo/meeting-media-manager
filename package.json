@@ -120,7 +120,7 @@
     "globals": "^17.14.0",
     "happy-dom": "^21.0.4",
     "husky": "^9.1.7",
-    "lint-staged": "^17.6.1",
+    "lint-staged": "^17.6.2",
     "lodash-es": "^4.18.1",
     "msw": "^3.0.7",
     "playwright": "^1.65.1",
