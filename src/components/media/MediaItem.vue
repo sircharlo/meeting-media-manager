@@ -2505,10 +2505,7 @@ const setMediaPlaying = async (
   });
 
   if (shouldStartZoomManagerSharing) {
-    const sharingStarted = await automateZoomMediaSharing(
-      true,
-      mediaPlaying.value.url,
-    );
+    const sharingStarted = await automateZoomMediaSharing(true);
     if (!sharingStarted) {
       log('Zoom media sharing did not start', 'zoom', 'warn', {
         mediaTitle: media.title,
