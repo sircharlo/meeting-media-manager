@@ -331,9 +331,11 @@ async function waitUnlessAborted<T>(
 // return", not a client bug. 'ewt' (MMM-V2-3FK), 'cew' and 'iut'
 // (MMM-V2-3KJ) are referenced by the Pioneer Service School media playlist
 // (pssmp) JWPUB and return 400 for every language and format, with an
-// empty mediator entry - school-only items with no public media. Add
-// symbols here individually rather than guessing at a broader pattern.
-const IGNORED_400_PUB_SYMBOLS = new Set(['cew', 'ewt', 'iut']);
+// empty mediator entry - school-only items with no public media. 'jtf'
+// (MMM-V2-3KJ) is likewise referenced by an imported JWPUB and returns 400
+// from GETPUBMEDIALINKS with no public media. Add symbols here
+// individually rather than guessing at a broader pattern.
+const IGNORED_400_PUB_SYMBOLS = new Set(['cew', 'ewt', 'iut', 'jtf']);
 
 export async function shouldReportCaughtError(error: unknown, online: boolean) {
   if (!online) return false;
