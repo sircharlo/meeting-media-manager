@@ -606,7 +606,7 @@ describe('fetchJson network errors', () => {
     expect(errorCatcher).not.toHaveBeenCalled();
   });
 
-  it.each(['ewt', 'cew', 'iut'])(
+  it.each(['ewt', 'cew', 'iut', 'jtf'])(
     'should not report a 400 for pub=%s, confirmed to have no media',
     async (pub) => {
       vi.spyOn(globalThis, 'fetch').mockResolvedValue(
