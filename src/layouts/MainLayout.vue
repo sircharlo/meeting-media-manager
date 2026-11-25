@@ -163,6 +163,10 @@ import {
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import {
+  syncMemorialDate,
+  updateMemorialDates,
+} from 'src/helpers/memorial-date';
+import {
   checkLowDiskSpaceAndNotify,
   createTemporaryNotification,
   notifyDiskFull,
@@ -196,7 +200,7 @@ import {
 } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { fetchYeartext } from 'src/utils/api';
-import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
+import { formatDate } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
 import { mmmIconMapFn } from 'src/utils/icon-map';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
@@ -248,7 +252,7 @@ const {
 
 const jwStore = useJwStore();
 
-const { updateJwLanguages, updateMemorials } = jwStore;
+const { updateJwLanguages } = jwStore;
 const { lookupPeriod } = storeToRefs(jwStore);
 
 const {
@@ -280,7 +284,7 @@ const {
   setPathProbeNotificationPaths,
   toggleTimerWindow,
 } = globalThis.electronApi;
-void updateMemorials(online.value);
+void updateMemorialDates(online.value);
 void updateJwLanguages(online.value);
 
 const hasActiveDownloads = () => currentState.hasActiveMediaWork;
@@ -1501,17 +1505,9 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
 
-    const year = new Date().getFullYear();
-
-    const memorialDate =
-      jwStore.memorials[year] &&
-      !isInPast(getSpecificWeekday(jwStore.memorials[year], 6))
-        ? jwStore.memorials[year]
-        : jwStore.memorials[year + 1];
-
-    if (currentSettings.value && memorialDate) {
-      currentSettings.value.memorialDate = memorialDate;
-    }
+    // With the dates fetched so far; updateMemorialDates() syncs again once
+    // a fetch started at launch is in.
+    syncMemorialDate();
 
     downloadProgress.value = {};
     clearMeetingCheckStatusPruneTimers();

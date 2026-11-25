@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
 import type {
+  DateReminderId,
   FeatureNudgeId,
   FeatureNudgeProfileState,
   FeatureNudgeResponse,
@@ -17,6 +18,13 @@ import { useJwStore } from 'stores/jw';
 interface Store {
   announcements: Partial<Record<string, string[]>>;
   congregations: Partial<Record<string, SettingsValues>>;
+  /**
+   * Until when (ms since epoch) each reminder to add a special date stays
+   * quiet, per profile.
+   */
+  dateReminderSnoozes: Partial<
+    Record<string, Partial<Record<DateReminderId, number>>>
+  >;
   /** Answers to the "Did you know?" feature suggestions, per profile. */
   featureNudges: Partial<Record<string, FeatureNudgeProfileState>>;
   quickStartTourSeen: Partial<Record<string, boolean>>;
@@ -159,6 +167,7 @@ export const useCongregationSettingsStore = defineStore(
         // to remember to duplicate it.
         const congId = String(id);
         delete this.announcements[congId];
+        delete this.dateReminderSnoozes[congId];
         delete this.featureNudges[congId];
         delete this.quickStartTourSeen[congId];
         delete useJwStore().lookupPeriod[congId];
@@ -189,6 +198,16 @@ export const useCongregationSettingsStore = defineStore(
       resetFeatureNudges(congId: string) {
         if (!congId) return;
         delete this.featureNudges[congId];
+      },
+      /**
+       * Keeps a profile's reminder to add a special date quiet until `until`
+       * (ms since epoch). Never shortens a longer snooze already in place.
+       */
+      snoozeDateReminder(congId: string, id: DateReminderId, until: number) {
+        if (!congId) return;
+        this.dateReminderSnoozes[congId] ??= {};
+        const snoozes = this.dateReminderSnoozes[congId];
+        snoozes[id] = Math.max(snoozes[id] ?? 0, until);
       },
       stopFeatureNudges(congId: string) {
         if (!congId) return;
@@ -322,6 +341,7 @@ export const useCongregationSettingsStore = defineStore(
       return {
         announcements: {},
         congregations: {},
+        dateReminderSnoozes: {},
         featureNudges: {},
         quickStartTourSeen: {},
       };

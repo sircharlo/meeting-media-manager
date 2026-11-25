@@ -248,6 +248,10 @@ import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
 import { MEDIA_STOP_FADE_DURATION_SECONDS } from 'src/constants/media';
 import { isCoWeek, isMemorialDay, isWeMeetingDay } from 'src/helpers/date';
+import {
+  isDateReminderSilenced,
+  showDateReminder,
+} from 'src/helpers/date-reminders';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import { getRendererPlatform } from 'src/helpers/fs';
@@ -277,6 +281,11 @@ import {
 } from 'src/helpers/media-sections';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
+import {
+  isMemorialDateMissing,
+  syncMemorialDate,
+  whenMemorialDatesUpdated,
+} from 'src/helpers/memorial-date';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { getPageBanners } from 'src/helpers/page-banners';
 import { withPendingSectionImport } from 'src/helpers/pending-section-imports';
@@ -1044,55 +1053,74 @@ const goToNextDayWithMedia = (ignoreTodaysDate = false) => {
   }
 };
 
+// Whether this load can remind the user to add a special date (the CO's
+// visit, the Memorial) that isn't set.
+const canRemindAboutDates = () =>
+  !!currentSettings.value &&
+  !currentSettings.value.disableMediaFetching &&
+  route.params?.typeOfLoad === 'initial' &&
+  !isDemoModeActive() &&
+  // A congregation with no meeting days set yet hasn't been through the
+  // setup wizard at all - this is its first launch. The currentCongregation
+  // watcher below can invoke this while the route param above is still
+  // stale from the previously active congregation (setCongregation()
+  // resolves, and this watcher's callback can run, before the later
+  // router.push('/setup-wizard') in DialogCongregationSwitcher.vue actually
+  // lands), so without this check a brand-new congregation could get a "you
+  // haven't set a CO date" nag before the user has configured anything at
+  // all.
+  (currentSettings.value.mwDay != null || currentSettings.value.weDay != null);
+
 const checkCoDate = () => {
-  if (
-    !currentSettings.value ||
-    currentSettings.value?.disableMediaFetching ||
-    route.params?.typeOfLoad !== 'initial' ||
-    isDemoModeActive() ||
-    // A congregation with no meeting days set yet hasn't been through the
-    // setup wizard at all - this is its first launch. The currentCongregation
-    // watcher below can invoke this while the route param above is still
-    // stale from the previously active congregation (setCongregation()
-    // resolves, and this watcher's callback can run, before the later
-    // router.push('/setup-wizard') in DialogCongregationSwitcher.vue
-    // actually lands), so without this check a brand-new congregation could
-    // get a "you haven't set a CO date" nag before the user has configured
-    // anything at all.
-    (currentSettings.value?.mwDay == null &&
-      currentSettings.value?.weDay == null)
-  )
+  const congId = currentCongregation.value;
+  if (!canRemindAboutDates() || isDateReminderSilenced(congId, 'coWeek')) {
     return;
-  if (
-    !currentSettings.value?.coWeek ||
-    getDateDiff(new Date(), currentSettings.value?.coWeek, 'months') > 2
-  ) {
-    // This can fire right as the congregation switcher modal is closing
-    // (both react to the same route change landing on
-    // /media-calendar/initial) - deferWhileDialogOpen holds it back until
-    // nothing is open, rather than it stacking visually on top of a
-    // still-open/closing modal.
-    createTemporaryNotification({
-      actions: [
-        {
-          color: 'white',
-          label: t('remind-me-later'),
-        },
-        {
-          color: 'white',
-          handler: () => {
-            void router.push('/settings/coWeek');
-          },
-          label: t('go-to-settings'),
-        },
-      ],
-      caption: t('dont-forget-to-add-circuit-overseer-date'),
-      deferWhileDialogOpen: true,
-      message: t('no-circuit-overseer-date-set'),
-      timeout: 30_000,
-      type: 'warning',
-    });
   }
+  const coWeek = currentSettings.value?.coWeek;
+  if (coWeek && getDateDiff(new Date(), coWeek, 'months') <= 2) return;
+  showDateReminder({
+    caption: t('dont-forget-to-add-circuit-overseer-date'),
+    congId,
+    id: 'coWeek',
+    message: t('no-circuit-overseer-date-set'),
+    onGoToSettings: () => {
+      void router.push('/settings/coWeek');
+    },
+  });
+};
+
+const checkMemorialDateSet = async () => {
+  const congId = currentCongregation.value;
+  if (!canRemindAboutDates()) return;
+  // Only once the Memorial dates fetched at launch are in and applied, so
+  // this never asks for a date M³ is about to fill in itself.
+  await whenMemorialDatesUpdated();
+  if (congId !== currentCongregation.value) return;
+  syncMemorialDate();
+  if (
+    isDateReminderSilenced(congId, 'memorialDate') ||
+    !isMemorialDateMissing()
+  ) {
+    return;
+  }
+  showDateReminder({
+    caption: t('dont-forget-to-add-memorial-date'),
+    congId,
+    id: 'memorialDate',
+    message: t('no-memorial-date-set'),
+    onGoToSettings: () => {
+      void router.push('/settings/memorialDate');
+    },
+  });
+};
+
+const checkSpecialDates = () => {
+  checkCoDate();
+  checkMemorialDateSet().catch((error: unknown) => {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'checkMemorialDateSet' } },
+    });
+  });
 };
 
 // Replaces the wizard's own footer-button tutorial steps (previously
@@ -3508,7 +3536,7 @@ onMounted(() => {
   } else {
     void router.push('/settings');
   }
-  checkCoDate();
+  checkSpecialDates();
   maybeShowQuickStartGuide();
 
   watch(
@@ -3579,7 +3607,7 @@ watch(
     if (!selectedDate.value) {
       selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
     }
-    checkCoDate();
+    checkSpecialDates();
     maybeShowQuickStartGuide();
     // onMounted's own fetchMedia() call only covers a fresh mount - this
     // page is reused (not remounted) across an in-place congregation switch,

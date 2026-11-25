@@ -4,6 +4,13 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Circuit Overseer's Visit**: The reminder to add the date of the circuit overseer's next visit now has **Remind me in a month** and **Dismiss for 6 months** buttons, for when the date isn't known yet. Closing it with its × keeps it quiet until M³ is restarted, instead of it coming back each time you switch congregations.
+- 🛠️ **Memorial**: From January 1 to April 20, M³ now reminds you to add the date of the Memorial when it isn't set, with the same buttons. M³ fills in that date by itself when it can, so the reminder only shows when it couldn't. Once the Memorial's week is over, its date is replaced with next year's if it's known, or cleared, instead of staying in Settings. A date you entered yourself is no longer replaced before its week is over.
+
 ## v26.11.5
 
 ### ✨ New Features
