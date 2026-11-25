@@ -878,14 +878,16 @@ export const runWhileHoldingZoomAutomations = async <T>(
 };
 
 /** Whether a check of the Zoom Meeting Manager is using Zoom right now. */
-export const isZoomCheckInProgress = () => !!zoomCheckInProgress;
+export const isZoomCheckInProgress = () => zoomCheckInProgress !== null;
 
 /**
  * Whether the automations may act now: once any check in progress is done,
  * unless a failed check paused them.
  */
 const zoomAutomationsAllowed = async (what: string) => {
-  if (zoomCheckInProgress) await zoomCheckInProgress.catch(() => undefined);
+  if (zoomCheckInProgress !== null) {
+    await zoomCheckInProgress.catch(() => undefined);
+  }
   if (!useZoomStateStore().automationsPaused) return true;
   log(`${what}: skipped, Zoom automations are paused`, 'zoom', 'warn');
   return false;
@@ -1542,7 +1544,7 @@ const startAutomatedMediaShare = async () => {
 };
 
 const stopAutomatedMediaShare = async () => {
-  if (mediaShareStarting) await mediaShareStarting;
+  if (mediaShareStarting !== null) await mediaShareStarting;
   if (!mediaShareStartedByM3) return true;
   const meeting = await getZoomMeetingState();
   // Already stopped in Zoom, or the meeting was left.
