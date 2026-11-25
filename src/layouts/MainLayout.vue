@@ -203,7 +203,7 @@ import { fetchYeartext } from 'src/utils/api';
 import { formatDate } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
 import { mmmIconMapFn } from 'src/utils/icon-map';
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -254,6 +254,19 @@ const jwStore = useJwStore();
 
 const { updateJwLanguages } = jwStore;
 const { lookupPeriod } = storeToRefs(jwStore);
+
+// The media item playing, whichever day it's on.
+const playingMediaItem = computed(() => {
+  const { uniqueId } = mediaPlaying.value;
+  if (!uniqueId) return undefined;
+  for (const day of lookupPeriod.value[currentCongregation.value] ?? []) {
+    for (const section of day.mediaSections ?? []) {
+      const item = section.items?.find((i) => i.uniqueId === uniqueId);
+      if (item) return item;
+    }
+  }
+  return undefined;
+});
 
 const {
   basename,
@@ -1936,9 +1949,10 @@ watchImmediate(
   },
 );
 
-// While M³ shares media in Zoom, mute the host microphone for a video or an
-// audio file, and unmute it after (see followZoomHostMicWithMedia).
-startZoomHostMicMediaSync();
+// While M³ shares media in Zoom, mute the host microphone for most of a
+// video or an audio file, and unmute it after (see
+// followZoomHostMicWithMedia).
+startZoomHostMicMediaSync(() => playingMediaItem.value);
 
 // Keep Zoom's meeting window (and M³'s) where the window layout says.
 watchImmediate(

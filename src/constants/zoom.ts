@@ -8,6 +8,21 @@ export const MEDIA_WINDOW_TITLE = 'Media Player - M³';
  */
 export const ZOOM_TESTED_VERSION = '7.2.1';
 
+/**
+ * While M³ shares a video or an audio file in Zoom, the host microphone is
+ * muted from this many seconds after the media starts playing...
+ */
+export const HOST_MIC_MUTE_AFTER_MEDIA_START_SECONDS = 5;
+
+/** ...until this many seconds before it ends (src/helpers/zoom.ts). */
+export const HOST_MIC_UNMUTE_BEFORE_MEDIA_END_SECONDS = 10;
+
+/**
+ * Media that plays for less than this many seconds, from where it started
+ * to its end, leaves the host microphone on throughout.
+ */
+export const HOST_MIC_MIN_MEDIA_SECONDS = 30;
+
 /** The setup assistant's id in the dialog-state store. */
 export const ZOOM_SETUP_ASSISTANT_DIALOG_ID = 'zoom-setup-assistant';
 

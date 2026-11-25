@@ -1,4 +1,5 @@
 import type {
+  MediaItem,
   SettingsValues,
   ZoomCommand,
   ZoomCommandResult,
@@ -13,7 +14,13 @@ import type {
 import { i18n } from 'boot/i18n';
 import { AUTO_START_WINDOW_HOURS } from 'src/constants/date';
 import { AUDIO_EXTENSIONS, VIDEO_EXTENSIONS } from 'src/constants/media';
-import { MEDIA_WINDOW_TITLE, ZOOM_TESTED_VERSION } from 'src/constants/zoom';
+import {
+  HOST_MIC_MIN_MEDIA_SECONDS,
+  HOST_MIC_MUTE_AFTER_MEDIA_START_SECONDS,
+  HOST_MIC_UNMUTE_BEFORE_MEDIA_END_SECONDS,
+  MEDIA_WINDOW_TITLE,
+  ZOOM_TESTED_VERSION,
+} from 'src/constants/zoom';
 import { getMeetingStartToday, isMemorialDay } from 'src/helpers/date';
 import { MEETING_SCHEDULED_DURATION_MINUTES } from 'src/helpers/meeting-parts';
 import { log } from 'src/shared/vanilla';
@@ -22,7 +29,11 @@ import {
   isOlderZoomVersion,
   zoomReleaseOf,
 } from 'src/utils/zoom';
-import { useCurrentStateStore } from 'stores/current-state';
+import {
+  type MediaPlayingState,
+  type MediaPlayingStateAction,
+  useCurrentStateStore,
+} from 'stores/current-state';
 import { useZoomStateStore } from 'stores/zoom-state';
 import { watch } from 'vue';
 
@@ -867,14 +878,16 @@ export const runWhileHoldingZoomAutomations = async <T>(
 };
 
 /** Whether a check of the Zoom Meeting Manager is using Zoom right now. */
-export const isZoomCheckInProgress = () => !!zoomCheckInProgress;
+export const isZoomCheckInProgress = () => zoomCheckInProgress !== null;
 
 /**
  * Whether the automations may act now: once any check in progress is done,
  * unless a failed check paused them.
  */
 const zoomAutomationsAllowed = async (what: string) => {
-  if (zoomCheckInProgress) await zoomCheckInProgress.catch(() => undefined);
+  if (zoomCheckInProgress !== null) {
+    await zoomCheckInProgress.catch(() => undefined);
+  }
   if (!useZoomStateStore().automationsPaused) return true;
   log(`${what}: skipped, Zoom automations are paused`, 'zoom', 'warn');
   return false;
@@ -1168,10 +1181,19 @@ let mediaShareStarting: null | Promise<boolean> = null;
 // computer's own output back to it as Zoom's microphone sends Zoom the same
 // sound twice, which its echo cancellation and noise suppression then make
 // muffled or choppy for Zoom participants. So the host microphone is muted
-// while that media plays, and unmuted once it's finished. M³ only unmutes a
-// microphone it muted: one the host had muted already stays muted.
+// while that media plays: from a few seconds after it starts playing until a
+// few seconds before it ends (HOST_MIC_MUTE_AFTER_MEDIA_START_SECONDS and
+// HOST_MIC_UNMUTE_BEFORE_MEDIA_END_SECONDS), and not while it's paused. M³
+// only unmutes a microphone it muted: one the host had muted already stays
+// muted.
 
+// Whether M³ muted the host microphone for media, and so unmutes it after.
 let hostMicMutedForMedia = false;
+// Whether the media wants the host microphone muted, as last asked: the
+// microphone is muted or unmuted only as that changes.
+let hostMicMuteWanted = false;
+// The microphone changes asked for, one after the other.
+let hostMicChanges = Promise.resolve();
 
 const SOUND_EXTENSIONS = new Set([...AUDIO_EXTENSIONS, ...VIDEO_EXTENSIONS]);
 
@@ -1218,12 +1240,17 @@ const setHostMicForMedia = async (on: boolean) => {
 };
 
 /**
- * Mutes the host microphone for media with sound (see above). Says so if
- * that failed, unless the host isn't joined to computer audio (the
- * microphone then sends Zoom nothing) or the user stopped it.
+ * Mutes the host microphone for media with sound (see above), unless the
+ * Zoom automations are paused. Says so if that failed, unless the host isn't
+ * joined to computer audio (the microphone then sends Zoom nothing) or the
+ * user stopped it.
  */
-const muteHostMicForMedia = async (url: string) => {
-  if (hostMicMutedForMedia || !hasSound(url) || !mutesHostMicForMedia()) {
+const muteHostMicForMedia = async () => {
+  if (
+    hostMicMutedForMedia ||
+    !mutesHostMicForMedia() ||
+    useZoomStateStore().automationsPaused
+  ) {
     return;
   }
   const result = await setHostMicForMedia(false);
@@ -1249,31 +1276,147 @@ const unmuteHostMicAfterMedia = async () => {
 };
 
 /**
- * Follows the media M³'s share shows while it goes on: a video or an audio
- * file mutes the host microphone, a picture after it unmutes it (see
- * muteHostMicForMedia). The share's start and end see to the rest (see
- * startAutomatedMediaShare and stopAutomatedMediaShare).
+ * Mutes or unmutes the host microphone for media as asked, once the change
+ * asked for before is done. A change that a later one has undone by the time
+ * its turn comes is skipped.
  */
-export const followZoomHostMicWithMedia = async (url: string) => {
-  if (!url || mediaShareStarting || !mediaShareStartedByM3) return;
-  if (!hasSound(url)) {
-    await unmuteHostMicAfterMedia();
-    return;
+const setHostMicMutedForMedia = (muted: boolean) => {
+  if (muted === hostMicMuteWanted) return hostMicChanges;
+  hostMicMuteWanted = muted;
+  hostMicChanges = hostMicChanges
+    .then(async () => {
+      if (hostMicMuteWanted !== muted) return;
+      await (muted ? muteHostMicForMedia() : unmuteHostMicAfterMedia());
+    })
+    .catch((error: unknown) => {
+      errorCatcher(error, {
+        contexts: { fn: { name: 'setHostMicMutedForMedia' } },
+      });
+    });
+  return hostMicChanges;
+};
+
+/** What the host microphone goes by of the media playing. */
+export interface HostMicPlayback {
+  action: MediaPlayingStateAction;
+  /**
+   * Whether the media window has reported this play request's playback
+   * moving (see MediaPlayingState's playbackConfirmedToken), so `position`
+   * is no longer the media before's.
+   */
+  confirmed: boolean;
+  /** Where it ends, in seconds into its file; 0 if that isn't known. */
+  end: number;
+  /** Whether it starts over at its end (repeat, or a slideshow's video). */
+  loops: boolean;
+  /** Where it's playing, in seconds into its file, as last reported. */
+  position: number;
+  rate: number;
+  url: string;
+}
+
+/**
+ * What the host microphone goes by of the media playing (`playing`), with
+ * the item playing it, for its trim and repeat: the media window reports
+ * only where the file itself ends.
+ */
+export const getHostMicPlayback = (
+  playing: MediaPlayingState,
+  item?: Pick<MediaItem, 'customDuration' | 'duration' | 'repeat'>,
+): HostMicPlayback => ({
+  action: playing.action,
+  // The play request's token is 0 until the media calendar issues it.
+  confirmed:
+    playing.playToken > 0 &&
+    playing.playbackConfirmedToken === playing.playToken,
+  // A trim's end of 0 means to the end. The media window's duration stays 0
+  // after media just as long, as its report doesn't change.
+  end: item?.customDuration?.max || playing.duration || item?.duration || 0, // NOSONAR: 0 is unknown
+  loops: !!item?.repeat || playing.shouldLoop,
+  position: playing.currentPosition,
+  rate: playing.playbackRate || 1, // NOSONAR: 0 isn't a rate
+  url: playing.url,
+});
+
+// Where the media playing started playing (seconds into its file, NaN until
+// it has), and whether its first seconds have played since.
+const hostMicMediaStart = { played: false, position: Number.NaN, url: '' };
+
+/**
+ * Whether the media playing is where the host microphone is muted for it
+ * (see above): a video or an audio file, playing, from a few seconds after
+ * it started (where it started: a trim's start, or where the user cued it)
+ * until a few seconds before it ends. Short media leaves it on throughout
+ * (HOST_MIC_MIN_MEDIA_SECONDS). Media that starts over at its end has none:
+ * however short, it stays muted, its start played once.
+ */
+const isHostMicMutedForPlayback = (playback: HostMicPlayback) => {
+  const start = hostMicMediaStart;
+  if (start.url !== playback.url) {
+    Object.assign(start, {
+      played: false,
+      position: Number.NaN,
+      url: playback.url,
+    });
   }
-  if (useZoomStateStore().automationsPaused) return;
-  await muteHostMicForMedia(url);
+  if (playback.action !== 'play' || !hasSound(playback.url)) return false;
+  if (Number.isNaN(start.position)) {
+    // Until then, the position may still be the media before's.
+    if (!playback.confirmed) return false;
+    start.position = playback.position;
+  }
+  start.played ||=
+    (playback.position - start.position) / playback.rate >=
+    HOST_MIC_MUTE_AFTER_MEDIA_START_SECONDS;
+  if (!start.played) return false;
+  if (playback.loops || !playback.end) return true;
+  if (
+    (playback.end - start.position) / playback.rate <
+    HOST_MIC_MIN_MEDIA_SECONDS
+  ) {
+    return false;
+  }
+  return (
+    (playback.end - playback.position) / playback.rate >
+    HOST_MIC_UNMUTE_BEFORE_MEDIA_END_SECONDS
+  );
+};
+
+// Whether the media playing, as last followed, has the host microphone muted.
+let hostMicMutedByPlayback = false;
+
+/** Mutes or unmutes the host microphone as the media and M³'s share ask. */
+const syncHostMicWithMedia = () =>
+  setHostMicMutedForMedia(mediaShareStartedByM3 && hostMicMutedByPlayback);
+
+/**
+ * Follows the media playing with the host microphone while M³'s share shows
+ * it (see isHostMicMutedForPlayback): mutes it a few seconds into a video or
+ * an audio file, and unmutes it a few seconds before its end, while it's
+ * paused, or for a picture after it. The share's end unmutes it too (see
+ * stopAutomatedMediaShare).
+ */
+export const followZoomHostMicWithMedia = (playback: HostMicPlayback) => {
+  hostMicMutedByPlayback = isHostMicMutedForPlayback(playback);
+  return syncHostMicWithMedia();
 };
 
 let stopFollowingMediaWithHostMic: (() => void) | undefined;
 
-/** Starts following the media shown with the host microphone (see above). */
-export const startZoomHostMicMediaSync = () => {
+/**
+ * Starts following the media playing with the host microphone (see above),
+ * with the item playing it (`playingItem`, for its trim and repeat).
+ */
+export const startZoomHostMicMediaSync = (
+  playingItem: () =>
+    Pick<MediaItem, 'customDuration' | 'duration' | 'repeat'> | undefined,
+) => {
   if (stopFollowingMediaWithHostMic) return;
   const currentState = useCurrentStateStore();
   stopFollowingMediaWithHostMic = watch(
-    () => currentState.mediaPlaying.url,
-    (url) => {
-      void followZoomHostMicWithMedia(url);
+    () => getHostMicPlayback(currentState.mediaPlaying, playingItem()),
+    (playback) => {
+      void followZoomHostMicWithMedia(playback);
     },
   );
 };
@@ -1358,7 +1501,7 @@ const reportOriginalSoundControlsOnce = async () => {
   }
 };
 
-const startAutomatedMediaShare = async (mediaUrl: string) => {
+const startAutomatedMediaShare = async () => {
   if (!(await zoomAutomationsAllowed('Zoom media sharing'))) {
     // At meeting time, the media not being shared is said each time: the
     // check's own notice may be closed by now.
@@ -1389,53 +1532,49 @@ const startAutomatedMediaShare = async (mediaUrl: string) => {
   }
   mediaShareStartedByM3 = await withZoomRun(
     'zoom-run-media-sharing-start',
-    async () => {
-      // While Zoom still shows its meeting window, which sharing hides.
-      await muteHostMicForMedia(mediaUrl);
-      const started = await startSharingMediaInZoom();
-      // Without the share, the microphone may be all that carries the media.
-      if (!started) await unmuteHostMicAfterMedia();
-      return started;
-    },
+    () => startSharingMediaInZoom(),
   );
-  // Not waited for: the media plays meanwhile.
-  if (mediaShareStartedByM3) void reportOriginalSoundControlsOnce();
+  if (mediaShareStartedByM3) {
+    // Not waited for: the media plays meanwhile. The microphone is muted
+    // now if the media's first seconds played while the share started.
+    void syncHostMicWithMedia();
+    void reportOriginalSoundControlsOnce();
+  }
   return mediaShareStartedByM3;
 };
 
 const stopAutomatedMediaShare = async () => {
-  if (mediaShareStarting) await mediaShareStarting;
+  if (mediaShareStarting !== null) await mediaShareStarting;
   if (!mediaShareStartedByM3) return true;
   const meeting = await getZoomMeetingState();
   // Already stopped in Zoom, or the meeting was left.
   if (meeting && !meeting.sharing) {
     mediaShareStartedByM3 = false;
-    await unmuteHostMicAfterMedia();
+    await setHostMicMutedForMedia(false);
     return true;
   }
   const stopped = await withZoomRun('zoom-run-media-sharing-stop', () =>
     stopSharingMediaInZoom(),
   );
   if (stopped) mediaShareStartedByM3 = false;
-  // The media is finished whether or not the share stopped.
-  await unmuteHostMicAfterMedia();
+  // The media is finished whether or not the share stopped. Most often, the
+  // media stopping unmuted it already (see followZoomHostMicWithMedia).
+  await setHostMicMutedForMedia(false);
   return stopped;
 };
 
 /**
  * Starts sharing the media window in Zoom as media starts, if a Zoom meeting
  * is open and the Zoom automations aren't paused, or stops the share it
- * started as media stops. For media with sound (`mediaUrl`), the host
- * microphone is muted for its time (see muteHostMicForMedia). Resolves to
- * whether Zoom is sharing (or, when stopping, no longer sharing M³'s media).
+ * started as media stops. While the share shows a video or an audio file,
+ * the host microphone is muted for most of its time (see
+ * followZoomHostMicWithMedia). Resolves to whether Zoom is sharing (or, when
+ * stopping, no longer sharing M³'s media).
  */
-export const automateZoomMediaSharing = async (
-  start: boolean,
-  mediaUrl = '',
-) => {
+export const automateZoomMediaSharing = async (start: boolean) => {
   if (!start) return stopAutomatedMediaShare();
   // Known at once, so a stop right behind it waits for it.
-  const starting = startAutomatedMediaShare(mediaUrl);
+  const starting = startAutomatedMediaShare();
   mediaShareStarting = starting;
   try {
     return await starting;

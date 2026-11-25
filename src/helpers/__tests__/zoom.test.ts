@@ -1,7 +1,14 @@
 import type { ZoomCommand, ZoomCommandResult } from 'src/types';
+import type {
+  MediaPlayingState,
+  MediaPlayingStateAction,
+} from 'stores/current-state';
 
 import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { effectScope, nextTick, reactive } from 'vue';
+
+import type { HostMicPlayback } from '../zoom';
 
 const currentSettings = {
   obsEnable: false,
@@ -49,8 +56,21 @@ vi.mock('src/helpers/date', () => dateMocks);
 
 vi.mock('@sentry/vue', () => sentryMocks);
 
+const AT_REST = {
+  action: '' as MediaPlayingStateAction,
+  currentPosition: 0,
+  duration: 0,
+  playbackConfirmedToken: 0,
+  playbackRate: 1,
+  playToken: 0,
+  shouldLoop: false,
+  url: '',
+};
+
+const mediaPlaying = reactive({ ...AT_REST });
+
 vi.mock('stores/current-state', () => ({
-  useCurrentStateStore: () => ({ currentSettings }),
+  useCurrentStateStore: () => ({ currentSettings, mediaPlaying }),
 }));
 
 const zoomState = {
@@ -140,6 +160,7 @@ beforeEach(() => {
   zoomState.runDepth = 0;
   zoomState.runLabel = null;
   sentryMocks.getClient.mockReturnValue(undefined);
+  Object.assign(mediaPlaying, AT_REST);
   Object.assign(currentSettings, {
     zoomMeetingManagerAutoLaunchMeeting: false,
     zoomMeetingManagerAutomateMeetingAudioSettings: false,
@@ -1150,6 +1171,49 @@ describe('the host microphone while media plays', () => {
       .filter((command) => command.type === 'set-mic')
       .map((command) => ('on' in command ? command.on : null));
 
+  // A minute-long video or audio file, playing at `position` seconds.
+  const playing = (
+    url: string,
+    position: number,
+    more: Partial<HostMicPlayback> = {},
+  ): HostMicPlayback => ({
+    action: 'play',
+    confirmed: true,
+    end: 60,
+    loops: false,
+    position,
+    rate: 1,
+    url,
+    ...more,
+  });
+
+  const STOPPED: HostMicPlayback = {
+    action: '',
+    confirmed: false,
+    end: 0,
+    loops: false,
+    position: 0,
+    rate: 1,
+    url: '',
+  };
+
+  const loadZoom = async () => {
+    const zoom = await import('../zoom');
+    return {
+      ...zoom,
+      // Plays `url` through each of `positions`, in turn.
+      play: async (
+        url: string,
+        positions: number[],
+        more: Partial<HostMicPlayback> = {},
+      ) => {
+        for (const position of positions) {
+          await zoom.followZoomHostMicWithMedia(playing(url, position, more));
+        }
+      },
+    };
+  };
+
   beforeEach(() => {
     Object.assign(currentSettings, {
       zoomMeetingManagerAutomateMediaSharing: true,
@@ -1158,23 +1222,30 @@ describe('the host microphone while media plays', () => {
   });
 
   it.each([VIDEO, SONG])(
-    'mutes it before sharing media with sound, and unmutes it once the share stops (%s)',
+    'mutes it 5 seconds into media with sound, and unmutes it 10 seconds before its end (%s)',
     async (url) => {
-      const { automateZoomMediaSharing } = await import('../zoom');
+      const { automateZoomMediaSharing, play } = await loadZoom();
 
-      expect(await automateZoomMediaSharing(true, url)).toBe(true);
+      expect(await automateZoomMediaSharing(true)).toBe(true);
+      await play(url, [0, 0.3, 4.9]);
+      expect(micCommands()).toEqual([]);
+
+      await play(url, [5, 20, 49.9]);
+      expect(micCommands()).toEqual([false]);
+
+      await play(url, [50, 59.9]);
+      expect(micCommands()).toEqual([false, true]);
+
+      // Already unmuted as the media ends.
       expect(await automateZoomMediaSharing(false)).toBe(true);
-
-      // Muted while Zoom still shows its meeting window, which sharing hides.
       expect(commandTypes()).toEqual([
         'meeting',
-        'set-mic',
         'start-share',
+        'set-mic',
+        'set-mic',
         'meeting',
         'stop-share',
-        'set-mic',
       ]);
-      expect(micCommands()).toEqual([false, true]);
       // Only for the media's time: the meeting checklist stays as it was.
       expect(updateChecklistMock).not.toHaveBeenCalled();
       expect(notifyMock).toHaveBeenCalledWith(
@@ -1186,13 +1257,199 @@ describe('the host microphone while media plays', () => {
     },
   );
 
-  it('leaves it alone for a picture', async () => {
-    const { automateZoomMediaSharing } = await import('../zoom');
+  it('counts the 5 seconds from where the media started playing', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
 
-    await automateZoomMediaSharing(true, PICTURE);
+    // A trimmed or cued video, which starts a minute in.
+    await play(VIDEO, [60, 64.9], { end: 120 });
+    expect(micCommands()).toEqual([]);
+
+    await play(VIDEO, [65], { end: 120 });
+    expect(micCommands()).toEqual([false]);
+  });
+
+  it('waits for the media window to report the new media before counting', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+
+    // Still the media before's position.
+    await play(VIDEO, [45], { confirmed: false });
+    await play(VIDEO, [0.5, 5.4]);
+    expect(micCommands()).toEqual([]);
+
+    await play(VIDEO, [5.5]);
+    expect(micCommands()).toEqual([false]);
+  });
+
+  it('unmutes it while the media is paused, and mutes it again as it resumes', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+
+    await play(VIDEO, [0, 6]);
+    await play(VIDEO, [20], { action: 'pause' });
+    expect(micCommands()).toEqual([false, true]);
+
+    await play(VIDEO, [20]);
+    expect(micCommands()).toEqual([false, true, false]);
+  });
+
+  it('still waits out the first 5 seconds when paused before them', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+
+    await play(VIDEO, [0, 3]);
+    await play(VIDEO, [3], { action: 'pause' });
+    await play(VIDEO, [3, 4.9]);
+    expect(micCommands()).toEqual([]);
+
+    await play(VIDEO, [5]);
+    expect(micCommands()).toEqual([false]);
+  });
+
+  it('mutes it again when the user goes back from its last 10 seconds', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+
+    await play(VIDEO, [0, 6, 55, 30]);
+
+    expect(micCommands()).toEqual([false, true, false]);
+  });
+
+  it('keeps it muted through media that starts over at its end', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+
+    await play(VIDEO, [0, 6, 55, 59.9, 0, 3], { loops: true });
+
+    expect(micCommands()).toEqual([false]);
+  });
+
+  it("keeps it muted until the media stops when its end isn't known", async () => {
+    const { automateZoomMediaSharing, followZoomHostMicWithMedia, play } =
+      await loadZoom();
+    await automateZoomMediaSharing(true);
+
+    await play(VIDEO, [0, 6, 3600], { end: 0 });
+    expect(micCommands()).toEqual([false]);
+
+    await followZoomHostMicWithMedia(STOPPED);
+    expect(micCommands()).toEqual([false, true]);
+  });
+
+  it('leaves it on for media that plays less than 30 seconds', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+
+    await play(VIDEO, [0, 5, 10, 19.9, 29.8], { end: 29.9 });
+    // A clip trimmed (or cued) out of a longer file: what plays is short.
+    await play(SONG, [100, 106, 115], { end: 120 });
+
+    expect(micCommands()).toEqual([]);
+  });
+
+  it('mutes it for media that plays 30 seconds', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+
+    await play(VIDEO, [0, 5, 20], { end: 30 });
+
+    expect(micCommands()).toEqual([false, true]);
+  });
+
+  it('mutes it for short media that starts over at its end', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+
+    await play(VIDEO, [0, 5, 9, 0, 3], { end: 10, loops: true });
+
+    expect(micCommands()).toEqual([false]);
+  });
+
+  it('counts in seconds of playback at another speed', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+
+    await play(VIDEO, [0, 9.9], { rate: 2 });
+    expect(micCommands()).toEqual([]);
+
+    await play(VIDEO, [10, 39.9], { rate: 2 });
+    expect(micCommands()).toEqual([false]);
+
+    await play(VIDEO, [40], { rate: 2 });
+    expect(micCommands()).toEqual([false, true]);
+  });
+
+  it('unmutes it as soon as the media is stopped, before the share stops', async () => {
+    const { automateZoomMediaSharing, followZoomHostMicWithMedia, play } =
+      await loadZoom();
+    await automateZoomMediaSharing(true);
+    await play(VIDEO, [0, 6]);
+
+    await followZoomHostMicWithMedia(STOPPED);
+    await automateZoomMediaSharing(false);
+
+    expect(commandTypes()).toEqual([
+      'meeting',
+      'start-share',
+      'set-mic',
+      'set-mic',
+      'meeting',
+      'stop-share',
+    ]);
+    expect(micCommands()).toEqual([false, true]);
+  });
+
+  it('unmutes it once the share stops, if the media stopping did not', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+    await play(VIDEO, [0, 6]);
+
+    expect(await automateZoomMediaSharing(false)).toBe(true);
+
+    expect(commandTypes()).toEqual([
+      'meeting',
+      'start-share',
+      'set-mic',
+      'meeting',
+      'stop-share',
+      'set-mic',
+    ]);
+    expect(micCommands()).toEqual([false, true]);
+  });
+
+  it('mutes it as the share starts when the first 5 seconds played meanwhile', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+
+    await play(VIDEO, [0, 6]);
+    expect(micCommands()).toEqual([]);
+
+    await automateZoomMediaSharing(true);
+    await vi.waitFor(() => expect(micCommands()).toEqual([false]));
+    expect(commandTypes()).toEqual(['meeting', 'start-share', 'set-mic']);
+  });
+
+  it('leaves it alone for a picture', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+
+    await automateZoomMediaSharing(true);
+    await play(PICTURE, [0, 30]);
     await automateZoomMediaSharing(false);
 
     expect(micCommands()).toEqual([]);
+  });
+
+  it('follows the media while the share goes on: a picture unmutes it, the next video mutes it 5 seconds in', async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+
+    await automateZoomMediaSharing(true);
+    await play(VIDEO, [0, 6]);
+    await play(PICTURE, [0]);
+    await play(SONG, [0, 4]);
+    expect(micCommands()).toEqual([false, true]);
+
+    await play(SONG, [5]);
+    expect(micCommands()).toEqual([false, true, false]);
   });
 
   it("doesn't unmute a microphone the host had muted already", async () => {
@@ -1202,65 +1459,112 @@ describe('the host microphone while media plays', () => {
         ? { changed: false, ok: true }
         : (respond?.(command) ?? { ok: false }),
     );
-    const { automateZoomMediaSharing } = await import('../zoom');
+    const { automateZoomMediaSharing, play } = await loadZoom();
 
-    await automateZoomMediaSharing(true, VIDEO);
+    await automateZoomMediaSharing(true);
+    await play(VIDEO, [0, 6, 50]);
     await automateZoomMediaSharing(false);
 
     expect(micCommands()).toEqual([false]);
   });
 
-  it("unmutes it again when the share doesn't start", async () => {
+  it("does nothing when the share doesn't start", async () => {
     failing = { 'start-share': 'share-picker-not-found' };
-    const { automateZoomMediaSharing } = await import('../zoom');
+    const { automateZoomMediaSharing, play } = await loadZoom();
 
-    expect(await automateZoomMediaSharing(true, VIDEO)).toBe(false);
+    expect(await automateZoomMediaSharing(true)).toBe(false);
+    await play(VIDEO, [0, 6]);
 
-    expect(micCommands()).toEqual([false, true]);
+    expect(micCommands()).toEqual([]);
   });
 
-  it('follows the media while the share goes on: a picture unmutes it, a video mutes it again', async () => {
-    const { automateZoomMediaSharing, followZoomHostMicWithMedia } =
-      await import('../zoom');
-
-    await automateZoomMediaSharing(true, VIDEO);
-    await followZoomHostMicWithMedia(VIDEO);
-    await followZoomHostMicWithMedia(PICTURE);
-    await followZoomHostMicWithMedia(PICTURE);
-    await followZoomHostMicWithMedia(SONG);
-
-    expect(micCommands()).toEqual([false, true, false]);
-  });
-
-  it("does nothing with a share the user started, nor once M³'s has stopped", async () => {
+  it('does nothing with a share the user started', async () => {
     zoomSharing = true;
-    const { automateZoomMediaSharing, followZoomHostMicWithMedia } =
-      await import('../zoom');
+    const { automateZoomMediaSharing, play } = await loadZoom();
 
-    await automateZoomMediaSharing(true, VIDEO);
-    await followZoomHostMicWithMedia(VIDEO);
+    await automateZoomMediaSharing(true);
+    await play(VIDEO, [0, 6]);
     await automateZoomMediaSharing(false);
+
+    expect(micCommands()).toEqual([]);
+  });
+
+  it("does nothing once M³'s share has stopped", async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+
+    await automateZoomMediaSharing(true);
+    await automateZoomMediaSharing(false);
+    await play(VIDEO, [0, 6]);
 
     expect(micCommands()).toEqual([]);
   });
 
   it('does nothing with the setting off', async () => {
     currentSettings.zoomMeetingManagerMuteHostMicDuringMedia = false;
-    const { automateZoomMediaSharing, followZoomHostMicWithMedia } =
-      await import('../zoom');
+    const { automateZoomMediaSharing, play } = await loadZoom();
 
-    await automateZoomMediaSharing(true, VIDEO);
-    await followZoomHostMicWithMedia(SONG);
+    await automateZoomMediaSharing(true);
+    await play(SONG, [0, 6]);
     await automateZoomMediaSharing(false);
 
     expect(micCommands()).toEqual([]);
   });
 
+  it("doesn't mute it while the Zoom automations are paused", async () => {
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+    zoomState.automationsPaused = true;
+
+    await play(VIDEO, [0, 6]);
+
+    expect(micCommands()).toEqual([]);
+  });
+
+  it('makes one change at a time, skipping one undone before its turn', async () => {
+    let release: (() => void) | undefined;
+    const respond = zoomCommandMock.getMockImplementation();
+    zoomCommandMock.mockImplementation(async (command) => {
+      if (command.type === 'set-mic') {
+        await new Promise<void>((resolve) => {
+          release = resolve;
+        });
+      }
+      return respond?.(command) ?? { ok: false };
+    });
+    const { automateZoomMediaSharing, followZoomHostMicWithMedia: follow } =
+      await loadZoom();
+    await automateZoomMediaSharing(true);
+    await follow(playing(VIDEO, 0));
+
+    // Paused while it's being muted: unmuting waits for the mute.
+    void follow(playing(VIDEO, 6));
+    await vi.waitFor(() => expect(micCommands()).toEqual([false]));
+    const unmuting = follow(playing(VIDEO, 7, { action: 'pause' }));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 20);
+    });
+    expect(micCommands()).toEqual([false]);
+    release?.();
+    await vi.waitFor(() => expect(micCommands()).toEqual([false, true]));
+    release?.();
+    await unmuting;
+
+    // Paused and resumed while it's being muted: no unmute, nor a second mute.
+    void follow(playing(VIDEO, 8));
+    await vi.waitFor(() => expect(micCommands()).toEqual([false, true, false]));
+    void follow(playing(VIDEO, 9, { action: 'pause' }));
+    const resumed = follow(playing(VIDEO, 9));
+    release?.();
+    await resumed;
+    expect(micCommands()).toEqual([false, true, false]);
+  });
+
   it("says so when it can't mute it, and shares all the same", async () => {
     failing = { 'set-mic': 'share-toolbar-mic-button-not-found' };
-    const { automateZoomMediaSharing } = await import('../zoom');
+    const { automateZoomMediaSharing, play } = await loadZoom();
 
-    expect(await automateZoomMediaSharing(true, VIDEO)).toBe(true);
+    expect(await automateZoomMediaSharing(true)).toBe(true);
+    await play(VIDEO, [0, 6]);
 
     expect(commandTypes()).toContain('start-share');
     expect(notifyMock).toHaveBeenCalledWith(
@@ -1276,10 +1580,12 @@ describe('the host microphone while media plays', () => {
     'says nothing when it could not mute it for %s',
     async (error) => {
       failing = { 'set-mic': error };
-      const { automateZoomMediaSharing } = await import('../zoom');
+      const { automateZoomMediaSharing, play } = await loadZoom();
 
-      await automateZoomMediaSharing(true, VIDEO);
+      await automateZoomMediaSharing(true);
+      await play(VIDEO, [0, 6]);
 
+      expect(micCommands()).toEqual([false]);
       expect(notifyMock).not.toHaveBeenCalledWith(
         expect.objectContaining({ group: 'zoom-host' }),
       );
@@ -1287,8 +1593,9 @@ describe('the host microphone while media plays', () => {
   );
 
   it("says so when it can't unmute it after the media", async () => {
-    const { automateZoomMediaSharing } = await import('../zoom');
-    await automateZoomMediaSharing(true, VIDEO);
+    const { automateZoomMediaSharing, play } = await loadZoom();
+    await automateZoomMediaSharing(true);
+    await play(VIDEO, [0, 6]);
     failing = { 'set-mic': 'share-toolbar-mic-button-not-found' };
 
     await automateZoomMediaSharing(false);
@@ -1300,6 +1607,121 @@ describe('the host microphone while media plays', () => {
         type: 'negative',
       }),
     );
+  });
+
+  it('follows the media playing once started', async () => {
+    const { automateZoomMediaSharing, startZoomHostMicMediaSync } =
+      await loadZoom();
+    await automateZoomMediaSharing(true);
+    // Stops the watcher with the test (each test loads the module afresh).
+    const scope = effectScope();
+    try {
+      // Trimmed to its first 45 seconds.
+      const item = { customDuration: { max: 45, min: 0 }, duration: 60 };
+      scope.run(() => startZoomHostMicMediaSync(() => item));
+
+      Object.assign(mediaPlaying, {
+        action: 'play',
+        currentPosition: 0.5,
+        playbackConfirmedToken: 1,
+        playToken: 1,
+        url: VIDEO,
+      });
+      await nextTick();
+      mediaPlaying.currentPosition = 6;
+      await vi.waitFor(() => expect(micCommands()).toEqual([false]));
+
+      mediaPlaying.currentPosition = 35;
+      await vi.waitFor(() => expect(micCommands()).toEqual([false, true]));
+    } finally {
+      scope.stop();
+    }
+  });
+});
+
+describe('what the host microphone goes by of the media playing', () => {
+  const mediaPlayingState = (
+    more: Partial<MediaPlayingState> = {},
+  ): MediaPlayingState => ({
+    action: 'play',
+    currentPosition: 12,
+    currentPositionUpdatedAt: 0,
+    duration: 90,
+    pan: {},
+    playbackConfirmedToken: 1,
+    playbackRate: 1,
+    playToken: 1,
+    seekTo: 0,
+    shouldLoop: false,
+    slideshowAudioUrl: '',
+    subtitlesUrl: '',
+    uniqueId: 'video',
+    url: 'file:///C:/Media/video.mp4',
+    zoom: 1,
+    ...more,
+  });
+
+  it("reads the media window's report", async () => {
+    const { getHostMicPlayback } = await import('../zoom');
+
+    expect(
+      getHostMicPlayback(mediaPlayingState({ playbackRate: 1.5 })),
+    ).toEqual({
+      action: 'play',
+      confirmed: true,
+      end: 90,
+      loops: false,
+      position: 12,
+      rate: 1.5,
+      url: 'file:///C:/Media/video.mp4',
+    });
+  });
+
+  it('ends where the trim ends, or else where the file does', async () => {
+    const { getHostMicPlayback } = await import('../zoom');
+    const playing = mediaPlayingState();
+
+    expect(
+      getHostMicPlayback(playing, { customDuration: { max: 45, min: 10 } }).end,
+    ).toBe(45);
+    // A trim's end of 0 means to the end.
+    expect(
+      getHostMicPlayback(playing, { customDuration: { max: 0, min: 10 } }).end,
+    ).toBe(90);
+    // The media window hasn't said (or didn't say again, for media just as
+    // long as the one before).
+    expect(
+      getHostMicPlayback(mediaPlayingState({ duration: 0 }), { duration: 75 })
+        .end,
+    ).toBe(75);
+    expect(getHostMicPlayback(mediaPlayingState({ duration: 0 })).end).toBe(0);
+  });
+
+  it('starts over at its end when it repeats, or for a slideshow', async () => {
+    const { getHostMicPlayback } = await import('../zoom');
+
+    expect(
+      getHostMicPlayback(mediaPlayingState(), { repeat: true }).loops,
+    ).toBe(true);
+    expect(
+      getHostMicPlayback(mediaPlayingState({ shouldLoop: true })).loops,
+    ).toBe(true);
+  });
+
+  it('is confirmed once the media window reported this play request moving', async () => {
+    const { getHostMicPlayback } = await import('../zoom');
+
+    // Not issued yet: media was just set.
+    expect(
+      getHostMicPlayback(
+        mediaPlayingState({ playbackConfirmedToken: 0, playToken: 0 }),
+      ).confirmed,
+    ).toBe(false);
+    expect(
+      getHostMicPlayback(
+        mediaPlayingState({ playbackConfirmedToken: 1, playToken: 2 }),
+      ).confirmed,
+    ).toBe(false);
   });
 });
 
