@@ -60,6 +60,7 @@ describe('transformObsPasswords', () => {
         abc: { ...defaultSettings, obsPassword: 'hunter2' },
         def: { ...defaultSettings, obsPassword: null },
       },
+      dateReminderSnoozes: {},
       featureNudges: {},
       quickStartTourSeen: {},
     };
@@ -74,6 +75,7 @@ describe('transformObsPasswords', () => {
     const state = {
       announcements: {},
       congregations: { abc: { ...defaultSettings, obsPassword: 'hunter2' } },
+      dateReminderSnoozes: {},
       featureNudges: {},
       quickStartTourSeen: {},
     };
@@ -101,6 +103,7 @@ describe('serializeCongregationSettings / deserializeCongregationSettings', () =
     const state = {
       announcements: {},
       congregations: { abc: { ...defaultSettings, obsPassword: 'hunter2' } },
+      dateReminderSnoozes: {},
       featureNudges: {},
       quickStartTourSeen: {},
     };
@@ -125,6 +128,7 @@ describe('serializeCongregationSettings / deserializeCongregationSettings', () =
     const state = {
       announcements: {},
       congregations: { abc: { ...defaultSettings, obsPassword: '' } },
+      dateReminderSnoozes: {},
       featureNudges: {},
       quickStartTourSeen: {},
     };
@@ -142,6 +146,7 @@ describe('obsPassword encryption caching', () => {
   const makeStore = (obsPassword: string) => ({
     announcements: {},
     congregations: { abc: { ...defaultSettings, obsPassword } },
+    dateReminderSnoozes: {},
     featureNudges: {},
     quickStartTourSeen: {},
   });
@@ -235,6 +240,7 @@ describe('obsPassword encryption caching', () => {
       congregations: {
         abc: { ...defaultSettings, obsPassword: 'enc:hunter2' },
       },
+      dateReminderSnoozes: {},
       featureNudges: {},
       quickStartTourSeen: {},
     });
@@ -353,5 +359,43 @@ describe('feature suggestion answers', () => {
     store.deleteCongregation('abc');
 
     expect(store.featureNudges['abc']).toBeUndefined();
+  });
+});
+
+describe('date reminder snoozes', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  it('keeps each snooze per profile and reminder', () => {
+    const store = useCongregationSettingsStore();
+
+    store.snoozeDateReminder('abc', 'coWeek', 1000);
+    store.snoozeDateReminder('abc', 'memorialDate', 2000);
+    store.snoozeDateReminder('def', 'coWeek', 3000);
+
+    expect(store.dateReminderSnoozes).toEqual({
+      abc: { coWeek: 1000, memorialDate: 2000 },
+      def: { coWeek: 3000 },
+    });
+  });
+
+  it('never shortens a longer snooze', () => {
+    const store = useCongregationSettingsStore();
+
+    store.snoozeDateReminder('abc', 'memorialDate', 5000);
+    store.snoozeDateReminder('abc', 'memorialDate', 2000);
+
+    expect(store.dateReminderSnoozes['abc']?.memorialDate).toBe(5000);
+  });
+
+  it("forgets a deleted profile's snoozes", () => {
+    const store = useCongregationSettingsStore();
+    store.congregations['abc'] = { ...defaultSettings };
+    store.snoozeDateReminder('abc', 'coWeek', 1000);
+
+    store.deleteCongregation('abc');
+
+    expect(store.dateReminderSnoozes['abc']).toBeUndefined();
   });
 });

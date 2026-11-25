@@ -1,3 +1,9 @@
+/**
+ * A reminder to add a special date that isn't set, named after its setting
+ * (see helpers/date-reminders).
+ */
+export type DateReminderId = 'coWeek' | 'memorialDate';
+
 /** A button of a banner (see NoticeBanner.vue). */
 export interface NoticeAction {
   label: string;
