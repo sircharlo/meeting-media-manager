@@ -4,8 +4,33 @@
     bordered
     class="q-mx-sm q-my-sm media-children rounded-borders overflow-hidden"
   >
-    <q-menu context-menu style="overflow-x: hidden" touch-position>
+    <!--
+      Opened by a right-click anywhere on the group or by the header's "..."
+      button (which points menuTarget at itself while it's open), same as a
+      media item's menu.
+    -->
+    <q-menu
+      v-model="contextMenu"
+      context-menu
+      style="overflow-x: hidden"
+      :target="menuTarget"
+      touch-position
+    >
       <q-list role="menu">
+        <!--
+          UX-6 (full-audit-2026-09-04.md): Move up/Move down are the
+          keyboard/screen-reader equivalent to dragging the header. They used
+          to be two always-there header buttons, which looked just like the
+          expand chevron beside them; they now sit in this menu like a media
+          item's, with the other sections to move the group to.
+        -->
+        <MediaMoveMenuItem
+          :can-move-down="canMoveDown"
+          :can-move-up="canMoveUp"
+          :media-ids="[element.uniqueId]"
+          reorder
+          @move="(delta) => emit('move', delta)"
+        />
         <q-item
           v-close-popup
           clickable
@@ -37,7 +62,11 @@
         element.children.map((m) => m.fileUrl).includes(mediaPlaying.url)
       "
       :header-class="[
-        'hover-reveal-group',
+        // The whole header is the drag handle, like a media item's row: the
+        // drag icon below is only a hint, shown per the showMediaDragHandle
+        // setting. Child rows aren't inside the header, so they still only
+        // drag within the group (group-child-drag-handle).
+        'hover-reveal-group section-drag-handle',
         isExpanded
           ? $q.dark.isActive
             ? 'bg-accent-400'
@@ -46,8 +75,13 @@
       ]"
     >
       <template #header>
-        <q-item-section class="relative-position">
-          <div>
+        <q-item-section
+          :class="[
+            'group-header-section relative-position',
+            { 'has-drag-handle': currentSettings?.showMediaDragHandle },
+          ]"
+        >
+          <div class="group-header-title">
             <!-- eslint-disable-next-line vue/no-v-html -->
             <span v-html="sanitize(element.extractCaption || '')"></span>
             <q-badge
@@ -72,44 +106,19 @@
               text-color="white"
             />
           </div>
+          <!--
+            @click.stop keeps these from also toggling the expansion panel
+            they sit inside.
+          -->
           <div
-            class="hover-reveal absolute-right text-accent-400 q-pa-md row q-gutter-md items-center no-wrap"
+            :class="[
+              'group-header-actions absolute-right row items-center no-wrap',
+              { 'is-menu-open': isMoreMenuOpen },
+            ]"
           >
-            <!--
-              UX-6 (full-audit-2026-09-04.md): keyboard/screen-reader
-              equivalent to the drag handle - it has no tabindex/keyboard
-              handler of its own. @click.stop keeps these from also
-              toggling the expansion panel they sit inside.
-            -->
-            <q-btn
-              :aria-label="t('move-up')"
-              color="accent-400"
-              dense
-              :disable="!canMoveUp"
-              flat
-              icon="mmm-up"
-              round
-              size="sm"
-              @click.stop="emit('move', -1)"
-            >
-              <q-tooltip :delay="500">{{ t('move-up') }}</q-tooltip>
-            </q-btn>
-            <q-btn
-              :aria-label="t('move-down')"
-              color="accent-400"
-              dense
-              :disable="!canMoveDown"
-              flat
-              icon="mmm-down"
-              round
-              size="sm"
-              @click.stop="emit('move', 1)"
-            >
-              <q-tooltip :delay="500">{{ t('move-down') }}</q-tooltip>
-            </q-btn>
             <q-icon
-              class="media-drag-handle section-drag-handle"
-              color="accent-400"
+              v-if="currentSettings?.showMediaDragHandle"
+              class="media-drag-handle q-mr-xs"
               name="mmm-drag-n-drop"
               size="sm"
               @click.stop
@@ -118,6 +127,20 @@
                 {{ t('drag-to-reorder') }}
               </q-tooltip>
             </q-icon>
+            <q-btn
+              ref="moreButton"
+              :aria-label="t('more-options')"
+              dense
+              flat
+              icon="mmm-dots"
+              round
+              size="sm"
+              @click.stop="openMoreMenu"
+            >
+              <q-tooltip v-if="!contextMenu && !isDragging" :delay="500">
+                {{ t('more-options') }}
+              </q-tooltip>
+            </q-btn>
           </div>
         </q-item-section>
       </template>
@@ -168,18 +191,19 @@ import type { MediaItem as MediaItemType } from 'src/types';
 import { useEventListener } from '@vueuse/core';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
-import { useQuasar } from 'quasar';
+import { type QBtn, useQuasar } from 'quasar';
 import { useMediaDragAndDrop } from 'src/composables/useMediaDragAndDrop';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, watch } from 'vue';
+import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import MediaItem from './MediaItem.vue';
+import MediaMoveMenuItem from './MediaMoveMenuItem.vue';
 
 const { sanitize } = DOMPurify;
 
 const currentState = useCurrentStateStore();
-const { mediaPlaying } = storeToRefs(currentState);
+const { currentSettings, mediaPlaying } = storeToRefs(currentState);
 
 const props = defineProps<{
   canMoveDown?: boolean;
@@ -222,6 +246,23 @@ const hiddenChildrenCount = computed(
   () => props.element.children?.filter((m) => m.hidden).length ?? 0,
 );
 
+// Same as MediaItem.vue: the menu anchors to the "..." button while that
+// opened it, and goes back to being a right-click menu once it closes.
+const moreButton = useTemplateRef<QBtn>('moreButton');
+const contextMenu = ref(false);
+const menuTarget = ref<boolean | string | undefined>(true);
+
+function openMoreMenu() {
+  menuTarget.value = moreButton.value?.$el;
+  contextMenu.value = true;
+}
+
+// Keeps the header's actions showing while the "..." menu is open, since the
+// pointer has left the header for the menu by then.
+const isMoreMenuOpen = computed(
+  () => contextMenu.value && menuTarget.value !== true,
+);
+
 const isExpanded = computed({
   get: () => (hasMediaFilterTerms.value ? true : props.expanded),
   set: (value) => {
@@ -261,6 +302,10 @@ watch(
   { flush: 'post' },
 );
 
+watch(contextMenu, (open) => {
+  if (!open) menuTarget.value = true;
+});
+
 // useMediaDragAndDrop captures props.element.children once at setup as its
 // own independent reactive array - resetSort() (HeaderCalendar.vue)
 // resorting that same underlying array in place afterwards doesn't
@@ -293,39 +338,65 @@ function moveChildItem(index: number, delta: number) {
 </script>
 
 <style lang="scss" scoped>
-// .icon-chip is a plain decorative wrapper elsewhere (dialog headers etc.),
-// always visible, so it has no pointer-events handling of its own - scoped
-// here rather than changed globally. This usage overlaps the header's own
-// click-to-expand/collapse area, so while hidden (opacity: 0, via
-// .hover-reveal) it still needs to let clicks through to whatever's
-// underneath it instead of silently eating them.
-.icon-chip.hover-reveal {
+// The header's drag icon + "..." button: a media row's hover actions, laid
+// over the right end of the title. Not the shared .hover-reveal /
+// .hover-actions-overlay / .fades-under-hover-actions classes, because
+// those also reveal on :focus-within, and QExpansionItem's header takes
+// focus on a plain mouse click (to expand/collapse) - the actions would
+// stay "stuck" on screen after the pointer had left. Here they show while
+// the pointer is over the header, while the header or one of the actions
+// has keyboard focus (:focus-visible, which a mouse click doesn't set), or
+// while the "..." menu is open.
+.group-header-section {
+  --group-actions-width: 24px;
+}
+
+.group-header-section.has-drag-handle {
+  // Drag icon (24px) + its q-mr-xs (4px) + the "..." button (24px).
+  --group-actions-width: 52px;
+}
+
+.group-header-actions {
+  // Same ink as the expand chevron next to it (QItem's side section), so
+  // the actions stay legible on the expanded header's tint in both themes.
+  // `transition: none` for the same reason QItem.sass gives: without an
+  // explicit transition, Chrome keeps a stale currentColor inside
+  // color-mix() after a dark-mode toggle.
+  color: color-mix(in srgb, currentColor 54%, transparent);
+  transition: none;
+  opacity: 0;
+  // Invisible still means "present": let clicks through to the header.
   pointer-events: none;
 }
 
-.hover-reveal-group:hover .icon-chip.hover-reveal,
-.hover-reveal-group:focus-within .icon-chip.hover-reveal {
+:global(.body--dark) .group-header-actions {
+  color: color-mix(in srgb, currentColor 70%, transparent);
+}
+
+.hover-reveal-group:hover .group-header-actions,
+.hover-reveal-group:focus-visible .group-header-actions,
+.group-header-actions:has(:focus-visible),
+.group-header-actions.is-menu-open {
+  opacity: 1;
   pointer-events: auto;
 }
 
-// The shared .hover-reveal-group:focus-within rule (app.scss) keeps a
-// revealed control visible while it holds keyboard focus - correct for an
-// actionable control a keyboard user tabs to, but QExpansionItem's header
-// is itself focusable purely for a11y, so a plain mouse click on the header
-// (to expand/collapse) also focuses it. Without this override the chip
-// stays visibly "stuck" after such a click until focus lands elsewhere in
-// the app, long after the mouse has moved away. There's no keyboard
-// equivalent for dragging here, so this chip specifically only needs to
-// react to real hover. Higher specificity than the shared rule (extra
-// .icon-chip) wins without needing !important; the :hover re-assertion
-// after it keeps the chip visible if the pointer is over it while also
-// focused.
-.hover-reveal-group:focus-within .icon-chip.hover-reveal {
-  opacity: 0;
+// Fades the title out just before the actions, and fully clears it under
+// them, instead of drawing the icons over the words (a long title wraps
+// under them). Both gradients share one shape so they're interchangeable.
+.group-header-title {
+  mask-image: linear-gradient(to right, #000 100%, transparent 100%);
 }
 
-.hover-reveal-group:hover .icon-chip.hover-reveal {
-  opacity: 1;
-  transition-delay: 400ms;
+.hover-reveal-group:hover .group-header-title,
+.hover-reveal-group:focus-visible .group-header-title,
+.hover-reveal-group:has(.group-header-actions :focus-visible)
+  .group-header-title,
+.hover-reveal-group:has(.is-menu-open) .group-header-title {
+  mask-image: linear-gradient(
+    to right,
+    #000 calc(100% - var(--group-actions-width) - 28px),
+    transparent calc(100% - var(--group-actions-width) - 4px)
+  );
 }
 </style>
