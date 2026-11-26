@@ -177,15 +177,15 @@
 
 Вручную синхронизировать текущее и будущее расписание встреч с информацией с официального сайта.
 
-### Help Set Up Zoom for Remote Participants {#zoom-display-setup-help}
+### Помогать настраивать Zoom для удаленных участников {#zoom-display-setup-help}
 
 <!-- **Setting**: `zoomDisplaySetupHelp` -->
 
-Someone presenting a part from Zoom is seen on the TV through the Zoom window, which is normally hidden behind the media display: hide the media display to show it. Before each meeting, M³ asks whether any of the day's parts will be presented by someone on Zoom (before the weekend meeting, whether the speaker will be on Zoom). If so, it helps you get the Zoom window ready on the TV: it hides the media display for a moment so you can check that the Zoom window is on the TV and fills the whole screen, says how to make it full screen if it doesn't (double-click the middle of the Zoom window), shows the media display again on top of the Zoom window, points out the buttons that hide and show it when it's time to show the Zoom window, then tells you when everything's ready.
+Того, кто выступает с частью через Zoom, на телевизоре видно в окне Zoom, которое обычно скрыто за окном мультимедиа: чтобы показать окно Zoom, скройте окно мультимедиа. Перед каждой встречей M³ спрашивает, будет ли в этот день кто-нибудь выступать с частью через Zoom (перед встречей в выходные дни — будет ли докладчик выступать через Zoom). Если да, M³ помогает подготовить окно Zoom на телевизоре: ненадолго скрывает окно мультимедиа, чтобы вы проверили, что окно Zoom находится на телевизоре и занимает весь экран, объясняет, как развернуть его на весь экран, если это не так (дважды щелкнуть посередине окна Zoom), снова показывает окно мультимедиа поверх окна Zoom, напоминает, какими кнопками скрыть и показать окно мультимедиа, когда придет время показать окно Zoom, а затем сообщает, что все готово.
 
-With Zoom's **Meeting window view** set to **Dual window**, Zoom shows the participants in a second window that can stay on the TV. With the [Zoom Meeting Manager](#zoom-meeting-manager) turned on, M³ also moves that window to the TV and makes it full screen for you.
+Если в Zoom для параметра **Meeting window view** выбрано **Dual window**, Zoom показывает участников во втором окне, которое может оставаться на телевизоре. Если включен [менеджер конференций Zoom](#zoom-meeting-manager), M³ также сам перемещает это окно на телевизор и разворачивает его на весь экран.
 
-M³ asks once per meeting, from a little over an hour before it starts until it starts, and only while the media display fills a screen of its own. To turn the question off, choose **Don't ask me again**, then **Turn it off**.
+M³ задает этот вопрос один раз для каждой встречи, в течение чуть более часа перед ее началом, и только если окно мультимедиа занимает отдельный экран. Чтобы отключить этот вопрос, выберите **Больше не спрашивать**, а затем **Отключить**.
 
 **По умолчанию**: `true`
 
