@@ -170,6 +170,53 @@ describe('ObsStatus - scene list retry', () => {
   });
 });
 
+// MMM-V2-3HB: switching scene collections in OBS replaces every scene but
+// sends only CurrentSceneCollectionChanged, never SceneListChanged (checked
+// against OBS 32.2.1), so M³ kept offering the previous collection's scenes.
+describe('ObsStatus - scene collection switch', () => {
+  const sceneList = (...names: string[]) => ({
+    currentProgramSceneName: names[0],
+    currentProgramSceneUuid: `${names[0]}-uuid`,
+    scenes: names.map((sceneName) => ({
+      sceneName,
+      sceneUuid: `${sceneName}-uuid`,
+    })),
+  });
+
+  it("fetches the new collection's scenes and current scene", async () => {
+    const obsState = setupObsSettings();
+    callMock
+      .mockResolvedValueOnce(sceneList('Game', 'Half Time'))
+      .mockResolvedValueOnce(sceneList('Camera', 'Media'));
+
+    await mountObsStatus();
+    // Registered again on every (re)init, so it must be removed with the rest.
+    expect(fakeObsWebSocket.removeAllListeners).toHaveBeenCalledWith(
+      'CurrentSceneCollectionChanged',
+    );
+
+    await triggerObsEvent('Identified');
+    await vi.waitFor(() => {
+      expect(obsState.currentScene).toBe('Game-uuid');
+    }, WAIT_OPTIONS);
+
+    await triggerObsEvent('CurrentSceneCollectionChanged', {
+      sceneCollectionName: 'Kingdom Hall',
+    });
+
+    await vi.waitFor(() => {
+      expect(obsState.currentScene).toBe('Camera-uuid');
+    }, WAIT_OPTIONS);
+    // GetSceneList lists scenes bottom-up; M³ shows them top-down.
+    expect(obsState.scenes.map(({ sceneName }) => sceneName)).toEqual([
+      'Media',
+      'Camera',
+    ]);
+    expect(callMock).toHaveBeenNthCalledWith(2, 'GetSceneList');
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+});
+
 // FE-6 (full-audit-2026-09-04.md): obsCloseHandler previously only flipped
 // obsConnectionState to 'disconnected' - nothing ever attempted to
 // reconnect on its own after OBS closed/crashed/restarted while M³ was
