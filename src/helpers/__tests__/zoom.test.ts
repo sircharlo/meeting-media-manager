@@ -332,8 +332,13 @@ describe('Zoom meeting automation', () => {
 
     expect(result).toEqual({ failedSteps: ['join-audio'], ok: false });
     expect(commandTypes()).toContain('mute-all');
+    // Something is left to do in Zoom by hand: it stays until closed.
     expect(notifyMock).toHaveBeenCalledWith(
-      expect.objectContaining({ group: 'zoom-automation', type: 'negative' }),
+      expect.objectContaining({
+        group: 'zoom-automation',
+        timeout: 0,
+        type: 'negative',
+      }),
     );
   });
 
@@ -485,7 +490,11 @@ describe('automated media sharing', () => {
 
     expect(zoomState.beginRun).not.toHaveBeenCalled();
     expect(notifyMock).toHaveBeenCalledWith(
-      expect.objectContaining({ group: 'zoom-sharing', type: 'negative' }),
+      expect.objectContaining({
+        group: 'zoom-sharing',
+        timeout: 0,
+        type: 'negative',
+      }),
     );
   });
 
@@ -1571,6 +1580,7 @@ describe('the host microphone while media plays', () => {
       expect.objectContaining({
         group: 'zoom-host',
         message: expect.stringContaining('couldn’t mute the host microphone'),
+        timeout: 15_000,
         type: 'warning',
       }),
     );
@@ -1604,6 +1614,8 @@ describe('the host microphone while media plays', () => {
       expect.objectContaining({
         group: 'zoom-host',
         message: expect.stringContaining('couldn’t unmute the host microphone'),
+        // The hall can't be heard in Zoom until someone unmutes it.
+        timeout: 0,
         type: 'negative',
       }),
     );

@@ -33,6 +33,21 @@ export const isTransientObsError = (error: unknown) =>
   (error.message.includes('OBS is not ready') ||
     error.message === 'Not connected');
 
+/**
+ * Tells the user that a scene set in the settings isn't in OBS Studio: on
+ * connecting (ObsStatus) or on picking a scene (DialogObsPopup). Repeats fold
+ * into one.
+ */
+export const notifyObsSceneNotFound = () =>
+  createTemporaryNotification({
+    caption: i18n.global.t('scene-not-found-explain'),
+    group: 'scene-not-found',
+    icon: 'mmm-obs-studio',
+    message: i18n.global.t('scene-not-found'),
+    timeout: 10_000,
+    type: 'negative',
+  });
+
 const OBS_NOT_READY_RETRIES = 5;
 const OBS_NOT_READY_RETRY_MS = 2000;
 

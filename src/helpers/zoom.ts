@@ -359,6 +359,13 @@ const notifyInfo = (group: string, messageKey: string) => {
   });
 };
 
+// A failure leaves something to do by hand in Zoom (share the media, unmute
+// the hall, check its settings), often in the middle of the meeting: it
+// stays until closed. Warnings stay a while too. Each group shows one at a
+// time, so repeats fold.
+const FAILURE_TIMEOUT_MS = 0;
+const WARNING_TIMEOUT_MS = 15_000;
+
 const notifyFailure = (
   group: string,
   messageKey: string,
@@ -370,6 +377,7 @@ const notifyFailure = (
     group,
     icon: 'mmm-error',
     message: t(messageKey),
+    timeout: FAILURE_TIMEOUT_MS,
     type: 'negative',
   });
 };
@@ -380,6 +388,7 @@ const notifyWarning = (group: string, messageKey: string) => {
     group,
     icon: 'mmm-warning',
     message: t(messageKey),
+    timeout: WARNING_TIMEOUT_MS,
     type: 'warning',
   });
 };
@@ -1451,6 +1460,8 @@ const notifyMediaNotSharedWhilePaused = () => {
     caption: t('zoom-sharing-failed-caption'),
     group: 'zoom-sharing',
     message: t('zoom-sharing-paused'),
+    // Shown on each media while paused: long enough to read, not stuck.
+    timeout: WARNING_TIMEOUT_MS,
     type: 'negative',
   });
 };

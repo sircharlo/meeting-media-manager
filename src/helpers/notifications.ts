@@ -189,6 +189,9 @@ export const createTemporaryNotification = (
   }
 };
 
+const LOW_DISK_REMINDER_INTERVAL_MS = 30 * 60 * 1000;
+let lastLowDiskWarningAt = 0;
+
 /**
  * Records that the user has seen a disk space warning, so that neither
  * process reports disk-full errors from then on.
@@ -205,16 +208,30 @@ const recordDiskSpaceWarning = () => {
  * full-audit-2026-09-04.md - a user switching congregations with just-enough
  * free space got no further warning even as a long download session kept
  * consuming it) show the exact same warning.
+ *
+ * The periodic check is a `reminder`: it warns at most every half hour, not
+ * on each check, every 2 minutes. Warnings waiting for a dialog to close
+ * fold into one.
  */
-export const checkLowDiskSpaceAndNotify = async (): Promise<void> => {
+export const checkLowDiskSpaceAndNotify = async ({
+  reminder = false,
+}: { reminder?: boolean } = {}): Promise<void> => {
   if (!globalThis.electronApi) return;
+  if (
+    reminder &&
+    Date.now() - lastLowDiskWarningAt < LOW_DISK_REMINDER_INTERVAL_MS
+  ) {
+    return;
+  }
   try {
     const isLowDiskSpace = await globalThis.electronApi.getLowDiskSpaceStatus();
     if (!isLowDiskSpace) return;
 
+    lastLowDiskWarningAt = Date.now();
     createTemporaryNotification({
       caption: i18n.global.t('low-disk-space-warning'),
       deferWhileDialogOpen: true,
+      group: 'low-disk-space',
       message: i18n.global.t('disk-space-is-running-low'),
       timeout: 10_000,
       type: 'warning',

@@ -178,6 +178,7 @@ import {
 } from 'src/helpers/notifications';
 import { syncTimerRemote } from 'src/helpers/timer-remote';
 import { createWatchFolderEventQueue } from 'src/helpers/watch-folder-event-queue';
+import { takeYeartextPreviewOffer } from 'src/helpers/yeartext-preview';
 import {
   cancelZoomRun,
   startZoomHostMicMediaSync,
@@ -874,6 +875,8 @@ const initListeners = () => {
       pathProbeNetworkWarningShown.value = true;
       createTemporaryNotification({
         caption: t('path-probe-network-warning-caption'),
+        // Shared with MediaItem's same warning, so the two show as one.
+        group: 'pathProbeNetworkWarning',
         message: t('path-probe-network-warning-message'),
         timeout: 15_000,
         type: 'negative',
@@ -1245,13 +1248,16 @@ const checkYeartextPreview = () => {
       }
     };
 
+    // Once per session, and not around meeting time
+    if (!takeYeartextPreviewOffer(nextYear)) return;
+
     // Show notification
     createTemporaryNotification({
       actions: [
         {
           color: 'white',
           handler: () => {
-            // Session dismissal handled by not showing again until app restart
+            // Asked again at the next start (see takeYeartextPreviewOffer)
           },
           label: t('later'),
         },
@@ -1270,6 +1276,7 @@ const checkYeartextPreview = () => {
           label: t('yes'),
         },
       ],
+      group: 'yeartext-preview',
       message: t('yeartext-preview-next-year', { year: nextYear }),
       timeout: 0, // Don't auto-dismiss
       type: 'info',
@@ -2109,7 +2116,9 @@ watchImmediate(
 // downloading anything.
 useIntervalFn(
   () => {
-    if (currentState.hasActiveDownloads) void checkLowDiskSpaceAndNotify();
+    if (currentState.hasActiveDownloads) {
+      void checkLowDiskSpaceAndNotify({ reminder: true });
+    }
   },
   2 * 60 * 1000,
 );

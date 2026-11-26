@@ -35,8 +35,11 @@ import {
   useIslandButton,
 } from 'src/composables/useIslandButton';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { createTemporaryNotification } from 'src/helpers/notifications';
-import { isTransientObsError, obsConnect } from 'src/helpers/obs';
+import {
+  isTransientObsError,
+  notifyObsSceneNotFound,
+  obsConnect,
+} from 'src/helpers/obs';
 import { log } from 'src/shared/vanilla';
 import { sleep } from 'src/utils/general';
 import { initObsWebSocket, obsWebSocketInfo } from 'src/utils/obs';
@@ -105,7 +108,7 @@ const applySceneList = (sceneList: OBSResponseTypes['GetSceneList']) => {
   ]
     .filter((s): s is string => !!s)
     .forEach((scene) => {
-      if (!sceneExists(scene)) notifySceneNotFound();
+      if (!sceneExists(scene)) notifyObsSceneNotFound();
     });
 };
 
@@ -153,16 +156,6 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
 };
 
 const { t } = useI18n();
-
-const notifySceneNotFound = () =>
-  createTemporaryNotification({
-    caption: t('scene-not-found-explain'),
-    group: 'scene-not-found',
-    icon: 'mmm-obs-studio',
-    message: t('scene-not-found'),
-    timeout: 10_000,
-    type: 'negative',
-  });
 
 const initObsListeners = async () => {
   try {
