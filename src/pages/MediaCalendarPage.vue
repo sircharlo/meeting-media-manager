@@ -283,6 +283,10 @@ import {
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import {
+  findDuplicateSongs,
+  songProblemKey,
+} from 'src/helpers/meeting-song-check';
+import {
   isMemorialDateMissing,
   syncMemorialDate,
   whenMemorialDatesUpdated,
@@ -640,7 +644,7 @@ const customDuration = computed(() => {
 const pageBanners = computed(() =>
   getPageBanners({
     coWeek: isCoWeek(selectedDateObject.value?.date),
-    duplicateSongs: duplicateSongsForWeMeeting.value,
+    duplicateSongs: duplicateSongsInMeeting.value,
     hiddenMediaNames: hiddenMediaNamesForSelectedDate.value,
     meetingType: selectedDayMeetingType.value,
     obsDisconnected: !!showObsBanner.value,
@@ -1980,26 +1984,16 @@ const handleDrop = (event: DragEvent) => {
   }
 };
 
-const duplicateSongsForWeMeeting = computed(() => {
-  if (!selectedDateObject.value || selectedDayMeetingType.value !== 'we')
-    return false;
-
-  // Get all media from all sections
-  const allMedia = (selectedDateObject.value.mediaSections ?? []).flatMap(
-    (section) => section.items || [],
+// The selected meeting has a song more than once, apart from those the user
+// said were on purpose (the song check before the meeting:
+// DialogMeetingSongCheck).
+const duplicateSongsInMeeting = computed(() => {
+  const day = selectedDateObject.value;
+  if (!day || !selectedDayMeetingType.value) return false;
+  const okays = new Set(day.songCheckOkays ?? []);
+  return findDuplicateSongs(day.mediaSections).some(
+    (problem) => !okays.has(songProblemKey(problem)),
   );
-
-  const songNumbers: (number | string)[] = allMedia
-    .filter((m) => !m.hidden && m.tag?.type === 'song' && m.tag?.value)
-    .map((m) => m.tag?.value)
-    .filter(
-      (value): value is number | string =>
-        typeof value === 'string' || typeof value === 'number',
-    );
-
-  if (songNumbers.length < 2) return false;
-  const songSet = new Set(songNumbers);
-  return songSet.size !== songNumbers.length;
 });
 
 const arraysAreIdentical = (a: string[], b: string[]) =>
@@ -2382,7 +2376,7 @@ const shouldShowBannerColumn = computed(
     showObsBanner.value || // NOSONAR: boolean OR, false falls through
     showObsSceneListErrorBanner.value || // NOSONAR: boolean OR, false falls through
     someItemsHiddenForSelectedDate.value ||
-    duplicateSongsForWeMeeting.value ||
+    duplicateSongsInMeeting.value ||
     showEmptyState.value,
 );
 
