@@ -4,6 +4,7 @@ import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { Platform } from 'quasar';
 import { defaultSettings } from 'src/constants/settings';
 import { wasSetUpThisSession } from 'src/helpers/feature-nudges';
+import { useAttentionStore } from 'stores/attention';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -259,6 +260,18 @@ describe('SetupWizard, shared folder', () => {
 
     await click('Back');
     expect(text()).toContain('How the shared folder works');
+  });
+});
+
+describe('SetupWizard, the screen', () => {
+  // Nothing that opens on its own gets in the way (see the attention store).
+  it('holds the screen while it is open', async () => {
+    await mountWizard();
+    expect(useAttentionStore().isClaimed('setup-wizard')).toBe(true);
+
+    wrapper?.unmount();
+    wrapper = undefined;
+    expect(useAttentionStore().isClaimed('setup-wizard')).toBe(false);
   });
 });
 

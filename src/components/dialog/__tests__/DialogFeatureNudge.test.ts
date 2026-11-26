@@ -10,10 +10,10 @@ import {
   resetFeatureNudgeSession,
 } from 'src/helpers/feature-nudges';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { useAttentionStore } from 'stores/attention';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useDialogStateStore } from 'stores/dialog-state';
-import { useZoomDisplaySetupStore } from 'stores/zoom-display-setup';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter, type Router } from 'vue-router';
 
@@ -119,7 +119,9 @@ beforeEach(() => {
   // installPinia shares one Pinia across the file
   useCongregationSettingsStore().featureNudges = {};
   useDialogStateStore().closeAllDialogs();
+  useAttentionStore().claims.clear();
   useCurrentStateStore().currentCongregation = '';
+  useCurrentStateStore().congregationSwitcherOpen = false;
   vi.spyOn(globalThis.electronApi, 'getAllScreens').mockResolvedValue([]);
   vi.spyOn(globalThis.electronApi, 'getLowDiskSpaceStatus').mockResolvedValue(
     false,
@@ -237,15 +239,27 @@ describe('DialogFeatureNudge', () => {
     expect(text()).toContain('Did you know?');
   });
 
-  // The tour after the Zoom display setup isn't a dialog, but the suggestion
-  // would cover the buttons it points at.
-  it('waits while the Zoom display tour runs', async () => {
+  // A tour isn't a dialog, but the suggestion would cover the buttons it
+  // points at: tours hold the screen instead (see the attention store).
+  it('waits while a tour holds the screen', async () => {
     await mountNudge();
-    useZoomDisplaySetupStore().startTour();
+    useAttentionStore().claim('zoom-display-tour');
     await wait(FIRST_TRY_MS);
     expect(text()).not.toContain('Did you know?');
 
-    useZoomDisplaySetupStore().endTour();
+    useAttentionStore().release('zoom-display-tour');
+    await wait(RETRY_MS);
+    expect(text()).toContain('Did you know?');
+  });
+
+  // Also while it picks a profile by itself at startup, with no dialog.
+  it('waits while the profile picker is up', async () => {
+    await mountNudge();
+    useCurrentStateStore().congregationSwitcherOpen = true;
+    await wait(FIRST_TRY_MS);
+    expect(text()).not.toContain('Did you know?');
+
+    useCurrentStateStore().congregationSwitcherOpen = false;
     await wait(RETRY_MS);
     expect(text()).toContain('Did you know?');
   });

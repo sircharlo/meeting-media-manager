@@ -39,13 +39,15 @@
 
 <script setup lang="ts">
 import WizardSpotlight from 'components/ui/WizardSpotlight.vue';
+import { useScreenClaim } from 'src/composables/useScreenClaim';
 import { computed, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // A short tour of real, currently-rendered elements (see WizardSpotlight):
 // one step at a time, each with a card above the spotlight's arrow, and
 // Next / Skip tour / Close. The quick-start tour and the Zoom display
-// setup's tour are built on it.
+// setup's tour are built on it. While it shows, it holds the screen (see
+// the attention store): what opens on its own waits for it.
 
 interface TourStep {
   body: string[];
@@ -54,12 +56,18 @@ interface TourStep {
   title: string;
 }
 
-const props = defineProps<{ steps: TourStep[] }>();
+const props = defineProps<{
+  /** The tour's name, for the attention store (e.g. 'quick-start-tour'). */
+  name: string;
+  steps: TourStep[];
+}>();
 
 /** The step shown (an index into `steps`); null: the tour is over. */
 const step = defineModel<null | number>('step', { required: true });
 
 const { t } = useI18n();
+
+useScreenClaim(props.name, () => step.value !== null);
 
 const currentStep = computed(() =>
   step.value === null ? null : (props.steps[step.value] ?? null),

@@ -1,5 +1,9 @@
 <template>
-  <SpotlightTour v-model:step="tourStep" :steps="steps" />
+  <SpotlightTour
+    v-model:step="tourStep"
+    name="quick-start-tour"
+    :steps="steps"
+  />
 </template>
 
 <script setup lang="ts">

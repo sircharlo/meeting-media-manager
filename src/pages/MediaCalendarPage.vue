@@ -245,6 +245,7 @@ import { storeToRefs } from 'pinia';
 import { type QInput, useMeta, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
+import { useQuickStartTour } from 'src/composables/useQuickStartTour';
 import { SORTER } from 'src/constants/general';
 import { MEDIA_STOP_FADE_DURATION_SECONDS } from 'src/constants/media';
 import { isCoWeek, isMemorialDay, isWeMeetingDay } from 'src/helpers/date';
@@ -330,7 +331,6 @@ import {
   tableExists,
 } from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
-import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import {
   type MediaPlayingState,
   useCurrentStateStore,
@@ -510,7 +510,6 @@ const { lookupPeriod, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const { getMeetingType } = currentState;
 const {
-  congregationSwitcherOpen,
   countItemsForSelectedDate,
   countItemsHiddenForSelectedDate,
   currentCongregation,
@@ -537,17 +536,16 @@ const { obsConnectionState, obsSceneListError } = storeToRefs(obsState);
 const meetingQuickActions = useMeetingQuickActionsStore();
 const { recordLastSongEnded } = meetingQuickActions;
 const { offerMusicAfterLastSong } = useMusicStore();
-const congregationSettingsStore = useCongregationSettingsStore();
 
 const totalFiles = ref(0);
 const currentFile = ref(0);
 const showFileImport = ref(false);
-const showQuickStartGuide = ref(false);
-// The congregation the guide was actually opened for (see UX-0 in
-// full-audit-2026-09-04.md) - captured so the eventual "mark as seen" below
-// can't misattribute to whichever congregation happens to be active if the
-// user switches congregations while the guide dialog is open.
-const quickStartGuideCongId = ref<string | undefined>(undefined);
+// The quick-start tour of the footer buttons, once per profile: it replaces
+// the wizard's former tutorial steps, and waits for the screen to be free.
+// Asked for on mount (e.g. right after the wizard) and on a profile switch,
+// as this page stays mounted then.
+const { requestQuickStartTour, visible: showQuickStartGuide } =
+  useQuickStartTour();
 const showSectionPicker = ref(false);
 const showMediaPicker = ref(false);
 const selectedDocument = ref<DocumentItem | undefined>();
@@ -1121,43 +1119,6 @@ const checkSpecialDates = () => {
       contexts: { fn: { name: 'checkMemorialDateSet' } },
     });
   });
-};
-
-// Replaces the wizard's own footer-button tutorial steps (previously
-// mandatory during setup) with an optional tour shown once, the first time
-// a congregation profile actually reaches this page with the footer
-// buttons visible - called from both onMounted (first mount, e.g. right
-// after the wizard finishes) and the currentCongregation watcher below
-// (switching to a different, not-yet-toured profile while this page stays
-// mounted).
-const maybeShowQuickStartGuide = () => {
-  const congId = currentCongregation.value;
-  if (!congId || congregationSettingsStore.quickStartTourSeen[congId]) return;
-  // While the congregation switcher is open (e.g. bootstrapping a brand-new
-  // profile that's about to be routed to /setup-wizard), this page is only
-  // mounted underneath it, not actually being looked at yet - the
-  // currentCongregation watcher below still fires the instant
-  // setCongregation() assigns the new id, before that redirect lands.
-  // enableMusicButton defaults to true, so without this guard a fresh,
-  // not-yet-configured congregation would immediately satisfy the check
-  // below and get marked as toured before the wizard ever ran, permanently
-  // skipping the real tour once setup actually finishes.
-  if (congregationSwitcherOpen.value) return;
-  if (
-    !currentSettings.value?.enableMediaDisplayButton &&
-    !currentSettings.value?.enableMusicButton
-  )
-    return;
-
-  // Marking "seen" happens once the guide is actually dismissed (see the
-  // showQuickStartGuide watcher below), not here. Marking it up front meant
-  // a guide that failed to render on its very first attempt - for any of the
-  // usual transient reasons (HMR timing, a layout-timing edge case, a user
-  // blinking past it) - was permanently suppressed for that congregation
-  // with no way to bring it back, since nothing ever set the flag to false
-  // again.
-  quickStartGuideCongId.value = congId;
-  showQuickStartGuide.value = true;
 };
 
 const sectionToAddTo = ref<MediaSectionIdentifier | undefined>();
@@ -3537,7 +3498,7 @@ onMounted(() => {
     void router.push('/settings');
   }
   checkSpecialDates();
-  maybeShowQuickStartGuide();
+  requestQuickStartTour();
 
   watch(
     () => urlVariables.value.mediator,
@@ -3608,7 +3569,7 @@ watch(
       selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
     }
     checkSpecialDates();
-    maybeShowQuickStartGuide();
+    requestQuickStartTour();
     // onMounted's own fetchMedia() call only covers a fresh mount - this
     // page is reused (not remounted) across an in-place congregation switch,
     // so without this the newly selected congregation's errored/incomplete
@@ -3617,20 +3578,6 @@ watch(
     void fetchMedia();
   },
 );
-
-// Marks the quick-start tour as seen only once it's actually been shown and
-// dismissed (see UX-0 in full-audit-2026-09-04.md), not at the moment it's
-// requested to open - so a guide that never becomes visible simply gets
-// retried on the next opportunity (next mount/congregation switch) instead
-// of being permanently and silently suppressed for that congregation.
-watch(showQuickStartGuide, (isShowing, wasShowing) => {
-  if (wasShowing && !isShowing && quickStartGuideCongId.value) {
-    congregationSettingsStore.markQuickStartTourSeen(
-      quickStartGuideCongId.value,
-    );
-    quickStartGuideCongId.value = undefined;
-  }
-});
 
 watchImmediate(
   () => getCurrentMediaWindowVariables.value,
