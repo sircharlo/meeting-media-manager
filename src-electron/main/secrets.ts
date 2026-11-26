@@ -1,4 +1,5 @@
 import { safeStorage } from 'electron';
+import { PLATFORM } from 'src-electron/constants';
 import { addElectronBreadcrumb } from 'src-electron/main/utils';
 
 // Bumping this prefix would let a future format change tell old and new
@@ -11,21 +12,58 @@ const ENCRYPTED_PREFIX = 'enc:v1:';
 // ever logging the secret itself.
 let hasReportedMissingSecretEncryption = false;
 
+// On Linux, Chromium starts what it encrypts with "v11" when the key comes
+// from the keyring, and with "v10" when no keyring could be reached: then
+// it uses a hardcoded key that anyone can look up, and safeStorage still
+// says encryption is available.
+const LINUX_HARDCODED_KEY_PREFIX = 'v10';
+
+// Chromium picks its key once, at startup: one check is enough.
+let linuxKeyringCheck: Promise<boolean> | undefined;
+
 /**
- * Whether {@link encryptSecret} can actually encrypt on this machine. `false`
- * on Linux without a compatible keyring/secret-service backend (headless
- * setups, minimal window managers, some kiosk-style deployments) - a
- * plausible real-world case for an always-on congregation media PC. The
- * renderer surfaces this so the user knows a secret like the OBS password is
- * sitting on disk as plain text, instead of that happening silently.
+ * Whether safeStorage's key comes from a keyring on Linux, from what it
+ * makes of a throwaway value.
+ * @returns False when it encrypts with Chromium's hardcoded key, or can't
+ * encrypt at all.
+ */
+const usesLinuxKeyring = async () => {
+  try {
+    const probe = await safeStorage.encryptStringAsync('probe');
+    return (
+      probe
+        .subarray(0, LINUX_HARDCODED_KEY_PREFIX.length)
+        .toString('latin1') !== LINUX_HARDCODED_KEY_PREFIX
+    );
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Whether {@link encryptSecret} can actually protect a secret on this
+ * machine. `false` on Linux without a keyring it can reach (headless setups,
+ * minimal window managers, kiosk-style deployments, or M³'s snap without the
+ * password-manager-service interface), a plausible real-world case for an
+ * always-on congregation media PC. There, safeStorage still says it's
+ * available, but encrypts with Chromium's hardcoded key, which protects
+ * nothing. The renderer surfaces this so the user knows a secret like the
+ * OBS password is sitting on disk as plain text, instead of that happening
+ * silently.
  *
  * Uses safeStorage's asynchronous API: the synchronous methods are
  * deprecated in Electron 45 and removed in 46. Both use the same OS key
  * stores, so values encrypted by earlier versions still decrypt.
  * @returns Whether OS-backed secret encryption is available
  */
-export const isSecretEncryptionAvailable = (): Promise<boolean> =>
-  safeStorage.isAsyncEncryptionAvailable().catch(() => false);
+export const isSecretEncryptionAvailable = async (): Promise<boolean> => {
+  const available = await safeStorage
+    .isAsyncEncryptionAvailable()
+    .catch(() => false);
+  if (!available || PLATFORM !== 'linux') return available;
+  linuxKeyringCheck ??= usesLinuxKeyring();
+  return linuxKeyringCheck;
+};
 
 /**
  * Encrypts a secret (e.g. the OBS websocket password) using the OS
