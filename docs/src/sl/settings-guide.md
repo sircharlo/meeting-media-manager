@@ -177,15 +177,15 @@ Trenutni profil znova poveže z iskanjem občine, da se lahko nadaljuje samodejn
 
 Ročno sinhroniziraj trenutni in prihodnji urnik shodov s podatki z uradnega spletnega mesta.
 
-### Help Set Up Zoom for Remote Participants {#zoom-display-setup-help}
+### Pomoč pri nastavitvi Zooma za udeležence na daljavo {#zoom-display-setup-help}
 
 <!-- **Setting**: `zoomDisplaySetupHelp` -->
 
-Someone presenting a part from Zoom is seen on the TV through the Zoom window, which is normally hidden behind the media display: hide the media display to show it. Before each meeting, M³ asks whether any of the day's parts will be presented by someone on Zoom (before the weekend meeting, whether the speaker will be on Zoom). If so, it helps you get the Zoom window ready on the TV: it hides the media display for a moment so you can check that the Zoom window is on the TV and fills the whole screen, says how to make it full screen if it doesn't (double-click the middle of the Zoom window), shows the media display again on top of the Zoom window, points out the buttons that hide and show it when it's time to show the Zoom window, then tells you when everything's ready.
+Kdor točko predstavlja prek Zooma, je na televizorju viden v oknu Zooma, ki je običajno skrito za multimedijskim zaslonom: da okno prikažeš, skrij multimedijski zaslon. Pred vsakim shodom M³ vpraša, ali bo kdo katero od točk tistega dne predstavil prek Zooma (pred javnim shodom pa, ali bo govornik govoril prek Zooma). Če je tako, ti pomaga pripraviti okno Zooma na televizorju: za trenutek skrije multimedijski zaslon, da lahko preveriš, ali je okno Zooma na televizorju in zapolnjuje cel zaslon, pove, kako okno prikažeš čez cel zaslon, če ga še ne zapolnjuje (dvakrat klikni sredino okna Zooma), znova prikaže multimedijski zaslon čez okno Zooma, pokaže gumbe, s katerimi multimedijski zaslon skriješ in znova prikažeš, ko je treba pokazati okno Zooma, nato pa ti sporoči, ko je vse pripravljeno.
 
-With Zoom's **Meeting window view** set to **Dual window**, Zoom shows the participants in a second window that can stay on the TV. With the [Zoom Meeting Manager](#zoom-meeting-manager) turned on, M³ also moves that window to the TV and makes it full screen for you.
+Ko je v Zoomu nastavitev **Meeting window view** nastavljena na **Dual window**, Zoom prikaže udeležence v drugem oknu, ki lahko ostane na televizorju. Ko je vklopljen [Upravitelj Zoom shoda](#zoom-meeting-manager), M³ to okno tudi premakne na televizor in ga namesto tebe prikaže čez cel zaslon.
 
-M³ asks once per meeting, from a little over an hour before it starts until it starts, and only while the media display fills a screen of its own. To turn the question off, choose **Don't ask me again**, then **Turn it off**.
+M³ vpraša enkrat za vsak shod, od nekaj več kot ure pred začetkom shoda do njegovega začetka, in samo, kadar multimedijski zaslon v celoti zapolnjuje ločen zaslon. Če želiš vprašanje izklopiti, izberi **Ne sprašuj me več**, nato pa **Izklopi ga**.
 
 **Privzeto**: `true`
 

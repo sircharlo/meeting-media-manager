@@ -177,15 +177,15 @@ Verknüpft das aktuelle Profil wieder mit der Versammlungssuche, damit Tag und U
 
 Synchronisieren Sie das aktuelle und zukünftige Zusammenkunftsprogramm manuell mit den Informationen der offiziellen Website.
 
-### Help Set Up Zoom for Remote Participants {#zoom-display-setup-help}
+### Hilfe beim Einrichten von Zoom für zugeschaltete Teilnehmer {#zoom-display-setup-help}
 
 <!-- **Setting**: `zoomDisplaySetupHelp` -->
 
-Someone presenting a part from Zoom is seen on the TV through the Zoom window, which is normally hidden behind the media display: hide the media display to show it. Before each meeting, M³ asks whether any of the day's parts will be presented by someone on Zoom (before the weekend meeting, whether the speaker will be on Zoom). If so, it helps you get the Zoom window ready on the TV: it hides the media display for a moment so you can check that the Zoom window is on the TV and fills the whole screen, says how to make it full screen if it doesn't (double-click the middle of the Zoom window), shows the media display again on top of the Zoom window, points out the buttons that hide and show it when it's time to show the Zoom window, then tells you when everything's ready.
+Wer einen Programmpunkt per Zoom übernimmt, ist auf dem Bildschirm im Saal im Zoom-Fenster zu sehen, das normalerweise hinter der Medienanzeige verborgen ist: Blenden Sie die Medienanzeige aus, um es zu zeigen. Vor jeder Zusammenkunft fragt M³, ob an diesem Tag jemand per Zoom einen Programmpunkt übernimmt (vor der Zusammenkunft am Wochenende, ob der Redner per Zoom zugeschaltet ist). Wenn ja, hilft M³ Ihnen, das Zoom-Fenster auf dem Bildschirm im Saal vorzubereiten: M³ blendet die Medienanzeige kurz aus, damit Sie prüfen können, ob das Zoom-Fenster dort angezeigt wird und den ganzen Bildschirm ausfüllt, erklärt, wie Sie es andernfalls auf Vollbild schalten (Doppelklick in die Mitte des Zoom-Fensters), blendet die Medienanzeige wieder über dem Zoom-Fenster ein, zeigt Ihnen die Schaltflächen, mit denen Sie sie aus- und einblenden, wenn das Zoom-Fenster gezeigt werden soll, und meldet schließlich, wenn alles bereit ist.
 
-With Zoom's **Meeting window view** set to **Dual window**, Zoom shows the participants in a second window that can stay on the TV. With the [Zoom Meeting Manager](#zoom-meeting-manager) turned on, M³ also moves that window to the TV and makes it full screen for you.
+Ist in Zoom **Meeting window view** auf **Dual window** gestellt, zeigt Zoom die Teilnehmer in einem zweiten Fenster an, das auf dem Bildschirm im Saal bleiben kann. Ist der [Zoom Meeting Manager](#zoom-meeting-manager) aktiviert, verschiebt M³ dieses Fenster außerdem für Sie auf den Bildschirm im Saal und schaltet es auf Vollbild.
 
-M³ asks once per meeting, from a little over an hour before it starts until it starts, and only while the media display fills a screen of its own. To turn the question off, choose **Don't ask me again**, then **Turn it off**.
+M³ fragt einmal pro Zusammenkunft, ab etwas mehr als einer Stunde vor ihrem Beginn bis zum Beginn, und nur, solange die Medienanzeige einen eigenen Bildschirm ausfüllt. Um die Frage auszuschalten, wählen Sie **Nicht mehr fragen** und dann **Ausschalten**.
 
 **Standard**: `true`
 

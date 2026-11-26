@@ -177,15 +177,15 @@ Seob praeguse profiili uuesti koguduse otsinguga, et koosolekupäevade ja -aegad
 
 Sünkroniseeri praegune ja tulevane koosolekute ajakava käsitsi ametliku veebisaidi andmetega.
 
-### Help Set Up Zoom for Remote Participants {#zoom-display-setup-help}
+### Abi Zoomi seadistamisel kaugosalejate jaoks {#zoom-display-setup-help}
 
 <!-- **Setting**: `zoomDisplaySetupHelp` -->
 
-Someone presenting a part from Zoom is seen on the TV through the Zoom window, which is normally hidden behind the media display: hide the media display to show it. Before each meeting, M³ asks whether any of the day's parts will be presented by someone on Zoom (before the weekend meeting, whether the speaker will be on Zoom). If so, it helps you get the Zoom window ready on the TV: it hides the media display for a moment so you can check that the Zoom window is on the TV and fills the whole screen, says how to make it full screen if it doesn't (double-click the middle of the Zoom window), shows the media display again on top of the Zoom window, points out the buttons that hide and show it when it's time to show the Zoom window, then tells you when everything's ready.
+Seda, kes esitab osa Zoomi kaudu, näeb teleris Zoomi aknas, mis on tavaliselt meediaakna taha peidetud: selle näitamiseks peida meediaaken. Enne iga koosolekut küsib M³, kas keegi esitab sel päeval mõne osa Zoomi kaudu (enne nädalavahetuse koosolekut, kas kõneleja esineb Zoomi kaudu). Kui jah, aitab see Zoomi akna teleris valmis seada: see peidab hetkeks meediaakna, et saaksid kontrollida, kas Zoomi aken on teleris ja täidab kogu ekraani, ütleb, kuidas aken täisekraanile panna, kui see ekraani ei täida (tee Zoomi akna keskel topeltklõps), näitab meediaakent uuesti Zoomi akna peal, juhib tähelepanu nuppudele, millega meediaakent peita ja näidata, kui on aeg Zoomi akent näidata, ning annab siis teada, kui kõik on valmis.
 
-With Zoom's **Meeting window view** set to **Dual window**, Zoom shows the participants in a second window that can stay on the TV. With the [Zoom Meeting Manager](#zoom-meeting-manager) turned on, M³ also moves that window to the TV and makes it full screen for you.
+Kui Zoomi seade **Meeting window view** on väärtusel **Dual window**, näitab Zoom osalejaid teises aknas, mis võib teleris püsima jääda. Kui [Zoomi koosolekuhaldur](#zoom-meeting-manager) on sisse lülitatud, liigutab M³ ka selle akna teleriekraanile ja paneb selle sinu eest täisekraanile.
 
-M³ asks once per meeting, from a little over an hour before it starts until it starts, and only while the media display fills a screen of its own. To turn the question off, choose **Don't ask me again**, then **Turn it off**.
+M³ küsib iga koosoleku kohta ühe korra, alates veidi rohkem kui tund enne koosoleku algust kuni selle alguseni, ja ainult siis, kui meediaaken täidab terve eraldi ekraani. Küsimuse väljalülitamiseks vali **Ära enam küsi** ja seejärel **Lülita välja**.
 
 **Vaikimisi**: `lubatud`
 

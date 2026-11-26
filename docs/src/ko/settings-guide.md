@@ -177,15 +177,15 @@ M³의 화면 테마를 설정합니다.
 
 현재 및 향후 집회 일정을 공식 웹사이트의 정보와 직접 동기화합니다.
 
-### Help Set Up Zoom for Remote Participants {#zoom-display-setup-help}
+### 원격 참가자를 위한 Zoom 준비 돕기 {#zoom-display-setup-help}
 
 <!-- **Setting**: `zoomDisplaySetupHelp` -->
 
-Someone presenting a part from Zoom is seen on the TV through the Zoom window, which is normally hidden behind the media display: hide the media display to show it. Before each meeting, M³ asks whether any of the day's parts will be presented by someone on Zoom (before the weekend meeting, whether the speaker will be on Zoom). If so, it helps you get the Zoom window ready on the TV: it hides the media display for a moment so you can check that the Zoom window is on the TV and fills the whole screen, says how to make it full screen if it doesn't (double-click the middle of the Zoom window), shows the media display again on top of the Zoom window, points out the buttons that hide and show it when it's time to show the Zoom window, then tells you when everything's ready.
+Zoom으로 파트를 발표하는 사람은 Zoom 창을 통해 TV에 표시되는데, 이 창은 평소에 미디어 화면 뒤에 가려져 있으므로 미디어 화면을 숨겨야 보입니다. M³는 매 집회 전에 그날 Zoom으로 파트를 발표하는 사람이 있는지 묻습니다(공개 집회 전에는 연사가 Zoom으로 연설하는지 묻습니다). 그렇다면 TV에 Zoom 창을 준비하는 일을 도와주는데, 미디어 화면을 잠시 숨겨 Zoom 창이 TV에 있고 화면 전체를 채우는지 확인할 수 있게 하고, 그렇지 않으면 전체 화면으로 만드는 방법(Zoom 창 가운데를 두 번 클릭)을 알려 주며, Zoom 창 위에 미디어 화면을 다시 표시하고, Zoom 창을 보여 줄 때 미디어 화면을 숨기고 다시 표시하는 버튼을 짚어 준 다음, 모든 준비가 끝나면 알려 줍니다.
 
-With Zoom's **Meeting window view** set to **Dual window**, Zoom shows the participants in a second window that can stay on the TV. With the [Zoom Meeting Manager](#zoom-meeting-manager) turned on, M³ also moves that window to the TV and makes it full screen for you.
+Zoom의 **Meeting window view** 설정이 **Dual window**로 되어 있으면 Zoom이 참가자를 두 번째 창에 표시하며, 이 창은 TV에 계속 띄워 둘 수 있습니다. [Zoom 회의 관리자](#zoom-meeting-manager)가 켜져 있으면 M³가 그 창을 TV로 옮겨 전체 화면으로 만드는 작업도 대신 해 줍니다.
 
-M³ asks once per meeting, from a little over an hour before it starts until it starts, and only while the media display fills a screen of its own. To turn the question off, choose **Don't ask me again**, then **Turn it off**.
+M³는 집회마다 한 번, 집회가 시작되기 1시간여 전부터 시작될 때까지, 그리고 미디어 화면이 별도의 화면 하나를 전부 차지하고 있을 때만 묻습니다. 이 질문을 끄려면 **다시 묻지 않기**를 선택한 다음 **끄기**를 선택하십시오.
 
 **기본값**: `true`
 
