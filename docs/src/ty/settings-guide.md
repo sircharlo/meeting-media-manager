@@ -177,15 +177,15 @@ Te taati faahou ra i teie parau tuatï i nia i te imiraa amuiraa ia tia ia hoʻi
 
 A fa’aaura’a ma te rima i te tāpura taime nō te putuputura’a i teie taime e i te mau taime e tupu mai, ma te fa’a’ohipa i te mau ha’amāramaramara’a nō roto mai i te tahua iteneti mana.
 
-### Help Set Up Zoom for Remote Participants {#zoom-display-setup-help}
+### Tauturu nō te fa’anaho iā Zoom nō te feiā i putuputu mai nā te ātea mai {#zoom-display-setup-help}
 
 <!-- **Setting**: `zoomDisplaySetupHelp` -->
 
-Someone presenting a part from Zoom is seen on the TV through the Zoom window, which is normally hidden behind the media display: hide the media display to show it. Before each meeting, M³ asks whether any of the day's parts will be presented by someone on Zoom (before the weekend meeting, whether the speaker will be on Zoom). If so, it helps you get the Zoom window ready on the TV: it hides the media display for a moment so you can check that the Zoom window is on the TV and fills the whole screen, says how to make it full screen if it doesn't (double-click the middle of the Zoom window), shows the media display again on top of the Zoom window, points out the buttons that hide and show it when it's time to show the Zoom window, then tells you when everything's ready.
+Te ta’ata e rave ra i te hō’ē tuha’a nā roto iā Zoom, e ’itehia ’oia i ni’a i te ’āfata teata nā roto i te ha’amāramarama a Zoom, o te vai huna noa i te taime mātau i muri mai i te fa’a’itera’a media: ’a huna i te fa’a’itera’a media nō te fa’a’ite i te reira. Hou te putuputura’a tā’itahi, e ani M³ mai te peu e rave te hō’ē ta’ata nā roto iā Zoom i te hō’ē o te mau tuha’a o te mahana (hou te putuputura’a nō te hope’a hepetoma, mai te peu e paraparau te ’ōrero nā roto iā Zoom). Mai te peu ē ’ē, e tauturu ’oia iā ’oe ’ia fa’aineine i te ha’amāramarama a Zoom i ni’a i te ’āfata teata: e huna ’oia i te fa’a’itera’a media nō te hō’ē taime poto ’ia nehenehe ’oe e hi’opo’a ē tei ni’a te ha’amāramarama a Zoom i te ’āfata teata ’e tē fa’a’ī ra i te paruai ta’ato’a, e parau ’oia e nāfea ’ia tu’u i te reira i ni’a i te paruai ta’ato’a mai te peu ’aita (’a pata e piti taime i rōpū i te ha’amāramarama a Zoom), e fa’a’ite fa’ahou ’oia i te fa’a’itera’a media i ni’a a’e i te ha’amāramarama a Zoom, e fa’a’ite ’oia i te mau pitopito e huna ’e e fa’a’ite i te fa’a’itera’a media ’ia tae i te taime e fa’a’ite ai i te ha’amāramarama a Zoom, ’e i muri iho e parau ’oia iā ’oe ’ia ineine te mau mea ato’a.
 
-With Zoom's **Meeting window view** set to **Dual window**, Zoom shows the participants in a second window that can stay on the TV. With the [Zoom Meeting Manager](#zoom-meeting-manager) turned on, M³ also moves that window to the TV and makes it full screen for you.
+’Ia fa’anahohia te fa’anahora’a **Meeting window view** a Zoom i ni’a i te **Dual window**, e fa’a’ite Zoom i te feiā i putuputu mai i roto i te piti o te ha’amāramarama o te nehenehe e vai noa i ni’a i te ’āfata teata. ’Ia fa’atupuhia te [Fa’atere Putuputura’a Zoom](#zoom-meeting-manager), e fa’ane’e ato’a M³ i taua ha’amāramarama ra i ni’a i te ’āfata teata ’e e tu’u i te reira i ni’a i te paruai ta’ato’a nō ’oe.
 
-M³ asks once per meeting, from a little over an hour before it starts until it starts, and only while the media display fills a screen of its own. To turn the question off, choose **Don't ask me again**, then **Turn it off**.
+E ani M³ hō’ē noa taime i te putuputura’a tā’itahi, mai te hau iti a’e i te hō’ē hora hou te putuputura’a e ha’amata ai e tae roa i tōna ha’amatara’a, ’e i te taime ana’e e fa’a’ī ai te fa’a’itera’a media i te hō’ē paruai nōna iho. Nō te tāpohe i teie uira’a, ’a mā’iti i **’Eiaha e ani fa’ahou mai iā’u**, ’e i muri iho i **’A tāpohe i te reira**.
 
 **Fa’anahora’a tumu**: `true`
 
