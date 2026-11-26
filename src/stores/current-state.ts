@@ -153,6 +153,20 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
 
 let zoomHelperSyncInProgress = false;
 
+// Closes the notification that M³'s Zoom helper couldn't start, which stays
+// until closed.
+let dismissHelperStartFailed: (() => void) | undefined;
+
+/**
+ * Closes the notification that M³'s Zoom helper couldn't start, if it's
+ * showing: a failed check's result, which gives the same reason, replaces it
+ * (see zoom-startup-check.ts).
+ */
+export const dismissZoomHelperStartFailedNotice = () => {
+  dismissHelperStartFailed?.();
+  dismissHelperStartFailed = undefined;
+};
+
 /** Local time with milliseconds, e.g. 14:03:12.345. */
 const formatLogTime = (date: Date) =>
   date.toLocaleTimeString('en-GB', {
@@ -421,7 +435,7 @@ export const useCurrentStateStore = defineStore('current-state', {
           const { createTemporaryNotification } =
             await import('src/helpers/notifications');
           const t = i18n.global.t as (key: string) => string;
-          createTemporaryNotification({
+          dismissHelperStartFailed = createTemporaryNotification({
             caption: t(getZoomHelperErrorMessageKey(result.error)),
             message: t('zoom-helper-start-failed'),
             timeout: 0,

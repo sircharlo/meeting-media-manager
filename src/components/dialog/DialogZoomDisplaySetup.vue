@@ -241,8 +241,9 @@ import {
   turnOffZoomDisplaySetup,
   type ZoomDisplayPlacement,
 } from 'src/helpers/zoom-display-setup';
+import { isZoomCheckStillToCome } from 'src/helpers/zoom-startup-check';
 import { log } from 'src/shared/vanilla';
-import { useAttentionStore } from 'stores/attention';
+import { SCREEN_PRIORITY, useAttentionStore } from 'stores/attention';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { isDemoModeActive } from 'stores/demo-mode';
@@ -267,6 +268,8 @@ interface PlacementNote {
 type Step = 'ask' | 'check' | 'done' | 'explain' | 'fix' | 'placing';
 
 const DIALOG_ID = 'zoom-display-setup';
+// Its turn to show, in the attention store.
+const SCREEN_REQUEST = 'zoom-display-question';
 // How long the closing screen stays, unless closed sooner.
 const FINALE_MS = 5000;
 
@@ -415,16 +418,17 @@ const allSet = () => {
   step.value = 'done';
 };
 
-// Only on the media calendar, over nothing else (no other dialog, tour or
-// profile picker: see the attention store), with no Zoom check or
-// automation and no media showing; not in the session the profile was set
-// up in, nor before its quick-start tour (which points at the same
-// buttons), nor in demo mode.
+// Only on the media calendar, with no Zoom check or automation and no
+// media showing, once today's Zoom check is done (it asks its own question
+// first); not in the session the profile was set up in, nor before its
+// quick-start tour (which points at the same buttons), nor in demo mode.
+// What else is on screen is left to the attention store: the question waits
+// for its turn there (see tryToAsk).
 const isGoodMoment = (congId: string) =>
   route.name === 'media-calendar' &&
-  !attention.isScreenTaken &&
   !zoomState.checkRunning &&
   !zoomState.runActive &&
+  !isZoomCheckStillToCome() &&
   !currentState.mediaPlaying.url &&
   !wasSetUpThisSession(congId) &&
   !!congregationSettings.quickStartTourSeen[congId] &&
@@ -432,19 +436,35 @@ const isGoodMoment = (congId: string) =>
 
 let asking = false;
 
+// Asks once it's its turn, if it still should by then.
+const askWhenItsTurn = (congId: string) => {
+  attention.request(SCREEN_REQUEST, {
+    open: () => {
+      if (meeting.value !== null || currentCongregation.value !== congId) {
+        return false;
+      }
+      const due = isGoodMoment(congId) && getDueZoomDisplaySetup();
+      if (!due) return false;
+      askZoomDisplaySetup(due);
+    },
+    priority: SCREEN_PRIORITY.zoomDisplayQuestion,
+  });
+};
+
 const tryToAsk = async () => {
   const congId = currentCongregation.value;
   if (asking || meeting.value !== null || !congId) return;
-  if (!isGoodMoment(congId)) return;
-  const due = getDueZoomDisplaySetup();
-  if (!due) return;
+  if (!isGoodMoment(congId) || !getDueZoomDisplaySetup()) {
+    attention.withdraw(SCREEN_REQUEST);
+    return;
+  }
   asking = true;
   try {
     // Without a TV of its own, there's nothing to set up (and the setup is
     // asked again once the media window fills one).
     if (!(await isMediaOnItsOwnScreen())) return;
-    if (currentCongregation.value !== congId || !isGoodMoment(congId)) return;
-    askZoomDisplaySetup(due);
+    if (currentCongregation.value !== congId) return;
+    askWhenItsTurn(congId);
   } catch (error) {
     errorCatcher(error, { contexts: { fn: { name: 'askZoomDisplaySetup' } } });
   } finally {
@@ -476,6 +496,7 @@ onBeforeUnmount(() => {
   clearTimeout(firstTry);
   clearInterval(interval);
   clearTimeout(finaleTimer);
+  attention.withdraw(SCREEN_REQUEST);
 });
 
 watch(meeting, (value) => {

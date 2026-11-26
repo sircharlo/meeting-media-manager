@@ -1,12 +1,12 @@
 import { createTestingPinia } from '@pinia/testing';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { setActivePinia } from 'pinia';
 import { useScreenClaim } from 'src/composables/useScreenClaim';
-import { useAttentionStore } from 'stores/attention';
+import { SCREEN_PRIORITY, useAttentionStore } from 'stores/attention';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useDialogStateStore } from 'stores/dialog-state';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { defineComponent, h, ref } from 'vue';
+import { defineComponent, h, nextTick, ref } from 'vue';
 
 let pinia: ReturnType<typeof createTestingPinia>;
 
@@ -83,5 +83,100 @@ describe('useScreenClaim', () => {
 
     wrapper.unmount();
     expect(useAttentionStore().isScreenTaken).toBe(false);
+  });
+});
+
+describe('attention queue', () => {
+  // What a request opens: a dialog, which then holds the screen.
+  const opener = (name: string, opened: string[]) => (): undefined => {
+    opened.push(name);
+    useDialogStateStore().openDialog(name, 'BaseDialog');
+  };
+
+  it('opens a request at once when the screen is free', () => {
+    const opened: string[] = [];
+    useAttentionStore().request('feature-tip', {
+      open: opener('feature-tip', opened),
+      priority: SCREEN_PRIORITY.featureTip,
+    });
+    expect(opened).toEqual(['feature-tip']);
+  });
+
+  it('waits for the screen, then opens the most important first, one at a time', async () => {
+    const attention = useAttentionStore();
+    const dialogs = useDialogStateStore();
+    const opened: string[] = [];
+    dialogs.openDialog('something-else', 'BaseDialog');
+    attention.request('feature-tip', {
+      open: opener('feature-tip', opened),
+      priority: SCREEN_PRIORITY.featureTip,
+    });
+    attention.request('zoom-check-prompt', {
+      open: opener('zoom-check-prompt', opened),
+      priority: SCREEN_PRIORITY.zoomCheckPrompt,
+    });
+    expect(opened).toEqual([]);
+
+    dialogs.closeDialog('something-else');
+    await flushPromises();
+    expect(opened).toEqual(['zoom-check-prompt']);
+    expect(attention.isWaiting('feature-tip')).toBe(true);
+
+    dialogs.closeDialog('zoom-check-prompt');
+    await flushPromises();
+    expect(opened).toEqual(['zoom-check-prompt', 'feature-tip']);
+  });
+
+  it('gives the turn to the next one when a request no longer wants it', async () => {
+    const opened: string[] = [];
+    useAttentionStore().claim('setup-wizard');
+    useAttentionStore().request('missing-dates', {
+      open: () => false,
+      priority: SCREEN_PRIORITY.missingDates,
+    });
+    useAttentionStore().request('feature-tip', {
+      open: opener('feature-tip', opened),
+      priority: SCREEN_PRIORITY.featureTip,
+    });
+
+    useAttentionStore().release('setup-wizard');
+    await nextTick();
+
+    expect(opened).toEqual(['feature-tip']);
+    expect(useAttentionStore().isWaiting('missing-dates')).toBe(false);
+  });
+
+  it('holds the screen until what it opened shows', async () => {
+    const attention = useAttentionStore();
+    // It opens something that registers only later.
+    attention.request('quick-start-tour', {
+      open: () => undefined,
+      priority: SCREEN_PRIORITY.quickStartTour,
+    });
+    const opened: string[] = [];
+    attention.request('feature-tip', {
+      open: opener('feature-tip', opened),
+      priority: SCREEN_PRIORITY.featureTip,
+    });
+    expect(opened).toEqual([]);
+
+    // By Vue's next update, what it opened shows or it never will.
+    await flushPromises();
+    expect(opened).toEqual(['feature-tip']);
+  });
+
+  it('forgets a withdrawn request', () => {
+    const attention = useAttentionStore();
+    attention.claim('setup-wizard');
+    const opened: string[] = [];
+    attention.request('feature-tip', {
+      open: opener('feature-tip', opened),
+      priority: SCREEN_PRIORITY.featureTip,
+    });
+
+    attention.withdraw('feature-tip');
+    attention.release('setup-wizard');
+
+    expect(opened).toEqual([]);
   });
 });

@@ -93,7 +93,7 @@ import {
   wasSetUpThisSession,
 } from 'src/helpers/feature-nudges';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { useAttentionStore } from 'stores/attention';
+import { SCREEN_PRIORITY, useAttentionStore } from 'stores/attention';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { isDemoModeActive } from 'stores/demo-mode';
@@ -115,6 +115,8 @@ const attention = useAttentionStore();
 // is usually gone within seconds, so that's checked again sooner.
 const FIRST_TRY_DELAY_MS = 30 * 1000;
 const RETRY_DELAY_MS = 60 * 1000;
+// Its turn to show, in the attention store.
+const SCREEN_REQUEST = 'feature-tip';
 const NOTIFICATION_RETRY_DELAY_MS = 2 * 1000;
 const GIVE_UP_AFTER_MS = 30 * 60 * 1000;
 
@@ -187,6 +189,7 @@ let retryTimer: ReturnType<typeof setTimeout> | undefined;
 const stopTrying = () => {
   clearTimeout(retryTimer);
   retryTimer = undefined;
+  attention.withdraw(SCREEN_REQUEST);
 };
 
 // Never for a profile the setup wizard just went through (it asked about
@@ -202,14 +205,14 @@ const isProfileReady = (congId: string) =>
 // dialog to close (deferWhileDialogOpen), so only those already up matter.
 const isNotificationShowing = () => !!document.querySelector('.q-notification');
 
-// Only on the media calendar, over nothing else (no dialog, tour or profile
-// picker: see the attention store), while no media is shown and not from
-// shortly before the meeting until it ends. Notifications are checked
+// Only on the media calendar, while no media is shown and not from shortly
+// before the meeting until it ends. What else is on screen is left to the
+// attention store: the suggestion waits for its turn there, after whatever
+// matters more (see suggestWhenItsTurn). Notifications are checked
 // separately, as they go away on their own soon.
 const isGoodMoment = (congId: string) =>
   currentCongregation.value === congId &&
   route.name === 'media-calendar' &&
-  !attention.isScreenTaken &&
   !currentStateStore.mediaPlaying.url &&
   isOutsideMeetingTime();
 
@@ -242,11 +245,35 @@ const tryToSuggest = async (congId: string, giveUpAt: number) => {
   );
   if (!next || getRetryDelay(congId) !== null) return;
 
-  nudge.value = next;
-  body.value = next.getBody(context);
-  shownFor.value = congId;
-  answered = false;
-  open.value = true;
+  suggestWhenItsTurn(congId, next, next.getBody(context));
+};
+
+// Shows the suggestion once it's its turn, if the moment is still right
+// then. A notification showing (often one held back until the screen was
+// free) only puts it off a moment.
+const suggestWhenItsTurn = (
+  congId: string,
+  next: FeatureNudge,
+  nextBody: string,
+) => {
+  attention.request(SCREEN_REQUEST, {
+    open: () => {
+      if (!isGoodMoment(congId)) return false;
+      if (isNotificationShowing()) {
+        retryTimer = setTimeout(
+          () => suggestWhenItsTurn(congId, next, nextBody),
+          NOTIFICATION_RETRY_DELAY_MS,
+        );
+        return false;
+      }
+      nudge.value = next;
+      body.value = nextBody;
+      shownFor.value = congId;
+      answered = false;
+      open.value = true;
+    },
+    priority: SCREEN_PRIORITY.featureTip,
+  });
 };
 
 const scheduleTry = (congId: string, giveUpAt: number, delay: number) => {

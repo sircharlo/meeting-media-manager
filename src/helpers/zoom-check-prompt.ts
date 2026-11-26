@@ -1,3 +1,4 @@
+import { SCREEN_PRIORITY, useAttentionStore } from 'stores/attention';
 import { useZoomStateStore } from 'stores/zoom-state';
 
 // Asking the user before the Zoom startup check touches Zoom: the check
@@ -5,7 +6,11 @@ import { useZoomStateStore } from 'stores/zoom-state';
 // seconds, so it waits for the user to say when it may run, and never
 // operates Zoom behind their back before a meeting.
 //
-// The question is shown by DialogZoomCheckPrompt, which answers it.
+// The question is shown by DialogZoomCheckPrompt, which answers it. Like
+// everything that opens on its own, it waits for its turn (see the
+// attention store): it doesn't open over another question or a tour.
+
+const SCREEN_REQUEST = 'zoom-check-prompt';
 
 /**
  * What the user said when asked whether M³ may test Zoom, or 'unanswered'
@@ -28,6 +33,8 @@ const settle = (answer: ZoomCheckPromptAnswer) => {
   // The question always goes away when it is answered, even if nothing is
   // waiting for the answer any more (the check gave up on it, see the timeout
   // below): otherwise the dialog stays on screen and its buttons do nothing.
+  // One still waiting for its turn no longer opens.
+  useAttentionStore().withdraw(SCREEN_REQUEST);
   useZoomStateStore().closeCheckPrompt();
   const resolve = awaitingAnswer;
   if (!resolve) return;
@@ -49,9 +56,20 @@ export const askBeforeCheckingZoom = (timeoutMs = CHECK_PROMPT_TIMEOUT_MS) => {
       clearTimeout(timer);
       resolve(answer);
     };
-    useZoomStateStore().promptForCheck();
+    useAttentionStore().request(SCREEN_REQUEST, {
+      open: () => {
+        useZoomStateStore().promptForCheck();
+      },
+      priority: SCREEN_PRIORITY.zoomCheckPrompt,
+    });
   });
 };
+
+/**
+ * Whether a question waits for its answer, showing or still waiting for its
+ * turn (see askBeforeCheckingZoom).
+ */
+export const isAskingBeforeCheckingZoom = () => awaitingAnswer !== null;
 
 /** The user's answer to askBeforeCheckingZoom(), from DialogZoomCheckPrompt. */
 export const answerZoomCheckPrompt = (answer: 'run' | 'skip') => {
