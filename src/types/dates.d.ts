@@ -18,6 +18,11 @@ export type CalendarDayStatus =
 export interface DateInfo {
   date: Date;
   mediaSections: MediaSectionWithConfig[];
+  /**
+   * The song check's problems the user said were fine for this day ("It's on
+   * purpose"), by songProblemKey (src/helpers/meeting-song-check.ts).
+   */
+  songCheckOkays?: string[];
   status: 'complete' | 'error' | null;
   /** The meeting timer's number of Apply Yourself and Living as Christians parts. */
   timerPartCounts?: TimerPartCounts;

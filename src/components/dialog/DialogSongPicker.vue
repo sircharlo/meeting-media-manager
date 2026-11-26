@@ -107,6 +107,21 @@
         </div>
       </div>
     </div>
+    <ConfirmDialog
+      :cancel-label="t('cancel')"
+      :confirm-label="t('song-already-in-meeting-confirm')"
+      dialog-id="song-picker-duplicate"
+      icon="mmm-music-note"
+      icon-color="warning"
+      :message="
+        t('song-already-in-meeting-message', { number: duplicateSong ?? '' })
+      "
+      :model-value="duplicateSong !== null"
+      :title="t('song-already-in-meeting-title')"
+      @cancel="duplicateSong = null"
+      @confirm="addDuplicateSong"
+      @update:model-value="if (!$event) duplicateSong = null;"
+    />
   </BaseDialog>
 </template>
 
@@ -120,11 +135,16 @@ import type {
 
 import { watchOnce } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
 import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwMediaInfo, getPubMediaLinks } from 'src/helpers/jw-media';
+import {
+  isSongInDay,
+  markDuplicateSongOkay,
+} from 'src/helpers/meeting-song-check';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { computed, ref, watch } from 'vue';
@@ -159,8 +179,14 @@ const dialogValue = computed({
 
 // Setup logic
 const currentState = useCurrentStateStore();
-const { currentSettings, currentSongbook, currentSongs, online } =
-  storeToRefs(currentState);
+const {
+  currentSettings,
+  currentSongbook,
+  currentSongs,
+  online,
+  selectedDateObject,
+  selectedDayMeetingType,
+} = storeToRefs(currentState);
 
 const jwStore = useJwStore();
 const { updateJwSongs } = jwStore;
@@ -171,8 +197,13 @@ const hoveredSong = ref<null | number>(null);
 
 const filter = ref('');
 
+// A song already in the selected meeting, waiting for the user to confirm
+// adding it again.
+const duplicateSong = ref<null | number>(null);
+
 const resetDialogState = () => {
   // Reset all dialog state
+  duplicateSong.value = null;
   filter.value = '';
   hoveredSong.value = null;
   loading.value = false;
@@ -203,7 +234,7 @@ const dismissPopup = () => {
   emit('cancel');
 };
 
-const addSong = async (songTrack: number) => {
+const importSong = async (songTrack: number) => {
   try {
     isProcessing.value = true;
     hoveredSong.value = songTrack;
@@ -259,6 +290,31 @@ const addSong = async (songTrack: number) => {
     dialogValue.value = false;
     emit('ok');
   }
+};
+
+// The same song twice in a meeting is almost always a mistake, and one
+// that's easy to miss until the meeting: adding a song the selected
+// meeting already has asks first.
+const addSong = (songTrack: number) => {
+  if (
+    selectedDayMeetingType.value &&
+    isSongInDay(selectedDateObject.value, songTrack)
+  ) {
+    duplicateSong.value = songTrack;
+    return;
+  }
+  void importSong(songTrack);
+};
+
+// Confirmed: the song check before the meeting won't ask about it again.
+const addDuplicateSong = () => {
+  const songTrack = duplicateSong.value;
+  duplicateSong.value = null;
+  if (songTrack === null) return;
+  if (selectedDateObject.value) {
+    markDuplicateSongOkay(selectedDateObject.value, songTrack);
+  }
+  void importSong(songTrack);
 };
 
 const startSongUpdate = async () => {

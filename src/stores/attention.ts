@@ -12,6 +12,7 @@ import { computed, nextTick, ref, watch } from 'vue';
  */
 export const SCREEN_PRIORITY = {
   featureTip: 10,
+  meetingSongCheck: 45,
   missingDates: 30,
   quickStartTour: 20,
   zoomCheckPrompt: 50,
@@ -43,8 +44,9 @@ export interface ScreenRequest {
  * - something was just given its turn, until what it opened shows.
  *
  * What opens on its own asks for its turn (request) instead of opening: the
- * feature tips, the quick-start tour, the missing-dates screen, and the Zoom
- * questions and check result. What the user opens still opens at once.
+ * feature tips, the quick-start tour, the missing-dates screen, today's song
+ * check, and the Zoom questions and check result. What the user opens still
+ * opens at once.
  *
  * Keyboard shortcuts and deferred notifications still look at dialogs only
  * (dialog-state's isAnyDialogOpen), not at this.

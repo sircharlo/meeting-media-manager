@@ -25,6 +25,7 @@
     <ZoomDisplaySetupTour />
     <DialogFeatureNudge />
     <DialogMissingDates />
+    <DialogMeetingSongCheck />
     <DialogMusicStartConfirm />
     <MediaConversionConfirm />
 
@@ -112,6 +113,7 @@ import { queues } from 'boot/globals';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogCongregationSwitcher from 'components/dialog/DialogCongregationSwitcher.vue';
 import DialogFeatureNudge from 'components/dialog/DialogFeatureNudge.vue';
+import DialogMeetingSongCheck from 'components/dialog/DialogMeetingSongCheck.vue';
 import DialogMissingDates from 'components/dialog/DialogMissingDates.vue';
 import DialogMusicStartConfirm from 'components/dialog/DialogMusicStartConfirm.vue';
 import DialogZoomAutomationOverlay from 'components/dialog/DialogZoomAutomationOverlay.vue';
