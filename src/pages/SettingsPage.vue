@@ -350,11 +350,10 @@
                         <q-icon name="mmm-warning" size="xs" />
                         {{ t('obs-password-not-encrypted-warning') }}
                         <template v-if="snapKeyringCommand">
-                          {{
-                            t('snap-connect-command-restart', {
-                              command: snapKeyringCommand,
-                            })
-                          }}
+                          {{ t('snap-connect-command-restart') }}
+                          <code class="snap-connect-command">{{
+                            snapKeyringCommand
+                          }}</code>
                         </template>
                       </q-item-label>
                       <q-item-label

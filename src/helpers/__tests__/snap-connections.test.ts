@@ -81,15 +81,16 @@ beforeEach(() => {
 });
 
 describe('remindToConnectSnapInterfaces', () => {
-  it('gives the exact command for removable-media when it is not connected', async () => {
+  it('gives the exact command for removable-media, alone, as code', async () => {
     runAsSnap({ 'password-manager-service': true, 'removable-media': false });
 
     await remind();
 
     expect(createTemporaryNotification).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
-        caption: `snap-connect-command:${JSON.stringify({ command: REMOVABLE_MEDIA })}`,
-        message: 'snap-connect-removable-media',
+        caption: REMOVABLE_MEDIA,
+        classes: 'snap-connect-notice',
+        message: 'snap-connect-removable-media\nsnap-connect-command',
         type: 'warning',
       }),
     );
@@ -104,24 +105,30 @@ describe('remindToConnectSnapInterfaces', () => {
     await remind(true);
     expect(createTemporaryNotification).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
-        caption: `snap-connect-command-restart:${JSON.stringify({ command: KEYRING })}`,
-        message: 'snap-connect-password-manager-service',
+        caption: KEYRING,
+        message:
+          'snap-connect-password-manager-service\nsnap-connect-command-restart',
       }),
     );
   });
 
-  it('puts both in one notice and one command line, with a restart', async () => {
+  it('puts both in one notice, one command per line joined by &&, with a restart', async () => {
     runAsSnap({ 'password-manager-service': false, 'removable-media': false });
 
     await remind(true);
 
     expect(createTemporaryNotification).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
-        caption: `snap-connect-command-restart:${JSON.stringify({
-          command: `${REMOVABLE_MEDIA} && ${KEYRING}`,
-        })}`,
-        message: 'snap-connect-both',
+        caption: `${REMOVABLE_MEDIA} &&\n${KEYRING}`,
+        message: 'snap-connect-both\nsnap-connect-command-restart',
       }),
+    );
+
+    // What's copied is what's shown.
+    copyToClipboard.mockResolvedValue(undefined);
+    getAction('snap-connect-copy')();
+    expect(copyToClipboard).toHaveBeenCalledWith(
+      `${REMOVABLE_MEDIA} &&\n${KEYRING}`,
     );
   });
 
@@ -137,7 +144,8 @@ describe('remindToConnectSnapInterfaces', () => {
     expect(createTemporaryNotification).toHaveBeenCalledTimes(2);
     expect(createTemporaryNotification).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        message: 'snap-connect-password-manager-service',
+        message:
+          'snap-connect-password-manager-service\nsnap-connect-command-restart',
       }),
     );
   });

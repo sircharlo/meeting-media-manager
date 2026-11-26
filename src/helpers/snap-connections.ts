@@ -88,10 +88,16 @@ export const remindToConnectSnapInterfaces = async ({
     const plugs = getUnconnected(toCheck, connections);
     if (!plugs.length) return;
 
+    // One command per line; `&&` at the end of a line carries on to the
+    // next, so the whole thing still pastes and runs as one.
     const command = plugs
       .map((plug) => getSnapConnectCommand(plug))
-      .join(' && ');
-    const needsRestart = plugs.includes('password-manager-service');
+      .join(' &&\n');
+    const instruction = i18n.global.t(
+      plugs.includes('password-manager-service')
+        ? 'snap-connect-command-restart'
+        : 'snap-connect-command',
+    );
     createTemporaryNotification({
       actions: [
         {
@@ -113,13 +119,13 @@ export const remindToConnectSnapInterfaces = async ({
         },
         { color: 'white', icon: 'close', round: true },
       ],
-      caption: i18n.global.t(
-        needsRestart ? 'snap-connect-command-restart' : 'snap-connect-command',
-        { command },
-      ),
+      // The command alone, as code, under what M³ needs and what to do (see
+      // .snap-connect-notice in app.scss).
+      caption: command,
+      classes: 'snap-connect-notice',
       deferWhileDialogOpen: true,
       group: 'snap-connect',
-      message: getReminderMessage(plugs),
+      message: `${getReminderMessage(plugs)}\n${instruction}`,
       protect: true,
       timeout: 30_000,
       type: 'warning',
