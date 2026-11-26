@@ -195,6 +195,14 @@ const initObsListeners = async () => {
     obsWebSocketInfo.obsWebSocket.on('SceneListChanged', (data) => {
       scenes.value = data.scenes.toReversed();
     });
+    // Switching scene collections in OBS replaces every scene, but OBS only
+    // sends CurrentSceneCollectionChanged (once the new collection is
+    // loaded), not SceneListChanged. The scene list, and the current scene,
+    // stayed the previous collection's, so the scenes offered were ones OBS
+    // no longer had ("No source was found by the UUID", MMM-V2-3HB).
+    obsWebSocketInfo.obsWebSocket.on('CurrentSceneCollectionChanged', () => {
+      void fetchSceneList();
+    });
     void obsConnect();
   } catch (error) {
     errorCatcher(error);
@@ -207,6 +215,7 @@ const removeObsListeners = () => {
     'ConnectionError',
     'ConnectionOpened',
     'CurrentProgramSceneChanged',
+    'CurrentSceneCollectionChanged',
     'Identified',
     'SceneListChanged',
   ] as const;

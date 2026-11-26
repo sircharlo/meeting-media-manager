@@ -31,6 +31,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Folder Warnings**: The warning "There was an error writing to one of the configured paths" no longer shows twice at once.
 - 🐞 **Setup Wizard**: While setting up a new congregation profile, choosing another profile from the side menu and confirming that you want to leave now deletes the unfinished profile, instead of the one you chose. The confirmation also shows in front of the list of profiles instead of behind it, and choosing to stay brings you back to setting up the new profile.
 - 🐞 **Quick Start Guide**: The tour of the buttons at the bottom of the window now waits for an open window, such as a question from M³, to close before it starts, instead of showing over it, and it no longer starts while another tour is showing.
+- 🐞 **OBS Studio**: After you switch to another scene collection in OBS Studio, the OBS Studio popup now lists that collection's scenes, instead of still listing the previous collection's scenes, which OBS Studio could no longer switch to.
 
 ## v26.11.5
 
