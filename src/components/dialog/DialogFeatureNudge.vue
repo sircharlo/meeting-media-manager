@@ -84,6 +84,8 @@ import type { FeatureNudge, FeatureNudgeResponse } from 'src/types';
 import { watchImmediate } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
+import { FEATURE_NUDGES } from 'src/constants/feature-nudges';
+import { useDevBus } from 'src/helpers/dev-bus';
 import {
   getFeatureNudgeContext,
   isOutsideMeetingTime,
@@ -275,6 +277,28 @@ const suggestWhenItsTurn = (
     priority: SCREEN_PRIORITY.featureTip,
   });
 };
+
+// Dev-only: the Dev actions popup shows any one suggestion at once, whether
+// it would be picked or not (see dev-bus.ts). Answering it is recorded like
+// any other answer.
+const showForDev = async (id: string) => {
+  const congId = currentCongregation.value;
+  const settings = currentSettings.value;
+  const next = FEATURE_NUDGES.find((candidate) => candidate.id === id);
+  if (!congId || !settings || !next) return;
+  const context = await getFeatureNudgeContext(settings);
+  nudge.value = next;
+  body.value = next.getBody(context);
+  shownFor.value = congId;
+  answered = false;
+  open.value = true;
+};
+
+if (import.meta.env.DEV) {
+  useDevBus().on((event) => {
+    if (event.type === 'show-feature-nudge') void showForDev(event.id);
+  });
+}
 
 const scheduleTry = (congId: string, giveUpAt: number, delay: number) => {
   stopTrying();

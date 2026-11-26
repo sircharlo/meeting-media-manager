@@ -6,6 +6,10 @@ vi.mock('electron', () => ({
   },
 }));
 
+const constants = vi.hoisted(() => ({ IS_DEV: true }));
+
+vi.mock('src-electron/constants', () => constants);
+
 vi.mock('src-electron/main/window/window-base', () => ({
   sendToWindow: vi.fn(),
 }));
@@ -137,5 +141,54 @@ describe('dev menu state sync', () => {
     expect(() =>
       updateDevMenuState({ demoEnabled: true, offline: false }),
     ).not.toThrow();
+  });
+});
+
+describe('devEmit', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+    constants.IS_DEV = true;
+  });
+
+  it('sends a notice event to the main window, with its payload', async () => {
+    const { sendToWindow } = await import('../window/window-base');
+    const { mainWindowInfo } = await import('../window/window-main');
+    const { devEmit } = await import('../dev-menu');
+
+    devEmit('media-window-renderer-gone', { reloading: false });
+    devEmit('gpu-crash-detected', undefined);
+
+    expect(sendToWindow).toHaveBeenNthCalledWith(
+      1,
+      mainWindowInfo.mainWindow,
+      'media-window-renderer-gone',
+      { reloading: false },
+    );
+    expect(sendToWindow).toHaveBeenNthCalledWith(
+      2,
+      mainWindowInfo.mainWindow,
+      'gpu-crash-detected',
+    );
+  });
+
+  it('refuses channels that would act on the app, like a close attempt', async () => {
+    const { sendToWindow } = await import('../window/window-base');
+    const { devEmit } = await import('../dev-menu');
+
+    devEmit('attemptedClose', undefined);
+    devEmit('setShouldQuit', true);
+
+    expect(sendToWindow).not.toHaveBeenCalled();
+  });
+
+  it('sends nothing in production', async () => {
+    constants.IS_DEV = false;
+    const { sendToWindow } = await import('../window/window-base');
+    const { devEmit } = await import('../dev-menu');
+
+    devEmit('gpu-crash-detected', undefined);
+
+    expect(sendToWindow).not.toHaveBeenCalled();
   });
 });

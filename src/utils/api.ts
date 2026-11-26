@@ -9,6 +9,7 @@ import type {
   Release,
 } from 'src/types';
 
+import { devRendererFaults } from 'src/helpers/dev-state';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { maybeWarnAboutExpectedDownloadIssue } from 'src/helpers/notifications';
 import { isFetchNetworkError } from 'src/shared/network-errors';
@@ -181,6 +182,10 @@ export const fetchRaw = async (
   // mode enabled at runtime via the Demo menu.
   if (isDemoModeActive()) {
     throw new TypeError('fetch failed', { cause: { code: 'ENOTFOUND' } });
+  }
+  // A developer faking failed fetches while online (see dev-state.ts).
+  if (import.meta.env.DEV && devRendererFaults.failFetches) {
+    throw new TypeError('fetch failed', { cause: { code: 'ECONNRESET' } });
   }
 
   const method = init?.method?.toUpperCase() ?? 'GET';

@@ -6,6 +6,7 @@ import { rename, rm, stat } from 'node:fs/promises';
 import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { setTimeout as delay } from 'node:timers/promises';
+import { isDevFaultOn } from 'src-electron/main/dev-faults';
 import {
   getFilesystemErrorCode,
   getFilesystemErrorSyscall,
@@ -411,6 +412,10 @@ export async function runTransfer(
 ): Promise<TransferResult> {
   const { destPath, partialPath, signal, url } = options;
   const stallTimeoutMs = options.stallTimeoutMs ?? TRANSFER_STALL_TIMEOUT_MS;
+
+  // A developer faking failed downloads: a 404 isn't retried, so the
+  // download fails at once, the way a missing file would.
+  if (isDevFaultOn('failDownloads')) return httpFailure(404, 0, null);
 
   const stall = new AbortController();
   const requestSignal = AbortSignal.any([signal, stall.signal]);

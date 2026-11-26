@@ -7,10 +7,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   fetch: vi.fn(),
+  isDevFaultOn: vi.fn<(fault: string) => boolean>(() => false),
 }));
 
 vi.mock('electron', () => ({
   net: { fetch: mocks.fetch },
+}));
+
+vi.mock('src-electron/main/dev-faults', () => ({
+  isDevFaultOn: mocks.isDevFaultOn,
 }));
 
 // The real rename, unless a test makes it fail.
@@ -227,6 +232,21 @@ describe('runTransfer', () => {
       status: 503,
     });
     await expect(readFile(destPath)).rejects.toThrow();
+  });
+
+  it('fails at once, as a missing file, while a developer fakes failed downloads', async () => {
+    mocks.isDevFaultOn.mockImplementation(
+      (fault: string) => fault === 'failDownloads',
+    );
+
+    expect(await transfer()).toMatchObject({
+      kind: 'failed',
+      reason: 'http',
+      retryable: false,
+      status: 404,
+    });
+    expect(mocks.fetch).not.toHaveBeenCalled();
+    mocks.isDevFaultOn.mockReturnValue(false);
   });
 
   it('leaves an unfinished .part file untouched when resuming fails with an HTTP error', async () => {

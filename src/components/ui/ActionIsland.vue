@@ -18,6 +18,10 @@
         <q-separator class="bg-semi-white-24" vertical />
         <MediaDisplayButton v-model="displayPopup" />
         <ZoomMeetingManagerButton v-model="zoomMeetingManagerPopup" />
+        <template v-if="DevActionsButton">
+          <q-separator class="bg-semi-white-24" vertical />
+          <DevActionsButton v-model="devPopup" />
+        </template>
       </div>
       <DialogDownloadsPopup v-model="downloadPopup" />
       <DialogBackgroundMusicPopup v-model="musicPopup" />
@@ -26,6 +30,7 @@
       <DialogDisplayPopup v-model="displayPopup" dialog-id="display-popup" />
       <DialogZoomMeetingManagerPopup v-model="zoomMeetingManagerPopup" />
       <DialogTimerPopup v-model="timerPopup" dialog-id="timer-popup" />
+      <DialogDevActionsPopup v-if="DialogDevActionsPopup" v-model="devPopup" />
     </q-chip>
   </div>
 </template>
@@ -41,7 +46,7 @@ import SubtitlesButton from 'components/media/SubtitlesButton.vue';
 import TimerButton from 'components/media/TimerButton.vue';
 import ZoomMeetingManagerButton from 'components/media/ZoomMeetingManagerButton.vue';
 import { useZoomDisplaySetupStore } from 'stores/zoom-display-setup';
-import { ref, watch } from 'vue';
+import { defineAsyncComponent, ref, watch } from 'vue';
 
 import DialogBackgroundMusicPopup from '../dialog/DialogBackgroundMusicPopup.vue';
 import DialogDisplayPopup from '../dialog/DialogDisplayPopup.vue';
@@ -50,6 +55,17 @@ import DialogObsPopup from '../dialog/DialogObsPopup.vue';
 import DialogRecordingPopup from '../dialog/DialogRecordingPopup.vue';
 import DialogTimerPopup from '../dialog/DialogTimerPopup.vue';
 import DialogZoomMeetingManagerPopup from '../dialog/DialogZoomMeetingManagerPopup.vue';
+
+// The Dev actions button and its popup: dev builds only. Production builds
+// leave them out altogether, since import.meta.env.DEV is false there.
+const DevActionsButton = import.meta.env.DEV
+  ? defineAsyncComponent(() => import('components/dev/DevActionsButton.vue'))
+  : null;
+const DialogDevActionsPopup = import.meta.env.DEV
+  ? defineAsyncComponent(
+      () => import('components/dev/DialogDevActionsPopup.vue'),
+    )
+  : null;
 
 const zoomDisplaySetup = useZoomDisplaySetupStore();
 
@@ -61,8 +77,10 @@ const recordingPopup = ref(false);
 const displayPopup = ref(false);
 const zoomMeetingManagerPopup = ref(false);
 const timerPopup = ref(false);
+const devPopup = ref(false);
 
 const popups = {
+  devPopup,
   displayPopup,
   downloadPopup,
   musicPopup,

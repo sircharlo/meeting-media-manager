@@ -1,8 +1,38 @@
-import type { DevMenuCommand, DevMenuState } from 'src/types';
+import type { DevEmitChannel, DevMenuCommand, DevMenuState } from 'src/types';
 
 import { Menu, type MenuItem, type MenuItemConstructorOptions } from 'electron';
+import { IS_DEV } from 'src-electron/constants';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
+
+// The events the Dev actions popup may have sent to the main window: only
+// notices and errors, whose handlers just show what happened. Never
+// 'attemptedClose' and the like, which would act on the app.
+const DEV_EMIT_CHANNELS = new Set<DevEmitChannel>([
+  'downloadError',
+  'gpu-crash-detected',
+  'hardware-acceleration-temporary-disabled',
+  'media-window-renderer-gone',
+  'pathProbeNetworkWarning',
+  'update-error',
+  'video-capture-crash-detected',
+  'watchFolderError',
+  'websiteLoadFailed',
+]);
+
+/**
+ * Sends the main window an event as if what it reports had happened, for the
+ * Dev actions popup (see devEmit in electron.d.ts). Dev builds only, and only
+ * for the channels above.
+ */
+export const devEmit = (channel: unknown, payload: unknown) => {
+  if (!IS_DEV || !DEV_EMIT_CHANNELS.has(channel as DevEmitChannel)) return;
+  sendToWindow(
+    mainWindowInfo.mainWindow,
+    channel as DevEmitChannel,
+    ...(payload === undefined ? [] : [payload]),
+  );
+};
 
 // The Demo menu is only built when the app is running in dev (see
 // electron-main.ts's createApplicationMenu); updateDevMenuState() no-ops

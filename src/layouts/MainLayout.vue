@@ -145,6 +145,7 @@ import {
   remainingTimeBeforeMeetingStart,
   updateLookupPeriod,
 } from 'src/helpers/date';
+import { useDevBus } from 'src/helpers/dev-bus';
 import { DISK_FULL_ERROR_EVENT, errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
 import { loadUiLocaleFont, setElementFont } from 'src/helpers/fonts';
@@ -1149,8 +1150,10 @@ const { data: noDecoderHere } = useBroadcastChannel<
   name: 'media-no-decoder-here',
 });
 
-// Function to check if we should show the yeartext preview notification
-const checkYeartextPreview = () => {
+// Function to check if we should show the yeartext preview notification.
+// onDemand: the Dev actions popup asks for it, whatever the month or the
+// time, even if it was already offered this session.
+const checkYeartextPreview = ({ onDemand = false } = {}) => {
   try {
     // Only run if congregation is selected
     if (!currentCongregation.value) return;
@@ -1164,7 +1167,7 @@ const checkYeartextPreview = () => {
     const month = now.getMonth() + 1; // getMonth is 0-based
 
     // Only run if we're in December
-    if (month !== 12) return;
+    if (month !== 12 && !onDemand) return;
 
     // Get current and next year
     const currentYear = now.getFullYear();
@@ -1255,7 +1258,7 @@ const checkYeartextPreview = () => {
     };
 
     // Once per session, and not around meeting time
-    if (!takeYeartextPreviewOffer(nextYear)) return;
+    if (!onDemand && !takeYeartextPreviewOffer(nextYear)) return;
 
     // Show notification
     createTemporaryNotification({
@@ -1450,6 +1453,16 @@ watchImmediate(
     );
   },
 );
+
+// Dev-only: the Dev actions popup offers next year's yeartext whatever the
+// month or the time, as often as asked (see dev-bus.ts).
+if (import.meta.env.DEV) {
+  useDevBus().on((event) => {
+    if (event.type === 'offer-yeartext-preview') {
+      checkYeartextPreview({ onDemand: true });
+    }
+  });
+}
 
 // Watch for congregation selection and trigger yeartext preview check
 watch(
