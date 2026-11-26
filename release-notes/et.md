@@ -4,6 +4,12 @@
 
 Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGELOG.md GitHubis.
 
+## TULEVANE VERSIOON
+
+### ✨ Uued funktsioonid
+
+- ✨ **Zoom on the TV**: Before each meeting, M³ now asks whether any of the day's parts will be presented by someone on Zoom (at the weekend meeting, whether the speaker will be on Zoom). If so, it helps you get the Zoom window ready on the TV, so everyone in the hall can see them when it's time for their part: it hides the media display for a moment so you can check that the Zoom window is on the TV and fills the whole screen, says how to make it full screen if it doesn't, shows the media display again on top of the Zoom window, points out the buttons that hide and show it when it's time to show the Zoom window, then tells you when everything's ready. With the Zoom Meeting Manager turned on, M³ also moves Zoom's second window to the TV and makes it full screen itself. To stop the question, choose **Don't ask me again**, or turn off **Help set up Zoom for remote participants** in Settings, under Congregation Meetings.
+
 ## v26.11.5
 
 ### ✨ Uued funktsioonid
