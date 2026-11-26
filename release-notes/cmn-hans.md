@@ -9,6 +9,7 @@
 ### ✨ 新功能
 
 - ✨ **电视上的 Zoom**：现在每次聚会前，M³ 都会询问当天是否有人会通过 Zoom 负责节目（周末聚会则询问讲者是否会通过 Zoom 演讲）。如果有，它会帮助你在电视上准备好 Zoom 窗口，以便轮到这些人负责节目时，王国聚会所里的所有人都能看到他们：它会暂时隐藏媒体窗口，让你检查 Zoom 窗口是否在电视上并占满整个屏幕；如果没有，会告诉你如何设为全屏；接着在 Zoom 窗口上方重新显示媒体窗口，指出需要显示 Zoom 窗口时用来隐藏和显示媒体窗口的按钮，最后在一切准备就绪时告诉你。开启 Zoom 会议管理器后，M³ 还会自己把 Zoom 的第二个窗口移到电视上并全屏显示。如果不想再看到这个问题，请选择**不再询问**，或在“设置”的“会众聚会”部分关闭**协助为远程参与者设置 Zoom**。
+- ✨ **Song Check Before the Meeting**: On a meeting day, M³ now checks the day's songs once its media are in, and again whenever they change, until the meeting starts. If a song is in the meeting more than once, if the weekend meeting has no song for the public talk yet, or if, during the circuit overseer's visit, the song after his talk hasn't been added yet, it says so on a screen over the whole window. From there, **Show me** goes to the song, **It's on purpose** and **There's no public talk this week** stop it from asking about that for the day, and **Add the song** opens the song picker for that part of the meeting. The screen stays until you answer it, even if the meeting starts. After **Later**, it asks once more 5 minutes before the meeting if something still isn't fixed. Adding a song that's already in the meeting now asks first, and the warning about songs that appear more than once now also shows for the midweek meeting.
 
 ## v26.11.5
 

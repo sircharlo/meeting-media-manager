@@ -9,6 +9,7 @@
 ### ✨ 새로운 기능
 
 - ✨ **TV에 Zoom 표시**: 이제 M³가 매 집회 전에 그날 Zoom으로 파트를 발표하는 사람이 있는지 묻습니다(공개 집회에서는 연사가 Zoom으로 연설하는지 묻습니다). 그렇다면 발표할 차례가 되었을 때 왕국회관에 있는 모든 사람이 발표자를 볼 수 있도록 TV에 Zoom 창을 준비하는 일을 도와주는데, 미디어 화면을 잠시 숨겨 Zoom 창이 TV에 있고 화면 전체를 채우는지 확인할 수 있게 하고, 그렇지 않으면 전체 화면으로 만드는 방법을 알려 주며, Zoom 창 위에 미디어 화면을 다시 표시하고, Zoom 창을 보여 줄 때 미디어 화면을 숨기고 다시 표시하는 버튼을 짚어 준 다음, 모든 준비가 끝나면 알려 줍니다. Zoom 회의 관리자가 켜져 있으면 M³가 Zoom의 두 번째 창을 TV로 옮겨 직접 전체 화면으로 만들어 줍니다. 이 질문을 그만 받으려면 **다시 묻지 않기**를 선택하거나, 설정의 회중 집회에서 **원격 참가자를 위한 Zoom 준비 돕기**를 끄세요.
+- ✨ **Song Check Before the Meeting**: On a meeting day, M³ now checks the day's songs once its media are in, and again whenever they change, until the meeting starts. If a song is in the meeting more than once, if the weekend meeting has no song for the public talk yet, or if, during the circuit overseer's visit, the song after his talk hasn't been added yet, it says so on a screen over the whole window. From there, **Show me** goes to the song, **It's on purpose** and **There's no public talk this week** stop it from asking about that for the day, and **Add the song** opens the song picker for that part of the meeting. The screen stays until you answer it, even if the meeting starts. After **Later**, it asks once more 5 minutes before the meeting if something still isn't fixed. Adding a song that's already in the meeting now asks first, and the warning about songs that appear more than once now also shows for the midweek meeting.
 
 ## v26.11.5
 
