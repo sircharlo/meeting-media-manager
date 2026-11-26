@@ -8,7 +8,7 @@
 
 ### ✨ 新功能
 
-- ✨ **Zoom on the TV**: Before each meeting, M³ now asks whether any of the day's parts will be presented by someone on Zoom (at the weekend meeting, whether the speaker will be on Zoom). If so, it helps you get the Zoom window ready on the TV, so everyone in the hall can see them when it's time for their part: it hides the media display for a moment so you can check that the Zoom window is on the TV and fills the whole screen, says how to make it full screen if it doesn't, shows the media display again on top of the Zoom window, points out the buttons that hide and show it when it's time to show the Zoom window, then tells you when everything's ready. With the Zoom Meeting Manager turned on, M³ also moves Zoom's second window to the TV and makes it full screen itself. To stop the question, choose **Don't ask me again**, or turn off **Help set up Zoom for remote participants** in Settings, under Congregation Meetings.
+- ✨ **电视上的 Zoom**：现在每次聚会前，M³ 都会询问当天是否有人会通过 Zoom 负责节目（周末聚会则询问讲者是否会通过 Zoom 演讲）。如果有，它会帮助你在电视上准备好 Zoom 窗口，以便轮到这些人负责节目时，王国聚会所里的所有人都能看到他们：它会暂时隐藏媒体窗口，让你检查 Zoom 窗口是否在电视上并占满整个屏幕；如果没有，会告诉你如何设为全屏；接着在 Zoom 窗口上方重新显示媒体窗口，指出需要显示 Zoom 窗口时用来隐藏和显示媒体窗口的按钮，最后在一切准备就绪时告诉你。开启 Zoom 会议管理器后，M³ 还会自己把 Zoom 的第二个窗口移到电视上并全屏显示。如果不想再看到这个问题，请选择**不再询问**，或在“设置”的“会众聚会”部分关闭**协助为远程参与者设置 Zoom**。
 
 ## v26.11.5
 
