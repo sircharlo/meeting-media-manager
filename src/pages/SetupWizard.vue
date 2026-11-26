@@ -849,8 +849,20 @@ const { t } = useI18n();
 useMeta({ title: t('setup-wizard') });
 
 const currentState = useCurrentStateStore();
-const { currentCongregation, currentLangObject, currentSettings, online } =
-  storeToRefs(currentState);
+const {
+  congregationSwitcherOpen,
+  currentCongregation,
+  currentLangObject,
+  currentSettings,
+  online,
+} = storeToRefs(currentState);
+
+// The profile this wizard sets up. The profile picker (in the side menu) can
+// switch to another profile while the wizard is open, before it navigates
+// away: abandoning the setup then still deletes this one, never the profile
+// switched to.
+const setupCongregationId = currentCongregation.value;
+const setupProfileId = () => setupCongregationId || currentCongregation.value;
 
 // UX-7 (full-audit-2026-09-04.md): the port/password step previously gated
 // "Continue" only on both fields being non-empty, not on an actual
@@ -986,7 +998,7 @@ let isPerformingCancelCleanup = false;
 
 const cancelSetup = async () => {
   isPerformingCancelCleanup = true;
-  const congId = currentCongregation.value;
+  const congId = setupProfileId();
   resetAfterCancelingSetup(congId);
   goToPage('/media-calendar');
   await removeCongregationCache(congId);
@@ -1023,18 +1035,31 @@ onBeforeRouteLeave(async (_to, _from, next) => {
     return;
   }
 
+  const congId = setupProfileId();
+  // Leaving through the profile picker: it has already switched to the
+  // profile chosen, and stays above everything until this navigation is
+  // over, which would hide the question. It closes first.
+  const switchedProfile = currentCongregation.value !== congId;
+  if (switchedProfile) congregationSwitcherOpen.value = false;
+
   abandonSetupConfirmOpen.value = true;
   const confirmed = await new Promise<boolean>((resolve) => {
     resolveAbandonSetupConfirm = resolve;
   });
 
   if (!confirmed) {
+    // Back to the setup, on the profile it sets up.
+    if (switchedProfile) await currentState.setCongregation(congId);
     next(false);
     return;
   }
 
-  const congId = currentCongregation.value;
-  resetAfterCancelingSetup(congId);
+  if (switchedProfile) {
+    // The profile switched to stays open.
+    deleteCongregation(congId);
+  } else {
+    resetAfterCancelingSetup(congId);
+  }
   next();
   await removeCongregationCache(congId);
 });

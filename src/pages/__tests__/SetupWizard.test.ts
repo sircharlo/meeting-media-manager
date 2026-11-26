@@ -8,9 +8,24 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
-import { createMemoryHistory, createRouter } from 'vue-router';
+import {
+  createMemoryHistory,
+  createRouter,
+  type Router,
+  RouterView,
+} from 'vue-router';
 
 import SetupWizard from '../SetupWizard.vue';
+
+// The profiles whose cached files the wizard removed.
+const removedCaches = vi.hoisted(() => [] as string[]);
+
+vi.mock('src/helpers/cleanup', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  removeCongregationCache: async (congId: string) => {
+    removedCaches.push(congId);
+  },
+}));
 
 // Its singleton needs an active Pinia as soon as it's imported (through
 // the wizard's shortcut input), before the test installs one.
@@ -259,5 +274,101 @@ describe('SetupWizard, feature suggestions', () => {
       useCongregationSettingsStore().featureNudges[CONGREGATION_ID]?.responses;
     expect(responses?.zoom?.response).toBe('declined');
     expect(responses?.obs?.response).toBe('declined');
+  });
+});
+
+describe('SetupWizard, leaving before the end', () => {
+  const OTHER_ID = 'existing-cong';
+  let router: Router;
+
+  const profileIds = () =>
+    Object.keys(useCongregationSettingsStore().congregations).sort();
+
+  // Through the router, as in the app: its leave guard needs a RouterView.
+  const mountInRouter = async () => {
+    setPlatform(true);
+    removedCaches.length = 0;
+    useCongregationSettingsStore().congregations = {
+      [CONGREGATION_ID]: { ...defaultSettings },
+      [OTHER_ID]: { ...defaultSettings, congregationName: 'Existing' },
+    };
+    const currentState = useCurrentStateStore();
+    currentState.currentCongregation = CONGREGATION_ID;
+    currentState.congregationSwitcherOpen = false;
+    router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { component: SetupWizard, path: '/setup-wizard' },
+        {
+          component: { template: '<div />' },
+          path: '/media-calendar/:typeOfLoad?',
+        },
+      ],
+    });
+    await router.push('/setup-wizard');
+    wrapper = mount(RouterView, {
+      attachTo: document.body,
+      global: { plugins: [router] },
+    });
+    await flushPromises();
+  };
+
+  // What the profile picker does: switch to the profile, then go to it.
+  const pickProfile = async (id: string) => {
+    const currentState = useCurrentStateStore();
+    currentState.congregationSwitcherOpen = true;
+    currentState.currentCongregation = id;
+    const navigation = router.push('/media-calendar/initial');
+    await flushPromises();
+    return { navigation };
+  };
+
+  const askedToLeave = () => text().includes('Are you sure you want to leave?');
+
+  it('deletes only the profile being set up when another profile is picked', async () => {
+    await mountInRouter();
+    const { navigation } = await pickProfile(OTHER_ID);
+    expect(askedToLeave()).toBe(true);
+    // The picker makes way, or it would hide the question.
+    expect(useCurrentStateStore().congregationSwitcherOpen).toBe(false);
+
+    await click('Confirm');
+    await navigation;
+    await flushPromises();
+
+    expect(profileIds()).toEqual([OTHER_ID]);
+    expect(useCurrentStateStore().currentCongregation).toBe(OTHER_ID);
+    expect(removedCaches).toEqual([CONGREGATION_ID]);
+    expect(router.currentRoute.value.path).toBe('/media-calendar/initial');
+  });
+
+  it('goes back to the profile being set up when the user stays', async () => {
+    await mountInRouter();
+    const { navigation } = await pickProfile(OTHER_ID);
+
+    await click('Cancel');
+    await navigation;
+    await flushPromises();
+
+    expect(profileIds()).toEqual([OTHER_ID, CONGREGATION_ID].sort());
+    expect(useCurrentStateStore().currentCongregation).toBe(CONGREGATION_ID);
+    expect(removedCaches).toEqual([]);
+    expect(router.currentRoute.value.path).toBe('/setup-wizard');
+  });
+
+  it('deletes the profile being set up when leaving any other way', async () => {
+    await mountInRouter();
+    const navigation = router.push('/media-calendar');
+    await flushPromises();
+    expect(askedToLeave()).toBe(true);
+
+    await click('Confirm');
+    await navigation;
+    await flushPromises();
+
+    expect(profileIds()).toEqual([OTHER_ID]);
+    expect(useCurrentStateStore().currentCongregation).toBe('');
+    expect(useCurrentStateStore().congregationSwitcherOpen).toBe(true);
+    expect(removedCaches).toEqual([CONGREGATION_ID]);
   });
 });
