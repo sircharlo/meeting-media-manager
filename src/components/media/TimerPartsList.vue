@@ -125,6 +125,19 @@
             >
               <q-tooltip>{{ t('stop-timer') }}</q-tooltip>
             </q-btn>
+            <q-btn
+              v-if="canRemovePart(part.value)"
+              :aria-label="t('delete')"
+              class="btn-tonal"
+              color="negative"
+              dense
+              flat
+              icon="mmm-delete"
+              size="sm"
+              @click.stop="removeCustomTimerPart(part.value)"
+            >
+              <q-tooltip>{{ t('delete') }}</q-tooltip>
+            </q-btn>
           </div>
         </q-item-section>
       </q-item>
@@ -219,25 +232,34 @@ import type { MeetingPart, MeetingPartOption } from 'src/types';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import { storeToRefs } from 'pinia';
 import useTimer from 'src/composables/useTimer';
+import { isMeetingDay } from 'src/helpers/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-withDefaults(defineProps<{ dense?: boolean; dialogId?: string }>(), {
-  dialogId: 'timer-parts',
-});
+const props = withDefaults(
+  defineProps<{
+    dense?: boolean;
+    dialogId?: string;
+    /** Delete buttons on custom parts, where no setup section is beside the list. */
+    removableCustomParts?: boolean;
+  }>(),
+  { dialogId: 'timer-parts' },
+);
 
 const { t } = useI18n();
 
 const {
   adjustPartDuration,
   currentPart,
+  customTimerParts,
   getDuration,
   getPlannedStartTime,
   getTimeString,
   meetingPartsOptions,
   partDurations,
   partTimings,
+  removeCustomTimerPart,
   resetPartTiming,
   selectPart,
   setPartDuration,
@@ -246,7 +268,21 @@ const {
   updateCustomTimerPart,
 } = useTimer();
 
-const { currentSettings } = storeToRefs(useCurrentStateStore());
+const { currentSettings, selectedDateObject } = storeToRefs(
+  useCurrentStateStore(),
+);
+
+// The same rules as the timer popup's custom parts: the part being timed
+// stays, and so does the last part of a day without a meeting, which needs
+// one to time.
+const canRemovePart = (part: MeetingPart) => {
+  if (!props.removableCustomParts || !part.startsWith('custom-')) return false;
+  if (timerRunning.value && currentPart.value === part) return false;
+  return (
+    isMeetingDay(selectedDateObject.value?.date) ||
+    customTimerParts.value.length > 1
+  );
+};
 
 // Custom part labels are shown as "Label (N min.)"; strip that suffix (and
 // the whitespace before it) to edit the bare label. Trimming with string ops

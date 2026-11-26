@@ -60,7 +60,7 @@
       <q-separator class="bg-accent-200" />
 
       <q-scroll-area class="col timer-dock__list">
-        <TimerPartsList dense dialog-id="timer-dock" />
+        <TimerPartsList dense dialog-id="timer-dock" removable-custom-parts />
       </q-scroll-area>
 
       <q-separator class="bg-accent-200" />
