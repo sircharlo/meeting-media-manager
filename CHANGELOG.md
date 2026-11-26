@@ -22,6 +22,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🛠️ **Zoom Check Before the Meeting**: When the check finds a problem, M³ now says so on a screen over the whole window, right after the check, instead of a notification at the top that was easy to miss. It offers **Test again** (or **Open setup assistant** when Zoom's buttons changed), or to go on without the Zoom automations for this meeting, after a confirmation. The question asking whether M³ may test Zoom no longer opens over another question or a tour, and the question about Zoom on the TV now waits until the check is done.
 - 🛠️ **Missing Dates**: When the date of the circuit overseer's visit or of the Memorial isn't set, M³ now reminds you on a screen over the whole window, with both dates together when both are missing, as long as no meeting is about to start. Shortly before a meeting, or right after setting up a profile, the reminder is still a notification.
 - 🛠️ **One Thing at a Time**: What M³ opens on its own (Zoom's questions, the missing-dates reminder, the quick-start tour, feature suggestions) now waits for whatever is already on screen and shows one at a time, the most important first, instead of opening over one another.
+- 🛠️ **Snap Store Version**: The Snap Store version of M³ can't use folders on USB drives and other disks, or keep the OBS Studio password encrypted, until you allow it to. When it can't, M³ now says so when it starts, with the command to run in a terminal and a button that copies it. The password is only brought up if you use OBS Studio. Choose **Don't remind me** to stop the reminder. In Settings, the warning that the OBS Studio password is stored as plain text now gives that command too.
 
 ### 🐞 Bug Fixes
 
@@ -31,6 +32,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Folder Warnings**: The warning "There was an error writing to one of the configured paths" no longer shows twice at once.
 - 🐞 **Setup Wizard**: While setting up a new congregation profile, choosing another profile from the side menu and confirming that you want to leave now deletes the unfinished profile, instead of the one you chose. The confirmation also shows in front of the list of profiles instead of behind it, and choosing to stay brings you back to setting up the new profile.
 - 🐞 **Quick Start Guide**: The tour of the buttons at the bottom of the window now waits for an open window, such as a question from M³, to close before it starts, instead of showing over it, and it no longer starts while another tour is showing.
+- 🐞 **OBS Studio Password on Linux**: On a Linux computer where M³ can't use a keyring, such as the Snap Store version until you allow it to, Settings now warns that the OBS Studio password is stored as plain text. Before, M³ saved it with a key that's built into the app and protects nothing, and nothing said so.
 - 🐞 **OBS Studio**: After you switch to another scene collection in OBS Studio, the OBS Studio popup now lists that collection's scenes, instead of still listing the previous collection's scenes, which OBS Studio could no longer switch to.
 
 ## v26.11.5

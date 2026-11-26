@@ -269,6 +269,12 @@ export interface ElectronApi {
   getSentryTags: () => Record<string, string>;
   getSharedDataPath: () => Promise<null | string>;
   /**
+   * Which of the snap's interfaces that the user connects themselves are
+   * connected, from snapctl (see src-electron/main/snap.ts). Null outside
+   * M³'s snap.
+   */
+  getSnapConnections: () => Promise<null | SnapConnections>;
+  /**
    * Returns the auto-updater's current lifecycle state (downloading /
    * downloaded) so the renderer can catch up on an update that started
    * before it mounted and missed the push events.
@@ -628,6 +634,7 @@ export type ElectronIpcInvokeKey =
   | 'getMediaWindowCaptureSourceId'
   | 'getScreenAccessStatus'
   | 'getSharedDataPath'
+  | 'getSnapConnections'
   | 'getUpdaterState'
   | 'getUpdatesDisabledPath'
   | 'getUserDataPath'
@@ -793,6 +800,19 @@ export interface SerializedPreloadError {
   stack?: string;
   syscall?: string;
 }
+
+/**
+ * Which of the snap's interfaces that the user connects themselves (see
+ * SNAP_MANUAL_INTERFACES in src/constants/snap.ts) are connected. An
+ * interface snapctl couldn't tell about is left out.
+ */
+export type SnapConnections = Partial<Record<SnapInterface, boolean>>;
+
+/**
+ * One of the snap's interfaces that the Snap Store doesn't connect by
+ * itself (see SNAP_MANUAL_INTERFACES in src/constants/snap.ts).
+ */
+export type SnapInterface = 'password-manager-service' | 'removable-media';
 
 export interface TimerRemoteStatus {
   /** `invalid-port`, `port-in-use` or `start-failed`. */

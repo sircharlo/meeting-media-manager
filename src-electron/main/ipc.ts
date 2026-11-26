@@ -89,6 +89,7 @@ import {
   unregisterAllShortcuts,
   unregisterShortcut,
 } from 'src-electron/main/shortcuts';
+import { getSnapConnections } from 'src-electron/main/snap';
 import {
   closeAllConnections,
   closeConnection,
@@ -536,6 +537,7 @@ handleIpcInvoke('getLowDiskSpaceStatus', async () => getLowDiskSpaceStatus());
 handleIpcInvoke('getUpdatesDisabledPath', async () => getUpdatesDisabledPath());
 handleIpcInvoke('getUpdaterState', () => getUpdaterState());
 handleIpcInvoke('getSharedDataPath', async () => getSharedDataPath());
+handleIpcInvoke('getSnapConnections', () => getSnapConnections());
 handleIpcInvoke('getUserDataPath', () => app.getPath('userData'));
 handleIpcInvoke('getLocales', () => app.getPreferredSystemLanguages());
 handleIpcInvoke('isUsablePath', async (_e, p: string) => isUsablePath(p));

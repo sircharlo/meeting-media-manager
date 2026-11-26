@@ -183,6 +183,7 @@ import {
   notifyDiskFull,
   notifyYeartextPreviewFailed,
 } from 'src/helpers/notifications';
+import { remindToConnectSnapInterfaces } from 'src/helpers/snap-connections';
 import { syncTimerRemote } from 'src/helpers/timer-remote';
 import { createWatchFolderEventQueue } from 'src/helpers/watch-folder-event-queue';
 import { takeYeartextPreviewOffer } from 'src/helpers/yeartext-preview';
@@ -1641,6 +1642,18 @@ watch(
   ],
   () => {
     void warnIfInstalledZoomOutdated();
+  },
+  { immediate: true },
+);
+
+// In M³'s snap, says how to connect the interfaces the Snap Store doesn't
+// connect by itself, once a profile is open: the keyring's only once OBS
+// Studio is on (see remindToConnectSnapInterfaces).
+watch(
+  () => [currentCongregation.value, currentSettings.value?.obsEnable],
+  ([congregation, obsEnabled]) => {
+    if (!congregation) return;
+    void remindToConnectSnapInterfaces({ obsEnabled: !!obsEnabled });
   },
   { immediate: true },
 );

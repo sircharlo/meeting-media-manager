@@ -675,6 +675,37 @@ $notice-solids: (
   outline: none;
 }
 
+// A `snap connect` command for the user to run in a terminal: monospaced,
+// never broken mid-word, and selectable.
+$snap-command-font: ui-monospace, 'DejaVu Sans Mono', 'Ubuntu Mono', monospace;
+
+.snap-connect-command {
+  font-family: $snap-command-font;
+  user-select: text;
+  white-space: nowrap;
+}
+
+// The snap's "connect this interface" reminder (helpers/snap-connections):
+// what it needs and the instruction on their own lines, then the command
+// alone, as code, one line per command.
+.snap-connect-notice {
+  .q-notification__message {
+    white-space: pre-line;
+  }
+
+  .q-notification__caption {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    font-family: $snap-command-font;
+    margin-top: 6px;
+    opacity: 1;
+    overflow-x: auto;
+    padding: 6px 8px;
+    user-select: text;
+    white-space: pre;
+  }
+}
+
 .q-item:focus-visible {
   outline: 2px solid var(--q-primary);
   outline-offset: -2px;

@@ -17,6 +17,14 @@ vi.mock('src-electron/main/utils', () => ({
   addElectronBreadcrumb: addElectronBreadcrumbMock,
 }));
 
+// Windows unless a test says otherwise: Linux adds a check of its own.
+const constants = vi.hoisted(() => ({ PLATFORM: 'win32' }));
+vi.mock('src-electron/constants', () => constants);
+
+beforeEach(() => {
+  constants.PLATFORM = 'win32';
+});
+
 describe('encryptSecret', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -156,6 +164,8 @@ describe('decryptSecret', () => {
 describe('isSecretEncryptionAvailable', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // The Linux keyring check is made once a session.
+    vi.resetModules();
   });
 
   it('reflects safeStorage.isAsyncEncryptionAvailable() when true', async () => {
@@ -177,5 +187,49 @@ describe('isSecretEncryptionAvailable', () => {
     const { isSecretEncryptionAvailable } = await import('../secrets');
 
     await expect(isSecretEncryptionAvailable()).resolves.toBe(false);
+  });
+
+  describe('on Linux', () => {
+    beforeEach(() => {
+      constants.PLATFORM = 'linux';
+      isAsyncEncryptionAvailableMock.mockResolvedValue(true);
+    });
+
+    it('is available when the key comes from the keyring (v11)', async () => {
+      encryptStringAsyncMock.mockResolvedValue(Buffer.from('v11\u0001\u0002'));
+      const { isSecretEncryptionAvailable } = await import('../secrets');
+
+      await expect(isSecretEncryptionAvailable()).resolves.toBe(true);
+    });
+
+    // Seen in M³'s snap without password-manager-service: safeStorage said
+    // available, and the OBS password was "encrypted" with Chromium's
+    // hardcoded key, with no warning.
+    it("is unavailable when Chromium falls back to its hardcoded key (v10), though safeStorage says it's available", async () => {
+      encryptStringAsyncMock.mockResolvedValue(Buffer.from('v10\u0001\u0002'));
+      const { encryptSecret, isSecretEncryptionAvailable } =
+        await import('../secrets');
+
+      await expect(isSecretEncryptionAvailable()).resolves.toBe(false);
+      // So the secret is stored as plain text, as the warning then says.
+      await expect(encryptSecret('hunter2')).resolves.toBe('hunter2');
+    });
+
+    it('is unavailable when the probe itself fails', async () => {
+      encryptStringAsyncMock.mockRejectedValue(new Error('no key'));
+      const { isSecretEncryptionAvailable } = await import('../secrets');
+
+      await expect(isSecretEncryptionAvailable()).resolves.toBe(false);
+    });
+
+    it('checks the key once a session', async () => {
+      encryptStringAsyncMock.mockResolvedValue(Buffer.from('v11\u0001'));
+      const { isSecretEncryptionAvailable } = await import('../secrets');
+
+      await isSecretEncryptionAvailable();
+      await isSecretEncryptionAvailable();
+
+      expect(encryptStringAsyncMock).toHaveBeenCalledOnce();
+    });
   });
 });

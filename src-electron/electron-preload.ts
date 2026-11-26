@@ -127,6 +127,7 @@ const electronApi: ElectronApi = {
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getSentryTags: () => sendSync('getSentryTagsSync') ?? {},
   getSharedDataPath: () => invoke('getSharedDataPath'),
+  getSnapConnections: () => invoke('getSnapConnections'),
   getUpdaterState: () => invoke('getUpdaterState'),
   getUpdatesDisabledPath: () => invoke('getUpdatesDisabledPath'),
   getUserDataPath: () => invoke('getUserDataPath'),

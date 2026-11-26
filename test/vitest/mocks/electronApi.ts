@@ -102,6 +102,7 @@ export const electronApi: ElectronApi = {
   },
   getSentryTags: () => ({}),
   getSharedDataPath: async () => fakePath('/app/shared'),
+  getSnapConnections: async () => null,
   getUpdaterState: async () => ({
     phase: null,
     progress: null,

@@ -1,4 +1,8 @@
-import type { ScreenPreferences, ZoomLayoutPreferences } from 'src/types';
+import type {
+  ScreenPreferences,
+  SnapInterface,
+  ZoomLayoutPreferences,
+} from 'src/types';
 
 import { defineStore } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -9,6 +13,11 @@ interface Store {
   displayCameraId: null | string;
   migrations: string[];
   screenPreferences: ScreenPreferences;
+  /**
+   * The snap's interfaces whose "connect it" reminder the user turned off
+   * (see helpers/snap-connections).
+   */
+  snapConnectReminderDismissed: Partial<Record<SnapInterface, boolean>>;
   timerPreferences: ScreenPreferences;
   yeartextPreviewDismissed: Record<number, boolean>;
   /** How the Zoom Meeting Manager arranges M³ and Zoom on this computer's screens. */
@@ -62,6 +71,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
     displayCameraId: null,
     migrations: [],
     screenPreferences: { preferredScreenNumber: 0, preferWindowed: false },
+    snapConnectReminderDismissed: {},
     timerPreferences: { preferredScreenNumber: 0, preferWindowed: true },
     yeartextPreviewDismissed: {},
     zoomLayout: { ...DEFAULT_ZOOM_LAYOUT },
