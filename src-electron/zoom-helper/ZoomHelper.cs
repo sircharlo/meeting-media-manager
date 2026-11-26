@@ -141,6 +141,7 @@ namespace M3.ZoomHelper
         public const uint WmMouseMove = 0x0200;
         public const uint WmLButtonDown = 0x0201;
         public const uint WmLButtonUp = 0x0202;
+        public const uint WmLButtonDblClk = 0x0203;
         public const uint WmMouseWheel = 0x020A;
         public const int MkLButton = 0x0001;
         public const uint CwpSkipInvisible = 0x0001;
@@ -208,6 +209,8 @@ namespace M3.ZoomHelper
         public static readonly IntPtr HwndTopmost = new IntPtr(-1);
         public static readonly IntPtr HwndNoTopmost = new IntPtr(-2);
         public const uint GaRoot = 2;
+        public const int GwlStyle = -16;
+        public const int WsCaption = 0x00C00000;
         public const int GwlExStyle = -20;
         public const int WsExTopmost = 0x0008;
         public const uint SwpNoSize = 0x0001;
@@ -3947,6 +3950,134 @@ namespace M3.ZoomHelper
             return new Dictionary<string, object> { { "placed", placed } };
         }
 
+        // --- Zoom's second window on the TV -------------------------------------
+
+        /// <summary>The whole screen a rectangle is on: Electron's bounds of
+        /// the media window's screen, converted to physical pixels, can be a
+        /// pixel or two off at some scalings.</summary>
+        static Native.Rect ScreenAt(Native.Rect rect)
+        {
+            var info = new Native.MonitorInfo { Size = Marshal.SizeOf(typeof(Native.MonitorInfo)) };
+            var monitor = Native.MonitorFromRect(ref rect, Native.MonitorDefaultToNearest);
+            if (monitor == IntPtr.Zero || !Native.GetMonitorInfo(monitor, ref info)) throw new ZoomActionError("screen-not-found");
+            return info.Monitor;
+        }
+
+        static bool HasTitleBar(IntPtr handle)
+        {
+            return (Native.GetWindowLong(handle, Native.GwlStyle) & Native.WsCaption) == Native.WsCaption;
+        }
+
+        /// <summary>Whether one of Zoom's meeting windows is full screen on
+        /// a screen: it covers it, taskbar included, without its title bar,
+        /// which Zoom takes away in full screen (Zoom 7.2.1), while a window
+        /// only sized to the screen (by M3's window layout, say) keeps
+        /// it.</summary>
+        static bool IsFullScreenOn(IntPtr handle, Native.Rect screen)
+        {
+            return !HasTitleBar(handle) && SameRect(VisibleFrame(handle), screen, 1);
+        }
+
+        static bool IsOnScreen(IntPtr handle, Native.Rect screen)
+        {
+            var monitor = MonitorOf(handle);
+            return monitor.HasValue && SameRect(monitor.Value.Monitor, screen, 1);
+        }
+
+        /// <summary>A rectangle in the middle of a screen, a fraction of its
+        /// size (well over Zoom's minimum size on any TV).</summary>
+        static Native.Rect MiddleOf(Native.Rect screen, double fraction)
+        {
+            int width = (int)((screen.Right - screen.Left) * fraction);
+            int height = (int)((screen.Bottom - screen.Top) * fraction);
+            int left = screen.Left + (screen.Right - screen.Left - width) / 2;
+            int top = screen.Top + (screen.Bottom - screen.Top - height) / 2;
+            return new Native.Rect { Left = left, Top = top, Right = left + width, Bottom = top + height };
+        }
+
+        /// <summary>Double-clicks the middle of one of Zoom's meeting
+        /// windows, which puts it full screen, or back in a window. The
+        /// double-click is sent to the window first, without the mouse; only
+        /// if Zoom ignores that (`done` still false a moment later) is it
+        /// really double-clicked there, lifted above M3's media window, the
+        /// mouse put back afterwards (see RunRestoringInput), and not while
+        /// a modifier key is held (which would change what the click does).
+        /// Returns how it worked ("posted" or "click"), or null.</summary>
+        static string DoubleClickMiddle(IntPtr handle, Func<bool> done)
+        {
+            var frame = VisibleFrame(handle);
+            int x = (frame.Left + frame.Right) / 2, y = (frame.Top + frame.Bottom) / 2;
+            var target = ChildWindowAt(handle, x, y);
+            var point = ClientPoint(target, x, y);
+            Native.PostMessage(target, Native.WmMouseMove, IntPtr.Zero, point);
+            Native.PostMessage(target, Native.WmLButtonDown, new IntPtr(Native.MkLButton), point);
+            Native.PostMessage(target, Native.WmLButtonUp, IntPtr.Zero, point);
+            Native.PostMessage(target, Native.WmLButtonDblClk, new IntPtr(Native.MkLButton), point);
+            Native.PostMessage(target, Native.WmLButtonUp, IntPtr.Zero, point);
+            if (WaitUntil(done, 2000)) return "posted";
+            if (ModifierHeld()) return null;
+            Lifted(handle, () =>
+            {
+                MoveCursor(x, y);
+                Thread.Sleep(50);
+                for (int click = 0; click < 2; click++)
+                {
+                    Native.mouse_event(Native.MouseLeftDown, 0, 0, 0, UIntPtr.Zero);
+                    Native.mouse_event(Native.MouseLeftUp, 0, 0, 0, UIntPtr.Zero);
+                }
+                return true;
+            });
+            return WaitUntil(done, 2500) ? "click" : null;
+        }
+
+        static Dictionary<string, object> SecondWindowReply(IntPtr handle, Native.Rect screen, string before, string via)
+        {
+            var reply = new Dictionary<string, object>
+            {
+                { "before", before },
+                { "frame", RectReply(VisibleFrame(handle)) },
+                { "fullScreen", IsFullScreenOn(handle, screen) },
+                { "via", via },
+            };
+            return new Dictionary<string, object> { { "secondWindow", reply } };
+        }
+
+        /// <summary>Puts Zoom's second window (with Zoom's "Dual window"
+        /// meeting view on, "Use dual monitors" in older versions: the
+        /// speaker or what's shared) full screen on the screen asked for, M3's
+        /// media window's (the TV), where hiding the media window shows it.
+        /// Zoom goes full screen, on the screen the window is on, by a
+        /// double-click in it, and back by another (Zoom 7.2.1 takes one sent
+        /// to its second window, even under M3's media window): a window full
+        /// screen on another screen is first double-clicked back there, then
+        /// moved to the TV and double-clicked full screen. One full screen on
+        /// the TV already is left as it is. Replies where it was, and whether
+        /// it now is full screen on the TV.</summary>
+        public static Dictionary<string, object> SecondWindowFullScreen(Dictionary<string, object> request)
+        {
+            var requested = GetRect(request, "screen");
+            if (!requested.HasValue) throw new ZoomActionError("invalid-request");
+            var screen = ScreenAt(requested.Value);
+            // Sharing hides the meeting window, which then isn't told apart.
+            if (IsSharing()) throw new ZoomActionError("sharing");
+            var handles = MeetingWindowHandles();
+            if (handles.Count == 0) throw new ZoomActionError(InMiniView() ? "mini-view" : "meeting-not-found");
+            if (handles.Count < 2) throw new ZoomActionError("second-window-not-found");
+            var second = handles[1];
+            if (IsFullScreenOn(second, screen)) return SecondWindowReply(second, screen, "full-screen", "already");
+            var before = "windowed";
+            var monitor = MonitorOf(second);
+            if (monitor.HasValue && IsFullScreenOn(second, monitor.Value.Monitor))
+            {
+                before = "elsewhere";
+                if (DoubleClickMiddle(second, () => HasTitleBar(second)) == null)
+                    return SecondWindowReply(second, screen, before, null);
+            }
+            if (Native.IsIconic(second) || !IsOnScreen(second, screen)) PlaceWindow(second, MiddleOf(screen, 0.8));
+            var via = DoubleClickMiddle(second, () => IsFullScreenOn(second, screen));
+            return SecondWindowReply(second, screen, before, via);
+        }
+
         /// <summary>While sharing, Zoom hides its meeting window, participants
         /// list included (and showing it again by hand only shows it blank):
         /// this opens the list in a window of its own instead, through the
@@ -4687,6 +4818,7 @@ namespace M3.ZoomHelper
                     return TestSharePicker(GetString(request, "windowTitle") ?? "", GetString(request, "shareButtonTitle"));
                 case "window-layout": return WindowLayout();
                 case "place-windows": return PlaceWindows(request);
+                case "second-window-full-screen": return SecondWindowFullScreen(request);
                 case "share-participants": return ShareParticipants();
                 default: throw new ZoomActionError("unknown-command");
             }

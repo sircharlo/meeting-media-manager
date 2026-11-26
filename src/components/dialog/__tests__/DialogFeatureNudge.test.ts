@@ -13,6 +13,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useDialogStateStore } from 'stores/dialog-state';
+import { useZoomDisplaySetupStore } from 'stores/zoom-display-setup';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter, type Router } from 'vue-router';
 
@@ -232,6 +233,19 @@ describe('DialogFeatureNudge', () => {
     expect(text()).not.toContain('Did you know?');
 
     useDialogStateStore().closeDialog('other');
+    await wait(RETRY_MS);
+    expect(text()).toContain('Did you know?');
+  });
+
+  // The tour after the Zoom display setup isn't a dialog, but the suggestion
+  // would cover the buttons it points at.
+  it('waits while the Zoom display tour runs', async () => {
+    await mountNudge();
+    useZoomDisplaySetupStore().startTour();
+    await wait(FIRST_TRY_MS);
+    expect(text()).not.toContain('Did you know?');
+
+    useZoomDisplaySetupStore().endTour();
     await wait(RETRY_MS);
     expect(text()).toContain('Did you know?');
   });

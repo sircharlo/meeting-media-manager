@@ -37,6 +37,7 @@ const COMMAND_TYPES = new Set<ZoomCommandType>([
   'ping',
   'place-windows',
   'raised-hands',
+  'second-window-full-screen',
   'set-mic',
   'set-participant-mic',
   'set-video',

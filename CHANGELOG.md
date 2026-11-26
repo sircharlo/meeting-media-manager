@@ -6,12 +6,20 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ## UPCOMING VERSION
 
+### ✨ New Features
+
+- ✨ **Zoom on the TV**: Before each meeting, M³ now asks whether any of the day's parts will be presented by someone on Zoom (at the weekend meeting, whether the speaker will be on Zoom). If so, it helps you get the Zoom window ready on the TV, so everyone in the hall can see them when it's time for their part: it hides the media display for a moment so you can check that the Zoom window is on the TV and fills the whole screen, says how to make it full screen if it doesn't, shows the media display again on top of the Zoom window, points out the buttons that hide and show it when it's time to show the Zoom window, then tells you when everything's ready. With the Zoom Meeting Manager turned on, M³ also moves Zoom's second window to the TV and makes it full screen itself. To stop the question, choose **Don't ask me again**, or turn off **Help set up Zoom for remote participants** in Settings, under Congregation Meetings.
+
 ### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Circuit Overseer's Visit**: The reminder to add the date of the circuit overseer's next visit now has **Remind me in a month** and **Dismiss for 6 months** buttons, for when the date isn't known yet. Closing it with its × keeps it quiet until M³ is restarted, instead of it coming back each time you switch congregations.
 - 🛠️ **Memorial**: From January 1 to April 20, M³ now reminds you to add the date of the Memorial when it isn't set, with the same buttons. M³ fills in that date by itself when it can, so the reminder only shows when it couldn't. Once the Memorial's week is over, its date is replaced with next year's if it's known, or cleared, instead of staying in Settings. A date you entered yourself is no longer replaced before its week is over.
 - 🛠️ **Media Groups**: When you point at a group of media items, its header now shows a **…** button like a single media item's, instead of up and down arrows that looked just like the arrow that opens the group. Its menu has **Move up** and **Move down**, the sections to move the group to, and **Hide from media list**. These buttons no longer sit on top of a long title, and they no longer stay on screen after you click the header to open or close the group. A group can now be dragged from anywhere on its header, and its drag icon follows the **Show drag handle on media items** setting, like media items.
 - 🛠️ **Zoom Meeting Manager**: When M³ mutes the host microphone while it shares a video or an audio file in Zoom, it now mutes it 5 seconds after the media starts playing, and unmutes it 10 seconds before the media ends (for a trimmed video, before its trimmed end), or as soon as the media is stopped. While the media is paused, the microphone is unmuted, and it's muted again when the media resumes. Before, it stayed muted from just before the media started until after it ended, pauses included. Media that plays for less than 30 seconds (for a trimmed video, its trimmed part) leaves it on throughout, and media set to repeat keeps it muted until it's stopped.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Zoom Meeting Manager**: The screen that shows while M³ operates Zoom now covers the whole M³ window, instead of a band across its middle.
 
 ## v26.11.5
 

@@ -395,6 +395,12 @@ describe('isZoomCommand', () => {
       true,
     );
     expect(isZoomCommand({ type: 'learn-hand-raised' })).toBe(true);
+    expect(
+      isZoomCommand({
+        screen: { height: 1080, width: 1920, x: 1920, y: 0 },
+        type: 'second-window-full-screen',
+      }),
+    ).toBe(true);
     expect(isZoomCommand({ phrase: 'Hand raised', type: 'raised-hands' })).toBe(
       true,
     );

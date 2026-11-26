@@ -192,6 +192,14 @@ const layoutTargets = async () =>
     await presentationScreens(),
   );
 
+/**
+ * The media window's screen (physical pixels), where Zoom's second window
+ * goes, full screen. Null when the media window doesn't fill a screen of its
+ * own, or off Windows.
+ */
+export const getMediaScreenForZoom = async () =>
+  (await layoutTargets())?.second ?? null;
+
 const noticeFallback = () => {
   if (fallbackNoticed) return;
   fallbackNoticed = true;

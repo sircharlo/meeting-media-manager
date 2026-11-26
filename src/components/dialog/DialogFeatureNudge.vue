@@ -97,6 +97,7 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { isDemoModeActive } from 'stores/demo-mode';
 import { useDialogStateStore } from 'stores/dialog-state';
+import { useZoomDisplaySetupStore } from 'stores/zoom-display-setup';
 import { onBeforeUnmount, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
@@ -110,6 +111,7 @@ const currentStateStore = useCurrentStateStore();
 const { congregationSwitcherOpen, currentCongregation, currentSettings } =
   storeToRefs(currentStateStore);
 const dialogStateStore = useDialogStateStore();
+const zoomDisplaySetupStore = useZoomDisplaySetupStore();
 
 // Let startup settle first (the Zoom startup check, OBS connecting), then
 // retry while the moment isn't right, for up to half an hour. A notification
@@ -203,14 +205,16 @@ const isProfileReady = (congId: string) =>
 // dialog to close (deferWhileDialogOpen), so only those already up matter.
 const isNotificationShowing = () => !!document.querySelector('.q-notification');
 
-// Only on the media calendar, over nothing else, while no media is shown and
-// not from shortly before the meeting until it ends. Notifications are
-// checked separately, as they go away on their own soon.
+// Only on the media calendar, over nothing else (no dialog, nor the Zoom
+// display tour, which isn't one), while no media is shown and not from
+// shortly before the meeting until it ends. Notifications are checked
+// separately, as they go away on their own soon.
 const isGoodMoment = (congId: string) =>
   currentCongregation.value === congId &&
   route.name === 'media-calendar' &&
   !congregationSwitcherOpen.value &&
   !dialogStateStore.isAnyDialogOpen &&
+  !zoomDisplaySetupStore.tourActive &&
   !currentStateStore.mediaPlaying.url &&
   isOutsideMeetingTime();
 

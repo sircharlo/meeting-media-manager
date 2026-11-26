@@ -20,6 +20,8 @@
     />
     <DialogZoomAutomationOverlay />
     <DialogZoomCheckPrompt />
+    <DialogZoomDisplaySetup />
+    <ZoomDisplaySetupTour />
     <DialogFeatureNudge />
     <DialogMusicStartConfirm />
     <MediaConversionConfirm />
@@ -111,6 +113,7 @@ import DialogFeatureNudge from 'components/dialog/DialogFeatureNudge.vue';
 import DialogMusicStartConfirm from 'components/dialog/DialogMusicStartConfirm.vue';
 import DialogZoomAutomationOverlay from 'components/dialog/DialogZoomAutomationOverlay.vue';
 import DialogZoomCheckPrompt from 'components/dialog/DialogZoomCheckPrompt.vue';
+import DialogZoomDisplaySetup from 'components/dialog/DialogZoomDisplaySetup.vue';
 import DialogZoomSetupAssistant from 'components/dialog/DialogZoomSetupAssistant.vue';
 import MediaConversionConfirm from 'components/dialog/MediaConversionConfirm.vue';
 import HeaderBase from 'components/header/HeaderBase.vue';
@@ -119,6 +122,7 @@ import TimerDockPanel from 'components/media/TimerDockPanel.vue';
 import ActionIsland from 'components/ui/ActionIsland.vue';
 import AnnouncementBanner from 'components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'components/ui/NavDrawer.vue';
+import ZoomDisplaySetupTour from 'components/ui/ZoomDisplaySetupTour.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
 import { SORTER } from 'src/constants/general';

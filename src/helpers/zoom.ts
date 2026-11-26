@@ -9,6 +9,7 @@ import type {
   ZoomKnownTitles,
   ZoomLayoutTargets,
   ZoomMeetingState,
+  ZoomScreenRect,
 } from 'src/types';
 
 import { i18n } from 'boot/i18n';
@@ -133,6 +134,7 @@ const COMMAND_STEP_KEYS: Partial<Record<ZoomCommandType, string>> = {
   meeting: 'zoom-self-test-step-meeting',
   'mute-all': 'zoom-self-test-step-mute-all-unlocked',
   'place-windows': 'zoom-run-arrange-windows',
+  'second-window-full-screen': 'zoom-run-second-window-full-screen',
   'set-mic': 'zoom-run-host-mic',
   'set-participant-mic': 'zoom-run-participant-mic',
   'set-video': 'zoom-run-host-video',
@@ -1628,6 +1630,20 @@ export const placeZoomWindows = async (
  */
 export const openZoomParticipantsWhileSharing = async () =>
   (await runCommand({ type: 'share-participants' })).ok;
+
+/**
+ * Puts Zoom's second window (with Zoom's "Dual window" meeting view on)
+ * full screen on `screen`, the media window's (physical pixels), for
+ * participants on Zoom to be seen there once the media window is hidden. A
+ * window full screen there already is left as it is (one only sized to the
+ * screen, its title bar showing, isn't full screen). Zoom goes full screen
+ * on a double-click in the window: the helper sends one, without the
+ * mouse, which Zoom 7.2.1 takes even under the media window; only should
+ * Zoom ignore it does it really double-click there, putting the mouse back
+ * at once.
+ */
+export const putZoomSecondWindowFullScreen = (screen: ZoomScreenRect) =>
+  runCommand({ screen, type: 'second-window-full-screen' });
 
 // --- Setup assistant -------------------------------------------------------
 

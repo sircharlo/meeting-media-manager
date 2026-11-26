@@ -220,6 +220,17 @@ export const settingsDefinitions: SettingsItems = {
     type: 'button',
     unless: ['disableMediaFetching', 'congregationNameModified'],
   },
+  // Before each meeting, asks whether anyone on the program is on Zoom and,
+  // if so, walks the user through putting Zoom's window on the TV, behind
+  // the media display (see zoom-display-setup.ts). With the Zoom Meeting
+  // Manager on, M³ also places that window itself.
+  zoomDisplaySetupHelp: {
+    depends: 'enableMediaDisplayButton',
+    group: 'congregationMeetings',
+    subgroup: 'remoteParticipants',
+    type: 'toggle',
+    unless: 'disableMediaFetching',
+  },
   // Media Retrieval and Playback
   meteredConnection: {
     group: 'mediaRetrievalPlayback',
@@ -1356,6 +1367,7 @@ export const defaultSettings: SettingsValues = {
   zoomAskToUnmuteTitle: null,
   zoomAutoFocusMediaWindow: false,
   zoomCancelAutomationShortcut: 'Ctrl+Alt+Escape',
+  zoomDisplaySetupHelp: true,
   zoomEnable: false,
   zoomHandButtonTitle: null,
   zoomHandRaisedPhrase: null,

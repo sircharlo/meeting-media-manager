@@ -1,6 +1,7 @@
 <template>
   <ActionPopup
     v-model="open"
+    :persistent="tourActive"
     :status-color="statusColor"
     :status-icon="statusIcon"
     :status-text="statusText"
@@ -246,6 +247,7 @@
         v-if="mediaWindowVisible"
         class="full-width"
         color="primary"
+        data-wizard-target="media-display-toggle"
         icon="mmm-media-display-inactive"
         :label="t('hide-media-display')"
         unelevated
@@ -255,6 +257,7 @@
         v-else
         class="full-width"
         color="primary"
+        data-wizard-target="media-display-toggle"
         icon="mmm-media-display-active"
         :label="t('show-media-display')"
         unelevated
@@ -352,6 +355,7 @@ import { isImage, isJwpub } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useZoomDisplaySetupStore } from 'stores/zoom-display-setup';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -371,6 +375,10 @@ const {
   mediaWindowVisible,
   selectedDate,
 } = storeToRefs(currentState);
+
+// Kept open while the Zoom display setup's tour points into it, from a
+// card outside it (see ZoomDisplaySetupTour).
+const { tourActive } = storeToRefs(useZoomDisplaySetupStore());
 
 const props = defineProps<{
   dialogId: string;

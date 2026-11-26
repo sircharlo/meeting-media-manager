@@ -11,6 +11,7 @@
     anchor="top middle"
     no-parent-event
     :offset="[0, 8]"
+    :persistent="persistent"
     self="bottom middle"
     transition-hide="jump-down"
     transition-show="jump-up"
@@ -66,6 +67,11 @@ import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { computed, onBeforeUnmount, useTemplateRef, watch } from 'vue';
 
 const props = defineProps<{
+  /**
+   * Stays open on a click outside it or Esc, e.g. while a tour points into
+   * it from a card outside it (see ZoomDisplaySetupTour).
+   */
+  persistent?: boolean;
   /**
    * Quasar color of the status icon. A notice type (positive, info, warning
    * or negative) takes the notice's shade, readable on the popup in both
