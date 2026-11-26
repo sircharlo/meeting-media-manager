@@ -20,9 +20,11 @@
     />
     <DialogZoomAutomationOverlay />
     <DialogZoomCheckPrompt />
+    <DialogZoomCheckResult />
     <DialogZoomDisplaySetup />
     <ZoomDisplaySetupTour />
     <DialogFeatureNudge />
+    <DialogMissingDates />
     <DialogMusicStartConfirm />
     <MediaConversionConfirm />
 
@@ -110,9 +112,11 @@ import { queues } from 'boot/globals';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogCongregationSwitcher from 'components/dialog/DialogCongregationSwitcher.vue';
 import DialogFeatureNudge from 'components/dialog/DialogFeatureNudge.vue';
+import DialogMissingDates from 'components/dialog/DialogMissingDates.vue';
 import DialogMusicStartConfirm from 'components/dialog/DialogMusicStartConfirm.vue';
 import DialogZoomAutomationOverlay from 'components/dialog/DialogZoomAutomationOverlay.vue';
 import DialogZoomCheckPrompt from 'components/dialog/DialogZoomCheckPrompt.vue';
+import DialogZoomCheckResult from 'components/dialog/DialogZoomCheckResult.vue';
 import DialogZoomDisplaySetup from 'components/dialog/DialogZoomDisplaySetup.vue';
 import DialogZoomSetupAssistant from 'components/dialog/DialogZoomSetupAssistant.vue';
 import MediaConversionConfirm from 'components/dialog/MediaConversionConfirm.vue';

@@ -26,6 +26,14 @@ export interface ZoomAutomationPause {
   problems: string[];
 }
 
+/** What a failed check found, as DialogZoomCheckResult shows it. */
+export interface ZoomFailedCheck {
+  /** What didn't work, and that M³ won't operate Zoom until a check passes. */
+  caption: string;
+  /** Zoom's buttons no longer read as learned: the setup assistant fixes it. */
+  relearn: boolean;
+}
+
 interface Store {
   /**
    * How many times the user stopped an automation this session: a run can
@@ -48,6 +56,11 @@ interface Store {
    * including while it waits for the user's go-ahead (see checkingZoom).
    */
   checkRunning: boolean;
+  /**
+   * The last failed check's result, shown over the whole window (see
+   * DialogZoomCheckResult) until closed; null: none showing.
+   */
+  failedCheck: null | ZoomFailedCheck;
   /**
    * What the last look at Zoom found (null: not looked yet, or Zoom's
    * helper couldn't tell), for the action island's Zoom button.
@@ -94,6 +107,9 @@ export const useZoomStateStore = defineStore('zoom-state', {
     closeCheckPrompt() {
       this.checkPrompt = false;
     },
+    closeFailedCheck() {
+      this.failedCheck = null;
+    },
     /**
      * A new day: the automations the user turned off for a meeting, by
      * skipping its check, come back on for the next one. Paused by a failed
@@ -135,6 +151,10 @@ export const useZoomStateStore = defineStore('zoom-state', {
     setRunStep(stepKey: null | string) {
       if (this.runDepth > 0) this.runStep = stepKey;
     },
+    /** Shows a failed check's result (see DialogZoomCheckResult). */
+    showFailedCheck(result: ZoomFailedCheck) {
+      this.failedCheck = result;
+    },
   },
   getters: {
     /** Whether a failed check paused the current congregation's automations. */
@@ -163,6 +183,7 @@ export const useZoomStateStore = defineStore('zoom-state', {
     checkPrompt: false,
     checkPromptSnoozedUntil: 0,
     checkRunning: false,
+    failedCheck: null,
     meeting: null,
     pause: null,
     runDepth: 0,

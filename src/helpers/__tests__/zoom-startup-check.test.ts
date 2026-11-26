@@ -43,7 +43,9 @@ const zoom = vi.hoisted(() => ({
   zoomNamesChanged: vi.fn(() => false),
 }));
 
+const helperNotice = vi.hoisted(() => ({ dismiss: vi.fn() }));
 vi.mock('stores/current-state', () => ({
+  dismissZoomHelperStartFailedNotice: helperNotice.dismiss,
   useCurrentStateStore: () => currentState,
 }));
 
@@ -110,11 +112,14 @@ vi.mock('src/helpers/notifications', () => ({
 const prompt = vi.hoisted(() => ({
   answer: vi.fn(),
   ask: vi.fn<() => Promise<'run' | 'skip' | 'unanswered'>>(),
+  // Whether a question waits for its answer (see isAskingBeforeCheckingZoom).
+  asking: false,
 }));
 vi.mock('src/helpers/zoom-check-prompt', () => ({
   answerZoomCheckPrompt: prompt.answer,
   askBeforeCheckingZoom: prompt.ask,
   CHECK_PROMPT_TIMEOUT_MS: 2 * 60_000,
+  isAskingBeforeCheckingZoom: () => prompt.asking,
 }));
 
 const sentry = vi.hoisted(() => ({ captureMessage: vi.fn() }));
@@ -133,6 +138,9 @@ const OPEN: ZoomMeetingState = { found: true, sharing: false };
 const passed = (...ids: ZoomSelfTestStep['id'][]): ZoomSelfTestStep[] =>
   ids.map((id) => ({ id, status: 'passed' }));
 
+// A failed check's result, shown over the whole window (DialogZoomCheckResult).
+const failedCheck = () => useZoomStateStore().failedCheck;
+
 const notification = () =>
   zoom.notify.mock.lastCall?.[0] as
     | undefined
@@ -145,6 +153,7 @@ const notification = () =>
 beforeEach(() => {
   setActivePinia(createPinia());
   vi.clearAllMocks();
+  prompt.asking = false;
   Object.assign(currentState.currentSettings, {
     zoomMeetingManagerAutomateMediaSharing: true,
     zoomMeetingManagerAutomateMeetingAudioSettings: true,
@@ -389,11 +398,13 @@ describe('Zoom startup check', () => {
       () =>
         new Promise((resolve) => {
           zoomState.promptForCheck();
+          prompt.asking = true;
           answer = resolve;
         }),
     );
     prompt.answer.mockImplementationOnce((choice: 'run' | 'skip') => {
       zoomState.closeCheckPrompt();
+      prompt.asking = false;
       answer(choice);
     });
 
@@ -553,7 +564,7 @@ describe('Zoom startup check', () => {
       namesChanged: false,
       problems: ['zoom-check-problem-meeting'],
     });
-    expect(notification()?.type).toBe('negative');
+    expect(failedCheck()).not.toBeNull();
     // MMM-V2-3MW: reported with what Zoom showed instead of the meeting,
     // where these reports used to say only that it wasn't there.
     await vi.waitFor(() =>
@@ -725,12 +736,14 @@ describe('Zoom startup check', () => {
       'zoom-setup-check-host',
     ]);
 
-    // "Test again", from the notification.
-    const testAgain = notification()?.actions?.find((a) => a.handler);
-    expect(testAgain?.label).toBe('Test again');
-    testAgain?.handler?.();
+    // Shown over the whole window, offering Test again (see
+    // DialogZoomCheckResult, which runs this).
+    expect(failedCheck()?.relearn).toBe(false);
+    await runZoomStartupCheck({ manual: true });
     await vi.waitFor(() => expect(zoomState.automationsPaused).toBe(false));
     expect(notification()?.type).toBe('positive');
+    // The passing check closes the earlier result.
+    expect(failedCheck()).toBeNull();
   });
 
   it.each([
@@ -757,19 +770,13 @@ describe('Zoom startup check', () => {
         { id: 'meeting', status: 'passed' },
         { detail: 'Mute the microphone', id: 'mic-off', status: 'failed' },
       ]);
-      const dispatch = vi.spyOn(globalThis, 'dispatchEvent');
-
       expect(await runZoomStartupCheck()).toBe('failed');
       expect(useZoomStateStore().pause?.namesChanged).toBe(true);
-      expect(notification()?.caption).toContain(
+      expect(failedCheck()?.caption).toContain(
         "Zoom's language was changed or Zoom was updated",
       );
-      const action = notification()?.actions?.find((a) => a.handler);
-      expect(action?.label).toBe('Open setup assistant');
-      action?.handler?.();
-      expect(dispatch).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'openZoomSetupAssistant' }),
-      );
+      // Its button opens the setup assistant (see DialogZoomCheckResult).
+      expect(failedCheck()?.relearn).toBe(true);
     },
   );
 
@@ -849,7 +856,7 @@ describe('Zoom startup check', () => {
 
     expect(await runZoomStartupCheck()).toBe('failed');
 
-    expect(notification()?.caption).toContain(
+    expect(failedCheck()?.caption).toContain(
       "A Zoom window is open (a dialog or a popup) and may be in M³'s way. Close it in Zoom.",
     );
     await vi.waitFor(() =>
@@ -881,7 +888,7 @@ describe('Zoom startup check', () => {
 
     expect(await runZoomStartupCheck()).toBe('failed');
 
-    expect(notification()?.caption).not.toContain('Close it in Zoom');
+    expect(failedCheck()?.caption).not.toContain('Close it in Zoom');
   });
 
   it('changes nothing when the user stops the check', async () => {
@@ -1024,11 +1031,7 @@ describe('Zoom startup check', () => {
       expect(useZoomStateStore().pause?.problems).toEqual([
         'zoom-check-problem-helper',
       ]);
-      expect(notification()).toMatchObject({
-        caption,
-        message: 'Zoom automations paused',
-        type: 'negative',
-      });
+      expect(failedCheck()).toEqual({ caption, relearn: false });
       await new Promise((resolve) => {
         setTimeout(resolve, 0);
       });
@@ -1045,7 +1048,7 @@ describe('Zoom startup check', () => {
     ]);
 
     expect(await runZoomStartupCheck()).toBe('failed');
-    expect(notification()?.caption).toContain("M³'s connection to Zoom");
+    expect(failedCheck()?.caption).toContain("M³'s connection to Zoom");
     await vi.waitFor(() =>
       expect(sentry.captureMessage).toHaveBeenCalledWith(
         'Zoom check failed: automations paused',
@@ -1062,16 +1065,40 @@ describe('Zoom startup check', () => {
     );
   });
 
-  it("lets the setup assistant close a failed check's notification", async () => {
+  it("lets the setup assistant close a failed check's result", async () => {
     const { dismissFailedZoomCheckNotice, runZoomStartupCheck } =
       await import('../zoom-startup-check');
-    const dismiss = vi.fn();
-    zoom.notify.mockReturnValueOnce(dismiss);
     zoom.getZoomMeetingState.mockResolvedValue(null);
 
     expect(await runZoomStartupCheck()).toBe('failed');
+    expect(failedCheck()).not.toBeNull();
     dismissFailedZoomCheckNotice();
-    dismissFailedZoomCheckNotice();
-    expect(dismiss).toHaveBeenCalledOnce();
+    expect(failedCheck()).toBeNull();
+  });
+
+  // Most often, the "M³ is operating Zoom" overlay is still up: the result
+  // follows it, rather than opening under it.
+  it('shows the result once the screen is free', async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    zoom.getZoomMeetingState.mockResolvedValue(null);
+    useDialogStateStore().openDialog(
+      'zoom-automation-overlay',
+      'DialogZoomAutomationOverlay',
+    );
+
+    expect(await runZoomStartupCheck()).toBe('failed');
+    expect(failedCheck()).toBeNull();
+
+    useDialogStateStore().closeDialog('zoom-automation-overlay');
+    await vi.waitFor(() => expect(failedCheck()).not.toBeNull());
+  });
+
+  // Saying the same thing twice: the result gives the helper's reason too.
+  it("closes the notification that M³'s helper couldn't start as it shows", async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    zoom.getZoomMeetingState.mockResolvedValue(null);
+
+    expect(await runZoomStartupCheck()).toBe('failed');
+    expect(helperNotice.dismiss).toHaveBeenCalled();
   });
 });

@@ -35,6 +35,7 @@ import {
   answerZoomCheckPrompt,
   askBeforeCheckingZoom,
   CHECK_PROMPT_TIMEOUT_MS,
+  isAskingBeforeCheckingZoom,
 } from 'src/helpers/zoom-check-prompt';
 import {
   runZoomSelfTest,
@@ -42,7 +43,11 @@ import {
   type ZoomSelfTestStepId,
 } from 'src/helpers/zoom-self-test';
 import { log } from 'src/shared/vanilla';
-import { useCurrentStateStore } from 'stores/current-state';
+import { SCREEN_PRIORITY, useAttentionStore } from 'stores/attention';
+import {
+  dismissZoomHelperStartFailedNotice,
+  useCurrentStateStore,
+} from 'stores/current-state';
 import { useDialogStateStore } from 'stores/dialog-state';
 import { AUTO_START_WINDOW_HOURS } from 'stores/music';
 import { useZoomStateStore } from 'stores/zoom-state';
@@ -561,16 +566,18 @@ const failedOnChangedNames = (failures: ZoomActionFailure[]) =>
   failures.some(({ error }) => UNRECOGNIZED_TITLE.test(error ?? '')) ||
   zoomNamesChanged(useZoomStateStore().meeting);
 
-// Closes the last failed check's notification, which stays until closed.
-let dismissFailedCheckNotice: (() => void) | undefined;
+// A failed check's result waits for its turn under this name (see the
+// attention store), then shows over the whole window (DialogZoomCheckResult).
+const RESULT_SCREEN_REQUEST = 'zoom-check-result';
 
 /**
- * Closes the notification of a failed check, if it's still showing: the
- * setup assistant, which it may offer, does so as it opens.
+ * Closes a failed check's result, showing or waiting for its turn: the setup
+ * assistant, which it may offer, does so as it opens, and a newer result
+ * replaces it.
  */
 export const dismissFailedZoomCheckNotice = () => {
-  dismissFailedCheckNotice?.();
-  dismissFailedCheckNotice = undefined;
+  useAttentionStore().withdraw(RESULT_SCREEN_REQUEST);
+  useZoomStateStore().closeFailedCheck();
 };
 
 /**
@@ -608,43 +615,36 @@ const getFailedCheckCaption = (
   return windowInTheWay ? `${failed} ${t('zoom-dialog-in-the-way')}` : failed;
 };
 
-const notifyFailedCheck = (
+/**
+ * Shows what a failed check found over the whole window, once it's its turn
+ * (right after the "M³ is operating Zoom" overlay, most often), with Test
+ * again, or Open setup assistant when Zoom's buttons changed (see
+ * DialogZoomCheckResult). It needs the user's decision before the meeting,
+ * which a notification at the top made easy to miss. The notification that
+ * M³'s helper couldn't start, saying the same, closes as it shows.
+ */
+const showFailedCheck = (
   problems: string[],
   namesChanged: boolean,
   unavailableHelper?: string,
   windowInTheWay = false,
 ) => {
-  dismissFailedCheckNotice = createTemporaryNotification({
-    actions: [
-      namesChanged
-        ? {
-            color: 'white',
-            handler: () => {
-              globalThis.dispatchEvent(
-                new CustomEvent('openZoomSetupAssistant'),
-              );
-            },
-            label: t('zoom-setup-open'),
-          }
-        : {
-            color: 'white',
-            handler: () => {
-              void runZoomStartupCheck({ manual: true });
-            },
-            label: t('zoom-check-test-again'),
-          },
-      { color: 'white', icon: 'close', round: true },
-    ],
+  dismissFailedZoomCheckNotice();
+  const result = {
     caption: getFailedCheckCaption(
       problems,
       namesChanged,
       unavailableHelper,
       windowInTheWay,
     ),
-    group: 'zoom-check',
-    message: t('zoom-automations-paused'),
-    timeout: 0,
-    type: 'negative',
+    relearn: namesChanged,
+  };
+  useAttentionStore().request(RESULT_SCREEN_REQUEST, {
+    open: () => {
+      dismissZoomHelperStartFailedNotice();
+      useZoomStateStore().showFailedCheck(result);
+    },
+    priority: SCREEN_PRIORITY.zoomCheckResult,
   });
 };
 
@@ -669,7 +669,7 @@ const report = (
     // in M³ (MMM-V2-3NY).
     if (!unavailableHelper)
       void reportFailedCheck(found, failures, namesChanged);
-    notifyFailedCheck(
+    showFailedCheck(
       problems,
       namesChanged,
       unavailableHelper,
@@ -681,6 +681,8 @@ const report = (
   zoomState.resumeAutomations();
   rememberZoomVersion();
   log('Zoom check passed', 'zoom', 'info');
+  // An earlier failure's result no longer stands.
+  dismissFailedZoomCheckNotice();
   // Confirmed even when nobody asked and nothing was paused: the check
   // presses Zoom's buttons, so it says how that went.
   createTemporaryNotification({
@@ -716,6 +718,23 @@ const mayCheck = (congregationId: string, manual: boolean) => {
     // Never while an automation operates Zoom: they'd press each other's
     // buttons. Today's check is still to do.
     !zoomState.runActive
+  );
+};
+
+/**
+ * Whether today's automatic check is still to come: under way, or it may
+ * run on its own (see mayCheck) and it isn't too late for it to ask before
+ * the meeting. What else M³ asks about Zoom before the meeting waits for it
+ * (see DialogZoomDisplaySetup): the check comes first.
+ */
+export const isZoomCheckStillToCome = () => {
+  const congregationId = useCurrentStateStore().currentCongregation;
+  if (!congregationId) return false;
+  if (useZoomStateStore().checkRunning) return true;
+  return (
+    mayCheck(congregationId, false) &&
+    getMeetingOpeningWindow() !== null &&
+    !isTooLateToAsk()
   );
 };
 
@@ -864,9 +883,10 @@ let checkUnderWay: null | Promise<ZoomStartupCheckOutcome> = null;
 export const runZoomStartupCheck = async ({
   manual = false,
 } = {}): Promise<ZoomStartupCheckOutcome> => {
-  // Asked for (Test again, in a notification above the question) while a
-  // check waits for the user's go-ahead: that's the go-ahead.
-  if (manual && checkUnderWay !== null && useZoomStateStore().checkPrompt) {
+  // Asked for (Test again) while a check waits for the user's go-ahead,
+  // its question showing or still waiting for its turn: that's the
+  // go-ahead.
+  if (manual && checkUnderWay !== null && isAskingBeforeCheckingZoom()) {
     log('Zoom check: asked for while asking, so it runs', 'zoom', 'info');
     answerZoomCheckPrompt('run');
     return checkUnderWay;
