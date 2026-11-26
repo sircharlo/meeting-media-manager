@@ -825,6 +825,7 @@ import NoticeBanner from 'components/ui/NoticeBanner.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
+import { useScreenClaim } from 'src/composables/useScreenClaim';
 import { removeCongregationCache } from 'src/helpers/cleanup';
 import { isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -863,6 +864,10 @@ const {
 // switched to.
 const setupCongregationId = currentCongregation.value;
 const setupProfileId = () => setupCongregationId || currentCongregation.value;
+
+// Nothing that opens on its own should get in the way of the setup (see the
+// attention store).
+useScreenClaim('setup-wizard');
 
 // UX-7 (full-audit-2026-09-04.md): the port/password step previously gated
 // "Continue" only on both fields being non-empty, not on an actual

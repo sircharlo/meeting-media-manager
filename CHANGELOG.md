@@ -21,6 +21,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 - 🐞 **Zoom Meeting Manager**: The screen that shows while M³ operates Zoom now covers the whole M³ window, instead of a band across its middle.
 - 🐞 **Setup Wizard**: While setting up a new congregation profile, choosing another profile from the side menu and confirming that you want to leave now deletes the unfinished profile, instead of the one you chose. The confirmation also shows in front of the list of profiles instead of behind it, and choosing to stay brings you back to setting up the new profile.
+- 🐞 **Quick Start Guide**: The tour of the buttons at the bottom of the window now waits for an open window, such as a question from M³, to close before it starts, instead of showing over it, and it no longer starts while another tour is showing.
 
 ## v26.11.5
 

@@ -6,6 +6,7 @@ import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plug
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
 import { __testables } from 'src/helpers/zoom-display-setup';
+import { useAttentionStore } from 'stores/attention';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useDialogStateStore } from 'stores/dialog-state';
@@ -175,6 +176,8 @@ beforeEach(() => {
   store().close();
   store().endTour();
   useDialogStateStore().closeAllDialogs();
+  useAttentionStore().claims.clear();
+  useCurrentStateStore().congregationSwitcherOpen = false;
   useCurrentStateStore().currentCongregation = '';
   useCurrentStateStore().mediaWindowVisible = true;
 });
@@ -212,6 +215,18 @@ describe('DialogZoomDisplaySetup: when it asks', () => {
     expect(store().meeting).toBeNull();
 
     useDialogStateStore().closeDialog('something-else');
+    await wait(TRY_INTERVAL_MS);
+    expect(store().meeting).toBe('mw');
+  });
+
+  // A tour or the setup wizard, which aren't dialogs (see the attention store).
+  it('waits while something else holds the screen', async () => {
+    useAttentionStore().claim('quick-start-tour');
+    await mountSetup();
+    await wait(FIRST_TRY_MS);
+    expect(store().meeting).toBeNull();
+
+    useAttentionStore().release('quick-start-tour');
     await wait(TRY_INTERVAL_MS);
     expect(store().meeting).toBe('mw');
   });

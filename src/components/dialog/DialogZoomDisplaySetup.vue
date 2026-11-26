@@ -242,10 +242,10 @@ import {
   type ZoomDisplayPlacement,
 } from 'src/helpers/zoom-display-setup';
 import { log } from 'src/shared/vanilla';
+import { useAttentionStore } from 'stores/attention';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { isDemoModeActive } from 'stores/demo-mode';
-import { useDialogStateStore } from 'stores/dialog-state';
 import { useZoomDisplaySetupStore } from 'stores/zoom-display-setup';
 import { useZoomStateStore } from 'stores/zoom-state';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
@@ -326,10 +326,9 @@ const route = useRoute();
 const store = useZoomDisplaySetupStore();
 const { meeting } = storeToRefs(store);
 const currentState = useCurrentStateStore();
-const { congregationSwitcherOpen, currentCongregation } =
-  storeToRefs(currentState);
+const { currentCongregation } = storeToRefs(currentState);
 const congregationSettings = useCongregationSettingsStore();
-const dialogState = useDialogStateStore();
+const attention = useAttentionStore();
 const zoomState = useZoomStateStore();
 
 // The closing screen, once a setup the user went through is over (after its
@@ -416,17 +415,16 @@ const allSet = () => {
   step.value = 'done';
 };
 
-// Only on the media calendar, over nothing else: no other dialog, no Zoom
-// check or automation, no media showing; not in the session the profile
-// was set up in, nor before its quick-start tour (which points at the
-// same buttons), nor in demo mode.
+// Only on the media calendar, over nothing else (no other dialog, tour or
+// profile picker: see the attention store), with no Zoom check or
+// automation and no media showing; not in the session the profile was set
+// up in, nor before its quick-start tour (which points at the same
+// buttons), nor in demo mode.
 const isGoodMoment = (congId: string) =>
   route.name === 'media-calendar' &&
-  !congregationSwitcherOpen.value &&
-  !dialogState.isAnyDialogOpen &&
+  !attention.isScreenTaken &&
   !zoomState.checkRunning &&
   !zoomState.runActive &&
-  !store.tourActive &&
   !currentState.mediaPlaying.url &&
   !wasSetUpThisSession(congId) &&
   !!congregationSettings.quickStartTourSeen[congId] &&

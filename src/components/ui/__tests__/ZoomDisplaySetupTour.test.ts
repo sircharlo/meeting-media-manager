@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import en from 'src/i18n/en.json';
+import { useAttentionStore } from 'stores/attention';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useZoomDisplaySetupStore } from 'stores/zoom-display-setup';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -102,6 +103,20 @@ describe('ZoomDisplaySetupTour', () => {
     store().tourStep = 1;
     await setMediaDisplayVisible(true);
     expect(store().tourStep).toBe(1);
+    wrapper.unmount();
+  });
+
+  // So that nothing opens on its own over it (see the attention store).
+  it('holds the screen while it shows', async () => {
+    const wrapper = mount(ZoomDisplaySetupTour, { attachTo: document.body });
+    expect(useAttentionStore().isClaimed('zoom-display-tour')).toBe(false);
+
+    store().startTour();
+    await flushPromises();
+    expect(useAttentionStore().isClaimed('zoom-display-tour')).toBe(true);
+
+    await click('Skip tour');
+    expect(useAttentionStore().isClaimed('zoom-display-tour')).toBe(false);
     wrapper.unmount();
   });
 
