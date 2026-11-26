@@ -79,6 +79,11 @@ export interface ZoomCommandResult {
   /** `learn-hand-raised`: the Reactions button's name, when seen. */
   reactButtonTitle?: null | string;
   /**
+   * `second-window-full-screen`: where Zoom's second window was, and
+   * whether it now fills the screen asked for.
+   */
+  secondWindow?: ZoomSecondWindowResult;
+  /**
    * On failure, and from the `snapshot` command: what Zoom showed, for error
    * reports (nothing personal).
    */
@@ -352,6 +357,31 @@ export interface ZoomScreenRect {
   y: number;
 }
 
+/**
+ * What `second-window-full-screen` found and did with Zoom's second window
+ * (with Zoom's "Dual window" meeting view on, "Use dual monitors" in older
+ * versions).
+ */
+export interface ZoomSecondWindowResult {
+  /**
+   * Where it was: full screen on the screen asked for already, full
+   * screen on another screen, or in a window (sized to a screen, maybe).
+   */
+  before: 'elsewhere' | 'full-screen' | 'windowed';
+  /** What's visible of it now (physical pixels). */
+  frame: ZoomScreenRect;
+  /**
+   * Whether it's now full screen on the screen asked for: covering it,
+   * taskbar included, without its title bar.
+   */
+  fullScreen: boolean;
+  /**
+   * How it was put full screen: it already was, a double-click sent to it,
+   * or a real one (the mouse moved there and back); null if it wasn't.
+   */
+  via: 'already' | 'click' | 'posted' | null;
+}
+
 /** Test participants joined by scripts/zoom-live/participants.mjs. */
 export interface ZoomTestParticipant {
   audioConnected?: boolean;
@@ -490,6 +520,11 @@ type ZoomCommandBody =
        * read when the "Lower hand" button's name is known too. */
       phrase: null | string;
       type: 'set-participant-mic';
+    }
+  | {
+      /** The screen it goes full screen on: the media window's (physical pixels). */
+      screen: ZoomScreenRect;
+      type: 'second-window-full-screen';
     }
   | {
       /** Where M³'s main window goes, and its window handle. */

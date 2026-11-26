@@ -204,6 +204,7 @@ export type SettingsItemSubgroup =
   | 'pinyin'
   | 'playback'
   | 'quickActions'
+  | 'remoteParticipants'
   | 'setupWizard'
   | 'setupWizard.backgroundMusic'
   | 'specialDates'
@@ -355,6 +356,11 @@ export interface SettingsValues {
   zoomAskToUnmuteTitle: null | string;
   zoomAutoFocusMediaWindow: boolean;
   zoomCancelAutomationShortcut: null | string;
+  /**
+   * Before each meeting, ask whether anyone on the program is on Zoom, and
+   * help put Zoom's window full screen on the TV, behind the media display.
+   */
+  zoomDisplaySetupHelp: boolean;
   zoomEnable: boolean;
   /** Zoom's plain Raise hand button, on accounts where reactions are off. */
   zoomHandButtonTitle: null | string;

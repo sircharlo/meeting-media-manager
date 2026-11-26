@@ -703,6 +703,11 @@ $notice-solids: (
   max-height: 75vh;
 }
 
+// A maximized dialog covers the whole window.
+.q-dialog .q-dialog__inner--maximized > div {
+  max-height: none;
+}
+
 .dashed-border {
   border: 2px dashed $primary;
 }
