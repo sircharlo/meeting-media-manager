@@ -49,7 +49,8 @@ vi.mock('src-electron/main/window/window-main', () => ({
 }));
 
 // Everything else ipc.ts imports is only used inside other channels' handlers.
-vi.mock('src-electron/constants', () => ({}));
+vi.mock('src-electron/constants', () => ({ IS_DEV: false }));
+vi.mock('src-electron/main/dev-faults', () => ({}));
 vi.mock('src-electron/main/dev-menu', () => ({}));
 vi.mock('src-electron/main/disk-space', () => ({}));
 vi.mock('src-electron/main/downloads', () => ({}));

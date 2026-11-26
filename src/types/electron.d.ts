@@ -61,6 +61,31 @@ export interface ConversionOptions {
 }
 
 /**
+ * Main-process events the dev-only Dev actions popup can have the main
+ * process send to the main window, so their real handlers show what a user
+ * would see (see devEmit).
+ */
+export type DevEmitChannel =
+  | 'downloadError'
+  | 'gpu-crash-detected'
+  | 'hardware-acceleration-temporary-disabled'
+  | 'media-window-renderer-gone'
+  | 'pathProbeNetworkWarning'
+  | 'update-error'
+  | 'video-capture-crash-detected'
+  | 'watchFolderError'
+  | 'websiteLoadFailed';
+
+/**
+ * Failures the dev-only Dev actions popup can make the main process fake
+ * (see setDevFault):
+ * - failDownloads: every new download fails at once, as if the server
+ *   answered 404;
+ * - lowDiskSpace: the low disk space check finds under 10 GB free.
+ */
+export type DevFault = 'failDownloads' | 'lowDiskSpace';
+
+/**
  * Dev-only commands sent from the main process's Demo menu to the main
  * window. The menu only exists in dev builds and the renderer listener
  * (src/boot/dev-menu.ts) no-ops unless `electronApi.isDev`, so these never
@@ -132,15 +157,6 @@ export interface ElectronApi {
     request: PlaybackConversionRequest,
   ) => Promise<PlaybackConversionResult>;
   convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
-  /**
-   * Converts a non-video file into a video file.
-   *
-   * @param originalFile - The path to the original non-video file.
-   * @param ffmpegPath - The path to the FFmpeg executable.
-   * @param outputDir - Where to write it: the app's Temp folder (getTempPath),
-   * the only folder the main process accepts.
-   * @returns A promise that resolves to the path of the converted video file.
-   */
   createVideoFromNonVideo: (
     originalFile: string,
     ffmpegPath: string,
@@ -151,6 +167,20 @@ export interface ElectronApi {
    * @param cipherText The stored value to decrypt
    */
   decryptSecretSync: (cipherText: string) => string;
+  /**
+   * Converts a non-video file into a video file.
+   *
+   * @param originalFile - The path to the original non-video file.
+   * @param ffmpegPath - The path to the FFmpeg executable.
+   * @param outputDir - Where to write it: the app's Temp folder (getTempPath),
+   * the only folder the main process accepts.
+   * @returns A promise that resolves to the path of the converted video file.
+   */
+  /**
+   * Dev builds only: has the main process send `channel` to the main window,
+   * as if what it reports had happened. Does nothing in production.
+   */
+  devEmit: (channel: DevEmitChannel, payload?: unknown) => void;
   dirname: typeof dirname;
   downloadFile: (
     url: string,
@@ -456,6 +486,11 @@ export interface ElectronApi {
    */
   sendKeyTap: (key: string, modifiers?: string[]) => void;
   setAutoStartAtLogin: (value: boolean) => void;
+  /**
+   * Dev builds only: turns one of the main process's faked failures on or
+   * off. Does nothing in production.
+   */
+  setDevFault: (fault: DevFault, on: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
   /**
    * Gives a file the executable bit, on the platforms that have one.
@@ -659,7 +694,9 @@ export type ElectronIpcSendKey =
   | 'cancelAllDownloads'
   | 'capturePreloadError'
   | 'checkForUpdates'
+  | 'dev-emit'
   | 'dev-menu-state'
+  | 'dev-set-fault'
   | 'focusMainWindow'
   | 'focusMediaWindow'
   | 'launchZoomMeeting'

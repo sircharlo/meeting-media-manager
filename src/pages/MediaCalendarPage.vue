@@ -253,6 +253,7 @@ import {
   isDateReminderSilenced,
   showDateReminder,
 } from 'src/helpers/date-reminders';
+import { useDevBus } from 'src/helpers/dev-bus';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import { getRendererPlatform } from 'src/helpers/fs';
@@ -1124,6 +1125,15 @@ const checkSpecialDates = () => {
     });
   });
 };
+
+// Dev-only: the Dev actions popup shows the quick-start tour again, seen or
+// not, without waiting for its turn (see dev-bus.ts).
+if (import.meta.env.DEV) {
+  useDevBus().on((event) => {
+    if (event.type === 'replay-quick-start-tour')
+      showQuickStartGuide.value = true;
+  });
+}
 
 const sectionToAddTo = ref<MediaSectionIdentifier | undefined>();
 

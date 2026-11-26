@@ -51,6 +51,7 @@ import NoticeBanner from 'components/ui/NoticeBanner.vue';
 import UpdateProgressToast from 'components/ui/UpdateProgressToast.vue';
 import { useQuasar } from 'quasar';
 import { getMeetingStartToday } from 'src/helpers/date';
+import { type DevUpdateSimulation, useDevBus } from 'src/helpers/dev-bus';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   createTemporaryNotification,
@@ -388,32 +389,46 @@ onMounted(() => {
   void catchUpUpdaterState();
 });
 
-// Dev-only: lets a developer preview the whole updater notification
-// lifecycle (downloading -> progress -> downloaded) without a real update.
+// Dev-only: what the Dev actions popup previews here (see dev-bus.ts) -
+// every updater notification, without a real update, and remote
+// announcements, without editing the live announcements file.
+const devAnnouncements = ref<Announcement[]>([]);
+
 if (import.meta.env.DEV) {
+  const FAKE_UPDATE_BYTES = 87 * 1024 * 1024;
+
+  const fakeProgress = (transferred: number): UpdaterProgressInfo => ({
+    bytesPerSecond: FAKE_UPDATE_BYTES * 0.08,
+    delta: 0,
+    percent: (transferred / FAKE_UPDATE_BYTES) * 100,
+    total: FAKE_UPDATE_BYTES,
+    transferred,
+  });
+
+  // The whole lifecycle: downloading, its progress, downloaded.
   const simulateUpdateFlow = () => {
     handleUpdateAvailable();
 
-    const total = 87 * 1024 * 1024;
     let transferred = 0;
     const interval = setInterval(() => {
       transferred = Math.min(
-        total,
-        transferred + total * (0.05 + Math.random() * 0.1), // NOSONAR: DEV-only fake update-progress step
+        FAKE_UPDATE_BYTES,
+        transferred + FAKE_UPDATE_BYTES * (0.05 + Math.random() * 0.1), // NOSONAR: DEV-only fake update-progress step
       );
-      handleUpdateDownloadProgress({
-        bytesPerSecond: total * 0.08,
-        delta: 0,
-        percent: (transferred / total) * 100,
-        total,
-        transferred,
-      });
+      handleUpdateDownloadProgress(fakeProgress(transferred));
 
-      if (transferred >= total) {
+      if (transferred >= FAKE_UPDATE_BYTES) {
         clearInterval(interval);
         handleUpdateDownloaded();
       }
     }, 500);
+  };
+
+  // A download that stops moving: after a few seconds, the toast says it's
+  // waiting for the network.
+  const simulateStalledUpdate = () => {
+    handleUpdateAvailable();
+    handleUpdateDownloadProgress(fakeProgress(FAKE_UPDATE_BYTES * 0.3));
   };
 
   // An update that waited since an earlier session, as at launch on Windows.
@@ -439,33 +454,34 @@ if (import.meta.env.DEV) {
     });
   };
 
-  onMounted(() => {
-    createTemporaryNotification({
-      actions: [
-        {
-          color: 'white',
-          handler: simulateUpdateFlow,
-          label: 'Simulate updater',
-          noDismiss: true,
-        },
-        {
-          color: 'white',
-          handler: simulateInstallOnLaunch,
-          label: 'Simulate install on launch',
-          noDismiss: true,
-        },
-        {
-          color: 'white',
-          handler: simulateUpdateAskingPermission,
-          label: 'Simulate all-users update',
-          noDismiss: true,
-        },
-        { color: 'white', icon: 'close', round: true },
-      ],
-      message: 'Dev only: preview the auto-updater notifications',
-      timeout: 0,
-      type: 'info',
+  // Going back to the stable version from a beta, say.
+  const simulateDowngrade = () => {
+    handleUpdateAvailable();
+    handleUpdateDownloaded({
+      installOnLaunch: false,
+      isDowngrade: true,
+      version: getPreviousVersion(version),
     });
+  };
+
+  const updateSimulations: Record<DevUpdateSimulation, () => void> = {
+    'all-users': simulateUpdateAskingPermission,
+    downgrade: simulateDowngrade,
+    flow: simulateUpdateFlow,
+    'install-on-launch': simulateInstallOnLaunch,
+    stalled: simulateStalledUpdate,
+  };
+
+  useDevBus().on((event) => {
+    if (event.type === 'simulate-update') {
+      updateSimulations[event.simulation]();
+    } else if (event.type === 'show-announcement') {
+      dismissed.value.delete(event.announcement.id);
+      devAnnouncements.value = [
+        ...devAnnouncements.value.filter((a) => a.id !== event.announcement.id),
+        event.announcement,
+      ];
+    }
   });
 }
 
@@ -570,7 +586,11 @@ const systemAnnouncements = computed(() =>
 );
 
 const activeAnnouncements = computed(() =>
-  [...announcements.value, ...systemAnnouncements.value].filter((a) => {
+  [
+    ...announcements.value,
+    ...systemAnnouncements.value,
+    ...devAnnouncements.value,
+  ].filter((a) => {
     if (!a.id || !a.message) return false;
     if (!currentStateStore.currentCongregation) return false;
     if (!matchesPlatform(a)) return false;

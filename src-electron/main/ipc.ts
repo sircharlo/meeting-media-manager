@@ -29,8 +29,9 @@ import {
   shell,
   systemPreferences,
 } from 'electron';
-import { APP_STORE, PLATFORM } from 'src-electron/constants';
-import { updateDevMenuState } from 'src-electron/main/dev-menu';
+import { APP_STORE, IS_DEV, PLATFORM } from 'src-electron/constants';
+import { setDevFault } from 'src-electron/main/dev-faults';
+import { devEmit, updateDevMenuState } from 'src-electron/main/dev-menu';
 import {
   getLowDiskSpaceStatus,
   markUserWarnedAboutDiskSpace,
@@ -321,6 +322,18 @@ handleIpcSend('capturePreloadError', (_e, report: unknown) => {
 handleIpcSend('dev-menu-state', (_e, state: DevMenuState) => {
   updateDevMenuState(state);
 });
+
+// The Dev actions popup's way into the main process. Dev builds only: in
+// production, these channels have no handler at all.
+if (IS_DEV) {
+  handleIpcSend('dev-emit', (_e, channel: unknown, payload: unknown) => {
+    devEmit(channel, payload);
+  });
+
+  handleIpcSend('dev-set-fault', (_e, fault: unknown, on: unknown) => {
+    setDevFault(fault, on);
+  });
+}
 
 handleIpcSend('setElectronUrlVariables', (_e, variables: string) => {
   try {

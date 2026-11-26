@@ -71,7 +71,8 @@ src/                         Renderer (Vue 3 + Quasar). Must NOT import src-elec
                              i18n, sentry, fonts, demo-mode, notify-types.
   components/                Vue components: dialog/, media/ (MediaList, MediaItem,
                              DownloadStatus, ...), form-inputs/ (ShortcutInput, ...),
-                             header/, ui/.
+                             header/, ui/, dev/ (the dev-only Dev actions
+                             button and popup, see tooling.md).
   composables/               use* composition functions: useMediaSection,
                              useMediaSectionRepeat, useMediaDividers,
                              useMediaDragAndDrop, useDialogState, useTimer, useLocale.
@@ -165,7 +166,9 @@ src-electron/                Electron main + preload. May import only src/types,
     crash-loop.ts            Crash-loop detection gated on the previous
                              session's clean-exit flag (markCleanExit/
                              recordStartupCrashCount).
-    dev-menu.ts              Dev-only "Demo" application menu.
+    dev-menu.ts              Dev-only "Demo" application menu, and devEmit
+                             for the Dev actions popup (see tooling.md).
+    dev-faults.ts            Dev-only faked failures (downloads, disk space).
     heic.ts                  HEIC→JPEG conversion in a utility process.
     image-size.ts            Image-dimension reading in a utility process
                              (sandboxes unpatched image-size CVEs).

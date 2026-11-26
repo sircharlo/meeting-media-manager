@@ -34,6 +34,31 @@ availability, or work on tests' setup or the release flow.
   network fetches fail intentionally), `TEST_VERSION=true` (test build identity),
   `M3_ENABLE_GPU_DIAGNOSTICS` (Chromium GPU logging).
 
+## Dev Actions (dev builds only)
+
+`yarn dev` adds a tools button at the end of the action island. Its popup
+(`src/components/dev/DialogDevActionsPopup.vue`) shows on demand what users
+only see at a given moment, on a failure or once: the run-up to a meeting
+and its end, background music starting and stopping by itself, download
+failures, every updater toast, crash notices, the yeartext offer, Zoom
+prompts, feature suggestions, tours and reminders, plus the Demo menu's
+commands. It turns orange while it fakes something. "Stop faking
+everything" undoes it all.
+
+- The actions live in `src/composables/useDevActions.ts`, in hardcoded
+  English (never user-facing), like the Demo menu.
+- What they fake lives in `src/helpers/dev-state.ts` (today's meeting time,
+  failed requests). Each check that reads it is behind
+  `import.meta.env.DEV`, so production never fakes anything. The button and
+  popup are async components that production builds leave out.
+- State only a component's own code shows goes through `useDevBus()`
+  (`src/helpers/dev-bus.ts`), which that component listens to in dev builds.
+- Main-process events go through `electronApi.devEmit` (an allowlist in
+  `src-electron/main/dev-menu.ts`) to their real renderer handlers. Faked
+  main-process failures (failed downloads, low disk space) go through
+  `electronApi.setDevFault` (`src-electron/main/dev-faults.ts`). Both are
+  only handled in dev builds.
+
 ## Generated and Build Assets
 
 - Do not hand-edit generated build output such as `dist/`, `.quasar/`, or

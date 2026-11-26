@@ -1,5 +1,6 @@
 import { app } from 'electron';
 import { statfs } from 'node:fs/promises';
+import { isDevFaultOn } from 'src-electron/main/dev-faults';
 import { log } from 'src/shared/vanilla';
 
 const BYTES_PER_GB = 1024 * 1024 * 1024;
@@ -35,6 +36,12 @@ const getFreeBytesFromStatfs = async (path: string): Promise<number> => {
 export async function getLowDiskSpaceStatus(
   minFreeGB = LOW_DISK_SPACE_WARNING_GB,
 ) {
+  // A developer faking low disk space only fakes the user's warning: the
+  // downloads' own, lower threshold still goes by the real free space.
+  if (minFreeGB === LOW_DISK_SPACE_WARNING_GB && isDevFaultOn('lowDiskSpace')) {
+    log('Low disk space warning: faked (dev).', 'electronFilesystem', 'warn');
+    return true;
+  }
   const userDataPath = app.getPath('userData');
   const minFreeBytes = minFreeGB * BYTES_PER_GB;
   try {

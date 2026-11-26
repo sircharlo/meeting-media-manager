@@ -2,7 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   checkDiskSpace: vi.fn(),
+  isDevFaultOn: vi.fn<(fault: string) => boolean>(() => false),
   statfs: vi.fn(),
+}));
+
+vi.mock('src-electron/main/dev-faults', () => ({
+  isDevFaultOn: mocks.isDevFaultOn,
 }));
 
 vi.mock('check-disk-space', () => ({
@@ -49,6 +54,21 @@ describe('getLowDiskSpaceStatus', () => {
     const { getLowDiskSpaceStatus } = await import('../disk-space');
     mockFreeSpace(10n * GB);
 
+    expect(await getLowDiskSpaceStatus()).toBe(false);
+  });
+
+  it("fakes low disk space for the user's warning only, while a developer turned it on", async () => {
+    const { getLowDiskSpaceStatus } = await import('../disk-space');
+    mockFreeSpace(500n * GB);
+    mocks.isDevFaultOn.mockImplementation(
+      (fault: string) => fault === 'lowDiskSpace',
+    );
+
+    expect(await getLowDiskSpaceStatus()).toBe(true);
+    // The downloads' critical check still goes by the real free space.
+    expect(await getLowDiskSpaceStatus(1)).toBe(false);
+
+    mocks.isDevFaultOn.mockReturnValue(false);
     expect(await getLowDiskSpaceStatus()).toBe(false);
   });
 

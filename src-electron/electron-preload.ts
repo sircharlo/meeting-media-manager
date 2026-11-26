@@ -98,6 +98,7 @@ const electronApi: ElectronApi = {
   createVideoFromNonVideo: (f, fP, oD) =>
     invoke('createVideoFromNonVideo', f, fP, oD),
   decryptSecretSync: (cipherText) => sendSync('decryptSecretSync', cipherText),
+  devEmit: (channel, payload) => send('dev-emit', channel, payload),
   dirname,
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   encryptSecretSync: (plainText) => sendSync('encryptSecretSync', plainText),
@@ -202,6 +203,7 @@ const electronApi: ElectronApi = {
   sendDevMenuState: (state) => send('dev-menu-state', state),
   sendKeyTap: (k, m) => sendKeyTap(k, m),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
+  setDevFault: (fault, on) => send('dev-set-fault', fault, on),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
   setExecutable: (p) => invoke('setExecutable', p),
   setHardwareAcceleration: (v) =>

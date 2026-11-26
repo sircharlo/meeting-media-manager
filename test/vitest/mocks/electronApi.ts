@@ -53,6 +53,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   decryptSecretSync: (cipherText) => cipherText,
+  devEmit: function () {
+    // no-op in tests
+  },
   dirname,
   downloadFile: function (url, saveDir, destFilename, lowPriority) {
     throw new Error('Function not implemented.');
@@ -270,6 +273,9 @@ export const electronApi: ElectronApi = {
   },
   setAutoStartAtLogin: function (value) {
     throw new Error('Function not implemented.');
+  },
+  setDevFault: function () {
+    // no-op in tests
   },
   setElectronUrlVariables: function (variables) {
     throw new Error('Function not implemented.');

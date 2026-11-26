@@ -2,6 +2,7 @@ import type { DateInfo, SettingsValues } from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import { WEEKS_TO_FETCH } from 'src/constants/date';
+import { getDevMeetingOn } from 'src/helpers/dev-state';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
 import {
@@ -212,6 +213,12 @@ export const isMwMeetingDay = (lookupDate?: Date) => {
       return false;
     }
 
+    // A developer made today a meeting day (see dev-state.ts).
+    if (import.meta.env.DEV) {
+      const devMeeting = getDevMeetingOn(lookupDate);
+      if (devMeeting) return devMeeting.type === 'mw';
+    }
+
     if (isReplacedByMemorial(lookupDate)) return false;
 
     lookupDate = dateFromString(lookupDate);
@@ -233,6 +240,11 @@ export const isWeMeetingDay = (lookupDate?: Date) => {
     const currentState = useCurrentStateStore();
     if (!lookupDate || currentState.currentSettings?.disableMediaFetching) {
       return false;
+    }
+
+    if (import.meta.env.DEV) {
+      const devMeeting = getDevMeetingOn(lookupDate);
+      if (devMeeting) return devMeeting.type === 'we';
     }
 
     if (isReplacedByMemorial(lookupDate)) return false;
@@ -473,6 +485,12 @@ function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
 // When a meeting of the given type held on `now`'s date starts, or null if
 // no start time is configured for it.
 const getMeetingStartOn = (now: Date, meetingType: 'mw' | 'we') => {
+  // A developer set when today's meeting starts (see dev-state.ts).
+  if (import.meta.env.DEV) {
+    const devMeeting = getDevMeetingOn(now);
+    if (devMeeting?.type === meetingType) return new Date(devMeeting.startsAt);
+  }
+
   const { currentSettings } = useCurrentStateStore();
   const meetingStartTimes = shouldUseChangedMeetingSchedule(now)
     ? {
