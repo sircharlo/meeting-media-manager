@@ -247,10 +247,9 @@ export const useDevActions = () => {
   // A media item of the selected day, so its thumbnail shows the fake
   // download too.
   const pickFilename = () => {
-    const items = (currentState.selectedDateObject?.mediaSections ?? [])
+    const fileUrl = (currentState.selectedDateObject?.mediaSections ?? [])
       .flatMap((section) => section.items ?? [])
-      .filter((item) => item.fileUrl?.startsWith('file:'));
-    const fileUrl = items[0]?.fileUrl;
+      .find((item) => item.fileUrl?.startsWith('file:'))?.fileUrl;
     if (!fileUrl) return 'dev-simulated-video.mp4';
     const { basename, fileUrlToPath } = globalThis.electronApi;
     return basename(fileUrlToPath(fileUrl));
