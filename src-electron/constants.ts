@@ -1,6 +1,7 @@
 import type { AppStore } from 'src/types';
 
 import os from 'node:os';
+import { SNAP_NAME } from 'src/constants/snap';
 
 // Environment
 export const PLATFORM = process?.platform || os.platform();
@@ -11,9 +12,7 @@ export const IS_DEMO_MODE =
   process.env.M3_DEMO_MODE === '1' ||
   process.env.M3_DEMO_MODE?.toLowerCase() === 'true';
 
-// The name of M³'s snap (electron-builder names it after package.json's
-// name, in test builds too) and its Flatpak's app ID (build/flatpak).
-const SNAP_NAME = 'meeting-media-manager';
+// M³'s Flatpak's app ID (build/flatpak).
 const FLATPAK_ID = 'io.github.sircharlo.meeting-media-manager';
 
 /**

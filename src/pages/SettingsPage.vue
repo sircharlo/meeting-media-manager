@@ -349,6 +349,13 @@
                       >
                         <q-icon name="mmm-warning" size="xs" />
                         {{ t('obs-password-not-encrypted-warning') }}
+                        <template v-if="snapKeyringCommand">
+                          {{
+                            t('snap-connect-command-restart', {
+                              command: snapKeyringCommand,
+                            })
+                          }}
+                        </template>
                       </q-item-label>
                       <q-item-label
                         v-if="isSettingDisabled(settingId)"
@@ -432,6 +439,7 @@ import {
   settingsDefinitions,
   settingsGroups,
 } from 'src/constants/settings';
+import { getSnapConnectCommand } from 'src/constants/snap';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getRendererPlatform } from 'src/helpers/fs';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -491,6 +499,26 @@ let settingsFilterClosedAt = 0;
 const autoUpdateEnabled = ref(true);
 const betaUpdatesEnabled = ref(false);
 const { appStore } = globalThis.electronApi;
+
+// In M³'s snap, the keyring stays out of reach until the user connects the
+// password-manager-service interface: the plain-text warning then says how.
+const snapKeyringCommand = ref<null | string>(null);
+
+const loadSnapKeyringCommand = async () => {
+  if (isSecretEncryptionAvailable || appStore !== 'snap-store') return;
+  try {
+    const connections = await globalThis.electronApi.getSnapConnections();
+    if (connections?.['password-manager-service'] === false) {
+      snapKeyringCommand.value = getSnapConnectCommand(
+        'password-manager-service',
+      );
+    }
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'loadSnapKeyringCommand' } },
+    });
+  }
+};
 
 // Set while loadGlobalPreferences() syncs the refs above from disk, so the
 // watch(betaUpdatesEnabled, ...) below can tell a user-initiated toggle
@@ -562,6 +590,7 @@ const stopSpaceForEditableTarget = (event: KeyboardEvent) => {
 onMounted(() => {
   globalThis.addEventListener('openCongregationLookup', openCongregationLookup);
   void loadGlobalPreferences();
+  void loadSnapKeyringCommand();
 });
 
 onBeforeUnmount(() => {
