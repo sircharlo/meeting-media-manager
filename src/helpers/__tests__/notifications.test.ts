@@ -101,6 +101,44 @@ describe('checkLowDiskSpaceAndNotify', () => {
     expect(mocks.markUserWarnedAboutDiskSpaceInMain).toHaveBeenCalled();
   });
 
+  // The check repeats every 2 minutes while downloads run: it shouldn't
+  // warn each time.
+  it('reminds at most every half hour, and always warns when asked', async () => {
+    vi.resetModules();
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-26T10:00:00'));
+    mocks.getLowDiskSpaceStatus.mockResolvedValue(true);
+    const { checkLowDiskSpaceAndNotify } = await import('../notifications');
+
+    await checkLowDiskSpaceAndNotify({ reminder: true });
+    expect(mocks.notifyCreate).toHaveBeenCalledTimes(1);
+
+    vi.setSystemTime(new Date('2026-11-26T10:20:00'));
+    await checkLowDiskSpaceAndNotify({ reminder: true });
+    expect(mocks.notifyCreate).toHaveBeenCalledTimes(1);
+
+    // A profile switch checks again on its own.
+    await checkLowDiskSpaceAndNotify();
+    expect(mocks.notifyCreate).toHaveBeenCalledTimes(2);
+
+    vi.setSystemTime(new Date('2026-11-26T10:51:00'));
+    await checkLowDiskSpaceAndNotify({ reminder: true });
+    expect(mocks.notifyCreate).toHaveBeenCalledTimes(3);
+    vi.useRealTimers();
+  });
+
+  // Warnings held back while a dialog is open would otherwise stack.
+  it('folds repeated warnings into one', async () => {
+    mocks.getLowDiskSpaceStatus.mockResolvedValue(true);
+
+    const { checkLowDiskSpaceAndNotify } = await import('../notifications');
+    await checkLowDiskSpaceAndNotify();
+
+    expect(mocks.notifyCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ group: 'low-disk-space' }),
+    );
+  });
+
   it('reports failures via errorCatcher instead of throwing', async () => {
     mocks.getLowDiskSpaceStatus.mockRejectedValue(new Error('statfs failed'));
 

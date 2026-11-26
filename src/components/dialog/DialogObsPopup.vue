@@ -66,9 +66,9 @@ import ActionPopup from 'components/ui/ActionPopup.vue';
 import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   isTransientObsError,
+  notifyObsSceneNotFound,
   obsConnect,
   obsGetRecordingDirectory,
   obsGetRecordingState,
@@ -130,16 +130,6 @@ const statusColor = computed(() =>
 const obsRecordingFolder = ref<null | string>(null);
 
 const { openFolder } = globalThis.electronApi;
-
-const notifySceneNotFound = () =>
-  createTemporaryNotification({
-    caption: t('scene-not-found-explain'),
-    group: 'scene-not-found',
-    icon: 'mmm-obs-studio',
-    message: t('scene-not-found'),
-    timeout: 10_000,
-    type: 'negative',
-  });
 
 const openObsRecordingFolder = () => {
   if (obsRecordingFolder.value) {
@@ -253,7 +243,7 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
         );
       }
     } else {
-      notifySceneNotFound();
+      notifyObsSceneNotFound();
     }
   } catch (error) {
     // OBS answers "not ready" while it loads or switches its scene
