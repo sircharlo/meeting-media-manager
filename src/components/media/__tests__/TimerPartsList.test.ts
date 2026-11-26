@@ -4,6 +4,7 @@ import { mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
+import { isMeetingDay } from 'src/helpers/date';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -17,12 +18,14 @@ vi.mock('src/composables/useTimer', async () => {
   const timer = {
     adjustPartDuration: vi.fn(),
     currentPart: ref(null),
+    customTimerParts: ref([]),
     getDuration: vi.fn(),
     getPlannedStartTime: vi.fn(() => null),
     getTimeString: vi.fn(),
     meetingPartsOptions: ref([]),
     partDurations: ref({}),
     partTimings: ref({}),
+    removeCustomTimerPart: vi.fn(),
     resetPartTiming: vi.fn(),
     selectPart: vi.fn(),
     setPartDuration: vi.fn(),
@@ -32,6 +35,11 @@ vi.mock('src/composables/useTimer', async () => {
   };
   return { default: () => timer };
 });
+
+vi.mock('src/helpers/date', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  isMeetingDay: vi.fn(() => true),
+}));
 
 installQuasarPlugin();
 installPinia();
@@ -130,6 +138,125 @@ describe('TimerPartsList rows', () => {
       wrapper.unmount();
     },
   );
+});
+
+describe('TimerPartsList custom part delete', () => {
+  const special: MeetingPartOption = {
+    label: 'Special talk (5 min.)',
+    name: 'Special talk',
+    value: 'custom-1',
+  };
+  const closing: MeetingPartOption = {
+    label: 'Closing (5 min.)',
+    name: 'Closing',
+    value: 'custom-2',
+  };
+  const builtIn: MeetingPartOption = {
+    label: 'AYFM 1 (4 min.)',
+    name: 'AYFM 1',
+    value: 'ayfm-1',
+  };
+
+  const setParts = async (options: MeetingPartOption[]) => {
+    const timer = (await import('src/composables/useTimer')).default();
+    const writable = timer as unknown as Record<string, { value: unknown }>;
+    Object.assign(writable.meetingPartsOptions ?? {}, { value: options });
+    Object.assign(writable.customTimerParts ?? {}, {
+      value: options
+        .filter((option) => option.value.startsWith('custom-'))
+        .map((option) => ({
+          duration: 5,
+          id: option.value,
+          label: option.name,
+        })),
+    });
+    Object.assign(writable.partDurations ?? {}, {
+      value: Object.fromEntries(options.map((option) => [option.value, 5])),
+    });
+    Object.assign(writable.partTimings ?? {}, { value: {} });
+    return timer;
+  };
+
+  // Each row's delete button, in list order (check .exists() for none).
+  const rowDeleteButtons = (wrapper: ReturnType<typeof mount>) =>
+    wrapper
+      .findAll('.q-item')
+      .map((row) => row.find('button[aria-label="Delete"]'));
+  const rowsWithDelete = (wrapper: ReturnType<typeof mount>) =>
+    rowDeleteButtons(wrapper).map((button) => button.exists());
+
+  beforeEach(async () => {
+    const timer = await setParts([builtIn, special, closing]);
+    timer.currentPart.value = 'ayfm-1';
+    timer.timerRunning.value = false;
+    vi.mocked(timer.removeCustomTimerPart).mockClear();
+    vi.mocked(isMeetingDay).mockReturnValue(true);
+    useCongregationSettingsStore().congregations = {
+      'test-cong': { ...defaultSettings },
+    };
+    useCurrentStateStore().currentCongregation = 'test-cong';
+  });
+
+  it('deletes a custom part from its row in the docked panel', async () => {
+    const timer = (await import('src/composables/useTimer')).default();
+    const wrapper = mount(TimerPartsList, {
+      props: { removableCustomParts: true },
+    });
+
+    expect(rowsWithDelete(wrapper)).toEqual([false, true, true]);
+
+    await rowDeleteButtons(wrapper)[1]?.trigger('click');
+
+    expect(timer.removeCustomTimerPart).toHaveBeenCalledWith('custom-1');
+    // Deleting doesn't also open the part's edit dialog.
+    const vm = wrapper.vm as unknown as { editDialogOpen: boolean };
+    expect(vm.editDialogOpen).toBe(false);
+    wrapper.unmount();
+  });
+
+  it('leaves deleting to the setup section where the list has one', () => {
+    const wrapper = mount(TimerPartsList);
+
+    expect(rowsWithDelete(wrapper)).toEqual([false, false, false]);
+    wrapper.unmount();
+  });
+
+  it('keeps the part being timed', async () => {
+    const timer = (await import('src/composables/useTimer')).default();
+    timer.currentPart.value = 'custom-1';
+    timer.timerRunning.value = true;
+
+    const wrapper = mount(TimerPartsList, {
+      props: { removableCustomParts: true },
+    });
+
+    expect(rowsWithDelete(wrapper)).toEqual([false, false, true]);
+    wrapper.unmount();
+  });
+
+  it('keeps the last part of a day without a meeting', async () => {
+    vi.mocked(isMeetingDay).mockReturnValue(false);
+    await setParts([special]);
+
+    const wrapper = mount(TimerPartsList, {
+      props: { removableCustomParts: true },
+    });
+
+    expect(rowsWithDelete(wrapper)).toEqual([false]);
+    wrapper.unmount();
+  });
+
+  it('can delete either part when a day without a meeting has two', async () => {
+    vi.mocked(isMeetingDay).mockReturnValue(false);
+    await setParts([special, closing]);
+
+    const wrapper = mount(TimerPartsList, {
+      props: { removableCustomParts: true },
+    });
+
+    expect(rowsWithDelete(wrapper)).toEqual([true, true]);
+    wrapper.unmount();
+  });
 });
 
 describe('TimerPartsList edit dialog label', () => {
