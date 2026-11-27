@@ -154,9 +154,9 @@ M³ 会按聚会类型和节目部分自动整理媒体：
 
 操作图标上的计时器弹出窗口会列出所选日期聚会的各个节目。对于周中聚会，可以选择“用心准备传道工作”和“基督徒的生活”各有几个节目；该部分的分钟数会平均分配，然后可以用 **+** 和 **−** 按钮或点击节目来自由调整每个节目的时间。任何节目都可以设置为任意分钟数，包括设为 0 来跳过该节目。如果某部分各节目的时间加起来与分配给该部分的时间不符，会显示警告图标提醒，但不会自动更改任何内容。
 
-If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+如果在开始周中聚会的某个节目时还没有选择节目数量，M³ 会先询问，每次聚会只问一次。即使在 M³ 询问期间，节目的时间也从开始的那一刻算起。
 
-With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+开启 [**单独计时建议**](/settings-guide#timer-separate-counsel) 后，经文朗读和“用心准备传道工作”每个节目之后的一分钟建议会列在该节目下面并单独计时，让主席知道还剩多少时间。
 
 **自定义节目**可以添加到任何一天，用于中央长老团的最新消息、特别节目或其他不在常规安排中的内容。在没有聚会的日子，计时器会为每个自定义媒体部分各创建一个自定义节目。
 
