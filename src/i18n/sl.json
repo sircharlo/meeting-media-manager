@@ -423,6 +423,7 @@
   "jwpub-file-unavailable-caption-cloud": "Shranjeno je v {provider} in morda še ni preneseno na ta računalnik. V {provider} omogoči, da je datoteka na voljo brez povezave, počakaj, da se prenos dokonča, in jo znova izberi. Ali pa jo kopiraj v mapo na tem računalniku, na primer Downloads, in jo izberi od tam.",
   "jwpub-file-unavailable-caption-drive": "Datoteka je na omrežni mapi ali odstranljivem pogonu, ki ga ni bilo mogoče doseči. Preveri, ali je pogon priključen ali je omrežna mapa povezana, nato datoteko znova izberi. Ali pa jo kopiraj v mapo na tem računalniku, na primer Downloads, in jo izberi od tam.",
   "jwpub-file-unavailable-caption-local": "Morda je bila premaknjena, preimenovana ali izbrisana, ali pa jo uporablja drug program. Izberi jo znova tam, kjer je zdaj, ali pa jo kopiraj v mapo, kot je Downloads, in jo izberi od tam.",
+  "jwpub-file-unavailable-caption-permission": "M³ doesn't have permission to open it where it's saved. Copy it to a folder on this computer, such as Downloads, and select it from there.",
   "jwpub-file-unavailable-caption-phone": "Datoteka je na tvojem telefonu, Windows pa je ni mogel pridobiti s telefona. Prepričaj se, da je telefon prižgan, odklenjen in povezan s tem računalnikom, nato datoteko znova izberi. Ali pa kopiraj datoteko v mapo na tem računalniku, na primer Downloads, in jo izberi od tam (ta način je bolj zanesljiv).",
   "jwpub-file-unavailable-message": "Izbrane datoteke JWPUB ni bilo mogoče prebrati.",
   "jwpubNoMultimedia": "Datoteka JWPUB ne vsebuje multimedijskih vsebin",
