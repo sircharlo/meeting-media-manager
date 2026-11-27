@@ -26,6 +26,7 @@ const unzipMock = vi.fn();
 const statMock = vi.fn();
 const removeMock = vi.fn();
 const copyMock = vi.fn();
+const readFileMock = vi.fn();
 const readdirMock = vi.fn();
 const pathExistsMock = vi.fn();
 const joinMock = vi.fn((...parts: string[]) => parts.join('/'));
@@ -241,6 +242,7 @@ describe('jw-media helpers', () => {
         ensureDir: ensureDirMock,
         pathExists: pathExistsMock,
         readdir: readdirMock,
+        readFile: readFileMock,
         remove: removeMock,
         rename: vi.fn(),
         stat: statMock,
@@ -969,6 +971,68 @@ describe('jw-media helpers', () => {
       }),
     );
     expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  describe('when Windows refuses the copy into the temp folder', () => {
+    const userJwpub = String.raw`D:\Media\publication.jwpub`;
+    // As it reaches the renderer: fs.copy's error crosses the contextBridge,
+    // which strips `code` (MMM-V2-3PF).
+    const refusedCopy = `EPERM: operation not permitted, copyfile '${userJwpub}' -> '/tmp/jwpub-import-uuid/publication.jwpub'`;
+
+    beforeEach(() => {
+      copyMock.mockRejectedValue(new Error(refusedCopy));
+    });
+
+    afterEach(() => {
+      copyMock.mockReset();
+      readFileMock.mockReset();
+    });
+
+    it('says M³ may not open the file, without reporting it, when reading it is refused too', async () => {
+      readFileMock.mockRejectedValue(
+        new Error(`EPERM: operation not permitted, open '${userJwpub}'`),
+      );
+      const { stageUserJwpubForRead } = await import('../jw-media');
+
+      await expect(stageUserJwpubForRead(userJwpub)).resolves.toBeUndefined();
+
+      expect(readFileMock).toHaveBeenCalledWith(userJwpub);
+      expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          caption: 'jwpub-file-unavailable-caption-permission',
+          group: 'jwpubFileUnavailable',
+          message: 'jwpub-file-unavailable-message',
+          type: 'negative',
+        }),
+      );
+      expect(errorCatcherMock).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      {
+        outcome: 'reading the JWPUB itself worked',
+        read: () => readFileMock.mockResolvedValue(Buffer.from('jwpub')),
+      },
+      {
+        outcome: `reading the JWPUB itself failed: ENOENT: no such file or directory, open '${userJwpub}'`,
+        read: () =>
+          readFileMock.mockRejectedValue(
+            new Error(`ENOENT: no such file or directory, open '${userJwpub}'`),
+          ),
+      },
+    ])(
+      'still throws the copy failure, saying "$outcome"',
+      async ({ outcome, read }) => {
+        read();
+        const { stageUserJwpubForRead } = await import('../jw-media');
+
+        await expect(stageUserJwpubForRead(userJwpub)).rejects.toThrow(
+          `${refusedCopy} (${outcome})`,
+        );
+
+        expect(createTemporaryNotificationMock).not.toHaveBeenCalled();
+      },
+    );
   });
 
   it('says so, without reporting it, when a staged jwpub becomes unavailable while extracting', async () => {
