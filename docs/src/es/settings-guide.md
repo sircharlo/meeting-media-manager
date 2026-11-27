@@ -493,6 +493,16 @@ Elige cómo acceder al cronómetro desde la ventana principal:
 - **Controles rápidos al pasar el ratón sobre el botón del cronómetro**: al pasar el ratón sobre el botón del cronómetro en la isla de acciones, se muestra la parte que se está cronometrando, con botones para Iniciar, Pausar, Detener y Siguiente parte, sin abrir la ventana emergente completa del cronómetro. Activado por defecto.
 - **Mostrar un panel del cronómetro en la ventana principal**: mantiene la lista completa de partes de la reunión y los controles del cronómetro en un panel anclado a la derecha de la ventana principal, siempre a la vista. La ventana emergente completa sigue estando disponible desde la isla de acciones para los ajustes de ventana y de pantalla.
 
+### Time Counsel Separately {#timer-separate-counsel}
+
+<!-- **Setting**: `timerSeparateCounsel` -->
+
+Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+
+The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+
+**Predeterminado**: `false`
+
 ### Control remoto del cronómetro {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->

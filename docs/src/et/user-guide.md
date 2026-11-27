@@ -154,6 +154,10 @@ Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
 
 Tegevussaare taimeri hüpikaken loetleb valitud päeva koosoleku osad. Nädalasisese koosoleku puhul vali, mitu osa on jaotistes „Valmistume kuulutustööks“ ja „Kristlik eluviis“; jaotise minutid jagatakse osade vahel võrdselt ning seejärel saab iga osa vabalt muuta nuppudega **+** ja **−** või osal klõpsates. Iga osa võib seada mis tahes arvule minutitele, ka 0-le, et see vahele jätta. Hoiatusikoon näitab jaotisi, mille osade kestus ei klapi neile eraldatud ajaga, kuid ise ei muuda see kunagi midagi.
 
+If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+
+With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+
 **Kohandatud osi** saab lisada igal päeval – juhtiva kogu teadeteks, eriprogrammideks või millekski muuks, mida tavapärases ajakavas pole. Päevadel, mil koosolekut pole, alustab taimer iga kohandatud meediajaotise kohta ühe kohandatud osaga.
 
 Osade arv, muudetud kestused, kohandatud osad ja salvestatud ajad hoitakse iga päeva juures eraldi, nii et need säilivad ka pärast M³ taaskäivitamist ega segune kunagi teise koosoleku aegadega. Päeva salvestatud ajad saab korraga kustutada nupuga **Lähtesta selle päeva kõik ajad** ning PDF-ajaaruande saab eksportida igal ajal.
