@@ -154,9 +154,9 @@ Ko je časovnik shoda omogočen, lahko M³ prikaže ločeno okno časovnika za m
 
 Pojavno okno časovnika v orodni vrstici prikaže točke izbranega dne shoda. Pri shodih med tednom izberi, koliko točk Izurimo se v oznanjevanju in Krščansko življenje je na sporedu; minute posameznega dela se razdelijo enakomerno, vsako točko pa je nato mogoče prosto prilagajati z gumboma + in − ali s klikom na točko. Vsako točko je mogoče nastaviti na poljubno število minut, tudi na 0, če jo želiš preskočiti. Opozorilna ikona označi razdelke, pri katerih se trajanja točk ne ujemajo z dodeljenim časom, vendar se nič ne popravi samo od sebe.
 
-If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+Če število točk še ni izbrano, ko se začne točka shoda med tednom, M³ najprej vpraša zanj, enkrat za vsak shod. Čas točke se meri od trenutka, ko se je začela, tudi medtem ko M³ sprašuje.
 
-With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+Ko je [**Ločeno meri čas za nasvete**](/settings-guide#timer-separate-counsel) vklopljeno, je minuta nasvetov po branju Svetega pisma in vsaki točki v delu Izurimo se v oznanjevanju navedena pod to točko in se meri ločeno, da predsedujoči vidi, koliko je še ostalo.
 
 **Prilagojene točke** je mogoče dodati na kateri koli dan — za poročila Vodstvenega organa, posebne programe ali kar koli drugega, kar ni na rednem razporedu. Na dneve brez shoda časovnik začne z eno prilagojeno točko na vsak razdelek s prilagojeno multimedijsko vsebino.
 

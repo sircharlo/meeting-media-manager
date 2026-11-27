@@ -154,9 +154,9 @@ Il timer è una funzione beta e dovrebbe essere usato solo se approvato localmen
 
 Il popup del timer nell'isola di azione elenca le parti dell'adunanza del giorno selezionato. Per le adunanze infrasettimanali, scegli quante parti ci sono nelle sezioni Efficaci nel ministero e Vita cristiana; i minuti di ciascuna sezione vengono ripartiti in modo uniforme e ogni parte può poi essere regolata liberamente con i pulsanti **+** e **−** o facendo clic sulla parte. Qualsiasi parte può essere impostata su qualsiasi numero di minuti, compreso 0 per saltarla. Un'icona di avviso segnala le sezioni le cui parti non corrispondono al tempo loro assegnato, ma non modifica mai nulla da sola.
 
-If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+Se il numero di parti non è ancora stato scelto quando si avvia una parte dell'adunanza infrasettimanale, M³ lo chiede prima, una volta per ogni adunanza. La parte viene cronometrata dal momento in cui è stata avviata, anche mentre M³ lo chiede.
 
-With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+Con [**Cronometra i consigli separatamente**](/settings-guide#timer-separate-counsel) attivato, il minuto di consigli dopo la lettura biblica e ogni parte di Efficaci nel ministero compare sotto quella parte e viene cronometrato a sé, così che il presidente veda quanto ne resta.
 
 Le **parti personalizzate** possono essere aggiunte in qualsiasi giorno, per gli aggiornamenti del Corpo Direttivo, programmi speciali o qualsiasi altra cosa che non faccia parte del programma regolare. Nei giorni senza adunanza, il timer inizia con una parte personalizzata per ogni sezione multimediale personalizzata.
 

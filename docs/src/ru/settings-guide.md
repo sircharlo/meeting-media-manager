@@ -493,13 +493,13 @@ M³ создает в общей папке папку для каждой пр�
 - **Быстрое управление при наведении на кнопку таймера**: при наведении курсора на кнопку таймера на панели действий показывается часть, время которой отсчитывается, с кнопками для запуска, паузы, остановки и перехода к следующей части, без открытия полного всплывающего окна таймера. Включено по умолчанию.
 - **Показывать панель таймера в главном окне**: весь список частей встречи и элементы управления таймером находятся на панели, закрепленной в правой части главного окна, и всегда на виду. Полное всплывающее окно по-прежнему доступно на панели действий для настроек окна и экрана.
 
-### Time Counsel Separately {#timer-separate-counsel}
+### Отдельно отсчитывать время советов {#timer-separate-counsel}
 
 <!-- **Setting**: `timerSeparateCounsel` -->
 
-Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+Отсчитывать минуту советов после чтения Библии и каждой части раздела «Оттачиваем навыки служения» как отдельную часть. Советы показываются под частью, за которой они следуют, а кнопка **Следующая часть** переходит от части учащегося к советам, а затем к следующей части. Так председатель видит, сколько осталось от минуты, а время самого учащегося по-прежнему записывается для отчета о времени, где у советов своя строка.
 
-The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+Советы всегда занимают одну минуту. Программа встречи, запланированное время начала и индикатор опережения или отставания остаются такими же, как при выключенной настройке.
 
 **По умолчанию**: `false`
 

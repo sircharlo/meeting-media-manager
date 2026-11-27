@@ -154,9 +154,9 @@ Az időzítő béta funkció, és csak helyi jóváhagyással szabad használni.
 
 A műveleti panel időzítő felugró ablaka felsorolja a kiválasztott napi összejövetel programrészeit. A hét közbeni összejövetelnél adja meg, hány programrész van a Fejlődjünk a szolgálatban és a Keresztényi életünk szakaszban; a szakasz percei egyenlően oszlanak el, majd az egyes programrészek szabadon módosíthatók a **+** és **−** gombokkal, vagy a programrészre kattintva. Bármelyik programrész tetszőleges számú percre állítható, akár 0-ra is, ha ki szeretné hagyni. Egy figyelmeztető ikon jelzi azokat a szakaszokat, amelyek programrészeinek összideje nem egyezik a szakaszra szánt idővel, de magától soha nem módosít semmit.
 
-If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+Ha a programrészek száma még nincs kiválasztva, amikor a hét közbeni összejövetel egyik programrészét elindítják, az M³ először ezt kérdezi meg, összejövetelenként egyszer. A programrész idejét attól a pillanattól méri, amikor elindították, akkor is, ha közben az M³ kérdez.
 
-With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+Ha [**A tanácsadás külön mérése**](/settings-guide#timer-separate-counsel) be van kapcsolva, a bibliaolvasás és a „Fejlődjünk a szolgálatban” rész minden programrésze utáni egy perc tanácsadás az adott programrész alatt jelenik meg, és külön méri, hogy az elnök lássa, mennyi van még hátra belőle.
 
 **Egyéni programrészek** bármelyik napon hozzáadhatók, például a vezetőtestület beszámolóihoz, különleges programokhoz vagy bármihez, ami nem szerepel a szokásos programban. Azokon a napokon, amikor nincs összejövetel, az időzítő minden egyéni médiaszakaszhoz egy egyéni programrésszel indul.
 

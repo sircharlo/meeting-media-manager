@@ -493,13 +493,13 @@ Scegli come accedere al timer dalla finestra principale:
 - **Controlli rapidi al passaggio sul pulsante del timer**: passando il mouse sul pulsante del timer nell'isola di azione viene mostrata la parte cronometrata, con i pulsanti Inizia, Pausa, Ferma e Prossima parte, senza aprire il popup completo del timer. Attivo per impostazione predefinita.
 - **Mostra un pannello timer nella finestra principale**: mantiene l'intero elenco delle parti dell'adunanza e i comandi del timer in un pannello agganciato sul lato destro della finestra principale, sempre visibile. Il popup completo resta disponibile dall'isola di azione per le impostazioni della finestra e della visualizzazione.
 
-### Time Counsel Separately {#timer-separate-counsel}
+### Cronometra i consigli separatamente {#timer-separate-counsel}
 
 <!-- **Setting**: `timerSeparateCounsel` -->
 
-Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+Cronometra come una parte a sé il minuto di consigli dopo la lettura biblica e ogni parte di Efficaci nel ministero. Compare sotto la parte a cui segue, e **Prossima parte** passa dalla parte dello studente ai consigli, poi alla parte successiva. In questo modo il presidente può vedere quanto resta del minuto, mentre il tempo dello studente continua a essere registrato per il rapporto dei tempi, dove i consigli hanno una riga a parte.
 
-The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+I consigli durano sempre un minuto. Il programma dell'adunanza, gli orari di inizio previsti e l'indicatore di anticipo o ritardo restano gli stessi di quando questa impostazione è disattivata.
 
 **Predefinito**: `false`
 
