@@ -2,6 +2,7 @@ import type { DateInfo } from 'src/types';
 
 import { createPinia, setActivePinia } from 'pinia';
 import { defaultSettings } from 'src/constants/settings';
+import { defaultPartCounts } from 'src/helpers/meeting-parts';
 import { formatDate } from 'src/utils/date';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -64,7 +65,9 @@ beforeEach(async () => {
   currentState.currentCongregation = 'cong';
   useJwStore().lookupPeriod['cong'] = [
     createDay(WEEKEND),
-    createDay(MIDWEEK),
+    // The number of parts is chosen, so starting a part doesn't ask for it
+    // (see "useTimer part counts question" for a day where it isn't).
+    { ...createDay(MIDWEEK), timerPartCounts: { ...defaultPartCounts } },
     createDay(NO_MEETING),
   ];
   await selectDay(MIDWEEK);
@@ -294,5 +297,233 @@ describe('useTimer custom parts', () => {
     timer.selectPart(second.id);
 
     expect(timer.aheadBehindMinutes.value).toBe(2);
+  });
+});
+
+describe('useTimer separate counsel', () => {
+  const MINUTE = 60_000;
+  const at = (hours: number, minutes: number) =>
+    new Date(2026, 9, 13, hours, minutes, 0).getTime();
+  const counselValues = (timer: ReturnType<typeof useTimer>) =>
+    timer.meetingPartsOptions.value
+      .map((option) => option.value)
+      .filter((value) => value.startsWith('counsel-'));
+
+  const setSeparateCounsel = async (separate: boolean) => {
+    const settings = useCongregationSettingsStore().congregations['cong'];
+    if (settings) settings.timerSeparateCounsel = separate;
+    await nextTick();
+  };
+
+  it('lists no counsel while the setting is off', () => {
+    expect(counselValues(useTimer())).toEqual([]);
+  });
+
+  it('lists a minute of counsel after the Bible reading and each Apply Yourself part that is not skipped', async () => {
+    await setSeparateCounsel(true);
+    const timer = useTimer();
+    timer.setPartDuration('ayfm-2', 0);
+
+    expect(timer.meetingPartsOptions.value.map((o) => o.value)).toEqual([
+      'introduction',
+      'treasures',
+      'gems',
+      'bible-reading',
+      'counsel-bible-reading',
+      'ayfm-1',
+      'counsel-ayfm-1',
+      'ayfm-2',
+      'ayfm-3',
+      'counsel-ayfm-3',
+      'lac-1',
+      'lac-2',
+      'cbs',
+      'concluding-comments',
+    ]);
+    expect(
+      timer.meetingPartsOptions.value.find(
+        (o) => o.value === 'counsel-ayfm-1',
+      ),
+    ).toEqual({ label: 'counsel', section: 'ayfm', value: 'counsel-ayfm-1' });
+    expect(timer.partDurations.value['counsel-ayfm-1']).toBe(1);
+  });
+
+  it('keeps the schedule as it is, with the counsel planned right after its part', async () => {
+    const timer = useTimer();
+    const plannedWithout = timer.getPlannedStartTime('ayfm-1');
+
+    await setSeparateCounsel(true);
+
+    // 19:00 song, 19:05 introduction, 19:06 Treasures, 19:16 gems, 19:26
+    // Bible reading (4 min.), then counsel, then the first Apply Yourself part.
+    expect(timer.getPlannedStartTime('counsel-bible-reading')).toBe(
+      at(19, 30),
+    );
+    expect(timer.getPlannedStartTime('ayfm-1')).toBe(at(19, 31));
+    expect(plannedWithout).toBe(at(19, 31));
+    expect(timer.getPlannedStartTime('counsel-ayfm-1')).toBe(at(19, 35));
+  });
+
+  it('times the counsel on its own, between its part and the next one', async () => {
+    await setSeparateCounsel(true);
+    const timer = useTimer();
+    timer.selectPart('bible-reading');
+    vi.advanceTimersByTime(4 * MINUTE);
+
+    expect(timer.nextPart.value?.value).toBe('counsel-bible-reading');
+    timer.startNextPart();
+    expect(timer.currentPartLabel.value).toBe('counsel');
+    vi.advanceTimersByTime(50_000);
+    expect(timer.formattedTime.value).toBe('00:50');
+
+    timer.startNextPart();
+    expect(timer.currentPart.value).toBe('ayfm-1');
+    expect(timer.partTimings.value['counsel-bible-reading']).toEqual({
+      endTime: MIDWEEK.getTime() + 4 * MINUTE + 50_000,
+      startTime: MIDWEEK.getTime() + 4 * MINUTE,
+    });
+    expect(timer.partTimings.value['bible-reading']?.endTime).toBe(
+      MIDWEEK.getTime() + 4 * MINUTE,
+    );
+  });
+
+  it('judges ahead/behind for the counsel by its planned start', async () => {
+    await setSeparateCounsel(true);
+    const timer = useTimer();
+    vi.setSystemTime(new Date(2026, 9, 13, 19, 32, 0));
+    timer.selectPart('counsel-bible-reading');
+    expect(timer.aheadBehindMinutes.value).toBe(2);
+  });
+
+  it('keeps the counsel to its minute', async () => {
+    await setSeparateCounsel(true);
+    const timer = useTimer();
+
+    timer.setPartDuration('counsel-ayfm-1', 3);
+    timer.adjustPartDuration('counsel-ayfm-1', 1);
+
+    expect(timer.partDurations.value['counsel-ayfm-1']).toBe(1);
+    expect(day(MIDWEEK)?.timerPartDurations).toBeUndefined();
+  });
+
+  it('stops counsel being timed when the setting is turned off, and goes back to its part', async () => {
+    await setSeparateCounsel(true);
+    const timer = useTimer();
+    timer.selectPart('counsel-ayfm-2');
+    vi.advanceTimersByTime(30_000);
+
+    await setSeparateCounsel(false);
+
+    expect(timer.timerRunning.value).toBe(false);
+    expect(timer.currentPart.value).toBe('ayfm-2');
+    expect(counselValues(timer)).toEqual([]);
+  });
+});
+
+describe('useTimer part counts question', () => {
+  const forgetPartCounts = () => {
+    const midweek = day(MIDWEEK);
+    if (midweek) delete midweek.timerPartCounts;
+  };
+
+  beforeEach(() => {
+    forgetPartCounts();
+  });
+
+  it('asks for the number of parts before timing a midweek meeting', () => {
+    const timer = useTimer();
+    timer.selectPart('introduction');
+
+    expect(timer.timerRunning.value).toBe(false);
+    expect(timer.pendingPartStart.value).toEqual({
+      part: 'introduction',
+      requestedAt: MIDWEEK.getTime(),
+    });
+  });
+
+  it('times the part from the click once the counts are chosen', () => {
+    const timer = useTimer();
+    timer.selectPart('introduction');
+    vi.advanceTimersByTime(8000);
+
+    timer.confirmPartCounts({ ayfm: 4, lac: 1 });
+
+    expect(timer.pendingPartStart.value).toBeNull();
+    expect(timer.timerRunning.value).toBe(true);
+    expect(timer.currentPart.value).toBe('introduction');
+    expect(timer.partTimings.value.introduction?.startTime).toBe(
+      MIDWEEK.getTime(),
+    );
+    expect(timer.formattedTime.value).toBe('00:08');
+    expect(day(MIDWEEK)?.timerPartCounts).toEqual({ ayfm: 4, lac: 1 });
+    // 15 minutes less 4 of counsel, shared out over the 4 parts.
+    expect(timer.partDurations.value).toMatchObject({
+      'ayfm-1': 3,
+      'ayfm-2': 3,
+      'ayfm-3': 3,
+      'ayfm-4': 2,
+      'lac-1': 15,
+      'lac-2': 0,
+    });
+  });
+
+  it('keeps durations changed by hand when the counts stay the same', () => {
+    const timer = useTimer();
+    timer.setPartDuration('ayfm-1', 6);
+    timer.selectPart('treasures');
+
+    timer.confirmPartCounts({ ayfm: 3, lac: 2 });
+
+    expect(timer.partDurations.value['ayfm-1']).toBe(6);
+    expect(day(MIDWEEK)?.timerPartCounts).toEqual({ ayfm: 3, lac: 2 });
+    expect(timer.currentPart.value).toBe('treasures');
+  });
+
+  it('asks only once for each meeting', () => {
+    const timer = useTimer();
+    timer.selectPart('introduction');
+    timer.confirmPartCounts({ ayfm: 3, lac: 2 });
+
+    timer.startNextPart();
+
+    expect(timer.pendingPartStart.value).toBeNull();
+    expect(timer.currentPart.value).toBe('treasures');
+  });
+
+  it('starts nothing when cancelled', () => {
+    const timer = useTimer();
+    timer.selectPart('introduction');
+
+    timer.cancelPendingPartStart();
+
+    expect(timer.pendingPartStart.value).toBeNull();
+    expect(timer.timerRunning.value).toBe(false);
+    expect(day(MIDWEEK)?.timerPartCounts).toBeUndefined();
+  });
+
+  it('starts nothing when the counts chosen leave the part out', () => {
+    const timer = useTimer();
+    timer.selectPart('ayfm-3');
+
+    timer.confirmPartCounts({ ayfm: 2, lac: 2 });
+
+    expect(timer.timerRunning.value).toBe(false);
+    expect(timer.partTimings.value['ayfm-3']).toBeUndefined();
+    expect(day(MIDWEEK)?.timerPartCounts).toEqual({ ayfm: 2, lac: 2 });
+  });
+
+  it('forgets the question on another day, and never asks on other days', async () => {
+    const timer = useTimer();
+    timer.selectPart('introduction');
+
+    await selectDay(WEEKEND);
+    expect(timer.pendingPartStart.value).toBeNull();
+
+    timer.selectPart('public-talk');
+    expect(timer.timerRunning.value).toBe(true);
+
+    await selectDay(NO_MEETING);
+    timer.selectPart(timer.customTimerParts.value[0]?.id ?? 'custom-x');
+    expect(timer.timerRunning.value).toBe(true);
   });
 });

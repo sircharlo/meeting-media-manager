@@ -1,4 +1,8 @@
-import type { MeetingPart } from 'src/types';
+import type {
+  CounselMeetingPart,
+  MeetingPart,
+  StudentMeetingPart,
+} from 'src/types';
 
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 
@@ -30,6 +34,12 @@ export const defaultPartDurations: Record<MeetingPart, number> = {
   'co-final-talk': 30,
   'co-service-talk': 30,
   'concluding-comments': 3,
+  'counsel-ayfm-1': COUNSEL_MINUTES,
+  'counsel-ayfm-2': COUNSEL_MINUTES,
+  'counsel-ayfm-3': COUNSEL_MINUTES,
+  'counsel-ayfm-4': COUNSEL_MINUTES,
+  'counsel-ayfm-5': COUNSEL_MINUTES,
+  'counsel-bible-reading': COUNSEL_MINUTES,
   gems: 10,
   introduction: 1,
   'lac-1': 8,
@@ -73,11 +83,28 @@ export const getSectionPartMinutes = (prefix: 'ayfm' | 'lac', count: number) =>
     ? AYFM_SECTION_MINUTES - count * COUNSEL_MINUTES
     : LAC_SECTION_MINUTES;
 
+export const isStudentPart = (part: MeetingPart): part is StudentMeetingPart =>
+  part === 'bible-reading' || part.startsWith('ayfm-');
+
 export const hasCounselAfterPart = (
   part: MeetingPart,
   duration: number,
-): boolean =>
-  (part === 'bible-reading' || part.startsWith('ayfm-')) && duration > 0;
+): boolean => isStudentPart(part) && duration > 0;
+
+const COUNSEL_PREFIX = 'counsel-';
+
+export const isCounselPart = (part: MeetingPart): part is CounselMeetingPart =>
+  part.startsWith(COUNSEL_PREFIX);
+
+/** The counsel timed after a student part (see timerSeparateCounsel). */
+export const getCounselPart = (part: StudentMeetingPart): CounselMeetingPart =>
+  `${COUNSEL_PREFIX}${part}`;
+
+/** The student part a counsel part follows. */
+export const getCounselledPart = (
+  part: CounselMeetingPart,
+): StudentMeetingPart =>
+  part.slice(COUNSEL_PREFIX.length) as StudentMeetingPart;
 
 export const getMeetingPartSequence = (
   date: Date | undefined,

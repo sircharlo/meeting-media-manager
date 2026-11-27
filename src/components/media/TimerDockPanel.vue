@@ -75,19 +75,39 @@
           size="sm"
           @click="addCustomTimerPart"
         />
-        <q-btn
-          color="warning"
-          dense
-          :disable="!hasAnyPartTimings || timerRunning"
-          flat
-          icon="mmm-reset"
-          no-caps
-          round
-          size="sm"
-          @click="resetAllConfirmOpen = true"
-        >
-          <q-tooltip :delay="500">{{ t('reset-all-timings') }}</q-tooltip>
-        </q-btn>
+        <div class="row no-wrap items-center">
+          <q-btn
+            :aria-label="t('export-pdf-report')"
+            color="primary"
+            dense
+            flat
+            icon="mmm-export"
+            :loading="exportingReport"
+            no-caps
+            round
+            size="sm"
+            @click="exportReport"
+          >
+            <q-tooltip :delay="500">{{ t('export-pdf-report') }}</q-tooltip>
+            <template #loading>
+              <LiquidSpinner />
+            </template>
+          </q-btn>
+          <q-btn
+            :aria-label="t('reset-all-timings')"
+            color="warning"
+            dense
+            :disable="!hasAnyPartTimings || timerRunning"
+            flat
+            icon="mmm-reset"
+            no-caps
+            round
+            size="sm"
+            @click="resetAllConfirmOpen = true"
+          >
+            <q-tooltip :delay="500">{{ t('reset-all-timings') }}</q-tooltip>
+          </q-btn>
+        </div>
       </div>
     </div>
   </q-drawer>
@@ -110,9 +130,11 @@
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import TimerPartsList from 'components/media/TimerPartsList.vue';
 import TimerQuickControls from 'components/media/TimerQuickControls.vue';
+import LiquidSpinner from 'components/ui/LiquidSpinner.vue';
 import { storeToRefs } from 'pinia';
 import useTimer from 'src/composables/useTimer';
 import { useTimerAheadBehindText } from 'src/composables/useTimerAheadBehindText';
+import { useTimerReportExport } from 'src/composables/useTimerReportExport';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -131,6 +153,8 @@ const {
 } = useTimer();
 
 const aheadBehindText = useTimerAheadBehindText();
+
+const { exportingReport, exportReport } = useTimerReportExport();
 
 const resetAllConfirmOpen = ref(false);
 

@@ -45,6 +45,7 @@ export type FeatureNudgeId =
   | 'settings-pin'
   | 'shared-folder'
   | 'songbook-videos'
+  | 'timer-counsel'
   | 'zoom'
   | 'zoom-window-layout';
 
