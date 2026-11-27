@@ -20,7 +20,14 @@ export type BuiltInMeetingPart =
   | 'public-talk'
   | 'song-and-optional-prayer'
   | 'treasures'
-  | 'wt';
+  | 'wt'
+  | CounselMeetingPart;
+
+/**
+ * The minute of counsel after a student part, timed as a part of its own
+ * when the timerSeparateCounsel setting is on.
+ */
+export type CounselMeetingPart = `counsel-${StudentMeetingPart}`;
 
 export type CustomMeetingPart = `custom-${string}`;
 
@@ -48,6 +55,15 @@ export interface MeetingPartTimings {
   endTime: null | number;
   startTime: null | number;
 }
+
+/** The parts a student gives, each followed by a minute of counsel. */
+export type StudentMeetingPart =
+  | 'ayfm-1'
+  | 'ayfm-2'
+  | 'ayfm-3'
+  | 'ayfm-4'
+  | 'ayfm-5'
+  | 'bible-reading';
 
 export type TimerCountdownDisplay =
   'analog' | 'analog-clock' | 'analog-digital' | 'digital';

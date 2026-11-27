@@ -1,9 +1,11 @@
 import type {
+  CounselMeetingPart,
   CustomTimerPart,
   DateInfo,
   MeetingPart,
   MeetingPartOption,
   MeetingPartTimings,
+  StudentMeetingPart,
   TimerData,
   TimerPartCounts,
 } from 'src/types';
@@ -27,9 +29,13 @@ import {
   defaultPartCounts,
   defaultPartDurations,
   distributeSectionMinutes,
+  getCounselledPart,
+  getCounselPart,
   getMeetingPartOffsetMinutes,
   getMeetingPartSequence,
   getSectionPartMinutes,
+  hasCounselAfterPart,
+  isCounselPart,
   MAX_AYFM_PARTS,
   MAX_LAC_PARTS,
 } from 'src/helpers/meeting-parts';
@@ -188,6 +194,9 @@ const createTimer = () => {
   const currentPart = ref<MeetingPart>('public-talk');
   const wtCustomEndTime = ref<string>('');
   const cbsCustomEndTime = ref('');
+  const separateCounsel = computed(
+    () => !!currentSettings.value?.timerSeparateCounsel,
+  );
 
   // --- Part counts (per day) --------------------------------------------------
 
@@ -339,6 +348,8 @@ const createTimer = () => {
   });
 
   const setPartDuration = (part: MeetingPart, duration: number) => {
+    // Counsel always takes its minute: the schedule is worked out with it.
+    if (isCounselPart(part)) return;
     const minutes = normalizePartDuration(duration);
     if (isCustomPart(part)) {
       updateCustomTimerPart(part, { duration: minutes });
@@ -463,6 +474,20 @@ const createTimer = () => {
     return options;
   };
 
+  /**
+   * With the timerSeparateCounsel setting, the minute of counsel after a
+   * student part (one that isn't skipped) is listed and timed on its own.
+   */
+  const pushCounselOption = (
+    options: MeetingPartOption[],
+    part: StudentMeetingPart,
+    section: MeetingPartOption['section'],
+  ) => {
+    if (!separateCounsel.value) return;
+    if (!hasCounselAfterPart(part, partDurations.value[part] ?? 0)) return;
+    options.push({ label: t('counsel'), section, value: getCounselPart(part) });
+  };
+
   const midweekPartOptions = (date: Date): MeetingPartOption[] => {
     const isCo = isCoWeek(date);
     const options: MeetingPartOption[] = [
@@ -490,6 +515,7 @@ const createTimer = () => {
         value: 'bible-reading',
       },
     ];
+    pushCounselOption(options, 'bible-reading', 'tgw');
 
     const ayfmWarning = getSectionDurationWarning(
       'ayfm',
@@ -497,7 +523,7 @@ const createTimer = () => {
       partDurations.value,
     );
     for (let i = 1; i <= ayfmPartsCount.value; i++) {
-      const part = `ayfm-${i}` as MeetingPart;
+      const part = `ayfm-${i}` as StudentMeetingPart;
       options.push({
         icon: getJwIconFromKeyword('ayfm-part'),
         label: t('ayfm-part', {
@@ -509,6 +535,7 @@ const createTimer = () => {
         value: part,
         warning: ayfmWarning,
       });
+      pushCounselOption(options, part, 'ayfm');
     }
 
     const lacWarning = getSectionDurationWarning(
@@ -643,7 +670,11 @@ const createTimer = () => {
 
   // --- Running the timer ------------------------------------------------------
 
-  const startTimer = () => {
+  /**
+   * Starts timing the current part. `startedAt` is when the user asked for
+   * it, which is earlier than now when M³ first asked for the part counts.
+   */
+  const startTimer = (startedAt = Date.now()) => {
     if (!isMeetingDay(selectedDate.value)) {
       ensureNonMeetingTimerParts();
       const firstCustomPart = customTimerParts.value[0];
@@ -658,22 +689,76 @@ const createTimer = () => {
 
     timerRunning.value = true;
     timerPaused.value = false;
-    timerStartTime.value = Date.now() - elapsedSeconds.value * 1000;
+    const startTime = startedAt - elapsedSeconds.value * 1000;
+    timerStartTime.value = startTime;
     timerPausedTime.value = null;
+    elapsedSeconds.value = computeElapsedSeconds(Date.now(), startTime);
 
     // Log the start time for the current part
     runningDayState = dayState.value;
-    setPartTiming(currentPart.value, { startTime: Date.now() });
+    setPartTiming(currentPart.value, { startTime: startedAt });
 
     resumeInterval();
     updateTimerWindow();
   };
 
   /** Times a part: stops the running one first, if any. */
-  const selectPart = (part: MeetingPart) => {
+  const startPart = (part: MeetingPart, startedAt = Date.now()) => {
     if (timerRunning.value) stopTimer();
     currentPart.value = part;
-    startTimer();
+    startTimer(startedAt);
+  };
+
+  // --- Asking for the part counts -----------------------------------------------
+
+  /**
+   * A part the user asked to start on a midweek meeting day whose number of
+   * parts wasn't chosen yet, and when they asked: DialogTimerPartCounts asks
+   * for the counts first, then the part is timed from that click.
+   */
+  const pendingPartStart = ref<null | {
+    part: MeetingPart;
+    requestedAt: number;
+  }>(null);
+
+  const needsPartCounts = () =>
+    isMwMeetingDay(selectedDate.value) && !dayState.value.timerPartCounts;
+
+  /**
+   * Times a part (stopping the running one first, if any), once the day's
+   * part counts are known.
+   */
+  const selectPart = (part: MeetingPart) => {
+    if (needsPartCounts()) {
+      pendingPartStart.value = { part, requestedAt: Date.now() };
+      return;
+    }
+    startPart(part);
+  };
+
+  /**
+   * Keeps the day's part counts, then starts the part that was waiting for
+   * them. Only a section whose count changed has its minutes shared out
+   * again, so durations changed by hand beforehand stay as they are.
+   */
+  const confirmPartCounts = (counts: TimerPartCounts) => {
+    const current = getPartCounts();
+    dayState.value.timerPartCounts = { ...current };
+    if (counts.ayfm !== current.ayfm) setPartCount('ayfm', counts.ayfm);
+    if (counts.lac !== current.lac) setPartCount('lac', counts.lac);
+
+    const pending = pendingPartStart.value;
+    pendingPartStart.value = null;
+    if (!pending) return;
+    // Fewer parts can take the chosen one out of the list (AYFM 3 of 2).
+    const stillListed = meetingPartsOptions.value.some(
+      (option) => option.value === pending.part,
+    );
+    if (stillListed) startPart(pending.part, pending.requestedAt);
+  };
+
+  const cancelPendingPartStart = () => {
+    pendingPartStart.value = null;
   };
 
   const startNextPart = () => {
@@ -943,6 +1028,7 @@ const createTimer = () => {
   // Get planned start time for a meeting part
   const getPlannedStartTime = (part: MeetingPart): null | number => {
     if (isCustomPart(part)) return getCustomPlannedStartTime(part);
+    if (isCounselPart(part)) return getCounselPlannedStartTime(part);
 
     const meetingStart = meetingStartTime.value?.getTime();
     if (!meetingStart) return null;
@@ -956,6 +1042,16 @@ const createTimer = () => {
       partDurations.value,
     );
     return meetingStart + offsetMinutes * 60 * 1000;
+  };
+
+  /** Counsel is planned right after the part it follows. */
+  const getCounselPlannedStartTime = (
+    part: CounselMeetingPart,
+  ): null | number => {
+    const counselledPart = getCounselledPart(part);
+    const counselledStart = getPlannedStartTime(counselledPart);
+    if (counselledStart === null) return null;
+    return counselledStart + getPartDurationSeconds(counselledPart) * 1000;
   };
 
   /**
@@ -1023,6 +1119,7 @@ const createTimer = () => {
   // previous day, so it's stopped (its end time recorded on that day).
   watch(selectedDate, (date, previousDate) => {
     if (date?.getTime() === previousDate?.getTime()) return;
+    cancelPendingPartStart();
     if (timerRunning.value) stopTimer();
   });
 
@@ -1044,13 +1141,24 @@ const createTimer = () => {
     if (timerRunning.value) stopTimer();
   });
 
+  // Turning separate counsel off takes the counsel out of the list: counsel
+  // being timed is stopped, and the timer goes back to the part before it.
+  watch(separateCounsel, (separate) => {
+    const part = currentPart.value;
+    if (separate || !isCounselPart(part)) return;
+    if (timerRunning.value) stopTimer();
+    currentPart.value = getCounselledPart(part);
+  });
+
   return {
     addCustomTimerPart,
     adjustPartDuration,
     aheadBehindMinutes,
     ayfmPartsCount,
+    cancelPendingPartStart,
     cbsCustomEndTime,
     cbsEndTimeRules,
+    confirmPartCounts,
     currentPart,
     currentPartLabel,
     currentPartOption,
@@ -1069,6 +1177,7 @@ const createTimer = () => {
     partDurations,
     partTimings,
     pauseTimer,
+    pendingPartStart,
     refreshCountdownTarget,
     removeCustomTimerPart,
     resetAllPartTimings,

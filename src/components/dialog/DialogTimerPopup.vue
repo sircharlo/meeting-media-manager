@@ -489,6 +489,7 @@ import { copyToClipboard } from 'quasar';
 import { useScreenLayout } from 'src/composables/useScreenLayout';
 import useTimer from 'src/composables/useTimer';
 import { useTimerAheadBehindText } from 'src/composables/useTimerAheadBehindText';
+import { useTimerReportExport } from 'src/composables/useTimerReportExport';
 import {
   isCoWeek,
   isMeetingDay,
@@ -497,7 +498,6 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { exportTimerReport } from 'src/helpers/timer-report';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { withTimeout } from 'src/utils/general';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -550,15 +550,10 @@ const {
   cbsEndTimeRules,
   currentPart,
   customTimerParts,
-  getDuration,
-  getTimeString,
   handleTimerWindowVisibility,
   hasAnyPartTimings,
   lacPartsCount,
-  meetingPartsOptions,
   moveCustomTimerPart,
-  partDurations,
-  partTimings,
   removeCustomTimerPart,
   resetAllPartTimings,
   timerMode,
@@ -578,27 +573,7 @@ const confirmResetAll = () => {
   resetAllConfirmOpen.value = false;
 };
 
-const exportingReport = ref(false);
-
-const exportReport = async () => {
-  if (exportingReport.value) return;
-  exportingReport.value = true;
-  try {
-    await exportTimerReport(
-      {
-        date: selectedDateObject.value?.date,
-        getDuration,
-        getTimeString,
-        partDurations: partDurations.value,
-        parts: meetingPartsOptions.value,
-        partTimings: partTimings.value,
-      },
-      currentSettings.value?.congregationName ?? '',
-    );
-  } finally {
-    exportingReport.value = false;
-  }
-};
+const { exportingReport, exportReport } = useTimerReportExport();
 
 const { getAllScreens, moveTimerWindow } = globalThis.electronApi;
 

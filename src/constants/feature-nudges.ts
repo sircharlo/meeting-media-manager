@@ -112,6 +112,18 @@ export const FEATURE_NUDGES: FeatureNudge[] = [
   },
   {
     acceptLabel: 'feature-nudge-show-me',
+    action: { setting: 'timerSeparateCounsel', type: 'settings' },
+    beta: true,
+    getBody: () => 'feature-nudge-timer-counsel-body',
+    icon: 'mmm-time',
+    id: 'timer-counsel',
+    // Only for congregations already timing their meetings with M³.
+    isEligible: ({ settings }) =>
+      settings.enableTimerDisplay && !settings.timerSeparateCounsel,
+    title: 'feature-nudge-timer-counsel-title',
+  },
+  {
+    acceptLabel: 'feature-nudge-show-me',
     action: { setting: 'enableExtraCache', type: 'settings' },
     getBody: () => 'feature-nudge-songbook-videos-body',
     icon: 'mmm-music-note',

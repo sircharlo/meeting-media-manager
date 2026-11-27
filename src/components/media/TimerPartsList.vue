@@ -12,13 +12,15 @@
       >
         {{ t(part.section) }}
       </q-item-label>
+      <!-- Counsel sits under the part it follows, and can't be edited. -->
       <q-item
         :class="{
           'text-notice-warning': part.warning,
           'timer-parts-list__item--active':
             currentPart === part.value && timerRunning,
         }"
-        clickable
+        :clickable="!isCounselPart(part.value)"
+        :inset-level="isCounselPart(part.value) ? 1 : undefined"
         @click="openEditDialog(part)"
         @contextmenu.prevent="openEditDialog(part)"
       >
@@ -44,7 +46,13 @@
         <q-item-section side>
           <div class="row no-wrap items-center q-gutter-xs">
             <!-- A running part can be given more or less time in one click. -->
-            <template v-if="timerRunning && currentPart === part.value">
+            <template
+              v-if="
+                timerRunning &&
+                currentPart === part.value &&
+                !isCounselPart(part.value)
+              "
+            >
               <q-btn
                 :aria-label="t('decrease-duration')"
                 class="btn-tonal"
@@ -70,7 +78,16 @@
                 <q-tooltip>{{ t('increase-duration') }}</q-tooltip>
               </q-btn>
             </template>
+            <span
+              v-if="isCounselPart(part.value)"
+              class="timer-parts-list__duration text-caption q-px-sm"
+            >
+              {{
+                t('minutes-short', { minutes: partDurations[part.value] ?? 0 })
+              }}
+            </span>
             <q-btn
+              v-else
               class="timer-parts-list__duration"
               dense
               flat
@@ -233,6 +250,7 @@ import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import { storeToRefs } from 'pinia';
 import useTimer from 'src/composables/useTimer';
 import { isMeetingDay } from 'src/helpers/date';
+import { isCounselPart } from 'src/helpers/meeting-parts';
 import { useCurrentStateStore } from 'stores/current-state';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -300,6 +318,7 @@ const editDuration = ref(0);
 const editLabel = ref('');
 
 const openEditDialog = (part: MeetingPartOption) => {
+  if (isCounselPart(part.value)) return;
   editPart.value = part;
   editDuration.value = partDurations.value[part.value] ?? 0;
   editLabel.value = part.value.startsWith('custom-')

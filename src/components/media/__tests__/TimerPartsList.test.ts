@@ -140,6 +140,52 @@ describe('TimerPartsList rows', () => {
   );
 });
 
+describe('TimerPartsList counsel rows', () => {
+  const counsel: MeetingPartOption = {
+    label: 'Counsel',
+    section: 'ayfm',
+    value: 'counsel-ayfm-1',
+  };
+  const buttonLabels = (wrapper: ReturnType<typeof mount>) =>
+    wrapper.findAll('button').map((button) => button.attributes('aria-label'));
+
+  beforeEach(async () => {
+    const timer = (await import('src/composables/useTimer')).default();
+    const writable = timer as unknown as Record<string, { value: unknown }>;
+    Object.assign(writable.meetingPartsOptions ?? {}, { value: [counsel] });
+    Object.assign(writable.partDurations ?? {}, {
+      value: { 'counsel-ayfm-1': 1 },
+    });
+    Object.assign(writable.partTimings ?? {}, { value: {} });
+    timer.currentPart.value = 'counsel-ayfm-1';
+    timer.timerRunning.value = true;
+    useCongregationSettingsStore().congregations = {
+      'test-cong': { ...defaultSettings },
+    };
+    useCurrentStateStore().currentCongregation = 'test-cong';
+  });
+
+  it('sits under the part it follows, with its minute and nothing to edit', async () => {
+    const wrapper = mount(TimerPartsList);
+    const row = wrapper.find('.q-item');
+
+    // Indented by one level, so it lines up with the names above it.
+    expect(row.attributes('style')).toContain('padding-left: 72px');
+    expect(wrapper.text()).toContain('Counsel');
+    expect(wrapper.text()).toContain('1 min.');
+    expect(
+      wrapper.findAll('button').some((button) => button.text() === '1 min.'),
+    ).toBe(false);
+    expect(buttonLabels(wrapper)).not.toContain('Increase duration');
+    expect(buttonLabels(wrapper)).toContain('Stop timer');
+
+    await row.trigger('click');
+    const vm = wrapper.vm as unknown as { editDialogOpen: boolean };
+    expect(vm.editDialogOpen).toBe(false);
+    wrapper.unmount();
+  });
+});
+
 describe('TimerPartsList custom part delete', () => {
   const special: MeetingPartOption = {
     label: 'Special talk (5 min.)',

@@ -346,6 +346,11 @@ export interface SettingsValues {
   timerRemoteEnable: boolean;
   timerRemoteFocusLayout: boolean;
   timerRemotePort: null | string;
+  /**
+   * Time the minute of counsel after the Bible reading and each Apply
+   * Yourself part as a part of its own. The schedule stays the same.
+   */
+  timerSeparateCounsel: boolean;
   timerShowOnActionIsland: boolean;
   timerShowPlannedStartTimes: boolean;
   timerTextColor: string;

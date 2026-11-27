@@ -27,6 +27,7 @@
     <DialogMissingDates />
     <DialogMeetingSongCheck />
     <DialogMusicStartConfirm />
+    <DialogTimerPartCounts v-if="currentSettings?.enableTimerDisplay" />
     <MediaConversionConfirm />
 
     <!-- Main content -->
@@ -116,6 +117,7 @@ import DialogFeatureNudge from 'components/dialog/DialogFeatureNudge.vue';
 import DialogMeetingSongCheck from 'components/dialog/DialogMeetingSongCheck.vue';
 import DialogMissingDates from 'components/dialog/DialogMissingDates.vue';
 import DialogMusicStartConfirm from 'components/dialog/DialogMusicStartConfirm.vue';
+import DialogTimerPartCounts from 'components/dialog/DialogTimerPartCounts.vue';
 import DialogZoomAutomationOverlay from 'components/dialog/DialogZoomAutomationOverlay.vue';
 import DialogZoomCheckPrompt from 'components/dialog/DialogZoomCheckPrompt.vue';
 import DialogZoomCheckResult from 'components/dialog/DialogZoomCheckResult.vue';
