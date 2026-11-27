@@ -50,6 +50,19 @@ Object.defineProperty(PQueue, Symbol.for('nodejs.event_target'), {
   value: true,
 });
 
+// Cancelling an animation rejects its `finished` promise. Browsers mark that
+// rejection as handled (Web Animations, "cancel an animation"), so nobody
+// sees it unless they await `finished`; happy-dom leaves it unhandled.
+// Quasar cancels its slide animation when a QExpansionItem unmounts mid-slide,
+// so a test unmounting one at that moment got an unhandled AbortError, which
+// fails the whole run (DialogDevActionsPopup.test.ts, now and then). Do what
+// browsers do: code awaiting `finished` still gets the rejection.
+const cancelAnimation = Animation.prototype.cancel;
+Animation.prototype.cancel = function (this: Animation) {
+  this.finished.catch(() => undefined);
+  cancelAnimation.call(this);
+};
+
 const i18n = createI18n({
   allowComposition: true,
   legacy: false,
