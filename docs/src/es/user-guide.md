@@ -154,9 +154,9 @@ El cronómetro es una función beta y solo debería usarse si se ha aprobado loc
 
 La ventana emergente del cronómetro en la isla de acciones muestra las partes de la reunión del día seleccionado. Para las reuniones de entre semana, elige cuántas partes hay de Seamos mejores maestros y Nuestra vida cristiana; los minutos de la sección se reparten de manera uniforme, y cada parte se puede ajustar libremente con los botones **+** y **−** o haciendo clic sobre ella. Cualquier parte se puede configurar con cualquier número de minutos, incluido 0 para omitirla. Un icono de advertencia señala las secciones cuyas partes no suman el tiempo que tienen asignado, pero nunca cambia nada por su cuenta.
 
-If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+Si todavía no se ha elegido el número de partes cuando se inicia una parte de la reunión de entre semana, M³ lo pregunta primero, una vez por reunión. La parte se cronometra desde el momento en que se inició, incluso mientras M³ pregunta.
 
-With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+Con [**Cronometrar los consejos por separado**](/settings-guide#timer-separate-counsel) activado, el minuto de consejos que sigue a la Lectura de la Biblia y a cada parte de Seamos mejores maestros aparece debajo de esa parte y se cronometra por separado, para que el presidente vea cuánto le queda.
 
 Se pueden añadir **partes personalizadas** cualquier día para informes del Cuerpo Gobernante, programas especiales o cualquier otra cosa que no esté en el programa habitual. Los días sin reunión, el cronómetro inicia con una parte personalizada por cada sección multimedia personalizada.
 
