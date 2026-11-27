@@ -423,7 +423,7 @@
   "jwpub-file-unavailable-caption-cloud": "이 파일은 {provider}에 저장되어 있으며 아직 이 컴퓨터에 다운로드되지 않았을 수 있습니다. {provider}에서 파일을 오프라인에서도 사용할 수 있도록 설정하고 다운로드가 끝날 때까지 기다린 다음 다시 선택하십시오. 또는 파일을 이 컴퓨터의 다운로드 폴더 등에 복사한 다음 그곳에서 선택하십시오.",
   "jwpub-file-unavailable-caption-drive": "이 파일은 연결할 수 없는 네트워크 폴더나 이동식 드라이브에 있습니다. 드라이브가 꽂혀 있는지 또는 네트워크 폴더가 연결되어 있는지 확인한 다음 파일을 다시 선택하십시오. 또는 파일을 이 컴퓨터의 다운로드 폴더 등에 복사한 다음 그곳에서 선택하십시오.",
   "jwpub-file-unavailable-caption-local": "파일이 이동, 이름 변경 또는 삭제되었거나 다른 프로그램에서 사용 중일 수 있습니다. 파일이 현재 있는 위치에서 다시 선택하거나, 다운로드 폴더 등에 복사한 다음 그곳에서 선택하십시오.",
-  "jwpub-file-unavailable-caption-permission": "M³ doesn't have permission to open it where it's saved. Copy it to a folder on this computer, such as Downloads, and select it from there.",
+  "jwpub-file-unavailable-caption-permission": "M³에는 이 파일이 저장된 위치에서 파일을 열 권한이 없습니다. 파일을 이 컴퓨터의 다운로드 폴더 등에 복사한 다음 그곳에서 선택하십시오.",
   "jwpub-file-unavailable-caption-phone": "이 파일은 휴대폰에 있으며 Windows가 휴대폰에서 파일을 가져오지 못했습니다. 휴대폰이 켜져 있고 잠금이 해제되어 있으며 이 컴퓨터에 연결되어 있는지 확인한 다음 파일을 다시 선택하십시오. 또는 더 확실한 방법으로, 파일을 이 컴퓨터의 다운로드 폴더 등에 복사한 다음 그곳에서 선택하십시오.",
   "jwpub-file-unavailable-message": "선택한 JWPUB 파일을 불러오는 데 실패했습니다.",
   "jwpubNoMultimedia": "이 JWPUB 파일에는 미디어가 없습니다.",
