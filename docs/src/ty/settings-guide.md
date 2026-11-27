@@ -493,6 +493,16 @@ A fa’anaho i te huru o te ha’amāramarama tāime: ia ’īrava ’ōpani-’
 - **Faatere oioi ia tuuhia te tautai i nia i te pitopito taime**: ’ia tu’u ’oe i te ’iore i ni’a i te pitopito fa’atere-hora i ni’a i te motu ha’atere, e fa’aitehia te tuha’a e fāitohia ra, ’e te mau pitopito ’A ha’amata, ’A fa’ataime, ’A fa’aoti ’e Tuhaa i mua nei, ma te ’ore e ’iriti i te ha’amāramarama iti tā’āto’a o te fa’atere-hora. Ua fa’atupuhia mai te mātauhia.
 - **A faaite i te matini taime i roto i te haamaramarama matamua**: e vaiiho i te tāpura tā’āto’a o te mau tuha’a o te putuputura’a ’e te mau pitopito fa’atere-hora i roto i te hō’ē ’api i tāpirihia i te pae ’atau o te ha’amāramarama matamua, e ’itehia noa. E vai noa te ha’amāramarama iti tā’āto’a i ni’a i te motu ha’atere nō te mau fa’anahora’a o te ha’amāramarama ’e o te fa’aitera’a.
 
+### Time Counsel Separately {#timer-separate-counsel}
+
+<!-- **Setting**: `timerSeparateCounsel` -->
+
+Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+
+The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+
+**Fa’anahora’a tumu**: `false`
+
 ### Haapa'oraa taime mai te ātea {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->

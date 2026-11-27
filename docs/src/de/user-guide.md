@@ -154,6 +154,10 @@ Der Timer ist eine Beta-Funktion und sollte nur verwendet werden, wenn dies vor 
 
 Das Timer-Popup auf der Aktionsinsel listet die Programmpunkte der Zusammenkunft des ausgewählten Tages auf. Wählen Sie bei Zusammenkünften unter der Woche aus, wie viele Programmpunkte es unter "Uns im Dienst verbessern" und "Unser Leben als Christ" gibt; die Minuten des jeweiligen Abschnitts werden gleichmäßig aufgeteilt, und jeder Programmpunkt kann danach mit den Schaltflächen **+** und **−** oder durch Anklicken frei angepasst werden. Jeder Programmpunkt kann auf eine beliebige Anzahl von Minuten gesetzt werden, auch auf 0, um ihn zu überspringen. Ein Warnsymbol weist auf Abschnitte hin, deren Programmpunkte zusammen nicht die dafür vorgesehene Zeit ergeben, ändert aber nie selbst etwas.
 
+If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+
+With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+
 **Benutzerdefinierte Programmpunkte** können an jedem Tag hinzugefügt werden, etwa für Berichte der leitenden Körperschaft, Sonderprogramme oder alles andere, was nicht im regulären Programm steht. An Tagen ohne Zusammenkunft beginnt der Timer mit einem benutzerdefinierten Programmpunkt pro benutzerdefinierter Mediensektion.
 
 Anzahl der Programmpunkte, geänderte Dauern, benutzerdefinierte Programmpunkte und erfasste Zeiten werden für jeden Tag gespeichert, sodass sie einen Neustart von M³ überstehen und die Zeiten einer Zusammenkunft nie mit denen einer anderen vermischt werden. Die erfassten Zeiten eines Tages lassen sich mit **Alle Zeiten für diesen Tag zurücksetzen** auf einmal löschen, und ein Zeitbericht als PDF kann jederzeit exportiert werden.

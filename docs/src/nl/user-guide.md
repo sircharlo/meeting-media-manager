@@ -154,6 +154,10 @@ De timer is een bètafunctie en mag alleen worden gebruikt als dat plaatselijk i
 
 Het pop-upvenster van de timer op de actiebalk toont de onderdelen van de vergadering op de geselecteerde dag. Kies bij doordeweekse vergaderingen hoeveel onderdelen er zijn bij Leg je toe op de velddienst en Leven als Christenen; de minuten van de sectie worden gelijk verdeeld, en daarna kun je elk onderdeel vrij aanpassen met de knoppen **+** en **−** of door op het onderdeel te klikken. Elk onderdeel kan op elk gewenst aantal minuten worden ingesteld, ook op 0 om het over te slaan. Een waarschuwingspictogram wijst op secties waarvan de onderdelen niet optellen tot de tijd die ervoor staat, maar verandert zelf nooit iets.
 
+If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+
+With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+
 **Aangepaste onderdelen** kunnen op elke dag worden toegevoegd, voor updates van het Besturende Lichaam, speciale programma's of iets anders dat niet op het gewone schema staat. Op dagen zonder vergadering begint de timer met één aangepast onderdeel per aangepaste mediasectie.
 
 Het aantal onderdelen, gewijzigde tijdsduren, aangepaste onderdelen en geregistreerde tijden worden per dag opgeslagen, zodat ze een herstart van M³ overleven en de tijden van de ene vergadering nooit met die van een andere vermengd raken. De geregistreerde tijden van een dag kun je in één keer wissen met **Alle tijden van deze dag resetten**, en je kunt op elk moment een tijdrapport als PDF exporteren.

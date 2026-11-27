@@ -493,6 +493,16 @@ Válassza ki, hogyan érhető el az időzítő a főablakból:
 - **Gyorsvezérlők az időzítőgomb fölé víve az egeret**: ha a műveleti panel időzítőgombja fölé viszi az egeret, megjelenik az éppen mért programrész az Indítás, Szünet, Leállítás és Következő programrész gombokkal, a teljes időzítő felugró ablak megnyitása nélkül. Alapértelmezés szerint be van kapcsolva.
 - **Időzítőpanel megjelenítése a főablakban**: az összejövetel programrészeinek teljes listája és az időzítő vezérlői a főablak jobb oldalán rögzített panelen maradnak, mindig szem előtt. Az ablak- és megjelenítési beállításokhoz a teljes felugró ablak továbbra is elérhető a műveleti panelről.
 
+### Time Counsel Separately {#timer-separate-counsel}
+
+<!-- **Setting**: `timerSeparateCounsel` -->
+
+Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+
+The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+
+**Alapértelmezett**: `false`
+
 ### Távoli időzítő {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->

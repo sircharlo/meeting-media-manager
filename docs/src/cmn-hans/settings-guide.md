@@ -493,6 +493,16 @@ M³ 会在共享文件夹中为每个即将举行的聚会创建一个文件夹�
 - **悬停在计时器按钮上时显示快捷控制**：将鼠标悬停在操作图标上的计时器按钮上，会显示正在计时的节目，以及“开始”“暂停”“停止”和“下一个节目”按钮，无需打开完整的计时器弹出窗口。默认开启。
 - **在主窗口中显示计时器面板**：在主窗口右侧固定一个面板，始终显示完整的聚会节目列表和计时器控制按钮。完整的弹出窗口仍可从操作图标打开，用于窗口和显示设置。
 
+### Time Counsel Separately {#timer-separate-counsel}
+
+<!-- **Setting**: `timerSeparateCounsel` -->
+
+Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+
+The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+
+**默认**：`false`
+
 ### 远程计时器 {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->

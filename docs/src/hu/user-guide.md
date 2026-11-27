@@ -154,6 +154,10 @@ Az időzítő béta funkció, és csak helyi jóváhagyással szabad használni.
 
 A műveleti panel időzítő felugró ablaka felsorolja a kiválasztott napi összejövetel programrészeit. A hét közbeni összejövetelnél adja meg, hány programrész van a Fejlődjünk a szolgálatban és a Keresztényi életünk szakaszban; a szakasz percei egyenlően oszlanak el, majd az egyes programrészek szabadon módosíthatók a **+** és **−** gombokkal, vagy a programrészre kattintva. Bármelyik programrész tetszőleges számú percre állítható, akár 0-ra is, ha ki szeretné hagyni. Egy figyelmeztető ikon jelzi azokat a szakaszokat, amelyek programrészeinek összideje nem egyezik a szakaszra szánt idővel, de magától soha nem módosít semmit.
 
+If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+
+With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+
 **Egyéni programrészek** bármelyik napon hozzáadhatók, például a vezetőtestület beszámolóihoz, különleges programokhoz vagy bármihez, ami nem szerepel a szokásos programban. Azokon a napokon, amikor nincs összejövetel, az időzítő minden egyéni médiaszakaszhoz egy egyéni programrésszel indul.
 
 A programrészek száma, a módosított időtartamok, az egyéni programrészek és a rögzített időmérések naponként tárolódnak, így az M³ újraindítása után is megmaradnak, és az egyik összejövetel időmérései sosem keverednek egy másikéval. Egy nap rögzített időmérései egy lépésben törölhetők **A nap összes időmérésének visszaállítása** gombbal, és bármikor exportálható egy PDF formátumú időmérési jelentés.
