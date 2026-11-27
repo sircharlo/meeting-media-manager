@@ -37,6 +37,8 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Quick Start Guide**: The tour of the buttons at the bottom of the window now waits for an open window, such as a question from M³, to close before it starts, instead of showing over it, and it no longer starts while another tour is showing.
 - 🐞 **OBS Studio Password on Linux**: On a Linux computer where M³ can't use a keyring, such as the Snap Store version until you allow it to, Settings now warns that the OBS Studio password is stored as plain text. Before, M³ saved it with a key that's built into the app and protects nothing, and nothing said so.
 - 🐞 **OBS Studio**: After you switch to another scene collection in OBS Studio, the OBS Studio popup now lists that collection's scenes, instead of still listing the previous collection's scenes, which OBS Studio could no longer switch to.
+- 🐞 **JWPUB Files**: When M³ isn't allowed to open a JWPUB file where it's saved, for example because of the folder's or drive's permissions, it now says so and suggests copying the file to a folder such as Downloads, instead of only saying the file couldn't be processed.
+- 🐞 **Custom Background**: When a JWPUB file chosen for a custom background can't be read, the window for choosing its image now closes after the message saying why, instead of staying open and loading.
 
 ## v26.11.5
 

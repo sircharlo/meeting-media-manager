@@ -148,7 +148,7 @@ const {
   setElectronUrlVariables,
   unzip,
 } = globalThis.electronApi;
-const { copy, ensureDir, pathExists, remove, rename, stat } = fs;
+const { copy, ensureDir, pathExists, readFile, remove, rename, stat } = fs;
 
 const backgroundMusicLibraryCache = new Map<string, Promise<SongItem[]>>();
 const publicationMediaLinksCache = new Map<string, Promise<MediaLink[]>>();
@@ -550,21 +550,60 @@ const getJwpubUnavailableCaption = (jwpubPath: string) => {
   return t('jwpub-file-unavailable-caption-local');
 };
 
-const warnJwpubUnavailable = (jwpubPath: string, error: unknown) => {
-  if (!isJwpubFileUnavailableError(error, jwpubPath)) return false;
-
-  const t = i18n.global.t;
-
+const notifyJwpubUnavailable = (caption: string) => {
   createTemporaryNotification({
-    caption: getJwpubUnavailableCaption(jwpubPath),
+    caption,
     group: 'jwpubFileUnavailable',
-    message: t('jwpub-file-unavailable-message'),
+    message: i18n.global.t('jwpub-file-unavailable-message'),
     timeout: 15_000,
     type: 'negative',
   });
+};
 
+const warnJwpubUnavailable = (jwpubPath: string, error: unknown) => {
+  if (!isJwpubFileUnavailableError(error, jwpubPath)) return false;
+
+  notifyJwpubUnavailable(getJwpubUnavailableCaption(jwpubPath));
   return true;
 };
+
+// Like isPermissionError, but also reads the code from the message, which is
+// all that's left of it once fs.copy's error has crossed the contextBridge.
+const isPermissionDeniedError = (error: unknown) =>
+  PERMISSION_ERROR_CODES.has(getFilesystemErrorCode(error) ?? '');
+
+const getErrorText = (error: unknown) =>
+  error instanceof Error ? error.message : String(error);
+
+const tryReadingJwpub = async (jwpubPath: string) => {
+  try {
+    await readFile(jwpubPath);
+    return undefined;
+  } catch (error) {
+    return error;
+  }
+};
+
+const warnJwpubNotPermitted = (jwpubPath: string, readError: unknown) => {
+  log(
+    `[stageUserJwpubForRead] Not allowed to read ${jwpubPath}`,
+    'jwpub',
+    'warn',
+    readError,
+  );
+  notifyJwpubUnavailable(
+    i18n.global.t('jwpub-file-unavailable-caption-permission'),
+  );
+};
+
+// Kept at the start of the message, the code and syscall still group these
+// reports with the copy failure they are (getNodeFsErrorFingerprint).
+const describeRefusedCopy = (copyError: unknown, readError: unknown) =>
+  new Error(
+    readError === undefined
+      ? `${getErrorText(copyError)} (reading the JWPUB itself worked)`
+      : `${getErrorText(copyError)} (reading the JWPUB itself failed: ${getErrorText(readError)})`,
+  );
 
 export const stageUserJwpubForRead = async (jwpubPath: string) => {
   const tempDir = await getTempPath();
@@ -576,7 +615,19 @@ export const stageUserJwpubForRead = async (jwpubPath: string) => {
     await copy(jwpubPath, stagedPath);
   } catch (error) {
     if (warnJwpubUnavailable(jwpubPath, error)) return undefined;
-    throw error;
+    if (!isPermissionDeniedError(error)) throw error;
+
+    // A refused copy ("EPERM: operation not permitted, copyfile") reads the
+    // same whether Windows wouldn't let M³ read the file or wouldn't let it
+    // write the copy into its temp folder (MMM-V2-3PF). Reading the file
+    // itself tells which: if that's refused too, its folder or drive doesn't
+    // let M³ in, and only the user can change that.
+    const readError = await tryReadingJwpub(jwpubPath);
+    if (readError !== undefined && isPermissionDeniedError(readError)) {
+      warnJwpubNotPermitted(jwpubPath, readError);
+      return undefined;
+    }
+    throw describeRefusedCopy(error, readError);
   }
 
   return stagedPath;

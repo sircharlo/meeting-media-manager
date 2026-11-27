@@ -480,7 +480,11 @@ const showCustomBackgroundPicker = computed({
 const processJwpubBackground = async (filepath: string) => {
   jwpubImportFilePath.value = filepath;
   const stagedFilepath = await stageUserJwpubForRead(filepath);
-  if (!stagedFilepath) return;
+  if (!stagedFilepath) {
+    // Already told the user why; don't leave the picker loading.
+    jwpubImportFilePath.value = '';
+    return;
+  }
   const unzipDir = await unzipJwpub(stagedFilepath);
   if (!unzipDir) throw new Error('Failed to unzip: ' + filepath);
 
