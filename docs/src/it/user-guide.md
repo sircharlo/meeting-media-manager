@@ -154,6 +154,10 @@ Il timer è una funzione beta e dovrebbe essere usato solo se approvato localmen
 
 Il popup del timer nell'isola di azione elenca le parti dell'adunanza del giorno selezionato. Per le adunanze infrasettimanali, scegli quante parti ci sono nelle sezioni Efficaci nel ministero e Vita cristiana; i minuti di ciascuna sezione vengono ripartiti in modo uniforme e ogni parte può poi essere regolata liberamente con i pulsanti **+** e **−** o facendo clic sulla parte. Qualsiasi parte può essere impostata su qualsiasi numero di minuti, compreso 0 per saltarla. Un'icona di avviso segnala le sezioni le cui parti non corrispondono al tempo loro assegnato, ma non modifica mai nulla da sola.
 
+If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+
+With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+
 Le **parti personalizzate** possono essere aggiunte in qualsiasi giorno, per gli aggiornamenti del Corpo Direttivo, programmi speciali o qualsiasi altra cosa che non faccia parte del programma regolare. Nei giorni senza adunanza, il timer inizia con una parte personalizzata per ogni sezione multimediale personalizzata.
 
 Il numero di parti, le durate modificate, le parti personalizzate e i tempi registrati vengono salvati per ciascun giorno, quindi restano anche dopo il riavvio di M³ e i tempi di un'adunanza non si mescolano mai con quelli di un'altra. I tempi registrati di un giorno possono essere cancellati in una volta sola con **Reimposta tutti i tempi per questo giorno**, e in qualsiasi momento puoi esportare un rapporto dei tempi in PDF.
