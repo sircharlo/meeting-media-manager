@@ -423,7 +423,7 @@
   "jwpub-file-unavailable-caption-cloud": "此文件存储在 {provider} 中，可能尚未下载到这台计算机。请在 {provider} 中将文件设为可离线使用，等待下载完成后再重新选择。或者将它复制到这台计算机上的某个文件夹（例如“下载”），然后从那里选择。",
   "jwpub-file-unavailable-caption-drive": "此文件位于无法访问的网络文件夹或可移动驱动器上。请确认驱动器已插入或网络文件夹已连接，然后重新选择该文件。或者将它复制到这台计算机上的某个文件夹（例如“下载”），然后从那里选择。",
   "jwpub-file-unavailable-caption-local": "此文件可能已被移动、重命名或删除，或者正被其他程序使用。请从文件当前所在的位置重新选择，或者将它复制到某个文件夹（例如“下载”），然后从那里选择。",
-  "jwpub-file-unavailable-caption-permission": "M³ doesn't have permission to open it where it's saved. Copy it to a folder on this computer, such as Downloads, and select it from there.",
+  "jwpub-file-unavailable-caption-permission": "M³ 没有权限在此文件的保存位置打开它。请将它复制到这台计算机上的某个文件夹（例如“下载”），然后从那里选择。",
   "jwpub-file-unavailable-caption-phone": "此文件位于你的手机上，但 Windows 无法从手机获取它。请确保手机已开机、已解锁并已连接到这台计算机，然后重新选择该文件。或者，更可靠的做法是将它复制到这台计算机上的某个文件夹（例如“下载”），然后从那里选择。",
   "jwpub-file-unavailable-message": "无法读取所选的 JWPUB 文件。",
   "jwpubNoMultimedia": "此 JWPUB 文件不包含任何多媒体",
