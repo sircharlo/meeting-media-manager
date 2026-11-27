@@ -6,7 +6,7 @@ describe('scrubUserPaths', () => {
   it('redacts the username in Windows home-directory paths', () => {
     expect(
       scrubUserPaths(
-        String.raw`ENOENT: no such file or directory, open 'C:\Users\Olivier\AppData\Roaming\Meeting Media Manager\cache\foo.json'`,
+        String.raw`ENOENT: no such file or directory, open 'C:\Users\Jane\AppData\Roaming\Meeting Media Manager\cache\foo.json'`,
       ),
     ).toBe(
       String.raw`ENOENT: no such file or directory, open 'C:\Users\<user>\AppData\Roaming\Meeting Media Manager\cache\foo.json'`,
@@ -16,7 +16,7 @@ describe('scrubUserPaths', () => {
   it('redacts the username in Windows file:// URLs (forward slashes)', () => {
     expect(
       scrubUserPaths(
-        'file:///C:/Users/Olivier/Desktop/MMM-Portable/resources/app.asar/index.html',
+        'file:///C:/Users/Jane/Desktop/MMM-Portable/resources/app.asar/index.html',
       ),
     ).toBe(
       'file:///C:/Users/<user>/Desktop/MMM-Portable/resources/app.asar/index.html',
@@ -25,12 +25,12 @@ describe('scrubUserPaths', () => {
 
   it('redacts the username in macOS home-directory paths', () => {
     expect(
-      scrubUserPaths('/Users/olivier/Library/Application Support/mmm/cache'),
+      scrubUserPaths('/Users/jane/Library/Application Support/mmm/cache'),
     ).toBe('/Users/<user>/Library/Application Support/mmm/cache');
   });
 
   it('redacts the username in Linux home-directory paths', () => {
-    expect(scrubUserPaths('/home/olivier/.config/mmm/cache')).toBe(
+    expect(scrubUserPaths('/home/jane/.config/mmm/cache')).toBe(
       '/home/<user>/.config/mmm/cache',
     );
   });
@@ -46,17 +46,17 @@ describe('scrubUserPaths', () => {
   // every backslash, and the username got through.
   it('redacts the username in Windows paths inside JSON strings', () => {
     const detail = JSON.stringify({
-      dir: 'C:/Users/Olivier/AppData/Local/Temp/MMM/Downloads/x',
-      message: String.raw`ENOENT: no such file or directory, stat 'C:\Users\Olivier\AppData\Local\Temp\MMM\Downloads\x'`,
+      dir: 'C:/Users/Jane/AppData/Local/Temp/MMM/Downloads/x',
+      message: String.raw`ENOENT: no such file or directory, stat 'C:\Users\Jane\AppData\Local\Temp\MMM\Downloads\x'`,
     });
     const scrubbed = scrubUserPaths(detail);
-    expect(scrubbed).not.toContain('Olivier');
+    expect(scrubbed).not.toContain('Jane');
     expect(JSON.parse(scrubbed)).toEqual({
       dir: 'C:/Users/<user>/AppData/Local/Temp/MMM/Downloads/x',
       message: String.raw`ENOENT: no such file or directory, stat 'C:\Users\<user>\AppData\Local\Temp\MMM\Downloads\x'`,
     });
     // Stringified twice: four backslashes.
-    expect(scrubUserPaths(JSON.stringify(detail))).not.toContain('Olivier');
+    expect(scrubUserPaths(JSON.stringify(detail))).not.toContain('Jane');
   });
 
   // A path that ends at the user's folder used to take the rest of the JSON
@@ -64,8 +64,8 @@ describe('scrubUserPaths', () => {
   it('keeps the rest of a JSON string after a path ending at the user folder', () => {
     const detail = JSON.stringify({
       cache: String.raw`D:\M3\cache`,
-      home: String.raw`C:\Users\Olivier`,
-      mac: '/Users/olivier',
+      home: String.raw`C:\Users\Jane`,
+      mac: '/Users/jane',
       next: 'kept',
     });
     expect(JSON.parse(scrubUserPaths(detail))).toEqual({
@@ -77,7 +77,7 @@ describe('scrubUserPaths', () => {
   });
 
   it('redacts Windows paths whatever their case', () => {
-    expect(scrubUserPaths(String.raw`c:\users\olivier\cache`)).toBe(
+    expect(scrubUserPaths(String.raw`c:\users\jane\cache`)).toBe(
       String.raw`c:\users\<user>\cache`,
     );
   });
@@ -85,7 +85,7 @@ describe('scrubUserPaths', () => {
   it('redacts every occurrence in a string with multiple paths', () => {
     expect(
       scrubUserPaths(
-        String.raw`rename 'C:\Users\Olivier\a\x.tmp' -> 'C:\Users\Olivier\a\x.exe'`,
+        String.raw`rename 'C:\Users\Jane\a\x.tmp' -> 'C:\Users\Jane\a\x.exe'`,
       ),
     ).toBe(
       String.raw`rename 'C:\Users\<user>\a\x.tmp' -> 'C:\Users\<user>\a\x.exe'`,
@@ -98,11 +98,11 @@ describe('scrubUserPathsDeep', () => {
     expect(
       scrubUserPathsDeep({
         breadcrumbs: [
-          { message: String.raw`C:\Users\Olivier\log.txt` },
+          { message: String.raw`C:\Users\Jane\log.txt` },
           { message: 'unrelated' },
         ],
         exception: {
-          values: [{ value: '/home/olivier/cache/foo.json' }],
+          values: [{ value: '/home/jane/cache/foo.json' }],
         },
       }),
     ).toEqual({

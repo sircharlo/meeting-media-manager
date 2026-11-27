@@ -916,12 +916,12 @@ describe('jw-media helpers', () => {
     const { stageUserJwpubForRead } = await import('../jw-media');
 
     await expect(
-      stageUserJwpubForRead(String.raw`D:\English\S-418mp-26_E_002.jwpub`),
-    ).resolves.toBe('/tmp/jwpub-import-uuid/S-418mp-26_E_002.jwpub');
+      stageUserJwpubForRead(String.raw`D:\Media\publication.jwpub`),
+    ).resolves.toBe('/tmp/jwpub-import-uuid/publication.jwpub');
 
     expect(copyMock).toHaveBeenCalledWith(
-      String.raw`D:\English\S-418mp-26_E_002.jwpub`,
-      '/tmp/jwpub-import-uuid/S-418mp-26_E_002.jwpub',
+      String.raw`D:\Media\publication.jwpub`,
+      '/tmp/jwpub-import-uuid/publication.jwpub',
     );
   });
 
@@ -933,7 +933,7 @@ describe('jw-media helpers', () => {
     const { stageUserJwpubForRead } = await import('../jw-media');
 
     await expect(
-      stageUserJwpubForRead(String.raw`D:\English\S-418mp-26_E_002.jwpub`),
+      stageUserJwpubForRead(String.raw`D:\Media\publication.jwpub`),
     ).resolves.toBeUndefined();
 
     expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
@@ -946,12 +946,12 @@ describe('jw-media helpers', () => {
   });
 
   it('says so with phone-specific advice when a jwpub on a phone shown by Windows Cross Device cannot be copied', async () => {
-    const phoneJwpub = String.raw`C:\Users\PC\CrossDevice\Redmi 12\storage\Download\S-34_T_029.jwpub`;
+    const phoneJwpub = String.raw`C:\Users\PC\CrossDevice\Phone\storage\Download\publication.jwpub`;
     // fs.copy crosses Electron's contextBridge, which strips `code` - only
     // the message survives (MMM-V2-3M1).
     copyMock.mockRejectedValue(
       new Error(
-        `UNKNOWN: unknown error, copyfile '${phoneJwpub}' -> 'C:\\temp\\S-34_T_029.jwpub'`,
+        `UNKNOWN: unknown error, copyfile '${phoneJwpub}' -> 'C:\\temp\\publication.jwpub'`,
       ),
     );
     vi.mocked(globalThis.electronApi.dirname).mockImplementation((path) =>
@@ -979,7 +979,7 @@ describe('jw-media helpers', () => {
     const { unzipJwpub } = await import('../jw-media');
 
     await expect(
-      unzipJwpub('/tmp/jwpub-import-uuid/S-418mp-26_E_002.jwpub', '/tmp/out'),
+      unzipJwpub('/tmp/jwpub-import-uuid/publication.jwpub', '/tmp/out'),
     ).rejects.toMatchObject({ code: 'ENOENT' });
 
     expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
@@ -1232,7 +1232,7 @@ describe('jw-media helpers', () => {
       enableFolderWatcher: true,
       // A Google Drive Stream-style virtual drive letter can briefly
       // unmount, making even the drive root fail recursive mkdir.
-      folderToWatch: String.raw`H:\Meu Drive\MIDIAS Cong Leste`,
+      folderToWatch: String.raw`H:\Meu Drive\Media`,
     };
     currentStateStore.getMeetingType.mockReturnValue('we');
     formatDateMock.mockReturnValue('2026-06-14');
