@@ -10,7 +10,7 @@
 
 - ✨ **电视上的 Zoom**：现在每次聚会前，M³ 都会询问当天是否有人会通过 Zoom 负责节目（周末聚会则询问讲者是否会通过 Zoom 演讲）。如果有，它会帮助你在电视上准备好 Zoom 窗口，以便轮到这些人负责节目时，王国聚会所里的所有人都能看到他们：它会暂时隐藏媒体窗口，让你检查 Zoom 窗口是否在电视上并占满整个屏幕；如果没有，会告诉你如何设为全屏；接着在 Zoom 窗口上方重新显示媒体窗口，指出需要显示 Zoom 窗口时用来隐藏和显示媒体窗口的按钮，最后在一切准备就绪时告诉你。开启 Zoom 会议管理器后，M³ 还会自己把 Zoom 的第二个窗口移到电视上并全屏显示。如果不想再看到这个问题，请选择**不再询问**，或在“设置”的“会众聚会”部分关闭**协助为远程参与者设置 Zoom**。
 - ✨ **聚会前检查诗歌**：现在，在聚会当天，M³ 会在媒体准备好后检查当天的诗歌，并在诗歌每次变动时再次检查，直到聚会开始。如果某首诗歌在聚会中出现了不止一次，如果周末聚会还没有公众演讲的诗歌，或者在分区监督探访期间，他演讲之后的诗歌还没有添加，M³ 会在覆盖整个窗口的画面上提示。在那里，**带我看看**会跳到该诗歌，**这是有意的**和**本周没有公众演讲**会让它当天不再询问这件事，**添加诗歌**会为聚会的那个部分打开诗歌选择器。即使聚会已经开始，这个画面也会一直显示，直到你作出回应。选择**稍后**后，如果仍有问题没有解决，它会在聚会开始前 5 分钟再询问一次。现在，添加聚会中已有的诗歌时会先询问，而且关于诗歌重复出现的提醒现在也会在周中聚会显示。
-- ✨ **Counsel Timer**: A new setting, **Time counsel separately**, times the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own, listed under the part it follows. **Next part** goes from the student's part to the counsel, then on to the next part, so the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own. The meeting's schedule, planned start times and ahead/behind indicator stay the same. It's off by default, under Meeting Timer in Settings.
+- ✨ **建议计时器**：新设置 **单独计时建议** 会把经文朗读和“用心准备传道工作”每个节目之后的一分钟建议作为单独的节目计时，并列在它之前的节目下面。**下一个节目**会从学生的节目转到建议，然后再转到下一个节目，这样主席可以看到这一分钟还剩多少时间，而学生自己的时间仍会记录在计时报告中，建议在报告中单独占一行。聚会的时间安排、计划开始时间以及超前或落后指示都保持不变。此设置默认关闭，位于“设置”的“聚会计时器”下。
 
 ## v26.11.5
 
