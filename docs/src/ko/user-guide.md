@@ -154,6 +154,10 @@ M³에 누락된 미디어가 있다고 표시되면 먼저 해당 항목이 집
 
 작업 아일랜드의 타이머 팝업에는 선택한 날짜의 집회 파트가 나열됩니다. 평일 집회의 경우 ‘야외 봉사에 힘쓰십시오’와 ‘그리스도인 생활’의 파트가 각각 몇 개인지 선택하십시오. 섹션의 시간이 균등하게 나뉘며, 이후 **+** 및 **−** 버튼을 사용하거나 파트를 클릭하여 각 파트의 시간을 자유롭게 조정할 수 있습니다. 모든 파트는 원하는 시간(분)으로 설정할 수 있으며, 0분으로 설정하면 해당 파트를 건너뜁니다. 파트 시간의 합계가 섹션에 배정된 시간과 맞지 않으면 경고 아이콘이 표시되지만, 자동으로 무언가를 변경하지는 않습니다.
 
+If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+
+With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+
 중앙장로회 최신 소식, 특별 프로그램 등 정규 일정에 없는 내용을 위해 어느 날이든 **사용자 지정 파트**를 추가할 수 있습니다. 집회가 없는 날에는 사용자 지정 미디어 섹션마다 사용자 지정 파트가 하나씩 있는 상태로 타이머가 시작됩니다.
 
 파트 수, 변경한 시간, 사용자 지정 파트, 기록된 시간은 날짜별로 저장되므로 M³를 다시 시작해도 유지되며, 한 집회의 시간 기록이 다른 집회와 섞이지 않습니다. **이 날의 모든 시간 기록 초기화**를 사용하면 해당 날짜에 기록된 시간을 한 번에 지울 수 있으며, PDF 시간 보고서는 언제든지 내보낼 수 있습니다.
