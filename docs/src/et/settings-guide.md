@@ -493,6 +493,16 @@ Vali, kuidas põhiaknast taimerini jõuda:
 - **Kiirjuhtnupud taimeri nupu kohal hõljumisel**: kui viid hiirekursori tegevussaare taimerinupu kohale, näed ajastatavat osa ning nuppe Käivita, Paus, Peata ja Järgmine osa, ilma et peaksid avama kogu taimeri hüpikakna. Vaikimisi sisse lülitatud.
 - **Näita põhiaknas taimeripaneeli**: hoiab kogu koosoleku osade loendi ja taimeri juhtnupud põhiakna paremasse serva kinnitatud paneelil alati nähtaval. Akna- ja kuvaseadete jaoks jääb täielik hüpikaken tegevussaarelt endiselt kättesaadavaks.
 
+### Time Counsel Separately {#timer-separate-counsel}
+
+<!-- **Setting**: `timerSeparateCounsel` -->
+
+Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+
+The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+
+**Vaikimisi**: `väljas`
+
 ### Taimeri kaugkuva {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->
