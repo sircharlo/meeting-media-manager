@@ -89,6 +89,17 @@ describe('SettingsPinGate', () => {
     expect(useCurrentStateStore().settingsLocked).toBe(true);
   });
 
+  it('tints only the PIN box, not the strip under it for the error message', async () => {
+    mountGate();
+
+    await failOnce();
+
+    expect(wrapper.find('.q-field').classes()).not.toContain('bg-accent-100');
+    expect(wrapper.find('.q-field__control').classes()).toContain(
+      'bg-accent-100',
+    );
+  });
+
   it('only offers resetting the PIN after three wrong tries', async () => {
     mountGate();
     expect(wrapper.text()).not.toContain(FORGOT);

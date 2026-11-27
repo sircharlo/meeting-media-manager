@@ -16,7 +16,7 @@
           v-model="pin"
           autocomplete="off"
           autofocus
-          class="bg-accent-100"
+          bg-color="accent-100"
           dense
           :error="wrongPin"
           :error-message="t('settings-pin-wrong')"

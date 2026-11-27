@@ -55,7 +55,8 @@
           v-model="newPin"
           autocomplete="off"
           autofocus
-          class="bg-accent-100 q-mb-sm"
+          bg-color="accent-100"
+          class="q-mb-sm"
           dense
           :error="submitted && !isValidSettingsPin(newPin)"
           :error-message="t('settings-pin-format')"
@@ -68,7 +69,7 @@
         <q-input
           v-model="repeatPin"
           autocomplete="off"
-          class="bg-accent-100"
+          bg-color="accent-100"
           dense
           :error="submitted && newPin !== repeatPin"
           :error-message="t('settings-pin-mismatch')"

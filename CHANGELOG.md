@@ -39,6 +39,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **OBS Studio**: After you switch to another scene collection in OBS Studio, the OBS Studio popup now lists that collection's scenes, instead of still listing the previous collection's scenes, which OBS Studio could no longer switch to.
 - 🐞 **JWPUB Files**: When M³ isn't allowed to open a JWPUB file where it's saved, for example because of the folder's or drive's permissions, it now says so and suggests copying the file to a folder such as Downloads, instead of only saying the file couldn't be processed.
 - 🐞 **Custom Background**: When a JWPUB file chosen for a custom background can't be read, the window for choosing its image now closes after the message saying why, instead of staying open and loading.
+- 🐞 **PIN Fields**: The fields for entering a PIN (to unlock Settings, set or reset the PIN, or delete a profile) and the duration field when editing a meeting part no longer have a colored band under them, around the space for their message. Only the field itself is colored now, and the message shows under it.
 
 ## v26.11.5
 

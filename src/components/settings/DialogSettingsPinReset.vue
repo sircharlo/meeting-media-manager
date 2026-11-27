@@ -29,7 +29,7 @@
       <q-input
         v-model="enteredCode"
         autocomplete="off"
-        class="bg-accent-100"
+        bg-color="accent-100"
         dense
         :error="wrongCode"
         :error-message="t('settings-pin-reset-code-wrong')"
