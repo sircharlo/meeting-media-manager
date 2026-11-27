@@ -493,6 +493,16 @@ Legen Sie fest, wie der Timer vom Hauptfenster aus erreichbar ist:
 - **Schnellsteuerung beim Zeigen auf die Timer-Schaltfläche**: Wenn Sie mit der Maus auf die Timer-Schaltfläche der Aktionsinsel zeigen, werden der aktuell gemessene Programmpunkt und die Schaltflächen Start, Pause, Stopp und Nächster Teil angezeigt, ohne dass das vollständige Timer-Popup geöffnet wird. Standardmäßig aktiviert.
 - **Timer-Bereich im Hauptfenster anzeigen**: Zeigt die gesamte Liste der Programmpunkte und die Timer-Steuerung in einem am rechten Rand des Hauptfensters angedockten Bedienfeld an, sodass sie immer sichtbar sind. Das vollständige Popup bleibt für die Fenster- und Anzeigeeinstellungen über die Aktionsinsel erreichbar.
 
+### Time Counsel Separately {#timer-separate-counsel}
+
+<!-- **Setting**: `timerSeparateCounsel` -->
+
+Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+
+The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+
+**Standard**: `false`
+
 ### Timer-Fernanzeige {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->
