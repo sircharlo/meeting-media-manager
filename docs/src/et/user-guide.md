@@ -154,9 +154,9 @@ Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
 
 Tegevussaare taimeri hüpikaken loetleb valitud päeva koosoleku osad. Nädalasisese koosoleku puhul vali, mitu osa on jaotistes „Valmistume kuulutustööks“ ja „Kristlik eluviis“; jaotise minutid jagatakse osade vahel võrdselt ning seejärel saab iga osa vabalt muuta nuppudega **+** ja **−** või osal klõpsates. Iga osa võib seada mis tahes arvule minutitele, ka 0-le, et see vahele jätta. Hoiatusikoon näitab jaotisi, mille osade kestus ei klapi neile eraldatud ajaga, kuid ise ei muuda see kunagi midagi.
 
-If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+Kui nädalasisese koosoleku osa käivitamisel pole osade arvu veel valitud, küsib M³ seda kõigepealt, iga koosoleku kohta üks kord. Osa aega mõõdetakse alates selle käivitamise hetkest, ka siis, kui M³ küsib.
 
-With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+Kui [**Ajasta nõuanded eraldi**](/settings-guide#timer-separate-counsel) on sisse lülitatud, on Piibli lugemise ja iga „Valmistume kuulutustööks” osa järel antavate nõuannete minut loetletud selle osa all ja seda ajastatakse eraldi, et juhataja näeks, kui palju on veel jäänud.
 
 **Kohandatud osi** saab lisada igal päeval – juhtiva kogu teadeteks, eriprogrammideks või millekski muuks, mida tavapärases ajakavas pole. Päevadel, mil koosolekut pole, alustab taimer iga kohandatud meediajaotise kohta ühe kohandatud osaga.
 

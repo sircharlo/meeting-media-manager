@@ -493,13 +493,13 @@ Izberi, kako dostopaš do časovnika iz glavnega okna:
 - **Hitre kontrole, ko se z miško ustaviš na gumbu časovnika**: ko se z miško ustaviš na gumbu časovnika v orodni vrstici, se prikaže točka, ki se trenutno meri, skupaj z gumbi Začni, Premor, Ustavi in Naslednja točka — brez odpiranja celotnega pojavnega okna časovnika. Ta možnost je privzeto vklopljena.
 - **Prikaži časovni panel v glavnem oknu**: ohrani celoten seznam točk shoda in kontrole časovnika v panelu, pripetem na desni strani glavnega okna, vedno viden. Celotno pojavno okno ostane na voljo v orodni vrstici za nastavitve okna in prikaza.
 
-### Time Counsel Separately {#timer-separate-counsel}
+### Ločeno meri čas za nasvete {#timer-separate-counsel}
 
 <!-- **Setting**: `timerSeparateCounsel` -->
 
-Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+Minuto nasvetov po branju Svetega pisma in vsaki točki v delu Izurimo se v oznanjevanju meri kot samostojno točko. Nasveti so navedeni pod točko, ki ji sledijo, gumb **Naslednja točka** pa preide z učenčeve točke na nasvete in nato na naslednjo točko. Tako predsedujoči vidi, koliko minute je še ostalo, čas samega učenca pa se še vedno beleži za poročilo o časovnem poteku, kjer imajo nasveti svojo vrstico.
 
-The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+Nasveti vedno trajajo eno minuto. Razpored shoda, načrtovani začetki točk in prikaz, ali je shod pred časovnim načrtom ali za njim, ostanejo enaki kot pri izklopljeni nastavitvi.
 
 **Privzeto**: `false`
 

@@ -154,9 +154,9 @@ O temporizador é um recurso beta e só deve ser usado quando aprovado localment
 
 O pop-up do temporizador na barra de ações lista as partes da reunião do dia selecionado. Nas reuniões do meio de semana, escolha quantas partes de Faça Seu Melhor no Ministério e de Nossa Vida Cristã há; os minutos da seção são divididos igualmente, e depois cada parte pode ser ajustada livremente com os botões **+** e **−** ou clicando na parte. Qualquer parte pode ter qualquer número de minutos, inclusive 0 para pulá-la. Um ícone de aviso indica as seções cujas partes não somam o tempo reservado para elas, mas nunca altera nada por conta própria.
 
-If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+Se o número de partes ainda não tiver sido escolhido quando uma parte da reunião do meio de semana for iniciada, o M³ pergunta primeiro, uma vez para cada reunião. A parte é cronometrada a partir do momento em que foi iniciada, mesmo enquanto o M³ pergunta.
 
-With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+Com [**Cronometrar o conselho separadamente**](/settings-guide#timer-separate-counsel) ativado, o minuto de conselho depois da Leitura da Bíblia e de cada parte de Faça Seu Melhor no Ministério aparece abaixo dessa parte e é cronometrado separadamente, para que o presidente veja quanto ainda resta.
 
 **Partes personalizadas** podem ser adicionadas em qualquer dia, para informativos do Corpo Governante, programas especiais ou qualquer outra coisa que não esteja na programação normal. Nos dias sem reunião, o temporizador começa com uma parte personalizada para cada seção de mídia personalizada.
 

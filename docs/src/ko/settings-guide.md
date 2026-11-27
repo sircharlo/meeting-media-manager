@@ -493,13 +493,13 @@ M³는 공유 폴더 안에 예정된 집회마다 폴더를 만들고, 집회 �
 - **타이머 버튼에 마우스를 올리면 빠른 제어 표시**: 작업 아일랜드의 타이머 버튼에 마우스를 올리면 전체 타이머 팝업을 열지 않아도 시간을 측정 중인 파트와 함께 ‘시작’, ‘일시 정지’, ‘중지’, ‘다음 파트’ 버튼이 표시됩니다. 기본적으로 켜져 있습니다.
 - **메인 창에 타이머 패널 표시**: 전체 집회 파트 목록과 타이머 제어를 메인 창 오른쪽에 고정된 패널에 항상 보이도록 표시합니다. 창 및 디스플레이 설정에 필요한 전체 팝업은 작업 아일랜드에서 계속 사용할 수 있습니다.
 
-### Time Counsel Separately {#timer-separate-counsel}
+### 조언 시간 따로 측정 {#timer-separate-counsel}
 
 <!-- **Setting**: `timerSeparateCounsel` -->
 
-Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+성경 낭독과 각 야외 봉사에 힘쓰십시오 파트 후의 1분간의 조언을 별도의 파트로 측정합니다. 조언은 앞의 파트 아래에 표시되며, **다음 파트**를 누르면 학생의 파트에서 조언으로, 그다음 파트로 넘어갑니다. 이렇게 하면 사회자는 1분 중 남은 시간을 알 수 있고, 학생의 시간은 계속 시간 보고서에 기록되며, 보고서에서 조언은 별도의 줄로 표시됩니다.
 
-The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+조언은 항상 1분입니다. 집회 일정, 예정 시작 시간, 일정보다 앞서거나 늦어지는지 알려 주는 표시는 이 설정을 끈 경우와 같습니다.
 
 **기본값**: `false`
 

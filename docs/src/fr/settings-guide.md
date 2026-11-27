@@ -493,13 +493,13 @@ Choisissez comment accéder au minuteur depuis la fenêtre principale :
 - **Commandes rapides lors du survol du bouton du minuteur** : au survol du bouton du minuteur dans l'îlot d'actions, la partie en cours de chronométrage s'affiche avec les boutons « Démarrer », « Mettre en pause », « Arrêter » et « Partie suivante », sans ouvrir la fenêtre contextuelle complète du minuteur. Option activée par défaut.
 - **Afficher un panneau du minuteur dans la fenêtre principale** : garde la liste complète des parties de la réunion et les commandes du minuteur toujours visibles, dans un panneau ancré sur le côté droit de la fenêtre principale. La fenêtre contextuelle complète reste accessible depuis l'îlot d'actions pour les paramètres de la fenêtre et de l'affichage.
 
-### Time Counsel Separately {#timer-separate-counsel}
+### Chronométrer les conseils à part {#timer-separate-counsel}
 
 <!-- **Setting**: `timerSeparateCounsel` -->
 
-Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+Chronométrer comme une partie à part entière la minute de conseils qui suit la lecture de la Bible et chaque partie de la section « Applique-toi au ministère ». Elle apparaît sous la partie qu'elle suit, et **Partie suivante** passe de la partie de l'élève aux conseils, puis à la partie suivante. Ainsi, le président peut voir combien de temps il lui reste, tandis que le temps de l'élève est toujours enregistré pour le rapport de chronométrage, où les conseils ont leur propre ligne.
 
-The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+Les conseils durent toujours une minute. L'horaire de la réunion, les heures de début prévues et l'indicateur d'avance ou de retard restent les mêmes que lorsque ce paramètre est désactivé.
 
 **Par défaut** : `faux`
 

@@ -493,13 +493,13 @@ A fa’anaho i te huru o te ha’amāramarama tāime: ia ’īrava ’ōpani-’
 - **Faatere oioi ia tuuhia te tautai i nia i te pitopito taime**: ’ia tu’u ’oe i te ’iore i ni’a i te pitopito fa’atere-hora i ni’a i te motu ha’atere, e fa’aitehia te tuha’a e fāitohia ra, ’e te mau pitopito ’A ha’amata, ’A fa’ataime, ’A fa’aoti ’e Tuhaa i mua nei, ma te ’ore e ’iriti i te ha’amāramarama iti tā’āto’a o te fa’atere-hora. Ua fa’atupuhia mai te mātauhia.
 - **A faaite i te matini taime i roto i te haamaramarama matamua**: e vaiiho i te tāpura tā’āto’a o te mau tuha’a o te putuputura’a ’e te mau pitopito fa’atere-hora i roto i te hō’ē ’api i tāpirihia i te pae ’atau o te ha’amāramarama matamua, e ’itehia noa. E vai noa te ha’amāramarama iti tā’āto’a i ni’a i te motu ha’atere nō te mau fa’anahora’a o te ha’amāramarama ’e o te fa’aitera’a.
 
-### Time Counsel Separately {#timer-separate-counsel}
+### E fāito ta’a ’ē i te taime o te a’o {#timer-separate-counsel}
 
 <!-- **Setting**: `timerSeparateCounsel` -->
 
-Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+E fāito mai te hō’ē tuha’a ta’a ’ē i te hō’ē minuti a’o i muri a’e i te Tai’ora’a Bibilia ’e i te tuha’a tāta’itahi o A rave maite i ta oe taviniraa. E fa’a’itehia te a’o i raro a’e i te tuha’a nā mua iho, ’e e haere **Tuhaa i mua nei** mai te tuha’a a te pīahi i te a’o, i muri iho i te tuha’a i muri mai. Nā reira, e ’ite te ti’a’au e ehia te taime e toe ra i roto i te minuti, ’e e tāpa’ohia noa te taime o te pīahi iho nō te tāpura taime, i reira te a’o e fa’a’itehia ai i ni’a i tōna iho rēni.
 
-The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+Hō’ē noa minuti te a’o i te mau taime ato’a. E vai noa te fa’anahora’a o te putuputura’a, te mau taime ha’amatara’a i fa’ahorohia ’e te tāpa’o e fa’a’ite ra e nā mua ’aore ra nā muri te putuputura’a i te taime, mai te huru ’ia tāpūhia teie fa’anahora’a.
 
 **Fa’anahora’a tumu**: `false`
 
