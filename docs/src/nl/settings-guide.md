@@ -493,13 +493,13 @@ Kies hoe je de timer vanuit het hoofdvenster bereikt:
 - **Snelle bediening bij aanwijzen van de timerknop**: als je de muisaanwijzer op de timerknop op de actiebalk houdt, zie je het onderdeel dat getimed wordt, met de knoppen Starten, Pauzeren, Stop en Volgend onderdeel, zonder het volledige pop-upvenster van de timer te openen. Standaard ingeschakeld.
 - **Een timerpaneel tonen in het hoofdvenster**: houdt de hele lijst met vergaderonderdelen en de timerbediening altijd in beeld, in een paneel dat rechts in het hoofdvenster is vastgezet. Het volledige pop-upvenster blijft via de actiebalk beschikbaar voor de instellingen van het venster en de weergave.
 
-### Time Counsel Separately {#timer-separate-counsel}
+### Raad apart timen {#timer-separate-counsel}
 
 <!-- **Setting**: `timerSeparateCounsel` -->
 
-Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+Time de minuut raad na het bijbellezen en elk onderdeel bij Leg je toe op de velddienst als een apart onderdeel. De raad staat onder het onderdeel waarop hij volgt, en **Volgend onderdeel** gaat van het onderdeel van de leerling naar de raad en dan naar het volgende onderdeel. Zo kan de voorzitter zien hoeveel van de minuut er nog over is, terwijl de tijd van de leerling zelf nog steeds wordt vastgelegd voor het tijdrapport, waarin de raad een eigen regel krijgt.
 
-The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+De raad duurt altijd één minuut. Het schema van de vergadering, de geplande begintijden en de indicator voor voor- of achterstand blijven hetzelfde als wanneer deze instelling uit staat.
 
 **Standaard**: `false`
 
