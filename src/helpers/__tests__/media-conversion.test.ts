@@ -119,12 +119,20 @@ const wait = (ms: number) =>
     setTimeout(resolve, ms);
   });
 
-/** Lets the queue run to its end. */
+/**
+ * Lets the queue run to its end. A job waiting for its file to stop playing
+ * looks again only every second (MOVE_RETRY_DELAY_MS), as long as
+ * vi.waitFor's default timeout, so a busy test run could give up just before
+ * the job finished: allow more than that.
+ */
 const settle = async () => {
   const { useMediaConversionStore } = await import('stores/media-conversion');
-  await vi.waitFor(() => {
-    expect(useMediaConversionStore().activeJobs).toHaveLength(0);
-  });
+  await vi.waitFor(
+    () => {
+      expect(useMediaConversionStore().activeJobs).toHaveLength(0);
+    },
+    { timeout: 5000 },
+  );
 };
 
 describe('media-conversion', () => {
