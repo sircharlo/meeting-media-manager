@@ -73,6 +73,8 @@ const notifyParticipantSpeaking = (name: string) => {
     message: t('zoom-hand-unmuted', { name }),
     timeout: 0,
     type: 'info',
+    // The meeting can't wait for a screen over the window to close.
+    urgent: true,
   });
 };
 
@@ -152,6 +154,8 @@ const notifyHandRaised = (name: string) => {
     // Stays until the operator acts or the hand goes down.
     timeout: 0,
     type: 'warning',
+    // The meeting can't wait for a screen over the window to close.
+    urgent: true,
   });
   if (dismiss) pendingHandNotifications.set(name, dismiss);
 };

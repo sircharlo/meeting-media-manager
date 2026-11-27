@@ -6,11 +6,12 @@ import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plug
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
 import { __testables } from 'src/helpers/zoom-display-setup';
-import { useAttentionStore } from 'stores/attention';
+import { SCREEN_PRIORITY, useAttentionStore } from 'stores/attention';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useDialogStateStore } from 'stores/dialog-state';
 import { useZoomDisplaySetupStore } from 'stores/zoom-display-setup';
+import { useZoomStateStore } from 'stores/zoom-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 
@@ -177,6 +178,9 @@ beforeEach(() => {
   store().endTour();
   useDialogStateStore().closeAllDialogs();
   useAttentionStore().claims.clear();
+  useAttentionStore().keptPlaces.clear();
+  useAttentionStore().waiting.clear();
+  useZoomStateStore().checkRunning = false;
   useCurrentStateStore().congregationSwitcherOpen = false;
   useCurrentStateStore().currentCongregation = '';
   useCurrentStateStore().mediaWindowVisible = true;
@@ -238,6 +242,49 @@ describe('DialogZoomDisplaySetup: when it asks', () => {
     await mountSetup(options);
     await wait(FIRST_TRY_MS + TRY_INTERVAL_MS);
     expect(store().meeting).toBeNull();
+  });
+
+  // Today's song check, and what else comes after it, waits for it.
+  it('keeps its place from the start until it asks', async () => {
+    const attention = useAttentionStore();
+    await mountSetup();
+    expect(attention.isPlaceKept('zoom-display-question')).toBe(true);
+    const opened: string[] = [];
+    attention.request('meeting-song-check', {
+      open: () => {
+        opened.push('song check');
+        return false;
+      },
+      priority: SCREEN_PRIORITY.meetingSongCheck,
+    });
+    expect(opened).toEqual([]);
+
+    await wait(FIRST_TRY_MS);
+
+    expect(store().meeting).toBe('mw');
+    expect(attention.isPlaceKept('zoom-display-question')).toBe(false);
+  });
+
+  it('keeps no place without a TV for the media window', async () => {
+    zoom.mediaOnItsOwnScreen = false;
+    await askQuestion();
+
+    expect(useAttentionStore().isPlaceKept('zoom-display-question')).toBe(
+      false,
+    );
+  });
+
+  it('asks as soon as the Zoom check is over, not at its next try', async () => {
+    useZoomStateStore().checkRunning = true;
+    await mountSetup();
+    await wait(FIRST_TRY_MS);
+    expect(store().meeting).toBeNull();
+    expect(useAttentionStore().isPlaceKept('zoom-display-question')).toBe(true);
+
+    useZoomStateStore().checkRunning = false;
+    await wait(0);
+
+    expect(store().meeting).toBe('mw');
   });
 
   it('never asks without a TV for the media window', async () => {

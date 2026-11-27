@@ -200,6 +200,7 @@ const logPrefixes = {
   mediaSections: '🗂️ Media Sections',
   migrations: '🧱 Migrations',
   mwMedia: '🌅 Midweek Meeting Media',
+  notifications: '🔔 Notifications',
   obs: '📡 OBS',
   publicationMedia: '📰 Publication Media',
   recording: '🔴 Recording',

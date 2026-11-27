@@ -67,7 +67,8 @@ const step = defineModel<null | number>('step', { required: true });
 
 const { t } = useI18n();
 
-useScreenClaim(props.name, () => step.value !== null);
+// Over the whole window: notifications wait for it too.
+useScreenClaim(props.name, () => step.value !== null, { takeover: true });
 
 const currentStep = computed(() =>
   step.value === null ? null : (props.steps[step.value] ?? null),

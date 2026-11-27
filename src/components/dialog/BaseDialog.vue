@@ -79,12 +79,16 @@ const handleHide = () => {
   emit('hide');
 };
 
-// Watch for changes in the dialog state and update the store
+// Watch for changes in the dialog state and update the store. A maximized
+// one covers the whole window (today's song check, the Zoom screens):
+// notifications wait for it.
 watch(
   () => props.modelValue,
   (newValue) => {
     if (newValue) {
-      dialogStore.openDialog(props.dialogId, 'BaseDialog');
+      dialogStore.openDialog(props.dialogId, 'BaseDialog', undefined, {
+        takeover: props.maximized,
+      });
     } else {
       dialogStore.closeDialog(props.dialogId);
     }

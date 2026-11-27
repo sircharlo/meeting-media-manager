@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick, reactive } from 'vue';
 
 const mocks = vi.hoisted(() => ({
+  attention: { holdsNotifications: false },
   dialogState: { isAnyDialogOpen: false },
   errorCatcher: vi.fn(),
   getLowDiskSpaceStatus: vi.fn(async () => false),
@@ -11,6 +12,7 @@ const mocks = vi.hoisted(() => ({
     vi.fn(),
   ),
   tMock: vi.fn((key: string) => key),
+  useAttentionStore: vi.fn(),
   useDialogStateStore: vi.fn(),
 }));
 
@@ -31,7 +33,18 @@ vi.mock('stores/dialog-state', () => ({
   useDialogStateStore: mocks.useDialogStateStore,
 }));
 
+vi.mock('stores/attention', () => ({
+  useAttentionStore: mocks.useAttentionStore,
+}));
+
+// Pinia is up, as in the app: the stores above stand in for it.
+vi.mock('pinia', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  getActivePinia: () => ({}),
+}));
+
 beforeEach(() => {
+  mocks.useAttentionStore.mockImplementation(() => mocks.attention);
   mocks.useDialogStateStore.mockImplementation(() => mocks.dialogState);
 });
 
@@ -244,6 +257,7 @@ describe('createTemporaryNotification', () => {
     vi.resetModules();
     vi.clearAllMocks();
     vi.useFakeTimers();
+    mocks.attention = { holdsNotifications: false };
     mocks.dialogState = { isAnyDialogOpen: false };
     mocks.notifyCreate.mockImplementation(() => vi.fn());
   });
@@ -460,7 +474,7 @@ describe('createTemporaryNotification', () => {
       message: 'later',
     });
 
-    expect(dismiss).toBeUndefined();
+    expect(dismiss).toBeTypeOf('function');
     expect(mocks.notifyCreate).not.toHaveBeenCalled();
 
     dialogState.isAnyDialogOpen = false;
@@ -485,5 +499,158 @@ describe('createTemporaryNotification', () => {
     createTemporaryNotification({ message: 'now' });
 
     expect(mocks.notifyCreate).toHaveBeenCalledOnce();
+  });
+
+  describe('while a screen covers the window', () => {
+    // Today's song check, the Zoom screens, a tour (see the attention store).
+    const coverWindow = () => {
+      const attention = reactive({ holdsNotifications: true });
+      mocks.attention = attention;
+      return async () => {
+        attention.holdsNotifications = false;
+        await nextTick();
+      };
+    };
+
+    it('holds a notification until that screen closes', async () => {
+      const uncover = coverWindow();
+      const { createTemporaryNotification } = await import('../notifications');
+
+      const handle = createTemporaryNotification({ message: 'muted' });
+
+      expect(handle).toBeTypeOf('function');
+      expect(mocks.notifyCreate).not.toHaveBeenCalled();
+
+      await uncover();
+
+      expect(mocks.notifyCreate).toHaveBeenCalledOnce();
+      expect(lastNotifyOptions()).toMatchObject({ message: 'muted' });
+    });
+
+    it('shows them in the order they came', async () => {
+      const uncover = coverWindow();
+      const { createTemporaryNotification } = await import('../notifications');
+
+      createTemporaryNotification({ message: 'first', type: 'warning' });
+      createTemporaryNotification({ message: 'second', type: 'negative' });
+      await uncover();
+
+      expect(
+        mocks.notifyCreate.mock.calls.map(
+          ([options]) => (options as { message: string }).message,
+        ),
+      ).toEqual(['first', 'second']);
+    });
+
+    it('still waits for dialogs when the notification asks to', async () => {
+      const uncover = coverWindow();
+      const dialogState = reactive({ isAnyDialogOpen: true });
+      mocks.dialogState = dialogState;
+      const { createTemporaryNotification } = await import('../notifications');
+
+      createTemporaryNotification({ deferWhileDialogOpen: true, message: 'x' });
+      await uncover();
+      expect(mocks.notifyCreate).not.toHaveBeenCalled();
+
+      dialogState.isAnyDialogOpen = false;
+      await nextTick();
+      expect(mocks.notifyCreate).toHaveBeenCalledOnce();
+    });
+
+    it('shows an urgent one at once, marked to stay on top', async () => {
+      coverWindow();
+      const { createTemporaryNotification } = await import('../notifications');
+
+      const handle = createTemporaryNotification({
+        classes: 'extra',
+        message: 'A hand is raised',
+        urgent: true,
+      });
+
+      expect(handle).toBe(mocks.notifyCreate.mock.results[0]?.value);
+      expect(lastNotifyOptions()).toMatchObject({
+        classes: 'extra notify-urgent',
+      });
+    });
+
+    it.each(['info', 'positive'] as const)(
+      'drops a %s message that waited more than a minute, out of date by then',
+      async (type) => {
+        const uncover = coverWindow();
+        const onDismiss = vi.fn();
+        const { createTemporaryNotification } =
+          await import('../notifications');
+
+        createTemporaryNotification({ message: 'muted', onDismiss, type });
+        vi.advanceTimersByTime(61_000);
+        await uncover();
+
+        expect(mocks.notifyCreate).not.toHaveBeenCalled();
+        expect(onDismiss).toHaveBeenCalledOnce();
+      },
+    );
+
+    it.each([
+      { message: 'a warning', type: 'warning' },
+      { message: 'an error', type: 'negative' },
+      { message: 'stays until closed', timeout: 0, type: 'info' },
+      { deferWhileDialogOpen: true, message: 'asked to wait', type: 'info' },
+    ] as const)('shows $message however long it waited', async (props) => {
+      const uncover = coverWindow();
+      const { createTemporaryNotification } = await import('../notifications');
+
+      createTemporaryNotification(props);
+      vi.advanceTimersByTime(10 * 60_000);
+      await uncover();
+
+      expect(mocks.notifyCreate).toHaveBeenCalledOnce();
+    });
+
+    it('never shows one closed while it waited', async () => {
+      const uncover = coverWindow();
+      const onDismiss = vi.fn();
+      const { createTemporaryNotification } = await import('../notifications');
+
+      const handle = createTemporaryNotification({ message: 'x', onDismiss });
+      handle?.();
+      await uncover();
+
+      expect(mocks.notifyCreate).not.toHaveBeenCalled();
+      expect(onDismiss).toHaveBeenCalledOnce();
+    });
+
+    it('shows one updated while it waited as updated, and its handle then works on it', async () => {
+      const uncover = coverWindow();
+      const shown = vi.fn();
+      mocks.notifyCreate.mockImplementationOnce(() => shown);
+      const { createTemporaryNotification } = await import('../notifications');
+
+      const handle = createTemporaryNotification({
+        message: '1 file',
+        timeout: 0,
+        type: 'warning',
+      });
+      handle?.({ message: '2 files' });
+      await uncover();
+
+      expect(lastNotifyOptions()).toMatchObject({ message: '2 files' });
+
+      handle?.();
+      expect(shown).toHaveBeenCalledWith(undefined);
+    });
+
+    it('lets dismissAllTemporaryNotifications drop the waiting ones, except protected ones', async () => {
+      const uncover = coverWindow();
+      const { createTemporaryNotification, dismissAllTemporaryNotifications } =
+        await import('../notifications');
+
+      createTemporaryNotification({ message: 'old profile' });
+      createTemporaryNotification({ message: 'updater', protect: true });
+      dismissAllTemporaryNotifications();
+      await uncover();
+
+      expect(mocks.notifyCreate).toHaveBeenCalledOnce();
+      expect(lastNotifyOptions()).toMatchObject({ message: 'updater' });
+    });
   });
 });

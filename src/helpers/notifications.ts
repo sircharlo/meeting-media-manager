@@ -1,11 +1,18 @@
 import { i18n } from 'boot/i18n';
-import { Notify, type QNotifyCreateOptions } from 'quasar';
+import { getActivePinia } from 'pinia';
+import {
+  Notify,
+  type QNotifyCreateOptions,
+  type QNotifyUpdateOptions,
+} from 'quasar';
 import {
   errorCatcher,
   markUserWarnedAboutDiskSpace,
 } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
+import { useAttentionStore } from 'stores/attention';
 import { useDialogStateStore } from 'stores/dialog-state';
-import { watch } from 'vue';
+import { watch, type WatchHandle } from 'vue';
 
 // 1. Strict allowed types: the four registered in boot/notify-types.ts, each
 // with its own color and icon, and Quasar's own 'ongoing' (with a spinner)
@@ -40,9 +47,9 @@ interface AllowedNotifyProps {
    * modal (e.g. a congregation-switch side effect racing the congregation
    * switcher's own close) can otherwise visibly stack on top of it.
    *
-   * Returns `undefined` immediately when deferring, since the notification
-   * (and its dismiss handle) doesn't exist yet - only opt in for
-   * notifications whose caller doesn't need that handle.
+   * Its handle works meanwhile: closing it before it shows means it never
+   * does. Unlike other notifications that wait (see urgent), it shows
+   * however long it waited.
    */
   deferWhileDialogOpen?: boolean;
   group?: QNotifyCreateOptions['group'];
@@ -66,9 +73,28 @@ interface AllowedNotifyProps {
   protect?: boolean;
   timeout?: QNotifyCreateOptions['timeout'];
   type?: AllowedNotifyType; // 👈 strict union
+  /**
+   * When true, it shows at once, even while a screen covers the whole
+   * window (a maximized dialog such as today's song check, or a tour), and
+   * on top of it. Every other notification waits for that screen to close
+   * (see the attention store's holdsNotifications), and an info or success
+   * message that waited more than a minute is dropped by then, out of date.
+   * For what can't wait: a raised hand during the meeting.
+   */
+  urgent?: boolean;
 }
 
 type AllowedNotifyType = (typeof allowedTypes)[number];
+
+/** A notification waiting to show (see mustWait). */
+interface HeldNotification {
+  heldAt: number;
+  props: AllowedNotifyProps;
+  /** Its own handle, once it shows. */
+  shown?: NotificationHandle;
+  /** What its handle changed while it waited. */
+  updates?: QNotifyUpdateOptions;
+}
 
 // 3. Reject extra keys
 type NoExtraKeys<T> = Record<
@@ -77,27 +103,52 @@ type NoExtraKeys<T> = Record<
 > &
   T;
 
+/** A notification's handle: updates it with the props given, else closes it. */
+type NotificationHandle = (props?: QNotifyUpdateOptions) => void;
+
 // Track all active notification dismiss functions
 const activeTemporaryNotifications: (() => void)[] = [];
 
-/**
- * When a dialog is open, waits for every open dialog to close and then calls
- * `show` once.
- * @returns Whether it's waiting (false: nothing open, so nothing to wait for).
- */
-const waitForOpenDialogsToClose = (show: () => void) => {
-  const dialogStateStore = useDialogStateStore();
-  if (!dialogStateStore.isAnyDialogOpen) return false;
+const DEFAULT_TIMEOUT_MS = 5000;
 
-  const stopWaiting = watch(
-    () => dialogStateStore.isAnyDialogOpen,
-    (stillOpen) => {
-      if (stillOpen) return;
-      stopWaiting();
-      show();
-    },
-  );
-  return true;
+// An info or success message that waited longer than this for a screen to
+// close ("Participants muted", minutes later) is out of date by then.
+const OUT_OF_DATE_AFTER_MS = 60_000;
+
+/** The notifications waiting to show, oldest first. */
+const heldNotifications: HeldNotification[] = [];
+
+let heldNotificationsWatcher: undefined | WatchHandle;
+
+/**
+ * Whether a notification has to wait: a screen covers the whole window, or
+ * is about to (see the attention store), or, for one that asks to, a dialog
+ * is open. Not before Pinia is up: nothing can be on screen yet.
+ */
+const mustWait = (props: AllowedNotifyProps) => {
+  if (props.urgent || !getActivePinia()) return false;
+  if (useAttentionStore().holdsNotifications) return true;
+  return !!props.deferWhileDialogOpen && useDialogStateStore().isAnyDialogOpen;
+};
+
+/**
+ * Whether a waiting notification is out of date: an info or success
+ * message that closes by itself, which waited for a screen to close for
+ * more than OUT_OF_DATE_AFTER_MS. One that asked to wait for dialogs always
+ * shows.
+ */
+const isOutOfDate = ({ heldAt, props }: HeldNotification) =>
+  !props.deferWhileDialogOpen &&
+  (props.type === 'info' || props.type === 'positive') &&
+  (props.timeout ?? DEFAULT_TIMEOUT_MS) > 0 &&
+  Date.now() - heldAt > OUT_OF_DATE_AFTER_MS;
+
+/** Takes a waiting notification off the list: it never shows. */
+const dropHeldNotification = (held: HeldNotification) => {
+  const index = heldNotifications.indexOf(held);
+  if (index === -1) return;
+  heldNotifications.splice(index, 1);
+  held.props.onDismiss?.();
 };
 
 /**
@@ -139,51 +190,114 @@ const getOptionalOptions = ({
   ...(onDismiss && { onDismiss }),
 });
 
+/** Shows a notification now, with what its handle changed while it waited. */
+const showNotification = (
+  props: AllowedNotifyProps,
+  updates?: QNotifyUpdateOptions,
+): NotificationHandle => {
+  const {
+    actions,
+    icon,
+    message,
+    noClose = false,
+    position = 'top',
+    protect = false,
+    timeout = DEFAULT_TIMEOUT_MS,
+    type,
+    urgent = false,
+  } = props;
+
+  // Runtime safety
+  if (type && !allowedTypes.includes(type)) {
+    throw new Error(`Unknown notify type: "${type}"`);
+  }
+
+  // An urgent one stays on top of a screen covering the window (see
+  // app.scss), which the others go under.
+  const classes = [props.classes, urgent && 'notify-urgent']
+    .filter(Boolean)
+    .join(' ');
+
+  // Without an icon of its own, it gets its type's (see
+  // boot/notify-types.ts): one given as undefined would replace it.
+  const dismiss = Notify.create({
+    group: false,
+    message,
+    position,
+    timeout,
+    ...getOptionalOptions({ ...props, classes }),
+    ...(type && { type }),
+    ...(icon && { icon }),
+    ...(!noClose && { actions: actions ?? getCloseActions() }),
+    ...updates,
+  });
+
+  // Track the dismiss function if it exists, unless it's protected from
+  // being swept up by dismissAllTemporaryNotifications()
+  if (dismiss && !protect) trackTemporaryNotification(dismiss, timeout);
+
+  return dismiss;
+};
+
+/**
+ * Shows the waiting notifications that no longer have to wait, oldest
+ * first, and drops those out of date by now. Stops watching once none is
+ * left.
+ */
+const showHeldNotifications = () => {
+  const ready = heldNotifications.filter((held) => !mustWait(held.props));
+  for (const held of ready) {
+    if (isOutOfDate(held)) {
+      log('Notification dropped, out of date', 'notifications', 'info', {
+        message: held.props.message,
+      });
+      dropHeldNotification(held);
+      continue;
+    }
+    heldNotifications.splice(heldNotifications.indexOf(held), 1);
+    try {
+      held.shown = showNotification(held.props, held.updates);
+    } catch (error) {
+      errorCatcher(error);
+    }
+  }
+  if (heldNotifications.length) return;
+  heldNotificationsWatcher?.stop();
+  heldNotificationsWatcher = undefined;
+};
+
+/**
+ * Keeps a notification until it no longer has to wait (see mustWait). Its
+ * handle works meanwhile: an update changes what it shows, and closing it
+ * means it never shows.
+ */
+const holdNotification = (props: AllowedNotifyProps): NotificationHandle => {
+  const held: HeldNotification = { heldAt: Date.now(), props };
+  heldNotifications.push(held);
+  heldNotificationsWatcher ??= watch(
+    [
+      () => useAttentionStore().holdsNotifications,
+      () => useDialogStateStore().isAnyDialogOpen,
+    ],
+    showHeldNotifications,
+  );
+  return (updates) => {
+    if (held.shown) {
+      held.shown(updates);
+    } else if (updates) {
+      held.updates = { ...held.updates, ...updates };
+    } else {
+      dropHeldNotification(held);
+    }
+  };
+};
+
 export const createTemporaryNotification = (
   props: NoExtraKeys<AllowedNotifyProps>,
 ) => {
   try {
-    if (
-      props.deferWhileDialogOpen &&
-      waitForOpenDialogsToClose(() => createTemporaryNotification(props))
-    ) {
-      return undefined;
-    }
-
-    const {
-      actions,
-      icon,
-      message,
-      noClose = false,
-      position = 'top',
-      protect = false,
-      timeout = 5000,
-      type,
-    } = props;
-
-    // Runtime safety
-    if (type && !allowedTypes.includes(type)) {
-      throw new Error(`Unknown notify type: "${type}"`);
-    }
-
-    // Without an icon of its own, it gets its type's (see
-    // boot/notify-types.ts): one given as undefined would replace it.
-    const dismiss = Notify.create({
-      group: false,
-      message,
-      position,
-      timeout,
-      ...getOptionalOptions(props),
-      ...(type && { type }),
-      ...(icon && { icon }),
-      ...(!noClose && { actions: actions ?? getCloseActions() }),
-    });
-
-    // Track the dismiss function if it exists, unless it's protected from
-    // being swept up by dismissAllTemporaryNotifications()
-    if (dismiss && !protect) trackTemporaryNotification(dismiss, timeout);
-
-    return dismiss;
+    if (mustWait(props)) return holdNotification(props);
+    return showNotification(props);
   } catch (error) {
     errorCatcher(error);
   }
@@ -323,10 +437,13 @@ export const maybeWarnAboutExpectedDownloadIssue = (): void => {
 };
 
 /**
- * Dismisses all active temporary notifications
+ * Dismisses all active temporary notifications, and those still waiting to
+ * show (unless protected)
  */
 export const dismissAllTemporaryNotifications = () => {
   try {
+    const unprotected = heldNotifications.filter((held) => !held.props.protect);
+    for (const held of unprotected) dropHeldNotification(held);
     // Call all dismiss functions
     while (activeTemporaryNotifications.length > 0) {
       const dismiss = activeTemporaryNotifications.pop();
