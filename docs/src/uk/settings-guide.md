@@ -493,13 +493,13 @@ M³ створює у спільній папці папку для кожног
 - **Швидке керування під час наведення на кнопку таймера**: під час наведення курсора на кнопку таймера на панелі дій показується частина, час якої відраховується, з кнопками запуску, паузи, зупинення й переходу до наступної частини, без відкриття повного спливного вікна таймера. Увімкнено за замовчуванням.
 - **Показувати панель таймера в головному вікні**: повний список частин зібрання й елементи керування таймером завжди видно на панелі, закріпленій праворуч у головному вікні. Повне спливне вікно, як і раніше, доступне на панелі дій для налаштувань вікна й дисплея.
 
-### Time Counsel Separately {#timer-separate-counsel}
+### Окремо відраховувати час порад {#timer-separate-counsel}
 
 <!-- **Setting**: `timerSeparateCounsel` -->
 
-Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+Відраховувати хвилину порад після читання Біблії та кожної частини розділу «Вдосконалюймо своє служіння» як окрему частину. Поради показуються під частиною, після якої вони йдуть, а кнопка **Наступна частина** переходить від частини учня до порад, а потім до наступної частини. Так головуючий бачить, скільки залишилося від хвилини, а час самого учня й далі записується для звіту про час, де поради мають окремий рядок.
 
-The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+Поради завжди тривають одну хвилину. Програма зібрання, запланований час початку та індикатор випередження чи відставання залишаються такими самими, як і з вимкненим налаштуванням.
 
 **За замовчуванням**: `false`
 
