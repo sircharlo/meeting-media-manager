@@ -30,7 +30,7 @@ describe('filesystem error helpers', () => {
     );
     expect(
       isPossiblyNetworkFolderPath(
-        String.raw`C:\Users\PC\Nextcloud\Hall\MediaSyncer`,
+        String.raw`C:\Users\PC\Nextcloud\Media`,
         'win32',
       ),
     ).toBe(true);
@@ -56,16 +56,14 @@ describe('filesystem error helpers', () => {
 
   it('recognizes known cloud-sync providers from a path, including Nextcloud', () => {
     expect(
-      getCloudStorageProvider(
-        String.raw`C:\Users\PC\Nextcloud\Hall\MediaSyncer`,
-      ),
+      getCloudStorageProvider(String.raw`C:\Users\PC\Nextcloud\Media`),
     ).toBe('Nextcloud');
     expect(isCloudStoragePath('C:/Users/test/OneDrive/Media')).toBe(true);
     expect(isCloudStoragePath('C:/Users/test/cache')).toBe(false);
   });
 
   it('recognizes a phone shown in File Explorer by Windows Cross Device as network-like storage', () => {
-    const phoneFolder = String.raw`C:\Users\PC\CrossDevice\Redmi 12\storage\Download`;
+    const phoneFolder = String.raw`C:\Users\PC\CrossDevice\Phone\storage\Download`;
     expect(getCloudStorageProvider(phoneFolder)).toBe(PHONE_STORAGE_PROVIDER);
     expect(isPhoneStoragePath(phoneFolder)).toBe(true);
     expect(isPossiblyNetworkFolderPath(phoneFolder, 'win32')).toBe(true);
@@ -75,12 +73,12 @@ describe('filesystem error helpers', () => {
   it('recognizes a Google Drive desktop "Mirror files" account folder by its "(email)" suffix, regardless of locale', () => {
     expect(
       getCloudStorageProvider(
-        String.raw`C:\Users\PC\Meu Drive (suporteavjw@gmail.com)\Outras midias`,
+        String.raw`C:\Users\PC\Meu Drive (name@example.com)\Media`,
       ),
     ).toBe('Google Drive');
     expect(
       isPossiblyNetworkFolderPath(
-        String.raw`C:\Users\PC\Meu Drive (suporteavjw@gmail.com)\Outras midias`,
+        String.raw`C:\Users\PC\Meu Drive (name@example.com)\Media`,
         'win32',
       ),
     ).toBe(true);
@@ -174,7 +172,7 @@ describe('filesystem error helpers', () => {
     expect(
       isExpectedNetworkPathAccessError(
         { code: 'Unknown system error -214545202' },
-        String.raw`C:\Users\PC\Nextcloud\Hall\MediaSyncer`,
+        String.raw`C:\Users\PC\Nextcloud\Media`,
         'win32',
       ),
     ).toBe(true);
@@ -207,7 +205,7 @@ describe('filesystem error helpers', () => {
     // not the /google drive/ marker) is transiently locking mid-sync.
     expect(
       shouldIgnoreWatchFolderError(
-        String.raw`C:\Users\PC\Meu Drive (suporteavjw@gmail.com)\Outras midias`,
+        String.raw`C:\Users\PC\Meu Drive (name@example.com)\Media`,
         { code: 'EBUSY', syscall: 'watch' },
         'win32',
       ),
@@ -218,7 +216,7 @@ describe('filesystem error helpers', () => {
     // network-path heuristic like EISDIR/UNKNOWN are.
     expect(
       shouldIgnoreWatchFolderError(
-        String.raw`C:\Users\PC\Documents\M3 - Arquivos recorrentes`,
+        String.raw`C:\Users\PC\Documents\M3 media`,
         { code: 'EBUSY', syscall: 'watch' },
         'win32',
       ),
@@ -251,7 +249,7 @@ describe('filesystem error helpers', () => {
   it('ignores transient scandir errors on cloud-sync/network paths', () => {
     expect(
       shouldIgnoreWatchFolderError(
-        String.raw`G:\.shortcut-targets-by-id\1uhAUmZUpn-NK8Ccr27CZmB9qoh30K4cw\AV Zoom Duty Documents\Meeting Media\2026-07-04`,
+        String.raw`G:\.shortcut-targets-by-id\1AbCdEfGhIjKlMnOpQrStUvWxYz01234\Shared\Meeting Media\2026-07-04`,
         { code: 'UNKNOWN', syscall: 'scandir' },
         'win32',
       ),

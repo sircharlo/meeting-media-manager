@@ -584,23 +584,23 @@ describe('macOS folder permissions', () => {
       .mockResolvedValue(undefined);
     vi.mocked(dialog.showOpenDialog).mockResolvedValue({
       canceled: false,
-      filePaths: ['/Users/test/Documents/El Arroyo'],
+      filePaths: ['/Users/test/Documents/Meeting Media'],
     });
 
     const { ensureMacosFolderPermission } = await import('../fs');
 
     await expect(
-      ensureMacosFolderPermission('/Users/test/Documents/El Arroyo'),
+      ensureMacosFolderPermission('/Users/test/Documents/Meeting Media'),
     ).resolves.toEqual({
-      path: '/Users/test/Documents/El Arroyo',
-      selectedPath: '/Users/test/Documents/El Arroyo',
+      path: '/Users/test/Documents/Meeting Media',
+      selectedPath: '/Users/test/Documents/Meeting Media',
       status: 'granted',
     });
 
     expect(dialog.showOpenDialog).toHaveBeenCalledWith(
       expect.objectContaining({}),
       expect.objectContaining({
-        defaultPath: '/Users/test/Documents/El Arroyo',
+        defaultPath: '/Users/test/Documents/Meeting Media',
         properties: ['openDirectory'],
         securityScopedBookmarks: true,
       }),
@@ -671,9 +671,9 @@ describe('macOS folder permissions', () => {
     const { ensureMacosFolderPermission } = await import('../fs');
 
     await expect(
-      ensureMacosFolderPermission('/Users/test/Documents/El Arroyo', false),
+      ensureMacosFolderPermission('/Users/test/Documents/Meeting Media', false),
     ).resolves.toEqual({
-      path: '/Users/test/Documents/El Arroyo',
+      path: '/Users/test/Documents/Meeting Media',
       status: 'failed',
     });
 
@@ -819,7 +819,7 @@ describe('getZipEntries', () => {
 
     await expect(
       getZipEntries(
-        '/Users/test/Library/Mobile Documents/com~apple~CloudDocs/Downloads/S-34_GA.jwpub',
+        '/Users/test/Library/Mobile Documents/com~apple~CloudDocs/Downloads/publication.jwpub',
       ),
     ).resolves.toEqual({});
 
@@ -915,7 +915,7 @@ describe('getZipEntries', () => {
   // while the same file read fine a moment later.
   it('retries a zip that is briefly locked right after download', async () => {
     const error = new Error(
-      "EPERM: operation not permitted, open 'E:/MeetingMM/Publications/w_E_202507.jwpub'",
+      "EPERM: operation not permitted, open 'E:/M3/Publications/w_E_202507.jwpub'",
     );
     (error as Error & { code?: string }).code = 'EPERM';
     const zipfile = {
