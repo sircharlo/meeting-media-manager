@@ -154,9 +154,9 @@ E tuha’a fa’anahora’a fa’a’ite-ātea ā teie, ’e ’ia fa’a’ohip
 
 Tē fa’aite nei te ha’amāramarama iti o te fa’atere-hora i ni’a i te motu ha’atere i te mau tuha’a o te putuputura’a o te mahana i mā’itihia. Nō te mau putuputura’a i rotopū i te hepetoma, ’a mā’iti e hia tuha’a tō "A rave maite i ta oe taviniraa" ’e tō "Orara’a Kerisetiano"; e tufahia ti’a te mau minuti o te tuha’a rahi, ’e i muri iho e nehenehe e taui ti’amā i te tuha’a tā’itahi nā roto i te mau pitopito **+** ’e **−** ’aore rā mā te pata i ni’a i te tuha’a. E nehenehe e fa’ata’a i te tuha’a tā’itahi i te mau minuti ato’a, ’oia ato’a te 0 nō te vaiiho i te reira. E fa’aite te hō’ē tāpa’o fa’aara i te mau tuha’a rahi ’aita tō rātou mau tuha’a e tū’ati ra i te taime i fa’ata’ahia nō rātou, ’aita rā ’oia e taui iho noa i te tahi mea.
 
-If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+Mai te mea ’aita ā i mā’itihia te nūmera o te mau tuha’a ’ia ha’amatahia te hō’ē tuha’a o te putuputura’a hāpene, e ani mātāmua M³ i te reira, hō’ē noa taime nō te putuputura’a tāta’itahi. E fāitohia te taime o te tuha’a mai te taime i ha’amatahia ai, noa atu ā e ani ra M³.
 
-With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+’Ia fa’a’ohipahia [**E fāito ta’a ’ē i te taime o te a’o**](/settings-guide#timer-separate-counsel), e fa’a’itehia te hō’ē minuti a’o i muri a’e i te Tai’ora’a Bibilia ’e i te tuha’a tāta’itahi o A rave maite i ta oe taviniraa i raro a’e i taua tuha’a ra ’e e fāitohia ta’a ’ē, ’ia ’ite te ti’a’au e ehia te taime e toe ra.
 
 E nehenehe e ’āmui i te **mau tuha’a ta’a ’ē** i te mau mahana ato’a, nō te mau parau ’āpī a te Tino Aratai, te mau porotarama ta’a ’ē ’aore rā te tahi atu mea ’aita i roto i te porotarama mātau. I te mau mahana ’aita e putuputura’a, e ha’amata te fa’atere-hora ma te hō’ē tuha’a ta’a ’ē nō te tuha’a media ta’a ’ē tā’itahi.
 
