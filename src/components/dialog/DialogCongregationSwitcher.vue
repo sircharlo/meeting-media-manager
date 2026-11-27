@@ -249,7 +249,7 @@
       <q-input
         v-model="deletePin"
         autocomplete="off"
-        class="bg-accent-100"
+        bg-color="accent-100"
         dense
         :error="deletePinWrong"
         :error-message="t('settings-pin-wrong')"

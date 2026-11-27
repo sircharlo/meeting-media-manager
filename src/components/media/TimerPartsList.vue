@@ -183,7 +183,7 @@
       />
       <q-input
         v-model.number="editDuration"
-        class="bg-accent-100"
+        bg-color="accent-100"
         dense
         :hint="editDuration === 0 ? t('part-skipped') : undefined"
         :label="t('duration-minutes')"
