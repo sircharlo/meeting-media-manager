@@ -154,6 +154,10 @@ E tuha’a fa’anahora’a fa’a’ite-ātea ā teie, ’e ’ia fa’a’ohip
 
 Tē fa’aite nei te ha’amāramarama iti o te fa’atere-hora i ni’a i te motu ha’atere i te mau tuha’a o te putuputura’a o te mahana i mā’itihia. Nō te mau putuputura’a i rotopū i te hepetoma, ’a mā’iti e hia tuha’a tō "A rave maite i ta oe taviniraa" ’e tō "Orara’a Kerisetiano"; e tufahia ti’a te mau minuti o te tuha’a rahi, ’e i muri iho e nehenehe e taui ti’amā i te tuha’a tā’itahi nā roto i te mau pitopito **+** ’e **−** ’aore rā mā te pata i ni’a i te tuha’a. E nehenehe e fa’ata’a i te tuha’a tā’itahi i te mau minuti ato’a, ’oia ato’a te 0 nō te vaiiho i te reira. E fa’aite te hō’ē tāpa’o fa’aara i te mau tuha’a rahi ’aita tō rātou mau tuha’a e tū’ati ra i te taime i fa’ata’ahia nō rātou, ’aita rā ’oia e taui iho noa i te tahi mea.
 
+If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+
+With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+
 E nehenehe e ’āmui i te **mau tuha’a ta’a ’ē** i te mau mahana ato’a, nō te mau parau ’āpī a te Tino Aratai, te mau porotarama ta’a ’ē ’aore rā te tahi atu mea ’aita i roto i te porotarama mātau. I te mau mahana ’aita e putuputura’a, e ha’amata te fa’atere-hora ma te hō’ē tuha’a ta’a ’ē nō te tuha’a media ta’a ’ē tā’itahi.
 
 E vaiihohia te numera o te mau tuha’a, te mau roara’a i tauihia, te mau tuha’a ta’a ’ē ’e te mau taime i tāpa’ohia i te mahana tā’itahi, nō reira e vai noa te reira noa atu e ha’amata fa’ahou ia M³, ’e e’ita roa te mau taime o te hō’ē putuputura’a e ’āmui i tō te tahi atu. E nehenehe e fa’a’ore i te mau taime i tāpa’ohia o te hō’ē mahana i te hō’ē noa taime nā roto i **A faa'āpī faahou i te mau tāpura taime atoa no teie mahana**, ’e e nehenehe e hā’ono i te hō’ē tāpura taime PDF i te mau taime ato’a.
