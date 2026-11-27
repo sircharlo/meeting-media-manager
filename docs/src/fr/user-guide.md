@@ -154,6 +154,10 @@ Le minuteur est une fonctionnalité bêta et ne doit être utilisé que s'il est
 
 La fenêtre contextuelle du minuteur, dans l'îlot d'actions, affiche la liste des parties de la réunion du jour sélectionné. Pour les réunions de semaine, choisissez le nombre de parties des sections « Applique-toi au ministère » et « Vie chrétienne » ; les minutes de chaque section sont réparties également entre ses parties, et chacune d'elles peut ensuite être ajustée librement à l'aide des boutons **+** et **−** ou en cliquant dessus. N'importe quelle partie peut être réglée sur le nombre de minutes de votre choix, y compris 0 pour l'ignorer. Une icône d'avertissement signale les sections dont la durée totale des parties ne correspond pas au temps qui leur est alloué, mais elle ne modifie jamais rien d'elle-même.
 
+If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+
+With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+
 Des **parties personnalisées** peuvent être ajoutées n'importe quel jour, pour les rapports du Collège central, les programmes spéciaux ou tout autre élément ne figurant pas dans l'horaire habituel. Les jours sans réunion, le minuteur comporte au départ une partie personnalisée par section de médias personnalisée.
 
 Le nombre de parties, les durées modifiées, les parties personnalisées et les temps enregistrés sont conservés pour chaque journée : ils restent ainsi disponibles après un redémarrage de M³, et les temps d'une réunion ne se mélangent jamais à ceux d'une autre. Les temps enregistrés d'une journée peuvent être effacés en une seule fois à l'aide du bouton **Réinitialiser tous les temps enregistrés pour cette journée**, et un rapport de chronométrage au format PDF peut être exporté à tout moment.
