@@ -19,60 +19,70 @@
       <div class="text-h5 text-weight-medium q-mt-lg">
         {{ t('meeting-song-check-title') }}
       </div>
-      <p class="meeting-song-check__text q-mt-md">
-        {{
-          displayed.length
-            ? t('meeting-song-check-explain')
-            : t('meeting-song-check-all-set')
-        }}
-      </p>
-      <div
-        v-for="problem in displayed"
-        :key="songProblemKey(problem)"
-        class="meeting-song-check__row row items-center q-mt-sm"
-      >
-        <span class="col text-left">{{ describe(problem) }}</span>
-        <div class="meeting-song-check__row-actions">
-          <template v-if="problem.kind === 'duplicate'">
-            <q-btn
-              color="primary"
-              :label="t('meeting-song-check-show-me')"
-              no-caps
-              unelevated
-              @click="showMe(problem)"
-            />
-            <q-btn
-              :label="t('meeting-song-check-on-purpose')"
-              no-caps
-              outline
-              @click="markOkay(problem)"
-            />
-          </template>
-          <template v-else>
-            <q-btn
-              color="primary"
-              :label="t('meeting-song-check-add-song')"
-              no-caps
-              unelevated
-              @click="addSong(problem)"
-            />
-            <q-btn
-              v-if="problem.kind === 'no-pt-song'"
-              :label="t('meeting-song-check-no-public-talk')"
-              no-caps
-              outline
-              @click="markOkay(problem)"
-            />
-          </template>
+      <!-- One problem: it's the message, and its answers are the screen's
+           main buttons. -->
+      <template v-if="onlyProblem">
+        <p class="meeting-song-check__problem q-mt-md">
+          {{ describe(onlyProblem) }}
+        </p>
+        <div class="meeting-song-check__actions">
+          <q-btn
+            v-for="action in actionsFor(onlyProblem)"
+            :key="action.label"
+            :color="action.primary ? 'primary' : undefined"
+            :label="t(action.label)"
+            no-caps
+            :outline="!action.primary"
+            :unelevated="action.primary"
+            @click="action.run"
+          />
         </div>
-      </div>
+      </template>
+      <!-- Several: each in its own card, its text across the card and its
+           answers underneath, so the buttons never squeeze the text. -->
+      <template v-else>
+        <p class="meeting-song-check__text q-mt-md">
+          {{
+            displayed.length
+              ? t('meeting-song-check-explain')
+              : t('meeting-song-check-all-set')
+          }}
+        </p>
+        <div
+          v-for="problem in displayed"
+          :key="songProblemKey(problem)"
+          class="meeting-song-check__row row no-wrap q-mt-sm text-left"
+        >
+          <q-icon color="warning" name="mmm-warning" size="20px" />
+          <div class="col">
+            <div>{{ describe(problem) }}</div>
+            <div class="meeting-song-check__row-actions">
+              <q-btn
+                v-for="action in actionsFor(problem)"
+                :key="action.label"
+                :color="action.primary ? 'primary' : undefined"
+                :label="t(action.label)"
+                no-caps
+                :outline="!action.primary"
+                :unelevated="action.primary"
+                @click="action.run"
+              />
+            </div>
+          </div>
+        </div>
+      </template>
+      <!-- Later is the quiet way out, next to answers; Close, once all is
+           set, the only one. -->
       <div class="meeting-song-check__actions">
         <q-btn
-          :label="displayed.length ? t('later') : t('close')"
+          v-if="displayed.length"
+          class="meeting-song-check__later"
+          flat
+          :label="t('later')"
           no-caps
-          outline
           @click="later"
         />
+        <q-btn v-else :label="t('close')" no-caps outline @click="later" />
       </div>
     </q-card>
   </BaseDialog>
@@ -207,6 +217,11 @@ const open = computed({
   set: () => undefined,
 });
 
+// One problem only: the screen asks about it alone (see the template).
+const onlyProblem = computed(() =>
+  displayed.value.length === 1 ? displayed.value[0] : undefined,
+);
+
 const describe = (problem: SongProblem) => {
   if (problem.kind === 'duplicate') {
     return t('meeting-song-check-duplicate', { number: problem.song });
@@ -274,6 +289,47 @@ const addSong = (problem: SongProblem) => {
   );
 };
 
+/** An answer to a problem, as a button. */
+interface ProblemAction {
+  label: string;
+  primary: boolean;
+  run: () => void;
+}
+
+// Fixing it comes first; the other answer, where there's one, says it's
+// right as it is.
+const actionsFor = (problem: SongProblem): ProblemAction[] => {
+  if (problem.kind === 'duplicate') {
+    return [
+      {
+        label: 'meeting-song-check-show-me',
+        primary: true,
+        run: () => showMe(problem),
+      },
+      {
+        label: 'meeting-song-check-on-purpose',
+        primary: false,
+        run: () => markOkay(problem),
+      },
+    ];
+  }
+  const actions: ProblemAction[] = [
+    {
+      label: 'meeting-song-check-add-song',
+      primary: true,
+      run: () => addSong(problem),
+    },
+  ];
+  if (problem.kind === 'no-pt-song') {
+    actions.push({
+      label: 'meeting-song-check-no-public-talk',
+      primary: false,
+      run: () => markOkay(problem),
+    });
+  }
+  return actions;
+};
+
 const askForTurn = () => {
   attention.request(SCREEN_REQUEST, {
     open: () => {
@@ -324,12 +380,17 @@ watch(
   opacity: 0.9;
 }
 
+.meeting-song-check__problem {
+  font-size: 1.15rem;
+  max-width: 560px;
+}
+
 .meeting-song-check__row {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   gap: 12px;
   max-width: 600px;
-  padding: 10px 14px;
+  padding: 12px 16px;
   width: 100%;
 }
 
@@ -337,6 +398,11 @@ watch(
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 10px;
+}
+
+.meeting-song-check__later {
+  opacity: 0.85;
 }
 
 .meeting-song-check__actions {

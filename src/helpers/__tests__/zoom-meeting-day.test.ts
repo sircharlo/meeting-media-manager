@@ -136,6 +136,47 @@ afterEach(() => {
 });
 
 describe('Zoom meeting day', () => {
+  // The song check and the rest wait, rather than opening between two steps.
+  it('keeps its place on screen from startup until the Zoom steps are done', async () => {
+    startAt(30 * MINUTE);
+    checkTaking(2 * MINUTE, 'passed');
+    const context = await setup();
+    const { SCREEN_PRIORITY, useAttentionStore } =
+      await import('stores/attention');
+    const attention = useAttentionStore();
+    const opened: string[] = [];
+    context.scheduleZoomAutomations();
+    attention.request('meeting-song-check', {
+      open: () => {
+        opened.push('song check');
+      },
+      priority: SCREEN_PRIORITY.meetingSongCheck,
+    });
+
+    await vi.advanceTimersByTimeAsync(10 * SECOND + MINUTE);
+    expect(zoom.calls).toEqual(['check started']);
+    expect(opened).toEqual([]);
+
+    await vi.advanceTimersByTimeAsync(MINUTE);
+    expect(zoom.calls).toEqual([
+      'check started',
+      'check done',
+      'before-meeting settings',
+    ]);
+    expect(attention.isPlaceKept('zoom-meeting-day')).toBe(false);
+    expect(opened).toEqual(['song check']);
+  });
+
+  it('keeps no place with the Zoom Meeting Manager off', async () => {
+    currentState.currentSettings.zoomMeetingManagerEnable = false;
+    const context = await setup();
+    const { useAttentionStore } = await import('stores/attention');
+
+    context.scheduleZoomAutomations();
+
+    expect(useAttentionStore().isPlaceKept('zoom-meeting-day')).toBe(false);
+  });
+
   it('checks Zoom, then applies the before-meeting settings, then the meeting settings when the music would stop', async () => {
     startAt(30 * MINUTE);
     checkTaking(30 * SECOND, 'passed');

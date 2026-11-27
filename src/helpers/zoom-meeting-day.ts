@@ -10,6 +10,7 @@ import {
 } from 'src/helpers/zoom';
 import { runZoomStartupCheck } from 'src/helpers/zoom-startup-check';
 import { log } from 'src/shared/vanilla';
+import { SCREEN_PRIORITY, useAttentionStore } from 'stores/attention';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useDialogStateStore } from 'stores/dialog-state';
 import { useZoomStateStore } from 'stores/zoom-state';
@@ -33,6 +34,12 @@ import { useZoomStateStore } from 'stores/zoom-state';
 // few seconds for as long as it's due. After the meeting, starting
 // background music applies the before/after-meeting settings (see the music
 // store).
+//
+// While they run, and from the moment a profile opens until they first do,
+// they keep their place on screen (see the attention store): what opens on
+// its own after the Zoom questions (the Zoom display question, today's song
+// check, and so on) waits for them, rather than opening between two steps,
+// under Zoom's window or the "M³ is operating Zoom" screen.
 
 interface MeetingSchedule {
   /** Today's meeting, for the current congregation. */
@@ -46,6 +53,8 @@ interface MeetingSchedule {
 type MeetingStep = 'before-meeting' | 'meeting';
 
 const STARTUP_DELAY_MS = 10_000;
+// Their place on screen, in the attention store.
+const SCREEN_PLACE = 'zoom-meeting-day';
 // M³ may stay open for days: each new day gets its own check and steps, and
 // a computer that slept through a step's time catches up when it wakes.
 const RECHECK_INTERVAL_MS = 5 * 60 * 1000;
@@ -213,6 +222,14 @@ let running = false;
 let runAgain = false;
 let stepTimer: ReturnType<typeof setTimeout> | undefined;
 
+// Below the check's own question and result, which come first.
+const keepScreenPlace = () => {
+  if (!useCurrentStateStore().currentSettings?.zoomMeetingManagerEnable) {
+    return;
+  }
+  useAttentionStore().keepPlace(SCREEN_PLACE, SCREEN_PRIORITY.zoomCheckPrompt);
+};
+
 /** Wakes up when the next step is due, or to try a waiting one again. */
 const scheduleNextStep = () => {
   clearTimeout(stepTimer);
@@ -238,6 +255,7 @@ export const runDueZoomAutomations = async () => {
     return;
   }
   running = true;
+  keepScreenPlace();
   try {
     do {
       runAgain = false;
@@ -249,6 +267,7 @@ export const runDueZoomAutomations = async () => {
     });
   } finally {
     running = false;
+    useAttentionStore().releasePlace(SCREEN_PLACE);
     scheduleNextStep();
   }
 };
@@ -279,6 +298,7 @@ const recheck = () => {
  */
 export function scheduleZoomAutomations(delayMs = STARTUP_DELAY_MS) {
   clearTimeout(startupTimer);
+  keepScreenPlace();
   startupTimer = setTimeout(() => {
     void runDueZoomAutomations();
   }, delayMs);

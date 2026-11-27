@@ -665,6 +665,16 @@ $notice-solids: (
   transition: margin-top 0.3s ease;
 }
 
+// Over a screen that covers the whole window (a maximized dialog such as
+// today's song check, or a tour), the notifications already showing go
+// under it, not on top: just below Quasar's dialogs (6000) and the tours'
+// spotlight (6009 and up). New ones wait for it (see notifications.ts). A
+// raised hand stays on top, with whatever shows next to it.
+body:has(.q-dialog__inner--maximized, .spotlight-tour-card)
+  .q-notifications__list:not(:has(.notify-urgent)) {
+  z-index: 5990;
+}
+
 .q-dialog,
 .q-card,
 .q-list,

@@ -11,7 +11,7 @@ import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
 import en from 'src/i18n/en.json';
 import { formatDate } from 'src/utils/date';
-import { useAttentionStore } from 'stores/attention';
+import { SCREEN_PRIORITY, useAttentionStore } from 'stores/attention';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useDialogStateStore } from 'stores/dialog-state';
@@ -133,6 +133,7 @@ beforeEach(() => {
   meeting.type = 'we';
   useDialogStateStore().closeAllDialogs();
   useAttentionStore().claims.clear();
+  useAttentionStore().keptPlaces.clear();
   useAttentionStore().waiting.clear();
   useCongregationSettingsStore().congregations = {
     [CONGREGATION_ID]: { ...defaultSettings },
@@ -249,10 +250,36 @@ describe('DialogMeetingSongCheck', () => {
     expect(opened).toEqual([{ section: 'circuit-overseer' }]);
   });
 
+  // Its answers are the screen's own buttons, with nothing to squeeze its
+  // text: no card, no general explanation.
+  it('asks about a single problem on its own', async () => {
+    setToday([section('wt', [song(30)])]);
+    await mountScreen();
+
+    expect(text()).toContain(en['meeting-song-check-no-pt-song']);
+    expect(text()).not.toContain(en['meeting-song-check-explain']);
+    expect(document.querySelector('.meeting-song-check__row')).toBeNull();
+    expect(
+      document.querySelector('.meeting-song-check__problem')?.textContent,
+    ).toContain(en['meeting-song-check-no-pt-song']);
+  });
+
+  it('covers the whole window, so notifications wait for it', async () => {
+    setToday([section('wt', [song(30)])]);
+    await mountScreen();
+
+    expect(useDialogStateStore().isTakeoverOpen).toBe(true);
+    expect(useAttentionStore().holdsNotifications).toBe(true);
+  });
+
   it('lists every problem together, and stays once they are fixed some other way', async () => {
     meeting.coWeek = true;
     const today = setToday([section('pt', []), section('wt', [song(30)])]);
     await mountScreen();
+    expect(text()).toContain(en['meeting-song-check-explain']);
+    expect(document.querySelectorAll('.meeting-song-check__row')).toHaveLength(
+      2,
+    );
     expect(text()).toContain(en['meeting-song-check-no-pt-song']);
     expect(text()).toContain(en['meeting-song-check-no-co-song']);
 
@@ -354,6 +381,22 @@ describe('DialogMeetingSongCheck', () => {
     expect(isShowing()).toBe(false);
 
     useDialogStateStore().closeDialog('something-else');
+    await flushPromises();
+
+    expect(isShowing()).toBe(true);
+  });
+
+  // The Zoom steps, then the Zoom display question, come first.
+  it('waits for what keeps its place before it', async () => {
+    useAttentionStore().keepPlace(
+      'zoom-display-question',
+      SCREEN_PRIORITY.zoomDisplayQuestion,
+    );
+    setToday([section('wt', [song(30)])]);
+    await mountScreen();
+    expect(isShowing()).toBe(false);
+
+    useAttentionStore().releasePlace('zoom-display-question');
     await flushPromises();
 
     expect(isShowing()).toBe(true);

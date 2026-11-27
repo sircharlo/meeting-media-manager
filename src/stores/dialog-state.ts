@@ -7,6 +7,11 @@ export interface DialogState {
   id: string;
   isOpen: boolean;
   props?: Record<string, unknown>;
+  /**
+   * It covers the whole window (a maximized BaseDialog, e.g. today's song
+   * check): notifications wait for it (see the attention store).
+   */
+  takeover?: boolean;
 }
 
 export const useDialogStateStore = defineStore('dialogState', () => {
@@ -16,10 +21,15 @@ export const useDialogStateStore = defineStore('dialogState', () => {
 
   const openDialogCount = computed(() => openDialogs.value.size);
 
+  const isTakeoverOpen = computed(() =>
+    [...openDialogs.value.values()].some((dialog) => dialog.takeover),
+  );
+
   const openDialog = (
     id: string,
     component: string,
     props?: Record<string, unknown>,
+    { takeover = false } = {},
   ) => {
     log(
       '🔄 [openDialog] Opening dialog:',
@@ -34,6 +44,7 @@ export const useDialogStateStore = defineStore('dialogState', () => {
       id,
       isOpen: true,
       props: props || {},
+      takeover,
     });
   };
 
@@ -59,6 +70,7 @@ export const useDialogStateStore = defineStore('dialogState', () => {
     getDialogState,
     isAnyDialogOpen,
     isDialogOpen,
+    isTakeoverOpen,
     openDialog,
     openDialogCount,
     openDialogs,

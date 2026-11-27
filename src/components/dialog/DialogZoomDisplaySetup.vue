@@ -418,21 +418,47 @@ const allSet = () => {
   step.value = 'done';
 };
 
+// Today's question is still to be asked: not in the session the profile was
+// set up in, nor before its quick-start tour (which points at the same
+// buttons), nor in demo mode.
+const isStillToAsk = (congId: string) =>
+  !!getDueZoomDisplaySetup() &&
+  !wasSetUpThisSession(congId) &&
+  !!congregationSettings.quickStartTourSeen[congId] &&
+  !isDemoModeActive();
+
 // Only on the media calendar, with no Zoom check or automation and no
 // media showing, once today's Zoom check is done (it asks its own question
-// first); not in the session the profile was set up in, nor before its
-// quick-start tour (which points at the same buttons), nor in demo mode.
-// What else is on screen is left to the attention store: the question waits
-// for its turn there (see tryToAsk).
-const isGoodMoment = (congId: string) =>
+// first). What else is on screen is left to the attention store: the
+// question waits for its turn there (see tryToAsk).
+const isGoodMoment = () =>
   route.name === 'media-calendar' &&
   !zoomState.checkRunning &&
   !zoomState.runActive &&
   !isZoomCheckStillToCome() &&
-  !currentState.mediaPlaying.url &&
-  !wasSetUpThisSession(congId) &&
-  !!congregationSettings.quickStartTourSeen[congId] &&
-  !isDemoModeActive();
+  !currentState.mediaPlaying.url;
+
+// Whether the media window fills a screen of its own (a TV), as last seen:
+// null until then.
+let mediaOnItsOwnScreen: boolean | null = null;
+
+// Until it's asked, the question keeps its place (see the attention store):
+// what comes after it, today's song check first, doesn't open while it
+// waits for today's Zoom check, nor in the moment before it asks. Not
+// without a TV: there's nothing to set up then.
+const updatePlace = () => {
+  const congId = currentCongregation.value;
+  const keeps =
+    !!congId &&
+    meeting.value === null &&
+    mediaOnItsOwnScreen !== false &&
+    isStillToAsk(congId);
+  if (keeps) {
+    attention.keepPlace(SCREEN_REQUEST, SCREEN_PRIORITY.zoomDisplayQuestion);
+  } else {
+    attention.releasePlace(SCREEN_REQUEST);
+  }
+};
 
 let asking = false;
 
@@ -443,9 +469,12 @@ const askWhenItsTurn = (congId: string) => {
       if (meeting.value !== null || currentCongregation.value !== congId) {
         return false;
       }
-      const due = isGoodMoment(congId) && getDueZoomDisplaySetup();
+      const due =
+        isGoodMoment() && isStillToAsk(congId) && getDueZoomDisplaySetup();
       if (!due) return false;
       askZoomDisplaySetup(due);
+      // Asked: the question holds the screen from now on.
+      updatePlace();
     },
     priority: SCREEN_PRIORITY.zoomDisplayQuestion,
   });
@@ -454,17 +483,20 @@ const askWhenItsTurn = (congId: string) => {
 const tryToAsk = async () => {
   const congId = currentCongregation.value;
   if (asking || meeting.value !== null || !congId) return;
-  if (!isGoodMoment(congId) || !getDueZoomDisplaySetup()) {
+  if (!isStillToAsk(congId)) {
     attention.withdraw(SCREEN_REQUEST);
+    updatePlace();
     return;
   }
   asking = true;
   try {
     // Without a TV of its own, there's nothing to set up (and the setup is
     // asked again once the media window fills one).
-    if (!(await isMediaOnItsOwnScreen())) return;
-    if (currentCongregation.value !== congId) return;
-    askWhenItsTurn(congId);
+    mediaOnItsOwnScreen = await isMediaOnItsOwnScreen();
+    updatePlace();
+    if (!mediaOnItsOwnScreen || currentCongregation.value !== congId) return;
+    if (isGoodMoment()) askWhenItsTurn(congId);
+    else attention.withdraw(SCREEN_REQUEST);
   } catch (error) {
     errorCatcher(error, { contexts: { fn: { name: 'askZoomDisplaySetup' } } });
   } finally {
@@ -488,6 +520,9 @@ let firstTry: ReturnType<typeof setTimeout> | undefined;
 let interval: ReturnType<typeof setInterval> | undefined;
 
 onMounted(() => {
+  // Its place is kept from the start, before the startup check asks its
+  // question (see updatePlace).
+  updatePlace();
   firstTry = setTimeout(tick, FIRST_TRY_DELAY_MS);
   interval = setInterval(tick, TRY_INTERVAL_MS);
 });
@@ -497,7 +532,21 @@ onBeforeUnmount(() => {
   clearInterval(interval);
   clearTimeout(finaleTimer);
   attention.withdraw(SCREEN_REQUEST);
+  attention.releasePlace(SCREEN_REQUEST);
 });
+
+// A profile opened: its question keeps its place at once.
+watch(currentCongregation, updatePlace);
+
+// Zoom's done for now (the check, an automation): the question is asked
+// right away, rather than at the next try. It still waits for its turn
+// until the Zoom steps are all done (see zoom-meeting-day.ts).
+watch(
+  () => !zoomState.checkRunning && !zoomState.runActive,
+  (idle) => {
+    if (idle) tick();
+  },
+);
 
 watch(meeting, (value) => {
   if (value === null) {

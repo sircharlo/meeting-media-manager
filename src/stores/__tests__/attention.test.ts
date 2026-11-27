@@ -50,11 +50,14 @@ describe('attention store', () => {
 });
 
 describe('useScreenClaim', () => {
-  const mountClaimer = (active: ReturnType<typeof ref<boolean>>) =>
+  const mountClaimer = (
+    active: ReturnType<typeof ref<boolean>>,
+    options: { takeover?: boolean } = {},
+  ) =>
     mount(
       defineComponent({
         setup() {
-          useScreenClaim('some-tour', () => !!active.value);
+          useScreenClaim('some-tour', () => !!active.value, options);
           return () => h('div');
         },
       }),
@@ -75,6 +78,15 @@ describe('useScreenClaim', () => {
     await wrapper.vm.$nextTick();
     expect(attention.isClaimed('some-tour')).toBe(false);
     wrapper.unmount();
+  });
+
+  // A tour: notifications wait for it (see holdsNotifications).
+  it('claims it as covering the window when asked to', () => {
+    const wrapper = mountClaimer(ref(true), { takeover: true });
+    expect(useAttentionStore().holdsNotifications).toBe(true);
+
+    wrapper.unmount();
+    expect(useAttentionStore().holdsNotifications).toBe(false);
   });
 
   it('releases the screen when the component goes away', () => {
@@ -165,6 +177,39 @@ describe('attention queue', () => {
     expect(opened).toEqual(['feature-tip']);
   });
 
+  it('makes what comes after a kept place wait for it, and lets it go once released', async () => {
+    const attention = useAttentionStore();
+    const opened: string[] = [];
+    attention.keepPlace(
+      'zoom-display-question',
+      SCREEN_PRIORITY.zoomDisplayQuestion,
+    );
+    attention.request('meeting-song-check', {
+      open: opener('meeting-song-check', opened),
+      priority: SCREEN_PRIORITY.meetingSongCheck,
+    });
+    expect(opened).toEqual([]);
+    expect(attention.isWaiting('meeting-song-check')).toBe(true);
+
+    attention.releasePlace('zoom-display-question');
+    await nextTick();
+    expect(opened).toEqual(['meeting-song-check']);
+  });
+
+  it('opens what comes before a kept place, or is what kept it', () => {
+    const attention = useAttentionStore();
+    const opened: string[] = [];
+    attention.keepPlace('zoom-meeting-day', SCREEN_PRIORITY.zoomCheckPrompt);
+
+    attention.request('zoom-check-prompt', {
+      open: opener('zoom-check-prompt', opened),
+      priority: SCREEN_PRIORITY.zoomCheckPrompt,
+    });
+
+    expect(opened).toEqual(['zoom-check-prompt']);
+    expect(attention.isPlaceKept('zoom-meeting-day')).toBe(true);
+  });
+
   it('forgets a withdrawn request', () => {
     const attention = useAttentionStore();
     attention.claim('setup-wizard');
@@ -178,5 +223,64 @@ describe('attention queue', () => {
     attention.release('setup-wizard');
 
     expect(opened).toEqual([]);
+  });
+});
+
+describe('holdsNotifications', () => {
+  it('lets notifications show with nothing on the screen', () => {
+    expect(useAttentionStore().holdsNotifications).toBe(false);
+  });
+
+  it('holds them while a dialog covers the whole window, not an ordinary one', () => {
+    const attention = useAttentionStore();
+    const dialogs = useDialogStateStore();
+    dialogs.openDialog('song-picker', 'BaseDialog');
+    expect(attention.holdsNotifications).toBe(false);
+
+    dialogs.openDialog('meeting-song-check', 'BaseDialog', undefined, {
+      takeover: true,
+    });
+    expect(attention.holdsNotifications).toBe(true);
+
+    dialogs.closeDialog('meeting-song-check');
+    expect(attention.holdsNotifications).toBe(false);
+  });
+
+  it('holds them during a tour, not in the setup wizard', () => {
+    const attention = useAttentionStore();
+    attention.claim('setup-wizard');
+    expect(attention.holdsNotifications).toBe(false);
+
+    attention.claim('quick-start-tour', { takeover: true });
+    expect(attention.holdsNotifications).toBe(true);
+
+    attention.release('quick-start-tour');
+    expect(attention.holdsNotifications).toBe(false);
+  });
+
+  // The next screen may cover the window: the free moment in between isn't
+  // one for a notification to slip into.
+  it('holds them while something is given its turn', async () => {
+    const attention = useAttentionStore();
+    attention.request('quick-start-tour', {
+      open: () => undefined,
+      priority: SCREEN_PRIORITY.quickStartTour,
+    });
+    expect(attention.holdsNotifications).toBe(true);
+
+    await flushPromises();
+    expect(attention.holdsNotifications).toBe(false);
+  });
+
+  it('lets them show while what waits has to wait for a kept place', () => {
+    const attention = useAttentionStore();
+    attention.keepPlace('zoom-meeting-day', SCREEN_PRIORITY.zoomCheckPrompt);
+    attention.request('meeting-song-check', {
+      open: () => undefined,
+      priority: SCREEN_PRIORITY.meetingSongCheck,
+    });
+
+    expect(attention.isWaiting('meeting-song-check')).toBe(true);
+    expect(attention.holdsNotifications).toBe(false);
   });
 });
