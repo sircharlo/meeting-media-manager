@@ -493,6 +493,16 @@ Escolha como acessar o temporizador a partir da janela principal:
 - **Controles rápidos ao passar o mouse sobre o botão do temporizador**: ao passar o mouse sobre o botão do temporizador na barra de ações, aparece a parte que está sendo cronometrada, com os botões Iniciar, Pausar, Parar e Próxima parte, sem abrir o pop-up completo do temporizador. Ativado por padrão.
 - **Mostrar um painel do temporizador na janela principal**: mantém a lista completa de partes da reunião e os controles do temporizador em um painel fixado no lado direito da janela principal, sempre à vista. O pop-up completo continua disponível na barra de ações para as configurações de janela e de exibição.
 
+### Time Counsel Separately {#timer-separate-counsel}
+
+<!-- **Setting**: `timerSeparateCounsel` -->
+
+Time the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part as a part of its own. It's listed under the part it follows, and **Next part** goes from the student's part to the counsel, then on to the next part. This way, the chairman can see how much of the minute is left, while the student's own time is still recorded for the timing report, where the counsel gets a line of its own.
+
+The counsel always takes one minute. The meeting's schedule, the planned start times and the ahead/behind indicator stay the same as with this setting off.
+
+**Padrão**: `false`
+
 ### Temporizador remoto {#timer-remote}
 
 <!-- **Settings**: `timerRemoteEnable`, `timerRemoteFocusLayout`, `timerRemotePort` -->
