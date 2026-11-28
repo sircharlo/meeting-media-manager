@@ -515,6 +515,8 @@ Hō’ē noa minuti te a’o i te mau taime ato’a. E vai noa te fa’anahora�
 
 Tē fa’aitehia ra te mau vāhi e ’iriti i ni’a i te mātini i roto i te ha’amāramarama iti o te fa’atere-hora, ma te hō’ē pitopito nō te hāmani hōho’a. ’A taui i te uputa ana’e mai te peu e te fa’a’ohipa ra te tahi atu porotarama i te reira. ’A ha’amana’o ē, e nehenehe te ta’ata ato’a i ni’a i taua reni itenati ra e ’iriti i te ’api ’a fa’atupuhia ai teie; ’aita e mea ’ē atu i ni’a iho maori rā te fa’atere-hora.
 
+The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+
 **Fa’anahora’a tumu**: `false`, uputa `8787`
 
 ### Te mau huru fa’a’itera’a o te tāime {#timer-display-formats}

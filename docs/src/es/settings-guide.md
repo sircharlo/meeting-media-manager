@@ -515,6 +515,8 @@ Mientras la página está abierta, mantiene encendida la pantalla del dispositiv
 
 Las direcciones para abrir en el dispositivo se enumeran en la ventana emergente del cronómetro, con un botón para copiar. Cambia el puerto solo si otro programa ya lo está usando. Ten en cuenta que cualquiera en la misma red puede abrir la página mientras esté activada; no muestra nada más que el cronómetro.
 
+The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+
 **Por defecto**: `false`, puerto `8787`
 
 ### Formatos de visualización del cronómetro {#timer-display-formats}

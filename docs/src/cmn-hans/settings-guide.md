@@ -515,6 +515,8 @@ M³ 会在共享文件夹中为每个即将举行的聚会创建一个文件夹�
 
 要在设备上打开的地址会列在计时器弹出窗口中，并附有复制按钮。只有在其他程序已占用该端口时才需要更改端口。请注意，开启此功能时，同一网络上的任何人都可以打开该网页；网页上只显示计时器。
 
+The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+
 **默认**：`false`，端口 `8787`
 
 ### 计时器显示格式 {#timer-display-formats}

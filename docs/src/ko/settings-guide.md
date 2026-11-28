@@ -515,6 +515,8 @@ M³는 공유 폴더 안에 예정된 집회마다 폴더를 만들고, 집회 �
 
 기기에서 열 주소는 복사 버튼과 함께 타이머 팝업에 표시됩니다. 다른 프로그램이 이미 포트를 사용하고 있는 경우에만 포트를 변경하십시오. 이 기능이 켜져 있는 동안에는 같은 네트워크에 있는 누구나 이 페이지를 열 수 있지만, 페이지에는 타이머만 표시됩니다.
 
+The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+
 **기본값**: `false`, 포트 `8787`
 
 ### 타이머 표시 형식 {#timer-display-formats}
