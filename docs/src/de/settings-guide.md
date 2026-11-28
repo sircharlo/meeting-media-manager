@@ -515,6 +515,8 @@ Solange die Seite geöffnet ist, hält sie den Bildschirm des Geräts wach, dami
 
 Die auf dem Gerät zu öffnenden Adressen sind im Timer-Popup aufgeführt, mit einer Schaltfläche zum Kopieren. Ändern Sie den Port nur, wenn ihn bereits ein anderes Programm verwendet. Beachten Sie, dass jeder im selben Netzwerk die Seite öffnen kann, solange diese Funktion aktiviert ist; sie zeigt jedoch nichts außer dem Timer an.
 
+The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+
 **Standard**: `false`, Port `8787`
 
 ### Timer-Anzeigeformate {#timer-display-formats}
