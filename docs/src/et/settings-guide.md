@@ -515,7 +515,7 @@ Kui leht on avatud, hoiab see seadme ekraani ärkvel, nii et kõnepuldi tahvelar
 
 Seadmes avatavad aadressid on loetletud taimeri hüpikaknas koos kopeerimisnupuga. Muuda porti ainult siis, kui mõni teine programm seda juba kasutab. Pea meeles, et kui see on sisse lülitatud, saab lehte avada igaüks samas võrgus; sellel ei ole midagi peale taimeri.
 
-The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+Aadressid on loetletud ka seadetes, taimeri kaugkuva pordi all. Kui leht avaneb selles arvutis, kuid mitte tahvelarvutis, blokeerib seda tõenäoliselt Windowsi tulemüür. Windows küsib ainult ühe korra, kas M³ võib ühendusi vastu võtta, ja kui see küsimus suleti või M³ lubati ainult privaatvõrkudes, samal ajal kui arvuti võrk on avalik, blokeerib see edasi ilma uuesti küsimata. Windowsis hoiatab M³ selle eest aadresside all ning nupp **Luba Windowsi tulemüüris** laseb lehe läbi pärast seda, kui Windows on küsinud administraatori luba. Microsoft Store'i versioon lubab selle juba installimisel.
 
 **Vaikimisi**: `false`, port `8787`
 

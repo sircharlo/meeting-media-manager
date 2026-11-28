@@ -515,7 +515,7 @@ M³ створює у спільній папці папку для кожног
 
 Адреси, які потрібно відкрити на пристрої, перелічено в спливному вікні таймера разом із кнопкою копіювання. Змінюйте порт, лише якщо його вже використовує інша програма. Зверніть увагу: поки цю функцію ввімкнено, сторінку може відкрити будь-хто в тій самій мережі; на ній показано лише таймер.
 
-The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+Адреси також наведено в налаштуваннях, під портом віддаленого таймера. Якщо сторінка відкривається на цьому комп'ютері, але не на планшеті, найімовірніше, її блокує брандмауер Windows. Windows лише один раз запитує, чи може M³ приймати підключення, і якщо це запитання закрили або M³ дозволили тільки в приватних мережах, а мережа комп'ютера загальнодоступна, брандмауер і далі блокує сторінку, не запитуючи знову. У Windows M³ попереджає про це під адресами, а кнопка **Дозволити в брандмауері Windows** відкриває доступ до сторінки після того, як Windows попросить дозвіл адміністратора. Версія з Microsoft Store дозволяє це під час встановлення.
 
 **За замовчуванням**: `false`, порт `8787`
 

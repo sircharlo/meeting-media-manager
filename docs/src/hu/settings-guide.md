@@ -515,7 +515,7 @@ Amíg az oldal nyitva van, ébren tartja az eszköz képernyőjét, így a pulpi
 
 Az eszközön megnyitandó címek az időzítő felugró ablakában vannak felsorolva, egy másolás gombbal együtt. A portot csak akkor módosítsa, ha egy másik program már használja. Vegye figyelembe, hogy amíg ez be van kapcsolva, ugyanazon a hálózaton bárki megnyithatja az oldalt; az oldal azonban csak az időzítőt mutatja.
 
-The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+A címek a Beállításokban is megjelennek, a távoli időzítő portja alatt. Ha az oldal ezen a számítógépen megnyílik, de a táblagépen nem, valószínűleg a Windows tűzfal blokkolja. A Windows csak egyszer kérdezi meg, hogy az M³ fogadhat-e kapcsolatokat, és ha ezt a kérdést elutasították, vagy az M³-at csak magánhálózatokon engedélyezték, miközben a számítógép hálózata nyilvános, akkor újabb kérdés nélkül továbbra is blokkolja. Windowson az M³ figyelmeztet erre a címek alatt, és az **Engedélyezés a Windows tűzfalban** gomb átengedi az oldalt, miután a Windows rendszergazdai engedélyt kért. A Microsoft Store-verzió a telepítéskor engedélyezi.
 
 **Alapértelmezett**: `false`, port: `8787`
 
