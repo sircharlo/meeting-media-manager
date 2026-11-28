@@ -41,6 +41,7 @@ const {
   clearFirewallCheckCache,
   coversPort,
   evaluateFirewall,
+  getElevationScript,
   getFirewallAllowScript,
   getTimerRemoteFirewallStatus,
 } = await import('../timer-remote-firewall');
@@ -109,7 +110,7 @@ const answer = ({
   execFileMock.mockImplementation(
     (_file: string, args: string[], _options: object, callback) => {
       const done = callback as ExecFileCallback;
-      if (scriptOf(args).includes('Start-Process')) {
+      if (scriptOf(args).includes('Process]::Start')) {
         const code = elevation?.code ?? 0;
         done(
           code ? Object.assign(new Error('Command failed'), { code }) : null,
@@ -271,6 +272,24 @@ describe('evaluateFirewall', () => {
   });
 });
 
+describe('getElevationScript', () => {
+  // Tried on Windows 11: turning the question down through Start-Process
+  // gave an error with only Windows' message, so it counted as a failure.
+  it('starts it elevated through Process.Start, whose error keeps the code of a refusal', () => {
+    const script = getElevationScript('Write-Output 1');
+
+    expect(script).toContain('[System.Diagnostics.Process]::Start($start)');
+    expect(script).toContain("$start.Verb = 'runas'");
+    expect(script).not.toContain('Start-Process');
+    expect(script).toContain(
+      '$e -is [System.ComponentModel.Win32Exception] -and $e.NativeErrorCode -eq 1223',
+    );
+    expect(script).toContain(
+      Buffer.from('Write-Output 1', 'utf16le').toString('base64'),
+    );
+  });
+});
+
 describe('getFirewallAllowScript', () => {
   it('allows M³ on the port on every network type, quoting its path', () => {
     const script = getFirewallAllowScript(
@@ -333,7 +352,7 @@ describe('getTimerRemoteFirewallStatus', () => {
   // Each check starts PowerShell for about a second.
   const checkCount = () =>
     execFileMock.mock.calls.filter(
-      ([, args]) => !scriptOf(args as string[]).includes('Start-Process'),
+      ([, args]) => !scriptOf(args as string[]).includes('Process]::Start'),
     ).length;
 
   it('shares a check under way, and its answer for a minute', async () => {

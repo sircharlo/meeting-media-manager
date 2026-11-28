@@ -165,7 +165,8 @@ const getPowerShellPath = () =>
  */
 export const getFirewallCheckScript = (program: string) => `
 $ErrorActionPreference = 'Stop'
-$fw = New-Object -ComObject HNetCfg.FwPolicy2
+$ProgressPreference = 'SilentlyContinue'
+$fw =New-Object -ComObject HNetCfg.FwPolicy2
 $program = [Environment]::ExpandEnvironmentVariables(${quote(program)}).ToLowerInvariant()
 $profiles = foreach ($type in 1, 2, 4) {
   [pscustomobject]@{
@@ -214,6 +215,7 @@ export const getFirewallAllowScript = (
   resultPath: string,
 ) => `
 $ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
 $resultPath = ${quote(resultPath)}
 try {
   $program = ${quote(program)}
@@ -235,13 +237,24 @@ try {
 /**
  * Starts the allow script elevated, which makes Windows ask for permission,
  * and exits with its exit code, or ERROR_CANCELLED when the question was
- * turned down.
+ * turned down. Through Process.Start rather than Start-Process: when the
+ * question is turned down, Start-Process throws an error that only has
+ * Windows' message (tried on Windows 11), while Process.Start's keeps the
+ * Win32Exception and its code.
  * @param elevatedScript The script to run elevated.
  * @returns The script.
  */
 export const getElevationScript = (elevatedScript: string) => `
+$ProgressPreference = 'SilentlyContinue'
 try {
-  $process = Start-Process -FilePath ${quote(getPowerShellPath())} -Verb RunAs -WindowStyle Hidden -Wait -PassThru -ArgumentList '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-EncodedCommand', '${encode(elevatedScript)}'
+  $start = New-Object System.Diagnostics.ProcessStartInfo
+  $start.FileName = ${quote(getPowerShellPath())}
+  $start.Arguments = '-NoProfile -NonInteractive -ExecutionPolicy Bypass -EncodedCommand ${encode(elevatedScript)}'
+  $start.Verb = 'runas'
+  $start.UseShellExecute = $true
+  $start.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+  $process = [System.Diagnostics.Process]::Start($start)
+  $process.WaitForExit()
   exit $process.ExitCode
 } catch {
   $e = $_.Exception
