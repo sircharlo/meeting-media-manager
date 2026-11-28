@@ -120,18 +120,21 @@ const wait = (ms: number) =>
   });
 
 /**
- * Lets the queue run to its end. A job waiting for its file to stop playing
- * looks again only every second (MOVE_RETRY_DELAY_MS), as long as
- * vi.waitFor's default timeout, so a busy test run could give up just before
- * the job finished: allow more than that.
+ * How long to wait for a job that waits for its file to stop playing. It
+ * looks again only every second (MOVE_RETRY_DELAY_MS), in real time, and a
+ * busy full test run stretched that past 3 seconds: allow ten. A passing
+ * test still only waits as long as the job takes.
  */
+const JOB_WAIT_MS = 10_000;
+
+/** Lets the queue run to its end. */
 const settle = async () => {
   const { useMediaConversionStore } = await import('stores/media-conversion');
   await vi.waitFor(
     () => {
       expect(useMediaConversionStore().activeJobs).toHaveLength(0);
     },
-    { timeout: 5000 },
+    { timeout: JOB_WAIT_MS },
   );
 };
 
@@ -530,7 +533,7 @@ describe('media-conversion', () => {
         () => {
           expect(fs.move).toHaveBeenCalled();
         },
-        { timeout: 3000 },
+        { timeout: JOB_WAIT_MS },
       );
     });
 
@@ -697,7 +700,7 @@ describe('media-conversion', () => {
             expect.stringMatching(/^\/temp\/conversion-/),
           );
         },
-        { timeout: 3000 },
+        { timeout: JOB_WAIT_MS },
       );
       expect(fs.move).not.toHaveBeenCalled();
       expect(items[0]?.fileUrl).toBe(fileUrl('/add/clip.mp4'));
