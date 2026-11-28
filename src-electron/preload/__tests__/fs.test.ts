@@ -1,3 +1,8 @@
+import type * as FsExtra from 'fs-extra';
+
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 type ExecFileCallback = (
@@ -12,7 +17,33 @@ const execFileMock = vi.fn(
 );
 const capturePreloadErrorMock = vi.fn();
 const logMock = vi.fn();
+// fs-extra's own, unless a test makes a path fail (see readDirectory).
+const { failingPaths } = vi.hoisted(() => ({
+  failingPaths: new Map<string, string>(),
+}));
 
+vi.mock('fs-extra', async (importOriginal) => {
+  const actual = await importOriginal<typeof FsExtra>();
+  const failFor = (path: unknown) => {
+    const code = failingPaths.get(String(path).replaceAll('\\', '/'));
+    if (code) {
+      throw Object.assign(new Error(`${code}: test, ${String(path)}`), {
+        code,
+      });
+    }
+  };
+  return {
+    ...actual,
+    readdir: (async (path: string, ...rest: unknown[]) => {
+      failFor(path);
+      return (actual.readdir as (...args: unknown[]) => unknown)(path, ...rest);
+    }) as typeof actual.readdir,
+    stat: (async (path: string) => {
+      failFor(path);
+      return actual.stat(path);
+    }) as typeof actual.stat,
+  };
+});
 vi.mock('node:child_process', () => ({ execFile: execFileMock }));
 vi.mock('src-electron/constants', () => ({ PLATFORM: 'win32' }));
 vi.mock('src-electron/preload/log', () => ({
@@ -211,5 +242,81 @@ describe('when attrib cannot run', () => {
         },
       },
     });
+  });
+});
+
+describe('readDirectory', () => {
+  const root = mkdtempSync(join(tmpdir(), 'm3-readdir-test-'));
+  const forward = (path: string) => path.replaceAll('\\', '/');
+
+  beforeEach(() => {
+    failingPaths.clear();
+    rmSync(root, { force: true, recursive: true });
+    mkdirSync(join(root, 'sjjm_T_0'), { recursive: true });
+    writeFileSync(join(root, 'a.jpg'), 'aaaa');
+    writeFileSync(join(root, 'sjjm_T_0', 'song.jpg'), 'bb');
+  });
+
+  afterAll(() => {
+    rmSync(root, { force: true, recursive: true });
+  });
+
+  const names = (items: { name: string; size?: number }[]) =>
+    items.map(({ name, size }) => `${name}:${size ?? '-'}`).sort();
+
+  it('lists files with their sizes, and folders within folders', async () => {
+    const { readDirectory } = await loadFs();
+
+    expect(names(await readDirectory(root, true, true))).toEqual([
+      'a.jpg:4',
+      'sjjm_T_0:-',
+      'song.jpg:2',
+    ]);
+  });
+
+  it('leaves out a download that finished while it was listed (MMM-V2-3PH)', async () => {
+    const part = join(root, 'sjjm_T_0', 'song2.jpg.40c325b2.part');
+    writeFileSync(part, 'ccc');
+    // Renamed into place between the listing and the look at its size.
+    failingPaths.set(forward(part), 'ENOENT');
+    const { readDirectory } = await loadFs();
+
+    expect(names(await readDirectory(root, true, true))).toEqual([
+      'a.jpg:4',
+      'sjjm_T_0:-',
+      'song.jpg:2',
+    ]);
+    expect(capturePreloadErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('leaves out the contents of a folder removed while it was listed', async () => {
+    failingPaths.set(forward(join(root, 'sjjm_T_0')), 'ENOENT');
+    const { readDirectory } = await loadFs();
+
+    expect(names(await readDirectory(root, true, true))).toEqual([
+      'a.jpg:4',
+      'sjjm_T_0:-',
+    ]);
+    expect(capturePreloadErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('reports any other failure with the folder it was listing', async () => {
+    failingPaths.set(forward(join(root, 'a.jpg')), 'EPERM');
+    const { readDirectory } = await loadFs();
+
+    expect(await readDirectory(root, true, true)).toEqual([]);
+    expect(capturePreloadErrorMock).toHaveBeenCalledWith(
+      expect.objectContaining({ code: 'EPERM' }),
+      {
+        contexts: {
+          fn: {
+            dir: root,
+            name: 'readDirectory',
+            recursive: true,
+            withSizes: true,
+          },
+        },
+      },
+    );
   });
 });

@@ -188,11 +188,16 @@ describe('preload error reporting', () => {
     expect(events[0]?.exception?.values?.[0]?.value).toMatch(
       /^ENOTDIR: not a directory, scandir /,
     );
+    // readDirectory says it's the one that failed, and on which folder.
     expect(events[0]?.fingerprint).toEqual([
       'node-fs-error',
       'ENOTDIR',
       'scandir',
-      'unknown',
+      'readDirectory',
     ]);
+    expect(events[0]?.contexts?.fn).toMatchObject({
+      dir: fileURLToPath(import.meta.url),
+      name: 'readDirectory',
+    });
   });
 });
