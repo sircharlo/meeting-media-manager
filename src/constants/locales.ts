@@ -173,13 +173,14 @@ export const locales: {
     englishName: 'Portuguese (Brazil)',
     label: 'Português (Brasil)',
     langcode: 'T',
-    signLangCodes: ['LSB', 'LGP', 'LAS', 'SLM'],
+    signLangCodes: ['LSB', 'LAS', 'SLM'],
     value: 'pt',
   },
   {
     englishName: 'Portuguese (Portugal)',
     label: 'Português (Portugal)',
     langcode: 'TPO',
+    signLangCodes: ['LGP'],
     value: 'ptPt',
   },
   {
