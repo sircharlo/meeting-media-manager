@@ -515,6 +515,8 @@ M³ створює у спільній папці папку для кожног
 
 Адреси, які потрібно відкрити на пристрої, перелічено в спливному вікні таймера разом із кнопкою копіювання. Змінюйте порт, лише якщо його вже використовує інша програма. Зверніть увагу: поки цю функцію ввімкнено, сторінку може відкрити будь-хто в тій самій мережі; на ній показано лише таймер.
 
+The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+
 **За замовчуванням**: `false`, порт `8787`
 
 ### Формати відображення таймера {#timer-display-formats}

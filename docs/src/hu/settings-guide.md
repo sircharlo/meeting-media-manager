@@ -515,6 +515,8 @@ Amíg az oldal nyitva van, ébren tartja az eszköz képernyőjét, így a pulpi
 
 Az eszközön megnyitandó címek az időzítő felugró ablakában vannak felsorolva, egy másolás gombbal együtt. A portot csak akkor módosítsa, ha egy másik program már használja. Vegye figyelembe, hogy amíg ez be van kapcsolva, ugyanazon a hálózaton bárki megnyithatja az oldalt; az oldal azonban csak az időzítőt mutatja.
 
+The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+
 **Alapértelmezett**: `false`, port: `8787`
 
 ### Az időzítő megjelenítési formátumai {#timer-display-formats}
