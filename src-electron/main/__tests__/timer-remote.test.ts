@@ -154,6 +154,26 @@ describe('timer remote', () => {
     expect(css).toMatch(/\.hand-banner\.flash \{ animation:/);
   });
 
+  // The clock before the meeting (with seconds, and AM/PM) is twice as long
+  // as a countdown, and ran off both sides of the screen at a countdown's
+  // size. Checked in Chrome: at 1920x900 and 412x860 it now fits, and
+  // "04:30" keeps its size.
+  it('sizes the time to its length, so the clock fits the width', async () => {
+    const { startTimerRemote } = await import('../timer-remote');
+    const port = await freePort();
+    await startTimerRemote(port);
+
+    const css = (await get(port, '/app.css')).body;
+    expect(css).toContain(
+      '.time { font-size: max(1rem, min(26vw, 40vh, calc(94vw / (var(--chars, 5) * .62))));',
+    );
+    expect(css).toMatch(
+      /\.display\.focus\.is-active \.time \{ font-size: min\([^}]*var\(--chars, 5\)/,
+    );
+    const js = (await get(port, '/app.js')).body;
+    expect(js).toContain("el.time.style.setProperty('--chars'");
+  });
+
   it('reports a port already in use', async () => {
     const { startTimerRemote } = await import('../timer-remote');
     const port = await freePort();
