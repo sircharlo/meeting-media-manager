@@ -515,7 +515,7 @@ Zolang de pagina open is, houdt hij het scherm van het apparaat wakker, zodat ee
 
 De adressen die je op het apparaat moet openen, staan in het pop-upvenster van de timer, met een kopieerknop. Wijzig de poort alleen als een ander programma die al gebruikt. Let op: zolang dit is ingeschakeld, kan iedereen op hetzelfde netwerk de pagina openen; die toont echter alleen de timer.
 
-The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+De adressen staan ook in Instellingen, onder de poort van de timer op afstand. Als de pagina wel op deze computer opent maar niet op de tablet, blokkeert Windows Firewall hem waarschijnlijk. Windows vraagt maar één keer of M³ verbindingen mag aannemen, en als die vraag is weggeklikt, of als M³ alleen op privénetwerken is toegestaan terwijl het netwerk van de computer openbaar is, blijft Windows blokkeren zonder het opnieuw te vragen. In Windows waarschuwt M³ daarvoor onder de adressen, en **Toestaan in Windows Firewall** laat de pagina door nadat Windows om de toestemming van een beheerder heeft gevraagd. De versie uit de Microsoft Store staat dit bij de installatie al toe.
 
 **Standaard**: `false`, poort `8787`
 
