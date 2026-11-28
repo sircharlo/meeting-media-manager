@@ -808,7 +808,6 @@
 </template>
 
 <script setup lang="ts">
-import type { LanguageValue } from 'src/constants/locales';
 import type { FeatureNudgeId, NoticeType } from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
@@ -833,9 +832,9 @@ import { markSetUpThisSession } from 'src/helpers/feature-nudges';
 import { getRendererPlatform } from 'src/helpers/fs';
 import { downloadSongbookVideos, fetchMedia } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { matchSystemLocale } from 'src/helpers/system-locale';
 import { localeOptions } from 'src/i18n';
 import { addToDate, formatDate, getLocalDate } from 'src/utils/date';
-import { camelToKebabCase } from 'src/utils/general';
 import { importProfileSettingsFromFile } from 'src/utils/profile-settings';
 import { areZoomButtonsLearned } from 'src/utils/zoom';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
@@ -936,24 +935,10 @@ const importProfileSettingsForWizard = async () => {
 
 const loadSystemLocale = async () => {
   try {
-    const systemLocales = await getLocales();
-    const availableLocales = new Set(
-      localeOptions.map((l) => camelToKebabCase(l.value).toLowerCase()),
+    const match = matchSystemLocale(
+      await getLocales(),
+      localeOptions.map((l) => l.value),
     );
-    let match: LanguageValue | undefined;
-
-    for (const locale of systemLocales) {
-      if (match || !currentSettings.value) break;
-
-      const normalized = locale.toLowerCase();
-      const base = normalized.split('-')[0];
-
-      if (availableLocales.has(normalized)) {
-        match = normalized as LanguageValue;
-      } else if (base && availableLocales.has(base)) {
-        match = base as LanguageValue;
-      }
-    }
 
     if (match && currentSettings.value) {
       currentSettings.value.localAppLang = match;
