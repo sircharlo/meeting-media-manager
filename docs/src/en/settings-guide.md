@@ -515,6 +515,8 @@ While the page is open, it keeps the device's screen awake, so a tablet at the l
 
 The addresses to open on the device are listed in the timer popup, with a copy button. Change the port only if another program already uses it. Note that anyone on the same network can open the page while this is on; it shows nothing but the timer.
 
+The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+
 **Default**: `false`, port `8787`
 
 ### Timer Display Formats {#timer-display-formats}

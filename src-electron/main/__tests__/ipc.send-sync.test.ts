@@ -64,6 +64,7 @@ vi.mock('src-electron/main/session', () => ({}));
 vi.mock('src-electron/main/shortcuts', () => ({}));
 vi.mock('src-electron/main/sqlite', () => ({}));
 vi.mock('src-electron/main/timer-remote', () => ({}));
+vi.mock('src-electron/main/timer-remote-firewall', () => ({}));
 vi.mock('src-electron/main/updater', () => ({}));
 vi.mock('src-electron/main/waf-challenge', () => ({}));
 vi.mock('src-electron/main/window/window-media', () => ({}));

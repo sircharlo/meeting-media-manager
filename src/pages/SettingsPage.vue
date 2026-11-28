@@ -384,6 +384,15 @@
                       />
                     </q-item-section>
                   </q-item>
+                  <!-- Where to open the timer remote, as in the timer popup -->
+                  <TimerRemoteAddresses
+                    v-if="
+                      settingId === 'timerRemotePort' &&
+                      currentSettings.enableTimerDisplay &&
+                      currentSettings.timerRemoteEnable
+                    "
+                    class="q-px-md q-pb-sm"
+                  />
                 </template>
               </div>
               <SettingsMeetingChecklists
@@ -427,6 +436,7 @@ import type {
 import { useEventListener, whenever } from '@vueuse/core';
 import { useRouteParams } from '@vueuse/router';
 import BaseInput from 'components/form-inputs/BaseInput.vue';
+import TimerRemoteAddresses from 'components/media/TimerRemoteAddresses.vue';
 import SettingsMeetingChecklists from 'components/settings/SettingsMeetingChecklists.vue';
 import SettingsPinCard from 'components/settings/SettingsPinCard.vue';
 import SettingsPinGate from 'components/settings/SettingsPinGate.vue';

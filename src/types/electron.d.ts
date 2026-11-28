@@ -129,6 +129,13 @@ export type Display = Electron.Display & {
 
 export interface ElectronApi {
   /**
+   * Allows the timer remote through Windows Firewall, after Windows asks for
+   * an administrator's permission, then checks again that it worked.
+   */
+  allowTimerRemoteThroughFirewall: (
+    port: number,
+  ) => Promise<TimerRemoteFirewallAllowResult>;
+  /**
    * The app store this copy of M³ came from, which updates it; null for M³'s
    * own installers, the AppImage and the portable build.
    */
@@ -274,6 +281,13 @@ export interface ElectronApi {
    * M³'s snap.
    */
   getSnapConnections: () => Promise<null | SnapConnections>;
+  /**
+   * Whether Windows Firewall lets other devices reach the timer remote on
+   * the networks this computer is on.
+   */
+  getTimerRemoteFirewallStatus: (
+    port: number,
+  ) => Promise<TimerRemoteFirewallStatus>;
   /**
    * Returns the auto-updater's current lifecycle state (downloading /
    * downloaded) so the renderer can catch up on an update that started
@@ -612,6 +626,7 @@ export type ElectronFsApi = Pick<
 
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
+  | 'allowTimerRemoteThroughFirewall'
   | 'cancelPlaybackConversion'
   | 'closeSqliteConnection'
   | 'closeSqliteConnections'
@@ -635,6 +650,7 @@ export type ElectronIpcInvokeKey =
   | 'getScreenAccessStatus'
   | 'getSharedDataPath'
   | 'getSnapConnections'
+  | 'getTimerRemoteFirewallStatus'
   | 'getUpdaterState'
   | 'getUpdatesDisabledPath'
   | 'getUserDataPath'
@@ -813,6 +829,37 @@ export type SnapConnections = Partial<Record<SnapInterface, boolean>>;
  * itself (see SNAP_MANUAL_INTERFACES in src/constants/snap.ts).
  */
 export type SnapInterface = 'password-manager-service' | 'removable-media';
+
+export interface TimerRemoteFirewallAllowResult {
+  /**
+   * `cancelled`: the permission was refused. `still-blocked`: done, but
+   * something M³ can't change still blocks it, such as an organization's
+   * rule.
+   */
+  outcome: 'allowed' | 'cancelled' | 'failed' | 'still-blocked';
+  /** The firewall's state afterwards. */
+  status: TimerRemoteFirewallStatus;
+}
+
+/**
+ * Whether Windows Firewall lets other devices reach the timer remote, on the
+ * network types this computer is on now: no rule allows it (`not-allowed`), a
+ * rule blocks it (`blocked`), or the firewall blocks every incoming
+ * connection there (`blocks-all`). `unknown` when the computer isn't on a
+ * network or the check couldn't read the firewall; `unsupported` outside
+ * Windows and in the Microsoft Store build, whose package allows it.
+ */
+export type TimerRemoteFirewallState =
+  | 'allowed'
+  | 'blocked'
+  | 'blocks-all'
+  | 'not-allowed'
+  | 'unknown'
+  | 'unsupported';
+
+export interface TimerRemoteFirewallStatus {
+  state: TimerRemoteFirewallState;
+}
 
 export interface TimerRemoteStatus {
   /** `invalid-port`, `port-in-use` or `start-failed`. */
