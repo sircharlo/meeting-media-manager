@@ -3,8 +3,8 @@ import type { TimerData } from 'src/types';
 
 import { mount, type VueWrapper } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { nextTick, ref } from 'vue';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { type Component, nextTick, ref } from 'vue';
 
 const timerData = ref<TimerData | undefined>();
 
@@ -37,6 +37,14 @@ const runningPart = (overrides: Partial<TimerData>): TimerData => ({
 });
 
 let wrapper: undefined | VueWrapper;
+let TimerPage: Component;
+
+// Imported here rather than at the top, so the @vueuse/core mock above finds
+// timerData. Once, before the tests: compiling the page and what it imports
+// took the first test past its 15 seconds in a busy full run.
+beforeAll(async () => {
+  ({ default: TimerPage } = await import('../TimerPage.vue'));
+}, 60_000);
 
 afterEach(() => {
   wrapper?.unmount();
@@ -45,7 +53,6 @@ afterEach(() => {
 });
 
 const arcRemainingColor = async (data: TimerData) => {
-  const { default: TimerPage } = await import('../TimerPage.vue');
   wrapper = mount(TimerPage);
   timerData.value = data;
   await nextTick();
@@ -96,7 +103,6 @@ describe('TimerPage - analog countdown', () => {
   const mountCountdown = async (
     timerCountdownDisplay: TimerData['timerCountdownDisplay'],
   ) => {
-    const { default: TimerPage } = await import('../TimerPage.vue');
     wrapper = mount(TimerPage);
     timerData.value = runningPart({
       mode: 'countdown',
@@ -125,7 +131,6 @@ describe('TimerPage - analog countdown', () => {
 
 describe('TimerPage - hand alert', () => {
   it('announces a raised hand in an <output> status region, with the names', async () => {
-    const { default: TimerPage } = await import('../TimerPage.vue');
     wrapper = mount(TimerPage);
     timerData.value = runningPart({
       handAlertActive: true,
