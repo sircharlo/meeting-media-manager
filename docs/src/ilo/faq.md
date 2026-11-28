@@ -1,371 +1,371 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Masansan a Maisalsaludsod {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## Dagiti Sapasap a Saludsod {#general-questions}
 
-### :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+### :earth_americas: Agdepende kadi daytoy nga app kadagiti sabali a site, gubuayan, wenno "curator" tapno mai-download dagiti publikasion, media ti gimong, wenno dadduma pay a linaon? {#external-dependencies}
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**Saan.** Agandar daytoy nga app a kas iti JW Library. Direkta nga i-download-na dagiti publikasion, media, ken dadduma pay a linaon manipud iti opisial a website dagiti Saksi ni Jehova ken iti content delivery network-na. Automatiko nga ikeddeng ti app no ania ti masapul a mai-download, ken no kaano a saanen a na-update ti dati a nai-download a linaon ket masapul a mai-download manen.
 
-:::info Note
+:::info Palagip
 
-The source code for this app is available for all to examine and verify what goes on under the hood.
+Mabalin a kitaen ti asinoman ti source code daytoy nga app tapno masukimat ken mapaneknekanna no ania ti mapaspasamak iti uneg daytoy.
 
 :::
 
-### :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses? {#terms-of-use}
+### :thinking: Sumalungasing kadi daytoy nga app iti Pagannurotan iti Panagusar ti opisial a website dagiti Saksi ni Jehova? {#terms-of-use}
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**Saan.** Nalawag nga ipalubos ti [Pagannurotan iti Panagusar](https://www.jw.org/finder?docid=1011511&prefer=content) ti opisial a website dagiti Saksi ni Jehova ti kita ti panangusar nga ar-aramidenmi. Daytoy ti maipanggep a paset dagidiay a pagannurotan (kukuami ti panangipaganetget):
 
-> You may not:
+> Saanmo a mabalin nga aramiden dagiti sumaganad:
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> Agaramid iti aniaman a maiwaras a software application, tool, wenno teknik a nairanta nga agkolekta, agkopia, agi-download, ag-extract, ag-harvest, wenno ag-scrape iti data, HTML, ladawan, wenno text manipud iti daytoy a site. (**Saan** nga iparit daytoy ti panangiwaras kadagiti libre ken saan a mailaklako nga application a nadisenio tapno agi-download kadagiti elektroniko a file kas iti EPUB, PDF, MP3, ken MP4 manipud kadagiti pangpubliko a paset daytoy a website.)
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: Ania dagiti operating system a suportaran ti M³? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+Suportaran ti M³ ti Windows, macOS, ken Linux:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 ken dagiti simmaruno a bersion (64-bit). Ti maudi a bersion para iti 32-bit a Windows ket v26.10.1, iti [panid ti download](download).
+- **macOS**: macOS 13 (Ventura) ken dagiti simmaruno a bersion (Universal build). Ti maudi a bersion para iti macOS 12 (Monterey) ket v26.10.1, iti [panid ti download](download).
+- **Linux**: Kaaduan a moderno a distribution ti Linux (AppImage a pormat)
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians: Agandar kadi ti M³ iti lengguahek? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Wen!** Kompleto ti suporta ti M³ para iti adu a lengguahe:
 
-- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **App Interface**: Use M³'s interface in many different languages
-- **Independent Settings**: You can use the interface in one language while downloading media in another
-- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
-- **Subtitle support**: Download and display subtitles in various languages
+- **Media**: I-download ti media iti aniaman kadagiti ginasut a lengguahe nga adda iti opisial a website dagiti Saksi ni Jehova
+- **Interface ti App**: Usarem ti interface ti M³ iti adu a nadumaduma a lengguahe
+- **Naisalumina a Setting**: Mabalinmo nga usaren ti interface iti maysa a lengguahe bayat nga agi-download-ka iti media iti sabali a lengguahe
+- **Dagiti maikadua a lengguahe**: I-set dagiti maikadua a lengguahe a mausar no awan ti media iti kangrunaan a lengguahe
+- **Suporta para kadagiti subtitle**: I-download ken ipakita dagiti subtitle iti nadumaduma a lengguahe
 
-## Installation and Setup {#installation-setup}
+## Panangi-install ken Setup {#installation-setup}
 
-### :computer: How do I download and install M³? {#installation}
+### :computer: Kasanok nga i-download ken i-install ti M³? {#installation}
 
-Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
+I-download ti maitutop a bersion manipud iti [panid ti download](download), ken surotem dagiti addang iti [Giya ti Agar-aramat](user-guide).
 
-### :gear: How do I set up M³ for the first time? {#first-time-setup}
+### :gear: Kasanok nga i-set up ti M³ iti umuna a gundaway? {#first-time-setup}
 
-M³ includes a setup wizard that guides you through the essential configuration:
+Addaan ti M³ iti setup wizard a mangiwanwan kenka kadagiti kangrunaan a setting:
 
-1. Choose your interface language
-2. Select profile type (Regular or Other)
-3. Configure congregation information
-4. Set up meeting schedule
-5. Configure optional features like OBS integration
+1. Piliem ti lengguahe ti app
+2. Piliem ti kita ti profile (Kadawyan wenno Sabali)
+3. I-set ti impormasion ti kongregasion
+4. I-set up ti eskediul ti gimong
+5. I-set dagiti opsional a feature a kas iti integration ti OBS
 
-## Media Management {#faq-media-management}
+## Panangimaneho iti Media {#faq-media-management}
 
-### :desktop_computer: How does M³ download media? {#media-download}
+### :desktop_computer: Kasano nga i-download ti M³ ti media? {#media-download}
 
-M³ automatically downloads media for upcoming meetings by:
+Automatiko nga i-download ti M³ ti media para kadagiti dumteng a gimong babaen ti:
 
-1. Checking your meeting schedule
-2. Determining what media is needed
-3. Downloading from the official website of Jehovah's Witnesses in your selected language
-4. Organizing media by date and meeting type
-5. Caching files for offline use
+1. Panangsukimat iti eskediul ti gimongmo
+2. Panangikeddeng no ania a media ti kasapulan
+3. Panangi-download manipud iti opisial a website dagiti Saksi ni Jehova iti lengguahe a pinilim
+4. Panangurnos iti media sigun iti petsa ken kita ti gimong
+5. Panangi-cache kadagiti file tapno mausar uray offline
 
-### :calendar: Can I download media for specific dates? {#specific-dates}
+### :calendar: Mabalinko kadi nga i-download ti media para kadagiti espesipiko a petsa? {#specific-dates}
 
-Yes! M³ allows you to:
+Wen! Babaen ti M³, mabalinka nga:
 
-- Download media for upcoming meetings automatically
-- Import custom media for any date
+- Automatiko nga agi-download iti media para kadagiti dumteng a gimong
+- Agi-import iti custom a media para iti aniaman a petsa
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: Kasano nga i-import dagiti bukodko a file ti media? {#import-media}
 
-You can import custom media in several ways:
+Mabalinmo nga i-import ti custom a media iti nadumaduma a wagas:
 
-- **File Import**: Use the import button to add videos, images, or audio files
-- **Drag and Drop**: Drag files directly into M³
-- **Folder Monitoring**: Set up a watched folder for automatic imports
-- **JWPUB Files and Playlists**: Import publications and playlists
-- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
-- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
+- **Panangi-import iti File**: Usarem ti button a pang-import tapno mangnayon kadagiti video, ladawan, wenno file ti audio
+- **I-drag ken I-drop**: I-drag dagiti file a direkta iti M³
+- **Panangbantay kadagiti Folder**: I-set up ti folder a mabanbantayan para iti automatiko a panangi-import
+- **Dagiti JWPUB a File ken Playlist**: I-import dagiti publikasion ken playlist
+- **Media para iti Palawag Publiko**: I-import-mo dagiti JWPUB a file ti S-34 wenno S-34mp para iti media ti palawag publiko
+- **Dagiti Ramit para iti Biblia ken Study Bible**: Inayonmo dagiti audio recording ti Biblia, media ti Study Bible, wenno media ti Biblia iti sign language
 
-### :speaker: Can I import audio Bible recordings? {#audio-bible}
+### :speaker: Mabalinko kadi nga i-import dagiti audio recording ti Biblia? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+Wen! Addaan ti M³ iti feature a para kadagiti audio recording ti Biblia, a mangipalubos kenka nga:
 
-1. Select Bible books and chapters
-2. Choose specific verses or verse ranges
-3. Download audio recordings
-4. Use them at the meetings
+1. Agpili kadagiti libro ken kapitulo ti Biblia
+2. Agpili kadagiti espesipiko a bersikulo wenno sumagmamano a bersikulo nga agsasaruno
+3. Agi-download kadagiti audio recording
+4. Usaren dagitoy kadagiti gimong
 
-## Presentation Features {#faq-presentation-features}
+## Dagiti Feature iti Panangipakita {#faq-presentation-features}
 
-### :tv: How do I present media during meetings? {#present-media}
+### :tv: Kasano nga ipakitak ti media bayat dagiti gimong? {#present-media}
 
-To present media:
+Tapno maipakita ti media:
 
-1. Select the date
-2. Click the play button on the media item you want to present or use keyboard shortcuts
-3. Use the media player controls to pause, navigate, or stop playback
-4. Use zoom/pan features for images
-5. Set custom timing if needed
+1. Piliem ti petsa
+2. I-click-mo ti button a pang-play iti media a kayatmo nga ipakita, wenno usarem dagiti keyboard shortcut
+3. Usarem dagiti kontrol ti media player tapno i-pause, ag-navigate, wenno isardeng ti panangi-play
+4. Usarem dagiti feature a zoom/pan para kadagiti ladawan
+5. I-set-mo ti custom nga oras no kasapulan
 
-### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
+### :keyboard: Ania dagiti keyboard shortcut a mausar? {#faq-keyboard-shortcuts}
 
-M³ supports customizable keyboard shortcuts for:
+Adda dagiti keyboard shortcut ti M³ a mabalinmo nga i-customize para iti:
 
-- Opening/closing media window
-- Previous/next media navigation
-- Play/pause/stop controls
-- Background music toggle
+- Panangluktan/panangiserra iti window ti media
+- Panagakar iti napalabas/sumaruno a media
+- Dagiti kontrol nga i-play/i-pause/isardeng
+- Panangirugi/panangisardeng iti background music
 
 <!-- - Fullscreen mode -->
 
-### :notes: How does background music work? {#faq-background-music}
+### :notes: Kasano nga agandar ti background music? {#faq-background-music}
 
-Background music features include:
+Karaman kadagiti feature ti background music ti:
 
-- Automatic playback when M³ starts, before the meeting begins
-- Automatic stop before meetings begin
-- One-click restart after meetings
-- Independent volume control
-- Configurable stop buffer time
+- Automatiko a panangi-play no agrugi ti M³, sakbay a mangrugi ti gimong
+- Automatiko a panangisardeng sakbay a mangrugi dagiti gimong
+- Panangirugi manen babaen ti maysa nga click kalpasan dagiti gimong
+- Bukod a kontrol ti kapigsa ti uni
+- Mabalin nga i-set ti palugit nga oras sakbay nga agsardeng ti musika
 
-### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+### :stopwatch: Adda kadi timer ti gimong iti M³? {#faq-meeting-timer}
 
-Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
+Wen. No naka-enable, mabalin nga ipakita ti M³ ti bukod a window ti timer para iti panangorasan kadagiti paset dagiti makipaset. Mabalinna ti agbilang a pangato wenno pababa, ipakita ti agdama nga oras, ipakita ti countdown sakbay ti gimong, ken no kayatmo, ipakitana no lumbes iti oras ti paset wenno no nasapa wenno naladaw ti gimong iti eskediul. Mabalin a baliwan a siwayawaya ti kabayag dagiti paset, mabalin ti agnayon iti custom a paset para kadagiti espesial a programa, ken mabalin a kontrolen ti timer manipud iti isla dagiti aksion (agraman no i-hover-mo) wenno manipud iti panel iti kangrunaan a window.
 
-The timer is a beta feature and should only be enabled if approved locally.
+Beta a feature ti timer, ket rumbeng laeng nga i-enable no naaprobaran iti kongregasionmo.
 
-### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
+### :video_camera: Kasano nga i-set up ti integration ti Zoom? {#zoom-setup}
 
-To integrate with Zoom:
+Tapno maikonektar ti M³ iti Zoom:
 
-1. Enable Zoom integration in M³ settings
-2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
-3. M³ will automatically start and stop Zoom screen sharing during media presentations
+1. I-enable-mo ti integration ti Zoom kadagiti setting ti M³
+2. I-set-mo ti shortcut ti panangi-share iti iskrin a naka-set up iti Zoom. Siguraduem a "global" dayta a shortcut kadagiti setting ti Zoom.
+3. Automatiko nga irugi ken isardeng ti M³ ti panangi-share iti iskrin iti Zoom bayat ti panangipakita iti media
 
-## OBS Studio Integration {#faq-obs-integration}
+## Integration ti OBS Studio {#faq-obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
+### :video_camera: Kasano nga i-set up ti integration ti OBS Studio? {#faq-obs-setup}
 
-To integrate with OBS Studio:
+Tapno maikonektar ti M³ iti OBS Studio:
 
-1. Install OBS Studio and the WebSocket plugin
-2. Enable OBS integration in M³ settings
-3. Enter the OBS port and password
-4. Configure scenes for camera, media, and images
-5. Test playback
+1. I-install-mo ti OBS Studio ken ti WebSocket plugin
+2. I-enable-mo ti integration ti OBS kadagiti setting ti M³
+3. I-type-mo ti port ken password ti OBS
+4. I-set-mo dagiti scene para iti kamera, media, ken ladawan
+5. I-test-mo ti panangi-play
 
-### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
+### :arrows_counterclockwise: Kasano nga agandar ti automatiko a panagsukat ti scene? {#faq-scene-switching}
 
-M³ automatically switches OBS scenes based on:
+Automatiko a sukatan ti M³ dagiti scene ti OBS a maibatay iti:
 
-- Media type (video, image, etc.)
-- Your scene configuration
-- Settings like "Do not automatically share images"
-- Whether to return to previous scene after media
+- Kita ti media (video, ladawan, kdpy.)
+- Dagiti setting ti scene-mo
+- Dagiti setting a kas iti "Saan nga automatiko nga i-share dagiti ladawan"
+- No agsubli iti dati a scene kalpasan ti media
 
-### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
+### :pause_button: Ania ti aramiden ti setting a "Saan nga automatiko nga i-share dagiti ladawan"? {#faq-postpone-images}
 
-This setting delays sharing images to OBS until you manually trigger them. This is useful for:
+Itantan daytoy a setting ti panangi-share kadagiti ladawan iti OBS agingga a sika mismo ti mangipaandar kadagitoy. Nasayaat daytoy para iti:
 
-- Showing images to in-person audience first
-- Having more control over timing
-- Avoiding premature scene changes
+- Panangipakita nga umuna kadagiti ladawan kadagiti personal a tumabtabuno
+- Ad-adda a panangkontrol iti oras
+- Panangliklik iti nasapa unay a panagsukat ti scene
 
-### :record_button: Can M³ record meetings? {#faq-recordings}
+### :record_button: Mabalin kadi nga i-record ti M³ dagiti gimong? {#faq-recordings}
 
-M³ does not include a built-in recorder, but it can help control recording in two ways:
+Awan ti naikabil a recorder iti M³, ngem makatulong dayta a mangkontrol iti panangi-record iti dua a wagas:
 
-- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
-- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+- No us-usarem ti OBS Studio, i-enable-mo dagiti kontrol ti panangi-record ti OBS, ken irugi wenno isardeng ti panangi-record ti OBS manipud iti popup ti OBS
+- No sabali nga app a pang-record ti us-usarem, i-set-mo dagiti keyboard shortcut tapno maitulod ti M³ dagiti bilin a pangirugi ken pangisardeng manipud iti popup dagiti recording ti gimong
 
-## Advanced Features {#faq-advanced-features}
+## Dagiti Advanced a Feature {#faq-advanced-features}
 
-### :cloud: How does the shared folder work? {#faq-folder-monitoring}
+### :cloud: Kasano nga agandar ti nai-share a folder? {#faq-folder-monitoring}
 
-If you keep files for meetings in a cloud storage app like Dropbox, OneDrive, iCloud Drive or Google Drive, M³ can add them to the right meeting automatically:
+No idulinmo dagiti file para kadagiti gimong iti cloud storage nga app a kas iti Dropbox, OneDrive, iCloud Drive wenno Google Drive, mabalin nga automatiko nga inayon ti M³ dagitoy iti husto a gimong:
 
-1. Choose a folder in your cloud storage app, in the setup wizard or in **Settings** > **Integrations** > **Shared folder**. A new folder used only for this is best.
-2. M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`).
-3. Put photos, videos, audio files or JW Library playlists in a meeting's folder whenever you need to. They're added to that meeting's media list, on every computer that uses the same folder.
-4. To add files for another day, create a folder for it, named the same way.
+1. Pumilika iti folder iti cloud storage nga app-mo, iti setup wizard wenno iti **Dagiti Setting** > **Dagiti Integration** > **Nai-share a folder**. Nasaysayaat no baro a folder a para laeng iti daytoy.
+2. Agaramid ti M³ iti folder iti uneg dayta para iti tunggal sumaruno a gimong, a nanaganan iti petsa ti gimong a naisurat kas tawen-bulan-aldaw (kas pagarigan, `2026-03-25`).
+3. Ikabilmo dagiti ladawan, video, audio file wenno playlist ti JW Library iti folder ti maysa a gimong no kasapulam. Mainayon dagitoy iti listaan ti media dayta a gimong, iti tunggal kompiuter nga agus-usar iti isu met laeng a folder.
+4. Tapno agnayon iti file para iti sabali nga aldaw, agaramidka iti folder para iti dayta, a nanaganan iti isu met laeng a wagas.
 
-When a week is over, M³ deletes that week's dated folders and the files in them, for everyone who uses the shared folder. To keep them, turn off **Delete past meeting folders**.
+No malpas ti maysa a lawas, i-delete ti M³ dagiti folder dayta a lawas nga addaan petsa ken dagiti file nga adda iti uneg dagitoy, para iti amin nga agus-usar iti nai-share a folder. Tapno pagtalinaedem dagitoy, i-off-mo ti **I-delete dagiti folder dagiti napalabas a gimong**.
 
-### :file_folder: What is media auto-export? {#faq-media-export}
+### :file_folder: Ania ti automatiko a panangi-export iti media? {#faq-media-export}
 
-Media auto-export automatically:
+Ti automatiko a panangi-export iti media:
 
-1. Exports media files to a specified folder
-2. Organizes files by date and section
-3. Converts files to MP4 format (optional)
-4. Maintains an organized backup of meeting media files
+1. Agi-export kadagiti file ti media iti naituding a folder
+2. Agurnos kadagiti file babaen ti petsa ken seksion
+3. Agi-convert kadagiti file iti pormat a MP4 (opsional)
+4. Agtaginayon iti naurnos a backup dagiti file ti media ti gimong
 
-### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
+### :family: Mabalinko kadi nga imaneho ti adu a kongregasion? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+Wen! Mabalin nga agaramid iti adu a profile iti M³ para iti:
 
-- Different congregations
-- Special events
-- Different groups
-- Separate settings and media for each
+- Nadumaduma a kongregasion
+- Dagiti espesial nga okasion
+- Nadumaduma a grupo
+- Bukod a setting ken media para iti tunggal maysa
 
-Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
+Mabalin met nga i-export dagiti profile iti JSON a file ken i-import iti sabali a kompiuter wenno iti sabali a profile. No mangi-importka, masukatan dagiti setting ti agdama a profile.
 
-## Troubleshooting {#faq-troubleshooting}
+## Panangrisut iti Problema {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
+### :warning: Saan a mai-download ti media. Ania ti rumbeng a sukimatek? {#faq-media-not-downloading}
 
-Check these common issues:
+Sukimatem dagitoy gagangay a problema:
 
-1. **Meeting Schedule**: Verify your meeting days and times are correct
-2. **Language Settings**: Ensure your media language is set correctly
-3. **Internet Connection**: Check your internet connection
-4. **Language Availability**: Verify media is available in your selected language
+1. **Eskediul ti Gimong**: Sukimatem no husto dagiti aldaw ken oras ti gimongmo
+2. **Dagiti Setting ti Lengguahe**: Siguraduem a husto ti naka-set a lengguahe ti media
+3. **Koneksion iti Internet**: Sukimatem ti koneksionmo iti Internet
+4. **Kaadda iti Lengguahe**: Sukimatem no adda ti media iti lengguahe a pinilim
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
+### :video_camera: Saan nga agandar ti integration ti OBS. Ania ti rumbeng a kitaek? {#faq-obs-not-working}
 
-Check these OBS-related issues:
+Sukimatem dagitoy a problema maipapan iti OBS:
 
-1. **OBS Installation**: Ensure OBS Studio is installed and running
-2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
-3. **Port and Password**: Check your OBS port and password settings
-4. **Firewall**: Ensure the firewall isn't blocking the connection
+1. **Pannakai-install ti OBS**: Siguraduem a naka-install ken agandar ti OBS Studio
+2. **WebSocket Plugin**: Sukimatem no naka-install ti WebSocket plugin
+3. **Port ken Password**: Sukimatem dagiti setting ti port ken password ti OBS
+4. **Firewall**: Siguraduem a saan a lapdan ti firewall ti koneksion
 
-### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
+### :speaker: Automatiko kadi nga itulod ti Meeting Media Manager ti audio ti media iti Zoom no agus-usar iti OBS Studio? {#audio-to-zoom}
 
-**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
+**Saan.** Saan nga automatiko nga itulod ti M³ ti audio ti media iti Zoom wenno OBS Studio. Agandar ti video stream a kas iti virtual a kamera nga awan ti uni, kas met laeng iti webcam. Tapno automatiko a mangngeg iti Zoom ti uni ti musika/video, masapul a siguraduem a 'mangngeg' ti Zoom ti audio a naggapu iti kompiuter, sa i-enable-mo ti setting nga **Original Audio** iti Zoom.
 
-**Important Notes:**
+**Napateg a Palagip:**
 
-- You must enable Original Audio **every time** before starting a Zoom meeting
-- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
-- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
-- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
-- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
+- Masapul nga i-enable-mo ti Original Audio **iti tunggal gundaway** sakbay nga irugim ti gimong iti Zoom
+- Saan a mainaig iti M³ daytoy a setting - isu met laeng a problema iti audio ti masangom no agusarka iti aniaman a sabali a media player ken saanmo nga usaren dagiti feature ti Zoom a pangi-share iti iskrin ken audio
+- Adda tallo a sub-opsion ti setting nga Original Audio - kadawyanna, rumbeng a naka-enable ti umuna a dua ken naka-disable ti maikatlo tapno nasayaat unay ti kalidad ti audio
+- No adda pay laeng problema iti audio, mabalin a masapul nga usarem ketdi ti opsion ti Zoom a "Share Computer Sound"
+- Wenno, ikabilangam ketdi ti panangusar iti integration ti Zoom, ta usarenna ti mismo a panangi-share iti iskrin ti Zoom.
 
-**Why is this necessary?**
-M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
+**Apay a kasapulan daytoy?**
+I-play ti M³ ti media nga addaan uni iti kompiutermo, ngem saan nga automatiko a maitulod daytoy nga audio babaen ti video stream iti Zoom no agus-usarka iti OBS Studio. Ipalubos ti setting nga Original Audio a ma-capture ti Zoom ti audio nga agtoktokar iti kompiutermo bayat ti panangi-share iti iskrin, no umiso ti pannakai-set up ti kompiutermo (kas pagarigan: adda maikadua a sound card ti kompiuter a mausar iti panangi-play iti media, a denggen ti Zoom a kas mikropono.)
 
-### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
+### :snail: Nabuntog ti M³. Kasano a mapasayaatko ti panagandarna? {#performance-issues}
 
-Try these performance optimizations:
+Padasem dagitoy a pamay-an tapno pumartak ti M³:
 
-1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
-2. **Close Other Apps**: Close unnecessary applications
-3. **Check Disk Space**: Ensure you have sufficient free disk space
-4. **Reduce Resolution**: Lower the maximum resolution setting
+1. **I-cache dagiti video ti pagkantaan**: I-cache-mo a nasapa amin a video ti pagkantaan kadagiti setting
+2. **Iserra ti Dadduma nga App**: Iserram dagiti app a saan a kasapulan
+3. **Sukimatem ti Espasio iti Disk**: Siguraduem nga adda umdas a bakante nga espasio iti disk-mo
+4. **Pababaen ti Resolution**: Pababaem ti setting ti kangatuan a resolution
 
-### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
+### :speech_balloon: Adda problemak iti lengguahe. Ania ti rumbeng a sukimatek? {#faq-language-issues}
 
-Verify these language settings:
+Sukimatem dagitoy a setting ti lengguahe:
 
-1. **Interface Language**: Check your display language setting
-2. **Media Language**: Verify your media download language
-3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
-4. **Fallback Language**: Try setting a fallback language
+1. **Lengguahe ti App**: Sukimatem ti setting ti lengguahe ti app
+2. **Lengguahe ti Media**: Sukimatem ti lengguahe a pangi-download-mo iti media
+3. **Kaadda iti Lengguahe**: Siguraduem a magun-od ti lengguahe ti media iti opisial a website dagiti Saksi ni Jehova
+4. **Maikadua a Lengguahe ti Media**: Padasem ti agpili iti maikadua a lengguahe ti media
 
-### :wrench: M³ won't open after an update. What should I do? {#faq-update-interrupted}
+### :wrench: Saan a mailukat ti M³ kalpasan ti update. Ania ti rumbeng nga aramidek? {#faq-update-interrupted}
 
-If the computer was turned off or restarted while M³ was installing an update, the installation may have stopped halfway, and M³ won't open anymore. Your settings and media are still there. To repair M³:
+No naiddep wenno nai-restart ti kompiuter bayat nga ii-install ti M³ ti maysa nga update, mabalin a nagsardeng ti panag-install iti tengngana, ket saanen a mailukat ti M³. Adda pay laeng dagiti setting-mo ken media-m. Tapno mapasayaat manen ti M³:
 
-1. Download the latest version from the [Download page](download).
-2. Run the installer. It puts M³ back in place and keeps your settings.
+1. I-download-mo ti kabaruan a bersion manipud iti [panid ti Download](download).
+2. Ipaandarmo ti installer. Isublina ti M³ ket taginayonenna dagiti setting-mo.
 
-**Don't uninstall M³ first**: uninstalling it also deletes its settings.
+**Dimo umuna nga i-uninstall ti M³**: no i-uninstall-mo dayta, maikkat met dagiti setting-na.
 
-If the computer can't go online, the installer that M³ had downloaded is usually still there: press `Win+R`, enter `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, then run the installer in the folder that opens.
+No saan a makakonekta iti internet ti kompiuter, kadawyan nga adda pay laeng sadiay ti installer nga in-download ti M³: pindutem ti `Win+R`, isuratmo ti `%LOCALAPPDATA%\meeting-media-manager-updater\pending`, sa ipaandarmo ti installer iti folder a malukatan.
 
-To prevent this, M³ on Windows installs a downloaded update the next time it's opened, rather than when it's closed. When M³ is installed for all users of the computer, Windows asks for permission first, so M³ waits until you choose to install the update.
+Tapno maliklikan daytoy, iti Windows, i-install ti M³ ti nai-download nga update inton sumaruno a mailukat dayta, imbes nga inton maiserra dayta. No nai-install ti M³ para kadagiti amin nga agus-usar iti kompiuter, umuna nga agkiddaw ti Windows iti pammalubos, isu nga aguray ti M³ agingga a piliem nga i-install ti update.
 
-## Support and Community {#support-community}
+## Tulong ken Komunidad {#support-community}
 
-### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
+### :radioactive: Kasano nga i-report ti problema? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
+Pangngaasim ta [i-report-mo ti problema](https://github.com/sircharlo/meeting-media-manager/issues) iti opisial a repository iti GitHub. Iramanmo:
 
-- Detailed description of the problem
-- Steps to reproduce the issue
-- Your operating system and M³ version
-- Any error messages, logs and screenshots
+- Detalyado a deskripsion ti problema
+- Dagiti addang tapno maulit ti problema
+- Ti operating system-mo ken ti bersion ti M³
+- Aniaman a mensahe ti error, log, ken screenshot
 
-### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: Kasano a kiddawek ti baro a feature wenno pannakapasayaat? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
+Pangngaasim ta [irugim ti maysa a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) iti opisial a repository iti GitHub. Iladawam:
 
-- The feature you'd like to see
-- How it would benefit users
-- Any specific requirements or preferences
+- Ti feature a kayatmo a makita
+- No kasano a makatulong dayta kadagiti agar-aramat
+- Aniaman nga espesipiko a kasapulan wenno kayat
 
-### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
+### :handshake: Kasano a makaipaayak iti code? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
+Pangngaasim ta [kitaem ti giya maipapan iti panangipaay](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) iti opisial a repository iti GitHub. Sirarag-o nga awatenmi dagiti maipaay a code ken Pull Request!
 
-### :globe_with_meridians: How can I help with translations? {#translations}
+### :globe_with_meridians: Kasano a makatulongak iti panagipatarus? {#translations}
 
-M³ uses Crowdin for translation management. You can contribute translations by:
+Us-usaren ti M³ ti Crowdin tapno maurnos dagiti patarus. Makatulongka iti panagipatarus babaen ti:
 
-1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
-2. Selecting your language
-3. Translating strings that need work
-4. Reviewing existing translations
+1. Panangbisita iti [proyekto iti Crowdin](https://crowdin.com/project/meeting-media-manager)
+2. Panagpili iti lengguahem
+3. Panangipatarus kadagiti string a masapul pay a trabahuen
+4. Panangrepaso kadagiti adda a patarus
 
-### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
+### :x: Mabalin kadi nga agdonarak iti proyekto? {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Agyamankami ta interesadoka a mangsuporta iti proyekto! Nupay kasta, maitunos iti espiritu ti Mateo 10:8, **saan** nga awaten dagiti donasion, ken saan pulos nga awaten. Naaramid daytoy nga app babaen ti ayat ken bassit a nawaya nga oras. Sapay koma ta maragsakanka iti daytoy! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Mateo 10:8
 
-"You received free, give free."
+"Inawatyo nga awan bayadna, itedyo nga awan bayadna."
 
 :::
 
-## Technical Questions {#technical-questions}
+## Dagiti Teknikal a Saludsod {#technical-questions}
 
-### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+### :computer: Ania ti kasapulan a hardware ken software ti M³? {#hardware-and-software-requirements}
 
-M³ is designed to work on a wide range of operating systems:
+Naaramid ti M³ tapno agandar iti adu a kita ti operating system:
 
-- **Windows**: Windows 10 and later (64-bit). The last version for 32-bit Windows is v26.10.1, on the [downloads page](download).
-- **macOS**: macOS 13 (Ventura) and later (Universal build). The last version for macOS 12 (Monterey) is v26.10.1, on the [downloads page](download).
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 ken dagiti simmaruno a bersion (64-bit). Ti maudi a bersion para iti 32-bit a Windows ket v26.10.1, iti [panid ti download](download).
+- **macOS**: macOS 13 (Ventura) ken dagiti simmaruno a bersion (Universal build). Ti maudi a bersion para iti macOS 12 (Monterey) ket v26.10.1, iti [panid ti download](download).
+- **Linux**: Kaaduan a moderno a distribution ti Linux (AppImage a pormat)
 
-M³ has the following hardware requirements:
+Dagitoy ti kasapulan a hardware ti M³:
 
-- **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
+- **Kababaan**: 4GB a RAM, 6GB a bakante nga espasio iti disk
+- **Mairekomenda**: 8GB a RAM, 15GB a bakante nga espasio iti disk para iti panangi-cache iti media
+- **Network**: Koneksion iti Internet para iti panangi-download iti media
 
-Depending on the features you use, M³ also requires the following additional software:
+Depende kadagiti feature nga usarem, kasapulan met ti M³ dagitoy a kanayonan a software:
 
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+- **Zoom**: Masapul laeng no usarem dagiti feature ti integration ti Zoom
+- **OBS Studio**: Masapul laeng no usarem dagiti feature ti integration ti OBS
 
-### :floppy_disk: How much disk space does M³ use? {#disk-space}
+### :floppy_disk: Kasano kadakkel nga espasio iti disk ti usaren ti M³? {#disk-space}
 
-Disk space usage depends on:
+Ti kadakkel ti mausar nga espasio iti disk ket agdepende iti:
 
-- **Media Resolution**: Higher resolutions use more space
-- **Cached Content**: Media files are cached locally
-- **Extra Cache**: Additional caching can increase usage
-- **Exported Media**: Auto-export features use additional space
+- **Resolution ti Media**: Ad-adu nga espasio ti usaren dagiti nangatngato a resolution
+- **Linaon iti Cache**: Mai-cache dagiti file ti media iti kompiutermo
+- **Kanayonan a Cache**: Mabalin a pangaduen ti kanayonan a panangi-cache ti mausar nga espasio
+- **Media a Nai-export**: Agusar iti kanayonan nga espasio dagiti feature ti automatiko a panangi-export
 
-Typical usage ranges from 2-10GB depending on settings and usage.
+Kadawyan nga agarup 2-10GB ti mausar, depende kadagiti setting ken panangusar.
 
-### :shield: Is M³ secure and private? {#security-privacy}
+### :shield: Natalged ken pribado kadi ti M³? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+Wen! Naaramid ti M³ a mangipangpangruna iti kinatalged ken kinapribado:
 
-- **Local Storage**: All meeting data is stored locally on your computer
-- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
-- **Open Source**: The code is open for review and verification
-- **Bug Reports**: Limited data may be collected for bug reporting purposes
+- **Lokal a Pagidulinan**: Maidulin amin a data ti gimong iti kompiutermo
+- **Direkta a Panangi-download**: Direkta a mai-download ti media manipud iti opisial a website dagiti Saksi ni Jehova
+- **Open Source**: Mabalin a kitaen ken sukimaten ti asinoman ti code
+- **Dagiti Report ti Bug**: Mabalin a maurnong ti limitado a data tapno mai-report dagiti bug
 
-For the details, read M³'s [privacy policy](privacy).
+Para kadagiti detalye, basaem ti [Pagannurotan iti Kinapribado](privacy) ti M³.
 
-### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
+### :arrows_clockwise: Kasano kadalas nga agsapul ti M³ iti update? {#update-frequency}
 
-M³ checks for updates:
+Agsapul ti M³ iti update:
 
-- **Application Updates**: Automatically checks for new versions every time the app is opened
-- **Media Updates**: Automatically checks for new meeting media every time the app is opened
-- **Language Updates**: Dynamic detection of new languages as needed
+- **Update ti App**: Automatiko nga agsapul iti baro a bersion kada malukatan ti app
+- **Update ti Media**: Automatiko nga agsapul iti baro a media ti gimong kada malukatan ti app
+- **Update ti Lengguahe**: Automatiko a pannakailasin dagiti baro a lengguahe no kasapulan
