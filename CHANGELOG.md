@@ -30,6 +30,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🐞 Bug Fixes
 
+- 🐞 **Setup Wizard**: On a computer set to Chinese, M³ now starts in Chinese (Simplified) when you set it up, instead of in English. It still starts in English when the computer uses traditional Chinese characters.
 - 🐞 **Zoom Meeting Manager**: The screen that shows while M³ operates Zoom now covers the whole M³ window, instead of a band across its middle.
 - 🐞 **Yeartext Preview**: In December, the question offering to preview next year's yeartext no longer comes back, piling up, each time you switch congregations or M³ reconnects to the internet. After **Later**, it asks again the next time M³ starts. It also no longer shows from shortly before a meeting until the meeting ends.
 - 🐞 **Low Disk Space**: While media is downloading, the low disk space warning now shows at most every half hour, instead of every 2 minutes.
