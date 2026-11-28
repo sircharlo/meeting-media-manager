@@ -55,6 +55,15 @@ import es from './es.json' with { type: 'json' };
 // 98.7% translated as of 2026-11-28
 import de from './de.json' with { type: 'json' };
 
+// 98.3% translated as of 2026-11-28
+import ilo from './ilo.json' with { type: 'json' };
+
+// 35.4% translated as of 2026-11-28
+import ptPt from './pt-pt.json' with { type: 'json' };
+
+// 15.4% translated as of 2026-11-28
+import tl from './tl.json' with { type: 'json' };
+
 // 0.8% translated as of 2026-11-28
 // import bzs from './bzs.json' with { type: 'json' };
 
@@ -64,9 +73,6 @@ import de from './de.json' with { type: 'json' };
 // 0.7% translated as of 2026-11-28
 // import cmnHant from './cmn-hant.json' with { type: 'json' };
 
-// 0.1% translated as of 2026-11-28
-// import ilo from './ilo.json' with { type: 'json' };
-
 const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {
   cmnHans,
   de,
@@ -75,12 +81,15 @@ const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {
   et,
   fr,
   hu,
+  ilo,
   it,
   ko,
   nl,
   pt,
+  ptPt,
   ru,
   sl,
+  tl,
   ty,
   uk,
 };
