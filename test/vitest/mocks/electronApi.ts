@@ -30,6 +30,10 @@ const fakePath = async (path: string, create = true) => {
 };
 
 export const electronApi: ElectronApi = {
+  allowTimerRemoteThroughFirewall: async () => ({
+    outcome: 'allowed',
+    status: { state: 'allowed' },
+  }),
   appStore: null,
   askForMediaAccess: function () {
     throw new Error('Function not implemented.');
@@ -103,6 +107,7 @@ export const electronApi: ElectronApi = {
   getSentryTags: () => ({}),
   getSharedDataPath: async () => fakePath('/app/shared'),
   getSnapConnections: async () => null,
+  getTimerRemoteFirewallStatus: async () => ({ state: 'unsupported' }),
   getUpdaterState: async () => ({
     phase: null,
     progress: null,

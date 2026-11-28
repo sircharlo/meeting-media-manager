@@ -6,13 +6,15 @@
   dollar-and-braces macro, with a startup task in place of the macro for its
   own extensions. Those (protocols, file associations, electron-builder's
   always-on startup task) are none M³ uses, and a second Extensions element
-  would make the manifest invalid.
+  in the Application would make the manifest invalid. The package's own
+  Extensions, after the Applications, hold the timer remote's firewall rule.
 -->
 <!--suppress XmlUnusedNamespaceDeclaration -->
 <Package
    xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
    xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
    xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+   xmlns:desktop2="http://schemas.microsoft.com/appx/manifest/desktop/windows10/2"
    xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
   <Identity Name="${identityName}"
     ProcessorArchitecture="${arch}"
@@ -56,4 +58,19 @@
       </Extensions>
     </Application>
   </Applications>
+  <Extensions>
+    <!--
+      The timer remote (src-electron/main/timer-remote.ts) serves its page to
+      tablets and phones on the network, over TCP on a port from 1024 to
+      65535 (8787 unless changed). Windows adds this rule when the package is
+      installed, on every network type, so the page opens on those devices
+      without Windows asking first. Other builds offer a button for it
+      instead (src-electron/main/timer-remote-firewall.ts).
+    -->
+    <desktop2:Extension Category="windows.firewallRules">
+      <desktop2:FirewallRules Executable="${executable}">
+        <desktop2:Rule Direction="in" IPProtocol="TCP" LocalPortMin="1024" LocalPortMax="65535" Profile="all" />
+      </desktop2:FirewallRules>
+    </desktop2:Extension>
+  </Extensions>
 </Package>

@@ -81,6 +81,8 @@ const invokeWithoutResult = (
 };
 
 const electronApi: ElectronApi = {
+  allowTimerRemoteThroughFirewall: (port) =>
+    invoke('allowTimerRemoteThroughFirewall', port),
   appStore: APP_STORE,
   askForMediaAccess: () => send('askForMediaAccess'),
   basename,
@@ -128,6 +130,8 @@ const electronApi: ElectronApi = {
   getSentryTags: () => sendSync('getSentryTagsSync') ?? {},
   getSharedDataPath: () => invoke('getSharedDataPath'),
   getSnapConnections: () => invoke('getSnapConnections'),
+  getTimerRemoteFirewallStatus: (port) =>
+    invoke('getTimerRemoteFirewallStatus', port),
   getUpdaterState: () => invoke('getUpdaterState'),
   getUpdatesDisabledPath: () => invoke('getUpdatesDisabledPath'),
   getUserDataPath: () => invoke('getUserDataPath'),

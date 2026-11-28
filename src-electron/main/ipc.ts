@@ -103,6 +103,10 @@ import {
   updateTimerRemote,
 } from 'src-electron/main/timer-remote';
 import {
+  allowTimerRemoteThroughFirewall,
+  getTimerRemoteFirewallStatus,
+} from 'src-electron/main/timer-remote-firewall';
+import {
   getBetaUpdatesPath,
   getUpdaterState,
   getUpdatesDisabledPath,
@@ -440,6 +444,14 @@ handleIpcInvoke('startTimerRemote', async (_e, port: unknown) =>
 handleIpcSend('stopTimerRemote', () => {
   stopTimerRemote();
 });
+
+handleIpcInvoke('getTimerRemoteFirewallStatus', async (_e, port: unknown) =>
+  getTimerRemoteFirewallStatus(port),
+);
+
+handleIpcInvoke('allowTimerRemoteThroughFirewall', async (_e, port: unknown) =>
+  allowTimerRemoteThroughFirewall(port),
+);
 
 handleIpcSend('timerRemoteText', (_e, text: unknown) => {
   setTimerRemoteText(text);
