@@ -515,7 +515,7 @@ Tant que la page est ouverte, elle garde l'écran de l'appareil allumé, afin qu
 
 Les adresses à ouvrir sur l'appareil sont indiquées dans la fenêtre contextuelle du minuteur, avec un bouton pour les copier. Ne modifiez le port que si un autre programme l'utilise déjà. Notez que, tant que cette option est activée, toute personne se trouvant sur le même réseau peut ouvrir la page ; celle-ci n'affiche toutefois que le minuteur.
 
-The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+Les adresses sont aussi indiquées dans les Paramètres, sous le port du minuteur à distance. Si la page s'ouvre sur cet ordinateur mais pas sur la tablette, c'est probablement le Pare-feu Windows qui la bloque. Windows demande une seule fois si M³ peut accepter des connexions, et si cette question a été ignorée, ou si M³ n'a été autorisé que sur les réseaux privés alors que le réseau de l'ordinateur est public, il continue de la bloquer sans redemander. Sous Windows, M³ le signale sous les adresses, et **Autoriser dans le Pare-feu Windows** laisse passer la page une fois que Windows a demandé la permission d'un administrateur. La version du Microsoft Store l'autorise dès son installation.
 
 **Par défaut** : `faux`, port `8787`
 
