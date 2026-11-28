@@ -42,6 +42,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **JWPUB Files**: When M³ isn't allowed to open a JWPUB file where it's saved, for example because of the folder's or drive's permissions, it now says so and suggests copying the file to a folder such as Downloads, instead of only saying the file couldn't be processed.
 - 🐞 **Custom Background**: When a JWPUB file chosen for a custom background can't be read, the window for choosing its image now closes after the message saying why, instead of staying open and loading.
 - 🐞 **PIN Fields**: The fields for entering a PIN (to unlock Settings, set or reset the PIN, or delete a profile) and the duration field when editing a meeting part no longer have a colored band under them, around the space for their message. Only the field itself is colored now, and the message shows under it.
+- 🐞 **Timer Remote**: The clock shown on the timer page when no part or countdown is running now fits the screen, on a computer and on a phone, instead of running off both sides when it shows seconds and AM/PM. Longer times, such as a part over an hour, are sized to fit the same way.
 
 ## v26.11.5
 

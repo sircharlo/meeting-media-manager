@@ -121,7 +121,7 @@ body { background: #000; color: #fff; font-family: -apple-system, "Segoe UI", Ro
 .display { align-items: center; box-sizing: border-box; display: flex; flex-direction: column; gap: 2vh; height: 100%; justify-content: center; position: relative; transition: background-color 700ms ease, color 700ms ease, padding 300ms ease; }
 .label { font-size: clamp(1rem, 4vw, 3rem); font-weight: 600; letter-spacing: 0.04em; max-width: 94vw; opacity: 0.85; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
 .label:empty { display: none; }
-.time { font-size: clamp(3rem, 26vw, 40vh); font-variant-numeric: tabular-nums; font-weight: 700; line-height: 1; white-space: nowrap; }
+.time { font-size: max(1rem, min(26vw, 40vh, calc(94vw / (var(--chars, 5) * .62)))); font-variant-numeric: tabular-nums; font-weight: 700; line-height: 1; white-space: nowrap; }
 .time__sign { color: var(--ring, #ff453a); }
 .time__sign:empty { display: none; }
 .caption { font-size: clamp(0.9rem, 3vw, 2rem); opacity: 0.7; }
@@ -150,7 +150,7 @@ body { background: #000; color: #fff; font-family: -apple-system, "Segoe UI", Ro
 .display.focus.is-active .eyebrow { display: block; }
 .display.focus.is-active .dial { aspect-ratio: 1; display: grid; place-items: center; width: min(58vh, 100%); }
 .display.focus.is-active .dial__ring { display: block; }
-.display.focus.is-active .time { font-size: min(11vh, 17vw); }
+.display.focus.is-active .time { font-size: min(11vh, 17vw, calc(min(58vh, 92vw) * .8 / (var(--chars, 5) * .62))); }
 .display.focus.is-active .caption { display: none; }
 .display.focus .label { font-size: clamp(1.1rem, 4.6vh, 2.6rem); font-weight: 800; letter-spacing: 0; opacity: 1; text-transform: none; }
 .display.focus.has-hands { padding-right: calc(30vw + 6vw); }
@@ -355,6 +355,9 @@ const PAGE_JS = String.raw`(function () {
       el.caption.textContent = '';
       el.eyebrow.textContent = '';
     }
+    // The time's size fits its length to the width (see .time): the clock
+    // with seconds and AM/PM is twice as long as a countdown.
+    el.time.style.setProperty('--chars', String(Math.max(1, (el.sign.textContent + el.value.textContent).length)));
 
     var blink = running && (data.paused || (overtime && data.timerOvertimeAnimation));
     setClass(el.time, 'time' + (blink ? ' blink' : ''));
