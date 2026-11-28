@@ -291,8 +291,36 @@ export const readDirectory = async (
     if (!(await pathExists(dir))) return [];
     return await readDirRecursive(dir, withSizes, recursive);
   } catch (error) {
-    capturePreloadError(error);
+    capturePreloadError(error, {
+      contexts: { fn: { dir, name: 'readDirectory', recursive, withSizes } },
+    });
     return [];
+  }
+};
+
+// Gone between the listing and the look at it: a download's `.part` file
+// renamed into place as it finished (MMM-V2-3PH, in a publication folder
+// while its media downloaded), or a folder cleaned up meanwhile.
+const isVanished = (error: unknown) =>
+  getFilesystemErrorCode(error) === 'ENOENT';
+
+/** A folder's entries; none when it's gone. */
+const listFolder = async (directory: string): Promise<Dirent[]> => {
+  try {
+    return await readdir(directory, { withFileTypes: true });
+  } catch (error) {
+    if (isVanished(error)) return [];
+    throw error;
+  }
+};
+
+/** A file's size; null when it's gone. */
+const getSizeIfPresent = async (path: string) => {
+  try {
+    return (await stat(path)).size;
+  } catch (error) {
+    if (isVanished(error)) return null;
+    throw error;
   }
 };
 
@@ -301,21 +329,21 @@ const readDirRecursive = async (
   withSizes?: boolean,
   recursive?: boolean,
 ): Promise<FileItem[]> => {
-  const dirs: Dirent[] = await readdir(directory, {
-    withFileTypes: true,
-  });
   const dirItems: FileItem[] = [];
-  for (const dirent of dirs) {
+  for (const dirent of await listFolder(directory)) {
     const fullPath = join(directory, dirent.name);
-    const fileItem: FileItem = {
+    const size =
+      withSizes && dirent.isFile()
+        ? await getSizeIfPresent(fullPath) // NOSONAR: sequential - ordered recursive directory walk
+        : undefined;
+    if (size === null) continue;
+    dirItems.push({
       isDirectory: dirent.isDirectory(),
       isFile: dirent.isFile(),
       name: dirent.name,
       parentPath: directory,
-      ...(withSizes &&
-        dirent.isFile() && { size: (await stat(fullPath)).size }), // NOSONAR: sequential - ordered recursive directory walk
-    };
-    dirItems.push(fileItem);
+      ...(size !== undefined && { size }),
+    });
     if (recursive && dirent.isDirectory()) {
       const subItems = await readDirRecursive(fullPath, withSizes, recursive); // NOSONAR: sequential - ordered recursive directory walk
       dirItems.push(...subItems);
