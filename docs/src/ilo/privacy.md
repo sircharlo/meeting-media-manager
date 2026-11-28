@@ -1,82 +1,82 @@
-# Privacy policy {#privacy-policy}
+# Pagannurotan iti Kinapribado {#privacy-policy}
 
-Effective date: November 24, 2026
+Petsa ti panagepekto: Nobiembre 24, 2026
 
-Meeting Media Manager (M³) is a free, open-source app made by volunteers. This policy explains what data M³ handles and where it goes. It applies to every version of M³: the installers and portable version from this website, and the versions in the Microsoft Store and the Snap Store.
+Ti Meeting Media Manager (M³) ket libre ken open-source nga app nga inaramid dagiti boluntario. Ilawlawag daytoy a pagannurotan no ania a data ti imanehoen ti M³ ken no sadino ti papananna. Agaplikar daytoy iti amin a bersion ti M³: dagiti installer ken ti portable a bersion manipud iti daytoy a website, ken dagiti bersion iti Microsoft Store ken Snap Store.
 
-**In short:** M³ has no accounts, no ads, and no advertising or marketing trackers. Your settings and media stay on your computer. To find and fix problems, M³ sends its developers diagnostic data: error reports, and information about each session and about how fast M³ runs. M³ leaves out of it what could identify you or your congregation, and your IP address isn't stored.
+**Iti ababa:** Awan ti account ti M³, awan ti anunsio, ken awan ti tracker para iti panangianunsio wenno marketing. Agtalinaed iti kompiutermo dagiti setting ken media-mo. Tapno masarakan ken masimpa dagiti problema, itulod ti M³ kadagiti developer-na ti diagnostic a data: dagiti report ti error, ken impormasion maipapan iti tunggal session ken iti kapartak ti panagandar ti M³. Saan nga iraman ti M³ iti dayta dagiti mabalin a makailasin kenka wenno iti kongregasionmo, ken saan a maidulin ti IP address-mo.
 
-## What stays on your computer {#on-your-computer}
+## Dagiti agtalinaed iti kompiutermo {#on-your-computer}
 
-M³ keeps the following in its data folder on your computer:
+Idulin ti M³ dagiti sumaganad iti folder ti data-na iti kompiutermo:
 
-- the settings of each congregation or group, such as its name, meeting schedule, language and integrations;
-- the media and publications it downloads, and the media you add;
-- the password for OBS Studio, if you use it. M³ encrypts it with your operating system's password storage when it's available; when it isn't, M³ stores it as plain text and tells you so;
-- your Zoom integration settings, if you use it.
+- dagiti setting ti tunggal kongregasion wenno grupo, kas iti naganna, eskediul ti gimong, lengguahe, ken dagiti integration;
+- dagiti media ken publikasion nga i-download-na, ken dagiti media nga inayonmo;
+- ti password para iti OBS Studio, no us-usarem dayta. I-encrypt ti M³ dayta a password babaen ti pagidulinan ti password ti operating system-mo, no adda; no awan, idulin ti M³ ti password kas plain text ken ipakaammona dayta kenka;
+- dagiti setting ti integration-mo iti Zoom, no us-usarem dayta.
 
-Error reports include some of these settings (see below), but never the ones that could identify you or your congregation.
+Mairaman ti dadduma kadagitoy a setting kadagiti report ti error (kitaem iti baba), ngem pulos a saan a mairaman dagiti setting a mabalin a makailasin kenka wenno iti kongregasionmo.
 
-If you show a camera's feed on the media window (an option for sign-language congregations), it's only displayed: M³ doesn't record, save or send it. The preview of the media window that M³ shows you is captured on your computer and isn't saved or sent either.
+No ipakitam ti feed ti kamera iti window ti media (maysa nga opsion para kadagiti kongregasion iti sign language), maipakita laeng dayta: saan nga i-record, i-save, wenno itulod ti M³ dayta. Ti preview ti window ti media nga ipakita ti M³ kenka ket ma-capture iti kompiutermo, ket saan met a mai-save wenno maitulod.
 
-You can delete all of this at any time by deleting M³'s data folder. On Windows, uninstalling M³ deletes it too. The Snap Store version keeps it when you uninstall it, unless you ask it not to (`snap remove --purge`).
+Mabalinmo nga i-delete amin daytoy iti aniaman nga oras babaen ti panangi-delete iti folder ti data ti M³. Iti Windows, no i-uninstall-mo ti M³, mai-delete met dayta. Taginayonen dayta ti bersion iti Snap Store no i-uninstall-mo, malaksid no ibagam a saanna a taginayonen (`snap remove --purge`).
 
-## Diagnostic data {#error-reports}
+## Diagnostic a data {#error-reports}
 
-M³ sends diagnostic data to [Sentry](https://sentry.io), the service its developers use to find and fix bugs.
+Itulod ti M³ ti diagnostic a data iti [Sentry](https://sentry.io), ti serbisio nga us-usaren dagiti developer-na tapno masarakan ken masimpa dagiti bug.
 
-**Error reports**, when something goes wrong in M³. A report can contain:
+**Dagiti report ti error**, no adda problema iti M³. Mabalin a mairaman iti maysa a report:
 
-- the error, and where in M³'s code it happened;
-- M³'s version and how you installed it, your operating system and its version, your language and time zone, and basic information about your hardware, such as your graphics card;
-- the steps that led up to the error, such as the pages opened in M³ and the files it was downloading;
-- M³'s state at the time: its settings, and what it was doing, such as the media playing or the meeting it was preparing;
-- when part of M³ crashes, a crash report of that part, which can include some of its memory at the moment of the crash.
+- ti error, ken no sadino iti code ti M³ a napasamak dayta;
+- ti bersion ti M³ ken no kasano nga in-install-mo, ti operating system-mo ken ti bersionna, ti lengguahe ken time zone-mo, ken batayan nga impormasion maipapan iti hardware-mo, kas iti graphics card-mo;
+- dagiti addang a nangiturong iti error, kas kadagiti panid a nalukatan iti M³ ken dagiti file nga agdama idi nga i-download-na;
+- ti kasasaad ti M³ iti dayta nga oras: dagiti setting-na, ken ti ar-aramidenna, kas iti media nga agdama a mai-play wenno ti gimong nga isagsaganana;
+- no ag-crash ti maysa a paset ti M³, ti crash report dayta a paset, a mabalin a mangiraman iti dadduma a linaon ti memory-na iti oras ti panag-crash.
 
-**Session information**, each time M³ runs: when it started and whether it ended normally or crashed, with M³'s version and your operating system.
+**Impormasion maipapan iti session**, iti tunggal panagandar ti M³: no kaano a nangrugi dayta ken no kadawyan ti pannakaiserrana wenno nag-crash, agraman ti bersion ti M³ ken ti operating system-mo.
 
-**Performance information**, in every session: how long M³'s pages take to open, and how long its requests to the servers below take, with their addresses.
+**Impormasion maipapan iti performance**, iti tunggal session: no kasano kabayag a malukatan dagiti panid ti M³, ken no kasano kabayag dagiti kiddawna kadagiti server iti baba, agraman dagiti address-da.
 
-### What M³ leaves out {#left-out}
+### Dagiti saan nga iraman ti M³ {#left-out}
 
-Before sending its diagnostic data, M³ removes what could identify you or your congregation:
+Sakbay nga itulodna ti diagnostic a data-na, ikkaten ti M³ dagiti mabalin a makailasin kenka wenno iti kongregasionmo:
 
-- the congregation's name, its Zoom meeting ID, and the names of Zoom participants;
-- the settings PIN and the OBS Studio password;
-- the names of the folders and files on your computer: only a folder's drive or top folder, and a file's type, remain;
-- the address in the Website setting, when it isn't the default one;
-- your user name, in the folder paths of its reports.
+- ti nagan ti kongregasion, ti Meeting ID-na iti Zoom, ken dagiti nagan dagiti participant iti Zoom;
+- ti PIN dagiti setting ken ti password ti OBS Studio;
+- dagiti nagan dagiti folder ken file iti kompiutermo: ti laeng mabati ket ti drive wenno ti kangatoan a folder ti maysa a folder, ken ti kita ti maysa a file;
+- ti address iti setting a "Address ti website", no saan a dayta ti default nga address;
+- ti user name-mo, kadagiti path ti folder kadagiti report-na.
 
-The data contains no name, email address or account, since M³ has none of these. M³ asks Sentry not to record your IP address, and Sentry is set not to store it.
+Awan ti nagan, email address, wenno account a nairaman iti data, gapu ta awan ti aniaman kadagitoy ti M³. Kiddawen ti M³ iti Sentry a saanna nga i-record ti IP address-mo, ken naisaad ti Sentry a saan nga idulin dayta.
 
-M³'s maintainers use this data only to find and fix problems. Sentry stores it in the United States and deletes it after a limited time. [Sentry's privacy policy](https://sentry.io/privacy/) explains how it handles it.
+Usaren laeng dagiti mangmantener iti M³ daytoy a data tapno masarakan ken masimpa dagiti problema. Idulin ti Sentry dayta idiay United States ken i-delete-na dayta kalpasan ti limitado a panawen. Ilawlawag ti [Pagannurotan iti Kinapribado ti Sentry](https://sentry.io/privacy/) no kasano nga imanehona dayta.
 
-## Servers M³ connects to {#connections}
+## Dagiti server a pakakonektaran ti M³ {#connections}
 
-To do its job, M³ connects to the servers below. As with any website you visit, these servers can see your computer's IP address.
+Tapno maaramidna ti trabahona, kumonektar ti M³ kadagiti server iti baba. Kas iti aniaman a website a sarungkaram, mabalin a makita dagitoy a server ti IP address ti kompiutermo.
 
-- **The official website of Jehovah's Witnesses** and its download servers, to download meeting media and publications, and their information. That website's own privacy policy applies to what it receives.
-- **GitHub**, where M³ is published, to check for and download updates of M³ and to show what's new in it. The Microsoft Store and Snap Store versions get their updates from their store instead.
-- **jsDelivr**, to download the fonts some languages need, and the component M³ uses to read PDF files.
-- **Apple, Cloudflare, icanhazip.com and ipify.org**, to check whether your computer is connected to the internet.
-- **Sentry**, to send the diagnostic data above.
+- **Ti opisial a website dagiti Saksi ni Jehova** ken dagiti server-na para iti panangi-download, tapno mai-download ti media ken publikasion ti gimong, ken ti impormasionda. Ti bukod a Pagannurotan iti Kinapribado dayta a website ti agaplikar kadagiti awatenna.
+- **GitHub**, a pakaipablaakan ti M³, tapno agsapul ken mangi-download kadagiti update ti M³ ken tapno ipakita no ania ti baro iti dayta. Dagiti bersion iti Microsoft Store ken Snap Store ket alaenda ketdi dagiti update-da iti store-da.
+- **jsDelivr**, tapno mai-download dagiti font a kasapulan ti dadduma a lengguahe, ken ti component nga us-usaren ti M³ a pangbasa kadagiti PDF a file.
+- **Apple, Cloudflare, icanhazip.com ken ipify.org**, tapno sukimaten no nakakonektar ti kompiutermo iti Internet.
+- **Sentry**, tapno maitulod ti diagnostic a data a nadakamat iti ngato.
 
-If you use them, M³ also works with these, on your computer or your local network:
+No us-usarem dagitoy, agtrabaho met ti M³ a kadua dagitoy, iti kompiutermo wenno iti lokal a network-mo:
 
-- **Zoom:** M³ controls the Zoom app on your computer. It doesn't send anything to Zoom's servers itself.
-- **OBS Studio:** M³ connects to OBS Studio on your computer or local network.
-- **The timer remote:** M³ runs a small web server on your local network, so another device can show the meeting timer.
+- **Zoom:** Kontrolen ti M³ ti Zoom app iti kompiutermo. Ti M³ a mismo ket saan nga agitulod iti aniaman kadagiti server ti Zoom.
+- **OBS Studio:** Kumonektar ti M³ iti OBS Studio iti kompiutermo wenno iti lokal a network.
+- **Ti remote ti timer:** Agpaandar ti M³ iti bassit a web server iti lokal a network-mo, tapno mabalin nga ipakita ti sabali a device ti timer ti gimong.
 
-When you display the official website of Jehovah's Witnesses in M³'s website window, it works as it does in a web browser.
+No ipakitam ti opisial a website dagiti Saksi ni Jehova iti window ti website ti M³, agandar dayta a kas iti panagandarna iti web browser.
 
-## Stores {#stores}
+## Dagiti store {#stores}
 
-If you install M³ from the Microsoft Store or the Snap Store, that store handles its installation and updates, under its own privacy policy. M³ itself works the same way in every version.
+No i-install-mo ti M³ manipud iti Microsoft Store wenno Snap Store, dayta a store ti mangasikaso iti pannakai-install ken dagiti update-na, sigun iti bukod a Pagannurotan iti Kinapribado dayta a store. Agpada ti panagandar ti M³ a mismo iti tunggal bersion.
 
-## Changes to this policy {#changes}
+## Dagiti panagbaliw iti daytoy a pagannurotan {#changes}
 
-If M³ starts handling data differently, this page will be updated, with a new date at the top. Its history is on [GitHub](https://github.com/sircharlo/meeting-media-manager/commits/master/docs/src/en/privacy.md).
+No agrugi ti M³ a mangimaneho iti data iti sabali a wagas, mai-update daytoy a panid, ken maikabil ti baro a petsa iti ngato. Adda ti pakasaritaanna iti [GitHub](https://github.com/sircharlo/meeting-media-manager/commits/master/docs/src/en/privacy.md).
 
-## Questions {#questions}
+## Dagiti saludsod {#questions}
 
-If you have a question about this policy or about your data, [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues).
+No adda saludsodmo maipapan iti daytoy a pagannurotan wenno iti data-mo, [agluktanka iti issue iti GitHub](https://github.com/sircharlo/meeting-media-manager/issues).
