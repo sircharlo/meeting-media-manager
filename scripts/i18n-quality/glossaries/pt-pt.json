@@ -1,0 +1,663 @@
+{
+  "_comment": "Grounded JW terminology for pt-PT (European Portuguese), cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-11-28",
+  "_language": "pt-PT",
+  "_note": "European Portuguese HAS its own version of jw.org's Terminology Guide (read from the English page's hreflang=\"pt-pt\" link): https://www.jw.org/pt-pt/informacao-mundial/glossario/ (titled 'Glossário'; Brazil's hreflang=\"pt\" page is a different text, 'Guia de estilo e terminologia'), cited as the primary source wherever it covers a term. Meeting-part names come from the current pt-PT S-38 instructions (S-38-TPO 8/26, wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038) and a live meeting-workbook week (23 a 29 de novembro de 2026, wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202026404). The pt-PT WOL edition is wol.jw.org/pt-PT/wol/d/r296/lp-tpo/<id> (region r296, lp-tpo; from wol.jw.org/wol/finder?wtlocale=TPO, which redirects to /pt-PT/wol/h/r296/lp-tpo). English numeric IDs matched directly for S-38 (1201038) and Organized to Do Jehovah's Will (od chap. 5 = 1102014935, chap. 6 = 1102014936, chap. 7 = 1102014937); WOL phrase searches (hit counts = documents, quoted in notes) did the rest. The pt-PT WOL also holds older Ministério do Reino issues (2005-2015) that predate current wording. Key differences from Brazil that the official material confirms: Memorial (not Celebração), reunião de semana (not reunião do meio de semana), Manual de Atividades (not Apostila), Empenhe-se no Ministério / Viver como Cristãos (Brazil: Faça Seu Melhor no Ministério / Nossa Vida Cristã), língua gestual (not língua de sinais), the songbook title ‘Cantemos com Alegria’ a Jeová, and the full Watchtower title 'A Sentinela a Anunciar o Reino de Jeová'. Inconsistencies inside the official pt-PT material: capitalization of 'Estudo bíblico de congregação' (S-38/workbook) vs 'Estudo Bíblico de Congregação' (od), and 'Viver como Cristãos' (S-38) vs 'Viver Como Cristãos' (od); the gender of 'JW Library' ('do JW Library' / 'da JW Library'); 'Filial' capitalized in the Glossário, lowercase in od. Prefer the S-38/workbook forms.",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Testemunhas de Jeová",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://www.jw.org/pt-pt/"
+      ],
+      "confidence": "high",
+      "notes": "Glossário: 'Num artigo, quando se faz referência às Testemunhas de Jeová pela primeira vez, deve usar-se o seu nome oficial completo. Uma alternativa aceitável seria “as Testemunhas”. Quando se refere apenas a um dos seus membros, usa-se “uma Testemunha” ou “uma das Testemunhas de Jeová”.' Site title: 'Site oficial das Testemunhas de Jeová: jw.org | Português (Portugal)'. Same as Brazil."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Salão do Reino",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22Sal%C3%A3o%20do%20Reino%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "Glossário headword 'Salão do Reino das Testemunhas de Jeová. Um lugar de adoração local usado por uma ou mais congregações. É conhecido como “Salão do Reino”. Por favor, evite usar a expressão “igreja”.' Plural 'Salões do Reino'. Assembly Hall = 'Salão de Assembleias' (Glossário headword 'Salão de Assembleias das Testemunhas de Jeová'). 335 WOL documents. Same as Brazil."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "superintendente de circuito",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22superintendente%20de%20circuito%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "Glossário headword 'superintendente de circuito. Um ancião experiente que serve sob a orientação da Filial local...'. S-38 §21 heading 'VISITA DO SUPERINTENDENTE DE CIRCUITO'. 179 WOL documents. Lowercase in running text; the old pt-PT suggestions capitalize it ('Superintendente de Circuito') in a few strings: don't. The app's abbreviation 'CO' has no pt-PT equivalent on jw.org (M³'s pt-BR uses 'SC'): spell it out."
+    },
+    {
+      "termEn": "congregation",
+      "official": "congregação",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "Glossário headword 'congregação. Um grupo organizado de Testemunhas de Jeová que se reúne regularmente para adorar a Deus.' Adjective 'congregacional' ('reuniões congregacionais', od cap. 7)."
+    },
+    {
+      "termEn": "elder",
+      "official": "ancião",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014935"
+      ],
+      "confidence": "high",
+      "notes": "Glossário headword 'ancião. Uma Testemunha de Jeová do género masculino, espiritualmente madura...'. Plural 'anciãos' (S-38 'os anciãos podem receber designações de estudante'), never 'anciões'. Not a title."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "coordenador do corpo de anciãos",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014935",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2021560",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22superintendente%20presidente%22&p=par",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22coordenador%20do%20corpo%20de%20anci%C3%A3os%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "Discontinued title. w21 setembro p. 2-7 states the rename verbatim: 'Tony serviu em três congregações como superintendente presidente (hoje chamado coordenador do corpo de anciãos)'. od cap. 5 §26: 'O coordenador do corpo de anciãos preside as reuniões do corpo.' 26 WOL documents; the old title 'superintendente presidente' (32 documents) appears only in Ministério do Reino 2005-2008 and that w21 note. Same as Brazil."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "servo ministerial",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038"
+      ],
+      "confidence": "high",
+      "notes": "Glossário headword 'servo ministerial'. Plural 'servos ministeriais' (S-38 §3, §4). Not a title."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "pioneiro",
+      "sourceUrls": ["https://www.jw.org/pt-pt/informacao-mundial/glossario/"],
+      "confidence": "high",
+      "notes": "Glossário headword 'pioneiro', with 'pioneiro regular' (600 horas por ano) and 'pioneiro auxiliar'. Not a title."
+    },
+    {
+      "termEn": "field service",
+      "official": "serviço de campo",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014935",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22servi%C3%A7o%20de%20campo%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "Glossário headword 'serviço de campo. Refere-se ao seu ministério pessoal e público...'. od: 'grupo de serviço de campo', 'relatório de serviço de campo', heading 'REUNIÕES PARA O SERVIÇO DE CAMPO'. 325 WOL documents. Preaching = 'pregação', ministry = 'ministério'."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Memorial",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://www.jw.org/pt-pt/testemunhas-de-jeova/memorial/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22Memorial%20da%20morte%20de%20Cristo%22&p=par",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22Celebra%C3%A7%C3%A3o%20da%20morte%20de%20Cristo%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "IMPORTANT, differs from Brazil: pt-PT keeps 'Memorial' (masculine: 'o Memorial', 'do Memorial'), while Brazil uses 'Celebração' and M³'s pt-BR has 'Celebração' in 34 strings - change every one. Glossário headword 'Memorial da morte de Cristo. A comemoração anual da morte de Cristo, também conhecida como Refeição Noturna do Senhor ou Santa Ceia'. jw.org page title 'Memorial da morte de Jesus – 22 de março de 2027'; nav label 'Memorial'; S-38 §23 'SEMANA DO MEMORIAL'; 'Ceia do Senhor' as a synonym (od cap. 7 heading 'A CEIA DO SENHOR'). Ministério do Reino 2014-2015 still wrote 'Celebração da Morte de Cristo' (5 documents): obsolete in pt-PT."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Estudo bíblico de congregação",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202026404",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22Estudo%20b%C3%ADblico%20de%20congrega%C3%A7%C3%A3o%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §17 and the live workbook ('8. Estudo bíblico de congregação (30 min.) wcg cap. 18'). 975 WOL documents. Capitalization is INCONSISTENT in the official material: S-38 and the workbook use sentence case, od cap. 7 §17 and older km write 'Estudo Bíblico de Congregação'. Use the S-38/workbook form (also M³'s pt-BR form)."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "reunião de semana",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/501400106",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22reuni%C3%A3o%20de%20semana%22&p=par",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22reuni%C3%A3o%20do%20meio%20de%20semana%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "IMPORTANT, differs from Brazil: Glossário headword 'reunião de semana. Uma reunião semanal de congregação, geralmente programada para uma noite durante a semana. A reunião tem o tema Vida e Ministério Cristãos...'; od cap. 7 heading 'REUNIÃO DE SEMANA'; S-38 §24 'todas as partes da reunião de semana'. 36 WOL documents; the Brazilian 'reunião do meio de semana' has 0 on the pt-PT WOL. M³'s pt-BR uses 'reunião do meio de semana' in 24 strings - change them. Heading form 'Reunião de semana'."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "reunião de fim de semana",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/501400106",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2025566",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22reuni%C3%A3o%20de%20fim%20de%20semana%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "od cap. 7 heading 'REUNIÃO DE FIM DE SEMANA' ('A primeira parte da reunião de fim de semana consiste num discurso bíblico...'); ijwfq art. 65 '● Reunião de fim de semana.'; w25 setembro. 10 WOL documents. The Glossário has no 'weekend meeting' headword; it describes this meeting as 'Reunião Pública ... normalmente realizada ao fim de semana'. Note 'de fim de semana', not 'do fim de semana' (M³ pt-BR)."
+    },
+    {
+      "termEn": "public talk",
+      "official": "discurso público",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22discurso%20p%C3%BAblico%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "od cap. 7 §5: 'O discurso público cumpre um papel importante...'. Plural 'discursos públicos' (S-38 §26). 117 WOL documents. Speaker = 'orador' (od cap. 7 §10, S-38 §3)."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "Estudo de A Sentinela",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014935",
+        "https://wol.jw.org/pt-PT/wol/meetings/r296/lp-tpo/2026/48",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22Estudo%20de%20A%20Sentinela%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "od cap. 7 §11 'A segunda parte da reunião de fim de semana é o Estudo de A Sentinela'; od cap. 5 §25 'dirigente do Estudo de A Sentinela'. The WOL meetings page heads the section Estudo de 'A Sentinela' (quote marks around the title only); S-38 §26 writes it lowercase ('o estudo de A Sentinela'). 50 WOL documents. No contraction ('de A Sentinela', not 'da Sentinela')."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "A Sentinela",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://www.jw.org/pt-pt/biblioteca/revistas/"
+      ],
+      "confidence": "high",
+      "notes": "Glossário headword 'A Sentinela a Anunciar o Reino de Jeová. O título completo da revista principal ... Também é conhecida como A Sentinela.' Note the pt-PT full title uses 'a Anunciar' (Brazil: 'Anunciando'). The article is part of the title: 'a revista A Sentinela', 'de A Sentinela'. The Glossário once contracts it ('edição de estudo d’A Sentinela'); prefer 'de A Sentinela'."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "Despertai!",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://www.jw.org/pt-pt/biblioteca/revistas/"
+      ],
+      "confidence": "high",
+      "notes": "Glossário headword 'Despertai!. Uma revista publicada e distribuída pelas Testemunhas de Jeová.' Keep the exclamation mark. Same as Brazil."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "Tradução do Novo Mundo da Bíblia Sagrada",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22Tradu%C3%A7%C3%A3o%20do%20Novo%20Mundo%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "Glossário: 'Tradução do Novo Mundo da Bíblia Sagrada. ... Pode chamar-se também Tradução do Novo Mundo.' 436 WOL documents. Study edition: 'Tradução do Novo Mundo da Bíblia Sagrada (Edição de Estudo)', 'Bíblia de Estudo'."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://www.jw.org/pt-pt/ajuda-online/jw-library/windows/faqs/",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22aplica%C3%A7%C3%A3o%20JW%20Library%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "Proper noun, never translated. S-38 §28 'na aplicação JW Library®'. 114 WOL documents say 'aplicação JW Library'; 'aplicativo' has 0 hits on the pt-PT WOL. Gender is inconsistent on jw.org (the same FAQ page writes 'nas definições do JW Library' and 'nas definições da JW Library'; 'Abra a JW Library'): use the feminine 'a aplicação JW Library' / 'a JW Library' (M³'s pt-BR uses the masculine 'o JW Library')."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/",
+        "https://wol.jw.org/pt-PT/wol/h/r296/lp-tpo"
+      ],
+      "confidence": "high",
+      "notes": "Domain kept as is. Site title 'Site oficial das Testemunhas de Jeová: jw.org'; footer 'SITE OFICIAL DAS TESTEMUNHAS DE JEOVÁ'; WOL home 'Para descarregar publicações, por favor, visite o 'site' jw.org.'; mrt 'No site JW.ORG'. So 'the official website of Jehovah's Witnesses' = 'o site oficial das Testemunhas de Jeová'. The site italicizes the loanword 'site' and WOL puts it in quotes; in the app write it plain. M³'s release notes never name jw.org: write 'o site oficial'."
+    },
+    {
+      "termEn": "songbook",
+      "official": "cancioneiro",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202014449",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2018450",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2023648",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22cancioneiro%22&p=par",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22livro%20de%20c%C3%A2nticos%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "'cancioneiro' (13 WOL documents: km 12/14 'o nosso cancioneiro será revisto'; w18 junho 'Segure o cancioneiro à altura do rosto'; rj 'O nosso cancioneiro, ‘Cantemos com Alegria’ a Jeová, tem vários cânticos...') and 'livro de cânticos' (5 documents: w23 novembro p. 32 'acesso ao livro de cânticos'). Both are official; prefer 'cancioneiro' (also M³'s pt-BR word). Current title: see 'Sing Out Joyfully to Jehovah'."
+    },
+    {
+      "termEn": "convention",
+      "official": "congresso",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038"
+      ],
+      "confidence": "high",
+      "notes": "Glossário: 'congresso. Veja as entradas: congresso internacional e congresso regional.' Regional convention = 'congresso regional'. S-38 §22 'SEMANA DE UMA ASSEMBLEIA OU DE UM CONGRESSO'. jw.org nav 'Congressos'. Same as Brazil."
+    },
+    {
+      "termEn": "assembly",
+      "official": "assembleia",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038"
+      ],
+      "confidence": "high",
+      "notes": "Glossário: 'assembleia. Veja a entrada: assembleia de circuito.' Circuit assembly = 'assembleia de circuito' (one-day event, twice a year). Post-1990 spelling 'assembleia' (no accent)."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "escola teocrática",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/502500223",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2018323",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014955",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22escolas%20teocr%C3%A1ticas%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "hdu art. 27 'Alunos de escolas teocráticas e voluntários de construção...'; w18 março ('escolas teocráticas: 10:17-18'); od 'Departamento de Escolas Teocráticas'; mwb16 novembro '• Cursar uma escola teocrática'. 10 + 2 WOL documents. Generic umbrella term for the named schools; not the discontinued 'Escola do Ministério Teocrático'."
+    },
+    {
+      "termEn": "sign language",
+      "official": "língua gestual",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/501100074",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/502500219",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/502014131",
+        "https://b.jw-cdn.org/apis/mediator/v1/translations/TPO",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22l%C3%ADngua%20gestual%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "IMPORTANT, differs from Brazil ('língua de sinais', used in 10 M³ pt-BR strings). mrt art. 81 'realizamos reuniões cristãs em língua gestual'; hdu art. 22 'mais de 100 línguas gestuais'; mediator lblSignLangFilter 'Mostrar Apenas Línguas Gestuais'; names 'Língua Gestual Americana', 'Língua Gestual Brasileira' (ijwfq art. 34). 34 + 9 WOL documents vs 1 for 'língua de sinais' (km 12/12, a menu path). Plural 'línguas gestuais'; adjectival 'em língua gestual' ('vídeos em língua gestual', 'Bíblia em língua gestual')."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "Manual de Atividades",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/biblioteca/reuniao-jw-manual-atividades/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22manual%20de%20atividades%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "IMPORTANT, differs from Brazil ('Apostila'). S-38 §3 'na publicação Vida e Ministério Cristãos – Manual de Atividades' and lowercase 'no manual de atividades'; od cap. 7 §14 'Esse Manual de Atividades também contém...'; jw.org nav 'Manuais de Atividades'. 146 WOL documents, 0 for 'apostila'. Full title: see 'Our Christian Life and Ministry—Meeting Workbook'."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "texto do ano",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2024240",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2022240",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22texto%20do%20ano%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "w24 janeiro 'TEXTO DO ANO PARA 2024: “Quando fico com medo, ponho a minha confiança em ti.”' and 'O nosso texto do ano para 2024 é...'. 39 WOL documents (yearly w janeiro articles 2019-2027); 'texto anual' has 0. Heading form 'Texto do ano'. Same as Brazil."
+    },
+    {
+      "termEn": "branch office",
+      "official": "filial",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014935"
+      ],
+      "confidence": "high",
+      "notes": "Glossário headwords 'Filial. Um centro administrativo local e escritórios de uma Comissão de Filial...' and 'Comissão de Filial' (Branch Committee). The Glossário capitalizes 'Filial' ('contacte a Filial local'), but od cap. 5 writes it lowercase ('Em todas as filiais', 'de acordo com orientações da filial'): use lowercase in running text. M³'s pt-BR glossary entry renders 'branch' as 'ramo' (a tree branch) - wrong in either variant."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Corpo Governante",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22Corpo%20Governante%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "Glossário headword 'Corpo Governante. Um grupo pequeno de anciãos designados para cuidar das necessidades espirituais das Testemunhas de Jeová em todo o mundo.' 240 WOL documents. Capitalized; distinct from 'corpo de anciãos'."
+    },
+    {
+      "termEn": "Our Christian Life and Ministry meeting",
+      "context": "the midweek meeting's official name; the app calls it the Life and Ministry Meeting",
+      "official": "Reunião Vida e Ministério Cristãos",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937",
+        "https://wol.jw.org/pt-PT/wol/meetings/r296/lp-tpo/2026/48"
+      ],
+      "confidence": "high",
+      "notes": "S-38 title 'Instruções para a Reunião Vida e Ministério Cristãos' (S-38-TPO 8/26). Short form used throughout S-38 and od: 'Reunião Vida e Ministério' (e.g. 'Presidente da Reunião Vida e Ministério', 'superintendente da Reunião Vida e Ministério'). WOL meetings page section label 'Vida e Ministério'. Note the plural 'Cristãos' (Brazil: 'Nossa Vida e Ministério Cristão')."
+    },
+    {
+      "termEn": "Treasures From God's Word",
+      "context": "first section of the midweek meeting (abbreviated TGW in the app)",
+      "official": "Tesouros da Palavra de Deus",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202026404",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "S-38 section header and live workbook header 'TESOUROS DA PALAVRA DE DEUS'; od cap. 7 §15. 1002 WOL documents. Same as Brazil. No official pt-PT abbreviation exists for the app's 'TGW'."
+    },
+    {
+      "termEn": "Treasures talk",
+      "context": "the 10-minute talk that opens the Treasures From God's Word section",
+      "official": "Discurso",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202026404"
+      ],
+      "confidence": "medium",
+      "notes": "There is no fixed 'Treasures talk' name: S-38 §3 calls the part just 'Discurso: Dez minutos.' under 'Tesouros da Palavra de Deus'; in the workbook it carries only its theme ('1. Não desista quando enfrentar desafios (10 min.)'). A descriptive label such as 'Discurso de Tesouros da Palavra de Deus' would be a translator's construction."
+    },
+    {
+      "termEn": "Spiritual Gems",
+      "context": "second part of Treasures From God's Word",
+      "official": "Pérolas espirituais",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202026404",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22P%C3%A9rolas%20espirituais%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §4 'Pérolas espirituais: Dez minutos.' and live workbook '2. Pérolas espirituais (10 min.)' ('Que pérolas espirituais encontrou na leitura da Bíblia desta semana?'). 601 WOL documents. Sentence case."
+    },
+    {
+      "termEn": "Bible Reading",
+      "context": "student part in Treasures From God's Word",
+      "official": "Leitura da Bíblia",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202026404"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §5 'Leitura da Bíblia: Quatro minutos.' and live workbook '3. Leitura da Bíblia (4 min.) Lam. 3:19-42 (th lição 12)'. 1083 WOL documents. Same as Brazil."
+    },
+    {
+      "termEn": "Apply Yourself to the Field Ministry",
+      "context": "second section of the midweek meeting (abbreviated AYFM in the app)",
+      "official": "Empenhe-se no Ministério",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202026404",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22Empenhe-se%20no%20Minist%C3%A9rio%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "IMPORTANT, differs from Brazil ('Faça Seu Melhor no Ministério'). S-38 heading 'EMPENHE-SE NO MINISTÉRIO' (§6-15), live workbook header, od cap. 7 §16. 625 WOL documents. Not a word-for-word rendering of the English - do not back-translate. No official abbreviation for the app's 'AYFM' (pt-BR invented 'FSMM')."
+    },
+    {
+      "termEn": "Living as Christians",
+      "context": "third section of the midweek meeting (abbreviated LAC in the app)",
+      "official": "Viver como Cristãos",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202026404",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22Viver%20como%20Crist%C3%A3os%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "IMPORTANT, differs from Brazil ('Nossa Vida Cristã'). S-38 heading 'VIVER COMO CRISTÃOS' and §18 'na secção Viver como Cristãos'; live workbook header. 845 WOL documents. od cap. 7 §17 capitalizes 'Viver Como Cristãos' - an outlier; use the S-38 form. No official abbreviation for the app's 'LAC'."
+    },
+    {
+      "termEn": "Opening Comments",
+      "context": "chairman's 1-minute introduction at the midweek meeting",
+      "official": "Comentários iniciais",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202026404"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §2 heading 'COMENTÁRIOS INICIAIS' ('Um minuto.'); live workbook 'Cântico 158 e oração | Comentários iniciais (1 min.)'. 380 WOL documents."
+    },
+    {
+      "termEn": "Concluding Comments",
+      "context": "chairman's 3-minute closing remarks at the midweek meeting",
+      "official": "Comentários finais",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202026404"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §18 heading 'COMENTÁRIOS FINAIS' ('Três minutos.'); live workbook 'Comentários finais (3 min.) | Cântico 74 e oração'. Same as Brazil."
+    },
+    {
+      "termEn": "concluding prayer",
+      "context": "the prayer that closes a meeting",
+      "official": "oração final",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202007241",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22ora%C3%A7%C3%A3o%20final%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §21: 'Ele pode convidar outro irmão para fazer a oração final.' 71 WOL documents vs 0 for 'oração de encerramento'. Opening prayer = 'oração inicial' (5 documents, e.g. w20 fevereiro 'A oração inicial das nossas reuniões...'). The workbook just writes 'Cântico 74 e oração'."
+    },
+    {
+      "termEn": "chairman",
+      "context": "the elder who presides over a meeting (the app mentions getting the chairman's attention)",
+      "official": "presidente",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §25 heading 'PRESIDENTE DA REUNIÃO VIDA E MINISTÉRIO'; od cap. 7 §18 'serve como presidente da reunião'. Verb 'presidir' ('um ancião preside a Reunião Vida e Ministério'). Same as Brazil."
+    },
+    {
+      "termEn": "Our Christian Life and Ministry—Meeting Workbook",
+      "context": "full title of the midweek meeting workbook publication",
+      "official": "Vida e Ministério Cristãos – Manual de Atividades",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/biblioteca/reuniao-jw-manual-atividades/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/meetings/r296/lp-tpo/2026/48"
+      ],
+      "confidence": "high",
+      "notes": "Verbatim jw.org library page title 'Vida e Ministério Cristãos – Manual de Atividades' (U+2013 en dash with spaces). WOL issue label 'Vida e Ministério Cristãos – Manual de Atividades — 2026 | novembro'. 2016-2017 issues used a plain hyphen, and one mwb20 article inverts it ('o Manual de Atividades – Vida e Ministério'): use the current form. Brazil: 'Nossa Vida e Ministério Cristão — Apostila da Reunião'."
+    },
+    {
+      "termEn": "The Watchtower—Study Edition",
+      "context": "the edition studied at the weekend meeting",
+      "official": "A Sentinela (Edição de Estudo)",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/biblioteca/revistas/",
+        "https://wol.jw.org/pt-PT/wol/meetings/r296/lp-tpo/2026/48"
+      ],
+      "confidence": "high",
+      "notes": "jw.org magazine list 'A SENTINELA (EDIÇÃO DE ESTUDO) Novembro de 2026'; WOL 'A Sentinela (Edição de Estudo) — 2026 | setembro'. Running text 'a edição de estudo de A Sentinela' (km 7/11; 157 WOL documents for 'Edição de Estudo')."
+    },
+    {
+      "termEn": "The Watchtower—Public Edition",
+      "context": "the edition for the general public",
+      "official": "edição para o público de A Sentinela",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2018604",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2023689",
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://www.jw.org/pt-pt/biblioteca/revistas/"
+      ],
+      "confidence": "high",
+      "notes": "Running-text form, 22 WOL documents: w23 dezembro heading 'EDIÇÃO PARA O PÚBLICO DE A SENTINELA'; w18 outubro 'a edição para o público da revista A Sentinela'; Glossário 'A edição para o público é oferecida gratuitamente'. The jw.org magazine list labels public issues just 'A SENTINELA' (no suffix). A label 'A Sentinela (edição para o público)', built on the Study Edition pattern, is a translator's construction."
+    },
+    {
+      "termEn": "Sing Out Joyfully to Jehovah",
+      "context": "title of the current songbook",
+      "official": "‘Cantemos com Alegria’ a Jeová",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/biblioteca/musica-cancoes/cantemos-com-alegria-a-jeova/",
+        "https://wol.jw.org/pt-PT/wol/meetings/r296/lp-tpo/2026/48",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22Cantemos%20com%20Alegria%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "IMPORTANT, differs from Brazil ('Cante de Coração para Jeová'). Verbatim jw.org page title '‘Cantemos com Alegria’ a Jeová | Canções Cristãs' (U+2018/U+2019 curly single quotes around 'Cantemos com Alegria', then 'a Jeová'); also the WOL meetings page. WOL short title '‘Cantemos com Alegria’ (sjj)'."
+    },
+    {
+      "termEn": "song",
+      "context": "a numbered song sung at meetings",
+      "official": "cântico",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202026404",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://www.jw.org/pt-pt/ajuda-online/jw-library/use-listas-reproducao/"
+      ],
+      "confidence": "high",
+      "notes": "Workbook 'Cântico 158 e oração', S-38 'após o cântico e a oração'. Original (non-songbook) songs are 'canções' (JW Library help: 'Fazer uma lista de reprodução das suas canções originais e dos seus cânticos preferidos'; jw.org category 'Canções Cristãs'). Use 'cântico' for meeting songs, as M³'s pt-BR does."
+    },
+    {
+      "termEn": "Kingdom song",
+      "context": "what jw.org calls the songs in the songbook",
+      "official": "cântico do Reino",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/202018450",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22c%C3%A2nticos%20do%20Reino%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "mwb18 dezembro 'Quais são os seus cânticos do Reino favoritos?'; rr cap. 18 'cantam juntos um cântico do Reino'. 13 + 1 WOL documents. Plural 'cânticos do Reino'."
+    },
+    {
+      "termEn": "Memorial talk",
+      "context": "the talk given at the Memorial",
+      "official": "discurso do Memorial",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2022245",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2024241",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22discurso%20do%20Memorial%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "w22 janeiro 'elas têm muito interesse em ouvir o discurso do Memorial'; w24 janeiro 'alguns desses assuntos sejam explicados no discurso do Memorial'. 8 WOL documents; Brazil's 'discurso da Celebração' has 0."
+    },
+    {
+      "termEn": "Memorial Welcome Video",
+      "context": "the welcome video shown before the Memorial (from the Memorial invitation publication)",
+      "official": "",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22v%C3%ADdeo%20de%20boas-vindas%22&p=par",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22convite%20para%20o%20Memorial%22&p=par"
+      ],
+      "confidence": "low",
+      "notes": "No pt-PT name found: 'vídeo de boas-vindas' has 0 WOL hits and no jw.org text names the video. Related attested terms: 'convite para o Memorial' (28 documents, the Memorial invitation) and 'vídeo de introdução' (32, but for Bible-book introductions - a different video). A rendering such as 'vídeo de boas-vindas do Memorial' (the old pt-PT suggestion had 'Vídeo de boas-vindas Memorial') is a translator's choice - flag for the reviewer."
+    },
+    {
+      "termEn": "public talk outline",
+      "context": "the S-34 outlines speakers prepare public talks from",
+      "official": "esboço do discurso público",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2026445",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22esbo%C3%A7os%22&p=par"
+      ],
+      "confidence": "medium",
+      "notes": "Built from attested parts; the full phrase has 0 WOL hits. w26 junho: 'Todas as nossas publicações, vídeos e esboços de discursos são baseados na Bíblia.'; S-38 §3 'O tema e um esboço com dois ou três pontos principais'; 'discurso público' (high). The S-34 form's own pt-PT title was not found online."
+    },
+    {
+      "termEn": "body of elders",
+      "context": "all the elders of a congregation acting together",
+      "official": "corpo de anciãos",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014935",
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §17 'O corpo de anciãos decide quem está qualificado...', §24 'Um ancião escolhido pelo corpo de anciãos'; od cap. 5 §21; Glossário 'Designa-se um corpo de anciãos'. Lowercase; distinct from 'Corpo Governante'."
+    },
+    {
+      "termEn": "branch",
+      "context": "short form of branch office (e.g. 'branch territory')",
+      "official": "filial",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/informacao-mundial/glossario/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014935"
+      ],
+      "confidence": "high",
+      "notes": "Same word as branch office (Glossário 'contacte a Filial local'; 'Comissão de Filial'). Branch territory: od cap. 5 §52 'todas as congregações no território da filial'; 'a filial mais próxima' (JW Library FAQ)."
+    },
+    {
+      "termEn": "talk",
+      "context": "a discourse given at a meeting",
+      "official": "discurso",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014937",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014935"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §3 'Discurso', §12 'Deve ser apresentada à congregação na forma de discurso'; 'discurso com participação da assistência' (talk with audience participation, workbook and S-38 §6). Verbs 'fazer um discurso' (od cap. 5 'Ele faz discursos'), 'apresentar um discurso'; speaker 'orador'."
+    },
+    {
+      "termEn": "service talk",
+      "context": "the circuit overseer's talk during his visit (app: 'CO Service Talk')",
+      "official": "discurso de serviço",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22discurso%20de%20servi%C3%A7o%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §21: 'será substituído por um discurso de serviço de 30 minutos apresentado pelo superintendente de circuito'. App 'CO Service Talk' = 'Discurso de serviço do superintendente de circuito'. The old pt-PT suggestion 'Conversa de Serviço CO' is wrong."
+    },
+    {
+      "termEn": "Videoconference Organizer",
+      "context": "the person who hosts the congregation's videoconference (Zoom) meeting",
+      "official": "",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/502500100",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22videoconfer%C3%AAncia%22&p=par"
+      ],
+      "confidence": "low",
+      "notes": "No official pt-PT role name found. 'videoconferência' itself is attested (29 WOL documents; hdu art. 1 'Reuniões por videoconferência', 'aplicações de videoconferência, como a aplicação Zoom'). 'anfitrião' appears only in its biblical sense. Candidate renderings (translator's choice, flag for review): 'responsável pela videoconferência' (the old pt-PT suggestion; matches the attested pattern 'os irmãos responsáveis pelo áudio e vídeo') or 'organizador da videoconferência' (closer to the English and to pt-BR 'Organizador de videoconferências')."
+    },
+    {
+      "termEn": "technical/audio-video support",
+      "context": "the volunteers who run sound, video and media at meetings",
+      "official": "áudio e vídeo",
+      "sourceUrls": [
+        "https://www.jw.org/pt-pt/ajuda-online/jw-library/use-listas-reproducao/",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/2019285",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014936"
+      ],
+      "confidence": "medium",
+      "notes": "JW Library help: 'partilhá-la com os irmãos responsáveis pelo áudio e vídeo'; w19 fevereiro: 'os irmãos que controlam o equipamento de som e vídeo da congregação'; od cap. 6: 'Alguns são designados para cuidar dos microfones, do equipamento de som...'. No fixed team name was found. 'equipa de áudio e vídeo' would be a construction ('equipa' is the pt-PT word, cf. hdu 'a equipa dos Serviços de Áudio e Vídeo'; pt-BR 'equipe')."
+    },
+    {
+      "termEn": "circuit overseer's visit",
+      "context": "the twice-yearly week when the circuit overseer visits a congregation",
+      "official": "visita do superintendente de circuito",
+      "sourceUrls": [
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1201038",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/1102014935",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22visita%20do%20superintendente%20de%20circuito%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "S-38 §21 heading 'VISITA DO SUPERINTENDENTE DE CIRCUITO'; od cap. 5 §48 'Um dos objetivos da visita do superintendente de circuito...'. 36 WOL documents. 'Quando a congregação tem a visita do superintendente de circuito' (S-38). Same as Brazil."
+    },
+    {
+      "termEn": "JW Hub",
+      "context": "the JW Hub website (source of S-34mp playlists)",
+      "official": "JW Hub",
+      "sourceUrls": ["https://www.jw.org/pt-pt/"],
+      "confidence": "high",
+      "notes": "Proper noun kept as is; the pt-pt jw.org footer links 'JW Hub'. Not mentioned on the pt-PT WOL (0 documents)."
+    },
+    {
+      "termEn": "JW Broadcasting",
+      "context": "the organization's video channel/programs",
+      "official": "JW Broadcasting",
+      "sourceUrls": [
+        "https://b.jw-cdn.org/apis/mediator/v1/translations/TPO",
+        "https://wol.jw.org/pt-PT/wol/d/r296/lp-tpo/502500208",
+        "https://wol.jw.org/pt-PT/wol/s/r296/lp-tpo?q=%22JW%20Broadcasting%22&p=par"
+      ],
+      "confidence": "high",
+      "notes": "Proper noun kept as is, masculine ('o JW Broadcasting', 'o canal JW Broadcasting'). mediator 'JW Broadcasting na Sua Televisão', 'Suporte do JW Broadcasting'. 58 WOL documents."
+    }
+  ]
+}
