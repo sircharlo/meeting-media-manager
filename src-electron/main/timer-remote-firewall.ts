@@ -285,7 +285,7 @@ const runPowerShell = (script: string, timeout: number) =>
           const code = (error as null | { code?: unknown })?.code;
           if (error && typeof code !== 'number') {
             // Not started, or killed at the timeout.
-            reject(error);
+            reject(error instanceof Error ? error : new Error(String(error)));
             return;
           }
           resolve({

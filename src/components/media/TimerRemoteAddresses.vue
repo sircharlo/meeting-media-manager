@@ -66,7 +66,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { parseTimerRemotePort } from 'src/helpers/timer-remote';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // Where to open the timer remote on a tablet or phone, in the timer popup
@@ -187,7 +187,7 @@ const allowThroughFirewall = async () => {
 // change, after a second without changes: typing a port changes it on each
 // keystroke, and each check starts PowerShell. The main process also shares
 // one check between the timer popup and Settings.
-void checkFirewall();
+onMounted(checkFirewall);
 watchDebounced(
   [port, () => timerRemoteUrls.value.join(' ')],
   () => checkFirewall(),
