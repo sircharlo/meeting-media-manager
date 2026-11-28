@@ -3,51 +3,51 @@
 layout: home
 
 hero:
-  name: 'M³ Documentation'
-  text: 'Complete guide to setting up and using Meeting Media Manager'
+  name: 'Dokumentasion ti M³'
+  text: 'Kompleto a giya iti panangi-set up ken panangusar iti Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand
-      text: Download
+      text: I-download
       link: /ilo/download
     - theme: brand
-      text: About
+      text: Maipapan
       link: /ilo/about
     - theme: brand
-      text: User Guide
+      text: Giya ti Agar-aramat
       link: /ilo/user-guide
     - theme: brand
-      text: Settings Guide
+      text: Giya kadagiti Setting
       link: /ilo/settings-guide
     - theme: brand
-      text: FAQ
+      text: Masansan a Maisalsaludsod
       link: /ilo/faq
 features:
   - icon: 🚀
-    title: Automatic Media Management
-    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    title: Automatiko a Panangimaneho iti Media
+    details: Automatiko nga i-download-na ken urnosenna dagiti ladawan ken video para kadagiti gimong ti kongregasion iti aniaman a lengguahe nga adda iti opisial a website dagiti Saksi ni Jehova.
   - icon: 🎦
-    title: Media Presentation
-    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
+    title: Panangipakita iti Media
+    details: Nalaka nga ipakitam ti media bayat dagiti hybrid a gimong wenno gimong a personal a tabunuan, babaen kadagiti advanced a kontrol, zoom/pan, ken custom nga opsion iti oras.
   - icon: 🎵
-    title: Background Music System
-    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
+    title: Sistema ti Background Music
+    details: Nasirib a background music nga automatiko nga agsardeng sakbay a mangrugi dagiti gimong, ken mabalin nga irugi manen iti maysa laeng a click kalpasan dagiti gimong.
   - icon: 🖥️
-    title: Multi-Monitor Support
-    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
+    title: Suporta para iti Adu nga Iskrin
+    details: Automatiko nga ilasinna ken imanehona dagiti external nga iskrin para iti nalam-ay a panangipakita iti media ken panangi-share iti website.
   - icon: 🌐
-    title: Multi-Language Support
-    details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
+    title: Suporta para iti Adu a Lengguahe
+    details: I-download ti media ti gimong iti ginasut a lengguahe, ken usarem ti interface ti M³ iti aniaman kadagiti adu a lengguahe nga adda.
   - icon: 🧩
-    title: Integrations
-    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+    title: Dagiti Integration
+    details: Nalam-ay a makonektar iti Zoom wenno OBS Studio para iti nasaysayaat a panangimaneho ken panangi-play iti media bayat dagiti gimong.
   - icon: 📁
-    title: Folder Monitoring
-    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+    title: Panangbantay kadagiti Folder
+    details: Automatiko nga i-sync ti media manipud kadagiti folder a mabanbantayan (kas iti Dropbox wenno OneDrive), ken i-export ti media kadagiti folder.
   - icon: 🎯
-    title: Advanced Features
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, Study Bible media, public talk media, and manage multiple congregations.
+    title: Dagiti Advanced a Feature
+    details: I-import ti custom a media, dagiti JWPUB a file, playlist, audio recording ti Biblia, media ti Study Bible ken media para iti palawag publiko; ken imanehom ti adu a kongregasion.
   - icon: ⏱️
-    title: Meeting Timer and Recording Controls
-    details: Use an optional timer display for participant timing and control OBS or external recording apps from M³.
+    title: Timer ti Gimong ken Dagiti Kontrol ti Panangi-record
+    details: Usarem ti opsional nga iskrin ti timer tapno maorasan dagiti addaan iti paset, ken kontrolem ti OBS wenno dagiti external nga app a pang-record manipud iti M³.
 ---

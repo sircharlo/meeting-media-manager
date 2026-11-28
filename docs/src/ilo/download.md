@@ -1,12 +1,12 @@
 ---
-title: Downloads
+title: Dagiti Download
 ---
 
 <!-- markdownlint-disable MD025 MD033 -->
 
-# Downloads
+# Dagiti Download
 
-Use the links below to download the latest version of Meeting Media Manager for your operating system. These links always point to the newest stable release.
+Usarem dagiti link iti baba tapno i-download ti kabaruan a bersion ti Meeting Media Manager para iti operating system-mo. Kanayon nga agturong dagitoy a link iti kabaruan a stable a bersion.
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
@@ -104,29 +104,29 @@ onMounted(async () => {
 })
 </script>
 
-## Latest release
+## Kabaruan a bersion
 
-- **Version**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
+- **Bersion**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
 
 <div v-if="recommended" style="margin: 1rem 0; padding: 1rem; border: 1px solid var(--vp-c-brand-1); border-radius: 8px; background: var(--vp-c-brand-soft);"><strong>{{ msg.recommendedFor }} {{ recommended.label }}</strong>
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
   </div>
-  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">If this doesn’t match your system, pick from the options below.</div>
+  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">No saan a maitutop daytoy iti sistemam, agpili kadagiti opsion iti baba.</div>
 </div>
 
 ## Windows
 
-- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Download</a>
-- **Windows 32-bit (.exe)**, last version for 32-bit Windows ({{ downloads.legacyVersion }}): <a :href="downloads.win32">Download</a>
-- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Download</a>
+- **Windows 64-bit (.exe)**: <a :href="downloads.win64">I-download</a>
+- **Windows 32-bit (.exe)**, maudi a bersion para iti 32-bit a Windows ({{ downloads.legacyVersion }}): <a :href="downloads.win32">I-download</a>
+- **Windows Portable (.exe)**: <a :href="downloads.winPortable">I-download</a>
 
 ## macOS
 
-- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Download</a>
-- **macOS 12 (Monterey) (.dmg)**, last version for macOS 12 ({{ downloads.legacyVersion }}): <a :href="downloads.macLegacy">Download</a>
+- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">I-download</a>
+- **macOS 12 (Monterey) (.dmg)**, maudi a bersion para iti macOS 12 ({{ downloads.legacyVersion }}): <a :href="downloads.macLegacy">I-download</a>
 
 ## Linux
 
-- **x86_64 (AppImage)**: <a :href="downloads.linux">Download</a>
+- **x86_64 (AppImage)**: <a :href="downloads.linux">I-download</a>
 
-<ul v-if="downloads.linuxArm64" style="margin-top: -8px;"><li><strong>arm64 (AppImage)</strong>: <a :href="downloads.linuxArm64">Download</a></li></ul>
+<ul v-if="downloads.linuxArm64" style="margin-top: -8px;"><li><strong>arm64 (AppImage)</strong>: <a :href="downloads.linuxArm64">I-download</a></li></ul>

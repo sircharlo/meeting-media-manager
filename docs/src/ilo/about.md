@@ -1,109 +1,109 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# Maipapan iti Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
 ![M³ banner](./../assets/m3-banner.png)
 
-## What is this app? {#what-is-this-app}
+## Ania daytoy nga app? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+Ti **Meeting Media Manager**, wenno **M³** no paiklien, ket kompleto nga app para iti Windows, macOS ken Linux nga automatiko nga agi-download, agurnos, ken agipakita kadagiti ladawan ken video para kadagiti gimong ti kongregasion dagiti Saksi ni Jehova. Suportaranna ti aniaman a lengguahe nga adda iti opisial a website dagiti Saksi ni Jehova, ken addaan iti nabileg a ramit iti panangimaneho iti media bayat dagiti hybrid a gimong ken gimong a personal a tabunuan.
 
-M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
+Mabalin nga imaneho ti M³ ti kadawyan ken custom a media ti gimong, ti adu a kongregasion ken/wenno grupo nga agus-usar iti isu met laeng nga account iti kompiuter, ken addaan iti advanced a feature iti panangipakita a mangpalaka iti panangi-share iti media.
 
-:::info Note
+:::info Palagip
 
-This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
+Daytoy nga app ket naam-ammo idi kas JWMMF (JW Meeting Media Fetcher), ngem nasukatan ti naganna iti Meeting Media Manager idi Mayo 2022.
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Apay a piliem ti M³? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+Ti M³ ti kasayaatan a ramit iti panangimaneho iti media ti gimong, a mangipaay iti nalam-ay, mapagtalkan, ken nabaknang iti feature a panangusar iti aniaman a platform. Naisangsangayan a naaramid para kadagiti kasapulan dagiti gimong ti kongregasion, ket ipaayna amin a kasapulan para iti epektibo a panangipakita iti media.
 
-### Key benefits {#key-benefits}
+### Kangrunaan a pagimbagan {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **Nalaka a panangipakita iti media**: Ti kasayaatan a panangipakita iti media — luktam laeng ti M³ ket agandar aminen. Awan ti narigat a setup wenno kanayonan nga addang a masapul.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **Suporta para iti adu a kongregasion**: Nalaka nga imanehom dagiti setting ti adu a kongregasion wenno grupo iti maysa laeng nga app.
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Dagiti advanced a feature**: Nalaka ti mangnayon iti kanayonan a media, agi-import iti custom a linaon, ken automatiko nga agi-share kadagiti participant iti Zoom iti mapaspasamak iti Kingdom Hall.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Napasayaat a panagandar iti amin a platform**: Pagragsakam ti nalam-ay ken napartak a panagandar iti Windows, macOS, ken Linux, uray kadagiti daan a sistema wenno kompiuter a limitado ti kabaelanna.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Mapagtalkan ken natibker**: Naaramid tapno agandar no kasapulam unay. Adda nasarakam a bug? I-report-mo, ket dagus a maasikaso dayta.
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- **Dagiti advanced a ramit iti panangipakita**: Advanced a kontrol ti media, zoom/pan, custom nga oras, ken nalam-ay nga integration ti Zoom ken OBS Studio.
 
-## What can M³ do? {#what-can-m3-do}
+## Ania ti maaramidan ti M³? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+Ti M³ ket kompleto a solusion iti panangimaneho iti media a mangtulong kenka a nalaka ken automatiko nga agi-download, agi-sync, agi-share, ken agipakita iti amin a media ti gimong. Dagitoy ti makagapu a nabileg ti M³:
 
-### Core Media Management {#core-media-management}
+### Kangrunaan a Panangimaneho iti Media {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **Automatiko a panangi-download iti media**: Automatiko nga alaenna ken i-download-na amin a media a kasapulan kadagiti dumteng a gimong
+- **Suporta para iti adu a lengguahe**: I-download ti media iti aniaman kadagiti ginasut a lengguahe nga adda
+- **Nasirib a panangi-cache**: Nasirib a sistema ti panangi-cache a mangtaginayon a naurnos ken na-update ti media
+- **Pannakaurnos ti media**: Automatiko nga urnosenna ti media sigun iti petsa ken seksion ti gimong
 
-### Media Presentation Features {#about-presentation-features}
+### Dagiti Feature ti Panangipakita iti Media {#about-presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+Para kadagiti gimong ti kongregasion a **hybrid** wenno **personal a tabunuan**, addaan ti nairaman a mode ti panangipakita iti media iti:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Live preview and speed control**: Preview the audience display and optionally adjust audio or video playback speed
-- **Multi-monitor support**: Automatic external monitor detection and management
-- **Clean presentation**: Distraction-free media presentation interface
+- **Advanced a kontrol ti media**: Dagiti thumbnail ti media nga addaan iti zoom ken pan
+- **Custom nga oras**: I-set ti custom nga oras ti panangrugi ken panaggibus ti panangi-play iti media
+- **Dagiti kontrol ti panangi-play**: Nalaka nga usaren dagiti button a pang-pause, pang-play ken pangisardeng, agraman dagiti keyboard shortcut
+- **Live a preview ken kontrol ti kapartak**: Kitaen ti preview ti iskrin a makita dagiti agdengdengngeg, ken no kayatmo, baliwan ti kapartak ti panangi-play iti audio wenno video
+- **Suporta para iti adu nga iskrin**: Automatiko a pannakailasin ken pannakaimaneho dagiti external nga iskrin
+- **Nadalus a panangipakita**: Interface ti panangipakita iti media nga awan ti makasinga iti atension
 
 ### Background Music {#about-background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- **Nasirib a panangi-play**: Background music nga automatiko nga agsardeng sakbay a mangrugi dagiti gimong
+- **Panangirugi manen iti maysa a click**: Ituloy ti background music iti maysa laeng a click kalpasan dagiti gimong
+- **Kontrol ti kapigsa ti uni**: Mabaliwan ti kapigsa ti uni ti background music, agraman ti in-inut a panagkapsut ti uni
 
-### Zoom Integration {#about-zoom-integration}
+### Integration ti Zoom {#about-zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- **Automatiko a panangi-share iti iskrin**: Automatiko nga irugi ken isardeng ti panangi-share iti iskrin iti Zoom no i-play wenno isardengmo ti media
 
-### OBS Studio Integration {#about-obs-integration}
+### Integration ti OBS Studio {#about-obs-integration}
 
-- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
-- **Scene management**: Automatic switching between camera, media, and other scenes
-- **Recording controls**: Start and stop OBS recordings from M³ when enabled
+- **Automatiko a panagsukat ti scene**: Nalam-ay nga integration iti OBS Studio para kadagiti hybrid a gimong
+- **Panangimaneho kadagiti scene**: Automatiko a panagsukat iti nagbaetan ti scene ti kamera, scene ti media, ken dadduma pay a scene
+- **Dagiti kontrol ti panangi-record**: Irugi ken isardeng dagiti recording ti OBS manipud iti M³ no naka-enable
 
-### Media Import and Management {#about-media-import}
+### Panangi-import ken Panangimaneho iti Media {#about-media-import}
 
-- **JWPUB files**: Import and manage JWPUB files with ease
-- **JWLPLAYLIST files**: Support for JW Library playlist files
-- **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Bible media**: Import Study Bible media, sign-language Bible media, and audio recordings of the New World Translation
-- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
+- **Dagiti JWPUB a file**: Nalaka nga i-import ken imaneho dagiti JWPUB a file
+- **Dagiti JWLPLAYLIST a file**: Suporta para kadagiti file ti playlist ti JW Library
+- **Custom a media**: I-import dagiti custom a video, ladawan, file ti audio, ken PDF a file
+- **Media ti Biblia**: I-import ti media ti Study Bible, media ti Biblia iti sign language, ken dagiti audio recording ti Baro a Lubong a Patarus
+- **Dagiti palawag publiko**: Kanayon a nakasagana ti pakabuklan ti media para iti palawag publiko babaen ti panangi-import iti S-34
 
-### Advanced Features {#about-advanced-features}
+### Dagiti Advanced a Feature {#about-advanced-features}
 
-- **Shared folder**: Automatically add media to meetings from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
-- **Media export**: Automatically export media to folders, organized by date
-- **Website presentation**: Present the official website on external monitors
-- **Meeting timer**: Optional timer window for timing meeting parts
-- **Meeting recording helpers**: Control OBS recording or an external recording application
-- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles, including profile settings import and export
+- **Nai-share a folder**: Automatiko nga inayon ti media kadagiti gimong manipud iti folder a kanayon nga i-sync ti Dropbox, OneDrive, iCloud Drive wenno Google Drive
+- **Panangi-export iti media**: Automatiko nga i-export ti media kadagiti folder, a naurnos sigun iti petsa
+- **Panangipakita iti website**: Ipakita ti opisial a website kadagiti external nga iskrin
+- **Timer ti gimong**: Opsional a window ti timer tapno maorasan dagiti paset ti gimong
+- **Dagiti katulongan iti panangi-record iti gimong**: Kontrolen ti panangi-record iti OBS wenno ti external nga app a pang-record
+- **Dagiti keyboard shortcut**: Mabalin a baliwan dagiti keyboard shortcut para iti adu a function
+- **Adu a profile**: Imaneho ti nadumaduma a kongregasion wenno grupo babaen ti naisalumina a profile, agraman ti panangi-import ken panangi-export kadagiti setting ti profile
 
-## Does M³ work in my language? {#does-m3-work-in-my-language}
+## Agandar kadi ti M³ iti lengguahek? {#does-m3-work-in-my-language}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Wen!** Kompleto ti suporta ti M³ para iti adu a lengguahe:
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+Mabalin nga automatiko a mai-download ti media para kadagiti gimong dagiti Saksi ni Jehova iti aniaman kadagiti ginasut a lengguahe nga adda iti opisial a website dagiti Saksi ni Jehova. Automatiko a mai-update ti listaan dagiti lengguahe nga adda; piliem laeng ti kasapulam bayat ti setup.
 
-### Interface Languages {#interface-languages}
+### Dagiti Lengguahe ti App {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+Ti M³ a mismo ket impatarus dagiti boluntario iti adu a lengguahe. Mabalinmo nga i-set ti lengguahe a kayatmo a maipakita iti interface ti M³, a saan a mainaig iti lengguahe a mausar iti panangi-download iti media. Kayat a sawen daytoy a mabalinmo nga usaren ti M³ iti kayatmo a lengguahe bayat nga agi-download-ka iti media iti aniaman a sabali a lengguahe a masuportaran.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+Para kadagiti detalye maipapan kadagiti maikadua a lengguahe ken subtitle, kitaem ti [Masansan a Maisalsaludsod](faq#language-support).
 
-## System Requirements {#system-requirements}
+## Dagiti Kasapulan ti Sistema {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+Para kadagiti masuportaran nga operating system ken kasapulan, kitaem dagiti sungbat iti [Masansan a Maisalsaludsod](faq#technical-questions).
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Padasem ti M³ ita nga aldaw, ket kitaem no ania ti kabaelanna! Nalaklaka itan ngem idi ti panangipakita iti media kadagiti gimong ti kongregasion.**
 
 ![M³ preview](./../assets/m3-preview.png)

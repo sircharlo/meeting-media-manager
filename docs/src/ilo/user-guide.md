@@ -1,473 +1,473 @@
-# User Guide {#user-guide}
+# Giya ti Agar-aramat {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+Tulongannaka daytoy kompleto a giya ti agar-aramat a mangsursuro a naimbag kadagiti amin a feature ti M³, manipud iti simple a setup agingga kadagiti advanced a teknik iti panangipakita iti media.
 
-## Getting Started {#getting-started}
+## Panangrugi {#getting-started}
 
-### Download and Install {#download-and-install}
+### I-download ken I-install {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+Alaem ti kabaruan a bersion iti [panid ti download](download). Irekomendana ti kasayaatan a build para iti device-mo ken ipakitana ti kabaruan a bersion.
 
-### First Launch {#first-launch}
+### Umuna a Pannakairugi {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+No umuna a luktam ti M³, iwanwannaka ti setup wizard a mangi-set kadagiti kangrunaan a setting para iti kongregasionmo:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Piliem ti lengguahe ti app** - Daytoy ti mangikeddeng no ania a lengguahe ti pakaipakitaan dagiti menu ken button ti M³
+2. **Piliem ti kita ti profile** - Piliem ti "Kadawyan" para iti gagangay a panagusar ti kongregasion wenno ti "Sabali" para kadagiti espesial nga okasion
+3. **I-set-mo ti impormasion ti kongregasion** - I-type-mo dagiti detalye ti kongregasionmo wenno usarem ti feature nga automatiko a panagbirok
+4. **I-set-mo ti eskediul ti gimong** - I-set-mo ti oras ti gimong iti tengnga ti lawas ken ti gimong iti ngudo ti lawas
+5. **Dagiti opsional a feature** - I-set-mo ti integration ti OBS, background music, ken dadduma pay nga advanced a feature
 
-:::tip Tip
+:::tip Singasing
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Saanka nga agdardaras bayat ti setup - ngem mabalinmo latta a sukatan madamdama dagitoy a setting iti menu a Dagiti Setting.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Ti Kangrunaan nga Interface {#main-interface}
 
-The main M³ interface consists of several key areas:
+Addaan ti kangrunaan nga interface ti M³ iti sumagmamano a napateg a paset:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **Menu iti Sikigan** - Mapan kadagiti nadumaduma a paset ti app ken kadagiti setting
+- **Kalendario** - Kitaem ti media babaen ti petsa
+- **Listaan ti Media** - Kitaem ken imanehom ti media para kadagiti napili a petsa
+- **Toolbar** - Napartak a pakaaramatan kadagiti gagangay a feature
+- **Bar ti Kasasaad** - Ipakitana ti progreso ti panangi-download, ken ti kasasaad ti background music ken ti koneksion iti OBS Studio
 
-## Media Management {#user-guide-media-management}
+## Panangimaneho iti Media {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### Pannakaawat iti Kalendario {#calendar-view}
 
-Click the date at the top of the window to open the calendar. It shows every week M³ prepares media for, starting with the current one:
+I-click-mo ti petsa iti ngato ti window tapno malukatan ti kalendario. Ipakitana ti tunggal lawas nga addaan iti media nga insagana ti M³, mangrugi iti agdama a lawas:
 
-- **Weeks** - Each row is a week from Monday to Sunday, named "This week", "Next week", "In 2 weeks" and so on, with its dates
-- **Meeting Days** - Meeting days are tinted by their status: green when their media is ready, orange when it isn't ready yet, and red if it couldn't be fetched. Days with media you added yourself are purple. A legend under the calendar explains the colors
-- **Special Weeks** - During the circuit overseer's visit and the week of the Memorial, that week's meeting days take the week's color and the week is named under its dates. A label next to the date at the top of the window says what's different on the selected day
-- **Keyboard** - Use the arrow keys to move between days, and Enter to select one
+- **Dagiti Lawas** - Ti tunggal linia ket maysa a lawas manipud Lunes agingga iti Domingo, a nanaganan iti "Daytoy a lawas", "Sumaruno a lawas", "Kalpasan ti 2 a lawas" ken dadduma pay, agraman dagiti petsana
+- **Dagiti Aldaw ti Gimong** - Addaan dagiti aldaw ti gimong iti kolor a maibatay iti kasasaadda: berde no nakasagana ti media-da, orange no saan pay a nakasagana, ken nalabaga no saan a nagun-od dayta. Purpura dagiti aldaw nga addaan iti media nga inayonmo. Adda legend iti baba ti kalendario a mangilawlawag kadagiti kolor
+- **Dagiti Espesial a Lawas** - Bayat ti panagbisita ti manangaywan iti sirkito ken ti lawas ti Memorial, maipakita dagiti aldaw ti gimong iti dayta a lawas iti kolor ti lawas, ken maisurat ti nagan ti lawas iti baba dagiti petsana. Ibaga ti label iti abay ti petsa iti ngato ti window no ania ti naiduma iti napili nga aldaw
+- **Keyboard** - Usarem dagiti arrow key tapno umakar manipud iti maysa nga aldaw iti sabali, ken ti Enter tapno pilien ti maysa
 
-### Organizing Media {#organizing-media}
+### Panangurnos iti Media {#organizing-media}
 
-M³ automatically organizes media by meeting type and section:
+Automatiko nga urnosen ti M³ ti media babaen ti kita ti gimong ken seksion:
 
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
-- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
-- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
+- **Dagiti Seksion ti Gimong** - Naurnos ti media sigun kadagiti paset ti gimong (Palawag publiko, Gameng Manipud iti Sao ti Dios, ken dadduma pay)
+- **Dagiti Custom a Seksion** - Mabalinmo ti mangaramid kadagiti custom a seksion para iti kanayonan a media no awan ti naiskediul a gimong iti dayta nga aldaw
+- **Manual a Panangurnos** - I-drag-mo dagiti media iti urnos a kasapulam, wenno i-reset ti urnos no kasapulan
+- **Ulit-ulit a Panangi-play** - Ulit-ulitan ti maysa a media wenno ulit-ulitan amin nga item iti maysa a seksion agingga nga isardengmo ti panangi-play
 
-### Hidden and Missing Media {#hidden-and-missing-media}
+### Nailemmeng ken Kurang a Media {#hidden-and-missing-media}
 
-Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
+Mabalin nga ilemmeng ti media iti listaan ti gimong a saan a mai-delete dagiti file nga automatiko a nai-download. No nailemmeng ti media gapu iti biddut, usarem ti **Ipakita dagiti nailemmeng a media** para iti napili nga aldaw.
 
-If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
+No ipakaammo ti M³ nga adda kurang a media, sukimatem nga umuna no ninamnama a magun-od ti item inton umasidegen ti petsa ti gimong. Mabalinmo met nga inayon a mismo ti kurang nga item babaen ti menu nga **Inayon ti media** wenno babaen ti panangi-drag iti dayta iti listaan ti media.
 
-## Media Presentation {#media-presentation}
+## Panangipakita iti Media {#media-presentation}
 
-### Opening the Media Player {#opening-media-player}
+### Luktan ti Media Player {#opening-media-player}
 
-To present media during a meeting:
+Tapno ipakitam ti media bayat ti gimong:
 
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
+1. Piliem ti petsa ken ti media a kayatmo nga ipakita
+2. I-click-mo ti button a pangi-play wenno usarem ti keyboard shortcut
+3. Mangrugi a mai-play ti media iti iskrin ti media
+4. Usarem dagiti kontrol tapno i-play, i-pause, wenno ag-navigate kadagiti media
 
-### Media Player Controls {#media-player-controls}
+### Dagiti Kontrol ti Media Player {#media-player-controls}
 
-The media player provides comprehensive controls:
+Addaan ti media player iti naan-anay a kontrol:
 
-- **Play/Pause** - Start or pause media playback
-- **Stop** - Stop playback
+- **I-play/I-pause** - Irugi wenno i-pause ti panangi-play iti media
+- **Isardeng** - Isardeng ti panangi-play
 
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Hold Ctrl or Shift and use the mouse wheel, or pinch on a touchpad, to zoom, then drag to pan (for images)
-- **Live Preview** - When enabled, show a preview of the audience media window in the main app
-- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
+- **Zoom/pan** - Tapno ag-zoom, usarem ti wheel ti mouse bayat a pindutem ti Ctrl wenno Shift, wenno i-pinch-mo iti touchpad; sa i-drag-mo tapno ag-pan (para kadagiti ladawan)
+- **Live a Preview** - No naka-enable, ipakitana ti preview ti window ti media a makita dagiti dumdumngeg iti kangrunaan a window ti app
+- **Kapartak ti panangi-play** - No naka-enable kadagiti setting, baliwan ti kapartak ti audio ken video manipud iti context menu ti media
 
-### Advanced Presentation Features {#advanced-presentation}
+### Dagiti Advanced a Feature ti Panangipakita {#advanced-presentation}
 
-#### Custom Timing {#custom-timing}
+#### Custom nga Oras {#custom-timing}
 
-Set custom start and end times for media:
+I-set ti custom nga oras ti panangrugi ken panaggibus ti media:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
 
-1. Click on the duration of a video on the top left of its thumbnail
-2. Set start and end times
-3. Save your changes
+1. I-click-mo ti kabayag ti video iti ngato a kannigid ti thumbnail-na
+2. I-set-mo ti oras ti panangrugi ken panaggibus
+3. I-save-mo dagiti binaliwmo
 
-#### Zoom and Pan {#zoom-pan}
+#### Zoom ken Pan {#zoom-pan}
 
-For images and videos:
+Para kadagiti ladawan ken video:
 
-- **Zoom In/Out** - Hold Ctrl or Shift and use the mouse wheel, pinch on a touchpad, or use the zoom controls on the thumbnail
-- **Pan** - Once zoomed in, click and drag the thumbnail to move the image around (drag the rest of the row to reorder the item)
-- **Reset Zoom** - Click to return to original zoom
+- **I-zoom in/out** - Usarem ti wheel ti mouse bayat a pindutem ti Ctrl wenno Shift, i-pinch-mo iti touchpad, wenno usarem dagiti kontrol ti zoom iti thumbnail
+- **Pan** - No naka-zoom in, i-click ken i-drag-mo ti thumbnail tapno iyakar ti ladawan (i-drag-mo ti dadduma a paset ti intar tapno baliwan ti urnos ti media)
+- **I-reset ti zoom** - I-click tapno agsubli iti orihinal a zoom
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+#### Dagiti Keyboard Shortcut {#user-guide-keyboard-shortcuts}
 
-Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
+I-set up dagiti custom a keyboard shortcut para iti napartak nga access. Laglagipem nga awan ti naka-set a keyboard shortcut a kas default.
 
-**Built-in Media Controls** (when main window is focused and showing the media list):
+**Dagiti Built-in a Kontrol ti Media** (no naka-focus ti kangrunaan a window ken maipakpakita ti listaan ti media):
 
-- **Tab/Shift+Tab** - Navigate between media items
-- **Up/Down Arrow** - Navigate between media items
-- **Space** - Play/Pause media
-- **Escape** - Stop media
+- **Tab/Shift+Tab** - Ag-navigate kadagiti media
+- **Pana a Pangato/Pababa** - Ag-navigate kadagiti media
+- **Space** - I-play/i-pause ti media
+- **Escape** - Isardeng ti media
 
-**Customizable Shortcuts** (when enabled in settings):
+**Dagiti Shortcut a Mabalin a Baliwan** (no naka-enable kadagiti setting):
 
-- **Media Window** - Open/close media window
-- **Previous/Next Media** - Navigate between media items
-- **Pause/Resume** - Control media playback
-- **Stop Media** - Stop media playback
-- **Music Toggle** - Control background music
+- **Window ti Media** - Luktan/iserra ti window ti media
+- **Napalabas/Sumaruno a Media** - Ag-navigate kadagiti media
+- **I-pause/Ituloy** - Kontrolen ti panangi-play iti media
+- **Isardeng ti media** - Isardeng ti panangi-play iti media
+- **Irugi/Isardeng ti Musika** - Kontrolen ti background music
 
-**Note (\*):** Global shortcut - available even when the app is not focused
+**Palagip (\*):** Global a shortcut - mausar uray no saan a naka-focus ti app
 
-## Display Tools {#display-tools}
+## Dagiti Ramit ti Iskrin {#display-tools}
 
-### Media Display Window {#media-display-window}
+### Window ti Media {#media-display-window}
 
-The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+Ti window ti media ket ti window a makita dagiti tumabuno. Mabalin a maikabil daytoy iti external nga iskrin wenno mausar a naka-window, depende kadagiti alikamenmo.
 
-Use the display popup to:
+Usarem ti popup ti iskrin tapno:
 
-- Show or hide the media display
-- Choose the display or window type
-- Select a temporary custom background instead of the yeartext
-- Use an available camera as the background. This is mostly used in sign-language congregations.
+- Ipakita wenno ilemmeng ti iskrin ti media
+- Pilien ti iskrin wenno ti kita ti window
+- Agpili iti temporario a custom a background imbes a ti teksto para iti tawen
+- Usaren ti maysa a kamera nga adda kas background. Kangrunaan nga us-usaren daytoy kadagiti kongregasion iti sign language.
 
-Please note that custom backgrounds are temporary and are not saved after M³ quits.
+Laglagipem a temporario laeng dagiti custom a background ken saanda a mai-save inton maiserra ti M³.
 
-### Meeting Timer {#user-guide-meeting-timer}
+### Timer ti Gimong {#user-guide-meeting-timer}
 
-When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+No naka-enable ti timer ti gimong, mabalin nga ipakita ti M³ ti naisalumina a window ti timer tapno maorasan dagiti paset dagiti addaan iti asaynment. Mabalin nga agbilang a pangato wenno pababa ti timer, ipakitana ti agdama nga oras, ipakitana ti countdown sakbay a mangrugi ti gimong, ken no kayatmo, ipakitana no lumbes iti oras ti maysa a paset wenno no nasapa wenno naladaw ti gimong ngem iti eskediul.
 
-The timer is a beta feature and should only be used when approved locally.
+Beta a feature ti timer, ket rumbeng nga usaren laeng daytoy no naaprobaran iti lokal a kongregasion.
 
-#### Meeting Parts {#user-guide-timer-parts}
+#### Dagiti Paset ti Gimong {#user-guide-timer-parts}
 
-The timer popup on the action island lists the parts of the selected day's meeting. For midweek meetings, choose how many Apply Yourself to the Field Ministry and Living as Christians parts there are; the section's minutes are shared out evenly, and each part can then be adjusted freely with the **+** and **−** buttons or by clicking the part. Any part can be set to any number of minutes, including 0 to skip it. A warning icon points out sections whose parts don't add up to the time allotted to them, but never changes anything on its own.
+Makita iti popup ti timer iti isla dagiti aksion ti listaan dagiti paset ti gimong iti napili nga aldaw. Para kadagiti gimong iti tengnga ti lawas, pilien no mano ti paset ti Agbalin a Mas Epektibo iti Ministerio ken ti Panagbiag kas Kristiano; agpapada a mabingay dagiti minuto ti seksion, sa mabalinmo a baliwan a siwayawaya ti tunggal paset babaen kadagiti button a **+** ken **−** wenno babaen ti panangi-click iti paset. Mabalin nga ikabil ti aniaman a bilang ti minuto iti aniaman a paset, agraman ti 0 tapno malaktawan dayta. Ipakita ti icon ti pakdaar dagiti seksion a ti dagup dagiti pasetda ket saan a kapada ti oras a naituding kadakuada, ngem pulos nga awan ti baliwanna a bukbukodna.
 
-If the number of parts hasn't been chosen yet when a part of a midweek meeting is started, M³ asks for it first, once for each meeting. The part is timed from the moment it was started, even while M³ asks.
+No saan pay a napili ti bilang dagiti paset inton marugian ti maysa a paset ti gimong iti tengnga ti lawas, agsaludsod nga umuna ti M³, maminsan iti tunggal gimong. Maorasan ti paset manipud iti oras a narugian dayta, uray bayat nga agsalsaludsod ti M³.
 
-With [**Time counsel separately**](/settings-guide#timer-separate-counsel) turned on, the minute of counsel after the Bible reading and each Apply Yourself to the Field Ministry part is listed under that part and timed on its own, so the chairman can see how much of it is left.
+No naka-on ti [**Orasan a naisina ti balakad**](/settings-guide#timer-separate-counsel), maipakita iti baba dayta a paset ti maysa a minuto a balakad kalpasan ti Panagbasa iti Biblia ken ti tunggal paset iti Agbalin a Mas Epektibo iti Ministerio ken maorasan a naisina, tapno makita ti tserman no mano pay ti nabati.
 
-**Custom parts** can be added on any day, for Governing Body updates, special programs or anything else that isn't on the regular schedule. On days without a meeting, the timer starts with one custom part per custom media section.
+Mabalin ti agnayon iti **custom a paset** iti aniaman nga aldaw, para kadagiti Update Manipud iti Bagi a Manarawidwid, espesial a programa, wenno aniaman a sabali nga awan iti kadawyan nga eskediul. Kadagiti aldaw nga awan ti gimong, mangrugi ti timer iti maysa a custom a paset para iti tunggal custom a seksion ti media.
 
-Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
+Maidulin iti tunggal aldaw ti bilang dagiti paset, dagiti nabaliwan a kabayag, dagiti custom a paset, ken dagiti narekord nga oras, isu a saanda a mapukaw uray i-restart ti M³, ken pulos a saan a maitipon dagiti oras ti maysa a gimong iti oras ti sabali a gimong. Mabalin nga i-clear iti maminsan dagiti narekord nga oras ti maysa nga aldaw babaen ti **I-reset amin a narekord nga oras para iti daytoy nga aldaw**, ken mabalin nga i-export ti PDF a report ti oras iti aniaman a tiempo.
 
-#### Hand Alert {#user-guide-timer-hand-alert}
+#### Pakaammo babaen ti Ima {#user-guide-timer-hand-alert}
 
-A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+Ti button a **Pakaammo babaen ti ima** iti popup ti timer ket mangipakita iti dakkel nga ima iti iskrin ti timer tapno maawis ti atension ti tserman, kas pagarigan, no adda nangingato iti imana iti Zoom. Babaen ti [katulongan iti nakangato nga ima ti Zoom Meeting Manager](/settings-guide#zoom-meeting-manager-hand-alert), automatiko nga ipakita ti M³ dayta tunggal adda mangingato iti imana iti Zoom, agraman ti naganna, ket mabalinmo nga i-unmute isuna, sa i-mute manen ken ibaba ti imana, babaen ti maysa a click iti tunggal maysa.
 
-#### Timer on a Tablet {#user-guide-timer-remote}
+#### Timer iti Tablet {#user-guide-timer-remote}
 
-The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³. Its optional focus layout shows the time in a progress ring, with the names of Zoom participants who raised their hand listed beside it. The page also keeps the tablet's screen awake while it's open, so it doesn't lock mid-part.
+Ti opsional a [remote ti timer](/settings-guide#timer-remote) ket mangipaay iti kopia ti iskrin ti timer a para laeng iti panangkita, kas web page iti lokal a network-mo. Luktam ti address a makita iti popup ti timer iti browser ti tablet wenno telepono nga adda iti pulpito, ket ti ispiker laeng ti makakita iti nabati nga oras, bayat nga agtalinaed iti M³ amin a kontrol. Ti opsional a focus layout-na ket mangipakita iti oras iti progress ring, a nakalista iti abayna dagiti nagan dagiti participant iti Zoom a nangingato iti imada. Pagtalinaeden met ti panid a naka-on ti iskrin ti tablet bayat a nakalukat dayta, tapno saan nga ag-lock iti tengnga ti paset.
 
-#### Quick Access {#user-guide-timer-quick-access}
+#### Napartak nga Access {#user-guide-timer-quick-access}
 
-Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).
+No i-hover-mo ti button ti timer iti isla dagiti aksion, maipakita ti paset nga or-orasan, agraman dagiti button nga Irugi, I-pause, Isardeng, ken Sumaruno a paset. Mabalin met nga ikabil ti maysa a setting ti panel ti timer iti kannawan a sikigan ti kangrunaan a window, nga addaan iti intero a listaan dagiti paset ken dagiti kontrol ti timer, a kanayon a makita. Kitaem ti [Giya kadagiti Setting](/settings-guide#timer-quick-access).
 
 ## Background Music {#user-guide-background-music}
 
-### Setting Up Background Music {#background-music-setup}
+### Panangi-set up iti Background Music {#background-music-setup}
 
-Background music automatically plays before meetings and stops at the appropriate time:
+Automatiko a mai-play ti background music sakbay dagiti gimong ken agsardeng iti umno nga oras:
 
-1. **Enable Music** - Turn on background music in settings
-2. **Auto-Start** - Music will start automatically when M³ launches, if appropriate
-3. **Meeting Stop** - Music stops automatically before meeting start time
-4. **Manual Control** - Use the music button in the status bar to start/stop manually
-5. **Restart** - Resume music after meetings with one click
+1. **I-enable ti Musika** - I-on ti background music kadagiti setting
+2. **Automatiko a Panangrugi** - Automatiko a mangrugi ti musika no agrugi ti M³, no maitutop
+3. **Panagsardeng Sakbay ti Gimong** - Automatiko nga agsardeng ti musika sakbay ti oras ti panangrugi ti gimong
+4. **Manual a Kontrol** - Usarem ti button ti musika iti status bar tapno sika a mismo ti mangirugi wenno mangisardeng iti dayta
+5. **Irugi Manen** - Ituloy ti musika kalpasan dagiti gimong iti maysa laeng a click
 
-## Zoom Integration {#user-guide-zoom-integration}
+## Integration ti Zoom {#user-guide-zoom-integration}
 
-M³ can integrate with Zoom for automatic screen sharing:
+Mabalin a maikonektar ti M³ iti Zoom para iti automatiko a panangi-share iti iskrin:
 
-1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
-3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
-4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
+1. **I-enable ti Integration** - I-on ti integration ti Zoom kadagiti setting
+2. **I-set up ti Shortcut** - Ikabil ti keyboard shortcut ti panangi-share iti iskrin a naka-set iti Zoom. Siguraduem a naka-check ti checkbox a "global" iti Zoom.
+3. **Automatiko a Kontrol** - Automatiko nga irugi wenno isardeng ti M³ ti panangi-share iti iskrin iti Zoom no kasapulan
+4. **Manual a Panangkontrol** - Mabalinmo latta a kontrolen a mismo ti panangi-share iti iskrin babaen ti Zoom no kasapulan
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## Integration ti OBS Studio {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#user-guide-obs-setup}
+### Panangi-set up iti Integration ti OBS {#user-guide-obs-setup}
 
-To use M³ with OBS Studio for hybrid meetings:
+Tapno usarem ti M³ a kadua ti OBS Studio para kadagiti hybrid a gimong:
 
-1. **Install OBS Studio** - Download and install OBS Studio
-2. **Enable WebSocket** - Install the WebSocket plugin in OBS
-3. **Configure M³** - Enter OBS port and password in M³ settings
-4. **Set Up Scenes** - Create scenes for camera, media, and other content
-5. **Test** - Verify playback works properly
+1. **I-install ti OBS Studio** - I-download ken i-install ti OBS Studio
+2. **I-enable ti WebSocket** - I-install ti plugin a WebSocket iti OBS
+3. **I-set up ti M³** - I-type ti port ken password ti OBS kadagiti setting ti M³
+4. **I-set up Dagiti Scene** - Agaramid kadagiti scene para iti kamera, media, ken sabali pay a linaon
+5. **I-test** - Sukimatem no agandar a nasayaat ti panangi-play
 
-### OBS Scene Management {#obs-scene-management}
+### Panangimaneho Kadagiti Scene ti OBS {#obs-scene-management}
 
-M³ automatically switches OBS scenes during presentations:
+Automatiko a sukatan ti M³ dagiti scene ti OBS bayat ti panangipakita:
 
-- **Camera Scene** - Shows the lectern/camera view
-- **Media Scene** - Displays media content
-- **Image Scene** - Shows images (can be postponed if enabled)
-- **Automatic Switching** - Scenes change based on media type and settings
-- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
+- **Scene ti Kamera** - Ipakitana ti pulpito wenno ti makita ti kamera
+- **Scene ti Media** - Ipakitana ti media
+- **Scene ti Ladawan** - Ipakitana dagiti ladawan (mabalin a maitantan no naka-enable)
+- **Automatiko a Panagsukat** - Agbaliw dagiti scene sigun iti kita ti media ken kadagiti setting
+- **Dagiti kontrol ti panangi-record** - No naka-enable, mabalin nga irugi ken isardeng ti M³ ti panangi-record iti OBS manipud iti popup ti OBS
 
-### Advanced OBS Features {#advanced-obs}
+### Dagiti Advanced a Feature ti OBS {#advanced-obs}
 
-#### Do Not Automatically Share Images {#user-guide-postpone-images}
+#### Saan nga Automatiko nga I-share Dagiti Ladawan {#user-guide-postpone-images}
 
-Enable this option to delay sharing images to OBS until manually triggered:
+I-enable daytoy nga opsion tapno maitantan ti panangi-share kadagiti ladawan iti OBS agingga nga i-share-mo dagita:
 
-1. Enable "Do not automatically share images" in OBS settings
-2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. This is useful for showing images to in-person audience first.
+1. I-enable ti "Saan nga automatiko nga i-share dagiti ladawan" kadagiti setting ti OBS
+2. Mai-share laeng dagiti ladawan no i-click-mo ti button a **Ipakita ti ladawan kadagiti participant iti Zoom** iti ladawan a maipakpakita. Makatulong daytoy no kayatmo nga ipakita nga umuna dagiti ladawan kadagiti personal a tumabtabuno.
 
-#### Scene Switching Behavior {#user-guide-scene-switching}
+#### Wagas ti Panagsukat ti Scene {#user-guide-scene-switching}
 
-Configure how M³ handles scene changes:
+I-set up no kasano nga imaneho ti M³ ti panagsukat ti scene:
 
-- **Switch After Media** - Automatically return to previous scene
-- **Remember Previous Scene** - Restore the scene that was active before media
+- **Agsukat Kalpasan ti Media** - Automatiko nga agsubli iti dati a scene
+- **Laglagipen ti Dati a Scene** - Isubli ti scene a naaktibo sakbay ti media
 
-### Audio Configuration for Hybrid Meetings {#audio-configuration}
+### Setup ti Audio para Kadagiti Hybrid a Gimong {#audio-configuration}
 
-When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
+No usarem ti M³ a kadua ti OBS Studio para kadagiti hybrid a gimong (personal + Zoom), masapul nga i-set up-mo dagiti setting ti audio tapno masigurado a mangngeg dagiti participant iti gimong ti media:
 
-#### Zoom Audio Settings {#zoom-audio-settings}
+#### Dagiti Setting ti Audio iti Zoom {#zoom-audio-settings}
 
-**Before every meeting, you must enable Original Audio in Zoom:**
+**Sakbay ti tunggal gimong, masapul nga i-enable-mo ti Original Audio iti Zoom:**
 
-1. **Open Zoom** and go to Settings
-2. **Navigate to Audio** → **Advanced**
-3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
-4. **Check "Disable echo cancellation"** (first checkbox)
-5. **Check "Disable noise suppression"** (second checkbox)
-6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
-7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
+1. **Luktan ti Zoom** sa mapanka iti Settings
+2. **Mapan iti Audio** → **Advanced**
+3. **I-enable ti "Show in-meeting option to 'Enable Original Sound'"**
+4. **I-check ti "Disable echo cancellation"** (umuna a checkbox)
+5. **I-check ti "Disable noise suppression"** (maikadua a checkbox)
+6. **I-uncheck ti "Disable high-fidelity music mode"** (maikatlo a checkbox)
+7. **Sakbay a rugiam ti tunggal gimong**, i-click-mo ti button nga "Original Audio" kadagiti kontrol ti gimong
 
-**Alternative: Share Computer Sound**
-If Original Audio doesn't work well in your setup:
+**Alternatibo: Share Computer Sound**
+No saan nga agandar a nasayaat ti Original Audio iti setup-mo:
 
-1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
-2. **Check "Share computer sound"**
-3. **Note**: This option must be enabled every time you start a new Zoom session
+1. **Sakbay nga i-play-mo ti media**, mapanka iti tab nga **Advanced** kadagiti opsion ti panangi-share iti iskrin iti Zoom
+2. **I-check ti "Share computer sound"**
+3. **Palagip**: Masapul nga i-enable daytoy nga opsion iti tunggal irugim ti baro a session iti Zoom
 
-**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
+**Kasayaatan nga Alternatibo**: Usarem koma ti integration ti Zoom iti M³ imbes nga OBS Studio, ta usarenna ti bukod a panangi-share iti iskrin ti Zoom, a nalaklaka ti panangimanehona iti audio ken saan a kasapulan ti narikut a setup ti audio.
 
-#### Why Audio Configuration is Necessary {#why-audio-config}
+#### No Apay a Kasapulan ti Setup ti Audio {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+Ti M³ ket mangi-play iti media nga addaan uni iti kompiutermo, ngem **saan nga automatiko a maipatulod** daytoy nga audio babaen ti video stream nga agturong iti OBS Studio. Kasta met laeng ti mapasaram iti aniaman a sabali a media player.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**Saan a mainaig iti M³ ti problema iti audio** - limitasion dayta ti panagandar ti video streaming ti OBS Studio iti Zoom. Kasla virtual a kamera ti video stream nga awan unina, kas iti webcam, isu a masapul nga espesipiko nga i-set up-mo ti Zoom tapno alaenna ti audio ti kompiuter. Kaipapanan daytoy a masapul nga addaan ti kompiutermo iti dua a sound card, ket no saan, nalabit a saanmo a mausar a naballigi ti integration ti OBS Studio.
 
-**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
+**Alternatibo a Solusion**: Usarem koma ketdi ti integration ti Zoom, ta usarenna ti bukod a panangi-share ti Zoom iti iskrin ken audio, a nalaklaka ti panangimanehona iti audio.
 
-#### Troubleshooting Audio Issues {#audio-troubleshooting}
+#### Panangsolbar Kadagiti Problema iti Audio {#audio-troubleshooting}
 
-**Common Problems:**
+**Dagiti Gagangay a Problema:**
 
-- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
-- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
-- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
+- **Awan ti audio iti Zoom**: Sukimatem no naka-enable ti Original Audio ken no umiso ti setup-na
+- **Saan a nasayaat ti kalidad ti audio**: Sukimatem no umiso ti pannaka-set dagiti tallo a checkbox ti Original Audio
+- **Saan nga agandar ti audio kalpasan a ma-restart ti Zoom**: Masapul nga i-enable manen dagiti setting ti Original Audio iti tunggal baro a session iti Zoom
 
-**Best Practices:**
+**Dagiti Kasayaatan a Wagas:**
 
-- Test audio configuration and sharing before meetings
-- Create a checklist for audio setup
-- Consider using "Share Computer Sound" as a backup option
-- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
-- Ensure all AV operators are familiar with these settings
+- I-test ti setup ti audio ken ti panangi-share sakbay dagiti gimong
+- Agaramid iti checklist para iti setup ti audio
+- Usarem koma ti "Share Computer Sound" kas reserba nga opsion
+- **Usarem koma ti integration ti Zoom imbes nga OBS Studio** tapno nalaklaka ti panangimaneho iti audio
+- Siguraduem a pamiliar kadagitoy a setting amin nga operator ti audio ken video
 
-## Media Import and Management {#media-import}
+## Panangi-import ken Panangimaneho iti Media {#media-import}
 
-### Importing Custom Media {#importing-custom-media}
+### Panangi-import iti Bukodmo a Media {#importing-custom-media}
 
-Add your own media files to M³:
+Inayonmo dagiti bukodmo a file ti media iti M³:
 
-1. **File Import** - Use the import button to add videos, images, or audio files
-2. **Drag and Drop** - Drag files directly into M³
-3. **Shared Folder** - Add media automatically from a folder kept in sync by Dropbox, OneDrive, iCloud Drive or Google Drive
-4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
-6. **Videos from the official website** - Search for videos and add them to the selected date
-7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
+1. **Panangi-import iti File** - Usarem ti button a pangi-import tapno inayonmo dagiti video, ladawan, wenno audio file
+2. **I-drag ken i-drop** - I-drag-mo a dagus dagiti file iti M³
+3. **Nai-share a folder** - Automatiko nga inayon ti media manipud iti folder a naka-sync babaen ti Dropbox, OneDrive, iCloud Drive wenno Google Drive
+4. **Dagiti JWPUB a File ken Playlist** - I-import dagiti publikasion ken playlist
+5. **Media para iti palawag publiko (S-34 / S-34mp)** - I-import ti media para iti palawag publiko babaen ti JWPUB a file ti S‑34 wenno S‑34mp
+6. **Dagiti video manipud iti opisial a website** - Agbirok kadagiti video sa inayon dagitoy iti napili a petsa
+7. **Media ti Study Bible ken ti Biblia iti sign language** - Inayon dagiti ladawan, video, mapa, reperensia iti pakasaritaan, wenno video ti Biblia iti sign language para kadagiti napili a bersikulo
 
-### Managing Imported Media {#managing-imported-media}
+### Panangimaneho iti Nai-import a Media {#managing-imported-media}
 
-- **Organize by Date** - Assign imported media to specific dates
-- **Custom Sections** - Create custom sections for organization
-- **Edit Properties** - Modify titles, descriptions, and timing
-- **Remove Media** - Delete unwanted media items
+- **Urnosen Sigun iti Petsa** - Ikabil ti nai-import a media iti espesipiko a petsa
+- **Dagiti Custom a Seksion** - Agaramid kadagiti custom a seksion tapno naurnos ti media
+- **I-edit Dagiti Detalye** - Baliwan dagiti titulo, deskripsion, ken oras
+- **Ikkaten ti Media** - I-delete dagiti media a saanmo a kasapulan
 
-### Audio Bible Import {#audio-bible-import}
+### Panangi-import iti Audio Recording ti Biblia {#audio-bible-import}
 
-Import audio recordings of Bible verses:
+I-import dagiti audio recording ti bersikulo ti Biblia:
 
-1. Click the "Audio Bible" button
-2. Select the Bible book and chapter
-3. Choose specific verses or verse ranges
-4. Download the audio files
-5. Use them
+1. I-click-mo ti button nga "Audio recording ti Biblia"
+2. Piliem ti libro ken kapitulo ti Biblia
+3. Agpili kadagiti espesipiko a bersikulo wenno sumagmamano a bersikulo nga agsasaruno
+4. I-download-mo dagiti audio file
+5. Usarem dagita
 
-### Profile Settings Import and Export {#profile-settings-import-export}
+### Panangi-import ken Panangi-export kadagiti Setting ti Profile {#profile-settings-import-export}
 
-Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
+Mabalin nga i-export dagiti setting ti tunggal profile iti JSON a file manipud iti panid ti Dagiti Setting. Ti panangi-import iti file dagiti setting ti profile ket mangsukat kadagiti setting ti agdama a profile, a makatulong no iyakarmo ti setup iti sabali a kompiuter wenno no isublim ti maysa a setup nga ammom nga umiso.
 
-## Shared Folder and Export {#user-guide-folder-monitoring}
+## Nai-share a Folder ken Panangi-export {#user-guide-folder-monitoring}
 
-### Setting Up a Shared Folder {#folder-monitoring-setup}
+### Panangi-set up iti Nai-share a Folder {#folder-monitoring-setup}
 
-Add media from a folder kept in sync by a cloud storage app, such as Dropbox, OneDrive, iCloud Drive or Google Drive:
+Inayon ti media manipud iti folder a naka-sync babaen ti app ti cloud storage, kas iti Dropbox, OneDrive, iCloud Drive wenno Google Drive:
 
-1. **Turn It On** - Answer "Yes" when the setup wizard asks about cloud storage apps, or go to **Settings** > **Integrations** > **Shared folder** and turn on **Add media from a shared folder**
-2. **Choose the Folder** - Pick a folder inside your cloud storage app, ideally a new one used only for this
-3. **Dated Folders** - M³ creates a folder inside it for each upcoming meeting, named with the meeting's date written as year-month-day (for example, `2026-03-25`)
-4. **Add Files** - Put photos, videos, audio files or JW Library playlists in a meeting's folder, and they're added to that meeting's media list automatically. For another day, create a folder named the same way
-5. **Past Folders** - When a week is over, M³ deletes that week's folders and their files, for everyone who uses the shared folder. Turn off **Delete past meeting folders** to keep them
+1. **I-on Daytoy** - Piliem ti "Wen" no agsaludsod ti setup wizard maipapan kadagiti app ti cloud storage, wenno mapan iti **Dagiti Setting** > **Dagiti Integration** > **Nai-share a folder** sa i-on-mo ti **Inayon ti media manipud iti nai-share a folder**
+2. **Pilien ti Folder** - Agpili iti folder iti uneg ti cloud storage-mo, nasaysayaat no baro a folder nga us-usaren laeng para iti daytoy
+3. **Dagiti Folder nga Addaan iti Petsa** - Mangaramid ti M³ iti folder iti uneg daytoy para iti tunggal sumaruno a gimong, a ti naganna ket ti petsa ti gimong a naisurat kas tawen-bulan-aldaw (kas pagarigan, `2026-03-25`)
+4. **Inayon Dagiti File** - Ikabil dagiti ladawan, video, file ti audio, wenno playlist ti JW Library iti folder ti maysa a gimong, ket automatiko a mainayon dagitoy iti listaan ti media dayta a gimong. Para iti sabali nga aldaw, agaramid iti folder a kasta met ti pannakanaganna
+5. **Dagiti Napalabas a Folder** - No nalpasen ti maysa a lawas, i-delete ti M³ dagiti folder dayta a lawas agraman dagiti file iti uneg dagitoy, para iti amin nga agus-usar iti nai-share a folder. I-off ti **I-delete dagiti folder dagiti napalabas a gimong** tapno saan a mai-delete dagitoy
 
-### Media Export {#user-guide-media-export}
+### Panangi-export iti Media {#user-guide-media-export}
 
-Automatically export media to organized folders:
+Automatiko nga i-export ti media kadagiti naurnos a folder:
 
-1. **Enable Auto-Export** - Turn on media export in settings
-2. **Select Export Folder** - Choose where to save exported files
-3. **Automatic Organization** - Files are organized by date and section
-4. **Format Options** - Convert files to MP4 for better compatibility
+1. **I-enable ti automatiko a panangi-export** - I-on ti panangi-export iti media kadagiti setting
+2. **Pilien ti Folder ti Panangi-export** - Piliem no sadino a mai-save dagiti nai-export a file
+3. **Automatiko a Panangurnos** - Maurnos dagiti file sigun iti petsa ken seksion
+4. **Dagiti Opsion ti Pormat** - I-convert dagiti file iti MP4 tapno mas nalaka a mausar dagita
 
-## Website Presentation {#website-presentation}
+## Panangipakita iti Website {#website-presentation}
 
-### Presenting the Official Website {#presenting-the-website}
+### Panangipakita iti Opisial a Website {#presenting-the-website}
 
-Share the official website on external displays:
+Ipakita ti opisial a website kadagiti external nga iskrin:
 
-1. **Open Website Mode** - Click the website presentation button
-2. **External Display** - The website opens in a new window
-3. **Navigation** - Use the browser controls to navigate
+1. **Luktan ti Mode ti Website** - I-click-mo ti button a pangipakita iti website
+2. **External nga Iskrin** - Maluktan ti website iti baro a window
+3. **Panag-navigate** - Usarem dagiti kontrol ti browser tapno ag-navigate
 
-### Website Controls {#website-controls}
+### Dagiti Kontrol ti Website {#website-controls}
 
-- **Open Website** - Open a separate website window
-- **Start Mirroring** - Show the website window in the media display for the audience
-- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
-- **Navigation** - Standard browser navigation controls
-- **Refresh** - Reload the current page
-- **Close** - Exit website presentation mode
-- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+- **Luktan ti website** - Luktan ti naisalumina a window ti website
+- **Irugi ti panangi-mirror** - Ipakita ti window ti website iti iskrin ti media para kadagiti tumabuno
+- **Isardeng ti panangi-mirror** - Isardeng ti panangipakita iti website ken agsubli iti teksto para iti tawen wenno iti background ti iskrin ti media
+- **Panag-navigate** - Dagiti kadawyan a kontrol ti browser para iti panag-navigate
+- **I-refresh** - I-load manen ti agdama a panid
+- **Iserra** - Rummuar iti mode ti panangipakita iti website
+- **Automatiko a Panagsubli** - No kayatmo, automatiko nga agsubli iti listaan ti media kalpasan ti panangisardeng iti panangi-mirror iti website
 
-## Meeting Recordings {#meeting-recordings}
+## Dagiti Recording ti Gimong {#meeting-recordings}
 
-M³ can help control meeting recording, but it does not include a built-in recorder.
+Makatulong ti M³ a mangkontrol iti panangi-record kadagiti gimong, ngem awan ti bukodna a pang-record.
 
-- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
-- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
-- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
+- **Panangi-record iti OBS** - No naka-enable dagiti kontrol ti panangi-record ti OBS, usarem ti popup ti OBS tapno irugi ken isardeng ti panangi-record iti OBS
+- **External nga App a Pang-record** - I-set up dagiti keyboard shortcut para iti naisalumina nga app a pang-record, sa usarem ti popup dagiti recording ti gimong tapno maitulod dagita a shortcut
+- **Folder dagiti recording** - I-set up ti folder dagiti recording tapno maipakita ti napartak a button a manglukat iti folder a pakaidulinan dagiti recording
 
-## Advanced Features {#user-guide-advanced-features}
+## Dagiti Advanced a Feature {#user-guide-advanced-features}
 
-### Multiple Congregations {#user-guide-multiple-congregations}
+### Adu a Kongregasion {#user-guide-multiple-congregations}
 
-Manage multiple congregations or groups:
+Imanehom ti adu a kongregasion wenno grupo:
 
-1. **Create Profiles** - Set up separate profiles for different congregations
-2. **Switch Profiles** - Use the congregation selector to switch between profiles
-3. **Separate Settings** - Each profile has its own settings and media
-4. **Shared Resources** - Media files are shared between profiles whenever possible
+1. **Agaramid iti Profile** - Agaramid kadagiti naisalumina a profile para kadagiti nadumaduma a kongregasion
+2. **Agsukat iti Profile** - Usarem ti pagpilian ti kongregasion tapno agsukat iti profile
+3. **Naisalumina a Setting** - Adda bukod a setting ken media ti tunggal profile
+4. **Dagiti Nai-share a Rekurso** - Agbibingay dagiti profile kadagiti file ti media no mabalin
 
-### Keyboard Shortcuts {#keyboard-shortcuts-guide}
+### Dagiti Keyboard Shortcut {#keyboard-shortcuts-guide}
 
-Configure custom keyboard shortcuts for efficient operation:
+I-set up dagiti custom a keyboard shortcut para iti epektibo a panagusar:
 
-1. **Enable Shortcuts** - Turn on keyboard shortcuts in settings
-2. **Configure Shortcuts** - Set up shortcuts for common actions
-3. **Practice** - Learn your shortcuts for faster operation
-4. **Customize** - Adjust shortcuts to match your preferences
+1. **I-enable Dagiti Shortcut** - I-on dagiti keyboard shortcut kadagiti setting
+2. **I-set up Dagiti Shortcut** - Agaramid kadagiti shortcut para kadagiti gagangay nga aksion
+3. **Agsanay** - Adalem dagiti shortcut-mo tapno mapapartak ti panagusarmo
+4. **I-customize** - Baliwam dagiti shortcut sigun iti kayatmo
 
-## Troubleshooting {#troubleshooting-guide}
+## Panangsolbar Kadagiti Problema {#troubleshooting-guide}
 
-### Common Issues {#common-issues}
+### Dagiti Gagangay a Problema {#common-issues}
 
-#### Media Not Downloading {#user-guide-media-not-downloading}
+#### Saan a Mai-download ti Media {#user-guide-media-not-downloading}
 
-- Check your meeting schedule settings
-- Verify internet connection
-- Check if media is available in your selected language
+- Sukimatem dagiti setting ti eskediul ti gimong
+- Sukimatem ti koneksion iti Internet
+- Sukimatem no adda ti media iti lengguahe a pinilim
 
-#### OBS Integration Not Working {#user-guide-obs-not-working}
+#### Saan nga Agandar ti Integration ti OBS {#user-guide-obs-not-working}
 
-- Verify OBS WebSocket plugin is installed
-- Check port and password settings
-- Ensure OBS is running
+- Sukimatem no naka-install ti plugin nga OBS WebSocket
+- Sukimatem dagiti setting ti port ken password
+- Siguraduem nga agandar ti OBS
 
-#### Audio Issues in Zoom/OBS {#audio-issues}
+#### Dagiti Problema iti Audio iti Zoom/OBS {#audio-issues}
 
-- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
-- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
-- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
-- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
+- **Awan ti audio iti Zoom**: I-enable ti Original Audio kadagiti setting ti Zoom ken sakbay ti tunggal gimong
+- **Saan a nasayaat ti kalidad ti audio**: Sukimatem dagiti tallo a checkbox ti Original Audio (naka-enable ti umuna a dua, naka-disable ti maikatlo)
+- **Saan nga agandar ti audio kalpasan ti panangi-restart**: Masapul nga i-enable manen ti Original Audio iti tunggal baro a session iti Zoom
+- **Alternatibo a solusion**: Usarem ti opsion a "Share Computer Sound" iti panangi-share iti iskrin iti Zoom
 
-#### Performance Issues {#user-guide-performance-issues}
+#### Dagiti Problema iti Panagandar {#user-guide-performance-issues}
 
-- Cache songbook video files
-- Reduce maximum resolution
-- Clear old cached files
-- Check available disk space
-- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
+- I-cache dagiti video ti pagkantaan
+- Ibaba ti kangatuan a resolution
+- I-clear dagiti daan a file iti cache
+- Sukimatem ti nabati nga espasio iti disk
+- No agparang dagiti glitch iti graphics wenno ag-crash ti app, padasem nga i-disable ti hardware acceleration sa i-restart-mo ti M³
 
-#### Language Issues {#user-guide-language-issues}
+#### Dagiti Problema iti Lengguahe {#user-guide-language-issues}
 
-- Check media language setting
-- Ensure language is available on JW.org
-- Try a fallback language
-- Verify interface language setting
+- Sukimatem ti setting ti lengguahe ti media
+- Siguraduem nga adda ti lengguahe iti JW.org
+- Padasem ti maikadua a lengguahe ti media
+- Sukimatem ti setting ti lengguahe ti app
 
-#### Forgotten Settings PIN {#user-guide-forgotten-settings-pin}
+#### Nalipatan a PIN ti Setting {#user-guide-forgotten-settings-pin}
 
-Only someone authorized to change M³'s settings should do this. After three wrong tries, M³ offers **Forgot the PIN?** wherever it asks for the PIN. To remove the PIN:
+Ti laeng addaan iti autorisasion a mangbaliw kadagiti setting ti M³ ti rumbeng a mangaramid iti daytoy. Kalpasan ti tallo a biddut a panangipadas, idaton ti M³ ti **Nalipatam ti PIN?** iti amin a lugar a dawatenna ti PIN. Tapno maikkat ti PIN:
 
-1. Select **Forgot the PIN?** and leave the window that opens in M³. It shows a folder on this computer.
-2. In your computer's file manager, go to that folder.
-3. Open the text file named `M3 settings PIN reset code.txt`, which M³ has just created there.
-4. Type the six-digit code from that file into M³, then confirm.
+1. Piliem ti **Nalipatam ti PIN?** ket baybay-am a nakalukat ti window nga aglukat iti M³. Ipakitana ti folder iti daytoy a kompiuter.
+2. Iti file manager ti kompiuterm, mapan iti dayta a folder.
+3. Luktam ti text file a managan iti `M3 settings PIN reset code.txt`, nga idi laeng inaramid ti M³ sadiay.
+4. I-type iti M³ ti innem a numero a code manipud iti dayta a file, sa i-confirm.
 
-M³ then removes the PIN and deletes the file. To protect the settings again, set a new PIN under **Settings** > **Advanced**.
+Kalpasanna, ikkaten ti M³ ti PIN ken i-delete ti file. Tapno masalakniban manen dagiti setting, mangikabil iti baro a PIN iti **Dagiti Setting** > **Advanced**.
 
-### Getting Help {#getting-help}
+### Panagkiddaw iti Tulong {#getting-help}
 
-If you encounter issues:
+No makasarakka iti problema:
 
-1. **Check Documentation** - Review this guide and other available documentation
-2. **Search Issues** - Look for similar issues on GitHub
-3. **Report Problems** - Create a new issue with detailed information
+1. **Kitaen ti Dokumentasion** - Basaem daytoy a giya ken ti dadduma pay a dokumentasion
+2. **Biroken Dagiti Issue** - Agbirok kadagiti kapada nga issue iti GitHub
+3. **I-report Dagiti Problema** - Agaramid iti baro nga issue nga addaan iti detalyado nga impormasion
 
-## Best Practices {#best-practices}
+## Dagiti Kasayaatan a Wagas {#best-practices}
 
-### Before Meetings {#before-meetings}
+### Sakbay Dagiti Gimong {#before-meetings}
 
-1. **Check Downloads** - Ensure all media is downloaded
-2. **Test Equipment** - Verify displays and audio work
-3. **Prepare Media** - Review and organize media for the meeting; make sure no media files are missing
-4. **Configure Audio** - For hybrid meetings, enable Original Audio in Zoom or set up "Share Computer Sound"
+1. **Sukimaten Dagiti Nai-download** - Siguraduem a nai-download amin a media
+2. **I-test Dagiti Alikamen** - Sukimatem no agandar dagiti iskrin ken audio
+3. **Isagana ti Media** - Kitaem ken urnosem ti media para iti gimong; siguraduem nga awan ti file ti media a kurang
+4. **I-set up ti Audio** - Para kadagiti hybrid a gimong, i-enable ti Original Audio iti Zoom wenno i-set up ti "Share Computer Sound"
 
-### During Meetings {#during-meetings}
+### Bayat Dagiti Gimong {#during-meetings}
 
-1. **Stay Focused** - Use the clean and distraction-free interface
-2. **Use Shortcuts** - Master keyboard shortcuts for smooth operation
-3. **Monitor Audio** - Keep an eye on volume levels, if that's part of your responsibilities
-4. **Be Prepared** - Have the next media item ready
-5. **Verify Audio** - For hybrid meetings, ensure Zoom participants can hear the media
+1. **Agtalinaed a Naka-focus** - Usarem ti nadalus nga interface nga awan ti makasinga iti atensionmo
+2. **Usaren Dagiti Shortcut** - Masanayka kadagiti keyboard shortcut tapno naannayas ti panagusarmo
+3. **Bantayan ti Audio** - Bantayam ti kapigsa ti uni, no paset dayta ti responsabilidadmo
+4. **Agsagana** - Isaganam ti sumaruno a media
+5. **Sukimaten ti Audio** - Para kadagiti hybrid a gimong, siguraduem a mangngeg dagiti participant iti Zoom ti media
 
-### After Meetings {#after-meetings}
+### Kalpasan Dagiti Gimong {#after-meetings}
 
-1. **Start Background Music** - Start the playback of background music
-2. **Plan Ahead** - Prepare for the next meeting by making sure everything is in place
-3. **Clean Up** - Close media player when you're ready to leave
+1. **Irugi ti Background Music** - Irugi ti panangi-play iti background music
+2. **Agplano a Nasapa** - Agsaganaka para iti sumaruno a gimong babaen ti panangsigurado a nakasagana ti amin
+3. **Agurnos** - Iserram ti media player no nakasaganakan a pumanaw
 
-### Regular Maintenance {#regular-maintenance}
+### Kadawyan a Panangtaripato {#regular-maintenance}
 
-1. **Update M³** - Keep the application updated
-2. **Clear Cache** - Periodically clear old cached files
-3. **Check Settings** - Review and update settings as needed
+1. **I-update ti M³** - Kanayon nga i-update ti app
+2. **I-clear ti cache** - Paminsan-minsan nga i-clear dagiti daan a file iti cache
+3. **Sukimaten Dagiti Setting** - Kitaem ken i-update dagiti setting no kasapulan
