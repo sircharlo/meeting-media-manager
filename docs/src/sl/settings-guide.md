@@ -515,7 +515,7 @@ Dokler je stran odprta, ohranja zaslon naprave buden, da se tablica na govorniš
 
 Naslovi, ki jih odpreš na napravi, so navedeni v pojavnem oknu časovnika skupaj z gumbom za kopiranje. Omrežna vrata spremeni le, če jih že uporablja kak drug program. Upoštevaj, da lahko stran odpre vsakdo v istem omrežju, dokler je ta možnost vklopljena; prikazuje samo časovnik.
 
-The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+Naslovi so navedeni tudi v Nastavitvah, pod omrežnimi vrati oddaljenega časovnika. Če se stran odpre v tem računalniku, ne pa tudi v tablici, jo verjetno blokira požarni zid Windows. Windows samo enkrat vpraša, ali lahko M³ sprejema povezave, in če je bilo to vprašanje zaprto ali je bil M³ dovoljen samo v zasebnih omrežjih, medtem ko je omrežje računalnika javno, ga še naprej blokira, ne da bi znova vprašal. V sistemu Windows M³ na to opozori pod naslovi, gumb **Dovoli v požarnem zidu Windows** pa spusti stran skozi, ko Windows zaprosi za dovoljenje skrbnika. Različica iz trgovine Microsoft Store to dovoli že ob namestitvi.
 
 **Privzeto**: `false`, port `8787`
 
