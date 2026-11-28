@@ -17,8 +17,10 @@ export type LanguageValue =
   | 'ko'
   | 'nl'
   | 'pt'
+  | 'ptPt'
   | 'ru'
   | 'sl'
+  | 'tl'
   | 'ty'
   | 'uk'
   | 'zh';
@@ -34,12 +36,15 @@ export const enabled: LanguageValue[] = [
   'et',
   'fr',
   'hu',
+  'ilo',
   'it',
   'ko',
   'nl',
   'pt',
+  'ptPt',
   'ru',
   'sl',
+  'tl',
   'ty',
   'uk',
 ];
@@ -140,6 +145,12 @@ export const locales: {
     value: 'hu',
   },
   {
+    englishName: 'Iloko',
+    label: 'Iloko',
+    langcode: 'IL',
+    value: 'ilo',
+  },
+  {
     englishName: 'Italian',
     label: 'Italiano',
     langcode: 'I',
@@ -166,6 +177,12 @@ export const locales: {
     value: 'pt',
   },
   {
+    englishName: 'Portuguese (Portugal)',
+    label: 'Português (Portugal)',
+    langcode: 'TPO',
+    value: 'ptPt',
+  },
+  {
     englishName: 'Russian',
     label: 'русский',
     langcode: 'U',
@@ -178,6 +195,12 @@ export const locales: {
     langcode: 'SV',
     signLangCodes: ['SZJ'],
     value: 'sl',
+  },
+  {
+    englishName: 'Tagalog',
+    label: 'Tagalog',
+    langcode: 'TG',
+    value: 'tl',
   },
   {
     englishName: 'Tahitian',
