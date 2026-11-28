@@ -1,0 +1,576 @@
+{
+  "_comment": "Grounded JW terminology for tl, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-11-28",
+  "_language": "tl",
+  "_note": "Tagalog HAS a version of jw.org's Terminology Guide (read from the English page's hreflang=\"tl\" link): https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/ ('Mga Terminong Ginagamit ng mga Saksi ni Jehova'), cited as the primary source wherever it covers a term. Meeting-part names come from the current Tagalog S-38 instructions (S-38-TG 8/26, wol.jw.org/tl/wol/d/r27/lp-tg/1201038, matched paragraph by paragraph against S-38-E 8/26) and a live meeting-workbook week (Nobyembre 23-29, 2026, wol.jw.org/tl/wol/d/r27/lp-tg/202026404, reached from wol.jw.org/tl/wol/meetings/r27/lp-tg/2026/48). The Tagalog WOL edition is wol.jw.org/tl/wol/d/r27/lp-tg/<id> (wol.jw.org/wol/finder?wtlocale=TG redirects to /tl/wol/h/r27/lp-tg). Organized to Do Jehovah's Will (od chap. 5 = 1102014935, chap. 7 = 1102014937), the FAQ 'Paano Sinasanay ang mga Saksi ni Jehova Para sa Ministeryo?' (ijwfq 65 = 501400106) and jw.org library/help pages were used as well. Counts quoted in notes are WOL phrase-search totals ('paglitaw' = occurrences, as WOL reports them; query form wol.jw.org/tl/wol/s/r27/lp-tg?q=%22<phrase>%22&p=doc&r=occ), with the newest hit given to show what is current. The official Tagalog material is itself inconsistent in several places, which translators must know about: (1) the individual 'elder' is the English loan (Terminology Guide headword, S-38, od) while the body of elders is the native 'lupon ng matatanda' (258 hits vs 2 for 'lupon ng mga elder'), often in the same paragraph; (2) the midweek/weekend meetings are 'pulong sa gitnang sanlinggo' / 'pulong sa dulong sanlinggo' in the Terminology Guide and od, but 'pulong sa midweek' / 'pulong sa weekend' in the current FAQ (ijwfq 65) and plain English 'midweek meeting' / 'weekend meeting' in S-38 par. 28 and recent Watchtowers; (3) 'chairman' (S-38, 2027 workbooks) replaced the older phonetic 'tsirman' (still in 2024 reprints of older material); (4) 'songbook' (w23, WOL's own search-filter label) replaced 'aklat-awitan' (last seen 2019); (5) WOL's reference label for S-38 reads 'S-038 Mga Tagubilin Para sa Pulong na Buhay at Ministeryo' while the document title is 'Mga Tagubilin Para sa Pulong na Ating Buhay at Ministeryong Kristiyano'. Renamings: 'Paghuhukay ng Espirituwal na Hiyas' (2016-2020 workbooks) became 'Espirituwal na Hiyas' (from 2021); the 2023 student-assignment names are 'Pagpapasimula ng Pakikipag-usap' (Starting a Conversation), 'Pakikipag-usap Muli' (Following Up), 'Paggawa ng mga Alagad' (Making Disciples), 'Ipaliwanag ang Paniniwala Mo' (Explaining Your Beliefs). The presiding overseer -> 'koordineytor ng lupon ng matatanda' change predates 2023 in Tagalog (earliest WOL hit km 11/08; 1985 km issues said 'punong tagapangasiwa').",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Mga Saksi ni Jehova",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://www.jw.org/tl/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'Mga Saksi ni Jehova': 'Sa unang paglitaw nito sa isang artikulo, gamitin ang opisyal na pangalang “Mga Saksi ni Jehova.” Kina-capitalize lang ang “mga” kapag may pantukoy itong panggrupo, gaya ng “relihiyon” o “organisasyon” (hal., “relihiyong Mga Saksi ni Jehova”). Sa iba pang paglitaw, puwede nang gamitin ang “mga” na nasa maliliit na letra (hal., “ang mga Saksi ni Jehova”). Puwede rin silang tawaging “mga Saksi.”' So mid-sentence it is 'ang mga Saksi ni Jehova' / 'ng mga Saksi ni Jehova' (lowercase 'mga'). One person: 'isang Saksi ni Jehova'. Site title: 'Mga Saksi ni Jehova—Opisyal na Website: jw.org | Tagalog'."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Kingdom Hall",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "Kept in English. Terminology Guide: 'Kingdom Hall ng mga Saksi ni Jehova. Lugar kung saan sama-samang sumasamba ang isang kongregasyon... Madalas itong tawaging “Kingdom Hall.” Hindi ito dapat tawaging “simbahan.”' Never 'simbahan' (church). 2170 WOL hits, newest w27 Enero. Same for 'Assembly Hall' ('Assembly Hall ng mga Saksi ni Jehova')."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "tagapangasiwa ng sirkito",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014935"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'tagapangasiwa ng sirkito. Isang makaranasang elder na naglilingkod sa ilalim ng pangangasiwa ng tanggapang pansangay.' Plural 'mga tagapangasiwa ng sirkito'. 770 WOL hits (newest S-38, w27 Enero, the 2026-2027 circuit-assembly program 'Programa ng Pansirkitong Asamblea Kasama ang Tagapangasiwa ng Sirkito') vs 19 for English 'circuit overseer' (only inside English school names such as 'School for Circuit Overseers and Their Wives'). sirkito = circuit. Old app suggestion 'Tagapangasiwa ng Sirkito' matches."
+    },
+    {
+      "termEn": "congregation",
+      "official": "kongregasyon",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'kongregasyon. Isang organisadong grupo ng mga Saksi na regular na nagtitipon-tipon para sumamba.' 'ng kongregasyon' (of the congregation), 'sa kongregasyon'. Host congregation is left in English in S-38 par. 21 ('host congregation')."
+    },
+    {
+      "termEn": "elder",
+      "official": "elder",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014935"
+      ],
+      "confidence": "high",
+      "notes": "The English loan IS the official Tagalog term: Terminology Guide headword 'elder. Isang lalaking Saksi na inatasang magturo at mangalaga sa mga kabilang sa kongregasyon... Ang terminong “elder” ay hindi isang titulo na nag-aangat sa kanila sa ibang Saksi.' Plural 'mga elder' (1139 WOL hits, newest mwb27 Marso). S-38: 'Iaatas ang pahayag na ito sa isang elder o kuwalipikadong ministeryal na lingkod.' INCONSISTENCY in the official material: the body of elders stays native 'lupon ng matatanda' (see that entry). Do not use 'matanda' for an individual congregation elder in UI text; 'matatandang lalaki' appears only in Bible contexts."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "koordineytor ng lupon ng matatanda",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014935",
+        "https://wol.jw.org/en/wol/d/r1/lp-e/1200274607"
+      ],
+      "confidence": "high",
+      "notes": "English WOL index 1200274607 marks 'PRESIDING OVERSEER (Discontinued) ... (Later called Coordinator of the Body of Elders)'. Current Tagalog, verbatim in od chap. 5 par. 26: 'Ang koordineytor ng lupon ng matatanda ang chairman kapag may pulong ang lupon ng matatanda.' 60 WOL hits (newest w22 Disyembre); 'koordinador' 0 hits - note the phonetic spelling 'koordineytor'. Older forms: 'punong tagapangasiwa' (km 1/85: 'Ang punong tagapangasiwa o ang sinumang inatasan niya ay dapat na mag-audit sa kuwenta ng kongregasyon') and the English form name 'Presiding Overseer/Secretary Change of Address (S-29)' (km 1999-2002). The rename is not a 2023+ change in Tagalog: earliest 'koordineytor ng lupon ng matatanda' hit is km 11/08."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "ministeryal na lingkod",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'ministeryal na lingkod. Isang lalaking Saksi na inatasang tumulong sa mga elder...'. Plural 'mga ministeryal na lingkod'. 642 WOL hits; S-38 'kuwalipikadong ministeryal na lingkod'. Spelling 'ministeryal' (with y)."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "payunir",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/501400106"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'payunir' (phonetic spelling). The Guide keeps the subtypes in English in quotes ('regular pioneer', 'auxiliary pioneer'); ijwfq 65 keeps school names in English ('Pioneer Service School'). 1889 WOL hits."
+    },
+    {
+      "termEn": "field service",
+      "official": "paglilingkod sa larangan",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'paglilingkod sa larangan. Pangangaral at pagtuturo ng mga Saksi sa publiko...' and 'pangangaral. Tingnan: paglilingkod sa larangan.' 1133 WOL hits. 'ministry' = 'ministeryo'; preaching = 'pangangaral'. S-38 par. 18: 'mga kaayusan sa paglabas sa larangan' (field-service arrangements). Service overseer = 'tagapangasiwa sa paglilingkod' (od chap. 5, 319 hits)."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Memoryal",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://www.jw.org/tl/mga-saksi-jehova/memoryal/",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038"
+      ],
+      "confidence": "high",
+      "notes": "Respelled with y. Terminology Guide headword 'Memoryal ng kamatayan ni Kristo... Tinatawag din itong Hapunan ng Panginoon, Huling Hapunan, Memoryal, o Memoryal ng kamatayan ni Jesus.' jw.org nav 'Memoryal'; page title 'Memoryal ng Kamatayan ni Jesus—Marso 22, 2027'; S-38 par. 23 heading 'LINGGO NG MEMORYAL' (Week of the Memorial). 1198 WOL hits (newest mwb27) vs 83 for English 'Memorial' (quotes/older)."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Pag-aaral ng Kongregasyon sa Bibliya",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202026404"
+      ],
+      "confidence": "high",
+      "notes": "S-38 par. 17 and the live workbook ('8. Pag-aaral ng Kongregasyon sa Bibliya (30 min.) wcg kab. 18'). 994 WOL hits, newest mwb27 Marso. Note the order: 'ng Kongregasyon sa Bibliya'. Old app suggestion matches."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "pulong sa gitnang sanlinggo",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014937",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/501400106"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword, verbatim with the English in parentheses: 'pulong sa gitnang sanlinggo (midweek meeting). Pulong ng kongregasyon linggo-linggo na karaniwang idinaraos sa weeknight. Tinatawag ang pulong na ito na Ating Buhay at Ministeryong Kristiyano...' od chap. 7 heading 'PULONG SA GITNANG SANLINGGO'. 40 WOL hits. INCONSISTENT in current material: S-38 par. 28 'Ang mga video para sa midweek meeting', es27 / lfs 'midweek meeting' (24 hits), ijwfq 65 'Pulong sa midweek.' Recommended for the app: 'pulong sa gitnang sanlinggo', paired with 'pulong sa dulong sanlinggo'. The old app suggestions mixed 'Pulong sa Gitnang Sanlinggo' and 'midweek meeting' - unify."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "pulong sa dulong sanlinggo",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014937",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/501400106",
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "od chap. 7 heading 'PULONG SA DULONG SANLINGGO' and par. 5 'Ang unang bahagi ng pulong sa dulong sanlinggo ay isang salig-Bibliyang pahayag...' (9 WOL hits, newest w21 Enero; 'dulong sanlinggo' alone 124 hits, newest w27 Enero). The Terminology Guide has no weekend-meeting headword; it describes this meeting under 'Pulong Pangmadla' (= the English guide's 'Public Meeting'). Newer, more colloquial variants: ijwfq 65 'Pulong sa weekend.', w25 Nobyembre 'susunod na pulong sa weekend', w25 Disyembre 'dumalo agad ang babae sa weekend meeting'. 'pulong sa dulo ng sanlinggo' is a one-off (w89). The old app suggestions used 'pulong sa weekend' and 'weekend meeting'. Recommended for the app: 'pulong sa dulong sanlinggo' (pairs with 'pulong sa gitnang sanlinggo'); if the team prefers the FAQ pair, switch both together to 'pulong sa midweek' / 'pulong sa weekend'."
+    },
+    {
+      "termEn": "public talk",
+      "official": "pahayag pangmadla",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014937",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038"
+      ],
+      "confidence": "high",
+      "notes": "od chap. 7 par. 5: 'Mahalaga ang pahayag pangmadla para masapatan ang espirituwal na pangangailangan...'; S-38 par. 26. 523 WOL hits (newest w27 Enero, 2026-2027 assembly programs) vs 25 for the older 'pangmadlang pahayag'. No linker: noun + 'pangmadla'. Public Meeting = 'Pulong Pangmadla' (Terminology Guide). Old app suggestion 'Pahayag Pangmadla' matches."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "Pag-aaral sa Bantayan",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://wol.jw.org/tl/wol/meetings/r27/lp-tg/2026/48",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide ('Karaniwan nang sinusundan ito ng Pag-aaral sa Bantayan'), WOL meetings-page section header 'Pag-aaral sa Bantayan', od chap. 7 par. 11, S-38 par. 26. 211 WOL hits. Running text also has 'pag-aaral ng Bantayan' (113, e.g. w25) - for the meeting part use 'sa'. Old app suggestion matches."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "Ang Bantayan",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://www.jw.org/tl/library/magasin/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'Ang Bantayan—Naghahayag ng Kaharian ni Jehova. Ang buong pamagat ng pangunahing magasin... Tinatawag din itong Bantayan.' The capitalized 'Ang' belongs to the title and is kept even after 'ng' in some places ('edisyon para sa pag-aaral ng Ang Bantayan', ijwfq 65; 'isyu ng Gumising! at ng Ang Bantayan', jw.org help) but dropped in others ('sa Bantayan, isyu ng Nobyembre 2025', live workbook; 'mga artikulo ng Bantayan'). jw.org is inconsistent; after a preposition the short 'Bantayan' reads more naturally."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "Gumising!",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://www.jw.org/tl/library/magasin/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'Gumising! Magasing inilalathala at ipinamamahagi ng mga Saksi ni Jehova.' Keep the exclamation mark; magazine list 'GUMISING!'."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "Bagong Sanlibutang Salin ng Banal na Kasulatan",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide: 'Bagong Sanlibutang Salin ng Banal na Kasulatan... Puwede rin itong tawaging “Bagong Sanlibutang Salin.”' Short form fine (709 WOL hits, newest mwb27 Enero). Study Bible = 'Bibliya Para sa Pag-aaral' (WOL nwtsty label)."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": [
+        "https://www.jw.org/tl/online-help/jw-library/",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038"
+      ],
+      "confidence": "high",
+      "notes": "Proper noun, never translated ('JW Library® app' in S-38 par. 28; help 'JW Library Para sa mga Windows Device'). Note: Tagalog JW Library help quotes the app's own buttons in English ('Pindutin ang Add Playlist button', 'Piliin ang Create Playlist o Import Playlist')."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": [
+        "https://www.jw.org/tl/",
+        "https://wol.jw.org/tl/wol/h/r27/lp-tg"
+      ],
+      "confidence": "high",
+      "notes": "Domain kept as is. Site title 'Mga Saksi ni Jehova—Opisyal na Website: jw.org'; footer 'JW.ORG® / OPISYAL NA WEBSITE NG MGA SAKSI NI JEHOVA'; WOL home 'Para makapag-download ng publikasyon, magpunta sa jw.org.' So 'the official website' = 'ang opisyal na website'. 'website' itself stays English."
+    },
+    {
+      "termEn": "songbook",
+      "official": "songbook",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/2023648",
+        "https://wol.jw.org/tl/wol/s/r27/lp-tg?q=%22songbook%22&p=doc&r=occ",
+        "https://www.jw.org/tl/library/musika-kanta-awit/umawit-nang-masaya/"
+      ],
+      "confidence": "high",
+      "notes": "Current usage keeps the English loan: w23 Nobyembre p. 32 'Kung kabisado mo ang mga ito, matutulungan ka nito kahit wala kang access sa songbook o gadget.'; ijwex 16 'wala pang songbook sa Chinese braille'; WOL's own search filter is labelled 'Songbook'. 31 hits. The native 'aklat-awitan' (83 hits) is older: newest w19 Hulyo / es19. Old app suggestions already used 'songbook'. Title of the current songbook: 'Umawit Nang Masaya kay Jehova' (separate entry)."
+    },
+    {
+      "termEn": "convention",
+      "official": "kombensiyon",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide: 'kombensiyon. Tingnan: internasyonal na kombensiyon at panrehiyong kombensiyon.' Regional convention = 'panrehiyong kombensiyon'; international = 'internasyonal na kombensiyon'. jw.org nav 'Kombensiyon'. Spelling '-siyon' (not 'kombensyon')."
+    },
+    {
+      "termEn": "assembly",
+      "official": "asamblea",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide: 'asamblea. Tingnan: pansirkitong asamblea.' Circuit assembly = 'pansirkitong asamblea' (359 WOL hits, newest the 2026-2027 programs). S-38 par. 22 heading 'LINGGO NG ASAMBLEA O KOMBENSIYON' (Week of an Assembly or a Convention)."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "teokratikong paaralan",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/s/r27/lp-tg?q=%22teokratikong+paaralan%22&p=doc&r=occ",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/501400106",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/2026364"
+      ],
+      "confidence": "medium",
+      "notes": "Generic form 'teokratikong paaralan' (33 WOL hits; heading 'Teokratikong Paaralan' in the WOL research guide). The discontinued Theocratic Ministry School is 'Paaralang Teokratiko Ukol sa Ministeryo' (679 hits, still mentioned historically in w26 Abril). The current training FAQ (ijwfq 65) says 'Mga Bible school para sa mga Saksi ni Jehova' and keeps each school's name in English (Pioneer Service School, School for Kingdom Evangelizers, School for Congregation Elders, School for Circuit Overseers and Their Wives)."
+    },
+    {
+      "termEn": "sign language",
+      "official": "sign language",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/501100074",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/502500219"
+      ],
+      "confidence": "high",
+      "notes": "Kept in English: jw.org language picker 'Ipakita ang mga Sign Language'; mediator 'Ipakita ang mga Sign Language'; mrt 81 'Gumagawa kami ng Bibliya at mga video... sa mahigit 100 sign language.'; hdu 22 'libo-libong sign-language na publikasyon'. 143 WOL hits. The native 'wikang pasenyas' (80 hits) is older (newest yb17, jl, ijwyp)."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "Workbook sa Buhay at Ministeryo",
+      "sourceUrls": [
+        "https://www.jw.org/tl/library/jw-workbook-para-sa-pulong/",
+        "https://wol.jw.org/tl/wol/meetings/r27/lp-tg/2026/48",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038"
+      ],
+      "confidence": "high",
+      "notes": "Issue name on jw.org's list ('WORKBOOK SA BUHAY AT MINISTERYO Nobyembre–Disyembre 2026'), on WOL ('Workbook sa Buhay at Ministeryo—2026 | Nobyembre') and in S-38 par. 1/3/21/24. jw.org's nav label for the category is 'Workbook Para sa Pulong' (= 'Meeting Workbook'); the WOL search filter also says 'Workbook Para sa Pulong'. 'workbook' stays English. Short 'workbook' is used in S-38 par. 3 ('Pero dapat niyang talakayin ang mga puntong nasa workbook')."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "taunang teksto",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/2027242",
+        "https://wol.jw.org/tl/wol/s/r27/lp-tg?q=%22taunang+teksto%22&p=doc&r=occ"
+      ],
+      "confidence": "high",
+      "notes": "w27 Enero p. 14-19: 'TAUNANG TEKSTO PARA SA 2027: “Magtiwala kayo kay Jehova.”—AWIT 115:11.' 178 WOL hits, newest w27 Enero; 'teksto sa taon' / 'teksto para sa taon' / 'teksto ng taon' all 0. Old app suggestion 'Taunang teksto' matches."
+    },
+    {
+      "termEn": "branch office",
+      "official": "tanggapang pansangay",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'tanggapang pansangay. Isang pasilidad kung saan nagtatrabaho ang Komite ng Sangay... Kung minsan, tinatawag lang itong “sangay.”' Branch Committee = 'Komite ng Sangay'. 1061 WOL hits (newest mwb27 Enero)."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Lupong Tagapamahala",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide headword 'Lupong Tagapamahala ng mga Saksi ni Jehova... Madalas itong tawaging “Lupong Tagapamahala.”' Capitalized; 1016 WOL hits. Don't confuse with 'lupon ng matatanda' (body of elders)."
+    },
+    {
+      "termEn": "Our Christian Life and Ministry meeting",
+      "official": "pulong na Ating Buhay at Ministeryong Kristiyano",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "S-38 title 'Mga Tagubilin Para sa Pulong na Ating Buhay at Ministeryong Kristiyano' and par. 1 'sa pulong na Ating Buhay at Ministeryong Kristiyano'; Terminology Guide 'Tinatawag ang pulong na ito na Ating Buhay at Ministeryong Kristiyano'. Short form used throughout S-38: 'Pulong Para sa Buhay at Ministeryo' ('Chairman ng Pulong Para sa Buhay at Ministeryo', 'Tagapangasiwa ng Pulong Para sa Buhay at Ministeryo'). WOL meetings page heading: 'Buhay at Ministeryo'. WOL's reference label for S-38 reads 'Mga Tagubilin Para sa Pulong na Buhay at Ministeryo' - an internal inconsistency."
+    },
+    {
+      "termEn": "Treasures From God's Word",
+      "official": "Kayamanan Mula sa Salita ng Diyos",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202026404"
+      ],
+      "confidence": "high",
+      "notes": "S-38 section header and live workbook ('KAYAMANAN MULA SA SALITA NG DIYOS'). 1072 WOL hits. Old app suggestion matches."
+    },
+    {
+      "termEn": "Treasures talk",
+      "official": "Pahayag",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202026404"
+      ],
+      "confidence": "medium",
+      "notes": "Neither English nor Tagalog S-38 has a fixed 'Treasures talk' name: the part is just 'Pahayag' (S-38 par. 3 'Pahayag: Sampung minuto.') under 'Kayamanan Mula sa Salita ng Diyos'; in the workbook it carries the week's theme ('1. Huwag Huminto sa Paglilingkod kay Jehova Kapag May Problema (10 min.)'). A descriptive label such as 'Pahayag sa Kayamanan Mula sa Salita ng Diyos' would be a translator's construction."
+    },
+    {
+      "termEn": "Spiritual Gems",
+      "official": "Espirituwal na Hiyas",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202026404"
+      ],
+      "confidence": "high",
+      "notes": "S-38 par. 4 and live workbook ('2. Espirituwal na Hiyas (10 min.)'). Renamed: 2016-2020 workbooks said 'Paghuhukay ng Espirituwal na Hiyas' (290 hits, newest mwb20 Disyembre); the short name is current (669 hits, newest mwb27 Marso)."
+    },
+    {
+      "termEn": "Bible Reading",
+      "official": "Pagbabasa ng Bibliya",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202026404"
+      ],
+      "confidence": "high",
+      "notes": "S-38 par. 5 and live workbook ('3. Pagbabasa ng Bibliya (4 min.) Pan 3:19-42 (th aralin 12)'). Same phrase for the weekly reading ('lingguhang pagbabasa ng Bibliya'). jw.org nav 'Pagbabasa ng Bibliya—Audio Drama'."
+    },
+    {
+      "termEn": "Apply Yourself to the Field Ministry",
+      "official": "Maging Mahusay sa Ministeryo",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202026404",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "Matched against the English S-38-E 8/26 table of contents (same paragraph numbers 6-15). The Tagalog name literally means 'Be Skilled in the Ministry' - do not back-translate it. 629 WOL hits since mwb16. Assignment names inside it (2023+): 'Pagpapasimula ng Pakikipag-usap', 'Pakikipag-usap Muli', 'Ano ang Sasabihin Mo?', 'Paggawa ng mga Alagad', 'Ipaliwanag ang Paniniwala Mo', 'Pahayag'. Old app suggestion matches."
+    },
+    {
+      "termEn": "Living as Christians",
+      "official": "Pamumuhay Bilang Kristiyano",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202026404"
+      ],
+      "confidence": "high",
+      "notes": "S-38 par. 16 header and live workbook ('PAMUMUHAY BILANG KRISTIYANO'). 1049 WOL hits. Old app suggestion matches."
+    },
+    {
+      "termEn": "Opening Comments",
+      "official": "Pambungad na Komento",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202026404"
+      ],
+      "confidence": "high",
+      "notes": "Live workbook: 'Awit Blg. 158 at Panalangin | Pambungad na Komento (1 min.)'. S-38 par. 2 heading 'PAMBUNGAD NA KOMENTO'. 593 WOL hits."
+    },
+    {
+      "termEn": "Concluding Comments",
+      "official": "Pangwakas na Komento",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202026404"
+      ],
+      "confidence": "high",
+      "notes": "Live workbook: 'Pangwakas na Komento (3 min.) | Awit Blg. 74 at Panalangin'. S-38 par. 18. 381 WOL hits."
+    },
+    {
+      "termEn": "concluding prayer",
+      "official": "pansarang panalangin",
+      "sourceUrls": ["https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038"],
+      "confidence": "high",
+      "notes": "S-38 par. 21: 'Puwede niyang hilingan ang ibang brother na magbigay ng pansarang panalangin.' 289 WOL hits (newest S-38, 2026 convention program) vs 9 for 'pangwakas na panalangin' (older). 'prayer' = 'panalangin' (workbook 'Awit Blg. 74 at Panalangin'). Opening song and prayer = 'pambukas na awit at panalangin' (S-38 par. 2); concluding/last song: no fixed term ('pangwakas na awit' only 5 old hits; S-38 par. 18 'Magtatapos ang pulong sa awit at panalangin')."
+    },
+    {
+      "termEn": "chairman",
+      "official": "chairman",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202027086"
+      ],
+      "confidence": "high",
+      "notes": "English loan in current material: S-38 par. 25 heading 'CHAIRMAN NG PULONG PARA SA BUHAY AT MINISTERYO'; od chap. 7 par. 18 'gaganap bilang chairman ng pulong ang isang elder'; mwb27 Marso 'Pahayag ng chairman.' 120 WOL hits (newest mwb27). The older phonetic 'tsirman' (141 hits) survives only in reprinted older material (mwbr24 Marso) - don't use it."
+    },
+    {
+      "termEn": "Our Christian Life and Ministry—Meeting Workbook",
+      "official": "Ating Buhay at Ministeryong Kristiyano—Workbook Para sa Pulong",
+      "sourceUrls": [
+        "https://www.jw.org/tl/library/jw-workbook-para-sa-pulong/",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "Verbatim jw.org library page heading (and od chap. 7 par. 14). Issue covers and WOL use 'Workbook sa Buhay at Ministeryo' (e.g. 'Workbook sa Buhay at Ministeryo—2026 | Nobyembre'); WOL's document header shows 'Ating Buhay at Ministeryong Kristiyano—2026'. All are official; the short nav label is 'Workbook Para sa Pulong'."
+    },
+    {
+      "termEn": "The Watchtower—Study Edition",
+      "official": "Ang Bantayan—Edisyon Para sa Pag-aaral",
+      "sourceUrls": [
+        "https://www.jw.org/tl/library/magasin/",
+        "https://wol.jw.org/tl/wol/meetings/r27/lp-tg/2026/48"
+      ],
+      "confidence": "high",
+      "notes": "jw.org magazine list labels study issues 'ANG BANTAYAN—EDISYON PARA SA PAG-AARAL Nobyembre 2026' (all caps; 'Para' is capitalized in JW Tagalog title case, cf. 'Workbook Para sa Pulong'). WOL abbreviates it 'Ang Bantayan (Pag-aaral)—2026 | Setyembre'. Running text: 'edisyon para sa pag-aaral ng Ang Bantayan' (ijwfq 65; 290 hits for 'edisyon para sa pag-aaral')."
+    },
+    {
+      "termEn": "The Watchtower—Public Edition",
+      "official": "Ang Bantayan (edisyong pampubliko)",
+      "sourceUrls": [
+        "https://www.jw.org/tl/online-help/paggamit-ng-jw-org/hanapin-sa-website/",
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "Verbatim on the Tagalog jw.org help page: 'ipapakita nito ang apat na pinakabagong isyu ng Gumising! at ng Ang Bantayan (edisyong pampubliko)'. Terminology Guide running text: 'Ang pampublikong edisyon ng Bantayan ay iniaalok nang libre'. WOL: 'edisyong pampubliko' 38 hits, 'pampublikong edisyon' 10. The jw.org magazine list labels public issues simply 'ANG BANTAYAN'."
+    },
+    {
+      "termEn": "Sing Out Joyfully to Jehovah",
+      "official": "Umawit Nang Masaya kay Jehova",
+      "sourceUrls": [
+        "https://www.jw.org/tl/library/musika-kanta-awit/umawit-nang-masaya/",
+        "https://wol.jw.org/tl/wol/meetings/r27/lp-tg/2026/48"
+      ],
+      "confidence": "high",
+      "notes": "Verbatim page title 'Umawit Nang Masaya kay Jehova | Awiting Kristiyano' - no quotation marks (unlike the English “Sing Out Joyfully” to Jehovah). Editions on the same page: 'Umawit Nang Masaya kay Jehova—Para sa Pulong' (sjjm, the meetings edition the app uses) and 'Umawit Nang Masaya kay Jehova—Vocals' (sjjc). WOL short title 'Umawit Nang Masaya' (sjj)."
+    },
+    {
+      "termEn": "song",
+      "official": "awit",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202026404",
+        "https://www.jw.org/tl/library/musika-kanta-awit/umawit-nang-masaya/"
+      ],
+      "confidence": "high",
+      "notes": "Workbook 'Awit Blg. 158 at Panalangin' (Blg. = bilang, 'No.'; 414 hits for 'Awit Blg.', 0 for 'Kanta Blg.'); songbook page 'Hanapin Ayon sa Bilang o Pamagat ng Awit', title 'Awiting Kristiyano'. Plural 'mga awit'. 'kanta' is also official in informal prose (w23 Nobyembre 'Kabisaduhin ang mga Kanta Natin'; JW Library help 'teokratikong mga kanta'). Caution: 'Awit' is also the Bible book Psalms ('Awit 115:11'), so number a song as 'Awit Blg. 158', not 'Awit 158'."
+    },
+    {
+      "termEn": "Kingdom song",
+      "official": "awiting pang-Kaharian",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202024403",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/202025239"
+      ],
+      "confidence": "high",
+      "notes": "mwb24 Nobyembre: 'Paano ipinakita ng mga kapatid natin sa Siberia na mahalaga sa kanila ang pagkanta ng mga awiting pang-Kaharian?'; mwbr25 Mayo 'sama-samang pagkanta ng awiting pang-Kaharian'. 141 WOL hits. The English 'Kingdom song' appears in some recent life stories (22 hits) and the old app glossary left 'Kingdom Song' untranslated - use the Tagalog."
+    },
+    {
+      "termEn": "Memorial talk",
+      "official": "pahayag sa Memoryal",
+      "sourceUrls": ["https://wol.jw.org/tl/wol/d/r27/lp-tg/202026084"],
+      "confidence": "high",
+      "notes": "mwb26 Marso: 'Pagkatapos ng pahayag sa Memoryal, sagutin ang mga tanong ng isang interesado.' 29 WOL hits (newest mwb26) vs 2 for 'pahayag ng Memoryal' and 0 for 'pahayag para sa Memoryal'."
+    },
+    {
+      "termEn": "Memorial Welcome Video",
+      "official": "",
+      "sourceUrls": [],
+      "confidence": "low",
+      "notes": "No Tagalog name found: no WOL/jw.org text names this video ('Maligayang Pagdating sa Memoryal' 0 hits, 'welcome video' 0). A descriptive rendering built from 'video', 'Maligayang pagdating' (WOL home's 'Welcome') and 'Memoryal' would be a translator's choice - flag it for the human reviewer."
+    },
+    {
+      "termEn": "public talk outline",
+      "official": "outline para sa pahayag pangmadla",
+      "sourceUrls": ["https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014255"],
+      "confidence": "high",
+      "notes": "kr chap. 16: 'Noong 2013, mayroon nang mahigit 180 outline para sa pahayag pangmadla.' and 'ibatay ang kanilang pahayag sa mga outline na ipinadadala sa mga kongregasyon'. Generic 'outline ng pahayag' (w26 Hunyo, bt chap. 14). The native 'balangkas' (km 2000-2003) is obsolete. The S-34 document's own Tagalog title was not found online."
+    },
+    {
+      "termEn": "body of elders",
+      "official": "lupon ng matatanda",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014935"
+      ],
+      "confidence": "high",
+      "notes": "S-38 par. 17/24/25/27 ('Ang lupon ng matatanda ang pipili kung sino ang kuwalipikadong mangasiwa...'), od chap. 5. 258 WOL hits (newest S-38, es27, w26 Hunyo) vs 2 for 'lupon ng mga elder'. Lowercase. INCONSISTENCY: the same documents call each member an 'elder' (English loan), so 'lupon ng matatanda' and 'mga elder' sit side by side; follow the official usage anyway. Old app glossary 'lupon ng matatanda' matches. Distinct from 'Lupong Tagapamahala'."
+    },
+    {
+      "termEn": "branch",
+      "official": "sangay",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology Guide: 'Kung minsan, tinatawag lang itong “sangay.”' Also 'Komite ng Sangay' and 'sa bansa o mga bansa na sakop ng sangay na iyon' (countries under that branch - useful for 'branch territory'). Circuit assembly with a branch representative: 'Programa ng Pansirkitong Asamblea na May Kinatawan ng Sangay'."
+    },
+    {
+      "termEn": "talk",
+      "official": "pahayag",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014937"
+      ],
+      "confidence": "high",
+      "notes": "S-38 'Pahayag 3', 'Pahayag 12'; od chap. 7. Speaker = 'tagapagsalita' (S-38 par. 3, od chap. 7 par. 9). 'to give a talk' = 'magbigay ng pahayag'. Old app glossary 'pahayag' matches."
+    },
+    {
+      "termEn": "service talk",
+      "official": "pahayag sa paglilingkod",
+      "sourceUrls": ["https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038"],
+      "confidence": "high",
+      "notes": "S-38 par. 21: 'papalitan ng 30-minutong pahayag sa paglilingkod ng tagapangasiwa ng sirkito'; 'Pagkatapos ng pahayag sa paglilingkod, tatapusin ng tagapangasiwa ng sirkito ang pulong sa isang awit na pinili niya.'"
+    },
+    {
+      "termEn": "Videoconference Organizer",
+      "official": "",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/502500209",
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/"
+      ],
+      "confidence": "low",
+      "notes": "No official Tagalog role name found ('videoconference organizer' 0 WOL hits). The loanword 'videoconference' itself is used as is (hdu 12: 'ginawa nila ito sa pamamagitan ng videoconference'; Terminology Guide 'walang bayad ang pagdalo dito o pag-connect sa videoconference nito'; 22 hits). Any role label is a translator's construction - flag for review. The old app glossary left 'Videoconference Organizer' in English."
+    },
+    {
+      "termEn": "technical/audio-video support",
+      "official": "audio/video",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102026204",
+        "https://www.jw.org/tl/online-help/jw-library/paggamit-ng-playlist/"
+      ],
+      "confidence": "medium",
+      "notes": "es26 (from w24.10): 'Inaatasan naman ang iba na mag-operate ng audio/video, maging attendant, o tumulong sa pagmamantini ng Kingdom Hall.' JW Library help: 'Maghanda ng mga picture para sa pahayag mo at i-share ang playlist sa mga brother sa audio/video'. So the A/V volunteers are 'mga brother sa audio/video'; no fixed name for the assignment or 'team' was found. 'attendant' and 'sound system' also stay English (2026 convention program). The old app glossary left 'technical A/V support team' in English."
+    },
+    {
+      "termEn": "circuit overseer's visit",
+      "official": "dalaw ng tagapangasiwa ng sirkito",
+      "sourceUrls": [
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1201038",
+        "https://wol.jw.org/tl/wol/d/r27/lp-tg/1102014935"
+      ],
+      "confidence": "high",
+      "notes": "S-38 par. 21 heading 'DALAW NG TAGAPANGASIWA NG SIRKITO' ('Kapag dalaw ng tagapangasiwa ng sirkito sa kongregasyon...'); od chap. 5 related article 'Tangkilikin ang Dalaw ng Tagapangasiwa ng Sirkito'. 95 WOL hits (newest S-38, w26 Hulyo) vs 20 for 'pagdalaw ng tagapangasiwa ng sirkito'. Old app suggestion 'Susunod na dalaw ng tagapangasiwa ng sirkito' matches."
+    },
+    {
+      "termEn": "JW Hub",
+      "official": "JW Hub",
+      "sourceUrls": [
+        "https://www.jw.org/tl/global-communication/terminong-ginagamit-saksi-jehova/"
+      ],
+      "confidence": "high",
+      "notes": "Proper noun kept as is; Tagalog jw.org footer lists 'JW Hub®'. Not mentioned in WOL text (0 hits)."
+    },
+    {
+      "termEn": "JW Broadcasting",
+      "official": "JW Broadcasting",
+      "sourceUrls": [
+        "https://www.jw.org/tl/online-help/",
+        "https://b.jw-cdn.org/apis/mediator/v1/translations/TG"
+      ],
+      "confidence": "high",
+      "notes": "Proper noun kept as is (jw.org nav 'JW Broadcasting®'; mediator 'Tulong sa Paggamit ng JW Broadcasting', 'JW Broadcasting sa Iyong TV'; 69 WOL hits)."
+    }
+  ]
+}
