@@ -515,6 +515,8 @@ Enquanto a página estiver aberta, ela mantém a tela do dispositivo ligada, par
 
 Os endereços para abrir no dispositivo aparecem no pop-up do temporizador, com um botão para copiar. Só altere a porta se outro programa já a estiver usando. Observe que qualquer pessoa na mesma rede pode abrir a página enquanto esta opção estiver ativada; ela não mostra nada além do temporizador.
 
+The addresses are also listed in Settings, under the timer remote's port. If the page opens on this computer but not on the tablet, Windows Firewall is probably blocking it. Windows asks once whether M³ may accept connections, and if that question was dismissed, or M³ was only allowed on private networks while the computer's network is public, it keeps blocking without asking again. On Windows, M³ warns about it under the addresses, and **Allow in Windows Firewall** lets the page through after Windows asks for an administrator's permission. The Microsoft Store version allows it when it's installed.
+
 **Padrão**: `false`, porta `8787`
 
 ### Formatos de exibição do temporizador {#timer-display-formats}
